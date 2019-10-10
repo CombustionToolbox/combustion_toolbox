@@ -1,11 +1,11 @@
-# Combustion Toolbox  MAT
-## MATLAB/GUI based thermochemical code
-
+# Combustion Toolbox
+A MATLAB MATLAB/GUI based thermochemical code
+## Introduction
 As a first step towards the development of a wider-scope thermochemical tool, in this work we present a thermochemical code with application to gaseous combustion problems recently implemented by the authors in MATLAB\textsuperscript{\textregistered}. The code solves six chemical equilibrium problems (TP, HP, SP, TV, EV and SV transformations; where T denotes temperature, P pressure, H enthalpy, S entropy, E internal energy and V volume), incident and reflected planar shock waves, as well as ideal detonations according to Chapman-Jouguet theory, assuming always ideal gases in all cases.\newline
 
 The code computes the equilibrium composition using equilibrium constants rather than by minimization of the Gibbs–Helmholtz free energy, and employs NASA’s 9-coefficient polynomial fits to evaluate the thermodynamic properties. Along with the plain code, the new tool has been equipped with a Graphical User Interface (hereafter **Combustion-Toolbox**) developed in MATLAB\textsuperscript{\textregistered} 2018 under AppDesigner.\newline
 
-Results computed with \textbf{Combustion-Toolbox} have been validated against, and are in good agreement with, NASA’s Chemical Equilibrium with Applications (CEA) program \cite{cite1}, CANTERA, and Caltech’s Shock and Detonation Toolbox \cite{sdtoolbox}. Moreover, the time required for the computations is comparable to that of other existing codes. **Combustion-Toolbox** has teaching and research aspirations and will be distributed as open source package as soon as it has been fully tested.
+Results computed with **Combustion-Toolbox** have been validated against, and are in good agreement with, NASA’s Chemical Equilibrium with Applications (CEA) program \cite{cite1}, CANTERA, and Caltech’s Shock and Detonation Toolbox \cite{sdtoolbox}. Moreover, the time required for the computations is comparable to that of other existing codes. **Combustion-Toolbox** has teaching and research aspirations and will be distributed as open source package as soon as it has been fully tested.
 
 ## Getting Started
 
@@ -21,51 +21,18 @@ Give examples
 
 ### Installing
 
-A step by step series of examples that tell you how to get a development env running
 
-Say what the step will be
-
-```
-Give the example
-```
-
-And repeat
-
-```
-until finished
-```
-
-End with an example of getting some data out of the system or using it for a little demo
 
 ## Running the tests
 
-Explain how to run the automated tests for this system
+
 
 ### Break down into end to end tests
 
-Explain what these tests test and why
-
-```
-Give an example
-```
-
-### And coding style tests
-
-Explain what these tests test and why
-
-```
-Give an example
-```
-
-## Deployment
-
-Add additional notes about how to deploy this on a live system
 
 ## Built With
 
-* [Dropwizard](http://www.dropwizard.io/1.0.2/docs/) - The web framework used
-* [Maven](https://maven.apache.org/) - Dependency Management
-* [ROME](https://rometools.github.io/rome/) - Used to generate RSS Feeds
+* [MATLAB-AppDesigner](https://es.mathworks.com/products/matlab/app-designer.html) - Used to developt the Graphical User Interface
 
 ## Contributing
 
@@ -73,17 +40,17 @@ Please read [CONTRIBUTING.md](https://gist.github.com/PurpleBooth/b24679402957c6
 
 ## Versioning
 
-We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/your/project/tags). 
+
 
 ## Authors
 
-* **Billie Thompson** - *Initial work* - [PurpleBooth](https://github.com/PurpleBooth)
+* **Alberto Cuadra-Lara** - *Initial work* - [AlbertoCuadra](https://github.com/AlbertoCuadra)
+* **Marcos Vera** - *Initial work*  
 
 See also the list of [contributors](https://github.com/your/project/contributors) who participated in this project.
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
 
 ## Acknowledgments
 

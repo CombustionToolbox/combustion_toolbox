@@ -1,4 +1,4 @@
-# Combustion Toolbox 
+# Combustion Toolbox  MAT
 ## MATLAB/GUI based thermochemical code
 
 As a first step towards the development of a wider-scope thermochemical tool, in this work we present a thermochemical code with application to gaseous combustion problems recently implemented by the authors in MATLAB\textsuperscript{\textregistered}. The code solves six chemical equilibrium problems (TP, HP, SP, TV, EV and SV transformations; where T denotes temperature, P pressure, H enthalpy, S entropy, E internal energy and V volume), incident and reflected planar shock waves, as well as ideal detonations according to Chapman-Jouguet theory, assuming always ideal gases in all cases.\newline
@@ -13,7 +13,7 @@ These instructions will get you a copy of the project up and running on your loc
 
 ### Prerequisites
 
-What things you need to install the software and how to install them
+MATLAB
 
 ```
 Give examples

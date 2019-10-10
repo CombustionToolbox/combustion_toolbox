@@ -65,7 +65,7 @@ Please read [CONTRIBUTING.md](https://gist.github.com/PurpleBooth/b24679402957c6
 * **Marcos Vera<sup>1</sup>** - *Programmer*  
 <sup>1</sup>  Grupo de Mecánica de Fluidos, Universidad Carlos III, Av. Universidad 30, 28911, Leganés, Spain
 
-See also the list of [contributors](https://github.com/your/project/contributors) who participated in this project.
+See also the list of [contributors](https://github.com/AlbertoCuadra/combustion_toolbox/blob/master/contributors.md) who participated in this project.
 
 ## License
 

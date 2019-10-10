@@ -44,8 +44,8 @@ Please read [CONTRIBUTING.md](https://gist.github.com/PurpleBooth/b24679402957c6
 
 ## Authors
 
-* **Alberto Cuadra-Lara** - *Initial work* - [AlbertoCuadra](https://github.com/AlbertoCuadra)
-* **Marcos Vera** - *Initial work*  
+* **Alberto Cuadra-Lara** - *Programmer and App designer* - [AlbertoCuadra](https://github.com/AlbertoCuadra)
+* **Marcos Vera** - *Programmer*  
 
 See also the list of [contributors](https://github.com/your/project/contributors) who participated in this project.
 

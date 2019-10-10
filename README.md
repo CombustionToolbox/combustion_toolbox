@@ -5,9 +5,20 @@ Table of contents
 =================
 
 <!--ts-->
-   * [Combustion Toolbox](#Combustion Toolbox)
+   * [Combustion Toolbox](#Combustion-Toolbox)
    * [Table of contents](#table-of-contents)
    * [Introduction](#Introduction)
+   * [Getting Started](#Getting-Started)
+   * [Prerequisites](#Prerequisites)
+   * [Installing](#Installing)
+   * [Running the tests](#Running the tests)
+   * [Built With](#Built With)
+   * [Contributing](#Contributing)
+   * [Versioning](#Versioning)
+   * [Authors](#Authors)
+   * [License](#License)
+   * [Acknowledgments](#Acknowledgments)
+   
 <!--te-->
 
 ## Introduction

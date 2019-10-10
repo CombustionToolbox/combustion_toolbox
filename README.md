@@ -26,10 +26,6 @@ Give examples
 ## Running the tests
 
 
-
-### Break down into end to end tests
-
-
 ## Built With
 
 * [MATLAB-AppDesigner](https://www.mathworks.com/products/matlab/app-designer.html) - Used to developt the Graphical User Interface
@@ -44,8 +40,9 @@ Please read [CONTRIBUTING.md](https://gist.github.com/PurpleBooth/b24679402957c6
 
 ## Authors
 
-* **Alberto Cuadra-Lara** - *Programmer and App designer* - [AlbertoCuadra](https://github.com/AlbertoCuadra)
-* **Marcos Vera** - *Programmer*  
+* **Alberto Cuadra-Lara\*** - *Programmer and App designer* - [AlbertoCuadra](https://github.com/AlbertoCuadra)
+* **Marcos Vera\*** - *Programmer*  
+\*  Grupo de Mecánica de Fluidos, Universidad Carlos III, Av. Universidad 30, 28911, Leganés, Spain
 
 See also the list of [contributors](https://github.com/your/project/contributors) who participated in this project.
 

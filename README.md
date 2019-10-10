@@ -32,7 +32,7 @@ Give examples
 
 ## Built With
 
-* [MATLAB-AppDesigner](https://es.mathworks.com/products/matlab/app-designer.html) - Used to developt the Graphical User Interface
+* [MATLAB-AppDesigner](https://www.mathworks.com/products/matlab/app-designer.html) - Used to developt the Graphical User Interface
 
 ## Contributing
 
@@ -54,6 +54,4 @@ See also the list of [contributors](https://github.com/your/project/contributors
 
 ## Acknowledgments
 
-* Hat tip to anyone whose code was used
-* Inspiration
-* etc
+A.C. is deeply grateful to Samuel Delbarre for his help in the validation and debuging process.

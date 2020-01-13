@@ -15,6 +15,7 @@ function displaysweepresults(varargin)
 nfrec = 3;
 linewidth = 2;
 fontsize = 24;
+
 if nargin < 4
     error('Error: Not enough input arguments. Function: displaysweepresults.');
 elseif nargin == 5

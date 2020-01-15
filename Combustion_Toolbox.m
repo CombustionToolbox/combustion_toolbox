@@ -16,7 +16,7 @@
 % * Alberto Cuadra Lara, Universidad Carlos III de Madrid (UC3M)
 % * Marcos Vera Coello,  Universidad Carlos III de Madrid (UC3M)
 %
-% Last update: 13-Sep-2019 10:50
+% Last update: 15-Jan-2020 10:57
 %% LOAD DATABASES AND GLOBAL CONSTANTS
 [app,strThProp,strMaster] = Initialize(); 
 app.Misc.save_Excel = false;
@@ -183,7 +183,7 @@ app.PD.phi.Value = 0.5:0.01:4.5;
 switch Problem_selected
     case 'TP' % * TP: Equilibrium composition at defined T and p
         app.PD.ProblemType = 'TP';
-        app.PD.TP_vector.Value = 4000;
+        app.PD.TP_vector.Value = 2000;
     case 'HP' % * HP: Adiabatic T and composition at constant p
         app.PD.ProblemType = 'HP';
         app.PD.pR_vector.Value = app.PD.pR.Value;
@@ -226,12 +226,12 @@ for i=app.C.l_phi:-1:1 % Evading preallocate struct
 % the temperature T [K]
 % app.PD.TR.Value = app.PD.TR.vector.Value(i);
 % app.PD.R_Fuel = 0; app.PD.phi_t = 1; app.PD.Fuel.x = 0; app.PD.Fuel.eps = 1e-1;
-% app.PD.S_Fuel = {'CH4','C2H6','C3H8'}; app.PD.N_Fuel = [0.85;0.1;0.05]; app.PD.phi_t = 2.3;
-app.PD.S_Fuel = {'CH4'}; app.PD.N_Fuel = 1;  app.PD.phi_t = 2;
+% app.PD.S_Fuel = {'CH4','C2H6','C3H8'}; app.PD.N_Fuel = [0.85;0.1;0.05]; 
+app.PD.S_Fuel = {'CH4'}; app.PD.N_Fuel = 1;
 % app.PD.S_Fuel = {'H2'}; app.PD.N_Fuel = 1; 
-% app.PD.S_Fuel = {'C2H2_acetylene'}; app.PD.N_Fuel = 1;  app.PD.phi_t = 2.5;
+% app.PD.S_Fuel = {'C2H2_acetylene'}; app.PD.N_Fuel = 1; 
 % app.PD.S_Fuel = {'C3H8'}; app.PD.N_Fuel = 1;    
-% app.PD.S_Fuel = {'C6H6'}; app.PD.N_Fuel = 1;  app.PD.phi_t = 7.5;
+% app.PD.S_Fuel = {'C6H6'}; app.PD.N_Fuel = 1; 
 % app.PD.S_Fuel = {'C2H6'}; app.PD.N_Fuel = 1;
 % app.PD.S_Fuel = {'C2H5OH'}; app.PD.N_Fuel = 1;
 

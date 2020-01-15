@@ -18,6 +18,7 @@
 %
 % Last update: 15-Jan-2020 10:57
 %% LOAD DATABASES AND GLOBAL CONSTANTS
+addpath(genpath(pwd));
 [app,strThProp,strMaster] = Initialize(); 
 app.Misc.save_Excel = false;
 %% REACTION: COMPLETE OR INCOMPLETE

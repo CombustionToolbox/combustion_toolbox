@@ -1,12 +1,10 @@
 # Combustion Toolbox
-A MATLAB MATLAB/GUI based thermochemical code
+A MATLAB/GUI based thermochemical code
 
 Table of contents
 =================
 
 <!--ts-->
-   * [Combustion Toolbox](#Combustion-Toolbox)
-   * [Table of contents](#table-of-contents)
    * [Introduction](#Introduction)
    * [Getting Started](#Getting-Started)
    * [Prerequisites](#Prerequisites)

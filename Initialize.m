@@ -32,9 +32,10 @@ app.PD.phi.Description = "Equivalence ratio [-]";
 if ~exist('strMaster','var')
    if exist('strMaster.mat','file')
     disp('NASA database loaded from main path')
-    load('strMaster.mat');
+    load('strMaster_reduced.mat');
    else
        strMaster = ParseThermoInp_test(); % struct with tabulated data of all species.
+       strMaster = strMaster_reduced(strMaster);
    end
 else
     disp('NASA database already loaded')

@@ -94,7 +94,7 @@ if ~isempty(n_pass)
     % CONTAINED ELEMENTS
     S.NameSpecies = fieldnames(strThProp); % In case any of the minor products didnt exist in strMaster
     S.NSpecies = numel(S.NameSpecies);
-    for k = length(S.NameSpecies):-1:1
+    for k = S.NSpecies:-1:1
         Species = S.NameSpecies{k};
         % Change uppercase 'L' to  lowercase 'l'
         Species(strfind(Species,'AL')+1)='l';

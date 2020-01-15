@@ -5,8 +5,6 @@ Table of contents
 =================
 
 <!--ts-->
-   * [Combustion Toolbox](#Combustion-Toolbox)
-   * [Table of contents](#table-of-contents)
    * [Introduction](#Introduction)
    * [Getting Started](#Getting-Started)
    * [Prerequisites](#Prerequisites)

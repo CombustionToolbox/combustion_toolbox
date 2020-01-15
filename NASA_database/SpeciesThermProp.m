@@ -20,49 +20,15 @@ if nargin < 5, echo = 0; end
 % -------------------------------
 % 
 % txFormula =
-% 
 %     'C   1.00O   1.00    0.00    0.00    0.00'
-% 
-% 
-% mm =
-% 
-%    28.0101
-% 
-% 
-% Cp0 =
-% 
-%    33.1788
-% 
-% 
-% Cv0 =
-% 
-%    24.8643
-% 
-% 
-% Hf0 =
-% 
-%   -1.1054e+05
-% 
-% 
-% H0 =
-% 
-%   -8.8848e+04
-% 
-% 
-% Ef0 =
-% 
-%   -1.1177e+05
-% 
-% 
-% E0 =
-% 
-%   -9.7162e+04
-% 
-% 
-% S0 =
-% 
-%   234.5409
-%
+% mm  = 28.0101
+% Cp0 = 33.1788
+% Cv0 = 24.8643
+% Hf0 = -1.1054e+05
+% H0  = -8.8848e+04
+% Ef0 = -1.1177e+05
+% E0  = -9.7162e+04
+% S0  = 234.5409
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Change lowercase 'l' to uppercase 'L'
@@ -240,7 +206,7 @@ if ctTInt > 0
         GR = zeros(1,size(Element_matrix,2));
         for i = 1:size(Element_matrix,2)
             nu_i = Element_matrix(2,i);
-            [iRE_i, REname_i] = isRefElm(Reference_form_of_elements_with_T_intervals,upper(Elements{Element_matrix(1,i)}),T);
+            [iRE_i, REname_i] = isRefElm(Reference_form_of_elements_with_T_intervals,Elements{Element_matrix(1,i)},T);
 %             [~, REname_i] = isRefElm(Reference_form_of_elements_with_T_intervals,upper(Elements{Element_matrix(1,i)}),T);
 %             [~, ~, ~, ~, ~, H0_i, ~, ~, S0_i, ~] = SpeciesThermProp(strMaster,REname_i,T,'molar',0);
             [txFormula_i, mm_i, Cp0_i, Cv0_i, Hf0_i, H0_i, Ef0_i, E0_i, S0_i, DfG0_i] = SpeciesThermProp(strMaster,REname_i,T,'molar',0);

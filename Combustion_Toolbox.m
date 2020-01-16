@@ -157,7 +157,7 @@ app.M.minor_products = {'H2', 'H', 'O', 'O2', 'OH', 'H2O', 'HO2', 'H2O2',...
 % Checks if any specie of the app.M.minor_products considered are not included
 % in the selected database strThProp. In case some is missing compute it.
 % IF THE MINOR-SPECIE IS NOT DECLARE AS REACTANT THE THEORY WILL FAIL!!
-[strThProp,app.E,app.S,app.M] = check_database(strMaster,strThProp,app.E,app.S,app.M);
+[strThProp,app.E,app.S,app.M,app.C] = check_database(strMaster,strThProp,app.E,app.S,app.M,app.C);
 %% PROBLEM CONDITIONS
 % Specify the pressure (app.PD.pR.Value [bar]) and the equivalence ratio (app.PD.phi.Value) of the
 % reactant mixture (R). The latter may not be required for non-reacting
@@ -174,7 +174,7 @@ app.PD.TR.Value = 300;
 % app.PD.TR.Value = 300;
 app.PD.pR.Value = 1;
 % app.PD.phi.Value = 1*ones(1,length(app.PD.TR.vector.Value));
-app.PD.phi.Value = 0.5:0.01:2;
+app.PD.phi.Value = 0.1:0.01:2;
 % app.PD.phi.Value = 2.5:0.001:2.64;
 % app.PD.phi.Value = 0.1:0.1:0.3;
 % app.PD.phi.Value = 2;

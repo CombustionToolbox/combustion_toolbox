@@ -59,7 +59,7 @@ Please read [CONTRIBUTING.md](https://gist.github.com/PurpleBooth/b24679402957c6
 
 ## Authors
 
-* **Alberto Cuadra-Lara<sup>1</sup>** - *Programmer and App designer* - [AlbertoCuadra](https://github.com/AlbertoCuadra)
+* **[Alberto Cuadra-Lara](https://github.com/AlbertoCuadra)<sup>1</sup>** - *Programmer and App designer*
 * **Marcos Vera<sup>1</sup>** - *Programmer*  
 <sup>1</sup>  Grupo de Mecánica de Fluidos, Universidad Carlos III, Av. Universidad 30, 28911, Leganés, Spain
 

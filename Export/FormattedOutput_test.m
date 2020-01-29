@@ -99,12 +99,13 @@ ExcelOutputMatrix{1,11} = 's';
 ExcelOutputMatrix{2,11} = ['[kJ/(',composition_unit,'·K)]'];
 ExcelOutputMatrix{1,12} = 'u';
 ExcelOutputMatrix{2,12} = '[m/s]';
+
 SpeciesCounter = 0;
 for j = 1:numel(NameSpecies)
     if (str{1}.Xi(j) > 0)||(any(strcmp(NameSpecies{j},{'CO2','CO','H2O','H2','O2','N2'})))
         SpeciesCounter = SpeciesCounter + 1;
-        ExcelOutputMatrix{1,11+SpeciesCounter} = [composition_variable,NameSpecies{j}];
-        ExcelOutputMatrix{2,11+SpeciesCounter} = '[-]';
+        ExcelOutputMatrix{1,12+SpeciesCounter} = [composition_variable,NameSpecies{j}];
+        ExcelOutputMatrix{2,12+SpeciesCounter} = '[-]';
     end
 end
 
@@ -147,7 +148,7 @@ for i=length(phi):-1:1
     %     eval(['ExcelOutputMatrixRow{1,9} = cPM_',MassOrMolar,';']);
     ExcelOutputMatrix{i+2,10} = str{i}.gamma;
     ExcelOutputMatrix{i+2,11} = str{i}.S;
-    if exist(str{i}.u)
+    if isfield(str{i},'u')
         ExcelOutputMatrix{i+2,12} = str{i}.u;
     end
     SpeciesCounter = 0;

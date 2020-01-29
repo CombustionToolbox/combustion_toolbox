@@ -1,8 +1,8 @@
-function [str1,str2,str3] = SolveProblemSHOCK_R_fast(strR,phi,p1,T1,u1,str2,str3,E,S,C,M,PD,TN,strThProp)
+function [str1,str2,str3] = SolveProblemSHOCK_R(strR,phi,p1,T1,u1,E,S,C,M,PD,TN,strThProp)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % CALCULATE PLANAR INCIDENT SHOCK STATE
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-[str1,str2] = SolveProblemSHOCK_I_fast(strR,phi,p1,T1,u1,str2,E,S,C,M,PD,TN,strThProp);
+[str1,str2] = SolveProblemSHOCK_I(strR,phi,p1,T1,u1,E,S,C,M,PD,TN,strThProp);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % CALCULATE POST-REFLECTED SHOCK STATE
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -28,7 +28,9 @@ TN.ERRFT = 1e-4;
 TN.ERRFV = 1e-4;
 % INITIAL ASSUMPTIONS OF ERROR
 deltaT = 1000; 
-deltaV = 1000; 
+deltaV = 1000;
+% VOLUME BOUND RATIO
+volumeBoundRation = 5; 
 % MISCELANEOUS
 j = 0;     % initilize looping variable
 nfrec = 0; % frequency of sampling results
@@ -55,11 +57,16 @@ UI = u2;     % velocity incident shock [m/s]
 u2 = sqrt((p2*1e5-p1*1e5)*(V1-V2)); % particle velocity [m/s]
 w2 = UI - u2; % velocity in shock fixed frame [m/s]
 
-V = 1/str3.rho;
+V = V2/volumeBoundRation;
 r = 1/V;
-T = str3.T;
-h = str3.h/str3.mi*1e3;
-p = str3.p;
+p = p2*1e5 + r2*(UI^2)*(1-V/V2);
+p = p/1e5;
+T = T2*p*V/(p2*V2);
+
+% state;
+strP = state(strR,r,T,phi,pP,E,S,C,M,PD,TN,strThProp);
+h = strP.h/strP.mi*1e3;
+p = strP.p;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % START LOOP
 while((abs(deltaT) > TN.ERRFT*T) || (abs(deltaV) > TN.ERRFV*V))
@@ -188,6 +195,8 @@ str3.T = T3;
 str3.V = V3;
 str3.p = p3;
 str3.h = h3*str3.mi/1e3;
+
+str3.error_problem = max(abs(deltaT),abs(deltaV));
 end
 
 function strP = state(strR,r,T,phi,pP,E,S,C,M,PD,TN,strThProp)

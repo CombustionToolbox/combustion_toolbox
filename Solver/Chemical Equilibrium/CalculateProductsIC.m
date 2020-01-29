@@ -1,4 +1,4 @@
-function P_IC = CalculateProductsIC(P_CC,TP,pP,vP,phi,minor_products,phi_c,FLAG_SOOT,M0,A0,E,S,C,M,PD,TN,strThProp)
+function [P_IC,DeltaNP] = CalculateProductsIC(P_CC,TP,pP,vP,phi,minor_products,phi_c,FLAG_SOOT,M0,A0,E,S,C,M,PD,TN,strThProp)
 
 R0TP = C.R0*TP;
 it = 0; itMax = 500; t=true;

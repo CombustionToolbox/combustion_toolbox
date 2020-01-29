@@ -47,6 +47,9 @@ else
         DeltaT = abs(Q_aux-Q)/(1 + abs(Q_aux));
     end
 end
+
+strP.error_problem = max(abs(DeltaT),abs(Q));
+
 if it>=itMax
     fprintf('****************************\n');
     fprintf('** Solution not converged **\n');

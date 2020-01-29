@@ -62,6 +62,8 @@ while (abs(DeltaT) > 1e-2 || abs(f) > 1e-2) && it<itMax
     DeltaT = abs(f_aux-f)/(1 + abs(f_aux));
 end
 
+strP.error_problem = max(abs(DeltaT),abs(f));
+
 if it>=itMax
     fprintf('****************************\n');
 	fprintf('** Solution not converged **\n');

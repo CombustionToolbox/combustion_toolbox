@@ -147,7 +147,7 @@ app.M.minor_products = {'H2', 'H', 'O', 'O2', 'OH', 'H2O', 'HO2', 'H2O2',...
 % *SHOCK NASA O2+N2 + OTHERS*
 
 % app.M.minor_products = {'O2','N2','O','O3','N','NO','NO2','NO3','N2O3','N2O4','N3','C','CO','CO2',...
-%     'Ar','CH4','H2O','H2','H','He'};
+%     'Ar','CH4','CH3','CH','H2O','H2','H','He'};
 %%
 % *HYDROGEN*
 
@@ -174,7 +174,7 @@ app.PD.TR.Value = 300;
 % app.PD.TR.Value = 300;
 app.PD.pR.Value = 1;
 % app.PD.phi.Value = 1*ones(1,length(app.PD.TR.vector.Value));
-app.PD.phi.Value = 0.1:0.01:2;
+app.PD.phi.Value = 0.1:0.1:2;
 % app.PD.phi.Value = 2.5:0.001:2.64;
 % app.PD.phi.Value = 0.1:0.1:0.3;
 % app.PD.phi.Value = 2;
@@ -191,7 +191,7 @@ switch Problem_selected
         % app.PD.pR_vector.Value = logspace(0,2,20); app.PD.phi.Value = 1*ones(1,length(app.PD.pR_vector.Value));
     case 'SP' % * SP: Isentropic (i.e., adiabatic) compression/expansion to a specified p
         app.PD.ProblemType = 'SP';
-        app.PD.pP_vector.Value = 10:10:50; app.PD.phi.Value = 1.1*ones(1,length(app.PD.pP_vector.Value));
+        app.PD.pP_vector.Value = 10:10:50; app.PD.phi.Value = 1*ones(1,length(app.PD.pP_vector.Value));
 %         app.PD.pP_vector.Value = 10*ones(1,length(app.PD.phi.Value));
     case 'TV' % * TV: Equilibrium composition at defined T and constant v
         app.PD.ProblemType = 'TV';
@@ -206,7 +206,7 @@ switch Problem_selected
         app.PD.vP_vR_vector.Value = 0.5:0.1:2; app.PD.phi.Value = 1*ones(1,length(app.PD.vP_vR_vector.Value));
     case 'SHOCK_I' % * SHOCK_I: CALCULATE PLANAR INCIDENT SHOCK WAVE
         app.PD.ProblemType = 'SHOCK_I';
-        app.PD.u1_vector.Value = 400:200:3000; app.PD.phi.Value = ones(1,length(app.PD.u1_vector.Value));
+        app.PD.u1_vector.Value = 400:200:2000; app.PD.phi.Value = ones(1,length(app.PD.u1_vector.Value));
     case 'SHOCK_R' % * SHOCK_R: CALCULATE PLANAR POST-REFLECTED SHOCK STATE
         app.PD.ProblemType = 'SHOCK_R';
         app.PD.u1_vector.Value = 400:50:3000; app.PD.phi.Value = ones(1,length(app.PD.u1_vector.Value));
@@ -236,14 +236,15 @@ app.PD.S_Fuel = {'CH4'}; app.PD.N_Fuel = 1;
 % app.PD.S_Fuel = {'C2H6'}; app.PD.N_Fuel = 1;
 % app.PD.S_Fuel = {'C2H5OH'}; app.PD.N_Fuel = 1;
 
-app.PD.R_Fuel = SetSpecies(app.C.M0.Value,app.PD.S_Fuel,app.PD.N_Fuel,app.PD.TR.Value,find_idx(app.PD.S_Fuel,app.S.NameSpecies),strThProp);
-app.PS.strR_Fuel{i} = ComputeProperties(app.C.A0.Value,app.PD.R_Fuel,app.PD.pR.Value,app.PD.TR.Value,app.E.ind_C,app.E.ind_H); app.PS.strR{i}.phi = app.PD.phi.Value(i);
-app.PD.Fuel.x = app.PS.strR_Fuel{i}.NatomE(app.E.ind_C);
-app.PD.Fuel.y = app.PS.strR_Fuel{i}.NatomE(app.E.ind_H);
-app.PD.Fuel.z = app.PS.strR_Fuel{i}.NatomE(app.E.ind_O);
-app.PD.Fuel.eps = 0;
-app.PD.phi_t = app.PD.Fuel.x+app.PD.Fuel.y/4-app.PD.Fuel.z/2;
-
+if ~isfield(app.PD,'R_Fuel')
+    app.PD.R_Fuel = SetSpecies(app.C.M0.Value,app.PD.S_Fuel,app.PD.N_Fuel,app.PD.TR.Value,find_idx(app.PD.S_Fuel,app.S.NameSpecies),strThProp);
+    app.PS.strR_Fuel{i} = ComputeProperties(app.C.A0.Value,app.PD.R_Fuel,app.PD.pR.Value,app.PD.TR.Value,app.E.ind_C,app.E.ind_H); app.PS.strR{i}.phi = app.PD.phi.Value(i);
+    app.PD.Fuel.x = app.PS.strR_Fuel{i}.NatomE(app.E.ind_C);
+    app.PD.Fuel.y = app.PS.strR_Fuel{i}.NatomE(app.E.ind_H);
+    app.PD.Fuel.z = app.PS.strR_Fuel{i}.NatomE(app.E.ind_O);
+    app.PD.Fuel.eps = 0;
+    app.PD.phi_t = app.PD.Fuel.x+app.PD.Fuel.y/4-app.PD.Fuel.z/2;
+end
 % DG0 = (species_g0_new('CO',TP,strThProp)-species_g0_new('CO2',TP,strThProp))*1000;
 % k_c = exp(-DG0/(R0*TP));
 % eps = 1/k_c;

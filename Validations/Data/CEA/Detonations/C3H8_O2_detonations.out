@@ -1,0 +1,1454 @@
+
+ *******************************************************************************
+
+         NASA-GLENN CHEMICAL EQUILIBRIUM PROGRAM CEA2, MAY 21, 2004
+                   BY  BONNIE MCBRIDE AND SANFORD GORDON
+      REFS: NASA RP-1311, PART I, 1994 AND NASA RP-1311, PART II, 1996
+
+ *******************************************************************************
+
+
+
+ problem    phi,eq.ratio=0.5,0.6,0.7,0.8,0.9,1,1.1,1.2,1.3,1.4,1.5,1.6,1.7,1.8,1.
+ 9,2,
+       det   t,k=300,  p,bar=1,
+ react
+   fuel=C3H8 moles=1 t,k=300
+   oxid=O2 moles=5 t,k=300
+ output
+      trace=1e-16 siunits short
+ end
+
+
+                     DETONATION PROPERTIES OF AN IDEAL REACTING GAS
+ CASE =                
+
+             REACTANT                       MOLES         ENERGY      TEMP
+                                                         KJ/KG-MOL      K
+ FUEL        C3H8                         1.0000000   -104543.521    300.000
+ OXIDANT     O2                           5.0000000        54.358    300.000
+
+ O/F=    7.25668  %FUEL= 12.111399  R,EQ.RATIO= 0.500000  PHI,EQ.RATIO= 0.500000
+
+ UNBURNED GAS
+
+ P1, BAR           1.0000
+ T1, K             300.00
+ H1, KJ/KG        -285.65
+ M1, (1/n)         33.099
+ GAMMA1            1.3309
+ SON VEL1,M/SEC     316.7
+
+ BURNED GAS
+
+ P, BAR            26.438
+ T, K             3498.24
+ RHO, KG/CU M    2.4555 0
+ H, KJ/KG         1190.93
+ U, KJ/KG          114.22
+ G, KJ/KG        -34492.1
+ S, KJ/(KG)(K)    10.2003
+
+ M, (1/n)          27.014
+ (dLV/dLP)t      -1.04388
+ (dLV/dLT)p        1.7989
+ Cp, KJ/(KG)(K)    6.2285
+ GAMMAs            1.1313
+ SON VEL,M/SEC     1103.6
+
+ DETONATION PARAMETERS
+
+ P/P1              26.438
+ T/T1              11.661
+ M/M1              0.8162
+ RHO/RHO1          1.8505
+ DET MACH NUMBER   6.4486
+ DET VEL,M/SEC     2042.3
+
+ MOLE FRACTIONS
+
+ *C              5.846-11
+ *CH             7.780-12
+ CH2             4.019-12
+ CH3             1.780-12
+ CH2OH           2.365-12
+ CH3O            7.471-13
+ CH4             1.382-13
+ CH3OH           4.659-14
+ *CO             7.4640-2
+ *CO2            1.4795-1
+ COOH            3.8504-6
+ C2H             2.548-16
+ C2H2,acetylene  8.087-16
+ CH2CO,ketene    3.966-14
+ O(CH)2O         2.712-15
+ HO(CO)2OH       1.543-14
+ C2O             2.770-12
+ C3O2            1.333-15
+ *H              1.3338-2
+ HCO             1.2913-6
+ HCCO            9.028-14
+ HO2             4.8033-4
+ *H2             1.3557-2
+ HCHO,formaldehy 1.1272-8
+ HCOOH           1.6948-7
+ H2O             2.2241-1
+ H2O2            2.2938-5
+ *O              5.7434-2
+ *OH             1.0778-1
+ *O2             3.6238-1
+ O3              4.1695-6
+
+  * THERMODYNAMIC PROPERTIES FITTED TO 20000.K
+
+
+                     DETONATION PROPERTIES OF AN IDEAL REACTING GAS
+ CASE =                
+
+             REACTANT                       MOLES         ENERGY      TEMP
+                                                         KJ/KG-MOL      K
+ FUEL        C3H8                         1.0000000   -104543.521    300.000
+ OXIDANT     O2                           5.0000000        54.358    300.000
+
+ O/F=    6.04724  %FUEL= 14.189958  R,EQ.RATIO= 0.600000  PHI,EQ.RATIO= 0.600000
+
+ UNBURNED GAS
+
+ P1, BAR           1.0000
+ T1, K             300.00
+ H1, KJ/KG        -334.96
+ M1, (1/n)         33.295
+ GAMMA1            1.3217
+ SON VEL1,M/SEC     314.7
+
+ BURNED GAS
+
+ P, BAR            28.598
+ T, K             3600.79
+ RHO, KG/CU M    2.4740 0
+ H, KJ/KG         1256.59
+ U, KJ/KG          100.64
+ G, KJ/KG        -36918.2
+ S, KJ/(KG)(K)    10.6018
+
+ M, (1/n)          25.900
+ (dLV/dLP)t      -1.05392
+ (dLV/dLT)p        1.9481
+ Cp, KJ/(KG)(K)    7.1853
+ GAMMAs            1.1308
+ SON VEL,M/SEC     1143.3
+
+ DETONATION PARAMETERS
+
+ P/P1              28.598
+ T/T1              12.003
+ M/M1              0.7779
+ RHO/RHO1          1.8534
+ DET MACH NUMBER   6.7341
+ DET VEL,M/SEC     2119.0
+
+ MOLE FRACTIONS
+
+ *C              2.025-10
+ *CH             3.061-11
+ CH2             1.639-11
+ CH3             7.331-12
+ CH2OH           7.591-12
+ CH3O            2.527-12
+ CH4             6.013-13
+ CH3OH           1.609-13
+ *CO             1.0423-1
+ *CO2            1.4579-1
+ COOH            5.7833-6
+ *C2             2.385-16
+ C2H             1.810-15
+ C2H2,acetylene  5.298-15
+ CH2CO,ketene    1.810-13
+ O(CH)2O         9.802-15
+ HO(CO)2OH       2.884-14
+ C2O             1.079-11
+ C3O2            6.138-15
+ *H              1.9794-2
+ HCO             2.6832-6
+ HCCO            4.010-13
+ HO2             4.8533-4
+ *H2             2.0548-2
+ HCHO,formaldehy 2.5951-8
+ HCOOH           2.8078-7
+ H2O             2.4211-1
+ H2O2            2.5655-5
+ *O              6.2783-2
+ *OH             1.2111-1
+ *O2             2.8311-1
+ O3              3.6032-6
+
+  * THERMODYNAMIC PROPERTIES FITTED TO 20000.K
+
+
+                     DETONATION PROPERTIES OF AN IDEAL REACTING GAS
+ CASE =                
+
+             REACTANT                       MOLES         ENERGY      TEMP
+                                                         KJ/KG-MOL      K
+ FUEL        C3H8                         1.0000000   -104543.521    300.000
+ OXIDANT     O2                           5.0000000        54.358    300.000
+
+ O/F=    5.18335  %FUEL= 16.172474  R,EQ.RATIO= 0.700000  PHI,EQ.RATIO= 0.700000
+
+ UNBURNED GAS
+
+ P1, BAR           1.0000
+ T1, K             300.00
+ H1, KJ/KG        -382.00
+ M1, (1/n)         33.484
+ GAMMA1            1.3132
+ SON VEL1,M/SEC     312.8
+
+ BURNED GAS
+
+ P, BAR            30.604
+ T, K             3678.91
+ RHO, KG/CU M    2.4904 0
+ H, KJ/KG         1315.02
+ U, KJ/KG          86.137
+ G, KJ/KG        -39050.6
+ S, KJ/(KG)(K)    10.9722
+
+ M, (1/n)          24.891
+ (dLV/dLP)t      -1.06192
+ (dLV/dLT)p        2.0600
+ Cp, KJ/(KG)(K)    7.9703
+ GAMMAs            1.1311
+ SON VEL,M/SEC     1179.0
+
+ DETONATION PARAMETERS
+
+ P/P1              30.604
+ T/T1              12.263
+ M/M1              0.7434
+ RHO/RHO1          1.8552
+ DET MACH NUMBER   6.9932
+ DET VEL,M/SEC     2187.3
+
+ MOLE FRACTIONS
+
+ *C              5.186-10
+ *CH             8.803-11
+ CH2             4.954-11
+ CH3             2.285-11
+ CH2OH           1.910-11
+ CH3O            6.604-12
+ CH4             2.001-12
+ CH3OH           4.374-13
+ CH3OOH          1.627-16
+ *CO             1.3354-1
+ *CO2            1.4031-1
+ COOH            7.7355-6
+ *C2             1.084-15
+ C2H             8.405-15
+ C2H2,acetylene  2.376-14
+ C2H2,vinylidene 2.640-16
+ CH2CO,ketene    6.037-13
+ O(CH)2O         2.670-14
+ HO(CO)2OH       4.555-14
+ CH3CO,acetyl    3.459-16
+ C2O             3.061-11
+ C3O2            1.999-14
+ *H              2.6692-2
+ HCO             4.6958-6
+ HCCO            1.281-12
+ HO2             4.6294-4
+ *H2             2.8815-2
+ HCHO,formaldehy 5.0109-8
+ HCOOH           4.1301-7
+ H2O             2.5822-1
+ H2O2            2.6977-5
+ *O              6.4035-2
+ *OH             1.2904-1
+ *O2             2.1884-1
+ O3              2.9032-6
+
+  * THERMODYNAMIC PROPERTIES FITTED TO 20000.K
+
+
+                     DETONATION PROPERTIES OF AN IDEAL REACTING GAS
+ CASE =                
+
+             REACTANT                       MOLES         ENERGY      TEMP
+                                                         KJ/KG-MOL      K
+ FUEL        C3H8                         1.0000000   -104543.521    300.000
+ OXIDANT     O2                           5.0000000        54.358    300.000
+
+ O/F=    4.53543  %FUEL= 18.065451  R,EQ.RATIO= 0.800000  PHI,EQ.RATIO= 0.800000
+
+ UNBURNED GAS
+
+ P1, BAR           1.0000
+ T1, K             300.00
+ H1, KJ/KG        -426.91
+ M1, (1/n)         33.667
+ GAMMA1            1.3055
+ SON VEL1,M/SEC     311.0
+
+ BURNED GAS
+
+ P, BAR            32.488
+ T, K             3739.36
+ RHO, KG/CU M    2.5054 0
+ H, KJ/KG         1367.92
+ U, KJ/KG          71.228
+ G, KJ/KG        -40944.8
+ S, KJ/(KG)(K)    11.3155
+
+ M, (1/n)          23.977
+ (dLV/dLP)t      -1.06797
+ (dLV/dLT)p        2.1392
+ Cp, KJ/(KG)(K)    8.5992
+ GAMMAs            1.1319
+ SON VEL,M/SEC     1211.5
+
+ DETONATION PARAMETERS
+
+ P/P1              32.488
+ T/T1              12.465
+ M/M1              0.7122
+ RHO/RHO1          1.8562
+ DET MACH NUMBER   7.2312
+ DET VEL,M/SEC     2248.9
+
+ MOLE FRACTIONS
+
+ *C              1.0910-9
+ *CH             2.065-10
+ CH2             1.233-10
+ CH3             5.956-11
+ CH2OH           4.096-11
+ CH3O            1.458-11
+ CH4             5.603-12
+ CH3OH           1.017-12
+ CH3OOH          3.542-16
+ *CO             1.6192-1
+ *CO2            1.3276-1
+ COOH            9.5665-6
+ *C2             3.684-15
+ C2H             2.969-14
+ C2H2,acetylene  8.369-14
+ C2H2,vinylidene 1.016-15
+ CH2CO,ketene    1.647-12
+ O(CH)2O         6.046-14
+ HO(CO)2OH       6.410-14
+ CH3CO,acetyl    1.152-15
+ C2O             7.073-11
+ C3O2            5.210-14
+ *H              3.3803-2
+ HCO             7.3469-6
+ HCCO            3.306-12
+ HO2             4.2239-4
+ *H2             3.8424-2
+ HCHO,formaldehy 8.6292-8
+ HCOOH           5.6083-7
+ H2O             2.7116-1
+ H2O2            2.7070-5
+ *O              6.2180-2
+ *OH             1.3239-1
+ *O2             1.6690-1
+ O3              2.2082-6
+
+  * THERMODYNAMIC PROPERTIES FITTED TO 20000.K
+
+
+                     DETONATION PROPERTIES OF AN IDEAL REACTING GAS
+ CASE =                
+
+             REACTANT                       MOLES         ENERGY      TEMP
+                                                         KJ/KG-MOL      K
+ FUEL        C3H8                         1.0000000   -104543.521    300.000
+ OXIDANT     O2                           5.0000000        54.358    300.000
+
+ O/F=    4.03149  %FUEL= 19.874823  R,EQ.RATIO= 0.900000  PHI,EQ.RATIO= 0.900000
+
+ UNBURNED GAS
+
+ P1, BAR           1.0000
+ T1, K             300.00
+ H1, KJ/KG        -469.84
+ M1, (1/n)         33.844
+ GAMMA1            1.2983
+ SON VEL1,M/SEC     309.3
+
+ BURNED GAS
+
+ P, BAR            34.263
+ T, K             3785.78
+ RHO, KG/CU M    2.5194 0
+ H, KJ/KG         1416.06
+ U, KJ/KG          56.105
+ G, KJ/KG        -42630.2
+ S, KJ/(KG)(K)    11.6347
+
+ M, (1/n)          23.146
+ (dLV/dLP)t      -1.07210
+ (dLV/dLT)p        2.1885
+ Cp, KJ/(KG)(K)    9.0795
+ GAMMAs            1.1330
+ SON VEL,M/SEC     1241.3
+
+ DETONATION PARAMETERS
+
+ P/P1              34.263
+ T/T1              12.619
+ M/M1              0.6839
+ RHO/RHO1          1.8569
+ DET MACH NUMBER   7.4512
+ DET VEL,M/SEC     2304.9
+
+ MOLE FRACTIONS
+
+ *C              1.9965-9
+ *CH             4.198-10
+ CH2             2.683-10
+ CH3             1.372-10
+ CH2OH           7.853-11
+ CH3O            2.856-11
+ CH4             1.395-11
+ CH3OH           2.119-12
+ CH3OOH          6.765-16
+ *CO             1.8899-1
+ *CO2            1.2395-1
+ COOH            1.1166-5
+ *C2             1.022-14
+ C2H             8.679-14
+ C2H2,acetylene  2.499-13
+ C2H2,vinylidene 3.240-15
+ CH2CO,ketene    3.910-12
+ O(CH)2O         1.202-13
+ HO(CO)2OH       8.279-14
+ C2H3,vinyl      1.343-16
+ CH3CO,acetyl    3.251-15
+ C2O             1.416-10
+ C3O2            1.164-13
+ *H              4.0922-2
+ HCO             1.0619-5
+ HCCO            7.359-12
+ HO2             3.7076-4
+ *H2             4.9490-2
+ HCHO,formaldehy 1.3718-7
+ HCOOH           7.1859-7
+ H2O             2.8122-1
+ H2O2            2.6117-5
+ *O              5.8036-2
+ *OH             1.3179-1
+ *O2             1.2518-1
+ O3              1.5918-6
+
+  * THERMODYNAMIC PROPERTIES FITTED TO 20000.K
+
+
+                     DETONATION PROPERTIES OF AN IDEAL REACTING GAS
+ CASE =                
+
+             REACTANT                       MOLES         ENERGY      TEMP
+                                                         KJ/KG-MOL      K
+ FUEL        C3H8                         1.0000000   -104543.521    300.000
+ OXIDANT     O2                           5.0000000        54.358    300.000
+
+ O/F=    3.62834  %FUEL= 21.606008  R,EQ.RATIO= 1.000000  PHI,EQ.RATIO= 1.000000
+
+ UNBURNED GAS
+
+ P1, BAR           1.0000
+ T1, K             300.00
+ H1, KJ/KG        -510.91
+ M1, (1/n)         34.015
+ GAMMA1            1.2917
+ SON VEL1,M/SEC     307.8
+
+ BURNED GAS
+
+ P, BAR            35.935
+ T, K             3820.09
+ RHO, KG/CU M    2.5325 0
+ H, KJ/KG         1459.72
+ U, KJ/KG          40.785
+ G, KJ/KG        -44121.6
+ S, KJ/(KG)(K)    11.9320
+
+ M, (1/n)          22.384
+ (dLV/dLP)t      -1.07430
+ (dLV/dLT)p        2.2090
+ Cp, KJ/(KG)(K)    9.4085
+ GAMMAs            1.1342
+ SON VEL,M/SEC     1268.6
+
+ DETONATION PARAMETERS
+
+ P/P1              35.935
+ T/T1              12.734
+ M/M1              0.6581
+ RHO/RHO1          1.8571
+ DET MACH NUMBER   7.6550
+ DET VEL,M/SEC     2356.0
+
+ MOLE FRACTIONS
+
+ *C              3.2843-9
+ *CH             7.654-10
+ CH2             5.277-10
+ CH3             2.891-10
+ CH2OH           1.384-10
+ CH3O            5.114-11
+ CH4             3.195-11
+ CH3OH           4.077-12
+ CH3OOH          1.168-15
+ *CO             2.1458-1
+ *CO2            1.1443-1
+ COOH            1.2446-5
+ *C2             2.435-14
+ C2H             2.207-13
+ C2H2,acetylene  6.629-13
+ C2H2,vinylidene 9.013-15
+ CH2CO,ketene    8.398-12
+ O(CH)2O         2.171-13
+ HO(CO)2OH       9.991-14
+ C2H3,vinyl      4.159-16
+ CH3CO,acetyl    8.126-15
+ C2O             2.546-10
+ C3O2            2.321-13
+ *H              4.7835-2
+ HCO             1.4458-5
+ HCCO            1.468-11
+ HO2             3.1368-4
+ *H2             6.2155-2
+ HCHO,formaldehy 2.0555-7
+ HCOOH           8.8038-7
+ H2O             2.8855-1
+ H2O2            2.4305-5
+ *O              5.2283-2
+ *OH             1.2779-1
+ *O2             9.2002-2
+ O3              1.0868-6
+
+  * THERMODYNAMIC PROPERTIES FITTED TO 20000.K
+
+
+                     DETONATION PROPERTIES OF AN IDEAL REACTING GAS
+ CASE =                
+
+             REACTANT                       MOLES         ENERGY      TEMP
+                                                         KJ/KG-MOL      K
+ FUEL        C3H8                         1.0000000   -104543.521    300.000
+ OXIDANT     O2                           5.0000000        54.358    300.000
+
+ O/F=    3.29849  %FUEL= 23.263968  R,EQ.RATIO= 1.100000  PHI,EQ.RATIO= 1.100000
+
+ UNBURNED GAS
+
+ P1, BAR           1.0000
+ T1, K             300.00
+ H1, KJ/KG        -550.25
+ M1, (1/n)         34.180
+ GAMMA1            1.2856
+ SON VEL1,M/SEC     306.3
+
+ BURNED GAS
+
+ P, BAR            37.502
+ T, K             3843.22
+ RHO, KG/CU M    2.5448 0
+ H, KJ/KG         1498.82
+ U, KJ/KG          25.164
+ G, KJ/KG        -45424.6
+ S, KJ/(KG)(K)    12.2094
+
+ M, (1/n)          21.684
+ (dLV/dLP)t      -1.07446
+ (dLV/dLT)p        2.2002
+ Cp, KJ/(KG)(K)    9.5744
+ GAMMAs            1.1356
+ SON VEL,M/SEC     1293.6
+
+ DETONATION PARAMETERS
+
+ P/P1              37.502
+ T/T1              12.811
+ M/M1              0.6344
+ RHO/RHO1          1.8571
+ DET MACH NUMBER   7.8433
+ DET VEL,M/SEC     2402.4
+
+ MOLE FRACTIONS
+
+ *C              4.9518-9
+ *CH             1.2786-9
+ CH2             9.594-10
+ CH3             5.693-10
+ CH2OH           2.284-10
+ CH3O            8.528-11
+ CH4             6.883-11
+ CH3OH           7.379-12
+ CH3OOH          1.855-15
+ *CO             2.3856-1
+ *CO2            1.0460-1
+ COOH            1.3344-5
+ *C2             5.144-14
+ C2H             5.036-13
+ C2H2,acetylene  1.610-12
+ C2H2,vinylidene 2.259-14
+ CH2CO,ketene    1.672-11
+ O(CH)2O         3.634-13
+ HO(CO)2OH       1.139-13
+ C2H3,vinyl      1.158-15
+ CH3CO,acetyl    1.852-14
+ C2H4            1.586-16
+ CH3CHO,ethanal  2.187-16
+ CH3COOH         1.528-16
+ C2O             4.208-10
+ C3O2            4.246-13
+ *H              5.4306-2
+ HCO             1.8766-5
+ HCCO            2.690-11
+ HO2             2.5564-4
+ *H2             7.6585-2
+ HCHO,formaldehy 2.9424-7
+ HCOOH           1.0400-6
+ H2O             2.9325-1
+ H2O2            2.1838-5
+ *O              4.5510-2
+ *OH             1.2088-1
+ *O2             6.5990-2
+ O3              7.0040-7
+
+  * THERMODYNAMIC PROPERTIES FITTED TO 20000.K
+
+
+                     DETONATION PROPERTIES OF AN IDEAL REACTING GAS
+ CASE =                
+
+             REACTANT                       MOLES         ENERGY      TEMP
+                                                         KJ/KG-MOL      K
+ FUEL        C3H8                         1.0000000   -104543.521    300.000
+ OXIDANT     O2                           5.0000000        54.358    300.000
+
+ O/F=    3.02362  %FUEL= 24.853251  R,EQ.RATIO= 1.200000  PHI,EQ.RATIO= 1.200000
+
+ UNBURNED GAS
+
+ P1, BAR           1.0000
+ T1, K             300.00
+ H1, KJ/KG        -587.95
+ M1, (1/n)         34.340
+ GAMMA1            1.2800
+ SON VEL1,M/SEC     304.9
+
+ BURNED GAS
+
+ P, BAR            38.957
+ T, K             3855.45
+ RHO, KG/CU M    2.5563 0
+ H, KJ/KG         1533.01
+ U, KJ/KG          9.0464
+ G, KJ/KG        -46537.9
+ S, KJ/(KG)(K)    12.4683
+
+ M, (1/n)          21.035
+ (dLV/dLP)t      -1.07249
+ (dLV/dLT)p        2.1611
+ Cp, KJ/(KG)(K)    9.5605
+ GAMMAs            1.1371
+ SON VEL,M/SEC     1316.4
+
+ DETONATION PARAMETERS
+
+ P/P1              38.957
+ T/T1              12.852
+ M/M1              0.6125
+ RHO/RHO1          1.8568
+ DET MACH NUMBER   8.0166
+ DET VEL,M/SEC     2444.4
+
+ MOLE FRACTIONS
+
+ *C              6.9200-9
+ *CH             1.9821-9
+ CH2             1.6344-9
+ CH3             1.0632-9
+ CH2OH           3.568-10
+ CH3O            1.340-10
+ CH4             1.416-10
+ CH3OH           1.272-11
+ CH3OOH          2.741-15
+ *CO             2.6087-1
+ *CO2            9.4763-2
+ COOH            1.3815-5
+ *C2             9.820-14
+ C2H             1.052-12
+ C2H2,acetylene  3.656-12
+ C2H2,vinylidene 5.214-14
+ CH2CO,ketene    3.140-11
+ O(CH)2O         5.719-13
+ HO(CO)2OH       1.235-13
+ C2H3,vinyl      2.969-15
+ CH3CO,acetyl    3.925-14
+ C2H4            4.457-16
+ CH3CHO,ethanal  5.120-16
+ CH3COOH         2.969-16
+ C2O             6.485-10
+ C3O2            7.251-13
+ *H              6.0063-2
+ HCO             2.3396-5
+ HCCO            4.600-11
+ HO2             2.0025-4
+ *H2             9.2951-2
+ HCHO,formaldehy 4.0594-7
+ HCOOH           1.1910-6
+ H2O             2.9534-1
+ H2O2            1.8926-5
+ *O              3.8240-2
+ *OH             1.1153-1
+ *O2             4.5988-2
+ O3              4.2362-7
+
+  * THERMODYNAMIC PROPERTIES FITTED TO 20000.K
+
+
+                     DETONATION PROPERTIES OF AN IDEAL REACTING GAS
+ CASE =                
+
+             REACTANT                       MOLES         ENERGY      TEMP
+                                                         KJ/KG-MOL      K
+ FUEL        C3H8                         1.0000000   -104543.521    300.000
+ OXIDANT     O2                           5.0000000        54.358    300.000
+
+ O/F=    2.79103  %FUEL= 26.378038  R,EQ.RATIO= 1.300000  PHI,EQ.RATIO= 1.300000
+
+ UNBURNED GAS
+
+ P1, BAR           1.0000
+ T1, K             300.00
+ H1, KJ/KG        -624.13
+ M1, (1/n)         34.495
+ GAMMA1            1.2747
+ SON VEL1,M/SEC     303.6
+
+ BURNED GAS
+
+ P, BAR            40.290
+ T, K             3856.64
+ RHO, KG/CU M    2.5670 0
+ H, KJ/KG         1561.72
+ U, KJ/KG         -7.8483
+ G, KJ/KG        -47456.1
+ S, KJ/(KG)(K)    12.7100
+
+ M, (1/n)          20.430
+ (dLV/dLP)t      -1.06837
+ (dLV/dLT)p        2.0919
+ Cp, KJ/(KG)(K)    9.3536
+ GAMMAs            1.1390
+ SON VEL,M/SEC     1337.1
+
+ DETONATION PARAMETERS
+
+ P/P1              40.290
+ T/T1              12.855
+ M/M1              0.5923
+ RHO/RHO1          1.8562
+ DET MACH NUMBER   8.1746
+ DET VEL,M/SEC     2481.8
+
+ MOLE FRACTIONS
+
+ *C              9.0165-9
+ *CH             2.8720-9
+ CH2             2.6311-9
+ CH3             1.9012-9
+ CH2OH           5.318-10
+ CH3O            1.998-10
+ CH4             2.815-10
+ CH3OH           2.108-11
+ CH3OOH          3.794-15
+ *CO             2.8146-1
+ *CO2            8.5133-2
+ COOH            1.3842-5
+ *C2             1.714-13
+ C2H             2.040-12
+ C2H2,acetylene  7.865-12
+ C2H2,vinylidene 1.124-13
+ CH2CO,ketene    5.625-11
+ O(CH)2O         8.539-13
+ HO(CO)2OH       1.279-13
+ C2H3,vinyl      7.116-15
+ CH3CO,acetyl    7.830-14
+ C2H4            1.187-15
+ CH3CHO,ethanal  1.136-15
+ CH3COOH         5.484-16
+ OHCH2COOH       1.538-16
+ C2O             9.401-10
+ C3O2            1.170-12
+ *H              6.4804-2
+ HCO             2.8146-5
+ HCCO            7.416-11
+ HO2             1.5025-4
+ *H2             1.1141-1
+ HCHO,formaldehy 5.4295-7
+ HCOOH           1.3266-6
+ H2O             2.9480-1
+ H2O2            1.5788-5
+ *O              3.0943-2
+ *OH             1.0026-1
+ *O2             3.0989-2
+ O3              2.3876-7
+
+  * THERMODYNAMIC PROPERTIES FITTED TO 20000.K
+
+
+                     DETONATION PROPERTIES OF AN IDEAL REACTING GAS
+ CASE =                
+
+             REACTANT                       MOLES         ENERGY      TEMP
+                                                         KJ/KG-MOL      K
+ FUEL        C3H8                         1.0000000   -104543.521    300.000
+ OXIDANT     O2                           5.0000000        54.358    300.000
+
+ O/F=    2.59167  %FUEL= 27.842178  R,EQ.RATIO= 1.400000  PHI,EQ.RATIO= 1.400000
+
+ UNBURNED GAS
+
+ P1, BAR           1.0000
+ T1, K             300.00
+ H1, KJ/KG        -658.87
+ M1, (1/n)         34.645
+ GAMMA1            1.2698
+ SON VEL1,M/SEC     302.4
+
+ BURNED GAS
+
+ P, BAR            41.486
+ T, K             3846.40
+ RHO, KG/CU M    2.5766 0
+ H, KJ/KG         1584.20
+ U, KJ/KG         -25.869
+ G, KJ/KG        -48170.5
+ S, KJ/(KG)(K)    12.9354
+
+ M, (1/n)          19.863
+ (dLV/dLP)t      -1.06233
+ (dLV/dLT)p        1.9955
+ Cp, KJ/(KG)(K)    8.9570
+ GAMMAs            1.1412
+ SON VEL,M/SEC     1355.5
+
+ DETONATION PARAMETERS
+
+ P/P1              41.486
+ T/T1              12.821
+ M/M1              0.5733
+ RHO/RHO1          1.8551
+ DET MACH NUMBER   8.3169
+ DET VEL,M/SEC     2514.7
+
+ MOLE FRACTIONS
+
+ *C              1.0979-8
+ *CH             3.9030-9
+ CH2             4.0223-9
+ CH3             3.2763-9
+ CH2OH           7.594-10
+ CH3O            2.840-10
+ CH4             5.444-10
+ CH3OH           3.374-11
+ CH3OOH          4.930-15
+ *CO             3.0031-1
+ *CO2            7.5888-2
+ COOH            1.3432-5
+ *C2             2.753-13
+ C2H             3.698-12
+ C2H2,acetylene  1.619-11
+ C2H2,vinylidene 2.282-13
+ CH2CO,ketene    9.688-11
+ O(CH)2O         1.217-12
+ HO(CO)2OH       1.268-13
+ C2H3,vinyl      1.611-14
+ CH3CO,acetyl    1.484-13
+ C2H4            3.028-15
+ CH3CHO,ethanal  2.410-15
+ CH3COOH         9.705-16
+ OHCH2COOH       2.248-16
+ C2O             1.2893-9
+ C3O2            1.800-12
+ *H              6.8211-2
+ HCO             3.2759-5
+ HCCO            1.135-10
+ HO2             1.0752-4
+ *H2             1.3207-1
+ HCHO,formaldehy 7.0674-7
+ HCOOH           1.4403-6
+ H2O             2.9157-1
+ H2O2            1.2637-5
+ *O              2.4034-2
+ *OH             8.7657-2
+ *O2             2.0090-2
+ O3              1.2438-7
+
+  * THERMODYNAMIC PROPERTIES FITTED TO 20000.K
+
+
+                     DETONATION PROPERTIES OF AN IDEAL REACTING GAS
+ CASE =                
+
+             REACTANT                       MOLES         ENERGY      TEMP
+                                                         KJ/KG-MOL      K
+ FUEL        C3H8                         1.0000000   -104543.521    300.000
+ OXIDANT     O2                           5.0000000        54.358    300.000
+
+ O/F=    2.41889  %FUEL= 29.249218  R,EQ.RATIO= 1.500000  PHI,EQ.RATIO= 1.500000
+
+ UNBURNED GAS
+
+ P1, BAR           1.0000
+ T1, K             300.00
+ H1, KJ/KG        -692.25
+ M1, (1/n)         34.790
+ GAMMA1            1.2651
+ SON VEL1,M/SEC     301.2
+
+ BURNED GAS
+
+ P, BAR            42.527
+ T, K             3824.27
+ RHO, KG/CU M    2.5852 0
+ H, KJ/KG         1599.61
+ U, KJ/KG         -45.406
+ G, KJ/KG        -48672.4
+ S, KJ/(KG)(K)    13.1455
+
+ M, (1/n)          19.329
+ (dLV/dLP)t      -1.05489
+ (dLV/dLT)p        1.8791
+ Cp, KJ/(KG)(K)    8.4002
+ GAMMAs            1.1441
+ SON VEL,M/SEC     1371.9
+
+ DETONATION PARAMETERS
+
+ P/P1              42.527
+ T/T1              12.748
+ M/M1              0.5556
+ RHO/RHO1          1.8535
+ DET MACH NUMBER   8.4428
+ DET VEL,M/SEC     2542.8
+
+ MOLE FRACTIONS
+
+ *C              1.2490-8
+ *CH             4.9790-9
+ CH2             5.8530-9
+ CH3             5.4627-9
+ CH2OH           1.0413-9
+ CH3O            3.855-10
+ CH4             1.0303-9
+ CH3OH           5.237-11
+ CH3OOH          6.022-15
+ *CO             3.1743-1
+ *CO2            6.7163-2
+ COOH            1.2626-5
+ *C2             4.081-13
+ C2H             6.297-12
+ C2H2,acetylene  3.212-11
+ C2H2,vinylidene 4.393-13
+ CH2CO,ketene    1.614-10
+ O(CH)2O         1.662-12
+ HO(CO)2OH       1.205-13
+ C2H3,vinyl      3.469-14
+ CH3CO,acetyl    2.687-13
+ C2H4            7.465-15
+ CH3CHO,ethanal  4.928-15
+ CH3COOH         1.655-15
+ OHCH2COOH       3.128-16
+ C2O             1.6777-9
+ C3O2            2.655-12
+ *H              6.9989-2
+ HCO             3.6935-5
+ HCCO            1.655-10
+ HO2             7.3042-5
+ *H2             1.5498-1
+ HCHO,formaldehy 8.9747-7
+ HCOOH           1.5261-6
+ H2O             2.8563-1
+ H2O2            9.6725-6
+ *O              1.7849-2
+ *OH             7.4366-2
+ *O2             1.2467-2
+ O3              5.9383-8
+
+  * THERMODYNAMIC PROPERTIES FITTED TO 20000.K
+
+
+                     DETONATION PROPERTIES OF AN IDEAL REACTING GAS
+ CASE =                
+
+             REACTANT                       MOLES         ENERGY      TEMP
+                                                         KJ/KG-MOL      K
+ FUEL        C3H8                         1.0000000   -104543.521    300.000
+ OXIDANT     O2                           5.0000000        54.358    300.000
+
+ O/F=    2.26771  %FUEL= 30.602434  R,EQ.RATIO= 1.600000  PHI,EQ.RATIO= 1.600000
+
+ UNBURNED GAS
+
+ P1, BAR           1.0000
+ T1, K             300.00
+ H1, KJ/KG        -724.35
+ M1, (1/n)         34.931
+ GAMMA1            1.2608
+ SON VEL1,M/SEC     300.1
+
+ BURNED GAS
+
+ P, BAR            43.398
+ T, K             3789.93
+ RHO, KG/CU M    2.5926 0
+ H, KJ/KG         1607.08
+ U, KJ/KG         -66.847
+ G, KJ/KG        -48954.3
+ S, KJ/(KG)(K)    13.3410
+
+ M, (1/n)          18.825
+ (dLV/dLP)t      -1.04679
+ (dLV/dLT)p        1.7532
+ Cp, KJ/(KG)(K)    7.7388
+ GAMMAs            1.1476
+ SON VEL,M/SEC     1386.0
+
+ DETONATION PARAMETERS
+
+ P/P1              43.398
+ T/T1              12.633
+ M/M1              0.5389
+ RHO/RHO1          1.8513
+ DET MACH NUMBER   8.5515
+ DET VEL,M/SEC     2565.9
+
+ MOLE FRACTIONS
+
+ *C              1.3257-8
+ *CH             5.9584-9
+ CH2             8.1125-9
+ CH3             8.8328-9
+ CH2OH           1.3724-9
+ CH3O            5.001-10
+ CH4             1.9151-9
+ CH3OH           7.902-11
+ CH3OOH          6.907-15
+ *CO             3.3282-1
+ *CO2            5.9058-2
+ COOH            1.1491-5
+ *C2             5.587-13
+ C2H             1.010-11
+ C2H2,acetylene  6.168-11
+ C2H2,vinylidene 8.043-13
+ CH2CO,ketene    2.610-10
+ O(CH)2O         2.180-12
+ HO(CO)2OH       1.100-13
+ C2H3,vinyl      7.132-14
+ CH3CO,acetyl    4.665-13
+ C2H4            1.789-14
+ CH3CHO,ethanal  9.758-15
+ CH3COOH         2.732-15
+ OHCH2COOH       4.156-16
+ C2O             2.0751-9
+ *C3             1.442-16
+ C3O2            3.771-12
+ *H              6.9916-2
+ HCO             4.0359-5
+ HCCO            2.306-10
+ HO2             4.6886-5
+ *H2             1.8005-1
+ HCHO,formaldehy 1.1134-6
+ HCOOH           1.5792-6
+ H2O             2.7697-1
+ H2O2            7.0530-6
+ *O              1.2626-2
+ *OH             6.1072-2
+ *O2             7.3716-3
+ O3              2.5778-8
+
+  * THERMODYNAMIC PROPERTIES FITTED TO 20000.K
+
+
+                     DETONATION PROPERTIES OF AN IDEAL REACTING GAS
+ CASE =                
+
+             REACTANT                       MOLES         ENERGY      TEMP
+                                                         KJ/KG-MOL      K
+ FUEL        C3H8                         1.0000000   -104543.521    300.000
+ OXIDANT     O2                           5.0000000        54.358    300.000
+
+ O/F=    2.13432  %FUEL= 31.904858  R,EQ.RATIO= 1.700000  PHI,EQ.RATIO= 1.700000
+
+ UNBURNED GAS
+
+ P1, BAR           1.0000
+ T1, K             300.00
+ H1, KJ/KG        -755.26
+ M1, (1/n)         35.068
+ GAMMA1            1.2568
+ SON VEL1,M/SEC     299.0
+
+ BURNED GAS
+
+ P, BAR            44.083
+ T, K             3743.35
+ RHO, KG/CU M    2.5986 0
+ H, KJ/KG         1605.92
+ U, KJ/KG         -90.504
+ G, KJ/KG        -49013.3
+ S, KJ/(KG)(K)    13.5224
+
+ M, (1/n)          18.347
+ (dLV/dLP)t      -1.03879
+ (dLV/dLT)p        1.6289
+ Cp, KJ/(KG)(K)    7.0409
+ GAMMAs            1.1521
+ SON VEL,M/SEC     1398.0
+
+ DETONATION PARAMETERS
+
+ P/P1              44.083
+ T/T1              12.478
+ M/M1              0.5232
+ RHO/RHO1          1.8483
+ DET MACH NUMBER   8.6423
+ DET VEL,M/SEC     2583.9
+
+ MOLE FRACTIONS
+
+ *C              1.3103-8
+ *CH             6.6800-9
+ CH2             1.0708-8
+ CH3             1.3866-8
+ CH2OH           1.7390-9
+ CH3O            6.201-10
+ CH4             3.5042-9
+ CH3OH           1.160-10
+ CH3OOH          7.432-15
+ *CO             3.4654-1
+ *CO2            5.1639-2
+ COOH            1.0123-5
+ *C2             7.061-13
+ C2H             1.526-11
+ C2H2,acetylene  1.149-10
+ C2H2,vinylidene 1.403-12
+ CH2CO,ketene    4.109-10
+ O(CH)2O         2.752-12
+ HO(CO)2OH       9.649-14
+ C2H3,vinyl      1.404-13
+ CH3CO,acetyl    7.785-13
+ C2H4            4.185-14
+ CH3CHO,ethanal  1.877-14
+ CH3COOH         4.374-15
+ OHCH2COOH       5.280-16
+ C2O             2.4419-9
+ *C3             2.441-16
+ C3O2            5.179-12
+ *H              6.7899-2
+ HCO             4.2744-5
+ HCCO            3.074-10
+ HO2             2.8327-5
+ *H2             2.0706-1
+ HCHO,formaldehy 1.3508-6
+ HCOOH           1.5965-6
+ H2O             2.6571-1
+ H2O2            4.8843-6
+ *O              8.4794-3
+ *OH             4.8444-2
+ *O2             4.1378-3
+ O3              1.0109-8
+
+  * THERMODYNAMIC PROPERTIES FITTED TO 20000.K
+
+
+                     DETONATION PROPERTIES OF AN IDEAL REACTING GAS
+ CASE =                
+
+             REACTANT                       MOLES         ENERGY      TEMP
+                                                         KJ/KG-MOL      K
+ FUEL        C3H8                         1.0000000   -104543.521    300.000
+ OXIDANT     O2                           5.0000000        54.358    300.000
+
+ O/F=    2.01575  %FUEL= 33.159295  R,EQ.RATIO= 1.800000  PHI,EQ.RATIO= 1.800000
+
+ UNBURNED GAS
+
+ P1, BAR           1.0000
+ T1, K             300.00
+ H1, KJ/KG        -785.02
+ M1, (1/n)         35.201
+ GAMMA1            1.2529
+ SON VEL1,M/SEC     298.0
+
+ BURNED GAS
+
+ P, BAR            44.573
+ T, K             3684.90
+ RHO, KG/CU M    2.6032 0
+ H, KJ/KG         1595.71
+ U, KJ/KG         -116.56
+ G, KJ/KG        -48852.6
+ S, KJ/(KG)(K)    13.6905
+
+ M, (1/n)          17.893
+ (dLV/dLP)t      -1.03148
+ (dLV/dLT)p        1.5149
+ Cp, KJ/(KG)(K)    6.3670
+ GAMMAs            1.1574
+ SON VEL,M/SEC     1407.8
+
+ DETONATION PARAMETERS
+
+ P/P1              44.573
+ T/T1              12.283
+ M/M1              0.5083
+ RHO/RHO1          1.8446
+ DET MACH NUMBER   8.7150
+ DET VEL,M/SEC     2596.8
+
+ MOLE FRACTIONS
+
+ *C              1.2040-8
+ *CH             7.0075-9
+ CH2             1.3454-8
+ CH3             2.1142-8
+ CH2OH           2.1184-9
+ CH3O            7.347-10
+ CH4             6.3222-9
+ CH3OH           1.659-10
+ CH3OOH          7.495-15
+ *CO             3.5867-1
+ *CO2            4.4942-2
+ COOH            8.6315-6
+ *C2             8.236-13
+ C2H             2.175-11
+ C2H2,acetylene  2.084-10
+ C2H2,vinylidene 2.337-12
+ CH2CO,ketene    6.310-10
+ O(CH)2O         3.348-12
+ HO(CO)2OH       8.141-14
+ C2H3,vinyl      2.650-13
+ CH3CO,acetyl    1.251-12
+ C2H4            9.574-14
+ CH3CHO,ethanal  3.513-14
+ CH3COOH         6.808-15
+ OHCH2COOH       6.425-16
+ C2H5            2.230-16
+ C2O             2.7362-9
+ *C3             3.838-16
+ C3O2            6.897-12
+ *H              6.4027-2
+ HCO             4.3880-5
+ HCCO            3.926-10
+ HO2             1.6063-5
+ *H2             2.3561-1
+ HCHO,formaldehy 1.6033-6
+ HCOOH           1.5776-6
+ H2O             2.5203-1
+ H2O2            3.2047-6
+ *O              5.3923-3
+ *OH             3.7054-2
+ *O2             2.1991-3
+ O3              3.5660-9
+
+  * THERMODYNAMIC PROPERTIES FITTED TO 20000.K
+
+
+                     DETONATION PROPERTIES OF AN IDEAL REACTING GAS
+ CASE =                
+
+             REACTANT                       MOLES         ENERGY      TEMP
+                                                         KJ/KG-MOL      K
+ FUEL        C3H8                         1.0000000   -104543.521    300.000
+ OXIDANT     O2                           5.0000000        54.358    300.000
+
+ O/F=    1.90965  %FUEL= 34.368350  R,EQ.RATIO= 1.900000  PHI,EQ.RATIO= 1.900000
+
+ UNBURNED GAS
+
+ P1, BAR           1.0000
+ T1, K             300.00
+ H1, KJ/KG        -813.70
+ M1, (1/n)         35.330
+ GAMMA1            1.2493
+ SON VEL1,M/SEC     297.0
+
+ BURNED GAS
+
+ P, BAR            44.867
+ T, K             3615.43
+ RHO, KG/CU M    2.6064 0
+ H, KJ/KG         1576.37
+ U, KJ/KG         -145.03
+ G, KJ/KG        -48482.1
+ S, KJ/(KG)(K)    13.8458
+
+ M, (1/n)          17.463
+ (dLV/dLP)t      -1.02515
+ (dLV/dLT)p        1.4158
+ Cp, KJ/(KG)(K)    5.7561
+ GAMMAs            1.1637
+ SON VEL,M/SEC     1415.3
+
+ DETONATION PARAMETERS
+
+ P/P1              44.867
+ T/T1              12.051
+ M/M1              0.4943
+ RHO/RHO1          1.8402
+ DET MACH NUMBER   8.7694
+ DET VEL,M/SEC     2604.5
+
+ MOLE FRACTIONS
+
+ *C              1.0277-8
+ *CH             6.8743-9
+ CH2             1.6087-8
+ CH3             3.1328-8
+ CH2OH           2.4812-9
+ CH3O            8.318-10
+ CH4             1.1261-8
+ CH3OH           2.311-10
+ CH3OOH          7.082-15
+ *CO             3.6929-1
+ *CO2            3.8970-2
+ COOH            7.1252-6
+ *C2             8.867-13
+ C2H             2.926-11
+ C2H2,acetylene  3.682-10
+ C2H2,vinylidene 3.716-12
+ CH2CO,ketene    9.472-10
+ O(CH)2O         3.932-12
+ HO(CO)2OH       6.620-14
+ C2H3,vinyl      4.805-13
+ CH3CO,acetyl    1.939-12
+ C2H4            2.147-13
+ C2H4O,ethylen-o 1.192-16
+ CH3CHO,ethanal  6.416-14
+ CH3COOH         1.033-14
+ OHCH2COOH       7.502-16
+ C2H5            5.109-16
+ C2O             2.9226-9
+ *C3             5.611-16
+ C3H3,2-propynl  1.957-16
+ C3O2            8.932-12
+ *H              5.8570-2
+ HCO             4.3673-5
+ HCCO            4.809-10
+ HO2             8.5342-6
+ *H2             2.6518-1
+ HCHO,formaldehy 1.8630-6
+ HCOOH           1.5248-6
+ H2O             2.3628-1
+ H2O2            1.9894-6
+ *O              3.2421-3
+ *OH             2.7299-2
+ *O2             1.1048-3
+ O3              1.1291-9
+
+  * THERMODYNAMIC PROPERTIES FITTED TO 20000.K
+
+
+                     DETONATION PROPERTIES OF AN IDEAL REACTING GAS
+ CASE =                
+
+             REACTANT                       MOLES         ENERGY      TEMP
+                                                         KJ/KG-MOL      K
+ FUEL        C3H8                         1.0000000   -104543.521    300.000
+ OXIDANT     O2                           5.0000000        54.358    300.000
+
+ O/F=    1.81417  %FUEL= 35.534442  R,EQ.RATIO= 2.000000  PHI,EQ.RATIO= 2.000000
+
+ UNBURNED GAS
+
+ P1, BAR           1.0000
+ T1, K             300.00
+ H1, KJ/KG        -841.37
+ M1, (1/n)         35.455
+ GAMMA1            1.2459
+ SON VEL1,M/SEC     296.1
+
+ BURNED GAS
+
+ P, BAR            44.970
+ T, K             3536.06
+ RHO, KG/CU M    2.6085 0
+ H, KJ/KG         1548.16
+ U, KJ/KG         -175.81
+ G, KJ/KG        -47916.8
+ S, KJ/(KG)(K)    13.9887
+
+ M, (1/n)          17.054
+ (dLV/dLP)t      -1.01986
+ (dLV/dLT)p        1.3325
+ Cp, KJ/(KG)(K)    5.2239
+ GAMMAs            1.1707
+ SON VEL,M/SEC     1420.7
+
+ DETONATION PARAMETERS
+
+ P/P1              44.970
+ T/T1              11.787
+ M/M1              0.4810
+ RHO/RHO1          1.8352
+ DET MACH NUMBER   8.8061
+ DET VEL,M/SEC     2607.2
+
+ MOLE FRACTIONS
+
+ *C              8.1460-9
+ *CH             6.3063-9
+ CH2             1.8313-8
+ CH3             4.5152-8
+ CH2OH           2.7961-9
+ CH3O            9.007-10
+ CH4             1.9838-8
+ CH3OH           3.140-10
+ CH3OOH          6.273-15
+ *CO             3.7854-1
+ *CO2            3.3696-2
+ COOH            5.6975-6
+ *C2             8.819-13
+ C2H             3.722-11
+ C2H2,acetylene  6.353-10
+ C2H2,vinylidene 5.655-12
+ CH2CO,ketene    1.3924-9
+ O(CH)2O         4.466-12
+ HO(CO)2OH       5.199-14
+ C2H3,vinyl      8.380-13
+ CH3CO,acetyl    2.904-12
+ C2H4            4.733-13
+ C2H4O,ethylen-o 1.943-16
+ CH3CHO,ethanal  1.146-13
+ CH3COOH         1.530-14
+ OHCH2COOH       8.426-16
+ C2H5            1.133-15
+ C2O             2.9799-9
+ *C3             7.644-16
+ C3H3,2-propynl  4.486-16
+ C3O2            1.128-11
+ *H              5.1945-2
+ HCO             4.2163-5
+ HCCO            5.659-10
+ HO2             4.2435-6
+ *H2             2.9514-1
+ HCHO,formaldehy 2.1212-6
+ HCOOH           1.4429-6
+ H2O             2.1890-1
+ H2O2            1.1675-6
+ *O              1.8409-3
+ *OH             1.9358-2
+ *O2             5.2414-4
+ O3              3.205-10
+
+  * THERMODYNAMIC PROPERTIES FITTED TO 20000.K
+
+
+

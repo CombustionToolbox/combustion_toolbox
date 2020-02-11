@@ -74,6 +74,12 @@ if M.major_CH4
     DG0_X = -(species_g0_new('H',TP,strThProp)+species_g0_new('CH',TP,strThProp))*1000;
     k10 = exp(-DG0_X/R0TP);
 end
+if M.major_OH
+    g_OH = species_g0_new('OH',TP,strThProp);
+    DG0_XI   = -g_OH*1000;
+    
+    k11  = exp(-DG0_XI/R0TP);
+end
 % if M.minor_C
 %     DG0_X = 2*g_CO*1000;
 %     k10 = exp(-DG0_X/R0TP);
@@ -318,7 +324,9 @@ end
 %                 Ni     = exp(log(k6)+log(NCO2).*(C.alpha)+log(NH2O).*(C.gamma-2*C.alpha) ...
 %                     +log(NH2).*(C.beta/2-C.gamma(n)+2*C.alpha)+log(NN2+1).*(C.omega/2) ...
 %                     +log(zeta).*DNfactor_VI);
-                
+                if M.major_OH && DeltaNP
+                    Ni(M.idx_m_OH) = sqrt(NH2*NO2)/k11;
+                end
                 Ni_old = P_IC_old(M.idx_minor,1)';
                 aux = find(Ni_old~=0);
                 if ~isempty(aux)

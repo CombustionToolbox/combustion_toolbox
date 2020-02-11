@@ -40,6 +40,13 @@ if any(contains(M.minor_products,'CH4'))
 else
     M.major_CH4 = false;
 end
+%% OH major specie
+if any(contains(M.minor_products,'OH'))
+    M.major_OH = true;
+    M.idx_m_OH = find_idx({'OH'},M.minor_products);
+else
+    M.major_OH = false;
+end
 %% C minor specie
 % if any(contains(M.minor_products,'C'))
 %     M.minor_C = true;

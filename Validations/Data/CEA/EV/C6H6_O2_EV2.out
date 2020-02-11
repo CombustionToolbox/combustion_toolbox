@@ -1,0 +1,1889 @@
+
+ *******************************************************************************
+
+         NASA-GLENN CHEMICAL EQUILIBRIUM PROGRAM CEA2, MAY 21, 2004
+                   BY  BONNIE MCBRIDE AND SANFORD GORDON
+      REFS: NASA RP-1311, PART I, 1994 AND NASA RP-1311, PART II, 1996
+
+ *******************************************************************************
+
+
+
+ problem    phi,eq.ratio=2.1,2.2,2.3,2.4,2.5,2.6,2.7,2.8,2.9,3,3.1,3.2,3.3,3.4,3.
+ 5,3.6,
+       uv   rho,kg/m**3=1.9258,  t,k=3800
+ react
+   fuel=C6H6 moles=1 t,k=300
+   oxid=O2 moles=7.5 t,k=300
+ output
+      trace=1e-16 siunits short
+ end
+
+
+
+
+         THERMODYNAMIC EQUILIBRIUM COMBUSTION PROPERTIES AT ASSIGNED
+
+                                     VOLUME
+
+ CASE =                
+
+             REACTANT                       MOLES         ENERGY      TEMP
+                                                         KJ/KG-MOL      K
+ FUEL        C6H6                         1.0000000     80537.766    300.000
+ OXIDANT     O2                           7.5000000     -2439.995    300.000
+
+ O/F=    1.46305  %FUEL= 40.600090  R,EQ.RATIO= 2.100000  PHI,EQ.RATIO= 2.100000
+
+ THERMODYNAMIC PROPERTIES
+
+ P, BAR            28.521
+ T, K             3642.07
+ RHO, KG/CU M    1.9258 0
+ H, KJ/KG         1854.33
+ U, KJ/KG          373.32
+ G, KJ/KG        -41542.4
+ S, KJ/(KG)(K)    11.9154
+
+ M, (1/n)          20.447
+ (dLV/dLP)t      -1.02211
+ (dLV/dLT)p        1.3525
+ Cp, KJ/(KG)(K)    4.2096
+ GAMMAs            1.1829
+ SON VEL,M/SEC     1323.6
+
+ MOLE FRACTIONS
+
+ *C              4.5625-8
+ *CH             2.0569-8
+ CH2             3.1710-8
+ CH3             4.0421-8
+ CH2OH           1.4035-9
+ CH3O            4.767-10
+ CH4             9.6226-9
+ CH3OH           8.692-11
+ CH3OOH          1.239-15
+ *CO             6.1006-1
+ *CO2            2.7537-2
+ COOH            3.6505-6
+ *C2             9.572-12
+ C2H             2.061-10
+ C2H2,acetylene  1.6596-9
+ C2H2,vinylidene 1.745-11
+ CH2CO,ketene    1.8201-9
+ O(CH)2O         3.326-12
+ HO(CO)2OH       1.034-14
+ C2H3,vinyl      1.525-12
+ CH3CO,acetyl    2.617-12
+ C2H4            4.465-13
+ C2H4O,ethylen-o 1.107-16
+ CH3CHO,ethanal  5.782-14
+ CH3COOH         4.002-15
+ OHCH2COOH       1.288-16
+ C2H5            7.495-16
+ C2O             1.2664-8
+ *C3             1.431-14
+ C3H3,2-propynl  1.488-15
+ C3O2            3.824-11
+ *H              6.7673-2
+ HCO             5.2002-5
+ HCCO            1.4056-9
+ HO2             1.9496-6
+ *H2             2.0112-1
+ HCHO,formaldehy 1.4860-6
+ HCOOH           5.2273-7
+ H2O             7.6980-2
+ H2O2            3.0436-7
+ *O              2.4799-3
+ *OH             1.3728-2
+ *O2             3.6260-4
+ O3              1.773-10
+
+  * THERMODYNAMIC PROPERTIES FITTED TO 20000.K
+
+
+
+
+
+
+
+
+
+         THERMODYNAMIC EQUILIBRIUM COMBUSTION PROPERTIES AT ASSIGNED
+
+                                     VOLUME
+
+ CASE =                
+
+             REACTANT                       MOLES         ENERGY      TEMP
+                                                         KJ/KG-MOL      K
+ FUEL        C6H6                         1.0000000     80537.766    300.000
+ OXIDANT     O2                           7.5000000     -2439.995    300.000
+
+ O/F=    1.39655  %FUEL= 41.726709  R,EQ.RATIO= 2.200000  PHI,EQ.RATIO= 2.200000
+
+ THERMODYNAMIC PROPERTIES
+
+ P, BAR            28.376
+ T, K             3556.21
+ RHO, KG/CU M    1.9258 0
+ H, KJ/KG         1859.26
+ U, KJ/KG          385.79
+ G, KJ/KG        -40724.9
+ S, KJ/(KG)(K)    11.9746
+
+ M, (1/n)          20.067
+ (dLV/dLP)t      -1.01758
+ (dLV/dLT)p        1.2829
+ Cp, KJ/(KG)(K)    3.8167
+ GAMMAs            1.1920
+ SON VEL,M/SEC     1325.3
+
+ MOLE FRACTIONS
+
+ *C              4.3087-8
+ *CH             2.2765-8
+ CH2             4.4314-8
+ CH3             7.2859-8
+ CH2OH           1.6007-9
+ CH3O            5.209-10
+ CH4             2.1540-8
+ CH3OH           1.214-10
+ CH3OOH          9.016-16
+ *CO             6.2381-1
+ *CO2            1.9316-2
+ COOH            2.3620-6
+ *C2             1.384-11
+ C2H             3.884-10
+ C2H2,acetylene  4.3425-9
+ C2H2,vinylidene 3.993-11
+ CH2CO,ketene    3.3027-9
+ O(CH)2O         3.770-12
+ HO(CO)2OH       5.349-15
+ C2H3,vinyl      4.049-12
+ CH3CO,acetyl    4.857-12
+ C2H4            1.525-12
+ C2H4O,ethylen-o 2.254-16
+ CH3CHO,ethanal  1.298-13
+ CH3COOH         6.055-15
+ OHCH2COOH       1.193-16
+ C2H5            2.584-15
+ C2H6            1.388-16
+ C2O             1.5465-8
+ *C3             3.477-14
+ C3H3,2-propynl  6.351-15
+ C3H4,propyne    1.389-16
+ C3O2            5.801-11
+ *H              6.0144-2
+ HCO             5.0011-5
+ HCCO            2.0057-9
+ HO2             6.3233-7
+ *H2             2.2840-1
+ HCHO,formaldehy 1.7088-6
+ HCOOH           4.0590-7
+ H2O             5.9134-2
+ H2O2            1.1814-7
+ *O              1.1234-3
+ *OH             7.9057-3
+ *O2             1.1155-4
+ O3              2.592-11
+
+  * THERMODYNAMIC PROPERTIES FITTED TO 20000.K
+
+
+
+
+
+
+
+
+
+         THERMODYNAMIC EQUILIBRIUM COMBUSTION PROPERTIES AT ASSIGNED
+
+                                     VOLUME
+
+ CASE =                
+
+             REACTANT                       MOLES         ENERGY      TEMP
+                                                         KJ/KG-MOL      K
+ FUEL        C6H6                         1.0000000     80537.766    300.000
+ OXIDANT     O2                           7.5000000     -2439.995    300.000
+
+ O/F=    1.33583  %FUEL= 42.811388  R,EQ.RATIO= 2.300000  PHI,EQ.RATIO= 2.300000
+
+ THERMODYNAMIC PROPERTIES
+
+ P, BAR            28.130
+ T, K             3461.12
+ RHO, KG/CU M    1.9258 0
+ H, KJ/KG         1858.48
+ U, KJ/KG          397.80
+ G, KJ/KG        -39755.1
+ S, KJ/(KG)(K)    12.0231
+
+ M, (1/n)          19.702
+ (dLV/dLP)t      -1.01391
+ (dLV/dLT)p        1.2269
+ Cp, KJ/(KG)(K)    3.4971
+ GAMMAs            1.2016
+ SON VEL,M/SEC     1324.8
+
+ MOLE FRACTIONS
+
+ *C              4.2183-8
+ *CH             2.6339-8
+ CH2             6.6058-8
+ CH3             1.4354-7
+ CH2OH           1.7554-9
+ CH3O            5.439-10
+ CH4             5.3744-8
+ CH3OH           1.656-10
+ CH3OOH          5.462-16
+ *CO             6.3578-1
+ *CO2            1.2050-2
+ COOH            1.3170-6
+ *C2             2.322-11
+ C2H             8.720-10
+ C2H2,acetylene  1.4044-8
+ C2H2,vinylidene 1.104-10
+ CH2CO,ketene    6.6160-9
+ O(CH)2O         4.143-12
+ HO(CO)2OH       2.125-15
+ C2H3,vinyl      1.307-11
+ CH3CO,acetyl    9.814-12
+ C2H4            6.495-12
+ C2H4O,ethylen-o 4.987-16
+ CH3CHO,ethanal  3.216-13
+ CH3COOH         8.993-15
+ C2H5            1.092-14
+ C2H6            7.428-16
+ C2O             2.0243-8
+ *C3             1.115-13
+ C3H3,1-propynl  1.112-16
+ C3H3,2-propynl  3.724-14
+ C3H4,allene     4.806-16
+ C3H4,propyne    9.822-16
+ C3O2            9.686-11
+ C4H2,butadiyne  3.190-16
+ *H              5.1632-2
+ HCO             4.6611-5
+ HCCO            3.0912-9
+ HO2             1.5108-7
+ *H2             2.5623-1
+ HCHO,formaldehy 1.9271-6
+ HCOOH           2.7500-7
+ H2O             3.9925-2
+ H2O2            3.4176-8
+ *O              4.2494-4
+ *OH             3.8842-3
+ *O2             2.5513-5
+ O3              2.372-12
+
+  * THERMODYNAMIC PROPERTIES FITTED TO 20000.K
+
+
+
+
+
+
+
+
+
+         THERMODYNAMIC EQUILIBRIUM COMBUSTION PROPERTIES AT ASSIGNED
+
+                                     VOLUME
+
+ CASE =                
+
+             REACTANT                       MOLES         ENERGY      TEMP
+                                                         KJ/KG-MOL      K
+ FUEL        C6H6                         1.0000000     80537.766    300.000
+ OXIDANT     O2                           7.5000000     -2439.995    300.000
+
+ O/F=    1.28017  %FUEL= 43.856424  R,EQ.RATIO= 2.400000  PHI,EQ.RATIO= 2.400000
+
+ THERMODYNAMIC PROPERTIES
+
+ P, BAR            27.793
+ T, K             3358.77
+ RHO, KG/CU M    1.9258 0
+ H, KJ/KG         1852.56
+ U, KJ/KG          409.37
+ G, KJ/KG        -38652.2
+ S, KJ/(KG)(K)    12.0594
+
+ M, (1/n)          19.351
+ (dLV/dLP)t      -1.01091
+ (dLV/dLT)p        1.1813
+ Cp, KJ/(KG)(K)    3.2330
+ GAMMAs            1.2115
+ SON VEL,M/SEC     1322.3
+
+ MOLE FRACTIONS
+
+ *C              5.0759-8
+ *CH             3.7755-8
+ CH2             1.2441-7
+ CH3             3.6588-7
+ CH2OH           1.8520-9
+ CH3O            5.430-10
+ CH4             1.7695-7
+ CH3OH           2.209-10
+ CH3OOH          2.331-16
+ *CO             6.4617-1
+ *CO2            5.6534-3
+ COOH            5.3529-7
+ *C2             6.349-11
+ C2H             3.2735-9
+ C2H2,acetylene  7.8711-8
+ C2H2,vinylidene 5.170-10
+ CH2CO,ketene    1.7336-8
+ O(CH)2O         4.420-12
+ HO(CO)2OH       4.636-16
+ C2H3,vinyl      7.198-11
+ CH3CO,acetyl    2.558-11
+ C2H4            4.829-11
+ C2H4O,ethylen-o 1.420-15
+ CH3CHO,ethanal  1.042-12
+ CH3COOH         1.312-14
+ C2H5            7.928-14
+ C2H6            6.953-15
+ C2O             3.3682-8
+ *C3             7.845-13
+ C3H3,1-propynl  1.326-15
+ C3H3,2-propynl  4.981-13
+ C3H4,allene     7.773-15
+ C3H4,propyne    1.602-14
+ C3H4,cyclo-     2.685-16
+ C3H5,allyl      1.152-16
+ C3O2            2.113-10
+ C4H2,butadiyne  9.055-15
+ *H              4.2821-2
+ HCO             4.2133-5
+ HCCO            6.0996-9
+ HO2             1.9006-8
+ *H2             2.8380-1
+ HCHO,formaldehy 2.1322-6
+ HCOOH           1.3746-7
+ H2O             2.0012-2
+ H2O2            5.2646-9
+ *O              1.1353-4
+ *OH             1.3762-3
+ *O2             3.1008-6
+ O3              8.221-14
+
+  * THERMODYNAMIC PROPERTIES FITTED TO 20000.K
+
+
+
+
+
+
+
+
+
+         THERMODYNAMIC EQUILIBRIUM COMBUSTION PROPERTIES AT ASSIGNED
+
+                                     VOLUME
+
+ CASE =                
+
+             REACTANT                       MOLES         ENERGY      TEMP
+                                                         KJ/KG-MOL      K
+ FUEL        C6H6                         1.0000000     80537.766    300.000
+ OXIDANT     O2                           7.5000000     -2439.995    300.000
+
+ O/F=    1.22896  %FUEL= 44.863954  R,EQ.RATIO= 2.500000  PHI,EQ.RATIO= 2.500000
+
+ THERMODYNAMIC PROPERTIES
+
+ P, BAR            27.357
+ T, K             3250.53
+ RHO, KG/CU M    1.9258 0
+ H, KJ/KG         1841.10
+ U, KJ/KG          420.53
+ G, KJ/KG        -37407.3
+ S, KJ/(KG)(K)    12.0745
+
+ M, (1/n)          19.025
+ (dLV/dLP)t      -1.00884
+ (dLV/dLT)p        1.1438
+ Cp, KJ/(KG)(K)    3.0099
+ GAMMAs            1.2212
+ SON VEL,M/SEC     1317.1
+
+ MOLE FRACTIONS
+
+ *C              1.3372-6
+ *CH             1.1938-6
+ CH2             5.2690-6
+ CH3             2.1479-5
+ CH2OH           1.8743-9
+ CH3O            5.170-10
+ CH4             1.3691-5
+ CH3OH           2.872-10
+ *CO             6.5493-1
+ *CO2            1.1179-4
+ COOH            8.8742-9
+ *C2             8.9943-8
+ C2H             6.5305-6
+ C2H2,acetylene  2.4315-4
+ C2H2,vinylidene 1.3036-6
+ CH2CO,ketene    1.0588-6
+ O(CH)2O         4.572-12
+ C2H3,vinyl      2.1472-7
+ CH3CO,acetyl    1.5319-9
+ C2H4            1.9922-7
+ C2H4O,ethylen-o 9.261-14
+ CH3CHO,ethanal  7.849-11
+ CH3COOH         1.877-14
+ C2H5            3.138-10
+ C2H6            3.613-11
+ C2H5OH          3.698-15
+ C2O             1.2702-6
+ *C3             6.8690-8
+ C3H3,1-propynl  2.017-10
+ C3H3,2-propynl  8.6178-8
+ C3H4,allene     1.6425-9
+ C3H4,propyne    3.4152-9
+ C3H4,cyclo-     5.124-11
+ C3H5,allyl      2.580-11
+ C3H6,propylene  3.565-12
+ C3H6,cyclo-     3.083-14
+ C3H6O,acetone   3.297-16
+ C3H6O,propanal  5.321-16
+ C3H7,n-propyl   2.244-15
+ C3H7,i-propyl   1.353-15
+ C3H8            2.473-16
+ C3O2            1.0741-8
+ *C4             3.577-11
+ C4H2,butadiyne  7.9173-8
+ C4H4,1,3-cyclo- 9.812-14
+ C4H6,butadiene  1.448-13
+ C4H6,1butyne    2.513-14
+ C4H6,2butyne    1.145-14
+ C4H6,cyclo-     5.300-16
+ *C5             1.619-11
+ C5H6,1,3cyclo-  2.775-16
+ C6H2            2.753-11
+ *H              3.4268-2
+ HCO             3.6886-5
+ HCCO            2.7459-7
+ HO2             3.943-12
+ *H2             3.0992-1
+ HCHO,formaldehy 2.3109-6
+ HCOOH           2.8360-9
+ H2O             4.1669-4
+ H2O2            1.352-12
+ *O              1.1986-6
+ *OH             1.9670-5
+ *O2             6.279-10
+
+  * THERMODYNAMIC PROPERTIES FITTED TO 20000.K
+
+
+
+
+
+
+
+
+
+         THERMODYNAMIC EQUILIBRIUM COMBUSTION PROPERTIES AT ASSIGNED
+
+                                     VOLUME
+
+ CASE =                
+
+             REACTANT                       MOLES         ENERGY      TEMP
+                                                         KJ/KG-MOL      K
+ FUEL        C6H6                         1.0000000     80537.766    300.000
+ OXIDANT     O2                           7.5000000     -2439.995    300.000
+
+ O/F=    1.18169  %FUEL= 45.835959  R,EQ.RATIO= 2.600000  PHI,EQ.RATIO= 2.600000
+
+ THERMODYNAMIC PROPERTIES
+
+ P, BAR            26.153
+ T, K             3134.06
+ RHO, KG/CU M    1.9258 0
+ H, KJ/KG         1789.31
+ U, KJ/KG          431.29
+ G, KJ/KG        -35932.0
+ S, KJ/(KG)(K)    12.0359
+
+ M, (1/n)          19.188
+ (dLV/dLP)t      -1.00668
+ (dLV/dLT)p        1.1144
+ Cp, KJ/(KG)(K)    2.8358
+ GAMMAs            1.2241
+ SON VEL,M/SEC     1289.3
+
+ MOLE FRACTIONS
+
+ *C              4.2971-6
+ *CH             4.4560-6
+ CH2             2.5902-5
+ CH3             1.4483-4
+ CH2OH           1.5454-9
+ CH3O            3.977-10
+ CH4             1.1977-4
+ CH3OH           2.976-10
+ *CO             6.4946-1
+ *CO2            1.5654-5
+ COOH            9.540-10
+ *C2             2.0587-6
+ C2H             2.0881-4
+ C2H2,acetylene  1.2119-2
+ C2H2,vinylidene 5.1346-5
+ CH2CO,ketene    7.5582-6
+ O(CH)2O         3.913-12
+ C2H3,vinyl      9.6662-6
+ CH3CO,acetyl    1.0064-8
+ C2H4            1.2271-5
+ C2H4O,ethylen-o 6.319-13
+ CH3CHO,ethanal  6.324-10
+ CH3COOH         2.068-14
+ C2H5            1.7337-8
+ C2H6            2.5717-9
+ C2H5OH          3.130-14
+ CH3OCH3         7.014-16
+ C2O             5.8740-6
+ *C3             1.3143-5
+ C3H3,1-propynl  6.0872-8
+ C3H3,2-propynl  3.0167-5
+ C3H4,allene     6.8172-7
+ C3H4,propyne    1.4324-6
+ C3H4,cyclo-     1.8911-8
+ C3H5,allyl      1.0779-8
+ C3H6,propylene  1.8002-9
+ C3H6,cyclo-     1.472-11
+ C3H6O,acetone   2.241-14
+ C3H6O,propanal  3.427-14
+ C3H7,n-propyl   9.941-13
+ C3H7,i-propyl   6.103-13
+ C3H8            1.416-13
+ C3O2            6.6709-8
+ *C4             4.1540-8
+ C4H2,butadiyne  1.9545-4
+ C4H4,1,3-cyclo- 2.557-10
+ C4H6,butadiene  4.861-10
+ C4H6,1butyne    8.509-11
+ C4H6,2butyne    3.986-11
+ C4H6,cyclo-     1.796-12
+ C4H8,1-butene   9.049-14
+ C4H8,cis2-buten 2.767-14
+ C4H8,tr2-butene 3.148-14
+ C4H8,isobutene  3.040-14
+ *C5             1.5125-7
+ C5H6,1,3cyclo-  7.926-12
+ C5H8,cyclo-     7.872-16
+ C6H2            3.3552-6
+ C6H5,phenyl     8.382-12
+ C6H5O,phenoxy   5.087-16
+ C6H6            6.993-12
+ C6H5OH,phenol   2.503-16
+ C7H7,benzyl     1.909-14
+ C7H8            1.423-15
+ C8H8,styrene    4.314-16
+ *H              2.5618-2
+ HCO             2.9069-5
+ HCCO            1.4650-6
+ HO2             3.770-14
+ *H2             3.1185-1
+ HCHO,formaldehy 2.1927-6
+ HCOOH           3.693-10
+ H2O             5.7618-5
+ H2O2            1.555-14
+ *O              8.5586-8
+ *OH             1.8731-6
+ *O2             6.202-12
+
+  * THERMODYNAMIC PROPERTIES FITTED TO 20000.K
+
+
+
+
+
+
+
+
+
+         THERMODYNAMIC EQUILIBRIUM COMBUSTION PROPERTIES AT ASSIGNED
+
+                                     VOLUME
+
+ CASE =                
+
+             REACTANT                       MOLES         ENERGY      TEMP
+                                                         KJ/KG-MOL      K
+ FUEL        C6H6                         1.0000000     80537.766    300.000
+ OXIDANT     O2                           7.5000000     -2439.995    300.000
+
+ O/F=    1.13793  %FUEL= 46.774286  R,EQ.RATIO= 2.700000  PHI,EQ.RATIO= 2.700000
+
+ THERMODYNAMIC PROPERTIES
+
+ P, BAR            25.082
+ T, K             3028.88
+ RHO, KG/CU M    1.9258 0
+ H, KJ/KG         1744.08
+ U, KJ/KG          441.68
+ G, KJ/KG        -34567.6
+ S, KJ/(KG)(K)    11.9885
+
+ M, (1/n)          19.336
+ MW, MOL WT        19.243
+ (dLV/dLP)t      -1.00526
+ (dLV/dLT)p        1.0882
+ Cp, KJ/(KG)(K)    3.4086
+ GAMMAs            1.1684
+ SON VEL,M/SEC     1233.6
+
+ MOLE FRACTIONS
+
+ *C              2.6381-6
+ *CH             3.1705-6
+ CH2             2.4110-5
+ CH3             1.8358-4
+ CH2OH           1.2827-9
+ CH3O            3.091-10
+ CH4             1.9637-4
+ CH3OH           3.093-10
+ *CO             6.4004-1
+ *CO2            1.1625-5
+ COOH            5.496-10
+ *C2             1.6888-6
+ C2H             2.3748-4
+ C2H2,acetylene  2.1251-2
+ C2H2,vinylidene 7.1603-5
+ CH2CO,ketene    1.0115-5
+ O(CH)2O         3.365-12
+ C2H3,vinyl      1.5388-5
+ CH3CO,acetyl    1.2463-8
+ C2H4            2.6549-5
+ C2H4O,ethylen-o 8.143-13
+ CH3CHO,ethanal  9.566-10
+ CH3COOH         2.285-14
+ C2H5            3.3841-8
+ C2H6            6.4360-9
+ C2H5OH          4.993-14
+ CH3OCH3         1.048-15
+ C2O             5.1376-6
+ *C3             1.6817-5
+ C3H3,1-propynl  1.2215-7
+ C3H3,2-propynl  6.9917-5
+ C3H4,allene     1.8690-6
+ C3H4,propyne    3.9670-6
+ C3H4,cyclo-     4.6272-8
+ C3H5,allyl      2.9833-8
+ C3H6,propylene  5.9995-9
+ C3H6,cyclo-     4.648-11
+ C3H6O,propylox  1.229-16
+ C3H6O,acetone   5.368-14
+ C3H6O,propanal  7.793-14
+ C3H7,n-propyl   2.925-12
+ C3H7,i-propyl   1.828-12
+ C3H8            5.356-13
+ C3O2            7.7746-8
+ *C4             6.0966-8
+ C4H2,butadiyne  5.9849-4
+ C4H4,1,3-cyclo- 8.295-10
+ C4H6,butadiene  2.0449-9
+ C4H6,1butyne    3.574-10
+ C4H6,2butyne    1.721-10
+ C4H6,cyclo-     7.559-12
+ C4H8,1-butene   4.564-13
+ C4H8,cis2-buten 1.418-13
+ C4H8,tr2-butene 1.612-13
+ C4H8,isobutene  1.568-13
+ C4H8,cyclo-     4.465-16
+ C4H9,n-butyl    4.049-16
+ C4H9,i-butyl    1.869-16
+ C4H9,s-butyl    2.512-16
+ *C5             3.3365-7
+ C5H6,1,3cyclo-  5.252-11
+ C5H8,cyclo-     5.738-15
+ C6H2            1.7891-5
+ C6H5,phenyl     6.660-11
+ C6H5O,phenoxy   3.066-15
+ C6H6            7.637-11
+ C6H5OH,phenol   1.800-15
+ C7H7,benzyl     2.604-13
+ C7H8            2.399-14
+ C8H8,styrene    9.902-15
+ C10H8,naphthale 5.190-16
+ *H              1.9244-2
+ HCO             2.2984-5
+ HCCO            1.4746-6
+ HO2             1.044-14
+ *H2             3.1305-1
+ HCHO,formaldehy 2.0814-6
+ HCOOH           2.569-10
+ H2O             4.2419-5
+ H2O2            5.164-15
+ *O              3.3065-8
+ *OH             9.5836-7
+ *O2             1.769-12
+ C(gr)           4.8503-3
+
+  * THERMODYNAMIC PROPERTIES FITTED TO 20000.K
+
+
+
+
+
+
+
+
+
+         THERMODYNAMIC EQUILIBRIUM COMBUSTION PROPERTIES AT ASSIGNED
+
+                                     VOLUME
+
+ CASE =                
+
+             REACTANT                       MOLES         ENERGY      TEMP
+                                                         KJ/KG-MOL      K
+ FUEL        C6H6                         1.0000000     80537.766    300.000
+ OXIDANT     O2                           7.5000000     -2439.995    300.000
+
+ O/F=    1.09729  %FUEL= 47.680657  R,EQ.RATIO= 2.800000  PHI,EQ.RATIO= 2.800000
+
+ THERMODYNAMIC PROPERTIES
+
+ P, BAR            24.603
+ T, K             2986.80
+ RHO, KG/CU M    1.9258 0
+ H, KJ/KG         1729.29
+ U, KJ/KG          451.72
+ G, KJ/KG        -33932.8
+ S, KJ/(KG)(K)    11.9399
+
+ M, (1/n)          19.438
+ MW, MOL WT        18.802
+ (dLV/dLP)t      -1.00480
+ (dLV/dLT)p        1.0808
+ Cp, KJ/(KG)(K)    3.3259
+ GAMMAs            1.1702
+ SON VEL,M/SEC     1222.7
+
+ MOLE FRACTIONS
+
+ *C              1.7553-6
+ *CH             2.2786-6
+ CH2             1.9691-5
+ CH3             1.7332-4
+ CH2OH           1.1998-9
+ CH3O            2.813-10
+ CH4             2.0985-4
+ CH3OH           3.229-10
+ *CO             6.1472-1
+ *CO2            1.1738-5
+ COOH            5.064-10
+ *C2             1.0621-6
+ C2H             1.7395-4
+ C2H2,acetylene  1.8958-2
+ C2H2,vinylidene 5.8001-5
+ CH2CO,ketene    9.5340-6
+ O(CH)2O         3.119-12
+ C2H3,vinyl      1.3381-5
+ CH3CO,acetyl    1.1547-8
+ C2H4            2.6667-5
+ C2H4O,ethylen-o 7.790-13
+ CH3CHO,ethanal  9.787-10
+ CH3COOH         2.425-14
+ C2H5            3.3052-8
+ C2H6            7.0853-9
+ C2H5OH          5.385-14
+ CH3OCH3         1.099-15
+ C2O             3.9294-6
+ *C3             1.0667-5
+ C3H3,1-propynl  9.7986-8
+ C3H3,2-propynl  5.9587-5
+ C3H4,allene     1.7357-6
+ C3H4,propyne    3.6998-6
+ C3H4,cyclo-     4.0969-8
+ C3H5,allyl      2.8248-8
+ C3H6,propylene  6.2353-9
+ C3H6,cyclo-     4.724-11
+ C3H6O,propylox  1.221-16
+ C3H6O,acetone   5.750-14
+ C3H6O,propanal  8.165-14
+ C3H7,n-propyl   2.930-12
+ C3H7,i-propyl   1.844-12
+ C3H8            6.054-13
+ C3O2            6.6461-8
+ *C4             3.4303-8
+ C4H2,butadiyne  4.7270-4
+ C4H4,1,3-cyclo- 6.920-10
+ C4H6,butadiene  1.9667-9
+ C4H6,1butyne    3.425-10
+ C4H6,2butyne    1.669-10
+ C4H6,cyclo-     7.254-12
+ C4H8,1-butene   4.871-13
+ C4H8,cis2-buten 1.524-13
+ C4H8,tr2-butene 1.731-13
+ C4H8,isobutene  1.690-13
+ C4H8,cyclo-     4.673-16
+ C4H9,n-butyl    4.191-16
+ C4H9,i-butyl    1.943-16
+ C4H9,s-butyl    2.604-16
+ *C5             1.8641-7
+ C5H6,1,3cyclo-  5.105-11
+ C5H8,cyclo-     5.986-15
+ C6H2            1.2498-5
+ C6H5,phenyl     5.759-11
+ C6H5O,phenoxy   2.795-15
+ C6H6            7.664-11
+ C6H5OH,phenol   1.795-15
+ C7H7,benzyl     2.438-13
+ C7H8            2.493-14
+ C8H8,styrene    9.794-15
+ C10H8,naphthale 5.088-16
+ *H              1.6906-2
+ HCO             2.0434-5
+ HCCO            1.2146-6
+ HO2             8.452-15
+ *H2             3.1532-1
+ HCHO,formaldehy 2.0289-6
+ HCOOH           2.602-10
+ H2O             4.4401-5
+ H2O2            4.581-15
+ *O              2.5614-8
+ *OH             8.4802-7
+ *O2             1.427-12
+ C(gr)           3.2758-2
+
+  * THERMODYNAMIC PROPERTIES FITTED TO 20000.K
+
+
+
+
+
+
+
+
+
+         THERMODYNAMIC EQUILIBRIUM COMBUSTION PROPERTIES AT ASSIGNED
+
+                                     VOLUME
+
+ CASE =                
+
+             REACTANT                       MOLES         ENERGY      TEMP
+                                                         KJ/KG-MOL      K
+ FUEL        C6H6                         1.0000000     80537.766    300.000
+ OXIDANT     O2                           7.5000000     -2439.995    300.000
+
+ O/F=    1.05945  %FUEL= 48.556675  R,EQ.RATIO= 2.900000  PHI,EQ.RATIO= 2.900000
+
+ THERMODYNAMIC PROPERTIES
+
+ P, BAR            24.143
+ T, K             2945.77
+ RHO, KG/CU M    1.9258 0
+ H, KJ/KG         1715.09
+ U, KJ/KG          461.42
+ G, KJ/KG        -33316.8
+ S, KJ/(KG)(K)    11.8923
+
+ M, (1/n)          19.537
+ MW, MOL WT        18.397
+ (dLV/dLP)t      -1.00439
+ (dLV/dLT)p        1.0740
+ Cp, KJ/(KG)(K)    3.2486
+ GAMMAs            1.1719
+ SON VEL,M/SEC     1212.1
+
+ MOLE FRACTIONS
+
+ *C              1.1679-6
+ *CH             1.6364-6
+ CH2             1.6056-5
+ CH3             1.6327-4
+ CH2OH           1.1205-9
+ CH3O            2.556-10
+ CH4             2.2369-4
+ CH3OH           3.364-10
+ *CO             5.9142-1
+ *CO2            1.1885-5
+ COOH            4.673-10
+ *C2             6.6779-7
+ C2H             1.2731-4
+ C2H2,acetylene  1.6890-2
+ C2H2,vinylidene 4.6903-5
+ CH2CO,ketene    8.9823-6
+ O(CH)2O         2.891-12
+ C2H3,vinyl      1.1607-5
+ CH3CO,acetyl    1.0683-8
+ C2H4            2.6704-5
+ C2H4O,ethylen-o 7.435-13
+ CH3CHO,ethanal  9.991-10
+ CH3COOH         2.571-14
+ C2H5            3.2147-8
+ C2H6            7.7625-9
+ C2H5OH          5.785-14
+ CH3OCH3         1.149-15
+ C2O             3.0086-6
+ *C3             6.7621-6
+ C3H3,1-propynl  7.8386-8
+ C3H3,2-propynl  5.0652-5
+ C3H4,allene     1.6066-6
+ C3H4,propyne    3.4391-6
+ C3H4,cyclo-     3.6148-8
+ C3H5,allyl      2.6633-8
+ C3H6,propylene  6.4478-9
+ C3H6,cyclo-     4.777-11
+ C3H6O,propylox  1.208-16
+ C3H6O,acetone   6.132-14
+ C3H6O,propanal  8.520-14
+ C3H7,n-propyl   2.916-12
+ C3H7,i-propyl   1.850-12
+ C3H8            6.795-13
+ C3O2            5.6935-8
+ *C4             1.9289-8
+ C4H2,butadiyne  3.7267-4
+ C4H4,1,3-cyclo- 5.753-10
+ C4H6,butadiene  1.8839-9
+ C4H6,1butyne    3.266-10
+ C4H6,2butyne    1.611-10
+ C4H6,cyclo-     6.926-12
+ C4H8,1-butene   5.163-13
+ C4H8,cis2-buten 1.626-13
+ C4H8,tr2-butene 1.847-13
+ C4H8,isobutene  1.808-13
+ C4H8,cyclo-     4.856-16
+ C4H9,n-butyl    4.302-16
+ C4H9,i-butyl    2.003-16
+ C4H9,s-butyl    2.678-16
+ *C5             1.0406-7
+ C5H6,1,3cyclo-  4.936-11
+ C5H8,cyclo-     6.201-15
+ C6H2            8.7115-6
+ C6H5,phenyl     4.957-11
+ C6H5O,phenoxy   2.539-15
+ C6H6            7.651-11
+ C6H5OH,phenol   1.781-15
+ C7H7,benzyl     2.269-13
+ C7H8            2.572-14
+ C8H8,styrene    9.610-15
+ C10H8,naphthale 4.950-16
+ *H              1.4851-2
+ HCO             1.8175-5
+ HCCO            1.0006-6
+ HO2             6.850-15
+ *H2             3.1734-1
+ HCHO,formaldehy 1.9772-6
+ HCOOH           2.637-10
+ H2O             4.6475-5
+ H2O2            4.064-15
+ *O              1.9869-8
+ *OH             7.5082-7
+ *O2             1.155-12
+ C(gr)           5.8345-2
+
+  * THERMODYNAMIC PROPERTIES FITTED TO 20000.K
+
+
+
+
+
+
+
+
+
+         THERMODYNAMIC EQUILIBRIUM COMBUSTION PROPERTIES AT ASSIGNED
+
+                                     VOLUME
+
+ CASE =                
+
+             REACTANT                       MOLES         ENERGY      TEMP
+                                                         KJ/KG-MOL      K
+ FUEL        C6H6                         1.0000000     80537.766    300.000
+ OXIDANT     O2                           7.5000000     -2439.995    300.000
+
+ O/F=    1.02413  %FUEL= 49.403841  R,EQ.RATIO= 3.000000  PHI,EQ.RATIO= 3.000000
+
+ THERMODYNAMIC PROPERTIES
+
+ P, BAR            23.700
+ T, K             2905.73
+ RHO, KG/CU M    1.9258 0
+ H, KJ/KG         1701.44
+ U, KJ/KG          470.80
+ G, KJ/KG        -32718.7
+ S, KJ/(KG)(K)    11.8456
+
+ M, (1/n)          19.632
+ MW, MOL WT        18.024
+ (dLV/dLP)t      -1.00401
+ (dLV/dLT)p        1.0677
+ Cp, KJ/(KG)(K)    3.1764
+ GAMMAs            1.1737
+ SON VEL,M/SEC     1201.8
+
+ MOLE FRACTIONS
+
+ *C              7.7702-7
+ *CH             1.1742-6
+ CH2             1.3073-5
+ CH3             1.5349-4
+ CH2OH           1.0451-9
+ CH3O            2.320-10
+ CH4             2.3791-4
+ CH3OH           3.498-10
+ *CO             5.6990-1
+ *CO2            1.2064-5
+ COOH            4.317-10
+ *C2             4.1969-7
+ C2H             9.3097-5
+ C2H2,acetylene  1.5030-2
+ C2H2,vinylidene 3.7866-5
+ CH2CO,ketene    8.4595-6
+ O(CH)2O         2.681-12
+ C2H3,vinyl      1.0045-5
+ CH3CO,acetyl    9.8708-9
+ C2H4            2.6667-5
+ C2H4O,ethylen-o 7.081-13
+ CH3CHO,ethanal  1.0179-9
+ CH3COOH         2.723-14
+ C2H5            3.1149-8
+ C2H6            8.4679-9
+ C2H5OH          6.191-14
+ CH3OCH3         1.196-15
+ C2O             2.3058-6
+ *C3             4.2842-6
+ C3H3,1-propynl  6.2545-8
+ C3H3,2-propynl  4.2954-5
+ C3H4,allene     1.4826-6
+ C3H4,propyne    3.1872-6
+ C3H4,cyclo-     3.1795-8
+ C3H5,allyl      2.5015-8
+ C3H6,propylene  6.6374-9
+ C3H6,cyclo-     4.808-11
+ C3H6O,propylox  1.190-16
+ C3H6O,acetone   6.516-14
+ C3H6O,propanal  8.856-14
+ C3H7,n-propyl   2.887-12
+ C3H7,i-propyl   1.844-12
+ C3H8            7.581-13
+ C3O2            4.8871-8
+ *C4             1.0838-8
+ C4H2,butadiyne  2.9332-4
+ C4H4,1,3-cyclo- 4.766-10
+ C4H6,butadiene  1.7982-9
+ C4H6,1butyne    3.098-10
+ C4H6,2butyne    1.547-10
+ C4H6,cyclo-     6.581-12
+ C4H8,1-butene   5.438-13
+ C4H8,cis2-buten 1.725-13
+ C4H8,tr2-butene 1.957-13
+ C4H8,isobutene  1.922-13
+ C4H8,cyclo-     5.015-16
+ C4H9,n-butyl    4.384-16
+ C4H9,i-butyl    2.050-16
+ C4H9,s-butyl    2.733-16
+ *C5             5.8030-8
+ C5H6,1,3cyclo-  4.750-11
+ C5H8,cyclo-     6.383-15
+ C6H2            6.0591-6
+ C6H5,phenyl     4.248-11
+ C6H5O,phenoxy   2.299-15
+ C6H6            7.603-11
+ C6H5OH,phenol   1.761-15
+ C7H7,benzyl     2.099-13
+ C7H8            2.637-14
+ C8H8,styrene    9.362-15
+ C10H8,naphthale 4.784-16
+ *H              1.3044-2
+ HCO             1.6173-5
+ HCCO            8.2444-7
+ HO2             5.558-15
+ *H2             3.1913-1
+ HCHO,formaldehy 1.9264-6
+ HCOOH           2.674-10
+ H2O             4.8650-5
+ H2O2            3.608-15
+ *O              1.5432-8
+ *OH             6.6513-7
+ *O2             9.360-13
+ C(gr)           8.1880-2
+
+  * THERMODYNAMIC PROPERTIES FITTED TO 20000.K
+
+
+
+
+
+
+
+
+
+         THERMODYNAMIC EQUILIBRIUM COMBUSTION PROPERTIES AT ASSIGNED
+
+                                     VOLUME
+
+ CASE =                
+
+             REACTANT                       MOLES         ENERGY      TEMP
+                                                         KJ/KG-MOL      K
+ FUEL        C6H6                         1.0000000     80537.766    300.000
+ OXIDANT     O2                           7.5000000     -2439.995    300.000
+
+ O/F=    0.99110  %FUEL= 50.223557  R,EQ.RATIO= 3.100000  PHI,EQ.RATIO= 3.100000
+
+ THERMODYNAMIC PROPERTIES
+
+ P, BAR            23.272
+ T, K             2866.66
+ RHO, KG/CU M    1.9258 0
+ H, KJ/KG         1688.32
+ U, KJ/KG          479.88
+ G, KJ/KG        -32137.8
+ S, KJ/(KG)(K)    11.7998
+
+ M, (1/n)          19.724
+ MW, MOL WT        17.680
+ (dLV/dLP)t      -1.00367
+ (dLV/dLT)p        1.0619
+ Cp, KJ/(KG)(K)    3.1091
+ GAMMAs            1.1754
+ SON VEL,M/SEC     1191.8
+
+ MOLE FRACTIONS
+
+ *C              5.1688-7
+ *CH             8.4187-7
+ CH2             1.0629-5
+ CH3             1.4404-4
+ CH2OH           9.736-10
+ CH3O            2.104-10
+ CH4             2.5254-4
+ CH3OH           3.631-10
+ *CO             5.4996-1
+ *CO2            1.2275-5
+ COOH            3.994-10
+ *C2             2.6365-7
+ C2H             6.8020-5
+ C2H2,acetylene  1.3360-2
+ C2H2,vinylidene 3.0525-5
+ CH2CO,ketene    7.9650-6
+ O(CH)2O         2.487-12
+ C2H3,vinyl      8.6756-6
+ CH3CO,acetyl    9.1107-9
+ C2H4            2.6565-5
+ C2H4O,ethylen-o 6.733-13
+ CH3CHO,ethanal  1.0353-9
+ CH3COOH         2.882-14
+ C2H5            3.0079-8
+ C2H6            9.2020-9
+ C2H5OH          6.605-14
+ CH3OCH3         1.241-15
+ C2O             1.7688-6
+ *C3             2.7125-6
+ C3H3,1-propynl  4.9787-8
+ C3H3,2-propynl  3.6347-5
+ C3H4,allene     1.3645-6
+ C3H4,propyne    2.9458-6
+ C3H4,cyclo-     2.7886-8
+ C3H5,allyl      2.3415-8
+ C3H6,propylene  6.8050-9
+ C3H6,cyclo-     4.821-11
+ C3H6O,propylox  1.169-16
+ C3H6O,acetone   6.901-14
+ C3H6O,propanal  9.176-14
+ C3H7,n-propyl   2.843-12
+ C3H7,i-propyl   1.830-12
+ C3H8            8.412-13
+ C3O2            4.2026-8
+ *C4             6.0853-9
+ C4H2,butadiyne  2.3050-4
+ C4H4,1,3-cyclo- 3.936-10
+ C4H6,butadiene  1.7111-9
+ C4H6,1butyne    2.926-10
+ C4H6,2butyne    1.479-10
+ C4H6,cyclo-     6.227-12
+ C4H8,1-butene   5.695-13
+ C4H8,cis2-buten 1.818-13
+ C4H8,tr2-butene 2.063-13
+ C4H8,isobutene  2.032-13
+ C4H8,cyclo-     5.151-16
+ C4H9,n-butyl    4.438-16
+ C4H9,i-butyl    2.085-16
+ C4H9,s-butyl    2.771-16
+ *C5             3.2329-8
+ C5H6,1,3cyclo-  4.552-11
+ C5H8,cyclo-     6.535-15
+ C6H2            4.2058-6
+ C6H5,phenyl     3.627-11
+ C6H5O,phenoxy   2.075-15
+ C6H6            7.523-11
+ C6H5OH,phenol   1.735-15
+ C7H7,benzyl     1.931-13
+ C7H8            2.688-14
+ C8H8,styrene    9.061-15
+ C10H8,naphthale 4.596-16
+ *H              1.1455-2
+ HCO             1.4396-5
+ HCCO            6.7941-7
+ HO2             4.514-15
+ *H2             3.2072-1
+ HCHO,formaldehy 1.8766-6
+ HCOOH           2.714-10
+ H2O             5.0934-5
+ H2O2            3.204-15
+ *O              1.1998-8
+ *OH             5.8953-7
+ *O2             7.601-13
+ C(gr)           1.0359-1
+
+  * THERMODYNAMIC PROPERTIES FITTED TO 20000.K
+
+
+
+
+
+
+
+
+
+         THERMODYNAMIC EQUILIBRIUM COMBUSTION PROPERTIES AT ASSIGNED
+
+                                     VOLUME
+
+ CASE =                
+
+             REACTANT                       MOLES         ENERGY      TEMP
+                                                         KJ/KG-MOL      K
+ FUEL        C6H6                         1.0000000     80537.766    300.000
+ OXIDANT     O2                           7.5000000     -2439.995    300.000
+
+ O/F=    0.96013  %FUEL= 51.017135  R,EQ.RATIO= 3.200000  PHI,EQ.RATIO= 3.200000
+
+ THERMODYNAMIC PROPERTIES
+
+ P, BAR            22.860
+ T, K             2828.53
+ RHO, KG/CU M    1.9258 0
+ H, KJ/KG         1675.70
+ U, KJ/KG          488.67
+ G, KJ/KG        -31573.5
+ S, KJ/(KG)(K)    11.7549
+
+ M, (1/n)          19.812
+ MW, MOL WT        17.362
+ (dLV/dLP)t      -1.00337
+ (dLV/dLT)p        1.0565
+ Cp, KJ/(KG)(K)    3.0465
+ GAMMAs            1.1770
+ SON VEL,M/SEC     1182.0
+
+ MOLE FRACTIONS
+
+ *C              3.4377-7
+ *CH             6.0315-7
+ CH2             8.6306-6
+ CH3             1.3495-4
+ CH2OH           9.060-10
+ CH3O            1.906-10
+ CH4             2.6761-4
+ CH3OH           3.765-10
+ *CO             5.3144-1
+ *CO2            1.2519-5
+ COOH            3.700-10
+ *C2             1.6554-7
+ C2H             4.9659-5
+ C2H2,acetylene  1.1864-2
+ C2H2,vinylidene 2.4573-5
+ CH2CO,ketene    7.4978-6
+ O(CH)2O         2.308-12
+ C2H3,vinyl      7.4784-6
+ CH3CO,acetyl    8.4012-9
+ C2H4            2.6405-5
+ C2H4O,ethylen-o 6.391-13
+ CH3CHO,ethanal  1.0515-9
+ CH3COOH         3.047-14
+ C2H5            2.8958-8
+ C2H6            9.9655-9
+ C2H5OH          7.027-14
+ CH3OCH3         1.284-15
+ C2O             1.3579-6
+ *C3             1.7162-6
+ C3H3,1-propynl  3.9546-8
+ C3H3,2-propynl  3.0694-5
+ C3H4,allene     1.2527-6
+ C3H4,propyne    2.7160-6
+ C3H4,cyclo-     2.4395-8
+ C3H5,allyl      2.1850-8
+ C3H6,propylene  6.9517-9
+ C3H6,cyclo-     4.816-11
+ C3H6O,propylox  1.145-16
+ C3H6O,acetone   7.288-14
+ C3H6O,propanal  9.480-14
+ C3H7,n-propyl   2.787-12
+ C3H7,i-propyl   1.808-12
+ C3H8            9.289-13
+ C3O2            3.6204-8
+ *C4             3.4139-9
+ C4H2,butadiyne  1.8086-4
+ C4H4,1,3-cyclo- 3.242-10
+ C4H6,butadiene  1.6238-9
+ C4H6,1butyne    2.753-10
+ C4H6,2butyne    1.409-10
+ C4H6,cyclo-     5.871-12
+ C4H8,1-butene   5.934-13
+ C4H8,cis2-buten 1.908-13
+ C4H8,tr2-butene 2.163-13
+ C4H8,isobutene  2.138-13
+ C4H8,cyclo-     5.265-16
+ C4H9,n-butyl    4.466-16
+ C4H9,i-butyl    2.108-16
+ C4H9,s-butyl    2.793-16
+ *C5             1.7993-8
+ C5H6,1,3cyclo-  4.346-11
+ C5H8,cyclo-     6.656-15
+ C6H2            2.9140-6
+ C6H5,phenyl     3.086-11
+ C6H5O,phenoxy   1.869-15
+ C6H6            7.416-11
+ C6H5OH,phenol   1.704-15
+ C7H7,benzyl     1.769-13
+ C7H8            2.725-14
+ C8H8,styrene    8.719-15
+ C10H8,naphthale 4.392-16
+ *H              1.0059-2
+ HCO             1.2821-5
+ HCCO            5.5999-7
+ HO2             3.671-15
+ *H2             3.2213-1
+ HCHO,formaldehy 1.8280-6
+ HCOOH           2.757-10
+ H2O             5.3336-5
+ H2O2            2.846-15
+ *O              9.3384-9
+ *OH             5.2280-7
+ *O2             6.184-13
+ C(gr)           1.2368-1
+
+  * THERMODYNAMIC PROPERTIES FITTED TO 20000.K
+
+
+
+
+
+
+
+
+
+         THERMODYNAMIC EQUILIBRIUM COMBUSTION PROPERTIES AT ASSIGNED
+
+                                     VOLUME
+
+ CASE =                
+
+             REACTANT                       MOLES         ENERGY      TEMP
+                                                         KJ/KG-MOL      K
+ FUEL        C6H6                         1.0000000     80537.766    300.000
+ OXIDANT     O2                           7.5000000     -2439.995    300.000
+
+ O/F=    0.93103  %FUEL= 51.785807  R,EQ.RATIO= 3.300000  PHI,EQ.RATIO= 3.300000
+
+ THERMODYNAMIC PROPERTIES
+
+ P, BAR            22.462
+ T, K             2791.32
+ RHO, KG/CU M    1.9258 0
+ H, KJ/KG         1663.55
+ U, KJ/KG          497.18
+ G, KJ/KG        -31025.3
+ S, KJ/(KG)(K)    11.7109
+
+ M, (1/n)          19.898
+ MW, MOL WT        17.066
+ (dLV/dLP)t      -1.00309
+ (dLV/dLT)p        1.0517
+ Cp, KJ/(KG)(K)    2.9883
+ GAMMAs            1.1786
+ SON VEL,M/SEC     1172.5
+
+ MOLE FRACTIONS
+
+ *C              2.2859-7
+ *CH             4.3183-7
+ CH2             7.0001-6
+ CH3             1.2625-4
+ CH2OH           8.425-10
+ CH3O            1.725-10
+ CH4             2.8314-4
+ CH3OH           3.899-10
+ *CO             5.1419-1
+ *CO2            1.2795-5
+ COOH            3.431-10
+ *C2             1.0389-7
+ C2H             3.6228-5
+ C2H2,acetylene  1.0526-2
+ C2H2,vinylidene 1.9756-5
+ CH2CO,ketene    7.0570-6
+ O(CH)2O         2.144-12
+ C2H3,vinyl      6.4353-6
+ CH3CO,acetyl    7.7411-9
+ C2H4            2.6195-5
+ C2H4O,ethylen-o 6.059-13
+ CH3CHO,ethanal  1.0666-9
+ CH3COOH         3.222-14
+ C2H5            2.7803-8
+ C2H6            1.0760-8
+ C2H5OH          7.459-14
+ CH3OCH3         1.325-15
+ C2O             1.0432-6
+ *C3             1.0851-6
+ C3H3,1-propynl  3.1350-8
+ C3H3,2-propynl  2.5875-5
+ C3H4,allene     1.1476-6
+ C3H4,propyne    2.4986-6
+ C3H4,cyclo-     2.1292-8
+ C3H5,allyl      2.0334-8
+ C3H6,propylene  7.0787-9
+ C3H6,cyclo-     4.796-11
+ C3H6O,propylox  1.119-16
+ C3H6O,acetone   7.678-14
+ C3H6O,propanal  9.770-14
+ C3H7,n-propyl   2.722-12
+ C3H7,i-propyl   1.778-12
+ C3H8            1.021-12
+ C3O2            3.1240-8
+ *C4             1.9138-9
+ C4H2,butadiyne  1.4173-4
+ C4H4,1,3-cyclo- 2.664-10
+ C4H6,butadiene  1.5373-9
+ C4H6,1butyne    2.581-10
+ C4H6,2butyne    1.338-10
+ C4H6,cyclo-     5.515-12
+ C4H8,1-butene   6.155-13
+ C4H8,cis2-buten 1.992-13
+ C4H8,tr2-butene 2.258-13
+ C4H8,isobutene  2.239-13
+ C4H8,cyclo-     5.357-16
+ C4H9,n-butyl    4.471-16
+ C4H9,i-butyl    2.120-16
+ C4H9,s-butyl    2.801-16
+ C4H10,n-butane  1.029-16
+ *C5             1.0004-8
+ C5H6,1,3cyclo-  4.135-11
+ C5H8,cyclo-     6.750-15
+ C6H2            2.0155-6
+ C6H5,phenyl     2.618-11
+ C6H5O,phenoxy   1.679-15
+ C6H6            7.286-11
+ C6H5OH,phenol   1.669-15
+ C7H7,benzyl     1.614-13
+ C7H8            2.751-14
+ C8H8,styrene    8.346-15
+ C10H8,naphthale 4.177-16
+ *H              8.8323-3
+ HCO             1.1422-5
+ HCCO            4.6166-7
+ HO2             2.988-15
+ *H2             3.2337-1
+ HCHO,formaldehy 1.7807-6
+ HCOOH           2.803-10
+ H2O             5.5863-5
+ H2O2            2.530-15
+ *O              7.2752-9
+ *OH             4.6386-7
+ *O2             5.040-13
+ C(gr)           1.4232-1
+
+  * THERMODYNAMIC PROPERTIES FITTED TO 20000.K
+
+
+
+
+
+
+
+
+
+         THERMODYNAMIC EQUILIBRIUM COMBUSTION PROPERTIES AT ASSIGNED
+
+                                     VOLUME
+
+ CASE =                
+
+             REACTANT                       MOLES         ENERGY      TEMP
+                                                         KJ/KG-MOL      K
+ FUEL        C6H6                         1.0000000     80537.766    300.000
+ OXIDANT     O2                           7.5000000     -2439.995    300.000
+
+ O/F=    0.90365  %FUEL= 52.530727  R,EQ.RATIO= 3.400000  PHI,EQ.RATIO= 3.400000
+
+ THERMODYNAMIC PROPERTIES
+
+ P, BAR            22.078
+ T, K             2755.01
+ RHO, KG/CU M    1.9258 0
+ H, KJ/KG         1651.84
+ U, KJ/KG          505.43
+ G, KJ/KG        -30492.7
+ S, KJ/(KG)(K)    11.6677
+
+ M, (1/n)          19.981
+ MW, MOL WT        16.791
+ (dLV/dLP)t      -1.00285
+ (dLV/dLT)p        1.0472
+ Cp, KJ/(KG)(K)    2.9346
+ GAMMAs            1.1801
+ SON VEL,M/SEC     1163.2
+
+ MOLE FRACTIONS
+
+ *C              1.5198-7
+ *CH             3.0899-7
+ CH2             5.6718-6
+ CH3             1.1796-4
+ CH2OH           7.828-10
+ CH3O            1.561-10
+ CH4             2.9917-4
+ CH3OH           4.033-10
+ *CO             4.9808-1
+ *CO2            1.3103-5
+ COOH            3.186-10
+ *C2             6.5177-8
+ C2H             2.6413-5
+ C2H2,acetylene  9.3320-3
+ C2H2,vinylidene 1.5866-5
+ CH2CO,ketene    6.6417-6
+ O(CH)2O         1.992-12
+ C2H3,vinyl      5.5294-6
+ CH3CO,acetyl    7.1282-9
+ C2H4            2.5940-5
+ C2H4O,ethylen-o 5.738-13
+ CH3CHO,ethanal  1.0808-9
+ CH3COOH         3.405-14
+ C2H5            2.6629-8
+ C2H6            1.1585-8
+ C2H5OH          7.899-14
+ CH3OCH3         1.365-15
+ C2O             8.0208-7
+ *C3             6.8569-7
+ C3H3,1-propynl  2.4810-8
+ C3H3,2-propynl  2.1777-5
+ C3H4,allene     1.0492-6
+ C3H4,propyne    2.2942-6
+ C3H4,cyclo-     1.8546-8
+ C3H5,allyl      1.8876-8
+ C3H6,propylene  7.1871-9
+ C3H6,cyclo-     4.762-11
+ C3H6O,propylox  1.090-16
+ C3H6O,acetone   8.071-14
+ C3H6O,propanal  1.005-13
+ C3H7,n-propyl   2.649-12
+ C3H7,i-propyl   1.743-12
+ C3H8            1.119-12
+ C3O2            2.6999-8
+ *C4             1.0722-9
+ C4H2,butadiyne  1.1094-4
+ C4H4,1,3-cyclo- 2.184-10
+ C4H6,butadiene  1.4524-9
+ C4H6,1butyne    2.412-10
+ C4H6,2butyne    1.266-10
+ C4H6,cyclo-     5.166-12
+ C4H8,1-butene   6.359-13
+ C4H8,cis2-buten 2.072-13
+ C4H8,tr2-butene 2.348-13
+ C4H8,isobutene  2.336-13
+ C4H8,cyclo-     5.429-16
+ C4H9,n-butyl    4.455-16
+ C4H9,i-butyl    2.122-16
+ C4H9,s-butyl    2.795-16
+ C4H10,n-butane  1.146-16
+ *C5             5.5581-9
+ C5H6,1,3cyclo-  3.922-11
+ C5H8,cyclo-     6.818-15
+ C6H2            1.3920-6
+ C6H5,phenyl     2.214-11
+ C6H5O,phenoxy   1.506-15
+ C6H6            7.137-11
+ C6H5OH,phenol   1.631-15
+ C7H7,benzyl     1.467-13
+ C7H8            2.765-14
+ C8H8,styrene    7.951-15
+ C10H8,naphthale 3.955-16
+ *H              7.7549-3
+ HCO             1.0179-5
+ HCCO            3.8068-7
+ HO2             2.434-15
+ *H2             3.2446-1
+ HCHO,formaldehy 1.7346-6
+ HCOOH           2.852-10
+ H2O             5.8525-5
+ H2O2            2.251-15
+ *O              5.6733-9
+ *OH             4.1178-7
+ *O2             4.114-13
+ C(gr)           1.5965-1
+
+  * THERMODYNAMIC PROPERTIES FITTED TO 20000.K
+
+
+
+
+
+
+
+
+
+         THERMODYNAMIC EQUILIBRIUM COMBUSTION PROPERTIES AT ASSIGNED
+
+                                     VOLUME
+
+ CASE =                
+
+             REACTANT                       MOLES         ENERGY      TEMP
+                                                         KJ/KG-MOL      K
+ FUEL        C6H6                         1.0000000     80537.766    300.000
+ OXIDANT     O2                           7.5000000     -2439.995    300.000
+
+ O/F=    0.87783  %FUEL= 53.252978  R,EQ.RATIO= 3.500000  PHI,EQ.RATIO= 3.500000
+
+ THERMODYNAMIC PROPERTIES
+
+ P, BAR            21.706
+ T, K             2719.57
+ RHO, KG/CU M    1.9258 0
+ H, KJ/KG         1640.56
+ U, KJ/KG          513.42
+ G, KJ/KG        -29975.3
+ S, KJ/(KG)(K)    11.6253
+
+ M, (1/n)          20.061
+ MW, MOL WT        16.535
+ (dLV/dLP)t      -1.00264
+ (dLV/dLT)p        1.0431
+ Cp, KJ/(KG)(K)    2.8850
+ GAMMAs            1.1816
+ SON VEL,M/SEC     1154.0
+
+ MOLE FRACTIONS
+
+ *C              1.0105-7
+ *CH             2.2100-7
+ CH2             4.5917-6
+ CH3             1.1008-4
+ CH2OH           7.269-10
+ CH3O            1.411-10
+ CH4             3.1573-4
+ CH3OH           4.169-10
+ *CO             4.8300-1
+ *CO2            1.3445-5
+ COOH            2.962-10
+ *C2             4.0880-8
+ C2H             1.9248-5
+ C2H2,acetylene  8.2675-3
+ C2H2,vinylidene 1.2729-5
+ CH2CO,ketene    6.2507-6
+ O(CH)2O         1.852-12
+ C2H3,vinyl      4.7446-6
+ CH3CO,acetyl    6.5606-9
+ C2H4            2.5647-5
+ C2H4O,ethylen-o 5.429-13
+ CH3CHO,ethanal  1.0942-9
+ CH3COOH         3.598-14
+ C2H5            2.5449-8
+ C2H6            1.2443-8
+ C2H5OH          8.351-14
+ CH3OCH3         1.403-15
+ C2O             6.1715-7
+ *C3             4.3310-7
+ C3H3,1-propynl  1.9604-8
+ C3H3,2-propynl  1.8303-5
+ C3H4,allene     9.5760-7
+ C3H4,propyne    2.1028-6
+ C3H4,cyclo-     1.6124-8
+ C3H5,allyl      1.7485-8
+ C3H6,propylene  7.2784-9
+ C3H6,cyclo-     4.717-11
+ C3H6O,propylox  1.060-16
+ C3H6O,acetone   8.469-14
+ C3H6O,propanal  1.031-13
+ C3H7,n-propyl   2.569-12
+ C3H7,i-propyl   1.704-12
+ C3H8            1.221-12
+ C3O2            2.3370-8
+ *C4             6.005-10
+ C4H2,butadiyne  8.6747-5
+ C4H4,1,3-cyclo- 1.787-10
+ C4H6,butadiene  1.3697-9
+ C4H6,1butyne    2.248-10
+ C4H6,2butyne    1.195-10
+ C4H6,cyclo-     4.826-12
+ C4H8,1-butene   6.546-13
+ C4H8,cis2-buten 2.148-13
+ C4H8,tr2-butene 2.433-13
+ C4H8,isobutene  2.428-13
+ C4H8,cyclo-     5.483-16
+ C4H9,n-butyl    4.421-16
+ C4H9,i-butyl    2.115-16
+ C4H9,s-butyl    2.778-16
+ C4H10,n-butane  1.269-16
+ *C5             3.0860-9
+ C5H6,1,3cyclo-  3.711-11
+ C5H8,cyclo-     6.862-15
+ C6H2            9.6014-7
+ C6H5,phenyl     1.869-11
+ C6H5O,phenoxy   1.348-15
+ C6H6            6.973-11
+ C6H5OH,phenol   1.590-15
+ C7H7,benzyl     1.329-13
+ C7H8            2.769-14
+ C8H8,styrene    7.544-15
+ C10H8,naphthale 3.731-16
+ *H              6.8089-3
+ HCO             9.0763-6
+ HCCO            3.1399-7
+ HO2             1.986-15
+ *H2             3.2543-1
+ HCHO,formaldehy 1.6898-6
+ HCOOH           2.904-10
+ H2O             6.1330-5
+ H2O2            2.003-15
+ *O              4.4283-9
+ *OH             3.6575-7
+ *O2             3.364-13
+ C(gr)           1.7580-1
+
+  * THERMODYNAMIC PROPERTIES FITTED TO 20000.K
+
+
+
+
+
+
+
+
+
+         THERMODYNAMIC EQUILIBRIUM COMBUSTION PROPERTIES AT ASSIGNED
+
+                                     VOLUME
+
+ CASE =                
+
+             REACTANT                       MOLES         ENERGY      TEMP
+                                                         KJ/KG-MOL      K
+ FUEL        C6H6                         1.0000000     80537.766    300.000
+ OXIDANT     O2                           7.5000000     -2439.995    300.000
+
+ O/F=    0.85345  %FUEL= 53.953581  R,EQ.RATIO= 3.600000  PHI,EQ.RATIO= 3.600000
+
+ THERMODYNAMIC PROPERTIES
+
+ P, BAR            21.348
+ T, K             2685.00
+ RHO, KG/CU M    1.9258 0
+ H, KJ/KG         1629.69
+ U, KJ/KG          521.18
+ G, KJ/KG        -29472.6
+ S, KJ/(KG)(K)    11.5837
+
+ M, (1/n)          20.139
+ MW, MOL WT        16.295
+ (dLV/dLP)t      -1.00245
+ (dLV/dLT)p        1.0394
+ Cp, KJ/(KG)(K)    2.8395
+ GAMMAs            1.1829
+ SON VEL,M/SEC     1145.1
+
+ MOLE FRACTIONS
+
+ *C              6.7193-8
+ *CH             1.5802-7
+ CH2             3.7146-6
+ CH3             1.0263-4
+ CH2OH           6.747-10
+ CH3O            1.276-10
+ CH4             3.3284-4
+ CH3OH           4.306-10
+ *CO             4.6885-1
+ *CO2            1.3819-5
+ COOH            2.757-10
+ *C2             2.5638-8
+ C2H             1.4022-5
+ C2H2,acetylene  7.3202-3
+ C2H2,vinylidene 1.0204-5
+ CH2CO,ketene    5.8830-6
+ O(CH)2O         1.723-12
+ C2H3,vinyl      4.0666-6
+ CH3CO,acetyl    6.0360-9
+ C2H4            2.5322-5
+ C2H4O,ethylen-o 5.132-13
+ CH3CHO,ethanal  1.1069-9
+ CH3COOH         3.802-14
+ C2H5            2.4276-8
+ C2H6            1.3336-8
+ C2H5OH          8.814-14
+ CH3OCH3         1.440-15
+ C2O             4.7525-7
+ *C3             2.7348-7
+ C3H3,1-propynl  1.5471-8
+ C3H3,2-propynl  1.5364-5
+ C3H4,allene     8.7267-7
+ C3H4,propyne    1.9245-6
+ C3H4,cyclo-     1.3997-8
+ C3H5,allyl      1.6166-8
+ C3H6,propylene  7.3539-9
+ C3H6,cyclo-     4.661-11
+ C3H6O,propylox  1.030-16
+ C3H6O,acetone   8.871-14
+ C3H6O,propanal  1.056-13
+ C3H7,n-propyl   2.485-12
+ C3H7,i-propyl   1.660-12
+ C3H8            1.328-12
+ C3O2            2.0259-8
+ *C4             3.362-10
+ C4H2,butadiyne  6.7776-5
+ C4H4,1,3-cyclo- 1.460-10
+ C4H6,butadiene  1.2898-9
+ C4H6,1butyne    2.089-10
+ C4H6,2butyne    1.125-10
+ C4H6,cyclo-     4.498-12
+ C4H8,1-butene   6.717-13
+ C4H8,cis2-buten 2.219-13
+ C4H8,tr2-butene 2.512-13
+ C4H8,isobutene  2.515-13
+ C4H8,cyclo-     5.521-16
+ C4H9,n-butyl    4.371-16
+ C4H9,i-butyl    2.100-16
+ C4H9,s-butyl    2.751-16
+ C4H10,n-butane  1.401-16
+ *C5             1.7128-9
+ C5H6,1,3cyclo-  3.502-11
+ C5H8,cyclo-     6.885-15
+ C6H2            6.6159-7
+ C6H5,phenyl     1.574-11
+ C6H5O,phenoxy   1.206-15
+ C6H6            6.796-11
+ C6H5OH,phenol   1.548-15
+ C7H7,benzyl     1.200-13
+ C7H8            2.764-14
+ C8H8,styrene    7.130-15
+ C10H8,naphthale 3.508-16
+ *H              5.9786-3
+ HCO             8.0963-6
+ HCCO            2.5908-7
+ HO2             1.622-15
+ *H2             3.2627-1
+ HCHO,formaldehy 1.6464-6
+ HCOOH           2.960-10
+ H2O             6.4286-5
+ H2O2            1.784-15
+ *O              3.4600-9
+ *OH             3.2506-7
+ *O2             2.755-13
+ C(gr)           1.9090-1
+
+  * THERMODYNAMIC PROPERTIES FITTED TO 20000.K
+
+
+

@@ -16,7 +16,7 @@
 % * Alberto Cuadra Lara, Universidad Carlos III de Madrid (UC3M)
 % * Marcos Vera Coello,  Universidad Carlos III de Madrid (UC3M)
 %
-% Last update: 15-Jan-2020 10:57
+% Last update: 05-Feb-2020 18:07
 %% LOAD DATABASES AND GLOBAL CONSTANTS
 addpath(genpath(pwd));
 [app,strThProp,strMaster] = Initialize(); 
@@ -26,7 +26,7 @@ app.Misc.save_Excel = false;
 
 % app.PD.CompleteOrIncomplete = 'complete';
 app.PD.CompleteOrIncomplete = 'incomplete'; 
-app.TN.factor_c = 0.8; % factor_c = 1 (default).
+app.TN.factor_c = 1; % factor_c = 1 (default).
 %% MINORS PRODUCTS
 % Specify the minority products to be considered in the product mixture (P) in
 % addition to the major species (CO2, CO, H2O, H2, O2, N2, C(gr))
@@ -54,19 +54,19 @@ app.TN.factor_c = 0.8; % factor_c = 1 (default).
 %%
 % HC/O2/N2 EXTENDED
 
-% app.M.minor_products = {'OH','H','O','HO2','NO','HCO','CH4','CH3','HO2',...
-%     'NO2','NH3','NH2','N','HCN','CN','N2O','C2','CH'};
+app.M.minor_products = {'OH','H','O','HO2','NO','HCO','CH4','CH3','HO2',...
+    'NO2','NH3','NH2','N','HCN','CN','N2O','C2','CH'};
 %%
 % load strThProp_HC_47.mat
 % SOOT FORMATION 
-app.M.minor_products = {'H2', 'H', 'O', 'O2', 'OH', 'H2O', 'HO2', 'H2O2',...
-    'CH', 'CH2', 'CH3', 'CH4', 'CO', 'CO2', 'HCO',...
-    'CH2OH', 'CH3O', 'CH3OH', 'C2H', 'C2H4',...
-    'C2H5', 'C2H6', 'HCCO', 'N', 'NH', 'NH2', 'NH3',...
-    'NO', 'NO2', 'N2O', 'HNO', 'CN', 'HCN',...
-    'NCO', 'N2', 'Ar', 'C3H8','C2','C2H2_acetylene','C6H6',...
-    'C8H18_isooctane','C2H5OH','He','HNC','HNCO','NH2OH',...
-    };
+% app.M.minor_products = {'H2', 'H', 'O', 'O2', 'OH', 'H2O', 'HO2', 'H2O2',...
+%     'CH', 'CH2', 'CH3', 'CH4', 'CO', 'CO2', 'HCO',...
+%     'CH2OH', 'CH3O', 'CH3OH', 'C2H', 'C2H4',...
+%     'C2H5', 'C2H6', 'HCCO', 'N', 'NH', 'NH2', 'NH3',...
+%     'NO', 'NO2', 'N2O', 'HNO', 'CN', 'HCN',...
+%     'NCO', 'N2', 'Ar', 'C3H8','C2','C2H2_acetylene','C6H6',...
+%     'C8H18_isooctane','C2H5OH','He','HNC','HNCO','NH2OH',...
+%     };
 % app.M.minor_products = fieldnames(strThProp)';
 % SOOT FORMATION WITHOUT CH4 CONSIDERED AS MINOR SPECIE
 % app.M.minor_products = {'H2', 'H', 'O', 'O2', 'OH', 'H2O', 'HO2', 'H2O2',...
@@ -151,8 +151,9 @@ app.M.minor_products = {'H2', 'H', 'O', 'O2', 'OH', 'H2O', 'HO2', 'H2O2',...
 %%
 % *HYDROGEN*
 
-%  app.M.minor_products = {'H','HNO3','H2O','NH','NH2OH','NO3','N2H2','N2O3','N3','OH','HNO2',...
-%     'H2','N','NH3','NO2','N2O','N2H4','N2O5','O','O3','He','Ar','CO2','CO','O2','N2','HO2','NH2','H2O2'};
+%  app.M.minor_products = {'H','HNO','HNO3','H2O','NH','NH2OH','NO3','N2H2','N2O3','N3','OH','HNO2',...
+%     'H2','N','NH3','NO2','N2O','N2H4','N2O5','O','O3','He','Ar','CO2','CO','O2','N2','HO2','NH2','H2O2',...
+%     'N3H','NH2NO2'};
 %% CHECK SPECIES MINOR PRODUCTS --> SELECTED DATABASE (strThProp)
 % Checks if any specie of the app.M.minor_products considered are not included
 % in the selected database strThProp. In case some is missing compute it.
@@ -174,10 +175,9 @@ app.PD.TR.Value = 300;
 % app.PD.TR.Value = 300;
 app.PD.pR.Value = 1;
 % app.PD.phi.Value = 1*ones(1,length(app.PD.TR.vector.Value));
-app.PD.phi.Value = 0.1:0.1:2;
-% app.PD.phi.Value = 2.5:0.001:2.64;
+app.PD.phi.Value = 0.5:0.01:2.5;
 % app.PD.phi.Value = 0.1:0.1:0.3;
-% app.PD.phi.Value = 2;
+% app.PD.phi.Value = 0.88;
 %% INITIALIZATION
 [app.E,app.S,app.M,app.C,app.Misc,Problem_selected] = Initialize_2(app.E,app.S,app.M,app.C,app.Misc);
 %% PROBLEM TYPE
@@ -226,7 +226,7 @@ for i=app.C.l_phi:-1:1 % Evading preallocate struct
 % Define the fuel blend by specifying the fuel(s), the number of moles and
 % the temperature T [K]
 % app.PD.TR.Value = app.PD.TR.vector.Value(i);
-% app.PD.R_Fuel = 0; app.PD.phi_t = 1; app.PD.Fuel.x = 0; app.PD.Fuel.eps = 1e-1;
+% app.PD.R_Fuel = 0; app.PD.phi_t = 1; app.PD.Fuel.x = 0; app.PD.Fuel.eps = 1e-1; app.C.FLAG_Fuel = 0;
 % app.PD.S_Fuel = {'CH4','C2H6','C3H8'}; app.PD.N_Fuel = [0.85;0.1;0.05]; 
 app.PD.S_Fuel = {'CH4'}; app.PD.N_Fuel = 1;
 % app.PD.S_Fuel = {'H2'}; app.PD.N_Fuel = 1; 
@@ -238,10 +238,10 @@ app.PD.S_Fuel = {'CH4'}; app.PD.N_Fuel = 1;
 
 if ~isfield(app.PD,'R_Fuel')
     app.PD.R_Fuel = SetSpecies(app.C.M0.Value,app.PD.S_Fuel,app.PD.N_Fuel,app.PD.TR.Value,find_idx(app.PD.S_Fuel,app.S.NameSpecies),strThProp);
-    app.PS.strR_Fuel{i} = ComputeProperties(app.C.A0.Value,app.PD.R_Fuel,app.PD.pR.Value,app.PD.TR.Value,app.E.ind_C,app.E.ind_H); app.PS.strR{i}.phi = app.PD.phi.Value(i);
-    app.PD.Fuel.x = app.PS.strR_Fuel{i}.NatomE(app.E.ind_C);
-    app.PD.Fuel.y = app.PS.strR_Fuel{i}.NatomE(app.E.ind_H);
-    app.PD.Fuel.z = app.PS.strR_Fuel{i}.NatomE(app.E.ind_O);
+    app.PS.strR_Fuel = ComputeProperties(app.C.A0.Value,app.PD.R_Fuel,app.PD.pR.Value,app.PD.TR.Value,app.E.ind_C,app.E.ind_H); app.PS.strR{i}.phi = app.PD.phi.Value(i);
+    app.PD.Fuel.x = app.PS.strR_Fuel.NatomE(app.E.ind_C);
+    app.PD.Fuel.y = app.PS.strR_Fuel.NatomE(app.E.ind_H);
+    app.PD.Fuel.z = app.PS.strR_Fuel.NatomE(app.E.ind_O);
     app.PD.Fuel.eps = 0;
     app.PD.phi_t = app.PD.Fuel.x+app.PD.Fuel.y/4-app.PD.Fuel.z/2;
 end

@@ -15,6 +15,9 @@ toc(timer_0);
             else
                 displaysweepresults(strP,phi,NameSpecies,mintol_display,display_species);
             end
+%             if ~any(strcmp(ProblemType,{'TP','TV'}))
+%                 display_Tp_phi(strP,phi,app.Reactants.Items{sscanf(numberReactants,'%d')},app.Reaction.Items{aux3});
+%             end
         end
 % end
 % delete(f);

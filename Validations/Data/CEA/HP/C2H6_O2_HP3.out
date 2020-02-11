@@ -1,0 +1,400 @@
+
+ *******************************************************************************
+
+         NASA-GLENN CHEMICAL EQUILIBRIUM PROGRAM CEA2, MAY 21, 2004
+                   BY  BONNIE MCBRIDE AND SANFORD GORDON
+      REFS: NASA RP-1311, PART I, 1994 AND NASA RP-1311, PART II, 1996
+
+ *******************************************************************************
+
+
+
+ problem    phi,eq.ratio=3.7,3.8,3.9,4,
+       hp   p,bar=1,  t,k=3800
+ react
+   fuel=C2H6 moles=1 t,k=300
+   oxid=O2 moles=3.5 t,k=300
+ output
+      trace=1e-16 siunits short
+ end
+
+
+
+
+         THERMODYNAMIC EQUILIBRIUM COMBUSTION PROPERTIES AT ASSIGNED
+
+                                   PRESSURES
+
+ CASE =                
+
+             REACTANT                       MOLES         ENERGY      TEMP
+                                                         KJ/KG-MOL      K
+ FUEL        C2H6                         1.0000000    -83754.210    300.000
+ OXIDANT     O2                           3.5000000        54.358    300.000
+
+ O/F=    1.00665  %FUEL= 49.834189  R,EQ.RATIO= 3.700000  PHI,EQ.RATIO= 3.700000
+
+ THERMODYNAMIC PROPERTIES
+
+ P, BAR            1.0000
+ T, K             1192.83
+ RHO, KG/CU M    1.2631-1
+ H, KJ/KG        -1387.23
+ U, KJ/KG        -2178.94
+ G, KJ/KG        -21013.5
+ S, KJ/(KG)(K)    16.4535
+
+ M, (1/n)          12.527
+ MW, MOL WT        12.212
+ (dLV/dLP)t      -1.01492
+ (dLV/dLT)p        1.1868
+ Cp, KJ/(KG)(K)    4.2956
+ GAMMAs            1.2543
+ SON VEL,M/SEC      996.5
+
+ MOLE FRACTIONS
+
+ CH2             3.391-15
+ CH3             2.5758-8
+ CH2OH           7.601-14
+ CH3O            1.609-15
+ CH4             5.9730-3
+ CH3OH           5.092-10
+ *CO             3.7068-1
+ *CO2            2.9502-3
+ COOH            7.274-13
+ C2H2,acetylene  5.2990-8
+ C2H2,vinylidene 3.053-15
+ CH2CO,ketene    1.2222-8
+ O(CH)2O         1.019-15
+ C2H3,vinyl      2.336-13
+ CH3CO,acetyl    3.747-13
+ C2H4            4.4020-7
+ C2H4O,ethylen-o 1.195-16
+ CH3CHO,ethanal  1.674-10
+ CH3COOH         4.397-13
+ C2H5            3.197-12
+ C2H6            4.4581-8
+ C2H5OH          5.127-14
+ C3H3,2-propynl  1.094-13
+ C3H4,allene     5.446-12
+ C3H4,propyne    1.778-11
+ C3H4,cyclo-     7.387-16
+ C3H5,allyl      1.150-13
+ C3H6,propylene  6.933-11
+ C3H6,cyclo-     6.018-14
+ C3H6O,acetone   2.248-14
+ C3H6O,propanal  3.276-15
+ C3H8            1.129-12
+ C3O2            1.908-13
+ C4H2,butadiyne  1.745-15
+ C4H6,butadiene  3.754-14
+ C4H6,1butyne    4.774-16
+ C4H6,2butyne    9.816-16
+ C4H8,1-butene   1.648-15
+ C4H8,cis2-buten 1.019-15
+ C4H8,tr2-butene 1.156-15
+ C4H8,isobutene  1.580-15
+ C5H6,1,3cyclo-  4.425-16
+ C6H6            1.819-14
+ *H              1.3081-7
+ HCO             3.604-10
+ HCCO            5.240-15
+ *H2             5.8891-1
+ HCHO,formaldehy 1.1168-7
+ HCOOH           1.7864-9
+ H2O             6.3145-3
+ *OH             1.327-11
+ C(gr)           2.5171-2
+
+  * THERMODYNAMIC PROPERTIES FITTED TO 20000.K
+
+
+
+
+
+
+
+
+
+         THERMODYNAMIC EQUILIBRIUM COMBUSTION PROPERTIES AT ASSIGNED
+
+                                   PRESSURES
+
+ CASE =                
+
+             REACTANT                       MOLES         ENERGY      TEMP
+                                                         KJ/KG-MOL      K
+ FUEL        C2H6                         1.0000000    -83754.210    300.000
+ OXIDANT     O2                           3.5000000        54.358    300.000
+
+ O/F=    0.98016  %FUEL= 50.500877  R,EQ.RATIO= 3.800000  PHI,EQ.RATIO= 3.800000
+
+ THERMODYNAMIC PROPERTIES
+
+ P, BAR            1.0000
+ T, K             1174.05
+ RHO, KG/CU M    1.2836-1
+ H, KJ/KG        -1405.81
+ U, KJ/KG        -2184.88
+ G, KJ/KG        -20683.5
+ S, KJ/(KG)(K)    16.4199
+
+ M, (1/n)          12.530
+ MW, MOL WT        12.074
+ (dLV/dLP)t      -1.01791
+ (dLV/dLT)p        1.2293
+ Cp, KJ/(KG)(K)    4.7320
+ GAMMAs            1.2407
+ SON VEL,M/SEC      983.2
+
+ MOLE FRACTIONS
+
+ CH2             1.816-15
+ CH3             2.0654-8
+ CH2OH           6.483-14
+ CH3O            1.297-15
+ CH4             6.9381-3
+ CH3OH           5.931-10
+ *CO             3.5854-1
+ *CO2            3.6659-3
+ COOH            6.811-13
+ C2H2,acetylene  3.6785-8
+ C2H2,vinylidene 1.578-15
+ CH2CO,ketene    1.0870-8
+ O(CH)2O         9.558-16
+ C2H3,vinyl      1.469-13
+ CH3CO,acetyl    3.154-13
+ C2H4            4.1665-7
+ C2H4O,ethylen-o 1.092-16
+ CH3CHO,ethanal  1.839-10
+ CH3COOH         6.003-13
+ C2H5            2.744-12
+ C2H6            5.3597-8
+ C2H5OH          6.391-14
+ C3H3,2-propynl  6.480-14
+ C3H4,allene     4.102-12
+ C3H4,propyne    1.353-11
+ C3H4,cyclo-     4.850-16
+ C3H5,allyl      9.100-14
+ C3H6,propylene  7.034-11
+ C3H6,cyclo-     5.784-14
+ C3H6O,acetone   2.732-14
+ C3H6O,propanal  3.755-15
+ C3H8            1.425-12
+ C3O2            1.453-13
+ C4H2,butadiyne  8.423-16
+ C4H6,butadiene  3.251-14
+ C4H6,1butyne    3.810-16
+ C4H6,2butyne    8.136-16
+ C4H8,1-butene   1.755-15
+ C4H8,cis2-buten 1.104-15
+ C4H8,tr2-butene 1.254-15
+ C4H8,isobutene  1.728-15
+ C5H6,1,3cyclo-  3.720-16
+ C6H6            1.667-14
+ *H              9.0558-8
+ HCO             2.746-10
+ HCCO            3.200-15
+ *H2             5.8679-1
+ HCHO,formaldehy 1.0988-7
+ HCOOH           2.1950-9
+ H2O             7.6642-3
+ *OH             1.013-11
+ C(gr)           3.6408-2
+
+  * THERMODYNAMIC PROPERTIES FITTED TO 20000.K
+
+
+
+
+
+
+
+
+
+         THERMODYNAMIC EQUILIBRIUM COMBUSTION PROPERTIES AT ASSIGNED
+
+                                   PRESSURES
+
+ CASE =                
+
+             REACTANT                       MOLES         ENERGY      TEMP
+                                                         KJ/KG-MOL      K
+ FUEL        C2H6                         1.0000000    -83754.210    300.000
+ OXIDANT     O2                           3.5000000        54.358    300.000
+
+ O/F=    0.95503  %FUEL= 51.150078  R,EQ.RATIO= 3.900000  PHI,EQ.RATIO= 3.900000
+
+ THERMODYNAMIC PROPERTIES
+
+ P, BAR            1.0000
+ T, K             1157.48
+ RHO, KG/CU M    1.3027-1
+ H, KJ/KG        -1423.90
+ U, KJ/KG        -2191.55
+ G, KJ/KG        -20390.3
+ S, KJ/(KG)(K)    16.3860
+
+ M, (1/n)          12.537
+ MW, MOL WT        11.944
+ (dLV/dLP)t      -1.02108
+ (dLV/dLT)p        1.2750
+ Cp, KJ/(KG)(K)    5.2081
+ GAMMAs            1.2284
+ SON VEL,M/SEC      971.1
+
+ MOLE FRACTIONS
+
+ CH2             1.029-15
+ CH3             1.6887-8
+ CH2OH           5.593-14
+ CH3O            1.063-15
+ CH4             7.9467-3
+ CH3OH           6.793-10
+ *CO             3.4669-1
+ *CO2            4.4412-3
+ COOH            6.380-13
+ C2H2,acetylene  2.6379-8
+ C2H2,vinylidene 8.649-16
+ CH2CO,ketene    9.7406-9
+ O(CH)2O         8.969-16
+ C2H3,vinyl      9.630-14
+ CH3CO,acetyl    2.689-13
+ C2H4            3.9614-7
+ C2H4O,ethylen-o 1.004-16
+ CH3CHO,ethanal  1.997-10
+ CH3COOH         7.927-13
+ C2H5            2.387-12
+ C2H6            6.3351-8
+ C2H5OH          7.789-14
+ C3H3,2-propynl  4.023-14
+ C3H4,allene     3.169-12
+ C3H4,propyne    1.056-11
+ C3H4,cyclo-     3.307-16
+ C3H5,allyl      7.357-14
+ C3H6,propylene  7.126-11
+ C3H6,cyclo-     5.578-14
+ C3H6O,acetone   3.253-14
+ C3H6O,propanal  4.240-15
+ C3H8            1.760-12
+ C3O2            1.129-13
+ C4H2,butadiyne  4.341-16
+ C4H6,butadiene  2.852-14
+ C4H6,1butyne    3.103-16
+ C4H6,2butyne    6.857-16
+ C4H8,1-butene   1.859-15
+ C4H8,cis2-buten 1.187-15
+ C4H8,tr2-butene 1.350-15
+ C4H8,isobutene  1.876-15
+ C5H6,1,3cyclo-  3.177-16
+ C6H6            1.540-14
+ *H              6.4788-8
+ HCO             2.139-10
+ HCCO            2.037-15
+ *H2             5.8453-1
+ HCHO,formaldehy 1.0794-7
+ HCOOH           2.6334-9
+ H2O             9.1121-3
+ *OH             7.896-12
+ C(gr)           4.7283-2
+
+  * THERMODYNAMIC PROPERTIES FITTED TO 20000.K
+
+
+
+
+
+
+
+
+
+         THERMODYNAMIC EQUILIBRIUM COMBUSTION PROPERTIES AT ASSIGNED
+
+                                   PRESSURES
+
+ CASE =                
+
+             REACTANT                       MOLES         ENERGY      TEMP
+                                                         KJ/KG-MOL      K
+ FUEL        C2H6                         1.0000000    -83754.210    300.000
+ OXIDANT     O2                           3.5000000        54.358    300.000
+
+ O/F=    0.93116  %FUEL= 51.782471  R,EQ.RATIO= 4.000000  PHI,EQ.RATIO= 4.000000
+
+ THERMODYNAMIC PROPERTIES
+
+ P, BAR            1.0000
+ T, K             1142.81
+ RHO, KG/CU M    1.3205-1
+ H, KJ/KG        -1441.53
+ U, KJ/KG        -2198.79
+ G, KJ/KG        -20128.7
+ S, KJ/(KG)(K)    16.3519
+
+ M, (1/n)          12.548
+ MW, MOL WT        11.822
+ (dLV/dLP)t      -1.02437
+ (dLV/dLT)p        1.3232
+ Cp, KJ/(KG)(K)    5.7140
+ GAMMAs            1.2175
+ SON VEL,M/SEC      960.2
+
+ MOLE FRACTIONS
+
+ CH2             6.129-16
+ CH3             1.4054-8
+ CH2OH           4.876-14
+ CH3O            8.851-16
+ CH4             8.9875-3
+ CH3OH           7.664-10
+ *CO             3.3514-1
+ *CO2            5.2585-3
+ COOH            5.980-13
+ C2H2,acetylene  1.9483-8
+ C2H2,vinylidene 5.004-16
+ CH2CO,ketene    8.7893-9
+ O(CH)2O         8.420-16
+ C2H3,vinyl      6.555-14
+ CH3CO,acetyl    2.319-13
+ C2H4            3.7821-7
+ CH3CHO,ethanal  2.147-10
+ CH3COOH         1.016-12
+ C2H5            2.102-12
+ C2H6            7.3744-8
+ C2H5OH          9.300-14
+ C3H3,2-propynl  2.606-14
+ C3H4,allene     2.505-12
+ C3H4,propyne    8.417-12
+ C3H4,cyclo-     2.334-16
+ C3H5,allyl      6.062-14
+ C3H6,propylene  7.209-11
+ C3H6,cyclo-     5.396-14
+ C3H6O,acetone   3.804-14
+ C3H6O,propanal  4.724-15
+ C3H8            2.134-12
+ C3O2            8.917-14
+ C4H2,butadiyne  2.374-16
+ C4H6,butadiene  2.532-14
+ C4H6,1butyne    2.574-16
+ C4H6,2butyne    5.869-16
+ C4H8,1-butene   1.960-15
+ C4H8,cis2-buten 1.268-15
+ C4H8,tr2-butene 1.444-15
+ C4H8,isobutene  2.022-15
+ C5H6,1,3cyclo-  2.752-16
+ C6H6            1.432-14
+ *H              4.7752-8
+ HCO             1.698-10
+ HCCO            1.347-15
+ *H2             5.8218-1
+ HCHO,formaldehy 1.0588-7
+ HCOOH           3.0917-9
+ H2O             1.0633-2
+ *OH             6.278-12
+ C(gr)           5.7802-2
+
+  * THERMODYNAMIC PROPERTIES FITTED TO 20000.K
+
+
+

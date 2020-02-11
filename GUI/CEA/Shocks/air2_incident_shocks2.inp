@@ -1,0 +1,9 @@
+problem   
+      shock  inc  eq  mach1=2,3,4,5,6,7,8,9, t,k=300,300,300,300,300,300,300,300,300,300,  p,bar=1,1,1,1,1,1,1,1,1,1,
+react 
+  name=O2 moles=1 t,k=300
+  name=N2 moles=3.7274 t,k=300
+  name=Ar moles=0.0458 t,k=300
+output  
+     trace=1e-16 siunits short
+end

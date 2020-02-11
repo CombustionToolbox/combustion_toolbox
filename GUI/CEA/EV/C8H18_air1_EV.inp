@@ -1,0 +1,9 @@
+problem    phi,eq.ratio=0.5,0.6,0.7,0.8,0.9,1,1.1,1.2,1.3,1.4,1.5,1.6,1.7,1.8,1.9,2,
+      uv   rho,kg/m**3=1.2804,  t,k=3800
+react 
+  fuel=C8H18,isooctane moles=1 t,k=300
+  oxid=O2 moles=12.5 t,k=300
+  oxid=N2 moles=47.0238 t,k=300
+output  
+     trace=1e-16 siunits short
+end

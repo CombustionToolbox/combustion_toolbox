@@ -1,0 +1,10 @@
+problem    phi,eq.ratio=3.7,3.8,3.9,4,
+      uv   rho,kg/m**3=0.917,  t,k=3800
+react 
+  fuel=CH4 moles=0.85 t,k=300
+  oxid=O2 moles=2.3 t,k=300
+  fuel=C2H6 moles=0.1 t,k=300
+  fuel=C3H8 moles=0.05 t,k=300
+output  
+     trace=1e-16 siunits short
+end

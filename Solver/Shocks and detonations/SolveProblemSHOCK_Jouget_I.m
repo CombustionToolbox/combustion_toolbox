@@ -64,11 +64,11 @@ while((abs(deltaT) > TN.ERRFT*T) || (abs(deltaV) > TN.ERRFV*V))
     if(j == 500)
         disp(['shock_incident did not converge for u1 = ',num2str(u1)])
         return
-    elseif ~mod(j,50)
-%         TN.ERRFT = 1e-3;
-%         TN.ERRFV = 1e-3;
-        u1 = u1 + .01;
-        u = u1*r1/r;
+%     elseif ~mod(j,50)
+% %         TN.ERRFT = 1e-3;
+% %         TN.ERRFV = 1e-3;
+%         u1 = u1 + .01;
+%         u = u1*r1/r;
     end
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % CALCULATE FH & FP FOR GUESS 1

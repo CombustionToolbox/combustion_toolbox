@@ -1,0 +1,1189 @@
+
+ *******************************************************************************
+
+         NASA-GLENN CHEMICAL EQUILIBRIUM PROGRAM CEA2, MAY 21, 2004
+                   BY  BONNIE MCBRIDE AND SANFORD GORDON
+      REFS: NASA RP-1311, PART I, 1994 AND NASA RP-1311, PART II, 1996
+
+ *******************************************************************************
+
+
+
+ problem    phi,eq.ratio=2.1,2.2,2.3,2.4,2.5,2.6,2.7,2.8,2.9,3,3.1,3.2,3.3,3.4,3.
+ 5,3.6,
+       det   t,k=300,  p,bar=1,
+ react
+   fuel=CO moles=1 t,k=300
+   oxid=O2 moles=0.5 t,k=300
+   oxid=N2 moles=1.8810 t,k=300
+ output
+      trace=1e-16 siunits short
+ end
+
+
+                     DETONATION PROPERTIES OF AN IDEAL REACTING GAS
+ CASE =                
+
+             REACTANT                       MOLES         ENERGY      TEMP
+                                                         KJ/KG-MOL      K
+ FUEL        CO                           1.0000000   -110481.283    300.000
+ OXIDANT     O2                           0.5000000        54.358    300.000
+ OXIDANT     N2                           1.8810000        53.881    300.000
+
+ O/F=    1.16782  %FUEL= 46.129284  R,EQ.RATIO= 1.354839  PHI,EQ.RATIO= 2.100000
+
+ UNBURNED GAS
+
+ P1, BAR           1.0000
+ T1, K             300.00
+ H1, KJ/KG       -1818.49
+ M1, (1/n)         28.457
+ GAMMA1            1.3988
+ SON VEL1,M/SEC     350.2
+
+ BURNED GAS
+
+ P, BAR            14.816
+ T, K             2807.02
+ RHO, KG/CU M    2.0275 0
+ H, KJ/KG         -872.27
+ U, KJ/KG        -1603.01
+ G, KJ/KG        -24516.6
+ S, KJ/(KG)(K)     8.4233
+
+ M, (1/n)          31.939
+ (dLV/dLP)t      -1.00220
+ (dLV/dLT)p        1.0553
+ Cp, KJ/(KG)(K)    1.7179
+ GAMMAs            1.1999
+ SON VEL,M/SEC      936.4
+
+ DETONATION PARAMETERS
+
+ P/P1              14.816
+ T/T1               9.357
+ M/M1              1.1224
+ RHO/RHO1          1.7772
+ DET MACH NUMBER   4.7524
+ DET VEL,M/SEC     1664.1
+
+ MOLE FRACTIONS
+
+ *C              4.074-12
+ *CN             1.6156-9
+ CNN             8.424-16
+ *CO             2.8075-1
+ *CO2            2.4524-1
+ OCCN            9.224-13
+ C2N2            1.355-14
+ C2O             5.335-12
+ C3O2            4.639-14
+ *N              6.5578-7
+ NCO             2.4668-8
+ *NO             2.2162-3
+ NO2             4.4494-7
+ NO3             4.242-13
+ *N2             4.7003-1
+ NCN             1.091-13
+ N2O             3.7058-7
+ N2O3            1.911-14
+ N3              5.224-12
+ *O              5.1294-4
+ *O2             1.2526-3
+ O3              1.448-10
+
+  * THERMODYNAMIC PROPERTIES FITTED TO 20000.K
+
+
+                     DETONATION PROPERTIES OF AN IDEAL REACTING GAS
+ CASE =                
+
+             REACTANT                       MOLES         ENERGY      TEMP
+                                                         KJ/KG-MOL      K
+ FUEL        CO                           1.0000000   -110481.283    300.000
+ OXIDANT     O2                           0.5000000        54.358    300.000
+ OXIDANT     N2                           1.8810000        53.881    300.000
+
+ O/F=    1.11474  %FUEL= 47.287191  R,EQ.RATIO= 1.375000  PHI,EQ.RATIO= 2.200000
+
+ UNBURNED GAS
+
+ P1, BAR           1.0000
+ T1, K             300.00
+ H1, KJ/KG       -1864.18
+ M1, (1/n)         28.447
+ GAMMA1            1.3988
+ SON VEL1,M/SEC     350.2
+
+ BURNED GAS
+
+ P, BAR            14.622
+ T, K             2774.73
+ RHO, KG/CU M    2.0196 0
+ H, KJ/KG         -929.75
+ U, KJ/KG        -1653.72
+ G, KJ/KG        -24303.6
+ S, KJ/(KG)(K)     8.4238
+
+ M, (1/n)          31.866
+ (dLV/dLP)t      -1.00157
+ (dLV/dLT)p        1.0402
+ Cp, KJ/(KG)(K)    1.6219
+ GAMMAs            1.2085
+ SON VEL,M/SEC      935.4
+
+ DETONATION PARAMETERS
+
+ P/P1              14.622
+ T/T1               9.249
+ M/M1              1.1202
+ RHO/RHO1          1.7709
+ DET MACH NUMBER   4.7297
+ DET VEL,M/SEC     1656.4
+
+ MOLE FRACTIONS
+
+ *C              3.508-12
+ *CN             1.5736-9
+ CNN             7.260-16
+ *CO             2.9718-1
+ *CO2            2.4080-1
+ OCCN            9.885-13
+ C2N2            1.666-14
+ C2O             5.590-12
+ C3O2            5.770-14
+ *N              5.1303-7
+ NCO             2.2568-8
+ *NO             1.7051-3
+ NO2             2.8451-7
+ NO3             2.144-13
+ *N2             4.5912-1
+ NCN             1.005-13
+ N2O             2.7954-7
+ N2O3            9.381-15
+ N3              4.008-12
+ *O              3.7012-4
+ *O2             8.3119-4
+ O3              7.167-11
+
+  * THERMODYNAMIC PROPERTIES FITTED TO 20000.K
+
+
+                     DETONATION PROPERTIES OF AN IDEAL REACTING GAS
+ CASE =                
+
+             REACTANT                       MOLES         ENERGY      TEMP
+                                                         KJ/KG-MOL      K
+ FUEL        CO                           1.0000000   -110481.283    300.000
+ OXIDANT     O2                           0.5000000        54.358    300.000
+ OXIDANT     N2                           1.8810000        53.881    300.000
+
+ O/F=    1.06627  %FUEL= 48.396368  R,EQ.RATIO= 1.393939  PHI,EQ.RATIO= 2.300000
+
+ UNBURNED GAS
+
+ P1, BAR           1.0000
+ T1, K             300.00
+ H1, KJ/KG       -1907.95
+ M1, (1/n)         28.437
+ GAMMA1            1.3988
+ SON VEL1,M/SEC     350.3
+
+ BURNED GAS
+
+ P, BAR            14.425
+ T, K             2740.63
+ RHO, KG/CU M    2.0125 0
+ H, KJ/KG         -985.66
+ U, KJ/KG        -1702.42
+ G, KJ/KG        -24071.9
+ S, KJ/(KG)(K)     8.4237
+
+ M, (1/n)          31.792
+ (dLV/dLP)t      -1.00110
+ (dLV/dLT)p        1.0288
+ Cp, KJ/(KG)(K)    1.5475
+ GAMMAs            1.2162
+ SON VEL,M/SEC      933.7
+
+ DETONATION PARAMETERS
+
+ P/P1              14.425
+ T/T1               9.135
+ M/M1              1.1180
+ RHO/RHO1          1.7652
+ DET MACH NUMBER   4.7052
+ DET VEL,M/SEC     1648.1
+
+ MOLE FRACTIONS
+
+ *C              2.928-12
+ *CN             1.5034-9
+ CNN             6.085-16
+ *CO             3.1313-1
+ *CO2            2.3618-1
+ OCCN            1.038-12
+ C2N2            2.014-14
+ C2O             5.722-12
+ C3O2            7.051-14
+ *N              3.9371-7
+ NCO             2.0342-8
+ *NO             1.2973-3
+ NO2             1.7893-7
+ NO3             1.055-13
+ *N2             4.4859-1
+ NCN             9.048-14
+ N2O             2.0853-7
+ N2O3            4.482-15
+ N3              3.021-12
+ *O              2.6237-4
+ *O2             5.4334-4
+ O3              3.446-11
+
+  * THERMODYNAMIC PROPERTIES FITTED TO 20000.K
+
+
+                     DETONATION PROPERTIES OF AN IDEAL REACTING GAS
+ CASE =                
+
+             REACTANT                       MOLES         ENERGY      TEMP
+                                                         KJ/KG-MOL      K
+ FUEL        CO                           1.0000000   -110481.283    300.000
+ OXIDANT     O2                           0.5000000        54.358    300.000
+ OXIDANT     N2                           1.8810000        53.881    300.000
+
+ O/F=    1.02184  %FUEL= 49.459830  R,EQ.RATIO= 1.411765  PHI,EQ.RATIO= 2.400000
+
+ UNBURNED GAS
+
+ P1, BAR           1.0000
+ T1, K             300.00
+ H1, KJ/KG       -1949.92
+ M1, (1/n)         28.429
+ GAMMA1            1.3988
+ SON VEL1,M/SEC     350.3
+
+ BURNED GAS
+
+ P, BAR            14.229
+ T, K             2705.48
+ RHO, KG/CU M    2.0062 0
+ H, KJ/KG        -1039.86
+ U, KJ/KG        -1749.11
+ G, KJ/KG        -23828.1
+ S, KJ/(KG)(K)     8.4230
+
+ M, (1/n)          31.716
+ (dLV/dLP)t      -1.00077
+ (dLV/dLT)p        1.0205
+ Cp, KJ/(KG)(K)    1.4914
+ GAMMAs            1.2229
+ SON VEL,M/SEC      931.3
+
+ DETONATION PARAMETERS
+
+ P/P1              14.229
+ T/T1               9.018
+ M/M1              1.1157
+ RHO/RHO1          1.7602
+ DET MACH NUMBER   4.6794
+ DET VEL,M/SEC     1639.4
+
+ MOLE FRACTIONS
+
+ *C              2.385-12
+ *CN             1.4136-9
+ CNN             4.988-16
+ *CO             3.2856-1
+ *CO2            2.3148-1
+ OCCN            1.072-12
+ C2N2            2.399-14
+ C2O             5.745-12
+ C3O2            8.482-14
+ *N              2.9776-7
+ NCO             1.8119-8
+ *NO             9.7947-4
+ NO2             1.1128-7
+ NO3             5.104-14
+ *N2             4.3844-1
+ NCN             8.003-14
+ N2O             1.5438-7
+ N2O3            2.103-15
+ N3              2.247-12
+ *O              1.8360-4
+ *O2             3.5157-4
+ O3              1.624-11
+
+  * THERMODYNAMIC PROPERTIES FITTED TO 20000.K
+
+
+                     DETONATION PROPERTIES OF AN IDEAL REACTING GAS
+ CASE =                
+
+             REACTANT                       MOLES         ENERGY      TEMP
+                                                         KJ/KG-MOL      K
+ FUEL        CO                           1.0000000   -110481.283    300.000
+ OXIDANT     O2                           0.5000000        54.358    300.000
+ OXIDANT     N2                           1.8810000        53.881    300.000
+
+ O/F=    0.98097  %FUEL= 50.480344  R,EQ.RATIO= 1.428571  PHI,EQ.RATIO= 2.500000
+
+ UNBURNED GAS
+
+ P1, BAR           1.0000
+ T1, K             300.00
+ H1, KJ/KG       -1990.19
+ M1, (1/n)         28.420
+ GAMMA1            1.3988
+ SON VEL1,M/SEC     350.4
+
+ BURNED GAS
+
+ P, BAR            14.037
+ T, K             2669.91
+ RHO, KG/CU M    2.0007 0
+ H, KJ/KG        -1092.27
+ U, KJ/KG        -1793.86
+ G, KJ/KG        -23577.6
+ S, KJ/(KG)(K)     8.4218
+
+ M, (1/n)          31.641
+ (dLV/dLP)t      -1.00053
+ (dLV/dLT)p        1.0145
+ Cp, KJ/(KG)(K)    1.4498
+ GAMMAs            1.2285
+ SON VEL,M/SEC      928.4
+
+ DETONATION PARAMETERS
+
+ P/P1              14.037
+ T/T1               8.900
+ M/M1              1.1133
+ RHO/RHO1          1.7560
+ DET MACH NUMBER   4.6527
+ DET VEL,M/SEC     1630.3
+
+ MOLE FRACTIONS
+
+ *C              1.905-12
+ *CN             1.3122-9
+ CNN             4.019-16
+ *CO             3.4346-1
+ *CO2            2.2678-1
+ OCCN            1.092-12
+ C2N2            2.820-14
+ C2O             5.675-12
+ C3O2            1.006-13
+ *N              2.2284-7
+ NCO             1.5994-8
+ *NO             7.3596-4
+ NO2             6.8767-8
+ NO3             2.443-14
+ *N2             4.2868-1
+ NCN             6.979-14
+ N2O             1.1379-7
+ N2O3            9.761-16
+ N3              1.656-12
+ *O              1.2737-4
+ *O2             2.2616-4
+ O3              7.567-12
+
+  * THERMODYNAMIC PROPERTIES FITTED TO 20000.K
+
+
+                     DETONATION PROPERTIES OF AN IDEAL REACTING GAS
+ CASE =                
+
+             REACTANT                       MOLES         ENERGY      TEMP
+                                                         KJ/KG-MOL      K
+ FUEL        CO                           1.0000000   -110481.283    300.000
+ OXIDANT     O2                           0.5000000        54.358    300.000
+ OXIDANT     N2                           1.8810000        53.881    300.000
+
+ O/F=    0.94324  %FUEL= 51.460461  R,EQ.RATIO= 1.444444  PHI,EQ.RATIO= 2.600000
+
+ UNBURNED GAS
+
+ P1, BAR           1.0000
+ T1, K             300.00
+ H1, KJ/KG       -2028.87
+ M1, (1/n)         28.412
+ GAMMA1            1.3988
+ SON VEL1,M/SEC     350.4
+
+ BURNED GAS
+
+ P, BAR            13.851
+ T, K             2634.39
+ RHO, KG/CU M    1.9960 0
+ H, KJ/KG        -1142.87
+ U, KJ/KG        -1836.77
+ G, KJ/KG        -23324.7
+ S, KJ/(KG)(K)     8.4201
+
+ M, (1/n)          31.566
+ (dLV/dLP)t      -1.00037
+ (dLV/dLT)p        1.0103
+ Cp, KJ/(KG)(K)    1.4191
+ GAMMAs            1.2332
+ SON VEL,M/SEC      925.0
+
+ DETONATION PARAMETERS
+
+ P/P1              13.851
+ T/T1               8.781
+ M/M1              1.1110
+ RHO/RHO1          1.7524
+ DET MACH NUMBER   4.6256
+ DET VEL,M/SEC     1621.0
+
+ MOLE FRACTIONS
+
+ *C              1.499-12
+ *CN             1.2057-9
+ CNN             3.196-16
+ *CO             3.5781-1
+ *CO2            2.2212-1
+ OCCN            1.099-12
+ C2N2            3.275-14
+ C2O             5.533-12
+ C3O2            1.179-13
+ *N              1.6559-7
+ NCO             1.4022-8
+ *NO             5.5170-4
+ NO2             4.2389-8
+ NO3             1.164-14
+ *N2             4.1928-1
+ NCN             6.018-14
+ N2O             8.3705-8
+ N2O3            4.512-16
+ N3              1.214-12
+ *O              8.7919-5
+ *O2             1.4516-4
+ O3              3.507-12
+
+  * THERMODYNAMIC PROPERTIES FITTED TO 20000.K
+
+
+                     DETONATION PROPERTIES OF AN IDEAL REACTING GAS
+ CASE =                
+
+             REACTANT                       MOLES         ENERGY      TEMP
+                                                         KJ/KG-MOL      K
+ FUEL        CO                           1.0000000   -110481.283    300.000
+ OXIDANT     O2                           0.5000000        54.358    300.000
+ OXIDANT     N2                           1.8810000        53.881    300.000
+
+ O/F=    0.90830  %FUEL= 52.402533  R,EQ.RATIO= 1.459459  PHI,EQ.RATIO= 2.700000
+
+ UNBURNED GAS
+
+ P1, BAR           1.0000
+ T1, K             300.00
+ H1, KJ/KG       -2066.04
+ M1, (1/n)         28.404
+ GAMMA1            1.3989
+ SON VEL1,M/SEC     350.5
+
+ BURNED GAS
+
+ P, BAR            13.670
+ T, K             2599.27
+ RHO, KG/CU M    1.9920 0
+ H, KJ/KG        -1191.71
+ U, KJ/KG        -1877.95
+ G, KJ/KG        -23072.4
+ S, KJ/(KG)(K)     8.4180
+
+ M, (1/n)          31.493
+ (dLV/dLP)t      -1.00026
+ (dLV/dLT)p        1.0073
+ Cp, KJ/(KG)(K)    1.3966
+ GAMMAs            1.2370
+ SON VEL,M/SEC      921.3
+
+ DETONATION PARAMETERS
+
+ P/P1              13.670
+ T/T1               8.664
+ M/M1              1.1087
+ RHO/RHO1          1.7493
+ DET MACH NUMBER   4.5984
+ DET VEL,M/SEC     1611.7
+
+ MOLE FRACTIONS
+
+ *C              1.166-12
+ *CN             1.0986-9
+ CNN             2.517-16
+ *CO             3.7162-1
+ *CO2            2.1755-1
+ OCCN            1.094-12
+ C2N2            3.762-14
+ C2O             5.334-12
+ C3O2            1.366-13
+ *N              1.2250-7
+ NCO             1.2231-8
+ *NO             4.1335-4
+ NO2             2.6138-8
+ NO3             5.552-15
+ *N2             4.1025-1
+ NCN             5.145-14
+ N2O             6.1570-8
+ N2O3            2.087-16
+ N3              8.861-13
+ *O              6.0541-5
+ *O2             9.3196-5
+ O3              1.625-12
+
+  * THERMODYNAMIC PROPERTIES FITTED TO 20000.K
+
+
+                     DETONATION PROPERTIES OF AN IDEAL REACTING GAS
+ CASE =                
+
+             REACTANT                       MOLES         ENERGY      TEMP
+                                                         KJ/KG-MOL      K
+ FUEL        CO                           1.0000000   -110481.283    300.000
+ OXIDANT     O2                           0.5000000        54.358    300.000
+ OXIDANT     N2                           1.8810000        53.881    300.000
+
+ O/F=    0.87587  %FUEL= 53.308733  R,EQ.RATIO= 1.473684  PHI,EQ.RATIO= 2.800000
+
+ UNBURNED GAS
+
+ P1, BAR           1.0000
+ T1, K             300.00
+ H1, KJ/KG       -2101.80
+ M1, (1/n)         28.396
+ GAMMA1            1.3989
+ SON VEL1,M/SEC     350.5
+
+ BURNED GAS
+
+ P, BAR            13.495
+ T, K             2564.76
+ RHO, KG/CU M    1.9884 0
+ H, KJ/KG        -1238.83
+ U, KJ/KG        -1917.50
+ G, KJ/KG        -22822.8
+ S, KJ/(KG)(K)     8.4156
+
+ M, (1/n)          31.421
+ (dLV/dLP)t      -1.00018
+ (dLV/dLT)p        1.0052
+ Cp, KJ/(KG)(K)    1.3799
+ GAMMAs            1.2401
+ SON VEL,M/SEC      917.4
+
+ DETONATION PARAMETERS
+
+ P/P1              13.495
+ T/T1               8.549
+ M/M1              1.1065
+ RHO/RHO1          1.7467
+ DET MACH NUMBER   4.5711
+ DET VEL,M/SEC     1602.4
+
+ MOLE FRACTIONS
+
+ *C              8.998-13
+ *CN             9.944-10
+ CNN             1.967-16
+ *CO             3.8491-1
+ *CO2            2.1310-1
+ OCCN            1.081-12
+ C2N2            4.280-14
+ C2O             5.095-12
+ C3O2            1.566-13
+ *N              9.0382-8
+ NCO             1.0628-8
+ *NO             3.0993-4
+ NO2             1.6154-8
+ NO3             2.656-15
+ *N2             4.0158-1
+ NCN             4.370-14
+ N2O             4.5343-8
+ N3              6.459-13
+ *O              4.1669-5
+ *O2             5.9965-5
+ O3              7.550-13
+
+  * THERMODYNAMIC PROPERTIES FITTED TO 20000.K
+
+
+                     DETONATION PROPERTIES OF AN IDEAL REACTING GAS
+ CASE =                
+
+             REACTANT                       MOLES         ENERGY      TEMP
+                                                         KJ/KG-MOL      K
+ FUEL        CO                           1.0000000   -110481.283    300.000
+ OXIDANT     O2                           0.5000000        54.358    300.000
+ OXIDANT     N2                           1.8810000        53.881    300.000
+
+ O/F=    0.84566  %FUEL= 54.181072  R,EQ.RATIO= 1.487179  PHI,EQ.RATIO= 2.900000
+
+ UNBURNED GAS
+
+ P1, BAR           1.0000
+ T1, K             300.00
+ H1, KJ/KG       -2136.23
+ M1, (1/n)         28.389
+ GAMMA1            1.3989
+ SON VEL1,M/SEC     350.6
+
+ BURNED GAS
+
+ P, BAR            13.326
+ T, K             2531.00
+ RHO, KG/CU M    1.9853 0
+ H, KJ/KG        -1284.32
+ U, KJ/KG        -1955.54
+ G, KJ/KG        -22577.2
+ S, KJ/(KG)(K)     8.4128
+
+ M, (1/n)          31.352
+ (dLV/dLP)t      -1.00013
+ (dLV/dLT)p        1.0038
+ Cp, KJ/(KG)(K)    1.3675
+ GAMMAs            1.2426
+ SON VEL,M/SEC      913.3
+
+ DETONATION PARAMETERS
+
+ P/P1              13.326
+ T/T1               8.437
+ M/M1              1.1044
+ RHO/RHO1          1.7443
+ DET MACH NUMBER   4.5441
+ DET VEL,M/SEC     1593.1
+
+ MOLE FRACTIONS
+
+ *C              6.896-13
+ *CN             8.952-10
+ CNN             1.529-16
+ *CO             3.9767-1
+ *CO2            2.0878-1
+ OCCN            1.060-12
+ C2N2            4.825-14
+ C2O             4.829-12
+ C3O2            1.780-13
+ *N              6.6605-8
+ NCO             9.2104-9
+ *NO             2.3275-4
+ NO2             1.0020-8
+ NO3             1.277-15
+ *N2             3.9324-1
+ NCN             3.691-14
+ N2O             3.3462-8
+ N3              4.706-13
+ *O              2.8705-5
+ *O2             3.8712-5
+ O3              3.527-13
+
+  * THERMODYNAMIC PROPERTIES FITTED TO 20000.K
+
+
+                     DETONATION PROPERTIES OF AN IDEAL REACTING GAS
+ CASE =                
+
+             REACTANT                       MOLES         ENERGY      TEMP
+                                                         KJ/KG-MOL      K
+ FUEL        CO                           1.0000000   -110481.283    300.000
+ OXIDANT     O2                           0.5000000        54.358    300.000
+ OXIDANT     N2                           1.8810000        53.881    300.000
+
+ O/F=    0.81747  %FUEL= 55.021413  R,EQ.RATIO= 1.500000  PHI,EQ.RATIO= 3.000000
+
+ UNBURNED GAS
+
+ P1, BAR           1.0000
+ T1, K             300.00
+ H1, KJ/KG       -2169.39
+ M1, (1/n)         28.382
+ GAMMA1            1.3989
+ SON VEL1,M/SEC     350.6
+
+ BURNED GAS
+
+ P, BAR            13.162
+ T, K             2498.08
+ RHO, KG/CU M    1.9825 0
+ H, KJ/KG        -1328.24
+ U, KJ/KG        -1992.15
+ G, KJ/KG        -22336.7
+ S, KJ/(KG)(K)     8.4098
+
+ M, (1/n)          31.285
+ (dLV/dLP)t      -1.00009
+ (dLV/dLT)p        1.0027
+ Cp, KJ/(KG)(K)    1.3580
+ GAMMAs            1.2448
+ SON VEL,M/SEC      909.1
+
+ DETONATION PARAMETERS
+
+ P/P1              13.162
+ T/T1               8.327
+ M/M1              1.1023
+ RHO/RHO1          1.7423
+ DET MACH NUMBER   4.5173
+ DET VEL,M/SEC     1583.9
+
+ MOLE FRACTIONS
+
+ *C              5.259-13
+ *CN             8.023-10
+ CNN             1.183-16
+ *CO             4.0994-1
+ *CO2            2.0460-1
+ OCCN            1.033-12
+ C2N2            5.397-14
+ C2O             4.547-12
+ C3O2            2.006-13
+ *N              4.9070-8
+ NCO             7.9658-9
+ *NO             1.7517-4
+ NO2             6.2430-9
+ NO3             6.183-16
+ *N2             3.8523-1
+ NCN             3.106-14
+ N2O             2.4758-8
+ N3              3.430-13
+ *O              1.9808-5
+ *O2             2.5094-5
+ O3              1.658-13
+
+  * THERMODYNAMIC PROPERTIES FITTED TO 20000.K
+
+
+                     DETONATION PROPERTIES OF AN IDEAL REACTING GAS
+ CASE =                
+
+             REACTANT                       MOLES         ENERGY      TEMP
+                                                         KJ/KG-MOL      K
+ FUEL        CO                           1.0000000   -110481.283    300.000
+ OXIDANT     O2                           0.5000000        54.358    300.000
+ OXIDANT     N2                           1.8810000        53.881    300.000
+
+ O/F=    0.79110  %FUEL= 55.831484  R,EQ.RATIO= 1.512195  PHI,EQ.RATIO= 3.100000
+
+ UNBURNED GAS
+
+ P1, BAR           1.0000
+ T1, K             300.00
+ H1, KJ/KG       -2201.36
+ M1, (1/n)         28.375
+ GAMMA1            1.3989
+ SON VEL1,M/SEC     350.7
+
+ BURNED GAS
+
+ P, BAR            13.003
+ T, K             2466.03
+ RHO, KG/CU M    1.9799 0
+ H, KJ/KG        -1370.68
+ U, KJ/KG        -2027.43
+ G, KJ/KG        -22101.6
+ S, KJ/(KG)(K)     8.4066
+
+ M, (1/n)          31.220
+ (dLV/dLP)t      -1.00006
+ (dLV/dLT)p        1.0020
+ Cp, KJ/(KG)(K)    1.3508
+ GAMMAs            1.2467
+ SON VEL,M/SEC      904.9
+
+ DETONATION PARAMETERS
+
+ P/P1              13.003
+ T/T1               8.220
+ M/M1              1.1003
+ RHO/RHO1          1.7404
+ DET MACH NUMBER   4.4909
+ DET VEL,M/SEC     1574.8
+
+ MOLE FRACTIONS
+
+ *C              3.995-13
+ *CN             7.165-10
+ *CO             4.2174-1
+ *CO2            2.0057-1
+ OCCN            1.001-12
+ C2N2            5.992-14
+ C2O             4.257-12
+ C3O2            2.245-13
+ *N              3.6165-8
+ NCO             6.8794-9
+ *NO             1.3216-4
+ NO2             3.9085-9
+ NO3             3.015-16
+ *N2             3.7753-1
+ NCN             2.604-14
+ N2O             1.8372-8
+ N3              2.503-13
+ *O              1.3700-5
+ *O2             1.6339-5
+ O3              7.854-14
+
+  * THERMODYNAMIC PROPERTIES FITTED TO 20000.K
+
+
+                     DETONATION PROPERTIES OF AN IDEAL REACTING GAS
+ CASE =                
+
+             REACTANT                       MOLES         ENERGY      TEMP
+                                                         KJ/KG-MOL      K
+ FUEL        CO                           1.0000000   -110481.283    300.000
+ OXIDANT     O2                           0.5000000        54.358    300.000
+ OXIDANT     N2                           1.8810000        53.881    300.000
+
+ O/F=    0.76638  %FUEL= 56.612893  R,EQ.RATIO= 1.523810  PHI,EQ.RATIO= 3.200000
+
+ UNBURNED GAS
+
+ P1, BAR           1.0000
+ T1, K             300.00
+ H1, KJ/KG       -2232.19
+ M1, (1/n)         28.369
+ GAMMA1            1.3989
+ SON VEL1,M/SEC     350.7
+
+ BURNED GAS
+
+ P, BAR            12.849
+ T, K             2434.86
+ RHO, KG/CU M    1.9776 0
+ H, KJ/KG        -1411.72
+ U, KJ/KG        -2061.46
+ G, KJ/KG        -21872.1
+ S, KJ/(KG)(K)     8.4031
+
+ M, (1/n)          31.158
+ (dLV/dLP)t      -1.00005
+ (dLV/dLT)p        1.0014
+ Cp, KJ/(KG)(K)    1.3450
+ GAMMAs            1.2483
+ SON VEL,M/SEC      900.6
+
+ DETONATION PARAMETERS
+
+ P/P1              12.849
+ T/T1               8.116
+ M/M1              1.0983
+ RHO/RHO1          1.7388
+ DET MACH NUMBER   4.4652
+ DET VEL,M/SEC     1566.0
+
+ MOLE FRACTIONS
+
+ *C              3.025-13
+ *CN             6.378-10
+ *CO             4.3309-1
+ *CO2            1.9667-1
+ OCCN            9.660-13
+ C2N2            6.610-14
+ C2O             3.966-12
+ C3O2            2.495-13
+ *N              2.6674-8
+ NCO             5.9348-9
+ *NO             9.9965-5
+ NO2             2.4590-9
+ NO3             1.481-16
+ *N2             3.7013-1
+ NCN             2.178-14
+ N2O             1.3675-8
+ N3              1.829-13
+ *O              9.4991-6
+ *O2             1.0687-5
+ O3              3.748-14
+
+  * THERMODYNAMIC PROPERTIES FITTED TO 20000.K
+
+
+                     DETONATION PROPERTIES OF AN IDEAL REACTING GAS
+ CASE =                
+
+             REACTANT                       MOLES         ENERGY      TEMP
+                                                         KJ/KG-MOL      K
+ FUEL        CO                           1.0000000   -110481.283    300.000
+ OXIDANT     O2                           0.5000000        54.358    300.000
+ OXIDANT     N2                           1.8810000        53.881    300.000
+
+ O/F=    0.74316  %FUEL= 57.367133  R,EQ.RATIO= 1.534884  PHI,EQ.RATIO= 3.300000
+
+ UNBURNED GAS
+
+ P1, BAR           1.0000
+ T1, K             300.00
+ H1, KJ/KG       -2261.96
+ M1, (1/n)         28.362
+ GAMMA1            1.3989
+ SON VEL1,M/SEC     350.8
+
+ BURNED GAS
+
+ P, BAR            12.699
+ T, K             2404.58
+ RHO, KG/CU M    1.9753 0
+ H, KJ/KG        -1451.40
+ U, KJ/KG        -2094.30
+ G, KJ/KG        -21648.5
+ S, KJ/(KG)(K)     8.3994
+
+ M, (1/n)          31.098
+ (dLV/dLP)t      -1.00003
+ (dLV/dLT)p        1.0011
+ Cp, KJ/(KG)(K)    1.3404
+ GAMMAs            1.2498
+ SON VEL,M/SEC      896.4
+
+ DETONATION PARAMETERS
+
+ P/P1              12.699
+ T/T1               8.015
+ M/M1              1.0964
+ RHO/RHO1          1.7372
+ DET MACH NUMBER   4.4396
+ DET VEL,M/SEC     1557.2
+
+ MOLE FRACTIONS
+
+ *C              2.286-13
+ *CN             5.664-10
+ *CO             4.4400-1
+ *CO2            1.9291-1
+ OCCN            9.280-13
+ C2N2            7.248-14
+ C2O             3.679-12
+ C3O2            2.755-13
+ *N              1.9698-8
+ NCO             5.1164-9
+ *NO             7.5825-5
+ NO2             1.5552-9
+ *N2             3.6300-1
+ NCN             1.818-14
+ N2O             1.0211-8
+ N3              1.339-13
+ *O              6.6058-6
+ *O2             7.0239-6
+ O3              1.803-14
+
+  * THERMODYNAMIC PROPERTIES FITTED TO 20000.K
+
+
+                     DETONATION PROPERTIES OF AN IDEAL REACTING GAS
+ CASE =                
+
+             REACTANT                       MOLES         ENERGY      TEMP
+                                                         KJ/KG-MOL      K
+ FUEL        CO                           1.0000000   -110481.283    300.000
+ OXIDANT     O2                           0.5000000        54.358    300.000
+ OXIDANT     N2                           1.8810000        53.881    300.000
+
+ O/F=    0.72130  %FUEL= 58.095598  R,EQ.RATIO= 1.545455  PHI,EQ.RATIO= 3.400000
+
+ UNBURNED GAS
+
+ P1, BAR           1.0000
+ T1, K             300.00
+ H1, KJ/KG       -2290.70
+ M1, (1/n)         28.356
+ GAMMA1            1.3989
+ SON VEL1,M/SEC     350.8
+
+ BURNED GAS
+
+ P, BAR            12.554
+ T, K             2375.16
+ RHO, KG/CU M    1.9732 0
+ H, KJ/KG        -1489.81
+ U, KJ/KG        -2126.03
+ G, KJ/KG        -21430.7
+ S, KJ/(KG)(K)     8.3956
+
+ M, (1/n)          31.040
+ (dLV/dLP)t      -1.00002
+ (dLV/dLT)p        1.0008
+ Cp, KJ/(KG)(K)    1.3366
+ GAMMAs            1.2511
+ SON VEL,M/SEC      892.2
+
+ DETONATION PARAMETERS
+
+ P/P1              12.554
+ T/T1               7.917
+ M/M1              1.0946
+ RHO/RHO1          1.7357
+ DET MACH NUMBER   4.4145
+ DET VEL,M/SEC     1548.6
+
+ MOLE FRACTIONS
+
+ *C              1.725-13
+ *CN             5.018-10
+ *CO             4.5451-1
+ *CO2            1.8928-1
+ OCCN            8.883-13
+ C2N2            7.904-14
+ C2O             3.401-12
+ C3O2            3.027-13
+ *N              1.4567-8
+ NCO             4.4089-9
+ *NO             5.7674-5
+ NO2             9.887-10
+ *N2             3.5614-1
+ NCN             1.515-14
+ N2O             7.6483-9
+ N3              9.821-14
+ *O              4.6073-6
+ *O2             4.6382-6
+ O3              8.746-15
+
+  * THERMODYNAMIC PROPERTIES FITTED TO 20000.K
+
+
+                     DETONATION PROPERTIES OF AN IDEAL REACTING GAS
+ CASE =                
+
+             REACTANT                       MOLES         ENERGY      TEMP
+                                                         KJ/KG-MOL      K
+ FUEL        CO                           1.0000000   -110481.283    300.000
+ OXIDANT     O2                           0.5000000        54.358    300.000
+ OXIDANT     N2                           1.8810000        53.881    300.000
+
+ O/F=    0.70069  %FUEL= 58.799587  R,EQ.RATIO= 1.555556  PHI,EQ.RATIO= 3.500000
+
+ UNBURNED GAS
+
+ P1, BAR           1.0000
+ T1, K             300.00
+ H1, KJ/KG       -2318.48
+ M1, (1/n)         28.350
+ GAMMA1            1.3989
+ SON VEL1,M/SEC     350.8
+
+ BURNED GAS
+
+ P, BAR            12.412
+ T, K             2346.59
+ RHO, KG/CU M    1.9711 0
+ H, KJ/KG        -1526.99
+ U, KJ/KG        -2156.70
+ G, KJ/KG        -21218.7
+ S, KJ/(KG)(K)     8.3916
+
+ M, (1/n)          30.984
+ (dLV/dLP)t      -1.00002
+ (dLV/dLT)p        1.0006
+ Cp, KJ/(KG)(K)    1.3335
+ GAMMAs            1.2523
+ SON VEL,M/SEC      888.0
+
+ DETONATION PARAMETERS
+
+ P/P1              12.412
+ T/T1               7.822
+ M/M1              1.0929
+ RHO/RHO1          1.7343
+ DET MACH NUMBER   4.3898
+ DET VEL,M/SEC     1540.1
+
+ MOLE FRACTIONS
+
+ *C              1.300-13
+ *CN             4.438-10
+ *CO             4.6464-1
+ *CO2            1.8578-1
+ OCCN            8.476-13
+ C2N2            8.578-14
+ C2O             3.134-12
+ C3O2            3.308-13
+ *N              1.0789-8
+ NCO             3.7984-9
+ *NO             4.3988-5
+ NO2             6.317-10
+ *N2             3.4953-1
+ NCN             1.261-14
+ N2O             5.7470-9
+ N3              7.218-14
+ *O              3.2231-6
+ *O2             3.0770-6
+ O3              4.275-15
+
+  * THERMODYNAMIC PROPERTIES FITTED TO 20000.K
+
+
+                     DETONATION PROPERTIES OF AN IDEAL REACTING GAS
+ CASE =                
+
+             REACTANT                       MOLES         ENERGY      TEMP
+                                                         KJ/KG-MOL      K
+ FUEL        CO                           1.0000000   -110481.283    300.000
+ OXIDANT     O2                           0.5000000        54.358    300.000
+ OXIDANT     N2                           1.8810000        53.881    300.000
+
+ O/F=    0.68123  %FUEL= 59.480313  R,EQ.RATIO= 1.565217  PHI,EQ.RATIO= 3.600000
+
+ UNBURNED GAS
+
+ P1, BAR           1.0000
+ T1, K             300.00
+ H1, KJ/KG       -2345.35
+ M1, (1/n)         28.345
+ GAMMA1            1.3989
+ SON VEL1,M/SEC     350.9
+
+ BURNED GAS
+
+ P, BAR            12.275
+ T, K             2318.84
+ RHO, KG/CU M    1.9692 0
+ H, KJ/KG        -1563.02
+ U, KJ/KG        -2186.36
+ G, KJ/KG        -21012.3
+ S, KJ/(KG)(K)     8.3875
+
+ M, (1/n)          30.930
+ (dLV/dLP)t      -1.00001
+ (dLV/dLT)p        1.0004
+ Cp, KJ/(KG)(K)    1.3307
+ GAMMAs            1.2534
+ SON VEL,M/SEC      883.9
+
+ DETONATION PARAMETERS
+
+ P/P1              12.275
+ T/T1               7.729
+ M/M1              1.0912
+ RHO/RHO1          1.7329
+ DET MACH NUMBER   4.3657
+ DET VEL,M/SEC     1531.7
+
+ MOLE FRACTIONS
+
+ *C              9.783-14
+ *CN             3.919-10
+ *CO             4.7440-1
+ *CO2            1.8240-1
+ OCCN            8.064-13
+ C2N2            9.268-14
+ C2O             2.879-12
+ C3O2            3.599-13
+ *N              8.0039-9
+ NCO             3.2720-9
+ *NO             3.3641-5
+ NO2             4.056-10
+ *N2             3.4316-1
+ NCN             1.049-14
+ N2O             4.3317-9
+ N3              5.316-14
+ *O              2.2615-6
+ *O2             2.0505-6
+ O3              2.105-15
+
+  * THERMODYNAMIC PROPERTIES FITTED TO 20000.K
+
+
+

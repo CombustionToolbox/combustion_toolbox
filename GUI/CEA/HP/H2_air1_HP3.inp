@@ -1,0 +1,9 @@
+problem    phi,eq.ratio=3.7,3.8,3.9,4,
+      hp   p,bar=1,  t,k=3800
+react 
+  fuel=H2 moles=1 t,k=300
+  oxid=O2 moles=0.5 t,k=300
+  oxid=N2 moles=1.8810 t,k=300
+output  
+     trace=1e-16 siunits short
+end

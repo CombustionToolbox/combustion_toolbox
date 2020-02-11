@@ -57,12 +57,12 @@ else % case of rich mixtures
         
         NCO2P_0 = 0;
         NCOP_0  = 0;
-        NH2OP_0 =       z;
+        NH2OP_0 = z;
         NH2P_0  = y/2-z;
         
     elseif (x ~= 0) && (y == 0) && phi < phi_c % if there are only carbons (C)
         
-        NCO2P_0 =-x+z;
+        NCO2P_0 = -x+z;
         NCOP_0  = 2*x-z;
         NH2OP_0 = 0;
         NH2P_0  = 0;

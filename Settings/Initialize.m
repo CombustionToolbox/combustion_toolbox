@@ -54,6 +54,8 @@ else
 end
 %% MISCELANEOUS
 app.Misc.FLAG_FIRST = true;
+app.Misc.config.linewidth = 1.8;
+app.Misc.config.fontsize  = 18;
 app.PD.Fuel.FLAG_phic = true;
 %% INITIALIZE VALUES
 app.M.display_species = {};

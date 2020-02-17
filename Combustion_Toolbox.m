@@ -10,6 +10,7 @@
 % * SHOCK_I -> Planar incident shock wave
 % * SHOCK_R -> Planar reflectet shock wave
 % * DET -----> Chapman-Jouget Detonation (CJ upper state)
+% * DET_OVERDRIVEN -----> Overdriven Detonation
 %
 % Authors:
 %
@@ -24,9 +25,9 @@ app.Misc.save_Excel = false;
 %% REACTION: COMPLETE OR INCOMPLETE
 % Specify the type of the reaction: complete or incomplete (dissociation)
 
-% app.PD.CompleteOrIncomplete = 'complete';
-app.PD.CompleteOrIncomplete = 'incomplete'; 
-app.TN.factor_c = 1; % factor_c = 1 (default).
+app.PD.CompleteOrIncomplete = 'complete';
+% app.PD.CompleteOrIncomplete = 'incomplete'; 
+app.TN.factor_c = 0.8; % factor_c = 1 (default).
 %% MINORS PRODUCTS
 % Specify the minority products to be considered in the product mixture (P) in
 % addition to the major species (CO2, CO, H2O, H2, O2, N2, C(gr))
@@ -51,12 +52,12 @@ app.TN.factor_c = 1; % factor_c = 1 (default).
 %     'NO', 'NO2', 'N2O', 'HNO', 'CN', 'HCN',...
 %     'NCO', 'N2', 'Ar', 'C3H8','C2','C2H2_acetylene','C6H6',...
 %     'C8H18_isooctane','C2H5OH','He','HNC'};
-%%
+%% Minor prodcuts
+% app.M.minor_products = {};
 % HC/O2/N2 EXTENDED
-
 app.M.minor_products = {'OH','H','O','HO2','NO','HCO','CH4','CH3','HO2',...
     'NO2','NH3','NH2','N','HCN','CN','N2O','C2','CH'};
-%%
+%
 % load strThProp_HC_47.mat
 % SOOT FORMATION 
 % app.M.minor_products = {'H2', 'H', 'O', 'O2', 'OH', 'H2O', 'HO2', 'H2O2',...
@@ -175,7 +176,7 @@ app.PD.TR.Value = 300;
 % app.PD.TR.Value = 300;
 app.PD.pR.Value = 1;
 % app.PD.phi.Value = 1*ones(1,length(app.PD.TR.vector.Value));
-app.PD.phi.Value = 0.5:0.01:2.5;
+app.PD.phi.Value = 0.3:0.01:2.4;
 % app.PD.phi.Value = 0.1:0.1:0.3;
 % app.PD.phi.Value = 0.88;
 %% INITIALIZATION
@@ -228,12 +229,12 @@ for i=app.C.l_phi:-1:1 % Evading preallocate struct
 % app.PD.TR.Value = app.PD.TR.vector.Value(i);
 % app.PD.R_Fuel = 0; app.PD.phi_t = 1; app.PD.Fuel.x = 0; app.PD.Fuel.eps = 1e-1; app.C.FLAG_Fuel = 0;
 % app.PD.S_Fuel = {'CH4','C2H6','C3H8'}; app.PD.N_Fuel = [0.85;0.1;0.05]; 
-app.PD.S_Fuel = {'CH4'}; app.PD.N_Fuel = 1;
+% app.PD.S_Fuel = {'CH4'}; app.PD.N_Fuel = 1;
 % app.PD.S_Fuel = {'H2'}; app.PD.N_Fuel = 1; 
 % app.PD.S_Fuel = {'C2H2_acetylene'}; app.PD.N_Fuel = 1; 
 % app.PD.S_Fuel = {'C3H8'}; app.PD.N_Fuel = 1;    
 % app.PD.S_Fuel = {'C6H6'}; app.PD.N_Fuel = 1; 
-% app.PD.S_Fuel = {'C2H6'}; app.PD.N_Fuel = 1;
+app.PD.S_Fuel = {'C2H4'}; app.PD.N_Fuel = 1;
 % app.PD.S_Fuel = {'C2H5OH'}; app.PD.N_Fuel = 1;
 
 if ~isfield(app.PD,'R_Fuel')
@@ -345,10 +346,10 @@ app.M.display_species = {};
 % app.M.display_species = {'CO','CO2','H','HO2','H2','H2O','N2','O2'};
 % app.M.display_species = {'CO','CO2','H','HO2','H2','H2O','NO','NO2','N2','O','OH','O2','Cbgrb'};
 % app.M.display_species = {'CN','H','Cbgrb','C2H2_acetylene','HCN','CO','C2N2','HNC','H2','N2','H2O','CO2','O2'};
-app.M.display_species = {'Cbgrb','CO2','CO','HCN','H2','OH','H2O','O2','N2'};
+% app.M.display_species = {'Cbgrb','CO2','CO','HCN','H2','OH','H2O','O2','N2'};
 % app.M.display_species = {'CO','CO2','H','HO2','H2','H2O','N2','O2','OH','H','O','HO2','NO','HCO','CH4','CH3','HO2',...
 %     'NO2','NH3','NH2','N','HCN','CH'};
-closing(app.PS.strP,app.PD.phi.Value,app.M.display_species,app.Misc.timer_0,app.S.NameSpecies,app.C.mintol_display,app.PD.ProblemType);
+closing(app,app.PS.strP,app.PD.phi.Value,app.M.display_species,app.Misc.timer_0,app.S.NameSpecies,app.C.mintol_display,app.PD.ProblemType);
 %% EXCEL I/O
 
 % delete(filename);

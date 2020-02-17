@@ -12,20 +12,25 @@ M.minor_products = M.minor_products(n_pass);
 S.List_Compute_Species = [S.List_fixed_Species,M.minor_products];
 %%
 if Misc.FLAG_FIRST
-M.L_minor = length(M.minor_products);
-for n=M.L_minor:-1:1
-    % Properties of other minor species under consideration, which can
-    % be written in the generic form C_alpha H_beta O_gamma N_omega
-    % Find index minor species
-    M.idx_minor(n) = find(strcmp(S.NameSpecies,M.minor_products{n}));
-    Misc.FLAG_FIRST = false;
+    M.L_minor = length(M.minor_products);
+    if M.L_minor > 0
+        for n=M.L_minor:-1:1
+            % Properties of other minor species under consideration, which can
+            % be written in the generic form C_alpha H_beta O_gamma N_omega
+            % Find index minor species
+            M.idx_minor(n) = find(strcmp(S.NameSpecies,M.minor_products{n}));
+            Misc.FLAG_FIRST = false;
+        end
+        C.alpha = C.A0.Value(M.idx_minor,E.ind_C)';
+        C.beta  = C.A0.Value(M.idx_minor,E.ind_H)';
+        C.gamma = C.A0.Value(M.idx_minor,E.ind_O)';
+        C.omega = C.A0.Value(M.idx_minor,E.ind_N)';
+        
+        S.idx_all = [S.idx_fixed,M.idx_minor];
+    else
+        S.idx_all = S.idx_fixed;
+    end
 end
-C.alpha = C.A0.Value(M.idx_minor,E.ind_C)';
-C.beta  = C.A0.Value(M.idx_minor,E.ind_H)';
-C.gamma = C.A0.Value(M.idx_minor,E.ind_O)';
-C.omega = C.A0.Value(M.idx_minor,E.ind_N)';
-end
-S.idx_all = [S.idx_fixed,M.idx_minor];
 %% CH4 major specie
 if any(contains(M.minor_products,'CH4'))
     M.major_CH4 = true;

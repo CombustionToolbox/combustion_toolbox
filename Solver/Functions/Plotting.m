@@ -1,4 +1,4 @@
-function Plotting(app,display_species)
+function Plotting(app,display_species,flag,flag_TP)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % PLOT FIGURES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -9,46 +9,24 @@ function Plotting(app,display_species)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % help Plotting
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-if numel(app.PD.phi.Value)>1 && all(app.PD.phi.Value(2:end) ~= phi(1)) && flag
+if numel(app.PD.phi.Value)>1 && all(app.PD.phi.Value(2:end) ~= app.PD.phi.Value(1)) && flag
     if isempty(display_species)
-        displaysweepresults(app.PS.strP,app.PD.phi.Value,app.S.NameSpecies,app.C.mintol_display);
+        displaysweepresults(app.PS.strP,app.PD.phi.Value,app.S.NameSpecies,app.C.mintol_display,'Equivalence Ratio $\phi$');
     else
-        displaysweepresults(app.PS.strP,app.PD.phi.Value,app.S.NameSpecies,app.C.mintol_display,display_species);
+        displaysweepresults(app.PS.strP,app.PD.phi.Value,app.S.NameSpecies,app.C.mintol_display,'Equivalence Ratio $\phi$',display_species);
     end
     if ~any(strcmp(app.ProblemType.Value,{'1','4'}))
-        display_Tp_phi(app.PS.strP,app.PD.phi.Value,app.Reactants.Items{sscanf(numberReactants,'%d')},app.Reaction.Items{aux3});
+        app.Misc.config.tit = app.Reactants.Items{sscanf(app.Reactants.Value,'%d')};
+        app.Misc.config.labelx = 'Equivalence Ratio $\phi [-]$';
+        app.Misc.config.labely = 'Temperature $T [K]$';
+        plot_figure(app.PD.phi.Value,app.PS.strP,'phi','T',app.Misc.config,app.Reaction.Items{sscanf(app.Reaction.Value,'%d')});
+%         display_Tp_phi(app.PS.strP,app.PD.phi.Value,app.Reactants.Items{sscanf(app.Reactants.Value,'%d')},app.Reaction.Items{sscanf(app.Reaction.Value,'%d')});
     end
 end
-end
-
-function vector = struct2vector(str,field)
-    Nstruct = length(str);
-    for i=Nstruct:-1:1
-        vector(i) = str{i}.(field);
+if flag_TP
+    if isempty(display_species)
+        displaysweepresults(app.PS.strP,cell2vector(app.PS.strP,'T'),app.S.NameSpecies,app.C.mintol_display,'Temperature $T_P$');
+    else
+        displaysweepresults(app.PS.strP,cell2vector(app.PS.strP,'T'),app.S.NameSpecies,app.C.mintol_display,'Temperature $T_P$',display_species);
     end
-end
-function plot_figure(x,y,config)
-config.linewidth;
-config.fontsize;
-config.tit 
-config.leg = {varargin{4}};
-
-%%% CHECK TIT FOR LATEX
-config.tit = strrep(config.tit,'%','\%');
-%%%
-% Plot configuration
-set(figure,'units','normalized','innerposition',[0.1 0.1 0.9 0.8],...
-    'outerposition',[0.1 0.1 0.9 0.8])
-set(axes,'LineWidth',config.linewidth,'FontSize',config.fontsize,'BoxStyle','full')
-grid on; box on; hold on; axis tight
-
-xlabel(config.labelx,'FontSize',config.fontsize,'interpreter','latex');
-ylabel(config.labely,'FontSize',config.fontsize,'interpreter','latex');
-
-plot(x,y,'LineWidth',config.linewidth);
-legend(leg,'FontSize',fontsize,'Location','northeast','interpreter','latex');
-title({config.tit},'Interpreter','latex','FontSize',config.fontsize+4);
-
-% filename2 = strcat(fpath,filename);
-% saveas(fig,filename2,'epsc');
 end

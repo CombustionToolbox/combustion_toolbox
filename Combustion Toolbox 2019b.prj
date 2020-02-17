@@ -1,5 +1,5 @@
 <deployment-project plugin="plugin.apptool" plugin-version="1.0">
-  <configuration build-checksum="130441627" file="C:\Users\Alberto Cuadra Lara\Google Drive\Phd\Combustion_Toolbox\Compile\combustion_toolbox\Combustion Toolbox 2019b.prj" location="C:\Users\Alberto Cuadra Lara\Google Drive\Phd\Combustion_Toolbox\Compile\combustion_toolbox" name="Combustion Toolbox 2019b" target="target.mlapps" target-name="Package App">
+  <configuration build-checksum="130441627" file="C:\Users\Alberto Cuadra Lara\Google Drive\Phd\Combustion_Toolbox\Combustion_Toolbox_repo\combustion_toolbox\Combustion Toolbox 2019b.prj" location="C:\Users\Alberto Cuadra Lara\Google Drive\Phd\Combustion_Toolbox\Combustion_Toolbox_repo\combustion_toolbox" name="Combustion Toolbox 2019b" target="target.mlapps" target-name="Package App">
     <param.appname>Combustion Toolbox 2019b</param.appname>
     <param.authnamewatermark>Alberto Cuadra Lara</param.authnamewatermark>
     <param.email>acuadra@ing.uc3m.es</param.email>
@@ -12,7 +12,7 @@
     </param.icons>
     <param.summary />
     <param.description>&lt;i&gt;Combustion-Toolbox&lt;/i&gt; is an open source thermochemical code with application to gaseous combustion problems. The code solves six chemical equilibrium problems (TP, HP, SP, TV, EV and SV transformations; where T denotes temperature, P pressure, H enthalpy, S entropy, E internal energy and V volume), incident and reflected planar shock waves, as well as ideal detonations according to Chapman-Jouguet theory, assuming always ideal gases. The code computes the equilibrium composition using equilibrium constants rather than by minimization of the Gibbs–Helmholtz free energy, and employs NASA’s 9-coefficient polynomial fits to evaluate the thermodynamic properties. Besides the plain code, the new tool has been equipped with a Graphical User Interface (hereafter &lt;i&gt;Combustion-Toolbox &lt;/i&gt;) developed in MATLAB® 2018b under AppDesigner. The results obtained with &lt;i&gt;Combustion-Toolbox&lt;/i&gt; have been validated against, and are in good agreement with, NASA’s Chemical Equilibrium with Applications (CEA) program, CANTERA, and Caltech’s Shock and Detonation Toolbox . Moreover, the time required for the computations is comparable to that of other existing codes. &lt;i&gt;Combustion-Toolbox&lt;/i&gt; has teaching and research aspirations and will be distributed as open source package as soon it has been fully tested.</param.description>
-    <param.screenshot>C:\Users\Alberto Cuadra Lara\AppData\Local\Temp\tp508b1091_80e5_4bfb_947e_210f76b7e62a.png</param.screenshot>
+    <param.screenshot>C:\Users\Alberto Cuadra Lara\AppData\Local\Temp\tp1495b5ef_d31b_4658_932c_ed76bd0c96ac.png</param.screenshot>
     <param.version>1.0</param.version>
     <param.products.name>
       <item>MATLAB</item>
@@ -40,14 +40,6 @@
     </fileset.main>
     <fileset.depfun />
     <fileset.resources>
-      <file>C:\Users\Alberto Cuadra Lara\Google Drive\Phd\Combustion_Toolbox\Compile\about.p</file>
-      <file>C:\Users\Alberto Cuadra Lara\Google Drive\Phd\Combustion_Toolbox\Compile\brewermap.p</file>
-      <file>C:\Users\Alberto Cuadra Lara\Google Drive\Phd\Combustion_Toolbox\Compile\CalculateProductsCC.p</file>
-      <file>C:\Users\Alberto Cuadra Lara\Google Drive\Phd\Combustion_Toolbox\Compile\CalculateProductsIC.p</file>
-      <file>C:\Users\Alberto Cuadra Lara\Google Drive\Phd\Combustion_Toolbox\Compile\check_database.p</file>
-      <file>C:\Users\Alberto Cuadra Lara\Google Drive\Phd\Combustion_Toolbox\Compile\closing.p</file>
-      <file>C:\Users\Alberto Cuadra Lara\Google Drive\Phd\Combustion_Toolbox\Compile\colours.p</file>
-      <file>C:\Users\Alberto Cuadra Lara\Google Drive\Phd\Combustion_Toolbox\Compile\Combustion_Toolbox.p</file>
       <file>${PROJECT_ROOT}\Databases\strMaster.mat</file>
       <file>${PROJECT_ROOT}\Databases\strMaster_reduced.mat</file>
       <file>${PROJECT_ROOT}\Databases\strThProp.mat</file>
@@ -73,6 +65,14 @@
       <file>${PROJECT_ROOT}\GUI\Icons\RG_square_green.jpg</file>
       <file>${PROJECT_ROOT}\NASA_database\thermo.inp</file>
       <file>${PROJECT_ROOT}\NASA_database\trans.inp</file>
+      <file>C:\Users\Alberto Cuadra Lara\Google Drive\Phd\Combustion_Toolbox\Compile\about.p</file>
+      <file>C:\Users\Alberto Cuadra Lara\Google Drive\Phd\Combustion_Toolbox\Compile\brewermap.p</file>
+      <file>C:\Users\Alberto Cuadra Lara\Google Drive\Phd\Combustion_Toolbox\Compile\CalculateProductsCC.p</file>
+      <file>C:\Users\Alberto Cuadra Lara\Google Drive\Phd\Combustion_Toolbox\Compile\CalculateProductsIC.p</file>
+      <file>C:\Users\Alberto Cuadra Lara\Google Drive\Phd\Combustion_Toolbox\Compile\check_database.p</file>
+      <file>C:\Users\Alberto Cuadra Lara\Google Drive\Phd\Combustion_Toolbox\Compile\closing.p</file>
+      <file>C:\Users\Alberto Cuadra Lara\Google Drive\Phd\Combustion_Toolbox\Compile\colours.p</file>
+      <file>C:\Users\Alberto Cuadra Lara\Google Drive\Phd\Combustion_Toolbox\Compile\Combustion_Toolbox.p</file>
       <file>C:\Users\Alberto Cuadra Lara\Google Drive\Phd\Combustion_Toolbox\Compile\Combustion_Toolbox_App.p</file>
       <file>C:\Users\Alberto Cuadra Lara\Google Drive\Phd\Combustion_Toolbox\Compile\ComputeProperties.p</file>
       <file>C:\Users\Alberto Cuadra Lara\Google Drive\Phd\Combustion_Toolbox\Compile\detect_location_of_phase_specifier.p</file>
@@ -132,7 +132,7 @@
     </fileset.resources>
     <fileset.package />
     <build-deliverables>
-      <file location="C:\Users\Alberto Cuadra Lara\Google Drive\Phd\Combustion_Toolbox\Compile" name="combustion_toolbox" optional="false">C:\Users\Alberto Cuadra Lara\Google Drive\Phd\Combustion_Toolbox\Compile\combustion_toolbox</file>
+      <file location="C:\Users\Alberto Cuadra Lara\Google Drive\Phd\Combustion_Toolbox\Combustion_Toolbox_repo" name="combustion_toolbox" optional="false">C:\Users\Alberto Cuadra Lara\Google Drive\Phd\Combustion_Toolbox\Combustion_Toolbox_repo\combustion_toolbox</file>
     </build-deliverables>
     <workflow />
     <matlab>

@@ -14,43 +14,53 @@ function displaysweepresults(varargin)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 nfrec = 3;
 linewidth = 2;
-fontsize = 24;
+fontsize = 18;
 
 if nargin < 4
     error('Error: Not enough input arguments. Function: displaysweepresults.');
 end
 str = varargin{1};
-phi = varargin{2};
+x = varargin{2};
 NameSpecies = varargin{3};
 mintol = varargin{4};
+labelx = varargin{5}; 
 NE = length(NameSpecies);
-if nargin == 5
-    display_species = varargin{5}; 
+if nargin == 6
+    display_species = varargin{6}; 
 end
-if length(phi)>1
+if length(x)>1
     % Plot configuration
     % color = colours;
     f = figure;
     set(f,'units','normalized','innerposition',[0.05 0.05 0.9 0.9],...
         'outerposition',[0.05 0.05 0.9 0.9]);
-    set(axes,'LineWidth',linewidth-0.6,'FontSize',fontsize+2,'BoxStyle','full')
+    set(axes,'LineWidth',linewidth-0.4,'FontSize',fontsize,'BoxStyle','full')
     grid minor; box on; hold on; 
 
-    xlabel('Equivalence Ratio $\phi$','FontSize',fontsize+10,'interpreter','latex');
+    xlabel(labelx,'FontSize',fontsize+10,'interpreter','latex');
     ylabel('Molar fraction $X_i$','FontSize',fontsize+10,'interpreter','latex');
     
     Nstruct = length(str);
 %     Nspecies = length(str{1}.Xi);
     Xi_phi = zeros(length(str{1}.Xi),Nstruct);
-    if nargin == 4
+    if nargin == 5
+%         for i=1:Nstruct
+%             Xi_phi(:,i) = str{i}.Xi;
+%         end
+%         j = any(Xi_phi'>mintol);
+%         
+%         NE = sum(j);  
         for i=1:Nstruct
             Xi_phi(:,i) = str{i}.Xi;
             j = str{i}.Xi>mintol;
             ind = find(j>0);
             %     Xminor(i) = sum(str(i).Xi(~j));
         end
+        
+        NE = sum(j);  
+        colorbw = brewermap(NE,'Spectral');
         for i=1:sum(j)
-            dl = plot(phi,Xi_phi(ind(i),:),'LineWidth',linewidth);
+            dl = plot(x,Xi_phi(ind(i),:),'LineWidth',linewidth,'color',colorbw(i,:));
 %             if mod(i,nfrec)==0
 %                 loc_label = 'right';
 %             else
@@ -58,7 +68,7 @@ if length(phi)>1
 %             end
 %             label(dl,NameSpecies{ind(i)},'FontSize',fontsize,'location',loc_label);
         end
-    elseif nargin == 5
+    elseif nargin == 6
         for i=1:Nstruct
             Xi_phi(:,i) = str{i}.Xi;
         end
@@ -74,7 +84,7 @@ if length(phi)>1
         NE = length(j);  
         colorbw = brewermap(NE,'Spectral');
         for i=1:length(j)
-            dl = plot(phi,Xi_phi(j(i),:),'LineWidth',linewidth,'color',colorbw(i,:));
+            dl = plot(x,Xi_phi(j(i),:),'LineWidth',linewidth,'color',colorbw(i,:));
 %             if mod(i,nfrec)==0
 %                 loc_label = 'right';
 %             else
@@ -88,7 +98,7 @@ if length(phi)>1
     % plot(phi,Xminor,'color','k','LineWidth',1.2);
     set(gca,'yscale','log')
     
-    xlim([min(phi),max(phi)])
+    xlim([min(x),max(x)])
     
     ymin = 10^floor(log(abs(min(Xi_phi(Xi_phi>0))))/log(10));
     if ymin > mintol
@@ -104,6 +114,7 @@ if length(phi)>1
     % title({tit},'Interpreter','latex','FontSize',16);
     % filename2 = strcat(fpath,filename);
     % saveas(fig,filename2,'epsc');
+    movegui(f,'center')
 else
     error('Funtion displaysweepresults - It is necessary at least 2 cases to display the results.')
 end

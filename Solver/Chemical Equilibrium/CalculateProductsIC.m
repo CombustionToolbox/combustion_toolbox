@@ -76,7 +76,7 @@ if M.major_CH4
 end
 if M.major_OH
     g_OH = species_g0_new('OH',TP,strThProp);
-    DG0_XI   = -g_OH*1000;
+    DG0_XI   = g_OH*1000;
     
     k11  = exp(-DG0_XI/R0TP);
 end
@@ -241,7 +241,7 @@ end
 %                 end
 %                 P_IC(M.idx_minor(n),[strThProp.(minor_products{n}).Element_matrix(1,:),1]) = [Ni(n)*strThProp.(minor_products{n}).Element_matrix(2,:),Ni(n)];
 %             end
-            Ni(Ni>NP_old) = 0;
+            Ni(Ni>NP_old) = 0.75*Ni(Ni>NP_old);
             Ni_old = P_IC_old(M.idx_minor,1)';
             aux = find(Ni_old~=0);
             if ~isempty(aux)
@@ -325,7 +325,8 @@ end
 %                     +log(NH2).*(C.beta/2-C.gamma(n)+2*C.alpha)+log(NN2+1).*(C.omega/2) ...
 %                     +log(zeta).*DNfactor_VI);
                 if M.major_OH && DeltaNP
-                    Ni(M.idx_m_OH) = sqrt(NH2*NO2)/k11;
+%                     Ni(M.idx_m_OH) = sqrt(NH2*NO2)/k11;
+                    Ni(M.idx_m_OH) = sqrt(NH2*NO2*k11*zeta^(-3/2));
                 end
                 Ni_old = P_IC_old(M.idx_minor,1)';
                 aux = find(Ni_old~=0);
@@ -676,7 +677,7 @@ end
                     if ~isempty(aux)
                         Ni(aux) = Ni_old(aux)+relax*(Ni(aux)-Ni_old(aux));
                     end
-                    Ni(Ni>NP_old) = 0;
+%                     Ni(Ni>NP_old) = 0;
                     P_IC(M.idx_minor,1) = Ni;
                 end
 %             end
@@ -865,7 +866,7 @@ end
                         Ni(aux) = Ni_old(aux)+relax*(Ni(aux)-Ni_old(aux));
                         %                           Ni(aux) = exp(log(Ni_old(aux)) +relax*(log(Ni(aux)) -log(Ni_old(aux))));
                     end
-                    Ni(Ni>NP_old) = 0;
+%                     Ni(Ni>NP_old) = 0;
                     P_IC(M.idx_minor,1) = Ni;
                 end
                 

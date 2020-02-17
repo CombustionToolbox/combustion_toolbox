@@ -25,7 +25,7 @@ FLAG_SOOT = 0;
 % else
 %     phi_c = phi;
 % end
-if Fuel.x~= 0 
+if Fuel.x~= 0 && (Fuel.x~= Fuel.z)
 %     DG0 = (species_g0_new('CO2',TP,strThProp)-2*species_g0_new('CO',TP,strThProp))*1000;
 %     k7 = exp(-DG0/(R0*TP));
 %     Fuel.eps = 1/2*(-1 + sqrt(1 + 4*k7*Fuel.x));
@@ -35,7 +35,7 @@ if Fuel.x~= 0
     phi_c =(2*(Fuel.x+Fuel.y/4-Fuel.z/2))/(-Fuel.z+((2*Fuel.eps*Fuel.x+Fuel.x+Fuel.eps*Fuel.y/2)/(1+Fuel.eps))); % C_x H_y O_z
 %     phi_c = -(((-1+Fuel.eps)*(4*Fuel.x+Fuel.y))/(2*(1+Fuel.eps)*Fuel.x+Fuel.eps^2*Fuel.y)); % C_x H_y
     else
-        phi_c = 2/(Fuel.x)*(Fuel.x+Fuel.y/4);
+        phi_c = 2/(Fuel.x-Fuel.z)*(Fuel.x+Fuel.y/4-Fuel.z/2);
     end
 else
     phi_c = 1.1*phi;

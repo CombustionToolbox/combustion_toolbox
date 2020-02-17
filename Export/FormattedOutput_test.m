@@ -102,11 +102,11 @@ ExcelOutputMatrix{2,12} = '[m/s]';
 
 SpeciesCounter = 0;
 for j = 1:numel(NameSpecies)
-    if (str{1}.Xi(j) > 0)||(any(strcmp(NameSpecies{j},{'CO2','CO','H2O','H2','O2','N2'})))
+%     if (str{1}.Xi(j) > 0)||(any(strcmp(NameSpecies{j},{'CO2','CO','H2O','H2','O2','N2'})))
         SpeciesCounter = SpeciesCounter + 1;
         ExcelOutputMatrix{1,12+SpeciesCounter} = [composition_variable,NameSpecies{j}];
         ExcelOutputMatrix{2,12+SpeciesCounter} = '[-]';
-    end
+%     end
 end
 
 % ExcelOutputMatrix = [ExcelOutputMatrix; ExcelOutputMatrix];
@@ -153,12 +153,12 @@ for i=length(phi):-1:1
     end
     SpeciesCounter = 0;
     for j = 1:numel(NameSpecies)
-        if (str{i}.Xi(j) > 0)||(any(strcmp(NameSpecies{j},{'CO2','CO','H2O','H2','O2','N2'})))
+%         if (str{i}.Xi(j) > 0)||(any(strcmp(NameSpecies{j},{'CO2','CO','H2O','H2','O2','N2'})))
             SpeciesCounter = SpeciesCounter + 1;
 %             eval(['ExcelOutputMatrixRow{1,10+SpeciesCounter} = ',composition_variable,'i(',num2str(j),');']);
 %             eval(['ExcelOutputMatrixRow{1,10+SpeciesCounter} = ',str{i}.Xi(j),';']);
             ExcelOutputMatrix{i+2,12+SpeciesCounter} = str{i}.Xi(j);
-        end
+%         end
     end
 %     ExcelOutputMatrix = [ExcelOutputMatrix; ExcelOutputMatrix];
     

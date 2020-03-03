@@ -1,4 +1,4 @@
-function plot_density_YFuel(strR,strR_Fuel)
+function [rho, YFuel, W] = plot_density_YFuel(strR,strR_Fuel)
 linewidth = 2;
 fontsize = 24;
 f = figure;
@@ -16,3 +16,4 @@ for i=Nstruct:-1:1
     rho(i)   = strR{i}.rho;
 end
 plot(YFuel,rho,'LineWidth',linewidth);
+W = plot_WorH_YFuel(strR,YFuel,rho,true);

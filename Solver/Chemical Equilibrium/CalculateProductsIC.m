@@ -181,74 +181,78 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% CHEMICAL EQUILIBRIUM
     function [P_IC,DeltaNP] = incomplete_phi_1(P_IC,E,S,M,C)
-    DeltaNP = 1;
-    while abs(DeltaNP/NP) > C.tolN && it<itMax 
-        it = it+1;
-        % Initialization of the product matrix for incomplete combustion (IC)
-        NP_old   = NP;
-        P_IC_old = P_IC;
-        P_IC = M0;
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        %
-        % In lean combustion the product mixture always contains O2, CO2,
-        % H2O, and N2 (in fuel-air combustion). The number of moles of
-        % CO and H2 can be calculated from the equilibrium condition for
-        % the reactions
-        %
-        %                  CO2 <-I -> CO+(1/2) O2             [k1]
-        %                  H2O <-II-> H2+(1/2) O2             [k2]
-        %
-        % For the remaining minor species, we calculate the number of
-        % moles from the equilibrium condition for the generalized
-        % reaction
-        %
-        % C.alpha CO2+(C.beta/2) H2O+(C.gamma/2-C.alpha-C.beta/4) O2
-        %+(C.omega/2) N2 <-III-> C_alpha H_beta O_gamma N_omega [k3]
-        %
-        % Note that reactions*i*and II are particular forms of the more
-        % general reaction III
-        %
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        NCO    = NCO2/NO2^(1/2)*zeta^(1/2)*k1;
-        NCO_old = P_IC_old(S.idx_CO,1);
-        
-        if NCO_old ~=0
-            NCO = NCO_old+relax*(NCO-NCO_old);
-        end
-        P_IC(S.idx_CO,1) = NCO;
-        
-        NH2     = NH2O/NO2^(1/2)*zeta^(1/2)*k2;
-        NH2_old = P_IC_old(S.idx_H2,1);
-        if NH2_old ~=0
-            NH2 = NH2_old+relax*(NH2-NH2_old);
-        end
-        P_IC(S.idx_H2,1) = NH2;
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        %
-        % Determination of the number of moles of the minor species
-        % from the equilibrium condition for the above reaction
-        %
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        if M.L_minor>0 
-            Ni     = k3.* NCO2.^C.alpha.* NH2O.^(C.beta/2).* NN2.^(C.omega/2) ...
-                .* NO2.^(C.gamma/2-C.alpha-C.beta/4).* zeta.^DNfactor_III;
-%           Ni = exp(log(k3)+ log(NCO2).*C.alpha+ log(NH2O).*(C.beta/2)+ log(NN2+1).*(C.omega/2) ...
-%                +log(NO2).*(C.gamma/2-C.alpha-C.beta/4)+ log(zeta).*DNfactor_III); 
-%             for n =M.L_minor:-1:1
-%                 Ni_old = P_IC_old(M.idx_minor(n),1);
-%                 if Ni_old ~=0
-%                     Ni(n) = Ni_old+relax*(Ni(n)-Ni_old);
-%                 end
-%                 P_IC(M.idx_minor(n),[strThProp.(minor_products{n}).Element_matrix(1,:),1]) = [Ni(n)*strThProp.(minor_products{n}).Element_matrix(2,:),Ni(n)];
-%             end
-            Ni(Ni>NP_old) = 0.75*Ni(Ni>NP_old);
-            Ni_old = P_IC_old(M.idx_minor,1)';
-            aux = find(Ni_old~=0);
-            if ~isempty(aux)
-                Ni(aux) = Ni_old(aux)+relax*(Ni(aux)-Ni_old(aux));
+        DeltaNP = 1;
+        while abs(DeltaNP/NP) > C.tolN && it<itMax
+            it = it+1;
+            % Initialization of the product matrix for incomplete combustion (IC)
+            NP_old   = NP;
+            P_IC_old = P_IC;
+            P_IC = M0;
+            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+            %
+            % In lean combustion the product mixture always contains O2, CO2,
+            % H2O, and N2 (in fuel-air combustion). The number of moles of
+            % CO and H2 can be calculated from the equilibrium condition for
+            % the reactions
+            %
+            %                  CO2 <-I -> CO+(1/2) O2             [k1]
+            %                  H2O <-II-> H2+(1/2) O2             [k2]
+            %
+            % For the remaining minor species, we calculate the number of
+            % moles from the equilibrium condition for the generalized
+            % reaction
+            %
+            % C.alpha CO2+(C.beta/2) H2O+(C.gamma/2-C.alpha-C.beta/4) O2
+            %+(C.omega/2) N2 <-III-> C_alpha H_beta O_gamma N_omega [k3]
+            %
+            % Note that reactions*i*and II are particular forms of the more
+            % general reaction III
+            %
+            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+            NCO    = NCO2/NO2^(1/2)*zeta^(1/2)*k1;
+            NCO_old = P_IC_old(S.idx_CO,1);
+            
+            if NCO_old ~=0
+                NCO = NCO_old+relax*(NCO-NCO_old);
             end
-            P_IC(M.idx_minor,1) = Ni;
-        end
+            P_IC(S.idx_CO,1) = NCO;
+            
+            NH2     = NH2O/NO2^(1/2)*zeta^(1/2)*k2;
+            NH2_old = P_IC_old(S.idx_H2,1);
+            if NH2_old ~=0
+                NH2 = NH2_old+relax*(NH2-NH2_old);
+            end
+            P_IC(S.idx_H2,1) = NH2;
+            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+            %
+            % Determination of the number of moles of the minor species
+            % from the equilibrium condition for the above reaction
+            %
+            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+            if M.L_minor>0
+                Ni     = k3.* NCO2.^C.alpha.* NH2O.^(C.beta/2).* NN2.^(C.omega/2) ...
+                    .* NO2.^(C.gamma/2-C.alpha-C.beta/4).* zeta.^DNfactor_III;
+                %           Ni = exp(log(k3)+ log(NCO2).*C.alpha+ log(NH2O).*(C.beta/2)+ log(NN2+1).*(C.omega/2) ...
+                %                +log(NO2).*(C.gamma/2-C.alpha-C.beta/4)+ log(zeta).*DNfactor_III);
+                %             for n =M.L_minor:-1:1
+                %                 Ni_old = P_IC_old(M.idx_minor(n),1);
+                %                 if Ni_old ~=0
+                %                     Ni(n) = Ni_old+relax*(Ni(n)-Ni_old);
+                %                 end
+                %                 P_IC(M.idx_minor(n),[strThProp.(minor_products{n}).Element_matrix(1,:),1]) = [Ni(n)*strThProp.(minor_products{n}).Element_matrix(2,:),Ni(n)];
+                %             end
+                
+                if M.major_OH && DeltaNP
+                    Ni(M.idx_m_OH) = sqrt(NH2*NO2*k11*zeta^(-3/2));
+                end
+                Ni(Ni>NP_old) = 0.75*Ni(Ni>NP_old);
+                Ni_old = P_IC_old(M.idx_minor,1)';
+                aux = find(Ni_old~=0);
+                if ~isempty(aux)
+                    Ni(aux) = Ni_old(aux)+relax*(Ni(aux)-Ni_old(aux));
+                end
+                P_IC(M.idx_minor,1) = Ni;
+            end
         % Correction of the number of moles of CO2, H2O, O2 and N2 from atom
         % conservation equations
         NCO2_old = NCO2;

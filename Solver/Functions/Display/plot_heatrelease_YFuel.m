@@ -1,4 +1,4 @@
-function plot_heatrelease_YFuel(strR,strP,strR_Fuel)
+function [q, YFuel, H, YFuel_st] = plot_heatrelease_YFuel(strR,strP,strR_Fuel)
 linewidth = 2;
 fontsize = 24;
 f = figure;
@@ -24,8 +24,15 @@ for i=Nstruct:-1:1
     uP(i)    = strP{i}.u;
     aR(i)    = strR{i}.sound;
     gamma(i) = strP{i}.gamma;
+    if strR{i}.phi == 1
+        YFuel_st = YFuel(i);
+    end
+end
+if ~exist('YFuel_st')
+   YFuel_st = 0; 
 end
 q = (dhP-dhR+0.5*(uP.^2-uR.^2))*1e-3; % kJ/kg == m^2/s^2 * 1e-3 --> J/kg
 % q = q/max(q); ylabel('Heat release, $q*$','FontSize',fontsize+10,'interpreter','latex');
 % q = q.*(gamma.^2-1)./(2*aR.^2)*1e3; ylabel('Heat release, $q*$','FontSize',fontsize+10,'interpreter','latex');
-plot(YFuel,q,'LineWidth',linewidth);
+plot(YFuel,q,'LineWidth',linewidth)
+H = plot_WorH_YFuel(strR,YFuel,q,false);

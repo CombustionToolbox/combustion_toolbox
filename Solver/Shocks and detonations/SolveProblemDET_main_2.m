@@ -68,7 +68,7 @@ while  ((counter <= 3) || (g <= Goodness))
     
 %     min = dnew - dnew*0.0005;
 %     max = dnew + dnew*0.0005;
-    if counter <= 3
+    if counter <= 2
         min_s = dnew - dnew*0.05;
         max_s = dnew + dnew*0.05;
     elseif counter <= 10
@@ -92,6 +92,7 @@ end
 % U_cj = cj_speed;  %Make sure Hugoniot and Rayleigh intersect
 
 U_cj = feval(curve,dnew);
+U_cj = U_cj + .001;
 
 guess_shock(3) = dnew;
 TN.guess_shock = guess_shock;

@@ -57,7 +57,7 @@ grid on; box on; hold on; axis tight
 
 xlabel(config.labelx,'FontSize',config.fontsize,'interpreter','latex');
 ylabel(config.labely,'FontSize',config.fontsize,'interpreter','latex');
-xlim([min(x),max(x)])
+xlim([min(x),1.02*max(x)])
 ylim([min(y),1.02*max(y)])
 plot(x,y,'LineWidth',config.linewidth);
 if nargin == 4

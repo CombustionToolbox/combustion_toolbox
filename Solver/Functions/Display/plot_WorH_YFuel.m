@@ -1,4 +1,12 @@
-function WorH = plot_WorH_YFuel(str,x,y,Wbool)
+function WorH = plot_WorH_YFuel(varargin)
+str   = varargin{1};
+str_Fuel   = varargin{2};
+x     = varargin{3};
+y     = varargin{4};
+Wbool = varargin{5};
+if nargin == 6
+    x2 = varargin{6};
+end
 linewidth = 2;
 fontsize = 24;
 
@@ -17,14 +25,13 @@ end
 dy0(1)   = 1/y(1)*(y(2)-y(1))/(x(2)-x(1));
 dy0(end) = 1/y(end)*(y(end)-y(end-1))/(x(end)-x(end-1));
 
-
-if ~isfield(str{1},'z')
-    str{1}.z = 0;
+if ~isfield(str_Fuel, 'z')
+   str_Fuel.z = 0;
 end
-s = str{1}.x + str{1}.y/4 - str{1}.z/2;
+s = str_Fuel.x + str_Fuel.y/4 - str_Fuel.z/2;
 
 WA = 28.850334000000007;
-WF = str{1}.x*12.0107 + str{1}.y*1.0079 + str{1}.z*15.9994;
+WF = str_Fuel.x*12.0107 + str_Fuel.y*1.0079 + str_Fuel.z*15.9994;
 for i=length(str):-1:1
     mo(i) = s*(2*15.9994 + 79/21*2*14.0067)/str{i}.phi;
     rho_Fuel(i) = str{i}.rho;
@@ -44,16 +51,22 @@ set(f,'units','normalized','innerposition',[0.05 0.05 0.9 0.9],...
 set(axes,'LineWidth',linewidth-0.2,'FontSize',fontsize+2,'BoxStyle','full')
 movegui(f,'center')
 grid on; box on; hold on; axis tight
-xlabel('$Y_{Fuel}\ [-]$','FontSize',fontsize+10,'interpreter','latex');
 if Wbool
-    ylabel('$W$','FontSize',fontsize+10,'interpreter','latex');
+    ylabel('$W\ [-]$','FontSize',fontsize+10,'interpreter','latex');
 else
-    ylabel('$H$','FontSize',fontsize+10,'interpreter','latex');
+    ylabel('$H\ [-]$','FontSize',fontsize+10,'interpreter','latex');
+end
+if nargin == 5
+    x = x2;
+    xlabel('$\phi\ [-]$','FontSize',fontsize+10,'interpreter','latex');
+else
+    xlabel('$Y_{Fuel}\ [-]$','FontSize',fontsize+10,'interpreter','latex');
 end
 plot(x,dy0,'LineWidth',linewidth)
 
 if Wbool
     plot(x,W,'LineWidth',linewidth)
+    legend({'CT','Analytical'},'FontSize',fontsize,'location','best','interpreter','latex');
 end
 
 WorH = dy0;

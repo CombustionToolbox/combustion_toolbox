@@ -1,4 +1,4 @@
-function plot_density_phi(strR)
+function [rho, YFuel, W, YFuel_st, phi] = plot_density_phi(strR,strR_Fuel)
 linewidth = 2;
 fontsize = 24;
 f = figure;
@@ -13,6 +13,14 @@ ylabel('Density, $\rho\ [kg/m^3]$','FontSize',fontsize+10,'interpreter','latex')
 Nstruct = length(strR);
 for i=Nstruct:-1:1
     phi(i) = strR{i}.phi;
+    YFuel(i) = strR_Fuel.mi/strR{i}.mi;
     rho(i) = strR{i}.rho;
+    if strR{i}.phi == 1
+        YFuel_st = YFuel(i);
+    end
+end
+if ~exist('YFuel_st')
+   YFuel_st = 0; 
 end
 plot(phi,rho,'LineWidth',linewidth);
+W = plot_WorH_YFuel(strR,strR_Fuel,YFuel,rho,true,phi);

@@ -61,7 +61,7 @@ if M.major_CH4
     g_CH4 = species_g0_new('CH4',TP,strThProp);
     g_C2H2 = species_g0_new('C2H2_acetylene',TP,strThProp);
     g_C6H6 = species_g0_new('C6H6',TP,strThProp);
-    DG0_VIII   = g_CH4*1000;
+    % DG0_VIII   = g_CH4*1000;
     
     DG0_VIII   = (species_g0_new('CH3',TP,strThProp)-species_g0_new('H',TP,strThProp)-g_CH4)*1000;
     
@@ -78,7 +78,7 @@ if M.major_OH
     g_OH = species_g0_new('OH',TP,strThProp);
     DG0_XI   = g_OH*1000;
     
-    k11  = exp(-DG0_XI/R0TP);
+    k11 = exp(-DG0_XI/R0TP);
 end
 % if M.minor_C
 %     DG0_X = 2*g_CO*1000;
@@ -241,10 +241,9 @@ end
                 %                 end
                 %                 P_IC(M.idx_minor(n),[strThProp.(minor_products{n}).Element_matrix(1,:),1]) = [Ni(n)*strThProp.(minor_products{n}).Element_matrix(2,:),Ni(n)];
                 %             end
-                
-                if M.major_OH && DeltaNP
-                    Ni(M.idx_m_OH) = sqrt(NH2*NO2*k11*zeta^(-3/2));
-                end
+%                 if M.major_OH && DeltaNP
+%                     Ni(M.idx_m_OH) = sqrt(NH2*NO2*k11*zeta^(-3/2));
+%                 end
                 Ni(Ni>NP_old) = 0.75*Ni(Ni>NP_old);
                 Ni_old = P_IC_old(M.idx_minor,1)';
                 aux = find(Ni_old~=0);
@@ -252,7 +251,9 @@ end
                     Ni(aux) = Ni_old(aux)+relax*(Ni(aux)-Ni_old(aux));
                 end
                 P_IC(M.idx_minor,1) = Ni;
+                % disp(sortrows([cell2table(S.NameSpecies(P_IC(:,1)>0.000001), 'VariableNames', {'Species'}), array2table(P_IC(P_IC(:,1)>0.000001), 'VariableNames', {'N'})], 2, 'descend'))
             end
+        % disp([sum(P_IC(:,1).*A0(:,E.ind_C)), sum(P_IC(:,1).*A0(:,E.ind_H)), sum(P_IC(:,1).*A0(:,E.ind_O)), sum(P_IC(:,1).*A0(:,E.ind_N))])
         % Correction of the number of moles of CO2, H2O, O2 and N2 from atom
         % conservation equations
         NCO2_old = NCO2;
@@ -287,7 +288,8 @@ end
 %         NP = sum(P_IC(:,1));
         DeltaNP = norm([NP-NP_old, x-sum(P_IC(:,1).*A0(:,E.ind_C)), y-sum(P_IC(:,1).*A0(:,E.ind_H)), z-sum(P_IC(:,1).*A0(:,E.ind_O)), w-sum(P_IC(:,1).*A0(:,E.ind_N))]);
         % relax = abs(relax*(1-DeltaNP/NP));
-    end
+        % disp(sortrows([cell2table(S.NameSpecies(P_IC(:,1)>0.000001), 'VariableNames', {'Species'}), array2table(P_IC(P_IC(:,1)>0.000001), 'VariableNames', {'N'})], 2, 'descend'))
+        end
     end % PHI <= 1
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     function [P_IC,DeltaNP] = incomplete_phi_2(P_IC,E,S,M,C)
@@ -323,15 +325,15 @@ end
             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
             if M.L_minor>0
                 Ni     = k6.* NCO2.^C.alpha.* NH2O.^(C.gamma-2*C.alpha) ...
-                    .* NH2.^(C.beta/2-C.gamma(n)+2*C.alpha) .* NN2.^(C.omega/2) ...
+                    .* NH2.^(C.beta/2-C.gamma+2*C.alpha) .* NN2.^(C.omega/2) ...
                     .* zeta.^DNfactor_VI;
 %                 Ni     = exp(log(k6)+log(NCO2).*(C.alpha)+log(NH2O).*(C.gamma-2*C.alpha) ...
 %                     +log(NH2).*(C.beta/2-C.gamma(n)+2*C.alpha)+log(NN2+1).*(C.omega/2) ...
 %                     +log(zeta).*DNfactor_VI);
-                if M.major_OH && DeltaNP
-%                     Ni(M.idx_m_OH) = sqrt(NH2*NO2)/k11;
-                    Ni(M.idx_m_OH) = sqrt(NH2*NO2*k11*zeta^(-3/2));
-                end
+%                 if M.major_OH && DeltaNP
+% %                     Ni(M.idx_m_OH) = sqrt(NH2*NO2)/k11;
+%                     Ni(M.idx_m_OH) = sqrt(NH2*NO2*k11*zeta^(-3/2));
+%                 end
                 Ni_old = P_IC_old(M.idx_minor,1)';
                 aux = find(Ni_old~=0);
                 if ~isempty(aux)
@@ -421,7 +423,7 @@ end
                 NO2 = NO2_old+relax*(NO2-NO2_old);
             end
             
-            % Correction of the number of moles of H2, H2O and N2 from
+            % Correction of the number of moles of CO2, CO and N2 from
             % atom conservation equations
             
             NCO2 = NCO2_0-2*(NO2-3*sum(P_IC(:,1).*A0(:,E.ind_C))/2+sum(P_IC(:,1).*A0(:,E.ind_O))/2);
@@ -518,7 +520,12 @@ end
                 Ni(Ni>NP_old) = 0;
                 P_IC(M.idx_minor,1) = Ni;
             end
-            
+            % Check
+%             sum(P_IC(:,1).*A0(:,E.ind_C))
+%             sum(P_IC(:,1).*A0(:,E.ind_H))
+%             sum(P_IC(:,1).*A0(:,E.ind_O))
+%             sum(P_IC(:,1).*A0(:,E.ind_N))
+            %%%%
             NO2     = zeta*(k1*NCO2/NCO)^2;
             NO2_old = P_IC_old(S.idx_O2,1);
             if NO2_old ~=0
@@ -547,7 +554,7 @@ end
             
             if TP > 3000
                 NCO2 = NCO2_old+0.1*relax*(NCO2-NCO2_old);
-                NCO  = NCO_old +0.1*relax*(NCO -NCO_old);
+                NCO  = NCO_old+0.1*relax*(NCO -NCO_old);
                 NH2O = NH2O_old+0.1*relax*(NH2O-NH2O_old);
                 NH2  = NH2_old +0.1*relax*(NH2 -NH2_old);
                 NN2  = NN2_old +0.1*relax*(NN2 -NN2_old);
@@ -829,7 +836,7 @@ end
                     end
                     
                     NP_old = N_minor_C_0_nswt+N_minor_H_0_nswt+N_minor_O_0_nswt+N_minor_N_0_nswt...
-                            +y/4+0.5+(NH2_0+NCO_0+z+w)/2+NHe+NAr;
+                            +y/4+(NH2_0+NCO_0+z+w)/2+NHe+NAr;
                     NP_old = 0.5*(NP+NP_old); 
                     
                     if strfind(PD.ProblemType,'P') == 2 % PD.ProblemType = 'TP', 'HP', or 'SP'

@@ -49,18 +49,20 @@ if length(x)>1
 %         end
 %         j = any(Xi_phi'>mintol);
 %         
-%         NE = sum(j);  
+%         NE = sum(j);
+        all_ind = [];
         for i=1:Nstruct
             Xi_phi(:,i) = str{i}.Xi;
             j = str{i}.Xi>mintol;
             ind = find(j>0);
+            all_ind = [all_ind; ind];
             %     Xminor(i) = sum(str(i).Xi(~j));
         end
-        
-        NE = sum(j);  
+        all_ind = unique(all_ind);
+        NE = numel(all_ind);  
         colorbw = brewermap(NE,'Spectral');
-        for i=1:sum(j)
-            dl = plot(x,Xi_phi(ind(i),:),'LineWidth',linewidth,'color',colorbw(i,:));
+        for i=1:numel(all_ind)
+            dl = plot(x,Xi_phi(all_ind(i),:),'LineWidth',linewidth,'color',colorbw(i,:));
 %             if mod(i,nfrec)==0
 %                 loc_label = 'right';
 %             else
@@ -72,19 +74,19 @@ if length(x)>1
         for i=1:Nstruct
             Xi_phi(:,i) = str{i}.Xi;
         end
-        j = [];
+        all_ind = [];
         for i = 1:length(NameSpecies)
             if any(strcmpi(NameSpecies{i},display_species))
-                j = [j, i];
+                all_ind = [all_ind, i];
             end
         end
-        k = any(Xi_phi(j,:)'>mintol);
-        j = j(k);
+        k = any(Xi_phi(all_ind,:)'>mintol);
+        all_ind = all_ind(k);
         
-        NE = length(j);  
+        NE = numel(all_ind);  
         colorbw = brewermap(NE,'Spectral');
-        for i=1:length(j)
-            dl = plot(x,Xi_phi(j(i),:),'LineWidth',linewidth,'color',colorbw(i,:));
+        for i=1:numel(all_ind)
+            dl = plot(x,Xi_phi(all_ind(i),:),'LineWidth',linewidth,'color',colorbw(i,:));
 %             if mod(i,nfrec)==0
 %                 loc_label = 'right';
 %             else
@@ -93,7 +95,7 @@ if length(x)>1
 %             label(dl,NameSpecies{j(i)},'FontSize',fontsize,'location',loc_label);
         end
     end
-    leg =NameSpecies(j);
+    leg =NameSpecies(all_ind);
     
     % plot(phi,Xminor,'color','k','LineWidth',1.2);
     set(gca,'yscale','log')

@@ -1,7 +1,5 @@
 function [strP] = SolveProblemHP(strR,phi,pP,E,S,C,M,PD,TN,strThProp)
 % CALCULATE ADIABATIC T AND COMPOSITION AT CONSTANT P (HP)
-%                           OR
-% CALCULATE EQUILIBRIUM COMPOSITION AT ADIABATIC T AND CONSTANT V (EV)
 %
 % INPUT:
 %   strR  = Prop. of reactives (phi,species,...)

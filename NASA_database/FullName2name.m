@@ -6,8 +6,6 @@ if name(end)=='+'
     name=[name(1:end-1) 'plus'];
 elseif name(end)=='-'
     name=[name(1:end-1) 'minus'];
-else
-
 end
 ind=regexp(name,'[()]');
 name(ind)='b';

@@ -77,9 +77,10 @@ tic
 
 % HYDROGEN
 % SpeciesList = {'H','HNO3','H2O','NH','NH2OH','NO3','N2H2','N2O3','N3','OH','HNO2',...
-%     'H2','N','NH3','NO2','N2O','N2H4','N2O5','O','O3','He','Ar','CO2','CO','O2','N2','HO2','NH2',...
-%     'H2O2','Cbgrb'};
+%     'H2','N','NH3','NO','NO2','N2O','N2H4','N2O5','O','O3','He','Ar','CO2','CO','O2','N2','HO2','NH2',...
+%     'H2O2','Cbgrb','HCO','CH4','CH3','HCN','CN','C2','CH','C2H2_acetylene','C6H6'};
 
+           
 fprintf('Generating short NASA database ... ')
 for i = 1:length(SpeciesList)
     
@@ -168,9 +169,12 @@ if isfield(strMaster,Species)
 %     strThProp.(Species).DhTcurve = griddedInterpolant(strThProp.(Species).T,strThProp.(Species).DhT);
 %     strThProp.(Species).s0curve = griddedInterpolant(strThProp.(Species).T,strThProp.(Species).s0);
 %     strThProp.(Species).g0curve = griddedInterpolant(strThProp.(Species).T,strThProp.(Species).g0);
-    
+%     tic
+%     strThProp.(Species).cPcurve = griddedInterpolant(strThProp.(Species).T,strThProp.(Species).cp,'spline');
+%     cPi = strThProp.(Species).cPcurve(2500)
+%     toc
     strThProp.(Species).cPcurve = griddedInterpolant(strThProp.(Species).T,strThProp.(Species).cp,'spline');
-%     strThProp.(Species).cPcurve = splinterp1(strThProp.(Species).T,strThProp.(Species).cp);
+    %     strThProp.(Species).cPcurve = splinterp1(strThProp.(Species).T,strThProp.(Species).cp);
     strThProp.(Species).cVcurve = griddedInterpolant(strThProp.(Species).T,strThProp.(Species).cv,'spline');
     strThProp.(Species).DeTcurve = griddedInterpolant(strThProp.(Species).T,strThProp.(Species).DeT,'spline');
     strThProp.(Species).DhTcurve = griddedInterpolant(strThProp.(Species).T,strThProp.(Species).DhT,'spline');

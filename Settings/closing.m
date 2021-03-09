@@ -21,6 +21,11 @@ toc(timer_0);
                 app.Misc.config.labely = 'Temperature $T [K]$';
                 plot_figure(app.PD.phi.Value,app.PS.strP,'phi','T',app.Misc.config,app.PD.CompleteOrIncomplete);
             end
+        elseif numel(phi)>1 && all(phi(2:end) == phi(1))
+            app.Misc.config.tit = ProblemType;
+            app.Misc.config.labelx = 'Critical Equivalence Ratio $\phi_c$';
+            app.Misc.config.labely = 'Temperature $T [K]$';
+            plot_figure(app.PS.strP,app.PS.strP,'phi_c','T',app.Misc.config,app.PD.CompleteOrIncomplete);
         end
 % end
 % delete(f);

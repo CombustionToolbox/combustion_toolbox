@@ -7,7 +7,9 @@ ctRefElm=0;
 while ctLine<2500
     
     tline = fgetl(fid);
-    if ~ischar(tline), break, end
+    if ~ischar(tline)
+        break
+    end
     %     disp(tline)
     if tline(1)=='!'
         continue

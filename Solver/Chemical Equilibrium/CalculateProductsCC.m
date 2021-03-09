@@ -1,4 +1,4 @@
-function [NCO2P_0,NCOP_0,NH2OP_0,NH2P_0,NO2P_0,NN2P_0,NHeP_0,NArP_0,NCgrP_0,phi_c,FLAG_SOOT] =  CalculateProductsCC(NatomE,phi,TP,Elements,factor_c,Fuel,strThProp)
+function [NCO2P_0,NCOP_0,NH2OP_0,NH2P_0,NO2P_0,NN2P_0,NHeP_0,NArP_0,NCgrP_0,phi_c,FLAG_SOOT] =  CalculateProductsCC(NatomE,phi,phi_c0,TP,pP,Elements,factor_c,Fuel,strThProp)
 
 R0 = 8.3144598; % [J/(K mol)]. Universal gas constant
 
@@ -25,22 +25,27 @@ FLAG_SOOT = 0;
 % else
 %     phi_c = phi;
 % end
-if Fuel.x~= 0 && (Fuel.x~= Fuel.z)
-%     DG0 = (species_g0_new('CO2',TP,strThProp)-2*species_g0_new('CO',TP,strThProp))*1000;
-%     k7 = exp(-DG0/(R0*TP));
-%     Fuel.eps = 1/2*(-1 + sqrt(1 + 4*k7*Fuel.x));
+% if Fuel.x~= 0 && (Fuel.x~= Fuel.z)
+% %     DG0 = (species_g0_new('CO2',TP,strThProp)-2*species_g0_new('CO',TP,strThProp))*1000;
+% %     k7 = exp(-DG0/(R0*TP));
+% %     Fuel.eps = 1/2*(-1+sqrt(1+4*k7*Fuel.x));
+% 
+%     if Fuel.eps <= 0.5 && Fuel.eps>1e-16
+% %     phi_c = -(((-1+Fuel.eps)*(4*Fuel.x+Fuel.y-2*Fuel.z))/(2*(1+Fuel.eps)*Fuel.x+Fuel.eps^2*Fuel.y-2*Fuel.z+2*Fuel.eps*Fuel.z)); % C_x H_y O_z
+%         phi_c =(2*(Fuel.x+Fuel.y/4-Fuel.z/2))/(-Fuel.z+((2*Fuel.eps*Fuel.x+Fuel.x+Fuel.eps*Fuel.y/2)/(1+Fuel.eps))); % C_x H_y O_z
+% %     phi_c = -(((-1+Fuel.eps)*(4*Fuel.x+Fuel.y))/(2*(1+Fuel.eps)*Fuel.x+Fuel.eps^2*Fuel.y)); % C_x H_y
+%     else
+%         phi_c = 2/(Fuel.x-Fuel.z)*(Fuel.x+Fuel.y/4-Fuel.z/2);
+%     end
+% else
+%     phi_c = 1.1*phi;
+% end
 
-    if Fuel.eps <= 0.5 && Fuel.eps>1e-16
-%     phi_c = -(((-1+Fuel.eps)*(4*Fuel.x+Fuel.y-2*Fuel.z))/(2*(1+Fuel.eps)*Fuel.x+Fuel.eps^2*Fuel.y-2*Fuel.z+2*Fuel.eps*Fuel.z)); % C_x H_y O_z
-    phi_c =(2*(Fuel.x+Fuel.y/4-Fuel.z/2))/(-Fuel.z+((2*Fuel.eps*Fuel.x+Fuel.x+Fuel.eps*Fuel.y/2)/(1+Fuel.eps))); % C_x H_y O_z
-%     phi_c = -(((-1+Fuel.eps)*(4*Fuel.x+Fuel.y))/(2*(1+Fuel.eps)*Fuel.x+Fuel.eps^2*Fuel.y)); % C_x H_y
-    else
-        phi_c = 2/(Fuel.x-Fuel.z)*(Fuel.x+Fuel.y/4-Fuel.z/2);
-    end
-else
-    phi_c = 1.1*phi;
+Ninerts = b + c;
+phi_c = CalculatePhic(Fuel, Ninerts, phi, TP, pP, strThProp);
+if phi_c0 <= 1e-5
+   phi_c = 1e5; 
 end
-
 if phi <= 1 % case of lean or stoichiometric mixtures
     
     NCO2P_0 = x;

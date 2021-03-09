@@ -42,7 +42,7 @@ else
 end
 %% LOAD/CALCULATE SHORT TABULATED DATA
 if ~exist('strThProp','var')
-   if exist('strThProp.mat','file')
+   if exist('strThProp.mat','file') 
     disp('NASA short database loaded from main path')
     load('strThProp.mat');
 %     load('strThProp_HC_47.mat');
@@ -128,10 +128,12 @@ app.C.MassOrMolar = 'mass';
 app.C.filename = 'output';
 app.C.firstrow = 1;
 app.C.ExcelOutputMatrix = [];
-app.C.mintol_display = 1e-8;
+app.C.mintol_display = 1e-10;
 app.C.mintol = 1e-5;
 app.C.tolN = 1e-14;
 app.C.FLAG_FIRST = true;
+global FLAG_PHIC
+FLAG_PHIC = true;
 %% Element_matrix
 app.C.A0.Value = zeros(app.S.NSpecies,app.E.NE);
 app.C.M0.Value = zeros(app.S.NSpecies,12);

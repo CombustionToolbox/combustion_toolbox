@@ -20,7 +20,7 @@
 % Last update: 05-Feb-2020 18:07
 %% LOAD DATABASES AND GLOBAL PARAMETERS
 addpath(genpath(pwd));
-[app,strThProp,strMaster] = Initialize(); 
+app = Initialize(); 
 app.Misc.save_Excel = false;
 %% REACTION: COMPLETE OR INCOMPLETE
 % Specify the type of the reaction: complete or incomplete (dissociation)
@@ -42,7 +42,7 @@ app = MinorProducts(app, 'Soot formation');
 % Checks if any specie of the app.M.minor_products considered are not included
 % in the selected database strThProp. In case some is missing compute it.
 % IF THE MINOR-SPECIE IS NOT DECLARE AS REACTANT THE THEORY WILL FAIL!!
-[strThProp,app.E,app.S,app.M,app.C] = check_database(strMaster,strThProp,app.E,app.S,app.M,app.C);
+[app.strThProp,app.E,app.S,app.M,app.C] = check_database(app.strMaster,app.strThProp,app.E,app.S,app.M,app.C);
 %% PROBLEM CONDITIONS
 % Specify the pressure (app.PD.pR.Value [bar]) and the equivalence ratio (app.PD.phi.Value) of the
 % reactant mixture (R). The latter may not be required for non-reacting
@@ -69,7 +69,7 @@ switch Problem_selected
     case 'TP' % * TP: Equilibrium composition at defined T and p
         app.PD.ProblemType = 'TP';
 %         app.PD.TP_vector.Value = [300:10:2000];
-        app.PD.TP_vector.Value = 1000;
+        app.PD.TP_vector.Value = 2000;
     case 'HP' % * HP: Adiabatic T and composition at constant p
         app.PD.ProblemType = 'HP';
         app.PD.pR_vector.Value = app.PD.pR.Value;
@@ -109,119 +109,77 @@ for i=app.C.l_phi:-1:1 % Evading preallocate struct
 % waitbar(1-i/app.C.l_phi,f,strcat('Case ',sprintf(' %d',app.C.l_phi-i+1),' -',sprintf(' %d',app.C.l_phi)));
 % if getappdata(f,'canceling'), break, end
 %% DEFINE FUEL
-% Define the fuel blend by specifying the fuel(s), the number of moles and
-% the temperature T [K]
-% app.PD.TR.Value = app.PD.TR.vector.Value(i);
 % app.PD.R_Fuel = 0; app.PD.phi_t = 1; app.PD.Fuel.x = 0; app.PD.Fuel.eps = 1e-1; app.C.FLAG_Fuel = 0;
-app.PD.S_Fuel = {'CH4','C2H6','C3H8'}; app.PD.N_Fuel = [0.85;0.1;0.05]; 
+% app.PD.S_Fuel = {'CH4','C2H6','C3H8'}; app.PD.N_Fuel = [0.85;0.1;0.05]; 
 % app.PD.S_Fuel = {'CH4'}; app.PD.N_Fuel = 1;
-% app.PD.S_Fuel = {'C'}; app.PD.N_Fuel = 1; 
-% app.PD.S_Fuel = {'C2H2_acetylene'}; app.PD.N_Fuel = 1; 
+app.PD.S_Fuel = {'C2H2_acetylene'}; app.PD.N_Fuel = 1; 
 % app.PD.S_Fuel = {'C3H8'}; app.PD.N_Fuel = 1;    
 % app.PD.S_Fuel = {'C6H6'}; app.PD.N_Fuel = 1; 
 % app.PD.S_Fuel = {'C2H4'}; app.PD.N_Fuel = 1;
-% app.PD.S_Fuel = {'C2H4'}; app.PD.N_Fuel = 1;
 
-if ~isfield(app.PD,'R_Fuel')
-    app.PD.R_Fuel = SetSpecies(app.C.M0.Value,app.PD.S_Fuel,app.PD.N_Fuel,app.PD.TR.Value,find_idx(app.PD.S_Fuel,app.S.NameSpecies),strThProp);
-    app.PS.strR_Fuel = ComputeProperties(app.C.A0.Value,app.PD.R_Fuel,app.PD.pR.Value,app.PD.TR.Value,app.E.ind_C,app.E.ind_H); app.PS.strR{i}.phi = app.PD.phi.Value(i);
-    app.PD.Fuel.x = app.PS.strR_Fuel.NatomE(app.E.ind_C); 
-    app.PD.Fuel.y = app.PS.strR_Fuel.NatomE(app.E.ind_H); 
-    app.PD.Fuel.z = app.PS.strR_Fuel.NatomE(app.E.ind_O); app.PS.strR_Fuel.z = app.PD.Fuel.z;
-    app.PD.Fuel.w = app.PS.strR_Fuel.NatomE(app.E.ind_N); app.PS.strR_Fuel.w = app.PD.Fuel.w;
-    app.PD.Fuel.eps = 0;
-    app.PD.phi_t = app.PD.Fuel.x+app.PD.Fuel.y/4-app.PD.Fuel.z/2;
-end
-% DG0 = (species_g0_new('CO',TP,strThProp)-species_g0_new('CO2',TP,strThProp))*1000;
-% k_c = exp(-DG0/(R0*TP));
-% eps = 1/k_c;
-% eps = 1e-3;
-% app.PD.phi_c = -(((-1+eps)*(4*x+y-2*z))/(2*(1+eps)*x+eps^2*y-2*z+2*eps*z)); % C_x H_y O_z
-% app.PD.phi_c = 2/(x)*(x+y/4);       % C_x H_y
+app = Define_F(app);
 %% DEFINE OXIDIZER
-% Specify the oxidizer, either i) pure O2, specifying the number of moles
-% of 'O2' or the equivalence ratio 'O2Phi', or ii) air, specifying the
-% equivalence ratio 'AirPhi'. When specifying the equivalence ratio one
-% must provide R_fuel as an input so that the required ammount of oxygen
-% for stoichiometric fuel-O2 combustion can be evaluated first
-
-% app.PD.R_Oxidizer = 0;
-% app.PD.R_Oxidizer = SetSpecies('O2',7.5/app.PD.phi.Value(i),'T',app.PD.TR.Value);
-% app.PD.R_Oxidizer = SetSpecies('Air',1/app.PD.phi.Value(i),'T',app.PD.TR.Value);
-% app.PD.R_Oxidizer = SetSpecies('O2Phi',app.PD.R_Fuel,app.PD.phi.Value(i),'T',app.PD.TR.Value);
-% app.PD.R_Oxidizer = SetSpecies('AirPhi',app.PD.R_Fuel,app.PD.phi.Value(i),'T',app.PD.TR.Value);
 app.PD.S_Oxidizer = {'O2'}; app.PD.N_Oxidizer = app.PD.phi_t/app.PD.phi.Value(i);
-app.PD.R_Oxidizer = SetSpecies(app.C.M0.Value,app.PD.S_Oxidizer,app.PD.N_Oxidizer,app.PD.TR.Value,find_idx(app.PD.S_Oxidizer,app.S.NameSpecies),strThProp);
+app = Define_O(app);
 %% DEFINE DILUENTS/INERTS
-% Specify diluents/inert species, such as CO2, H2O, N2, He, Ar, etc.
-
-% app.PD.R_Inert = 0; % case without inert gases
 app.PD.S_Inert = {'N2'}; app.PD.N_Inert = app.PD.phi_t/app.PD.phi.Value(i)*79/21;
 % app.PD.S_Inert = {'N2','Ar'}; app.PD.N_Inert = app.PD.phi_t/app.PD.phi.Value(i).*[78.09/20.95;0.93/20.95];
-app.PD.R_Inert = SetSpecies(app.C.M0.Value,app.PD.S_Inert,app.PD.N_Inert,app.PD.TR.Value,find_idx(app.PD.S_Inert,app.S.NameSpecies),strThProp);
-
-
-app.PS.strR_Oxidizer = ComputeProperties(app.C.A0.Value,app.PD.R_Oxidizer+app.PD.R_Inert,app.PD.pR.Value,app.PD.TR.Value,app.E.ind_C,app.E.ind_H);
+app = Define_I(app);
 %% COMPUTE PROPERTIES
-% COMPUTE PROPERTIES OF THE REACTIVES FOR THE GIVEN CONDITIONS
-R = app.PD.R_Fuel+app.PD.R_Oxidizer+app.PD.R_Inert;
-app.PS.strR{i} = ComputeProperties(app.C.A0.Value,R,app.PD.pR.Value,app.PD.TR.Value,app.E.ind_C,app.E.ind_H); app.PS.strR{i}.phi = app.PD.phi.Value(i);
-
-% FO = sum(app.PD.R_Fuel(:,1))/sum(app.PD.R_Oxidizer(:,1));
-% FO_st = sum(app.PD.R_Fuel(:,1))/(app.PD.Fuel.x+app.PD.Fuel.y/4-app.PD.Fuel.z/2);
+app = Define_FOI(app, i);
 %% PROBLEM TYPE
 % Specify the problem type and the thermodynamic properties of the product
 % mixture (P) required for the computations
 switch app.PD.ProblemType
     case {'TP','TV'}
         TP = app.PD.TP_vector.Value;
-        app.PS.strP{i} = SolveProblemTP_TV(app.PS.strR{i},app.PD.phi.Value(i),app.PD.pR.Value,TP,app.E,app.S,app.C,app.M,app.PD,app.TN,strThProp);
+        app.PS.strP{i} = SolveProblemTP_TV(app.PS.strR{i},app.PD.phi.Value(i),app.PD.pR.Value,TP,app.E,app.S,app.C,app.M,app.PD,app.TN,app.strThProp);
     case {'HP'}
         if i==app.C.l_phi
             % app.PS.strP{i} = SolveProblemHP_test(app.PS.strR{i},app.PD.phi.Value(i),app.PD.pR.Value); % Newton-Raphson-worse convergence!!
-            app.PS.strP{i} = SolveProblemHP(app.PS.strR{i},app.PD.phi.Value(i),app.PD.pR.Value,app.E,app.S,app.C,app.M,app.PD,app.TN,strThProp);
+            app.PS.strP{i} = SolveProblemHP(app.PS.strR{i},app.PD.phi.Value(i),app.PD.pR.Value,app.E,app.S,app.C,app.M,app.PD,app.TN,app.strThProp);
         else
-            app.PS.strP{i} = SolveProblemHP_EV_fast(app.PS.strR{i},app.PD.phi.Value(i),app.PD.pR.Value,app.PS.strP{i+1},app.E,app.S,app.C,app.M,app.PD,app.TN,strThProp);
+            app.PS.strP{i} = SolveProblemHP_EV_fast(app.PS.strR{i},app.PD.phi.Value(i),app.PD.pR.Value,app.PS.strP{i+1},app.E,app.S,app.C,app.M,app.PD,app.TN,app.strThProp);
         end
     case {'EV'}
         if i==app.C.l_phi
-            app.PS.strP{i} = SolveProblemEV(app.PS.strR{i},app.PD.phi.Value(i),app.PD.pR.Value,app.E,app.S,app.C,app.M,app.PD,app.TN,strThProp);
+            app.PS.strP{i} = SolveProblemEV(app.PS.strR{i},app.PD.phi.Value(i),app.PD.pR.Value,app.E,app.S,app.C,app.M,app.PD,app.TN,app.strThProp);
         else
-            app.PS.strP{i} = SolveProblemHP_EV_fast(app.PS.strR{i},app.PD.phi.Value(i),app.PD.pR.Value,app.PS.strP{i+1},app.E,app.S,app.C,app.M,app.PD,app.TN,strThProp);
+            app.PS.strP{i} = SolveProblemHP_EV_fast(app.PS.strR{i},app.PD.phi.Value(i),app.PD.pR.Value,app.PS.strP{i+1},app.E,app.S,app.C,app.M,app.PD,app.TN,app.strThProp);
         end
     case 'SP'
         pP = app.PD.pP_vector.Value(i);
         if i==app.C.l_phi
-            app.PS.strP{i} = SolveProblemSP(app.PS.strR{i},app.PD.phi.Value(i),pP,app.E,app.S,app.C,app.M,app.PD,app.TN,strThProp);
+            app.PS.strP{i} = SolveProblemSP(app.PS.strR{i},app.PD.phi.Value(i),pP,app.E,app.S,app.C,app.M,app.PD,app.TN,app.strThProp);
         else
-            app.PS.strP{i} = SolveProblemSP_fast(app.PS.strR{i},app.PD.phi.Value(i),pP,app.PS.strP{i+1},app.E,app.S,app.C,app.M,app.PD,app.TN,strThProp);
+            app.PS.strP{i} = SolveProblemSP_fast(app.PS.strR{i},app.PD.phi.Value(i),pP,app.PS.strP{i+1},app.E,app.S,app.C,app.M,app.PD,app.TN,app.strThProp);
         end
     case 'SV'
         vP_vR = app.PD.vP_vR_vector.Value(i);
-        app.PS.strP{i} = SolveProblemSV(app.PS.strR{i},app.PD.phi.Value(i),vP_vR*app.PS.strR{i}.v,app.E,app.S,app.C,app.M,app.PD,app.TN,strThProp);
+        app.PS.strP{i} = SolveProblemSV(app.PS.strR{i},app.PD.phi.Value(i),vP_vR*app.PS.strR{i}.v,app.E,app.S,app.C,app.M,app.PD,app.TN,app.strThProp);
     case {'SHOCK_I','SHOCK_R'}
         u1 = app.PD.u1_vector.Value(i);
         if strcmp(app.PD.ProblemType,'SHOCK_I')
             if i==app.C.l_phi
-                [app.PS.strR{i},app.PS.strP{i}] = SolveProblemSHOCK_I(app.PS.strR{i},app.PD.phi.Value(i),app.PD.pR.Value,app.PD.TR.Value,u1,app.E,app.S,app.C,app.M,app.PD,app.TN,strThProp);
+                [app.PS.strR{i},app.PS.strP{i}] = SolveProblemSHOCK_I(app.PS.strR{i},app.PD.phi.Value(i),app.PD.pR.Value,app.PD.TR.Value,u1,app.E,app.S,app.C,app.M,app.PD,app.TN,app.strThProp);
             else
-                [app.PS.strR{i},app.PS.strP{i}] = SolveProblemSHOCK_I_fast(app.PS.strR{i},app.PD.phi.Value(i),app.PD.pR.Value,app.PD.TR.Value,u1,app.PS.strP{i+1},app.E,app.S,app.C,app.M,app.PD,app.TN,strThProp);
+                [app.PS.strR{i},app.PS.strP{i}] = SolveProblemSHOCK_I_fast(app.PS.strR{i},app.PD.phi.Value(i),app.PD.pR.Value,app.PD.TR.Value,u1,app.PS.strP{i+1},app.E,app.S,app.C,app.M,app.PD,app.TN,app.strThProp);
             end
         else
             if i==app.C.l_phi
-                [app.PS.strR{i},app.PS.str2{i},app.PS.strP{i}] = SolveProblemSHOCK_R(app.PS.strR{i},app.PD.phi.Value(i),app.PD.pR.Value,app.PD.TR.Value,u1,app.E,app.S,app.C,app.M,app.PD,app.TN,strThProp);
+                [app.PS.strR{i},app.PS.str2{i},app.PS.strP{i}] = SolveProblemSHOCK_R(app.PS.strR{i},app.PD.phi.Value(i),app.PD.pR.Value,app.PD.TR.Value,u1,app.E,app.S,app.C,app.M,app.PD,app.TN,app.strThProp);
             else
-                [app.PS.strR{i},app.PS.str2{i},app.PS.strP{i}] = SolveProblemSHOCK_R_fast(app.PS.strR{i},app.PD.phi.Value(i),app.PD.pR.Value,app.PD.TR.Value,u1,app.PS.str2{i+1},app.PS.strP{i+1},app.E,app.S,app.C,app.M,app.PD,app.TN,strThProp);
+                [app.PS.strR{i},app.PS.str2{i},app.PS.strP{i}] = SolveProblemSHOCK_R_fast(app.PS.strR{i},app.PD.phi.Value(i),app.PD.pR.Value,app.PD.TR.Value,u1,app.PS.str2{i+1},app.PS.strP{i+1},app.E,app.S,app.C,app.M,app.PD,app.TN,app.strThProp);
             end
         end
     case 'DET'
 %         app.PD.TR.Value = app.PD.TR_vector.Value(i);
-%         [app.PS.strR{i},app.PS.strP{i},app.TN.guess] = SolveProblemDET_main(app.PS.strR{i},app.PD.phi.Value(i),app.PD.pR.Value,app.PD.TR.Value,app.TN.guess,app.E,app.S,app.C,app.M,app.PD,app.TN,strThProp);
-        [app.PS.strR{i},app.PS.strP{i},app.TN.guess] = SolveProblemDET_main_2(app.PS.strR{i},app.PD.phi.Value(i),app.PD.pR.Value,app.PD.TR.Value,app.TN.guess,app.E,app.S,app.C,app.M,app.PD,app.TN,strThProp);
-%         [app.PS.strR{i},app.PS.strP{i},app.TN.guess] = SolveProblemDET_hybrid_main(app.PS.strR{i},app.PD.phi.Value(i),app.PD.pR.Value,app.PD.TR.Value,app.TN.guess,app.E,app.S,app.C,app.M,app.PD,app.TN,strThProp);
-%         [app.PS.strR{i},app.PS.strP{i},app.TN.guess] = SolveProblemDET_Jouget_main(app.PS.strR{i},app.PD.phi.Value(i),app.PD.pR.Value,app.PD.TR.Value,app.TN.guess,app.E,app.S,app.C,app.M,app.PD,app.TN,strThProp);
+%         [app.PS.strR{i},app.PS.strP{i},app.TN.guess] = SolveProblemDET_main(app.PS.strR{i},app.PD.phi.Value(i),app.PD.pR.Value,app.PD.TR.Value,app.TN.guess,app.E,app.S,app.C,app.M,app.PD,app.TN,app.strThProp);
+        [app.PS.strR{i},app.PS.strP{i},app.TN.guess] = SolveProblemDET_main_2(app.PS.strR{i},app.PD.phi.Value(i),app.PD.pR.Value,app.PD.TR.Value,app.TN.guess,app.E,app.S,app.C,app.M,app.PD,app.TN,app.strThProp);
+%         [app.PS.strR{i},app.PS.strP{i},app.TN.guess] = SolveProblemDET_hybrid_main(app.PS.strR{i},app.PD.phi.Value(i),app.PD.pR.Value,app.PD.TR.Value,app.TN.guess,app.E,app.S,app.C,app.M,app.PD,app.TN,app.strThProp);
+%         [app.PS.strR{i},app.PS.strP{i},app.TN.guess] = SolveProblemDET_Jouget_main(app.PS.strR{i},app.PD.phi.Value(i),app.PD.pR.Value,app.PD.TR.Value,app.TN.guess,app.E,app.S,app.C,app.M,app.PD,app.TN,app.strThProp);
     case 'DET_OVERDRIVEN'
-        [app.PS.strR{i},app.PS.strP{i},app.TN.guess] = SolveProblemDET_OVERDRIVEN(app.PS.strR{i},app.PD.phi.Value(i),app.PD.pR.Value,app.PD.TR.Value,app.TN.guess,app.E,app.S,app.C,app.M,app.PD,app.TN,strThProp,app.PD.overdriven);
+        [app.PS.strR{i},app.PS.strP{i},app.TN.guess] = SolveProblemDET_OVERDRIVEN(app.PS.strR{i},app.PD.phi.Value(i),app.PD.pR.Value,app.PD.TR.Value,app.TN.guess,app.E,app.S,app.C,app.M,app.PD,app.TN,app.strThProp,app.PD.overdriven);
 end
 %% DISPLAY RESULTS
 if ~strcmp(app.PD.ProblemType,'SHOCK_R') && ~strcmp(app.PD.ProblemType,'DET_OVERDRIVEN')

@@ -1,4 +1,4 @@
-function [app,strThProp,strMaster] = Initialize()
+function app = Initialize()
 %% LOAD/CALCULATE TABULATED DATA AND CONSTANTS
 tic;
 clearvars -except strMaster strThProp;
@@ -32,10 +32,11 @@ app.PD.phi.Description = "Equivalence ratio [-]";
 if ~exist('strMaster','var')
    if exist('strMaster.mat','file')
     disp('NASA database loaded from main path')
-    load('strMaster_reduced.mat');
+    load('strMaster_reduced.mat' , 'strMaster');
+    app.strMaster = strMaster;
    else
        strMaster = ParseThermoInp_test(); % struct with tabulated data of all species.
-       strMaster = strMaster_reduced(strMaster);
+       app.strMaster = strMaster_reduced(strMaster);
    end
 else
     disp('NASA database already loaded')
@@ -45,9 +46,9 @@ if ~exist('strThProp','var')
    if exist('strThProp.mat','file') 
     disp('NASA short database loaded from main path')
     load('strThProp.mat');
-%     load('strThProp_HC_47.mat');
+    app.strThProp = strThProp;
    else
-       strThProp = GenerateShortDatabase_test(strMaster); % struct with tabulated data of selected species. 
+       app.strThProp = GenerateShortDatabase_test(strMaster); % struct with tabulated data of selected species. 
    end
 else
     disp('NASA short database already loaded')
@@ -61,7 +62,7 @@ app.PD.Fuel.FLAG_phic = true;
 app.M.display_species = {};
 app.M.minor_products = {};
 %% CONTAINED ELEMENTS
-app.S.NameSpecies = fieldnames(strThProp); 
+app.S.NameSpecies = fieldnames(app.strThProp); 
 app.S.NSpecies = numel(app.S.NameSpecies);
 % Match=cellfun(@(x) ismember(x,NameSpecies), Elements, 'UniformOutput', 0);
 % Elements = Elements(cell2mat(Match));
@@ -138,10 +139,10 @@ FLAG_PHIC = true;
 app.C.A0.Value = zeros(app.S.NSpecies,app.E.NE);
 app.C.M0.Value = zeros(app.S.NSpecies,12);
 for i=1:app.S.NSpecies
-    txFormula = strThProp.(app.S.NameSpecies{i,1}).txFormula;
-    strThProp.(app.S.NameSpecies{i,1}).Element_matrix = set_element_matrix(txFormula,app.E.Elements);
-    app.C.A0.Value(i,strThProp.(app.S.NameSpecies{i,1}).Element_matrix(1,:)) = strThProp.(app.S.NameSpecies{i,1}).Element_matrix(2,:);
-    app.C.M0.Value(i,10) = strThProp.(app.S.NameSpecies{i,1}).swtCondensed;    
+    txFormula = app.strThProp.(app.S.NameSpecies{i,1}).txFormula;
+    app.strThProp.(app.S.NameSpecies{i,1}).Element_matrix = set_element_matrix(txFormula,app.E.Elements);
+    app.C.A0.Value(i,app.strThProp.(app.S.NameSpecies{i,1}).Element_matrix(1,:)) = app.strThProp.(app.S.NameSpecies{i,1}).Element_matrix(2,:);
+    app.C.M0.Value(i,10) = app.strThProp.(app.S.NameSpecies{i,1}).swtCondensed;    
 end
 %% GUESS INITIAL CALCULATION
 app.TN.guess = [2000,2000,0,1.5,2];

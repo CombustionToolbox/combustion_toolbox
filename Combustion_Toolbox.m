@@ -21,8 +21,8 @@
 %% LOAD DATABASES, GLOBAL PARAMETERS AND MINORS PRODUCTS
 addpath(genpath(pwd));
 % app = App();
-app = App('Soot formation');
-% app = App('HC/02/N2 EXTENDED');
+% app = App('Soot formation');
+app = App('HC/02/N2 EXTENDED');
 % app = App('Hydrogen');
 % app = App('NASA ALL');
 % app = App('Cbgrb'); 
@@ -37,7 +37,7 @@ app.TN.factor_c = 1; % factor_c = 1 (default).
 app.PD.TR.value = 300;
 % app.PD.TR.vector.value = 300:50:700;
 app.PD.pR.value = 1;
-app.PD.phi.value = 0.1:0.01:2;
+app.PD.phi.value = 0.5:0.1:2;
 %% INITIALIZATION
 app = Initialize(app);
 %% PROBLEM TYPE
@@ -108,9 +108,9 @@ end
 disp('TIME:')
 toc
 %% DISPLAY MOLAR FRACTION VS EQUIVALENCE RATIO
-app.M.display_species = {};
-% app.M.display_species = {'CO','CO2','H','HO2','H2','H2O','N2','O2'};
+% app.M.display_species = {};
+app.M.display_species = {'CO','CO2','H','HO2','H2','H2O','N2','O2'};
 % app.M.display_species = {'CO','CO2','H','HO2','H2','H2O','NO','NO2','N2','O','OH','O2','Cbgrb'};
-closing(app,app.PS.strP,app.PD.phi.value,app.M.display_species,app.Misc.timer_0,app.S.namespecies,app.C.mintol_display,app.PD.ProblemType);
+closing(app,app.PS.strP,app.PD.phi.value,app.M.display_species,app.Misc.timer_0,app.S.LS,app.C.mintol_display,app.PD.ProblemType);
 %% EXCEL I/O
 ExportExcel(app);

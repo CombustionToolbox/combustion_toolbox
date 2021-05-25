@@ -9,7 +9,7 @@ if nargin < 2
 else
     minors = varargin(2);       
     if strcmpi(minors, 'HC/02/N2 EXTENDED')
-        app.M.minors_products = {'OH','H','O','HO2','NO','HCO','CH4','CH3','HO2',...
+        app.M.minors_products = {'OH','H','O','HO2','NO','HCO','CH4','CH3',...
                                 'NO2','NH3','NH2','N','HCN','CN','N2O','C2','CH'};
     elseif strcmpi(minors, 'SOOT FORMATION')
         app.M.minors_products = {'H2', 'H', 'O', 'O2', 'OH', 'H2O', 'HO2', 'H2O2',...
@@ -67,5 +67,7 @@ else
     else
         app.M.minors_products = minors;
     end
+app.M.minors_products = unique(app.M.minors_products);
 app.M.Lminors = numel(app.M.minors_products);
+end
 end

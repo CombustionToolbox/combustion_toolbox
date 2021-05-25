@@ -24,12 +24,12 @@ if strcmpi(PD.CompleteOrIncomplete,'INCOMPLETE')
     % N_CC matrix with number of moles and swtCondesated of each species
     N_CC = P(:, [1,10]);
     % Compute number of moles of M.minor_products
-%     [N_IC, DeltaNP] = CalculateProductsIC(app, N_CC, phi, pP, TP, strR.v, phi_c0, FLAG_SOOT);
-    [N_IC, DeltaNP] = Equilibrium(app, N_CC, phi, pP, TP, strR.v);
+    [N_IC, STOP] = CalculateProductsIC(app, N_CC, phi, pP, TP, strR.v, phi_c0, FLAG_SOOT);
+%     [N_IC, STOP] = Equilibrium(app, N_CC, phi, pP, TP, strR.v);
     % Compute properties of all species
     P = SetSpecies(C.M0.value, S.LS, N_IC(S.ind_all, 1), TP, S.ind_all, strThProp);
 else
-    DeltaNP = 0;
+    STOP = 0;
 end
 
 if strfind(PD.ProblemType,'P') == 2 % PD.ProblemType = 'TP', 'HP', or 'SP'
@@ -40,5 +40,5 @@ elseif strfind(PD.ProblemType,'V') == 2 % PD.ProblemType = 'TV', 'EV', or 'SV'
     strP = ComputeProperties(C.A0.value,P,pP,TP,E.ind_C,E.ind_H);
 end
 strP.phi_c = phi_c0;
-strP.error_moles = DeltaNP;
+strP.error_moles = STOP;
 end

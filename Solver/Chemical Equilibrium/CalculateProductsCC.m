@@ -70,7 +70,7 @@ else % case of rich mixtures
         %
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         
-        DG0 = (species_g0_new('CO',TP,strThProp)+species_g0_new('H2O',TP,strThProp)-species_g0_new('CO2',TP,strThProp))*1000;
+        DG0 = (species_g0('CO',TP,strThProp)+species_g0('H2O',TP,strThProp)-species_g0('CO2',TP,strThProp))*1000;
         k4 = exp(-DG0/(R0*TP));
         
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -94,9 +94,9 @@ else % case of rich mixtures
         % CO2+H2 <-IV-> CO+H2O
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         
-        DG0 = (species_g0_new('CO2',TP,strThProp)-2*species_g0_new('CO',TP,strThProp))*1000;
+        DG0 = (species_g0('CO2',TP,strThProp)-2*species_g0('CO',TP,strThProp))*1000;
         k7 = exp(-DG0/(R0*TP));
-        DG0 = (species_g0_new('CO',TP,strThProp)+species_g0_new('H2O',TP,strThProp)-species_g0_new('CO2',TP,strThProp))*1000;
+        DG0 = (species_g0('CO',TP,strThProp)+species_g0('H2O',TP,strThProp)-species_g0('CO2',TP,strThProp))*1000;
         k4 = exp(-DG0/(R0*TP));
         
 

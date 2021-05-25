@@ -1,12 +1,12 @@
 function self = Initialize(self)
     % List of species that we are going to compute
     self = Compute_Species(self);
-    % Index fixed species
-    self = Index_fixed_Species(self);
     % Index gaseous and condensed species
     self = list_phase_species(self, self.S.LS);
     % Sort species: first gaseous species, secondly condensed species
     self = rearrange_species(self);
+    % Index fixed species
+    self = Index_fixed_Species(self);
     % Stoichiometric Matrix
     self = Stoich_Matrix(self);
     % Compute CHON equilibria for the minors products considered
@@ -60,10 +60,14 @@ function self = list_phase_species(self, LS)
     self.S.NG = length(self.S.ind_nswt);
 end
 function self = rearrange_species(self)
-    self.S.LS = self.S.LS([self.S.ind_nswt,self.S.ind_swt]);
+    self.S.LS = self.S.LS([self.S.ind_nswt, self.S.ind_swt]);
     if any(contains(self.S.LS,'Cbgrb'))
        self.S.ind_Cgr = find_ind({'Cbgrb'}, self.S.LS);
     end
+    self.S.ind_nswt = [];
+    self.S.ind_swt = [];
+    % Index gaseous and condensed species
+    self = list_phase_species(self, self.S.LS);
 end
 function self = Stoich_Matrix(self)
     self.C.A0.value = zeros(self.S.NS,self.E.NE);

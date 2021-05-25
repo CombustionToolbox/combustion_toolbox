@@ -18,11 +18,11 @@ for n = length(N):-1:1
     hfi = strThProp.(S{n}).hf/1000;
     efi = strThProp.(S{n}).ef/1000;
     if length(strThProp.(S{n}).T) > 1
-        DhTi = species_DhT_new(S{n},T,strThProp);
-        DeTi = species_DeT_new(S{n},T,strThProp);
-        cPi = species_cP_new(S{n},T,strThProp);
-        cVi = species_cV_new(S{n},T,strThProp);
-        s0i = species_s0_new(S{n},T,strThProp);
+        DhTi = species_DhT(S{n},T,strThProp);
+        DeTi = species_DeT(S{n},T,strThProp);
+        cPi = species_cP(S{n},T,strThProp);
+        cVi = species_cV(S{n},T,strThProp);
+        s0i = species_s0(S{n},T,strThProp);
         swtCondensed = strThProp.(S{n}).swtCondensed;
         mi = N(n)*strThProp.(S{n}).mm;
         mmi = strThProp.(S{n}).mm;

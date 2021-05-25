@@ -2,9 +2,9 @@ function phi_c = CalculatePhic(Fuel, Ninerts, phi, TP, pP, strThProp)
     R0 = 8.3144598; % [J/(K mol)]. Universal gas constant
     tol = 1;
     if Fuel.x~= 0 && (Fuel.x~= Fuel.z)
-        DG0 = (species_g0_new('CO2',TP,strThProp)-2*species_g0_new('CO',TP,strThProp))*1000;
+        DG0 = (species_g0('CO2',TP,strThProp)-2*species_g0('CO',TP,strThProp))*1000;
         k7 = exp(-DG0/(R0*TP));
-        DG0 = (species_g0_new('CO',TP,strThProp)+species_g0_new('H2O',TP,strThProp)-species_g0_new('CO2',TP,strThProp))*1000;
+        DG0 = (species_g0('CO',TP,strThProp)+species_g0('H2O',TP,strThProp)-species_g0('CO2',TP,strThProp))*1000;
         k4 = exp(-DG0/(R0*TP));
         
         phi_c0 = 2/(Fuel.x-Fuel.z)*(Fuel.x+Fuel.y/4-Fuel.z/2);

@@ -64,20 +64,20 @@ end
 P_IC = M0;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % CALCULATION OF GIBBS FREE ENERGY, CONSTANTS EQUILIBRIUM AND OTHERS
-g_CO2 = species_g0_new('CO2',TP,strThProp);
-g_CO  = species_g0_new('CO',TP,strThProp);
-g_H2O = species_g0_new('H2O',TP,strThProp);
+g_CO2 = species_g0('CO2',TP,strThProp);
+g_CO  = species_g0('CO',TP,strThProp);
+g_H2O = species_g0('H2O',TP,strThProp);
 DG0_I    = (g_CO-g_CO2)*1000;
 DG0_II   = -g_H2O*1000;
 k1  = exp(-DG0_I/R0TP);
 k2  = exp(-DG0_II/R0TP);
 if M.major_CH4
-    g_CH4 = species_g0_new('CH4',TP,strThProp);
-    g_C2H2 = species_g0_new('C2H2_acetylene',TP,strThProp);
-    g_C6H6 = species_g0_new('C6H6',TP,strThProp);
+    g_CH4 = species_g0('CH4',TP,strThProp);
+    g_C2H2 = species_g0('C2H2_acetylene',TP,strThProp);
+    g_C6H6 = species_g0('C6H6',TP,strThProp);
     % DG0_VIII   = g_CH4*1000;
     
-    DG0_VIII   = (species_g0_new('CH3',TP,strThProp)-species_g0_new('H',TP,strThProp)-g_CH4)*1000;
+    DG0_VIII   = (species_g0('CH3',TP,strThProp)-species_g0('H',TP,strThProp)-g_CH4)*1000;
     
     k8  = exp(-DG0_VIII/R0TP);
     
@@ -85,11 +85,11 @@ if M.major_CH4
     DG0_IX = -(g_C6H6-3*g_C2H2)*1000;
     k9 =  exp(-DG0_IX/R0TP);
     
-    DG0_X = -(species_g0_new('H',TP,strThProp)+species_g0_new('CH',TP,strThProp))*1000;
+    DG0_X = -(species_g0('H',TP,strThProp)+species_g0('CH',TP,strThProp))*1000;
     k10 = exp(-DG0_X/R0TP);
 end
 if M.major_OH
-    g_OH = species_g0_new('OH',TP,strThProp);
+    g_OH = species_g0('OH',TP,strThProp);
     DG0_XI   = g_OH*1000;
     
     k11 = exp(-DG0_XI/R0TP);
@@ -107,14 +107,14 @@ NP     = NP+(NO2-NO2_0);
 if phi<=1 && M.Lminors>0 % case of lean-to-stoichiometric mixtures
     DNfactor_III = 1-(C.beta+2*(C.gamma+C.omega))/4;
     for n = M.Lminors:-1:1
-        DG0_III(n) = (species_g0_new(minors_products{n},TP,strThProp)-C.alpha(n)*g_CO2 ...
+        DG0_III(n) = (species_g0(minors_products{n},TP,strThProp)-C.alpha(n)*g_CO2 ...
             -(C.beta(n)/2)*g_H2O)*1000;
     end
     k3 = exp(-DG0_III/R0TP);
 elseif phi>1  % case rich mixtures
     if (x == 0) && (y ~= 0) && M.Lminors>0 % if there are only hydrogens (H)
         for n = M.Lminors:-1:1
-            DG0_VI(n) = (species_g0_new(minors_products{n},TP,strThProp) ...
+            DG0_VI(n) = (species_g0(minors_products{n},TP,strThProp) ...
                 -C.alpha(n) * g_CO2 ...
                 -(C.gamma(n)-2*C.alpha(n)) * g_H2O)*1000;
         end
@@ -122,7 +122,7 @@ elseif phi>1  % case rich mixtures
         DNfactor_VI = 1-C.alpha-C.beta/2-C.omega/2;
     elseif ((x ~= 0) && (y == 0) && M.Lminors>0 && phi < phi_c) && ~FLAG_SOOT% if there are only carbons (C)
         for n = M.Lminors:-1:1
-            DG0_V(n) = (species_g0_new(minors_products{n},TP,strThProp) ...
+            DG0_V(n) = (species_g0(minors_products{n},TP,strThProp) ...
                 -(C.gamma(n)-C.alpha(n)-C.beta(n)/2) * g_CO2 ...
                 -(C.beta(n)/2) * g_H2O ...
                 -(2*C.alpha(n)-C.gamma(n)+C.beta(n)/2) * g_CO)*1000;
@@ -131,7 +131,7 @@ elseif phi>1  % case rich mixtures
         DNfactor_V = 1-C.alpha-C.beta/2-C.omega/2;
     elseif phi < phi_c*TN.factor_c && ~FLAG_SOOT% general case of rich mixtures with hydrogens (H) and carbons (C)
         for n = M.Lminors:-1:1
-            DG0_V(n) = (species_g0_new(minors_products{n},TP,strThProp) ...
+            DG0_V(n) = (species_g0(minors_products{n},TP,strThProp) ...
                 -(C.gamma(n)-C.alpha(n)-C.beta(n)/2) * g_CO2 ...
                 -(C.beta(n)/2) * g_H2O ...
                 -(2*C.alpha(n)-C.gamma(n)+C.beta(n)/2) * g_CO)*1000;
@@ -144,7 +144,7 @@ elseif phi>1  % case rich mixtures
         k4 = exp(-DG0_IV/R0TP);
     elseif phi >= phi_c*TN.factor_c || FLAG_SOOT
         for n = M.Lminors:-1:1
-            DG0_V(n) = (species_g0_new(minors_products{n},TP,strThProp) ...
+            DG0_V(n) = (species_g0(minors_products{n},TP,strThProp) ...
                 -(C.gamma(n)-C.alpha(n)-C.beta(n)/2) * g_CO2 ...
                 -(C.beta(n)/2) * g_H2O ...
                 -(2*C.alpha(n)-C.gamma(n)+C.beta(n)/2) * g_CO)*1000;

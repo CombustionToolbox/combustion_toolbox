@@ -84,8 +84,8 @@ for i=app.C.l_phi:-1:1 % Evading preallocate struct
 %% DEFINE FUEL
 % app.PD.R_Fuel = 0; app.PD.phi_t = 1; app.PD.Fuel.x = 0; app.PD.Fuel.eps = 1e-1; app.C.FLAG_Fuel = 0;
 % app.PD.S_Fuel = {'CH4','C2H6','C3H8'}; app.PD.N_Fuel = [0.85;0.1;0.05]; 
-% app.PD.S_Fuel = {'CH4'}; app.PD.N_Fuel = 1;
-app.PD.S_Fuel = {'C2H2_acetylene'}; app.PD.N_Fuel = 1; 
+app.PD.S_Fuel = {'CH4'}; app.PD.N_Fuel = 1;
+% app.PD.S_Fuel = {'C2H2_acetylene'}; app.PD.N_Fuel = 1; 
 % app.PD.S_Fuel = {'C3H8'}; app.PD.N_Fuel = 1;    
 % app.PD.S_Fuel = {'C6H6'}; app.PD.N_Fuel = 1; 
 % app.PD.S_Fuel = {'C2H4'}; app.PD.N_Fuel = 1;
@@ -95,8 +95,8 @@ app = Define_F(app);
 app.PD.S_Oxidizer = {'O2'}; app.PD.N_Oxidizer = app.PD.phi_t/app.PD.phi.value(i);
 app = Define_O(app);
 %% DEFINE DILUENTS/INERTS
-app.PD.S_Inert = {'N2'}; app.PD.N_Inert = app.PD.phi_t/app.PD.phi.value(i)*79/21;
-% app.PD.S_Inert = {'N2','Ar'}; app.PD.N_Inert = app.PD.phi_t/app.PD.phi.value(i).*[78.09/20.95;0.93/20.95];
+app.PD.proportion_N2_O2 = 79/21;
+app.PD.S_Inert = {'N2'}; app.PD.N_Inert = app.PD.phi_t/app.PD.phi.value(i) * app.PD.proportion_N2_O2;
 app = Define_I(app);
 %% COMPUTE PROPERTIES
 app = Define_FOI(app, i);

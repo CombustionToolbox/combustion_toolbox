@@ -1,4 +1,4 @@
-function [NCO2P_0,NCOP_0,NH2OP_0,NH2P_0,NO2P_0,NN2P_0,NHeP_0,NArP_0,NCgrP_0,phi_c,FLAG_SOOT] =  CalculateProductsCC(NatomE,phi,phi_c0,TP,pP,Elements,factor_c,Fuel,strThProp)
+function [N_CC, phi_c, FLAG_SOOT] =  CalculateProductsCC(NatomE,phi,phi_c0,TP,pP,Elements,factor_c,Fuel,strThProp)
 
 R0 = 8.3144598; % [J/(K mol)]. Universal gas constant
 
@@ -163,3 +163,4 @@ else % case of rich mixtures
         
     end
 end
+N_CC = [NCO2P_0, NCOP_0, NH2OP_0, NH2P_0, NO2P_0, NN2P_0, NHeP_0, NArP_0, NCgrP_0];

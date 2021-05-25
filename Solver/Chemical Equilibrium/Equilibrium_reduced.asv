@@ -42,21 +42,23 @@ while STOP > C.tolN && it < itMax
     % Construction of matrix A
     A = update_matrix_A(A0, N0, NP, temp_ind, temp_ind_E);
     % Construction of vector b            
-    b = update_vector_b(A0, N0, NP, NatomE, temp_ind, temp_ind_E, G0RT);
+    b = update_vector_b(A0, N0, NP, NatomE, temp_ind, temp_ind_E, temp_ind_nswt, G0RT);
     % Solve of the linear system A*x = b
     x = A\b;
-    % Compute log variation of moles
-    DeltaNi_log = x(end) + sum(A0(temp_ind, temp_ind_E)' .* x(1:end-1))' - G0RT(temp_ind);
     % Calculate correction factor
     % update_SIZE(N0, A0, temp_ind, temp_ind_E, C.tolN)
-    e = relax_factor(NP, N0(temp_ind, 1), DeltaNi_log, x(end), SIZE);
+    e = relax_factor(NP, N0(temp_ind, 1), x(1:temp_NS), x(end), SIZE);
     % Apply correction
-    N0_log = log(N0(temp_ind, 1)) + e * DeltaNi_log;
+    N0_log = log(N0(temp_ind, 1)) + e * x(1:temp_NS);
     NP_log = log(NP) + e * x(end);
     % Apply antilog
     [N0, NP] = apply_antilog(N0, N0_log, NP_log, temp_ind);
+    % Update temp values in order to remove species with moles < tolerance
+    [temp_ind, temp_ind_swt, temp_ind_nswt, temp_NS] = update_temp(N0, N0(temp_ind, 1), temp_ind, temp_ind_swt, temp_ind_nswt, NP, SIZE);
+    % Update matrix A
+    A1 = update_matrix_A1(A0, temp_NS, temp_ind, temp_ind_E);
     % Compute STOP criteria
-    STOP = compute_STOP(NP_0, NP, x(end), N0(temp_ind, 1), DeltaNi_log);
+    STOP = compute_STOP(NP_0, NP, x(end), N0(temp_ind, 1), x(1:temp_NS));
 end
 end
 % NESTED FUNCTIONS
@@ -135,14 +137,18 @@ function A = update_matrix_A(A0, N0, NP, temp_ind, temp_ind_E)
     A = [A1, A2];
 end
 
-function b = update_vector_b(A0, N0, NP, NatomE, temp_ind, temp_ind_E, G0RT)
+function b = update_vector_b(A0, N0, NP, NatomE, temp_ind, temp_ind_E, temp_ind_nswt, G0RT)
     % Update coefficient vector b
+    bi_0 = NatomE[E] - sum(N0[:, 0] * A0[:, E] * (1.0 - G0RT))
+        NP_0 = NP - sum(N0[:, 0] * (1.0 - N0[:, 1])) + sum(N0[:, 0] * G0RT)
+        b = np.concatenate((bi_0, np.array([NP_0])))
+    
     for i=length(temp_ind_E):-1:1
         E = temp_ind_E(i);
-        bi_0(i, 1) = NatomE(E) - sum(N0(temp_ind, 1) .* A0(temp_ind, E) .* (1.0 - G0RT(temp_ind)));
+        bi_0(i, 1) = NatomE(E) - N0(temp_ind, 1)' * A0(temp_ind, E);
     end
-    NP_0 = NP - sum(N0(temp_ind, 1) .* (1.0 - N0(temp_ind, 2))) + sum(N0(temp_ind, 1) .* G0RT(temp_ind));
-    b = [bi_0; NP_0];
+    NP_0 = NP - sum(N0(temp_ind_nswt, 1));
+    b = [G0RT(temp_ind); bi_0; NP_0];
 end
 
 function relax = relax_factor(NP, n, n_log_new, DeltaNP, SIZE)
@@ -150,7 +156,7 @@ function relax = relax_factor(NP, n, n_log_new, DeltaNP, SIZE)
     bool = log(n)/log(NP) <= -SIZE & n_log_new >= 0;
     e = ones(length(n), 1);
     e(bool) = abs(-log(n(bool)/NP) - 9.2103404 ./ (n_log_new(bool) - DeltaNP));
-    e(~bool) = min(2./max(5*abs(DeltaNP), abs(n_log_new(~bool))));          
+    e(~bool) = min(2./max(5*abs(DeltaNP), abs(n_log_new(~bool))), exp(2));          
     relax = min(1, min(e));  
 end
 

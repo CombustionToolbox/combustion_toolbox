@@ -3,7 +3,8 @@ function app = SolveProblem(app, i)
 % mixture (P) required for the computations
 switch app.PD.ProblemType
     case {'TP','TV'}
-        app.PS.strP{i} = SolveProblemTP_TV(app, i);
+        TP = app.PD.TP.value;
+        app.PS.strP{i} = SolveProblemTP_TV(app, i, TPapp.PS.strR{i},app.PD.phi.value(i),app.PD.pR.value,TP,app.E,app.S,app.C,app.M,app.PD,app.TN,app.strThProp);
     case {'HP'}
         if i==app.C.l_phi
             % app.PS.strP{i} = SolveProblemHP_test(app.PS.strR{i},app.PD.phi.value(i),app.PD.pR.value); % Newton-Raphson-worse convergence!!

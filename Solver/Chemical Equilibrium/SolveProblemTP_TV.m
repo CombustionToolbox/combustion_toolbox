@@ -1,20 +1,34 @@
-function [strP] = SolveProblemTP_TV(strR,phi,pP,TP,E,S,C,M,PD,TN,strThProp)
+function [strP] = SolveProblemTP_TV(app, i)
 % CALCULATE EQUILIBRIUM AT DEFINED T AND P (TP)
 %                       OR
 % CALCULATE EQUILIBRIUM AT DEFINED T AND CONSTANT V (TV)
 % INPUT:
 %   strR  = Prop. of reactives (phi,species,...)
-%   phi   = velocity upstream       [-]
-%   pP    = pressure of products    [bar]
-%   TP    = temperature of products [K]
+%   i     = case
 % OUTPUT:
 %   strP  = Prop. of products (phi,species,...)
-phi_c0 = 2/(PD.Fuel.x-PD.Fuel.z)*(PD.Fuel.x+PD.Fuel.y/4-PD.Fuel.z/2);
-[N_CC, phi_c0, FLAG_SOOT] = CalculateProductsCC(strR.NatomE,phi,phi_c0,TP,pP,E.elements,TN.factor_c,PD.Fuel,strThProp);
+
+% Abbreviations ---------------------
+E = app.E;
+S = app.S;
+C = app.C;
+M = app.M;
+PD = app.PD;
+PS = app.PS;
+TN = app.TN;
+strThProp = app.strThProp;
+strR = PS.strR{i};
+phi = PD.phi.value(i);
+TP = PD.TP.value;
+pR = PD.pR.value;
+pP = pR;
+% -----------------------------------
+[N_CC, phi_c0, FLAG_SOOT] = CalculateProductsCC(app, i);
 P = SetSpecies(C.M0.value, S.LS, N_CC', TP, S.ind_fixed, strThProp);
 if strcmpi(PD.CompleteOrIncomplete,'INCOMPLETE')
     % Compute number of moles of M.minor_products                                         
     [P,DeltaNP] = CalculateProductsIC(P,TP,pP,strR.v,phi,M.minors_products,phi_c0,FLAG_SOOT,C.M0.value,C.A0.value,E,S,C,M,PD,TN,strThProp);
+%     [N_IC, DeltaNP] = Equilibrium(app, N_CC, phi, pP, TP, strR.v);
     % Compute properties of all species
     P = SetSpecies(C.M0.value,S.LS,P(S.ind_all,1),TP,S.ind_all,strThProp);
 else

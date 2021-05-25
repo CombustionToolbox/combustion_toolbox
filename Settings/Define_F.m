@@ -1,7 +1,7 @@
 function app = Define_F(app)
-if isfield(app.PD,'S_Fuel')
-    app.PD.R_Fuel = SetSpecies(app.C.M0.Value,app.PD.S_Fuel,app.PD.N_Fuel,app.PD.TR.Value,find_idx(app.PD.S_Fuel,app.S.NameSpecies), app.strThProp);
-    app.PS.strR_Fuel = ComputeProperties(app.C.A0.Value,app.PD.R_Fuel,app.PD.pR.Value,app.PD.TR.Value,app.E.ind_C,app.E.ind_H);
+if ~isempty(app.PD.S_Fuel)
+    app.PD.R_Fuel = SetSpecies(app.C.M0.value,app.PD.S_Fuel,app.PD.N_Fuel,app.PD.TR.value,find_ind(app.PD.S_Fuel,app.S.namespecies), app.strThProp);
+    app.PS.strR_Fuel = ComputeProperties(app.C.A0.value,app.PD.R_Fuel,app.PD.pR.value,app.PD.TR.value,app.E.ind_C,app.E.ind_H);
     app.PD.Fuel.x = app.PS.strR_Fuel.NatomE(app.E.ind_C); 
     app.PD.Fuel.y = app.PS.strR_Fuel.NatomE(app.E.ind_H); 
     app.PD.Fuel.z = app.PS.strR_Fuel.NatomE(app.E.ind_O); app.PS.strR_Fuel.z = app.PD.Fuel.z;

@@ -6,13 +6,13 @@ it = 0; itMax = 500; t=true;
 relax = 0.00007385775+(0.9854897-0.00007385775)/(1+(TP/4058911)^1.817875)^658457.8;
 % Number of moles of the major species in the product mixture under the
 % assumption of complete combustion (CC), denoted by subscript _0
-NCO2_0 = P_CC(S.idx_CO2,1);
-NCO_0  = P_CC(S.idx_CO,1);
-NH2O_0 = P_CC(S.idx_H2O,1);
-NH2_0  = P_CC(S.idx_H2,1);
-NO2_0  = P_CC(S.idx_O2,1);
-NN2_0  = P_CC(S.idx_N2,1);
-NCgr_0 = P_CC(S.idx_Cgr,1);
+NCO2_0 = P_CC(S.ind_CO2,1);
+NCO_0  = P_CC(S.ind_CO,1);
+NH2O_0 = P_CC(S.ind_H2O,1);
+NH2_0  = P_CC(S.ind_H2,1);
+NO2_0  = P_CC(S.ind_O2,1);
+NN2_0  = P_CC(S.ind_N2,1);
+NCgr_0 = P_CC(S.ind_Cgr,1);
 % Number of C, H, O, N, He, Ar-atoms in the product species
 NatomE = sum(P_CC(:,1).*A0);
 
@@ -90,24 +90,24 @@ end
 NO2    = NO2_0+((NH2O*k2+NCO2*k1)/2)^(2/3)*zeta^(1/3);
 NP     = NP+(NO2-NO2_0);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-if phi<=1 && M.L_minor>0 % case of lean-to-stoichiometric mixtures
+if phi<=1 && M.Lminors>0 % case of lean-to-stoichiometric mixtures
     DNfactor_III = 1-(C.beta+2*(C.gamma+C.omega))/4;
-    for n = M.L_minor:-1:1
+    for n = M.Lminors:-1:1
         DG0_III(n) = (species_g0_new(minor_products{n},TP,strThProp)-C.alpha(n)*g_CO2 ...
             -(C.beta(n)/2)*g_H2O)*1000;
     end
     k3 = exp(-DG0_III/R0TP);
 elseif phi>1  % case rich mixtures
-    if (x == 0) && (y ~= 0) && M.L_minor>0 % if there are only hydrogens (H)
-        for n = M.L_minor:-1:1
+    if (x == 0) && (y ~= 0) && M.Lminors>0 % if there are only hydrogens (H)
+        for n = M.Lminors:-1:1
             DG0_VI(n) = (species_g0_new(minor_products{n},TP,strThProp) ...
                 -C.alpha(n) * g_CO2 ...
                 -(C.gamma(n)-2*C.alpha(n)) * g_H2O)*1000;
         end
         k6 = exp(-DG0_VI/R0TP);
         DNfactor_VI = 1-C.alpha-C.beta/2-C.omega/2;
-    elseif ((x ~= 0) && (y == 0) && M.L_minor>0 && phi < phi_c) && ~FLAG_SOOT% if there are only carbons (C)
-        for n = M.L_minor:-1:1
+    elseif ((x ~= 0) && (y == 0) && M.Lminors>0 && phi < phi_c) && ~FLAG_SOOT% if there are only carbons (C)
+        for n = M.Lminors:-1:1
             DG0_V(n) = (species_g0_new(minor_products{n},TP,strThProp) ...
                 -(C.gamma(n)-C.alpha(n)-C.beta(n)/2) * g_CO2 ...
                 -(C.beta(n)/2) * g_H2O ...
@@ -116,26 +116,26 @@ elseif phi>1  % case rich mixtures
         k5 = exp(-DG0_V/R0TP);
         DNfactor_V = 1-C.alpha-C.beta/2-C.omega/2;
     elseif phi < phi_c*TN.factor_c && ~FLAG_SOOT% general case of rich mixtures with hydrogens (H) and carbons (C)
-        for n = M.L_minor:-1:1
+        for n = M.Lminors:-1:1
             DG0_V(n) = (species_g0_new(minor_products{n},TP,strThProp) ...
                 -(C.gamma(n)-C.alpha(n)-C.beta(n)/2) * g_CO2 ...
                 -(C.beta(n)/2) * g_H2O ...
                 -(2*C.alpha(n)-C.gamma(n)+C.beta(n)/2) * g_CO)*1000;
         end
-        if M.L_minor>0
+        if M.Lminors>0
             k5 = exp(-DG0_V/R0TP);
             DNfactor_V = 1-C.alpha-C.beta/2-C.omega/2;
         end
         DG0_IV = (g_CO+g_H2O-g_CO2)*1000;
         k4 = exp(-DG0_IV/R0TP);
     elseif phi >= phi_c*TN.factor_c || FLAG_SOOT
-        for n = M.L_minor:-1:1
+        for n = M.Lminors:-1:1
             DG0_V(n) = (species_g0_new(minor_products{n},TP,strThProp) ...
                 -(C.gamma(n)-C.alpha(n)-C.beta(n)/2) * g_CO2 ...
                 -(C.beta(n)/2) * g_H2O ...
                 -(2*C.alpha(n)-C.gamma(n)+C.beta(n)/2) * g_CO)*1000;
         end
-        if M.L_minor>0
+        if M.Lminors>0
             k5 = exp(-DG0_V/R0TP);
             DNfactor_V = 1-C.alpha-C.beta/2-C.omega/2;
         end
@@ -210,47 +210,47 @@ end
             %
             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
             NCO    = NCO2/NO2^(1/2)*zeta^(1/2)*k1;
-            NCO_old = P_IC_old(S.idx_CO,1);
+            NCO_old = P_IC_old(S.ind_CO,1);
             
             if NCO_old ~=0
                 NCO = NCO_old+relax*(NCO-NCO_old);
             end
-            P_IC(S.idx_CO,1) = NCO;
+            P_IC(S.ind_CO,1) = NCO;
             
             NH2     = NH2O/NO2^(1/2)*zeta^(1/2)*k2;
-            NH2_old = P_IC_old(S.idx_H2,1);
+            NH2_old = P_IC_old(S.ind_H2,1);
             if NH2_old ~=0
                 NH2 = NH2_old+relax*(NH2-NH2_old);
             end
-            P_IC(S.idx_H2,1) = NH2;
+            P_IC(S.ind_H2,1) = NH2;
             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
             %
             % Determination of the number of moles of the minor species
             % from the equilibrium condition for the above reaction
             %
             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-            if M.L_minor>0
+            if M.Lminors>0
                 Ni     = k3.* NCO2.^C.alpha.* NH2O.^(C.beta/2).* NN2.^(C.omega/2) ...
                     .* NO2.^(C.gamma/2-C.alpha-C.beta/4).* zeta.^DNfactor_III;
                 %           Ni = exp(log(k3)+ log(NCO2).*C.alpha+ log(NH2O).*(C.beta/2)+ log(NN2+1).*(C.omega/2) ...
                 %                +log(NO2).*(C.gamma/2-C.alpha-C.beta/4)+ log(zeta).*DNfactor_III);
-                %             for n =M.L_minor:-1:1
-                %                 Ni_old = P_IC_old(M.idx_minor(n),1);
+                %             for n =M.Lminors:-1:1
+                %                 Ni_old = P_IC_old(M.ind_minor(n),1);
                 %                 if Ni_old ~=0
                 %                     Ni(n) = Ni_old+relax*(Ni(n)-Ni_old);
                 %                 end
-                %                 P_IC(M.idx_minor(n),[strThProp.(minor_products{n}).Element_matrix(1,:),1]) = [Ni(n)*strThProp.(minor_products{n}).Element_matrix(2,:),Ni(n)];
+                %                 P_IC(M.ind_minor(n),[strThProp.(minor_products{n}).Element_matrix(1,:),1]) = [Ni(n)*strThProp.(minor_products{n}).Element_matrix(2,:),Ni(n)];
                 %             end
 %                 if M.major_OH && DeltaNP
-%                     Ni(M.idx_m_OH) = sqrt(NH2*NO2*k11*zeta^(-3/2));
+%                     Ni(M.ind_m_OH) = sqrt(NH2*NO2*k11*zeta^(-3/2));
 %                 end
                 Ni(Ni>NP_old) = 0.75*Ni(Ni>NP_old);
-                Ni_old = P_IC_old(M.idx_minor,1)';
+                Ni_old = P_IC_old(M.ind_minor,1)';
                 aux = find(Ni_old~=0);
                 if ~isempty(aux)
                     Ni(aux) = Ni_old(aux)+relax*(Ni(aux)-Ni_old(aux));
                 end
-                P_IC(M.idx_minor,1) = Ni;
+                P_IC(M.ind_minor,1) = Ni;
                 % disp(sortrows([cell2table(S.NameSpecies(P_IC(:,1)>0.000001), 'VariableNames', {'Species'}), array2table(P_IC(P_IC(:,1)>0.000001), 'VariableNames', {'N'})], 2, 'descend'))
             end
         % disp([sum(P_IC(:,1).*A0(:,E.ind_C)), sum(P_IC(:,1).*A0(:,E.ind_H)), sum(P_IC(:,1).*A0(:,E.ind_O)), sum(P_IC(:,1).*A0(:,E.ind_N))])
@@ -266,23 +266,23 @@ end
         if TP > 3000, NH2O = NH2O_old+relax*(NH2O-NH2O_old); end
         if NH2O < 0, NH2O = 0.75*NH2O_old; end
         
-        P_IC(S.idx_CO2,1)= NCO2;
-        P_IC(S.idx_H2O,1)= NH2O;
+        P_IC(S.ind_CO2,1)= NCO2;
+        P_IC(S.ind_H2O,1)= NH2O;
         
         NO2_old = NO2;
         NO2  = NO2_0+NCO2_0+NCO_0/2+NH2O_0/2-sum(P_IC(:,1).*A0(:,E.ind_O))/2; % O-atom conservation
         if TP > 3000, NO2 = NO2_old+relax*(NO2-NO2_old); end
         if NO2 < 0, NO2 = 0.75*NO2_old; end
         
-        P_IC(S.idx_O2,1) = NO2;
+        P_IC(S.ind_O2,1) = NO2;
         NN2_old = NN2;
         NN2  = NN2_0 -sum(P_IC(:,1).*A0(:,E.ind_N))/2; % N-atom conservation
         if TP > 3000, NN2 = NN2_old+relax*(NN2-NN2_old); end
         if NN2 < 0, NN2 = 0.75*NN2_old; end
         
-        P_IC(S.idx_N2,1) = NN2;
-        P_IC(S.idx_He,1) = NHe;
-        P_IC(S.idx_Ar,1) = NAr;
+        P_IC(S.ind_N2,1) = NN2;
+        P_IC(S.ind_He,1) = NHe;
+        P_IC(S.ind_Ar,1) = NAr;
         % Overall number of moles in the product species
         NP = sum(P_IC(:,1).*(1-P_IC(:,10)));
 %         NP = sum(P_IC(:,1));
@@ -323,7 +323,7 @@ end
             % the equilibrium condition for the above reaction
             %
             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-            if M.L_minor>0
+            if M.Lminors>0
                 Ni     = k6.* NCO2.^C.alpha.* NH2O.^(C.gamma-2*C.alpha) ...
                     .* NH2.^(C.beta/2-C.gamma+2*C.alpha) .* NN2.^(C.omega/2) ...
                     .* zeta.^DNfactor_VI;
@@ -331,19 +331,19 @@ end
 %                     +log(NH2).*(C.beta/2-C.gamma(n)+2*C.alpha)+log(NN2+1).*(C.omega/2) ...
 %                     +log(zeta).*DNfactor_VI);
 %                 if M.major_OH && DeltaNP
-% %                     Ni(M.idx_m_OH) = sqrt(NH2*NO2)/k11;
-%                     Ni(M.idx_m_OH) = sqrt(NH2*NO2*k11*zeta^(-3/2));
+% %                     Ni(M.ind_m_OH) = sqrt(NH2*NO2)/k11;
+%                     Ni(M.ind_m_OH) = sqrt(NH2*NO2*k11*zeta^(-3/2));
 %                 end
-                Ni_old = P_IC_old(M.idx_minor,1)';
+                Ni_old = P_IC_old(M.ind_minor,1)';
                 aux = find(Ni_old~=0);
                 if ~isempty(aux)
                     Ni(aux) = Ni_old(aux)+relax*(Ni(aux)-Ni_old(aux));
                 end
                 Ni(Ni>NP_old) = 0;
-                P_IC(M.idx_minor,1) = Ni;
+                P_IC(M.ind_minor,1) = Ni;
             end
             NO2     = zeta*(k2*NH2O/NH2)^2;
-            NO2_old = P_IC_old(S.idx_O2,1);
+            NO2_old = P_IC_old(S.ind_O2,1);
             if NO2_old ~=0
                 NO2 = NO2_old+relax*(NO2-NO2_old);
             end
@@ -355,12 +355,12 @@ end
             NH2  = NH2_0 +2*(NO2+sum(P_IC(:,1).*A0(:,E.ind_O))/2-sum(P_IC(:,1).*A0(:,E.ind_H))/4);
             NN2  = NN2_0 -sum(P_IC(:,1).*A0(:,E.ind_N))/2; % N-atom conservation
 
-            P_IC(S.idx_H2O,1)= NH2O;
-            P_IC(S.idx_H2,1) = NH2;
-            P_IC(S.idx_O2,1) = NO2;
-            P_IC(S.idx_N2,1) = NN2;
-            P_IC(S.idx_He,1) = NHe;
-            P_IC(S.idx_Ar,1) = NAr;
+            P_IC(S.ind_H2O,1)= NH2O;
+            P_IC(S.ind_H2,1) = NH2;
+            P_IC(S.ind_O2,1) = NO2;
+            P_IC(S.ind_N2,1) = NN2;
+            P_IC(S.ind_He,1) = NHe;
+            P_IC(S.ind_Ar,1) = NAr;
             % Overall number of moles in the product species
             NP = sum(P_IC(:,1).*(1-P_IC(:,10)));
 %             NP = sum(P_IC(:,1));
@@ -402,23 +402,23 @@ end
             % the equilibrium condition for the above reaction
             %
             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-            if M.L_minor>0
+            if M.Lminors>0
                 Ni     = k5 .* NCO2.^(C.gamma-C.alpha-C.beta/2) .* NH2O.^(C.beta/2) ...
                     .* NCO.^(C.beta/2-C.gamma+2*C.alpha) .* NN2.^(C.omega/2) ...
                     .* zeta.^DNfactor_V;
 %                 Ni    = exp(log(k5)+(C.gamma-C.alpha-C.beta/2).*log(NCO2)+(C.beta/2).*log(NH2O) ...
 %                        +log(NCO).*(2*C.alpha-C.gamma+C.beta/2)+log(NN2+1).*(C.omega/2) ...
 %                        +log(zeta).*DNfactor_V);
-                Ni_old = P_IC_old(M.idx_minor,1)';
+                Ni_old = P_IC_old(M.ind_minor,1)';
                 aux = find(Ni_old~=0);
                 if ~isempty(aux)
                     Ni(aux) = Ni_old(aux)+relax*(Ni(aux)-Ni_old(aux));
                 end
                 Ni(Ni>NP_old) = 0;
-                P_IC(M.idx_minor,1) = Ni;
+                P_IC(M.ind_minor,1) = Ni;
             end
             NO2     = zeta*(k1*NCO2/NCO)^2;
-            NO2_old = P_IC_old(S.idx_O2,1);
+            NO2_old = P_IC_old(S.ind_O2,1);
             if NO2_old ~=0
                 NO2 = NO2_old+relax*(NO2-NO2_old);
             end
@@ -430,12 +430,12 @@ end
             NCO  = NCO_0 +2*(NO2-sum(P_IC(:,1).*A0(:,E.ind_C))+sum(P_IC(:,1).*A0(:,E.ind_O))/2);
             NN2  = NN2_0 -sum(P_IC(:,1).*A0(:,E.ind_N))/2; % N-atom conservation
             
-            P_IC(S.idx_CO,1) = NCO;
-            P_IC(S.idx_CO2,1)= NCO2;
-            P_IC(S.idx_O2,1) = NO2;
-            P_IC(S.idx_N2,1) = NN2;
-            P_IC(S.idx_He,1) = NHe;
-            P_IC(S.idx_Ar,1) = NAr;
+            P_IC(S.ind_CO,1) = NCO;
+            P_IC(S.ind_CO2,1)= NCO2;
+            P_IC(S.ind_O2,1) = NO2;
+            P_IC(S.ind_N2,1) = NN2;
+            P_IC(S.ind_He,1) = NHe;
+            P_IC(S.ind_Ar,1) = NAr;
             % Overall number of moles in the product species
             NP = sum(P_IC(:,1).*(1-P_IC(:,10)));
 %             NP = sum(P_IC(:,1));
@@ -496,7 +496,7 @@ end
             % the equilibrium condition for the above reaction
             %
             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-            if M.L_minor>0 
+            if M.Lminors>0 
                 Ni     = k5 .* NCO2.^(C.gamma-C.alpha-C.beta/2) .* NH2O.^(C.beta/2) ...
                     .* NCO.^(2*C.alpha-C.gamma+C.beta/2) .* NN2.^(C.omega/2) ...
                     .* zeta.^DNfactor_V;
@@ -504,21 +504,21 @@ end
 %                        +log(NCO).*(2*C.alpha-C.gamma+C.beta/2)+log(NN2+1).*(C.omega/2) ...
 %                        +log(zeta).*DNfactor_V);
                 if M.major_CH4 && DeltaNP
-%                         Ni(M.idx_m_CH4) = k8*NH2^2/zeta;
-                        Ni(M.idx_m_CH4) = NH2*Ni(M.idx_m_CH3)/(Ni(M.idx_m_H)*k8);
-%                         Ni(M.idx_m_CH4) = Ni(M.idx_m_CH4) + 0.995*(k8*NH2^2/zeta-Ni(M.idx_m_CH4));
-%                         Ni(M.idx_m_C6H6)= k9*Ni(M.idx_m_C2H2)^3/zeta^2;
+%                         Ni(M.ind_m_CH4) = k8*NH2^2/zeta;
+                        Ni(M.ind_m_CH4) = NH2*Ni(M.ind_m_CH3)/(Ni(M.ind_m_H)*k8);
+%                         Ni(M.ind_m_CH4) = Ni(M.ind_m_CH4) + 0.995*(k8*NH2^2/zeta-Ni(M.ind_m_CH4));
+%                         Ni(M.ind_m_C6H6)= k9*Ni(M.ind_m_C2H2)^3/zeta^2;
                 end
 %                   if M.minor_C
-%                       Ni(M.idx_m_C)= sqrt(NCO^2/(NO2*zeta*k10));
+%                       Ni(M.ind_m_C)= sqrt(NCO^2/(NO2*zeta*k10));
 %                   end
-                Ni_old = P_IC_old(M.idx_minor,1)';
+                Ni_old = P_IC_old(M.ind_minor,1)';
                 aux = find(Ni_old~=0);
                 if ~isempty(aux)
                     Ni(aux) = Ni_old(aux)+relax*(Ni(aux)-Ni_old(aux));
                 end
                 Ni(Ni>NP_old) = 0;
-                P_IC(M.idx_minor,1) = Ni;
+                P_IC(M.ind_minor,1) = Ni;
             end
             % Check
 %             sum(P_IC(:,1).*A0(:,E.ind_C))
@@ -527,7 +527,7 @@ end
 %             sum(P_IC(:,1).*A0(:,E.ind_N))
             %%%%
             NO2     = zeta*(k1*NCO2/NCO)^2;
-            NO2_old = P_IC_old(S.idx_O2,1);
+            NO2_old = P_IC_old(S.ind_O2,1);
             if NO2_old ~=0
                 NO2 = NO2_old+relax*(NO2-NO2_old);
             end
@@ -566,14 +566,14 @@ end
             if NH2  < 0, NH2  = 0.75*NH2_old ; end
             if NN2  < 0, NN2  = 0.75*NN2_old ; end
             
-            P_IC(S.idx_CO,1) = NCO;
-            P_IC(S.idx_CO2,1)= NCO2;
-            P_IC(S.idx_H2O,1)= NH2O;
-            P_IC(S.idx_H2,1) = NH2;
-            P_IC(S.idx_O2,1) = NO2;
-            P_IC(S.idx_N2,1) = NN2;
-            P_IC(S.idx_He,1) = NHe;
-            P_IC(S.idx_Ar,1) = NAr;
+            P_IC(S.ind_CO,1) = NCO;
+            P_IC(S.ind_CO2,1)= NCO2;
+            P_IC(S.ind_H2O,1)= NH2O;
+            P_IC(S.ind_H2,1) = NH2;
+            P_IC(S.ind_O2,1) = NO2;
+            P_IC(S.ind_N2,1) = NN2;
+            P_IC(S.ind_He,1) = NHe;
+            P_IC(S.ind_Ar,1) = NAr;
             
             % Overall number of moles in the product species
             
@@ -656,20 +656,20 @@ end
             
             if t
 %             if phi~=phi_c
-%                 if M.L_minor>0
+%                 if M.Lminors>0
 %                     Ni    = k8 .* NCO.^(C.gamma) .* NCgr.^(C.alpha-C.gamma) ...
 %                         .* NH2.^(C.beta/2) .* NN2.^(C.omega/2) ...
 %                         .* zeta.^DNfactor_VIII;
-%                     for n = M.L_minor:-1:1
-%                         Ni_old = P_IC_old(M.idx_minor(n),1);
+%                     for n = M.Lminors:-1:1
+%                         Ni_old = P_IC_old(M.ind_minor(n),1);
 %                         if Ni_old ~=0
 %                             Ni(n) = Ni_old+relax*(Ni(n)-Ni_old);
 %                         end
-%                         P_IC(M.idx_minor(n),[strThProp.(minor_products{n}).Element_matrix(1,:),1]) = [Ni(n)*strThProp.(minor_products{n}).Element_matrix(2,:),Ni(n)];
+%                         P_IC(M.ind_minor(n),[strThProp.(minor_products{n}).Element_matrix(1,:),1]) = [Ni(n)*strThProp.(minor_products{n}).Element_matrix(2,:),Ni(n)];
 %                     end
 %                 end
 %             else
-                if M.L_minor>0
+                if M.Lminors>0
                     Ni    = k5 .* NCO2.^(C.gamma-C.alpha-C.beta/2) .* NH2O.^(C.beta/2) ...
                         .* NCO.^(2*C.alpha-C.gamma+C.beta/2) .* NN2.^(C.omega/2) ...
                         .* zeta.^DNfactor_V;
@@ -677,25 +677,25 @@ end
 %                        +log(NCO).*(2*C.alpha-C.gamma+C.beta/2)+log(NN2+1).*(C.omega/2) ...
 %                        +log(zeta).*DNfactor_V);
                     if M.major_CH4 && DeltaNP
-%                         Ni(M.idx_m_CH4) = k8*NH2^2/zeta;
-                        Ni(M.idx_m_CH4) = NH2*Ni(M.idx_m_CH3)/(Ni(M.idx_m_H)*k8);
-%                         Ni(M.idx_m_C) = Ni(M.idx_m_H)*Ni(M.idx_m_CH)/NH2*k10;
-%                         Ni(M.idx_m_CH4) = Ni(M.idx_m_CH4) + 0.995*(k8*NH2^2/zeta-Ni(M.idx_m_CH4));
-%                         Ni(M.idx_m_C6H6)= k9*Ni(M.idx_m_C2H2)^3/zeta^2;
+%                         Ni(M.ind_m_CH4) = k8*NH2^2/zeta;
+                        Ni(M.ind_m_CH4) = NH2*Ni(M.ind_m_CH3)/(Ni(M.ind_m_H)*k8);
+%                         Ni(M.ind_m_C) = Ni(M.ind_m_H)*Ni(M.ind_m_CH)/NH2*k10;
+%                         Ni(M.ind_m_CH4) = Ni(M.ind_m_CH4) + 0.995*(k8*NH2^2/zeta-Ni(M.ind_m_CH4));
+%                         Ni(M.ind_m_C6H6)= k9*Ni(M.ind_m_C2H2)^3/zeta^2;
                     end
-                    Ni_old = P_IC_old(M.idx_minor,1)';
+                    Ni_old = P_IC_old(M.ind_minor,1)';
                     aux = find(Ni_old~=0);
                     if ~isempty(aux)
                         Ni(aux) = Ni_old(aux)+relax*(Ni(aux)-Ni_old(aux));
                     end
 %                     Ni(Ni>NP_old) = 0;
-                    P_IC(M.idx_minor,1) = Ni;
+                    P_IC(M.ind_minor,1) = Ni;
                 end
 %             end
 %             NO2     = mean([zeta*(k1*NCO2/NCO)^2, zeta*(k2*NH2O/NH2)^2]);
             NO2     = zeta*(k1*NCO2/NCO)^2;
 %             NO2 = 0;
-            NO2_old = P_IC_old(S.idx_O2,1);
+            NO2_old = P_IC_old(S.ind_O2,1);
             if NO2_old ~= 0
                 NO2 = NO2_old+relax*(NO2-NO2_old);
             end
@@ -858,7 +858,7 @@ end
 %                 N_minor_O_0+2*NCO2_0+NCO_0+2*NO2_0+NH2O_0
 %                 N_minor_N_0+2*NN2_0 
                 %%%%%%%%%%%%%%%%
-                if M.L_minor>0
+                if M.Lminors>0
                     Ni    = k5 .* NCO2.^(C.gamma-C.alpha-C.beta/2) .* NH2O.^(C.beta/2) ...
                         .* NCO.^(2*C.alpha-C.gamma+C.beta/2) .* NN2.^(C.omega/2) ...
                         .* zeta.^DNfactor_V;
@@ -866,24 +866,24 @@ end
 %                        +log(NCO).*(2*C.alpha-C.gamma+C.beta/2)+log(NN2).*(C.omega/2) ...
 %                        +log(zeta).*DNfactor_V);
                     if M.major_CH4 && DeltaNP
-%                         Ni(M.idx_m_CH4) = k8*NH2^2/zeta;
-                    Ni(M.idx_m_CH4) = NH2*Ni(M.idx_m_CH3)/(Ni(M.idx_m_H)*k8);
-%                         Ni(M.idx_m_CH4) = Ni(M.idx_m_CH4) + 0.995*(k8*NH2^2/zeta-Ni(M.idx_m_CH4));
-%                         Ni(M.idx_m_C6H6)= k9*Ni(M.idx_m_C2H2)^3/zeta^2;
+%                         Ni(M.ind_m_CH4) = k8*NH2^2/zeta;
+                    Ni(M.ind_m_CH4) = NH2*Ni(M.ind_m_CH3)/(Ni(M.ind_m_H)*k8);
+%                         Ni(M.ind_m_CH4) = Ni(M.ind_m_CH4) + 0.995*(k8*NH2^2/zeta-Ni(M.ind_m_CH4));
+%                         Ni(M.ind_m_C6H6)= k9*Ni(M.ind_m_C2H2)^3/zeta^2;
                     end
-                    Ni_old = P_IC_old(M.idx_minor,1)';
+                    Ni_old = P_IC_old(M.ind_minor,1)';
                     aux = find(Ni_old~=0);
                     if ~isempty(aux)
                         Ni(aux) = Ni_old(aux)+relax*(Ni(aux)-Ni_old(aux));
                         %                           Ni(aux) = exp(log(Ni_old(aux)) +relax*(log(Ni(aux)) -log(Ni_old(aux))));
                     end
 %                     Ni(Ni>NP_old) = 0;
-                    P_IC(M.idx_minor,1) = Ni;
+                    P_IC(M.ind_minor,1) = Ni;
                 end
                 
                 NO2     = zeta*(k1*NCO2/NCO)^2;
                 
-                NO2_old = P_IC_old(S.idx_O2,1);
+                NO2_old = P_IC_old(S.ind_O2,1);
                 if NO2_old ~= 0
                     NO2 = NO2_old+relax*(NO2-NO2_old);
 %                     NO2 = exp(log(NO2_old) +relax*(log(NO2) -log(NO2_old)));
@@ -948,15 +948,15 @@ end
             if NH2  < 0 || ~isreal(NH2), NH2  = 0.75*NH2_old ; end
             if NN2  < 0 || ~isreal(NN2), NN2  = 0.75*NN2_old ; end
             
-            P_IC(S.idx_Cgr,1)= NCgr;
-            P_IC(S.idx_CO,1) = NCO;
-            P_IC(S.idx_CO2,1)= NCO2;
-            P_IC(S.idx_H2O,1)= NH2O;
-            P_IC(S.idx_H2,1) = NH2;
-            P_IC(S.idx_O2,1) = NO2;
-            P_IC(S.idx_N2,1) = NN2;
-            P_IC(S.idx_He,1) = NHe;
-            P_IC(S.idx_Ar,1) = NAr;
+            P_IC(S.ind_Cgr,1)= NCgr;
+            P_IC(S.ind_CO,1) = NCO;
+            P_IC(S.ind_CO2,1)= NCO2;
+            P_IC(S.ind_H2O,1)= NH2O;
+            P_IC(S.ind_H2,1) = NH2;
+            P_IC(S.ind_O2,1) = NO2;
+            P_IC(S.ind_N2,1) = NN2;
+            P_IC(S.ind_He,1) = NHe;
+            P_IC(S.ind_Ar,1) = NAr;
 
             % Overall number of moles in the product species
             NP = sum(P_IC(:,1).*(1-P_IC(:,10)));
@@ -1019,21 +1019,21 @@ end
             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
             
             if t
-                if M.L_minor>0
+                if M.Lminors>0
                     Ni    = k5 .* NCO2.^(C.gamma-C.alpha-C.beta/2) .* NH2O.^(C.beta/2) ...
                         .* NCO.^(2*C.alpha-C.gamma+C.beta/2) .* NN2.^(C.omega/2) ...
                         .* zeta.^DNfactor_V;
                     Ni(Ni>NP_old) = 0;
-                    Ni_old = P_IC_old(M.idx_minor,1)';
+                    Ni_old = P_IC_old(M.ind_minor,1)';
                     aux = find(Ni_old~=0);
                     if ~isempty(aux)
                         Ni(aux) = Ni_old(aux)+relax*(Ni(aux)-Ni_old(aux));
                     end
-                    P_IC(M.idx_minor,1) = Ni;
+                    P_IC(M.ind_minor,1) = Ni;
                 end
             
             NO2     = zeta*(k1*NCO2/NCO)^2;
-            NO2_old = P_IC_old(S.idx_O2,1);
+            NO2_old = P_IC_old(S.ind_O2,1);
             if NO2_old ~= 0
                 NO2 = NO2_old+relax*(NO2-NO2_old);
             end
@@ -1080,15 +1080,15 @@ end
             if NH2  < 0, NH2  = 0.75*NH2_old ; end
             if NN2  < 0, NN2  = 0.75*NN2_old ; end
             
-            P_IC(S.idx_Cgr,1)= NCgr;
-            P_IC(S.idx_CO,1) = NCO;
-            P_IC(S.idx_CO2,1)= NCO2;
-            P_IC(S.idx_H2O,1)= NH2O;
-            P_IC(S.idx_H2,1) = NH2;
-            P_IC(S.idx_O2,1) = NO2;
-            P_IC(S.idx_N2,1) = NN2;
-            P_IC(S.idx_He,1) = NHe;
-            P_IC(S.idx_Ar,1) = NAr;
+            P_IC(S.ind_Cgr,1)= NCgr;
+            P_IC(S.ind_CO,1) = NCO;
+            P_IC(S.ind_CO2,1)= NCO2;
+            P_IC(S.ind_H2O,1)= NH2O;
+            P_IC(S.ind_H2,1) = NH2;
+            P_IC(S.ind_O2,1) = NO2;
+            P_IC(S.ind_N2,1) = NN2;
+            P_IC(S.ind_He,1) = NHe;
+            P_IC(S.ind_Ar,1) = NAr;
             
             % Overall number of moles in the product species
             

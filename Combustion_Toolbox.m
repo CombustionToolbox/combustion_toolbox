@@ -103,11 +103,7 @@ app = Define_FOI(app, i);
 %% PROBLEM TYPE
 app = SolveProblem(app, i);
 %% DISPLAY RESULTS
-if ~strcmp(app.PD.ProblemType,'SHOCK_R') && ~strcmp(app.PD.ProblemType,'DET_OVERDRIVEN')
-    displayresults(app.PS.strR{i},app.PS.strP{i},app.PD.ProblemType,app.C.mintol_display,app.S.namespecies);
-elseif ~strcmp(app.PD.ProblemType,'DET_OVERDRIVEN')
-    displayresults(app.PS.strR{i},app.PS.str2{i},app.PS.strP{i},app.PD.ProblemType,app.C.mintol_display,app.S.namespecies); % Display all results SHOCK_R
-end
+results(app, i);
 end
 disp('TIME:')
 toc

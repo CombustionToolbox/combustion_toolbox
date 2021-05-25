@@ -31,13 +31,15 @@ app.Misc.save_Excel = false;
 % app.PD.CompleteOrIncomplete = 'complete';
 app.PD.CompleteOrIncomplete = 'incomplete'; 
 app.TN.factor_c = 1; % factor_c = 1 (default).
+%% SOLVER: SEGREGATED OR GIBBS_MIN
+app.PD.FLAG_GIBBS = true; % false: segregated; true: gibbs minimization
 %% CHECK SPECIES MINOR PRODUCTS --> SELECTED DATABASE (strThProp)
 [app.strThProp,app.E,app.S,app.M,app.C] = check_database(app.strMaster,app.strThProp,app.E,app.S,app.M,app.C);
 %% PROBLEM CONDITIONS
 app.PD.TR.value = 300;
 % app.PD.TR.vector.value = 300:50:700;
 app.PD.pR.value = 1;
-app.PD.phi.value = 0.5:0.1:2;
+app.PD.phi.value = 1:0.01:3;
 %% INITIALIZATION
 app = Initialize(app);
 %% PROBLEM TYPE
@@ -108,8 +110,8 @@ end
 disp('TIME:')
 toc
 %% DISPLAY MOLAR FRACTION VS EQUIVALENCE RATIO
-% app.M.display_species = {};
-app.M.display_species = {'CO','CO2','H','HO2','H2','H2O','N2','O2'};
+app.M.display_species = {};
+% app.M.display_species = {'CO','CO2','H','HO2','H2','H2O','N2','O2'};
 % app.M.display_species = {'CO','CO2','H','HO2','H2','H2O','NO','NO2','N2','O','OH','O2','Cbgrb'};
 closing(app,app.PS.strP,app.PD.phi.value,app.M.display_species,app.Misc.timer_0,app.S.LS,app.C.mintol_display,app.PD.ProblemType);
 %% EXCEL I/O

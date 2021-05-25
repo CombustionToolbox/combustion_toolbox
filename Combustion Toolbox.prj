@@ -1,0 +1,158 @@
+<deployment-project plugin="plugin.apptool" plugin-version="1.0">
+  <configuration build-checksum="130441627" file="C:\Users\Alberto Cuadra Lara\Google Drive\Phd\Combustion_Toolbox\Combustion_Toolbox_repo\combustion_toolbox\Combustion Toolbox 2019b.prj" location="C:\Users\Alberto Cuadra Lara\Google Drive\Phd\Combustion_Toolbox\Combustion_Toolbox_repo\combustion_toolbox" name="Combustion Toolbox 2019b" target="target.mlapps" target-name="Package App">
+    <param.appname>Combustion Toolbox 2019b</param.appname>
+    <param.authnamewatermark>Alberto Cuadra Lara</param.authnamewatermark>
+    <param.email>acuadra@ing.uc3m.es</param.email>
+    <param.company>Universidad Carlos III de Madrid</param.company>
+    <param.icon>${PROJECT_ROOT}\Combustion Toolbox 2019b_resources\icon_24.png</param.icon>
+    <param.icons>
+      <file>${PROJECT_ROOT}\Combustion Toolbox 2019b_resources\icon_48.png</file>
+      <file>${PROJECT_ROOT}\Combustion Toolbox 2019b_resources\icon_24.png</file>
+      <file>${PROJECT_ROOT}\Combustion Toolbox 2019b_resources\icon_16.png</file>
+    </param.icons>
+    <param.summary />
+    <param.description>&lt;i&gt;Combustion-Toolbox&lt;/i&gt; is an open source thermochemical code with application to gaseous combustion problems. The code solves six chemical equilibrium problems (TP, HP, SP, TV, EV and SV transformations; where T denotes temperature, P pressure, H enthalpy, S entropy, E internal energy and V volume), incident and reflected planar shock waves, as well as ideal detonations according to Chapman-Jouguet theory, assuming always ideal gases. The code computes the equilibrium composition using equilibrium constants rather than by minimization of the Gibbs–Helmholtz free energy, and employs NASA’s 9-coefficient polynomial fits to evaluate the thermodynamic properties. Besides the plain code, the new tool has been equipped with a Graphical User Interface (hereafter &lt;i&gt;Combustion-Toolbox &lt;/i&gt;) developed in MATLAB® 2018b under AppDesigner. The results obtained with &lt;i&gt;Combustion-Toolbox&lt;/i&gt; have been validated against, and are in good agreement with, NASA’s Chemical Equilibrium with Applications (CEA) program, CANTERA, and Caltech’s Shock and Detonation Toolbox . Moreover, the time required for the computations is comparable to that of other existing codes. &lt;i&gt;Combustion-Toolbox&lt;/i&gt; has teaching and research aspirations and will be distributed as open source package as soon it has been fully tested.</param.description>
+    <param.screenshot>C:\Users\Alberto Cuadra Lara\AppData\Local\Temp\tp1495b5ef_d31b_4658_932c_ed76bd0c96ac.png</param.screenshot>
+    <param.version>1.0</param.version>
+    <param.products.name>
+      <item>MATLAB</item>
+    </param.products.name>
+    <param.products.id>
+      <item>1</item>
+    </param.products.id>
+    <param.products.version>
+      <item>9.7</item>
+    </param.products.version>
+    <param.platforms />
+    <param.output>${PROJECT_ROOT}</param.output>
+    <param.guid>06f70579-1abb-4a40-bd4d-8244a5ae79d0</param.guid>
+    <unset>
+      <param.authnamewatermark />
+      <param.email />
+      <param.company />
+      <param.summary />
+      <param.version />
+      <param.platforms />
+      <param.output />
+    </unset>
+    <fileset.main>
+      <file>${PROJECT_ROOT}\Combustion_Toolbox_App.mlapp</file>
+    </fileset.main>
+    <fileset.depfun />
+    <fileset.resources>
+      <file>${PROJECT_ROOT}\Databases\strMaster.mat</file>
+      <file>${PROJECT_ROOT}\Databases\strMaster_reduced.mat</file>
+      <file>${PROJECT_ROOT}\Databases\strThProp.mat</file>
+      <file>${PROJECT_ROOT}\Databases\strThProp_airnasanoions.mat</file>
+      <file>${PROJECT_ROOT}\Databases\strThProp_HC_165.mat</file>
+      <file>${PROJECT_ROOT}\Databases\strThProp_HC_47.mat</file>
+      <file>${PROJECT_ROOT}\Databases\strThProp_hydrogen_air_complete.mat</file>
+      <file>${PROJECT_ROOT}\GUI\Help\Masters Thesis - Alberto Cuadra Lara.pdf</file>
+      <file>${PROJECT_ROOT}\GUI\Help\poster_msc11.pdf</file>
+      <file>${PROJECT_ROOT}\GUI\Icons\acronimo.png</file>
+      <file>${PROJECT_ROOT}\GUI\Icons\engineer.svg</file>
+      <file>${PROJECT_ROOT}\GUI\Icons\foto.jpg</file>
+      <file>${PROJECT_ROOT}\GUI\Icons\GitHub-Mark-120px-plus.png</file>
+      <file>${PROJECT_ROOT}\GUI\Icons\gmail.png</file>
+      <file>${PROJECT_ROOT}\GUI\Icons\lab.png</file>
+      <file>${PROJECT_ROOT}\GUI\Icons\libro.png</file>
+      <file>${PROJECT_ROOT}\GUI\Icons\linkedin.png</file>
+      <file>${PROJECT_ROOT}\GUI\Icons\Logo-2C-128px-TM.png</file>
+      <file>${PROJECT_ROOT}\GUI\Icons\logo_uc3m.png</file>
+      <file>${PROJECT_ROOT}\GUI\Icons\logoFMRGv2.png</file>
+      <file>${PROJECT_ROOT}\GUI\Icons\mvcoello240x360.jpg</file>
+      <file>${PROJECT_ROOT}\GUI\Icons\office.svg</file>
+      <file>${PROJECT_ROOT}\GUI\Icons\RG_square_green.jpg</file>
+      <file>${PROJECT_ROOT}\NASA_database\thermo.inp</file>
+      <file>${PROJECT_ROOT}\NASA_database\trans.inp</file>
+      <file>C:\Users\Alberto Cuadra Lara\Google Drive\Phd\Combustion_Toolbox\Compile\about.p</file>
+      <file>C:\Users\Alberto Cuadra Lara\Google Drive\Phd\Combustion_Toolbox\Compile\brewermap.p</file>
+      <file>C:\Users\Alberto Cuadra Lara\Google Drive\Phd\Combustion_Toolbox\Compile\CalculateProductsCC.p</file>
+      <file>C:\Users\Alberto Cuadra Lara\Google Drive\Phd\Combustion_Toolbox\Compile\CalculateProductsIC.p</file>
+      <file>C:\Users\Alberto Cuadra Lara\Google Drive\Phd\Combustion_Toolbox\Compile\check_database.p</file>
+      <file>C:\Users\Alberto Cuadra Lara\Google Drive\Phd\Combustion_Toolbox\Compile\closing.p</file>
+      <file>C:\Users\Alberto Cuadra Lara\Google Drive\Phd\Combustion_Toolbox\Compile\colours.p</file>
+      <file>C:\Users\Alberto Cuadra Lara\Google Drive\Phd\Combustion_Toolbox\Compile\Combustion_Toolbox.p</file>
+      <file>C:\Users\Alberto Cuadra Lara\Google Drive\Phd\Combustion_Toolbox\Compile\Combustion_Toolbox_App.p</file>
+      <file>C:\Users\Alberto Cuadra Lara\Google Drive\Phd\Combustion_Toolbox\Compile\ComputeProperties.p</file>
+      <file>C:\Users\Alberto Cuadra Lara\Google Drive\Phd\Combustion_Toolbox\Compile\detect_location_of_phase_specifier.p</file>
+      <file>C:\Users\Alberto Cuadra Lara\Google Drive\Phd\Combustion_Toolbox\Compile\display_Tp_phi.p</file>
+      <file>C:\Users\Alberto Cuadra Lara\Google Drive\Phd\Combustion_Toolbox\Compile\displayresults.p</file>
+      <file>C:\Users\Alberto Cuadra Lara\Google Drive\Phd\Combustion_Toolbox\Compile\displaysweepresults.p</file>
+      <file>C:\Users\Alberto Cuadra Lara\Google Drive\Phd\Combustion_Toolbox\Compile\find_idx.p</file>
+      <file>C:\Users\Alberto Cuadra Lara\Google Drive\Phd\Combustion_Toolbox\Compile\FormattedOutput_test.p</file>
+      <file>C:\Users\Alberto Cuadra Lara\Google Drive\Phd\Combustion_Toolbox\Compile\FullName2name.p</file>
+      <file>C:\Users\Alberto Cuadra Lara\Google Drive\Phd\Combustion_Toolbox\Compile\GenerateShortDatabase_test.p</file>
+      <file>C:\Users\Alberto Cuadra Lara\Google Drive\Phd\Combustion_Toolbox\Compile\Initialize.p</file>
+      <file>C:\Users\Alberto Cuadra Lara\Google Drive\Phd\Combustion_Toolbox\Compile\Initialize_2.p</file>
+      <file>C:\Users\Alberto Cuadra Lara\Google Drive\Phd\Combustion_Toolbox\Compile\isRefElm.p</file>
+      <file>C:\Users\Alberto Cuadra Lara\Google Drive\Phd\Combustion_Toolbox\Compile\label.p</file>
+      <file>C:\Users\Alberto Cuadra Lara\Google Drive\Phd\Combustion_Toolbox\Compile\list_species_names.p</file>
+      <file>C:\Users\Alberto Cuadra Lara\Google Drive\Phd\Combustion_Toolbox\Compile\name_with_parenthesis.p</file>
+      <file>C:\Users\Alberto Cuadra Lara\Google Drive\Phd\Combustion_Toolbox\Compile\ParseThermoInp_test.p</file>
+      <file>C:\Users\Alberto Cuadra Lara\Google Drive\Phd\Combustion_Toolbox\Compile\Plotting.p</file>
+      <file>C:\Users\Alberto Cuadra Lara\Google Drive\Phd\Combustion_Toolbox\Compile\set_alpha_beta_gamma_omega.p</file>
+      <file>C:\Users\Alberto Cuadra Lara\Google Drive\Phd\Combustion_Toolbox\Compile\set_element_matrix.p</file>
+      <file>C:\Users\Alberto Cuadra Lara\Google Drive\Phd\Combustion_Toolbox\Compile\set_elements.p</file>
+      <file>C:\Users\Alberto Cuadra Lara\Google Drive\Phd\Combustion_Toolbox\Compile\set_reference_form_of_elements.p</file>
+      <file>C:\Users\Alberto Cuadra Lara\Google Drive\Phd\Combustion_Toolbox\Compile\set_reference_form_of_elements_with_T_intervals.p</file>
+      <file>C:\Users\Alberto Cuadra Lara\Google Drive\Phd\Combustion_Toolbox\Compile\set_species_matrix.p</file>
+      <file>C:\Users\Alberto Cuadra Lara\Google Drive\Phd\Combustion_Toolbox\Compile\SetSpecies.p</file>
+      <file>C:\Users\Alberto Cuadra Lara\Google Drive\Phd\Combustion_Toolbox\Compile\SolveProblemDET_fast.p</file>
+      <file>C:\Users\Alberto Cuadra Lara\Google Drive\Phd\Combustion_Toolbox\Compile\SolveProblemDET_fast_inloop.p</file>
+      <file>C:\Users\Alberto Cuadra Lara\Google Drive\Phd\Combustion_Toolbox\Compile\SolveProblemDET_hybrid_inloop.p</file>
+      <file>C:\Users\Alberto Cuadra Lara\Google Drive\Phd\Combustion_Toolbox\Compile\SolveProblemDET_hybrid_main.p</file>
+      <file>C:\Users\Alberto Cuadra Lara\Google Drive\Phd\Combustion_Toolbox\Compile\SolveProblemDET_inloop.p</file>
+      <file>C:\Users\Alberto Cuadra Lara\Google Drive\Phd\Combustion_Toolbox\Compile\SolveProblemDET_Jouget_inloop.p</file>
+      <file>C:\Users\Alberto Cuadra Lara\Google Drive\Phd\Combustion_Toolbox\Compile\SolveProblemDET_Jouget_main.p</file>
+      <file>C:\Users\Alberto Cuadra Lara\Google Drive\Phd\Combustion_Toolbox\Compile\SolveProblemDET_main.p</file>
+      <file>C:\Users\Alberto Cuadra Lara\Google Drive\Phd\Combustion_Toolbox\Compile\SolveProblemDET_main_2.p</file>
+      <file>C:\Users\Alberto Cuadra Lara\Google Drive\Phd\Combustion_Toolbox\Compile\SolveProblemDET_OVERDRIVEN.p</file>
+      <file>C:\Users\Alberto Cuadra Lara\Google Drive\Phd\Combustion_Toolbox\Compile\SolveProblemEV.p</file>
+      <file>C:\Users\Alberto Cuadra Lara\Google Drive\Phd\Combustion_Toolbox\Compile\SolveProblemHP.p</file>
+      <file>C:\Users\Alberto Cuadra Lara\Google Drive\Phd\Combustion_Toolbox\Compile\SolveProblemHP_EV_fast.p</file>
+      <file>C:\Users\Alberto Cuadra Lara\Google Drive\Phd\Combustion_Toolbox\Compile\SolveProblemSHOCK_I.p</file>
+      <file>C:\Users\Alberto Cuadra Lara\Google Drive\Phd\Combustion_Toolbox\Compile\SolveProblemSHOCK_I_fast.p</file>
+      <file>C:\Users\Alberto Cuadra Lara\Google Drive\Phd\Combustion_Toolbox\Compile\SolveProblemSHOCK_Jouget_I.p</file>
+      <file>C:\Users\Alberto Cuadra Lara\Google Drive\Phd\Combustion_Toolbox\Compile\SolveProblemSHOCK_R.p</file>
+      <file>C:\Users\Alberto Cuadra Lara\Google Drive\Phd\Combustion_Toolbox\Compile\SolveProblemSHOCK_R_fast.p</file>
+      <file>C:\Users\Alberto Cuadra Lara\Google Drive\Phd\Combustion_Toolbox\Compile\SolveProblemSP.p</file>
+      <file>C:\Users\Alberto Cuadra Lara\Google Drive\Phd\Combustion_Toolbox\Compile\SolveProblemSP_fast.p</file>
+      <file>C:\Users\Alberto Cuadra Lara\Google Drive\Phd\Combustion_Toolbox\Compile\SolveProblemSV.p</file>
+      <file>C:\Users\Alberto Cuadra Lara\Google Drive\Phd\Combustion_Toolbox\Compile\SolveProblemTP_TV.p</file>
+      <file>C:\Users\Alberto Cuadra Lara\Google Drive\Phd\Combustion_Toolbox\Compile\soundspeed_eq.p</file>
+      <file>C:\Users\Alberto Cuadra Lara\Google Drive\Phd\Combustion_Toolbox\Compile\species_cP_new.p</file>
+      <file>C:\Users\Alberto Cuadra Lara\Google Drive\Phd\Combustion_Toolbox\Compile\species_cV_new.p</file>
+      <file>C:\Users\Alberto Cuadra Lara\Google Drive\Phd\Combustion_Toolbox\Compile\species_DeT_new.p</file>
+      <file>C:\Users\Alberto Cuadra Lara\Google Drive\Phd\Combustion_Toolbox\Compile\species_DhT_new.p</file>
+      <file>C:\Users\Alberto Cuadra Lara\Google Drive\Phd\Combustion_Toolbox\Compile\species_g0_new.p</file>
+      <file>C:\Users\Alberto Cuadra Lara\Google Drive\Phd\Combustion_Toolbox\Compile\species_s0_new.p</file>
+      <file>C:\Users\Alberto Cuadra Lara\Google Drive\Phd\Combustion_Toolbox\Compile\SpeciesThermProp.p</file>
+      <file>C:\Users\Alberto Cuadra Lara\Google Drive\Phd\Combustion_Toolbox\Compile\strMaster_reduced.p</file>
+    </fileset.resources>
+    <fileset.package />
+    <build-deliverables>
+      <file location="C:\Users\Alberto Cuadra Lara\Google Drive\Phd\Combustion_Toolbox\Combustion_Toolbox_repo" name="combustion_toolbox" optional="false">C:\Users\Alberto Cuadra Lara\Google Drive\Phd\Combustion_Toolbox\Combustion_Toolbox_repo\combustion_toolbox</file>
+    </build-deliverables>
+    <workflow />
+    <matlab>
+      <root>C:\Program Files\MATLAB\R2019b</root>
+      <toolboxes />
+    </matlab>
+    <platform>
+      <unix>false</unix>
+      <mac>false</mac>
+      <windows>true</windows>
+      <win2k>false</win2k>
+      <winxp>false</winxp>
+      <vista>false</vista>
+      <linux>false</linux>
+      <solaris>false</solaris>
+      <osver>10.0</osver>
+      <os32>false</os32>
+      <os64>true</os64>
+      <arch>win64</arch>
+      <matlab>true</matlab>
+    </platform>
+  </configuration>
+</deployment-project>

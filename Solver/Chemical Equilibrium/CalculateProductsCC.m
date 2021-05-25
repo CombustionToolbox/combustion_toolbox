@@ -1,10 +1,7 @@
-function [N_CC, phi_c, FLAG_SOOT] =  CalculateProductsCC(app, i)
+function [N_CC, phi_c, FLAG_SOOT] =  CalculateProductsCC(app, strR, phi, pP, TP)
 
 % Abbreviations ---------------------
-NatomE = app.PS.strR{i}.NatomE;
-phi = app.PD.phi.value(i);
-TP = app.PD.TP.value;
-pP = app.PD.pR.value;
+NatomE = strR.NatomE;
 Elements = app.E.elements;
 factor_c = app.TN.factor_c;
 Fuel = app.PD.Fuel;

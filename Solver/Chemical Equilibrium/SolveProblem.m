@@ -3,19 +3,19 @@ function app = SolveProblem(app, i)
 % mixture (P) required for the computations
 switch app.PD.ProblemType
     case {'TP','TV'}
-        app.PS.strP{i} = SolveProblemTP_TV(app, i);
+        app.PS.strP{i} = SolveProblemTP_TV(app, app.PS.strR{i},app.PD.phi.value(i),app.PD.pR.value, app.PD.TP.value);
     case {'HP'}
         if i==app.C.l_phi
             % app.PS.strP{i} = SolveProblemHP_test(app.PS.strR{i},app.PD.phi.value(i),app.PD.pR.value); % Newton-Raphson-worse convergence!!
-            app.PS.strP{i} = SolveProblemHP(app.PS.strR{i},app.PD.phi.value(i),app.PD.pR.value,app.E,app.S,app.C,app.M,app.PD,app.TN,app.strThProp);
+            app.PS.strP{i} = SolveProblemHP(app, app.PS.strR{i}, app.PD.phi.value(i), app.PD.pR.value);
         else
-            app.PS.strP{i} = SolveProblemHP_EV_fast(app.PS.strR{i},app.PD.phi.value(i),app.PD.pR.value,app.PS.strP{i+1},app.E,app.S,app.C,app.M,app.PD,app.TN,app.strThProp);
+            app.PS.strP{i} = SolveProblemHP_EV_fast(app, app.PS.strR{i},app.PD.phi.value(i),app.PD.pR.value,app.PS.strP{i+1});
         end
     case {'EV'}
         if i==app.C.l_phi
-            app.PS.strP{i} = SolveProblemEV(app.PS.strR{i},app.PD.phi.value(i),app.PD.pR.value,app.E,app.S,app.C,app.M,app.PD,app.TN,app.strThProp);
+            app.PS.strP{i} = SolveProblemEV(app, app.PS.strR{i}, app.PD.phi.value(i), app.PD.pR.value);
         else
-            app.PS.strP{i} = SolveProblemHP_EV_fast(app.PS.strR{i},app.PD.phi.value(i),app.PD.pR.value,app.PS.strP{i+1},app.E,app.S,app.C,app.M,app.PD,app.TN,app.strThProp);
+            app.PS.strP{i} = SolveProblemHP_EV_fast(app, app.PS.strR{i},app.PD.phi.value(i),app.PD.pR.value,app.PS.strP{i+1});
         end
     case 'SP'
         pP = app.PD.pP.value(i);

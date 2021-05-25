@@ -21,11 +21,14 @@ strThProp = app.strThProp;
 [N_CC, phi_c0, FLAG_SOOT] = CalculateProductsCC(app, strR, phi, pP, TP);
 P = SetSpecies(C.M0.value, S.LS, N_CC', TP, S.ind_fixed, strThProp);
 if strcmpi(PD.CompleteOrIncomplete,'INCOMPLETE')
-    % N_CC matrix with number of moles and swtCondesated of each species
-    N_CC = P(:, [1,10]);
-    % Compute number of moles of M.minor_products
-    [N_IC, STOP] = CalculateProductsIC(app, N_CC, phi, pP, TP, strR.v, phi_c0, FLAG_SOOT);
-%     [N_IC, STOP] = Equilibrium(app, N_CC, phi, pP, TP, strR.v);
+    if ~app.PD.FLAG_GIBBS
+        % N_CC matrix with number of moles and swtCondesated of each species
+        N_CC = P(:, [1,10]);
+        % Compute number of moles of M.minor_products
+        [N_IC, STOP] = CalculateProductsIC(app, N_CC, phi, pP, TP, strR.v, phi_c0, FLAG_SOOT);
+    else
+        [N_IC, STOP] = Equilibrium(app, pP, TP, strR);
+    end
     % Compute properties of all species
     P = SetSpecies(C.M0.value, S.LS, N_IC(S.ind_all, 1), TP, S.ind_all, strThProp);
 else

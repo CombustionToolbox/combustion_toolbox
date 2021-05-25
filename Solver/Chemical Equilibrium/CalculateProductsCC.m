@@ -8,7 +8,7 @@ Fuel = app.PD.Fuel;
 strThProp = app.strThProp;
 % -----------------------------------
 
-phi_c0 = 2/(Fuel.x - Fuel.z) * (Fuel.x + Fuel.y/4 - Fuel.z/2);
+phi_c0 = Compute_phi_c(Fuel);
 
 R0 = 8.3144598; % [J/(K mol)]. Universal gas constant
 

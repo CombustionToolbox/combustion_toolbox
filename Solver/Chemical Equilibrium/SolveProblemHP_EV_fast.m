@@ -1,4 +1,4 @@
-function [strP] = SolveProblemHP_EV_fast(strR,phi,pP,strP,E,S,C,M,PD,TN,strThProp)
+function [strP] = SolveProblemHP_EV_fast(app, strR, phi, pP, strP)
 % CALCULATE ADIABATIC T AND COMPOSITION AT CONSTANT P (HP)
 %                           OR
 % CALCULATE EQUILIBRIUM COMPOSITION AT ADIABATIC T AND CONSTANT V (EV)
@@ -14,13 +14,13 @@ it = 0;
 Q = 1;
 itMax = 30;
 TP = strP.T;
-if strcmp(PD.ProblemType,'HP')
+if strcmp(app.PD.ProblemType,'HP')
     while (abs(DeltaT) > 1e-2 || abs(Q) > 1e-2) && it<itMax
         it = it+1;
-        strP = SolveProblemTP_TV(strR,phi,pP,TP,E,S,C,M,PD,TN,strThProp);
+        strP = SolveProblemTP_TV(app, strR, phi, pP, TP);
         Q  = strP.h - strR.h;
         gx = abs(Q-TP);
-        strP_aux = SolveProblemTP_TV(strR,phi,pP,gx,E,S,C,M,PD,TN,strThProp);
+        strP_aux = SolveProblemTP_TV(app, strR, phi, pP, gx);
         Q_aux  = strP_aux.h - strR.h;
         gx2 = abs(Q_aux-gx);
         if abs(gx2-2*gx+TP) > tol0
@@ -33,10 +33,10 @@ if strcmp(PD.ProblemType,'HP')
 else
     while (abs(DeltaT) > 1e-2 || abs(Q) > 1e-2) && it<itMax
         it = it+1;
-        strP = SolveProblemTP_TV(strR,phi,pP,TP,E,S,C,M,PD,TN,strThProp);
+        strP = SolveProblemTP_TV(app, strR, phi, pP, TP);
         Q  = strP.e - strR.e;
         gx = abs(Q-TP);
-        strP_aux = SolveProblemTP_TV(strR,phi,pP,gx,E,S,C,M,PD,TN,strThProp);
+        strP_aux = SolveProblemTP_TV(app, strR, phi, pP, gx);
         Q_aux  = strP_aux.e - strR.e;
         gx2 = abs(Q_aux-gx);
         if abs(gx2-2*gx+TP) > tol0

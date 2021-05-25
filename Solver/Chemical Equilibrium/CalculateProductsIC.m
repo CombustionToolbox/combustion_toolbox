@@ -1,4 +1,18 @@
-function [P_IC,DeltaNP] = CalculateProductsIC(P_CC,TP,pP,vP,phi,minor_products,phi_c,FLAG_SOOT,M0,A0,E,S,C,M,PD,TN,strThProp)
+function [P_IC,DeltaNP] = CalculateProductsIC(app, N_CC, phi, pP, TP, vP, phi_c, FLAG_SOOT)
+
+% Abbreviations ---------------------
+M0 = app.C.M0.value;
+A0 = app.C.A0.value;
+E = app.E;
+S = app.S;
+C = app.C;
+M = app.M;
+PD = app.PD;
+TN = app.TN;
+strThProp = app.strThProp;
+minors_products = app.M.minors_products;
+% -----------------------------------
+
 
 R0TP = C.R0*TP;
 it = 0; itMax = 500; t=true;
@@ -6,15 +20,15 @@ it = 0; itMax = 500; t=true;
 relax = 0.00007385775+(0.9854897-0.00007385775)/(1+(TP/4058911)^1.817875)^658457.8;
 % Number of moles of the major species in the product mixture under the
 % assumption of complete combustion (CC), denoted by subscript _0
-NCO2_0 = P_CC(S.ind_CO2,1);
-NCO_0  = P_CC(S.ind_CO,1);
-NH2O_0 = P_CC(S.ind_H2O,1);
-NH2_0  = P_CC(S.ind_H2,1);
-NO2_0  = P_CC(S.ind_O2,1);
-NN2_0  = P_CC(S.ind_N2,1);
-NCgr_0 = P_CC(S.ind_Cgr,1);
+NCO2_0 = N_CC(S.ind_CO2,1);
+NCO_0  = N_CC(S.ind_CO,1);
+NH2O_0 = N_CC(S.ind_H2O,1);
+NH2_0  = N_CC(S.ind_H2,1);
+NO2_0  = N_CC(S.ind_O2,1);
+NN2_0  = N_CC(S.ind_N2,1);
+NCgr_0 = N_CC(S.ind_Cgr,1);
 % Number of C, H, O, N, He, Ar-atoms in the product species
-NatomE = sum(P_CC(:,1).*A0);
+NatomE = sum(N_CC(:,1).*A0);
 
 x = NatomE(E.ind_C); %  6 = find(strcmp(Elements,'C'))
 y = NatomE(E.ind_H); %  1 = find(strcmp(Elements,'H'))
@@ -38,8 +52,8 @@ NAr    = NatomE(E.ind_Ar); % 18 = find(strcmp(Elements,'Ar'))
 % Initial guess for the overall number of moles of gaseous species in the
 % product mixture
 
-NP = sum(P_CC(:,1).*(1-P_CC(:,10))); % Sum of num of moles of gases-(1-swt), with swt == condensed phase.
-% NP = sum(P_CC(:,1));
+NP = sum(N_CC(:,1).*(1-N_CC(:,2))); % Sum of num of moles of gases-(1-swt), with swt == condensed phase.
+% NP = sum(N_CC(:,1));
 
 if strfind(PD.ProblemType,'P') == 2 % PD.ProblemType = 'TP', 'HP', or 'SP'
     zeta = NP/pP;
@@ -93,14 +107,14 @@ NP     = NP+(NO2-NO2_0);
 if phi<=1 && M.Lminors>0 % case of lean-to-stoichiometric mixtures
     DNfactor_III = 1-(C.beta+2*(C.gamma+C.omega))/4;
     for n = M.Lminors:-1:1
-        DG0_III(n) = (species_g0_new(minor_products{n},TP,strThProp)-C.alpha(n)*g_CO2 ...
+        DG0_III(n) = (species_g0_new(minors_products{n},TP,strThProp)-C.alpha(n)*g_CO2 ...
             -(C.beta(n)/2)*g_H2O)*1000;
     end
     k3 = exp(-DG0_III/R0TP);
 elseif phi>1  % case rich mixtures
     if (x == 0) && (y ~= 0) && M.Lminors>0 % if there are only hydrogens (H)
         for n = M.Lminors:-1:1
-            DG0_VI(n) = (species_g0_new(minor_products{n},TP,strThProp) ...
+            DG0_VI(n) = (species_g0_new(minors_products{n},TP,strThProp) ...
                 -C.alpha(n) * g_CO2 ...
                 -(C.gamma(n)-2*C.alpha(n)) * g_H2O)*1000;
         end
@@ -108,7 +122,7 @@ elseif phi>1  % case rich mixtures
         DNfactor_VI = 1-C.alpha-C.beta/2-C.omega/2;
     elseif ((x ~= 0) && (y == 0) && M.Lminors>0 && phi < phi_c) && ~FLAG_SOOT% if there are only carbons (C)
         for n = M.Lminors:-1:1
-            DG0_V(n) = (species_g0_new(minor_products{n},TP,strThProp) ...
+            DG0_V(n) = (species_g0_new(minors_products{n},TP,strThProp) ...
                 -(C.gamma(n)-C.alpha(n)-C.beta(n)/2) * g_CO2 ...
                 -(C.beta(n)/2) * g_H2O ...
                 -(2*C.alpha(n)-C.gamma(n)+C.beta(n)/2) * g_CO)*1000;
@@ -117,7 +131,7 @@ elseif phi>1  % case rich mixtures
         DNfactor_V = 1-C.alpha-C.beta/2-C.omega/2;
     elseif phi < phi_c*TN.factor_c && ~FLAG_SOOT% general case of rich mixtures with hydrogens (H) and carbons (C)
         for n = M.Lminors:-1:1
-            DG0_V(n) = (species_g0_new(minor_products{n},TP,strThProp) ...
+            DG0_V(n) = (species_g0_new(minors_products{n},TP,strThProp) ...
                 -(C.gamma(n)-C.alpha(n)-C.beta(n)/2) * g_CO2 ...
                 -(C.beta(n)/2) * g_H2O ...
                 -(2*C.alpha(n)-C.gamma(n)+C.beta(n)/2) * g_CO)*1000;
@@ -130,7 +144,7 @@ elseif phi>1  % case rich mixtures
         k4 = exp(-DG0_IV/R0TP);
     elseif phi >= phi_c*TN.factor_c || FLAG_SOOT
         for n = M.Lminors:-1:1
-            DG0_V(n) = (species_g0_new(minor_products{n},TP,strThProp) ...
+            DG0_V(n) = (species_g0_new(minors_products{n},TP,strThProp) ...
                 -(C.gamma(n)-C.alpha(n)-C.beta(n)/2) * g_CO2 ...
                 -(C.beta(n)/2) * g_H2O ...
                 -(2*C.alpha(n)-C.gamma(n)+C.beta(n)/2) * g_CO)*1000;
@@ -239,7 +253,7 @@ end
                 %                 if Ni_old ~=0
                 %                     Ni(n) = Ni_old+relax*(Ni(n)-Ni_old);
                 %                 end
-                %                 P_IC(M.ind_minor(n),[strThProp.(minor_products{n}).Element_matrix(1,:),1]) = [Ni(n)*strThProp.(minor_products{n}).Element_matrix(2,:),Ni(n)];
+                %                 P_IC(M.ind_minor(n),[strThProp.(minors_products{n}).Element_matrix(1,:),1]) = [Ni(n)*strThProp.(minors_products{n}).Element_matrix(2,:),Ni(n)];
                 %             end
 %                 if M.major_OH && DeltaNP
 %                     Ni(M.ind_m_OH) = sqrt(NH2*NO2*k11*zeta^(-3/2));
@@ -665,7 +679,7 @@ end
 %                         if Ni_old ~=0
 %                             Ni(n) = Ni_old+relax*(Ni(n)-Ni_old);
 %                         end
-%                         P_IC(M.ind_minor(n),[strThProp.(minor_products{n}).Element_matrix(1,:),1]) = [Ni(n)*strThProp.(minor_products{n}).Element_matrix(2,:),Ni(n)];
+%                         P_IC(M.ind_minor(n),[strThProp.(minors_products{n}).Element_matrix(1,:),1]) = [Ni(n)*strThProp.(minors_products{n}).Element_matrix(2,:),Ni(n)];
 %                     end
 %                 end
 %             else

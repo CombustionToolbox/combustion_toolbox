@@ -1,4 +1,4 @@
-function [strP] = SolveProblemTP_TV(app, i)
+function [strP] = SolveProblemTP_TV(app, strR, phi, pP, TP)
 % CALCULATE EQUILIBRIUM AT DEFINED T AND P (TP)
 %                       OR
 % CALCULATE EQUILIBRIUM AT DEFINED T AND CONSTANT V (TV)
@@ -8,28 +8,22 @@ function [strP] = SolveProblemTP_TV(app, i)
 % OUTPUT:
 %   strP  = Prop. of products (phi,species,...)
 
+% Abbreviations ---------------------
 E = app.E;
 S = app.S;
 C = app.C;
 M = app.M;
 PD = app.PD;
-PS = app.PS;
 TN = app.TN;
 strThProp = app.strThProp;
-strR = PS.strR{i};
-phi = PD.phi.value(i);
-pR = PD.pR.value;
-TP = PD.TP.value;
+% -----------------------------------
 
-
-
-phi_c0 = 2/(app.PD.Fuel.x-app.PD.Fuel.z)*(app.PD.Fuel.x+app.PD.Fuel.y/4-app.PD.Fuel.z/2);
-[N_CC, phi_c0, FLAG_SOOT] = CalculateProductsCC(strR.NatomE,phi,phi_c0,TP,pP,app.E.elements,app.TN.factor_c,app.PD.Fuel,app.strThProp);
+[N_CC, phi_c0, FLAG_SOOT] = CalculateProductsCC(app, strR, phi, pP, TP);
 P = SetSpecies(C.M0.value, S.LS, N_CC', TP, S.ind_fixed, strThProp);
 if strcmpi(PD.CompleteOrIncomplete,'INCOMPLETE')
     % Compute number of moles of M.minor_products                                         
-%     [P,DeltaNP] = CalculateProductsIC(P,TP,pP,strR.v,phi,M.minors_products,phi_c0,FLAG_SOOT,C.M0.value,C.A0.value,E,S,C,M,PD,TN,strThProp);
-    [N_IC, DeltaNP] = Equilibrium(app, N_CC, phi, pP, TP, strR.v);
+    [P,DeltaNP] = CalculateProductsIC(P,TP,pP,strR.v,phi,M.minors_products,phi_c0,FLAG_SOOT,C.M0.value,C.A0.value,E,S,C,M,PD,TN,strThProp);
+%     [N_IC, DeltaNP] = Equilibrium(app, N_CC, phi, pP, TP, strR.v);
     % Compute properties of all species
     P = SetSpecies(C.M0.value,S.LS,P(S.ind_all,1),TP,S.ind_all,strThProp);
 else

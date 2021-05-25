@@ -1,6 +1,6 @@
 function app = Define_I(app)
 if ~isempty(app.PD.S_Inert)
-    app.PD.R_Inert = SetSpecies(app.C.M0.value,app.PD.S_Inert,app.PD.N_Inert,app.PD.TR.value,find_ind(app.PD.S_Inert,app.S.namespecies), app.strThProp);
+    app.PD.R_Inert = SetSpecies(app.C.M0.value,app.PD.S_Inert,app.PD.N_Inert,app.PD.TR.value,find_ind(app.PD.S_Inert,app.S.LS), app.strThProp);
 else
     app.PD.R_Inert = 0; % case without inert gases
 end

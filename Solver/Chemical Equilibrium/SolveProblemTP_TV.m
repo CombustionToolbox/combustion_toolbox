@@ -14,9 +14,7 @@ function [strP] = SolveProblemTP_TV(app, strR, phi, pP, TP)
 E = app.E;
 S = app.S;
 C = app.C;
-M = app.M;
 PD = app.PD;
-TN = app.TN;
 strThProp = app.strThProp;
 % -----------------------------------
 
@@ -26,8 +24,8 @@ if strcmpi(PD.CompleteOrIncomplete,'INCOMPLETE')
     % N_CC matrix with number of moles and swtCondesated of each species
     N_CC = P(:, [1,10]);
     % Compute number of moles of M.minor_products
-    [N_IC, DeltaNP] = CalculateProductsIC(app, N_CC, phi, pP, TP, strR.v, phi_c0, FLAG_SOOT);
-%     [N_IC, DeltaNP] = Equilibrium(app, N_CC, phi, pP, TP, strR.v);
+%     [N_IC, DeltaNP] = CalculateProductsIC(app, N_CC, phi, pP, TP, strR.v, phi_c0, FLAG_SOOT);
+    [N_IC, DeltaNP] = Equilibrium(app, N_CC, phi, pP, TP, strR.v);
     % Compute properties of all species
     P = SetSpecies(C.M0.value, S.LS, N_IC(S.ind_all, 1), TP, S.ind_all, strThProp);
 else

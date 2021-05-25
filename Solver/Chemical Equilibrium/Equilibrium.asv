@@ -1,0 +1,34 @@
+function [N_IC, DeltaNP] = Equilibrium(app, N_CC, phi, pP, TP, vR)
+% Generalized Gibbs minimization method  
+
+% Abbreviations ---------------------
+S = app.S;
+C = app.C;
+% -----------------------------------
+
+N0 = C.N0.value;
+A0 = C.A0.value;
+R0TP = C.R0 * TP; % [J/(mol)]
+% Initialization
+NatomE = N_CC(:,1)' * A0;
+NP_0 = 0.1;
+NP = NP_0;
+
+it = 0;
+% itMax = 500
+itMax = 50 + round(S.NS/2);
+SIZE = -log(C.tolN);
+e = 0.;
+STOP = 1.;
+
+% Find indeces of the species/elements that we have to remove from the stoichiometric matrix A0
+% for the sum of elements whose value is <= tolN 
+
+
+end
+
+function ind_A0_E0 = remove_elements(NatomE, A0, tol)
+% Find zero sum elements
+ind_E0 = find(Nat)
+
+end

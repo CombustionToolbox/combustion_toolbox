@@ -34,22 +34,23 @@ function self = Compute_Species(self)
 end
 function self = Index_fixed_Species(self)
     % List of fixed gaseous species
-    self.S.ind_CO2 = find_ind({'CO2'}, self.S.LS);
-    self.S.ind_CO  = find_ind({'CO'}, self.S.LS);
-    self.S.ind_H2O = find_ind({'H2O'}, self.S.LS);
-    self.S.ind_H2  = find_ind({'H2'}, self.S.LS);
-    self.S.ind_O2  = find_ind({'O2'}, self.S.LS);
-    self.S.ind_N2  = find_ind({'N2'}, self.S.LS);
-    self.S.ind_He  = find_ind({'He'}, self.S.LS);
-    self.S.ind_Ar  = find_ind({'Ar'}, self.S.LS);
-    self.S.ind_Cgr  = find_ind({'Cbgrb'}, self.S.LS);
+    self.S.ind_CO2 = find_ind({'CO2'}, self.S.namespecies);
+    self.S.ind_CO  = find_ind({'CO'}, self.S.namespecies);
+    self.S.ind_H2O = find_ind({'H2O'}, self.S.namespecies);
+    self.S.ind_H2  = find_ind({'H2'}, self.S.namespecies);
+    self.S.ind_O2  = find_ind({'O2'}, self.S.namespecies);
+    self.S.ind_N2  = find_ind({'N2'}, self.S.namespecies);
+    self.S.ind_He  = find_ind({'He'}, self.S.namespecies);
+    self.S.ind_Ar  = find_ind({'Ar'}, self.S.namespecies);
+    self.S.ind_Cgr  = find_ind({'Cbgrb'}, self.S.namespecies);
     self.S.ind_fixed = [self.S.ind_CO2,self.S.ind_CO,self.S.ind_H2O,...
         self.S.ind_H2,self.S.ind_O2,self.S.ind_N2,self.S.ind_He,...
         self.S.ind_Ar,self.S.ind_Cgr];
 end
 function self = list_phase_species(self, LS)
-    for ind=1:length(LS)
-        Species = LS{ind};
+    i = 0;
+    for Species = LS
+        i = i + 1;
         if ~self.strThProp.(Species).swtCondensed
            self.S.ind_nswt = [self.S.ind_nswt, ind];
         else
@@ -66,13 +67,13 @@ function self = rearrange_species(self)
     end
 end
 function self = Stoich_Matrix(self)
-    self.C.A0.value = zeros(self.S.NS,self.E.NE);
-    self.C.M0.value = zeros(self.S.NS,12);
-    for i=1:self.S.NS
-        txFormula = self.strThProp.(self.S.LS{i}).txFormula;
-        self.strThProp.(self.S.LS{i}).Element_matrix = set_element_matrix(txFormula,self.E.elements);
-        self.C.A0.value(i,self.strThProp.(self.S.LS{i}).Element_matrix(1,:)) = self.strThProp.(self.S.LS{i}).Element_matrix(2,:);
-        self.C.M0.value(i,10) = self.strThProp.(self.S.LS{i}).swtCondensed;    
+    self.C.A0.value = zeros(self.S.Nspecies,self.E.NE);
+    self.C.M0.value = zeros(self.S.Nspecies,12);
+    for i=1:self.S.Nspecies
+        txFormula = self.strThProp.(self.S.namespecies{i,1}).txFormula;
+        self.strThProp.(self.S.namespecies{i,1}).Element_matrix = set_element_matrix(txFormula,self.E.elements);
+        self.C.A0.value(i,self.strThProp.(self.S.namespecies{i,1}).Element_matrix(1,:)) = self.strThProp.(self.S.namespecies{i,1}).Element_matrix(2,:);
+        self.C.M0.value(i,10) = self.strThProp.(self.S.namespecies{i,1}).swtCondensed;    
     end
     self.C.N0.value = self.C.M0.value(:, [1, 10]);
 end
@@ -85,7 +86,7 @@ function self = Compute_minors_species(self)
                 % Properties of other minor species under consideration, which can
                 % be written in the generic form C_alpha H_beta O_gamma N_omega
                 % Find index minor species
-                self.M.ind_minor(n) = find(strcmp(self.S.LS, self.M.minors_products{n}));
+                self.M.ind_minor(n) = find(strcmp(self.S.namespecies, self.M.minors_products{n}));
             end
             self.C.alpha = self.C.A0.value(self.M.ind_minor, self.E.ind_C)';
             self.C.beta  = self.C.A0.value(self.M.ind_minor, self.E.ind_H)';

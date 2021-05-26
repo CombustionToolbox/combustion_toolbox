@@ -22,7 +22,11 @@ elseif any(strcmp(ProblemType,{'SP'}))
 elseif any(strcmp(ProblemType,{'SV'}))
         app.Misc.config.labelx = 'Volume ratio $v_P/v_R$';
         app.Misc.config.labely = 'Temperature $T [K]$';
-        plot_figure(app.PD.vP_vR.value,app.PS.strP,'v_P/v_R','T',app.Misc.config,app.PD.CompleteOrIncomplete);        
+        plot_figure(app.PD.vP_vR.value,app.PS.strP,'v_P/v_R','T',app.Misc.config,app.PD.CompleteOrIncomplete);     
+elseif any(strcmp(ProblemType,{'SHOCK_I'}))
+        app.Misc.config.labelx = 'Incident velocity $u_1$';
+        app.Misc.config.labely = 'Temperature $T [K]$';
+        plot_figure(app.PD.u1.value,app.PS.strP,'u','T',app.Misc.config,app.PD.CompleteOrIncomplete); 
 elseif numel(phi)>1 && all(phi(2:end) == phi(1))
     app.Misc.config.labelx = 'Critical Equivalence Ratio $\phi_c$';
     app.Misc.config.labely = 'Temperature $T [K]$';

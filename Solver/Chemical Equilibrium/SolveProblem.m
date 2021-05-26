@@ -20,13 +20,13 @@ switch app.PD.ProblemType
     case 'SP'
         pP = app.PD.pP.value(i);
         if i==app.C.l_phi
-            app.PS.strP{i} = SolveProblemSP(app.PS.strR{i},app.PD.phi.value(i),pP,app.E,app.S,app.C,app.M,app.PD,app.TN,app.strThProp);
+            app.PS.strP{i} = SolveProblemSP(app, app.PS.strR{i}, app.PD.phi.value(i), pP);
         else
-            app.PS.strP{i} = SolveProblemSP_fast(app.PS.strR{i},app.PD.phi.value(i),pP,app.PS.strP{i+1},app.E,app.S,app.C,app.M,app.PD,app.TN,app.strThProp);
+            app.PS.strP{i} = SolveProblemSP_fast(app, app.PS.strR{i}, app.PD.phi.value(i), pP, app.PS.strP{i+1});
         end
     case 'SV'
         vP_vR = app.PD.vP_vR.value(i);
-        app.PS.strP{i} = SolveProblemSV(app.PS.strR{i},app.PD.phi.value(i),vP_vR*app.PS.strR{i}.v,app.E,app.S,app.C,app.M,app.PD,app.TN,app.strThProp);
+        app.PS.strP{i} = SolveProblemSV(app, app.PS.strR{i}, app.PD.phi.value(i), vP_vR*app.PS.strR{i}.v);
     case {'SHOCK_I','SHOCK_R'}
         u1 = app.PD.u1_vector.value(i);
         if strcmp(app.PD.ProblemType,'SHOCK_I')

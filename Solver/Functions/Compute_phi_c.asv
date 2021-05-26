@@ -1,6 +1,5 @@
 function phi_c0 = Compute_phi_c(Fuel)
+    if any([isempty(Fuel.x), isempty(Fuel.y), isempty(Fuel.y), isempty(Fuel.y)])
     phi_c0 = 2/(Fuel.x - Fuel.z) * (Fuel.x + Fuel.y/4 - Fuel.z/2);
-    if phi_c0 <= 1e-5 || isnan(phi_c0) 
-       phi_c0 = 1e5; 
     end
 end

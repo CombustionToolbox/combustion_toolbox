@@ -76,10 +76,11 @@ end
 
 function ind_A = find_ind_Matrix(A, bool)
     ls = find(bool>0);
-    ind_A = zeros(1, length(ls));
+%     ind_A = zeros(1, length(ls));
+    ind_A = [];
     i = 1;
     for ind = ls
-        ind_A(i) = find(A(:, ind) > 0);
+        ind_A = [ind_A, find(A(:, ind) > 0)'];
         i = i + 1;
     end
 end

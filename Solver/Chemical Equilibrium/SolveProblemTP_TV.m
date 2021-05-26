@@ -27,7 +27,7 @@ if strcmpi(PD.CompleteOrIncomplete,'INCOMPLETE')
         % Compute number of moles of M.minor_products
         [N_IC, STOP] = CalculateProductsIC(app, N_CC, phi, pP, TP, strR.v, phi_c0, FLAG_SOOT);
     else
-        [N_IC, STOP] = Equilibrium_reduced(app, pP, TP, strR);
+        [N_IC, STOP] = Equilibrium(app, pP, TP, strR);
     end
     % Compute properties of all species
     P = SetSpecies(C.M0.value, S.LS, N_IC(S.ind_all, 1), TP, S.ind_all, strThProp);

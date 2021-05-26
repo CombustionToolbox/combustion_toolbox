@@ -43,7 +43,7 @@ A0_T = A0';
 while STOP > C.tolN && it < itMax
     it = it + 1;
     % Gibbs free energy
-    G0RT(temp_ind_nswt) =  -(g0(temp_ind_nswt) / R0TP + log(N0(temp_ind_nswt, 1) / NP) + log(pP));
+    G0RT(temp_ind_nswt) =  g0(temp_ind_nswt) / R0TP + log(N0(temp_ind_nswt, 1) / NP) + log(pP);
     % Construction of matrix A
     A = update_matrix_A(A0_T, A1, A22, N0, NP, temp_ind, temp_ind_E);
     % Construction of vector b            
@@ -146,7 +146,7 @@ function b = update_vector_b(A0, N0, NP, NatomE, temp_ind, temp_ind_E, temp_ind_
         bi_0(i, 1) = NatomE(E) - N0(temp_ind, 1)' * A0(temp_ind, E);
     end
     NP_0 = NP - sum(N0(temp_ind_nswt, 1));
-    b = [G0RT(temp_ind); bi_0; NP_0];
+    b = [-G0RT(temp_ind); bi_0; NP_0];
 end
 
 function relax = relax_factor(NP, n, n_log_new, DeltaNP, SIZE)

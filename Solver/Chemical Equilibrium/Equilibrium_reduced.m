@@ -17,8 +17,8 @@ NP_0 = 0.1;
 NP = NP_0;
 
 it = 0;
-% itMax = 500;
-itMax = 50 + round(S.NS/2);
+itMax = 500;
+% itMax = 50 + round(S.NS/2);
 SIZE = -log(C.tolN);
 STOP = 1.;
 
@@ -38,7 +38,7 @@ G0RT = g0/R0TP;
 while STOP > C.tolN && it < itMax
     it = it + 1;
     % Gibbs free energy
-    G0RT(temp_ind_nswt) =  -(g0(temp_ind_nswt) / R0TP + log(N0(temp_ind_nswt, 1) / NP) + log(pP));
+    G0RT(temp_ind_nswt) =  g0(temp_ind_nswt) / R0TP + log(N0(temp_ind_nswt, 1) / NP) + log(pP);
     % Construction of matrix A
     A = update_matrix_A(A0, N0, NP, temp_ind, temp_ind_E);
     % Construction of vector b            
@@ -115,13 +115,11 @@ function [temp_ind, temp_ind_swt, temp_ind_nswt, temp_NS] = update_temp(N0, zip1
 end
 function [A1, A12] = update_matrix_A1(A0, N0, temp_ind, temp_ind_E)
     % Update stoichiometric submatrix A1
-    for k=length(temp_ind_E):-1:1
-        for i=length(temp_ind_E):-1:1
-            A11(k, i) = sum(A0(temp_ind, temp_ind_E(k)) .* A0(temp_ind, temp_ind_E(i)) .* N0(temp_ind, 1));
-        end
+    for i=length(temp_ind_E):-1:1
+        A11(temp_ind_E, i) = sum(A0(temp_ind, temp_ind_E) .* A0(temp_ind, temp_ind_E(i)) .* N0(temp_ind, 1));
     end
     A12 = sum(A0(temp_ind, temp_ind_E) .* N0(temp_ind, 1));
-    A1 = [A11; A12];
+    A1 = [A11(temp_ind_E, :); A12];
 end
 function A2 = update_matrix_A2(A12, N0, NP, temp_ind)
     % Update stoichiometric submatrix A2
@@ -137,10 +135,7 @@ end
 
 function b = update_vector_b(A0, N0, NP, NatomE, temp_ind, temp_ind_E, G0RT)
     % Update coefficient vector b
-    for i=length(temp_ind_E):-1:1
-        E = temp_ind_E(i);
-        bi_0(i, 1) = NatomE(E) - sum(N0(temp_ind, 1) .* A0(temp_ind, E) .* (1.0 - G0RT(temp_ind)));
-    end
+    bi_0 = (NatomE(temp_ind_E) - sum(N0(temp_ind, 1) .* A0(temp_ind, temp_ind_E) .* (1.0 - G0RT(temp_ind))))';
     NP_0 = NP - sum(N0(temp_ind, 1) .* (1.0 - N0(temp_ind, 2))) + sum(N0(temp_ind, 1) .* G0RT(temp_ind));
     b = [bi_0; NP_0];
 end

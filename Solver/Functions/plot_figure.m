@@ -63,7 +63,7 @@ plot(x,y,'LineWidth',config.linewidth);
 if nargin == 4
     legend(leg,'FontSize',config.fontsize,'Location','northeast','interpreter','latex');
 end
-title({config.tit},'Interpreter','latex','FontSize',config.fontsize+4);
+title({strcat('$',config.tit,'$')},'Interpreter','latex','FontSize',config.fontsize+4);
 
 movegui(f,'center');
 % filename2 = strcat(fpath,filename);

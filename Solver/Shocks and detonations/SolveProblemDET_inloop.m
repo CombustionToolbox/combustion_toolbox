@@ -1,14 +1,12 @@
-function [str1,str2,guess] = SolveProblemDET_inloop(strR,phi,p1,T1,volumeBoundRation,guess,E,S,C,M,PD,TN,strThProp)
+function [str1,str2,guess] = SolveProblemDET_inloop(app, strR, phi, p1, T1, volumeBoundRation, guess)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % CALCULATE CHAPMAN-JOUGET STATE (CJ UPPER STATE - STRONG DETONATION)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % help SolveProblemDET
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% GLOBAL CONFIGURATION
-% constants;
-% TOLERANCES
-% TN.ERRFT = 1e-3;
-% TN.ERRFU = 1e-3;
+% Abbreviations ---------------------
+TN = app.TN;
+% -----------------------------------
 % INITIAL ASSUMPTIONS OF ERROR
 deltaT = 1000;
 deltaU = 1000;
@@ -30,11 +28,11 @@ V = V1/volumeBoundRation;
 r = 1/V;
 u1 = guess(2);
 % state;
-strP = state(strR,r,T,phi,pP,E,S,C,M,PD,TN,strThProp);
+strP = state(app, strR, r, T, phi, pP);
 if ~isreal(strP.h)
     T = 2000;
     u1 = 2000;
-    strP = state(strR,r,T,phi,pP,E,S,C,M,PD,TN,strThProp);
+    strP = state(app, strR, r, T, phi, pP);
 end
 h = strP.h/strP.mi*1e3;
 p = strP.p;
@@ -54,7 +52,7 @@ while((abs(deltaT) > TN.ERRFT*T) || (abs(deltaU) > TN.ERRFU*u1))
         r = 1/V;
         u1 = 2000;
         % state;
-        strP = state(strR,r,T,phi,pP,E,S,C,M,PD,TN,strThProp);
+        strP = state(app, strR, r, T, phi, pP);
         h = strP.h/strP.mi*1e3;
         p = strP.p;
         u = u1*r1/r;
@@ -72,7 +70,7 @@ while((abs(deltaT) > TN.ERRFT*T) || (abs(deltaU) > TN.ERRFU*u1))
     uper = u1;
     
     %     stateper;
-    strP = state(strR,rper,Tper,phi,pP,E,S,C,M,PD,TN,strThProp);
+    strP = state(app, strR, rper, Tper, phi, pP);
 %     if ~isreal(strP.h)
 %         DT = T*0.01;
 %         Tper = T + DT;
@@ -98,7 +96,7 @@ while((abs(deltaT) > TN.ERRFT*T) || (abs(deltaU) > TN.ERRFU*u1))
     rper = 1/V;
     
     % 	stateper;
-    strP = state(strR,rper,Tper,phi,pP,E,S,C,M,PD,TN,strThProp);
+    strP = state(app, strR, rper, Tper, phi, pP);
 %     if ~isreal(strP.h)
 %         DU = u1*0.01;
 %         uper = u1 + DU;
@@ -135,7 +133,7 @@ while((abs(deltaT) > TN.ERRFT*T) || (abs(deltaU) > TN.ERRFU*u1))
     T = T + deltaT;
     u1 = u1 + deltaU;
     % 	state;
-    strP = state(strR,r,T,phi,pP,E,S,C,M,PD,TN,strThProp);
+    strP = state(app, strR, r, T, phi, pP);
     h = strP.h/strP.mi*1e3;
     p = strP.p;
     u = u1*r1/r;
@@ -191,11 +189,11 @@ guess(2) = u1;
 guess(3) = V2;
 end
 
-function strP = state(strR,r,T,phi,pP,E,S,C,M,PD,TN,strThProp)
+function strP = state(app, strR, r, T, phi, pP)
 % Calculate frozen state given T & rho
 strR.v = strR.mi/r*1e3;
 TP = T; % vP = vR (computed from R);
 % Equilibrium composition at defined T and constant v
-PD.ProblemType = 'TV';
-strP = SolveProblemTP_TV(strR,phi,pP,TP,E,S,C,M,PD,TN,strThProp);
+app.PD.ProblemType = 'TV';
+strP = SolveProblemTP_TV(app, strR, phi, pP, TP);
 end

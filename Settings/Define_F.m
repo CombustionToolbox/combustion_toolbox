@@ -8,5 +8,8 @@ if ~isempty(app.PD.S_Fuel)
     app.PD.Fuel.w = app.PS.strR_Fuel.NatomE(app.E.ind_N); app.PS.strR_Fuel.w = app.PD.Fuel.w;
     app.PD.Fuel.eps = 0;
     app.PD.phi_t = app.PD.Fuel.x+app.PD.Fuel.y/4-app.PD.Fuel.z/2;
+else
+    app.PD.R_Fuel = 0; app.PD.phi_t = 1; app.PD.Fuel.x = 0; app.PD.Fuel.y = 0;
+    app.PD.Fuel.z = 0; app.PD.Fuel.eps = 1e-1; app.C.FLAG_Fuel = 0;
 end
 

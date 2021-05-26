@@ -21,11 +21,12 @@
 %% LOAD DATABASES, GLOBAL PARAMETERS AND MINORS PRODUCTS
 addpath(genpath(pwd));
 % app = App();
-app = App('Soot formation');
-% app = App('HC/02/N2 EXTENDED');
+% app = App('Soot formation');
+app = App('HC/02/N2 EXTENDED');
 % app = App('Hydrogen');
 % app = App('NASA ALL');
 % app = App('Cbgrb'); 
+% app = App('AIR'); 
 app.Misc.save_Excel = false;
 %% REACTION: COMPLETE OR INCOMPLETE
 % app.PD.CompleteOrIncomplete = 'complete';
@@ -68,10 +69,10 @@ switch app.PD.ProblemType
         app.PD.vP_vR.value = 0.5:0.1:2; app.PD.phi.value = 1*ones(1,length(app.PD.vP_vR.value));
     case 'SHOCK_I' % * SHOCK_I: CALCULATE PLANAR INCIDENT SHOCK WAVE
         app.PD.ProblemType = 'SHOCK_I';
-        app.PD.u1_vector.value = 400:200:2000; app.PD.phi.value = ones(1,length(app.PD.u1_vector.value));
+        app.PD.u1.value = 400:200:2000; app.PD.phi.value = ones(1,length(app.PD.u1.value));
     case 'SHOCK_R' % * SHOCK_R: CALCULATE PLANAR POST-REFLECTED SHOCK STATE
         app.PD.ProblemType = 'SHOCK_R';
-        app.PD.u1_vector.value = 400:50:3000; app.PD.phi.value = ones(1,length(app.PD.u1_vector.value));
+        app.PD.u1.value = 400:50:3000; app.PD.phi.value = ones(1,length(app.PD.u1.value));
     case 'DET' % * DET: CALCULATE CHAPMAN-JOUGET STATE (CJ UPPER STATE)
         app.PD.ProblemType = 'DET';
 %         app.PD.TR_vector.value = app.PD.TR.value;
@@ -84,10 +85,9 @@ app.C.l_phi = length(app.PD.phi.value);
 tic
 for i=app.C.l_phi:-1:1 % Evading preallocate struct
 %% DEFINE FUEL
-% app.PD.R_Fuel = 0; app.PD.phi_t = 1; app.PD.Fuel.x = 0; app.PD.Fuel.eps = 1e-1; app.C.FLAG_Fuel = 0;
 % app.PD.S_Fuel = {'CH4','C2H6','C3H8'}; app.PD.N_Fuel = [0.85;0.1;0.05]; 
-% app.PD.S_Fuel = {'CH4'}; app.PD.N_Fuel = 1;
-app.PD.S_Fuel = {'C2H2_acetylene'}; app.PD.N_Fuel = 1; 
+app.PD.S_Fuel = {'CH4'}; app.PD.N_Fuel = 1;
+% app.PD.S_Fuel = {'C2H2_acetylene'}; app.PD.N_Fuel = 1; 
 % app.PD.S_Fuel = {'C3H8'}; app.PD.N_Fuel = 1;    
 % app.PD.S_Fuel = {'C6H6'}; app.PD.N_Fuel = 1; 
 % app.PD.S_Fuel = {'C2H4'}; app.PD.N_Fuel = 1;

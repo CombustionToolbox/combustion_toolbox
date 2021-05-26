@@ -31,9 +31,7 @@ FLAG_SOOT = 0;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 Ninerts = b + c;
 phi_c = Compute_phi_c(Fuel);
-if phi_c0 <= 1e-5
-   phi_c = 1e5; 
-end
+
 if phi <= 1 % case of lean or stoichiometric mixtures
     
     NCO2P_0 = x;

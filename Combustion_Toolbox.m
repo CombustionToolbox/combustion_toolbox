@@ -21,8 +21,8 @@
 %% LOAD DATABASES, GLOBAL PARAMETERS AND MINORS PRODUCTS
 addpath(genpath(pwd));
 % app = App();
-% app = App('Soot formation');
-app = App('HC/02/N2 EXTENDED');
+app = App('Soot formation');
+% app = App('HC/02/N2 EXTENDED');
 % app = App('Hydrogen');
 % app = App('NASA ALL');
 % app = App('Cbgrb'); 
@@ -39,7 +39,7 @@ app.PD.FLAG_GIBBS = true; % false: segregated; true: gibbs minimization
 app.PD.TR.value = 300;
 % app.PD.TR.vector.value = 300:50:700;
 app.PD.pR.value = 1;
-app.PD.phi.value = 1:0.01:3;
+app.PD.phi.value = 0.5:0.01:2;
 %% INITIALIZATION
 app = Initialize(app);
 %% PROBLEM TYPE
@@ -86,8 +86,8 @@ for i=app.C.l_phi:-1:1 % Evading preallocate struct
 %% DEFINE FUEL
 % app.PD.R_Fuel = 0; app.PD.phi_t = 1; app.PD.Fuel.x = 0; app.PD.Fuel.eps = 1e-1; app.C.FLAG_Fuel = 0;
 % app.PD.S_Fuel = {'CH4','C2H6','C3H8'}; app.PD.N_Fuel = [0.85;0.1;0.05]; 
-app.PD.S_Fuel = {'CH4'}; app.PD.N_Fuel = 1;
-% app.PD.S_Fuel = {'C2H2_acetylene'}; app.PD.N_Fuel = 1; 
+% app.PD.S_Fuel = {'CH4'}; app.PD.N_Fuel = 1;
+app.PD.S_Fuel = {'C2H2_acetylene'}; app.PD.N_Fuel = 1; 
 % app.PD.S_Fuel = {'C3H8'}; app.PD.N_Fuel = 1;    
 % app.PD.S_Fuel = {'C6H6'}; app.PD.N_Fuel = 1; 
 % app.PD.S_Fuel = {'C2H4'}; app.PD.N_Fuel = 1;
@@ -107,8 +107,6 @@ app = SolveProblem(app, i);
 %% DISPLAY RESULTS
 results(app, i);
 end
-disp('TIME:')
-toc
 %% DISPLAY MOLAR FRACTION VS EQUIVALENCE RATIO
 app.M.display_species = {};
 % app.M.display_species = {'CO','CO2','H','HO2','H2','H2O','N2','O2'};

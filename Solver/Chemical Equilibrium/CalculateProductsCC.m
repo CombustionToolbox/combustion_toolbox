@@ -30,7 +30,7 @@ NCgrP_0 = 0;
 FLAG_SOOT = 0;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 Ninerts = b + c;
-phi_c = CalculatePhic(Fuel, Ninerts, phi, TP, pP, strThProp);
+phi_c = Compute_phi_c(Fuel);
 if phi_c0 <= 1e-5
    phi_c = 1e5; 
 end

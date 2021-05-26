@@ -23,3 +23,4 @@ function phi_c = CalculatePhic(Fuel, Ninerts, phi, TP, pP, strThProp)
     else
         phi_c = 1.1*phi;
     end
+end

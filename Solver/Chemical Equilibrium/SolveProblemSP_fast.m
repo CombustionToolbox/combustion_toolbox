@@ -1,4 +1,4 @@
-function [strP] = SolveProblemSP_fast(strR,phi,pP,strP,E,S,C,M,PD,TN,strThProp)
+function [strP] = SolveProblemSP_fast(app, strR, phi, pP, strP)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % CALCULATE ISENTROPIC COMPOSITION AT CONSTANT P
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -40,18 +40,18 @@ itMax = 20;
 TP = strP.T;
 while (abs(DeltaT) > 1e-2 || abs(f) > 1e-2) && it<itMax
     it = it+1;
-    strP = SolveProblemTP_TV(strR,phi,pP,TP,E,S,C,M,PD,TN,strThProp);
+    strP = SolveProblemTP_TV(app, strR, phi, pP, TP);
     if isnan(strP.S)
         TP = 1.05*TP;
-        strP = SolveProblemTP_TV(strR,phi,pP,TP,E,S,C,M,PD,TN,strThProp);
+        strP = SolveProblemTP_TV(app, strR, phi, pP, TP);
         if isnan(strP.S)
            TP = 0.9*TP;
-            strP = SolveProblemTP_TV(strR,phi,pP,TP,E,S,C,M,PD,TN,strThProp); 
+            strP = SolveProblemTP_TV(app, strR, phi, pP, TP); 
         end
     end
     f  = strP.S - strR.S;
     gx = abs(f-TP);
-    strP_aux = SolveProblemTP_TV(strR,phi,pP,gx,E,S,C,M,PD,TN,strThProp);
+    strP_aux = SolveProblemTP_TV(app, strR, phi, pP, gx);
     f_aux  = strP_aux.S - strR.S;
     gx2 = abs(f_aux-gx);
     if abs(gx2-2*gx+TP) > tol0

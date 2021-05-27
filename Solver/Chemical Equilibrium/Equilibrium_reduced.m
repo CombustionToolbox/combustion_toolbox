@@ -26,9 +26,9 @@ STOP = 1.;
 % for the sum of elements whose value is <= tolN
 ind_A0_E0 = remove_elements(NatomE, A0, C.tolN);
 % List of indices with nonzero values
-[temp_ind_nswt, temp_ind_swt, temp_ind_E, temp_NE] = temp_values(S, NatomE, C.tolN);
+[temp_ind_nswt, temp_ind_swt, temp_ind_E, ~] = temp_values(S, NatomE, C.tolN);
 % Update temp values
-[temp_ind, temp_ind_swt, temp_ind_nswt, temp_NS] = update_temp(N0, N0(ind_A0_E0, 1), ind_A0_E0, temp_ind_swt, temp_ind_nswt, C.tolN, SIZE);
+[temp_ind, ~, temp_ind_nswt, temp_NS] = update_temp(N0, N0(ind_A0_E0, 1), ind_A0_E0, temp_ind_swt, temp_ind_nswt, C.tolN, SIZE);
 % Initialize species vector N0 
 N0(temp_ind, 1) = 0.1/temp_NS;
 % Dimensionless Standard Gibbs free energy 

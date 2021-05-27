@@ -1,4 +1,4 @@
-function [N_CC, phi_c, FLAG_SOOT] =  CalculateProductsCC(app, strR, phi, pP, TP)
+function [N_CC, phi_c, FLAG_SOOT, STOP] =  CalculateProductsCC(app, strR, phi, pP, TP)
 
 % Abbreviations ---------------------
 NatomE = strR.NatomE;
@@ -8,7 +8,7 @@ Fuel = app.PD.Fuel;
 strThProp = app.strThProp;
 % -----------------------------------
 
-phi_c0 = Compute_phi_c(Fuel);
+STOP = 0.;
 
 R0 = 8.3144598; % [J/(K mol)]. Universal gas constant
 

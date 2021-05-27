@@ -38,7 +38,7 @@ it = 0;
 f = 1;
 itMax = 20;
 TP = strP.T;
-while (abs(DeltaT) > 1e-2 || abs(f) > 1e-2) && it<itMax
+while (abs(DeltaT) > 1e-3 || abs(f) > 1e-3) && it<itMax
     it = it+1;
     strP = SolveProblemTP_TV(app, strR, phi, pP, TP);
     if isnan(strP.S)

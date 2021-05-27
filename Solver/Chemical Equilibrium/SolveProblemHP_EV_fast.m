@@ -15,7 +15,7 @@ Q = 1;
 itMax = 30;
 TP = strP.T;
 if strcmp(app.PD.ProblemType,'HP')
-    while (abs(DeltaT) > 1e-2 || abs(Q) > 1e-2) && it<itMax
+    while (abs(DeltaT) > 1e-4 || abs(Q) > 1e-4) && it<itMax
         it = it+1;
         strP = SolveProblemTP_TV(app, strR, phi, pP, TP);
         Q  = strP.h - strR.h;

@@ -1,4 +1,4 @@
-function [N0, STOP] = Equilibrium(app, pP, TP, strR)
+function [N0, STOP] = Equilibrium_2(app, pP, TP, strR)
 % Generalized Gibbs minimization method
 
 % Abbreviations ---------------------
@@ -20,7 +20,6 @@ it = 0;
 % itMax = 500;
 itMax = 50 + round(S.NS/2);
 SIZE = -log(C.tolN);
-e = 0.;
 STOP = 1.;
 
 % Find indeces of the species/elements that we have to remove from the stoichiometric matrix A0
@@ -30,13 +29,14 @@ ind_A0_E0 = remove_elements(NatomE, A0, C.tolN);
 [temp_ind_nswt, temp_ind_swt, temp_ind_E, temp_NE] = temp_values(S, NatomE, C.tolN);
 % Update temp values
 [temp_ind, temp_ind_swt, temp_ind_nswt, temp_NS] = update_temp(N0, N0(ind_A0_E0, 1), ind_A0_E0, temp_ind_swt, temp_ind_nswt, C.tolN, SIZE);
+temp_NS0 = temp_NS + 1;
 % Initialize species vector N0 
 N0(temp_ind, 1) = 0.1/temp_NS;
 % Dimensionless Standard Gibbs free energy 
 g0 = set_g0(S.LS, TP, strThProp);
 G0RT = g0/R0TP;
 % Construction of part of matrix A (complete)
-A1 = update_matrix_A1(A0, temp_NS, temp_ind, temp_ind_E);
+[A1, temp_NS0] = update_matrix_A1(A0, [], temp_NS, temp_NS0, temp_ind, temp_ind_E);
 A22 = zeros(temp_NE + 1);
 A0_T = A0';
 
@@ -51,17 +51,16 @@ while STOP > C.tolN && it < itMax
     % Solve of the linear system A*x = b
     x = A\b;
     % Calculate correction factor
-    % update_SIZE(N0, A0, temp_ind, temp_ind_E, C.tolN)
     e = relax_factor(NP, N0(temp_ind, 1), x(1:temp_NS), x(end), SIZE);
     % Apply correction
-    N0_log = log(N0(temp_ind, 1)) + e * x(1:temp_NS);
+    N0(temp_ind, 1) = log(N0(temp_ind, 1)) + e * x(1:temp_NS);
     NP_log = log(NP) + e * x(end);
     % Apply antilog
-    [N0, NP] = apply_antilog(N0, N0_log, NP_log, temp_ind);
+    [N0, NP] = apply_antilog(N0, NP_log, temp_ind);
     % Update temp values in order to remove species with moles < tolerance
     [temp_ind, temp_ind_swt, temp_ind_nswt, temp_NS] = update_temp(N0, N0(temp_ind, 1), temp_ind, temp_ind_swt, temp_ind_nswt, NP, SIZE);
     % Update matrix A
-    A1 = update_matrix_A1(A0, temp_NS, temp_ind, temp_ind_E);
+    [A1, temp_NS0] = update_matrix_A1(A0, A1, temp_NS, temp_NS0, temp_ind, temp_ind_E);
     % Compute STOP criteria
     STOP = compute_STOP(NP_0, NP, x(end), N0(temp_ind, 1), x(1:temp_NS));
 end
@@ -99,33 +98,41 @@ function [temp_ind_nswt, temp_ind_swt, temp_ind_E, temp_NE] = temp_values(S, Nat
     temp_NE = length(temp_ind_E);
 end
 
-function [ls1, ls2] = remove_item(N0, zip1, zip2, ls1, ls2, NP, SIZE)
+function [ls1, ls2] = remove_item(N0, n, ind, ls1, ls2, NP, SIZE)
     % Remove species from the computed indeces list of gaseous and condensed
     % species and append the indeces of species that we have to remove
-    for i=1:length(zip1)
-        n = zip1(i);
-        ind = zip2(i);
-        if log(n/NP) < -SIZE
-            if N0(ind, 2)
-                ls1(ls1==ind) = [];
+    for i=1:length(n)
+        if log(n(i)/NP) < -SIZE
+            if N0(ind(i), 2)
+                ls1(ls1==ind(i)) = [];
             else
-                ls2(ls2==ind) = [];
+                ls2(ls2==ind(i)) = [];
             end
         end
     end
+%     bool = log(zip1./NP) < -SIZE;
+%     bool1 = bool & N0(zip2, 2);
+%     bool2 = bool & ~N0(zip2, 2);
+%     ind1 = logical(sum(ls1(:)==zip2(bool1), 2)); if ~ind1, ind1=[]; end
+%     ind2 = logical(sum(ls2(:)==zip2(bool2), 2)); if ~ind2, ind2=[]; end
+%     ls1(ind1) = [];
+%     ls2(ind2) = [];
 end
 
 function [temp_ind, temp_ind_swt, temp_ind_nswt, temp_NS] = update_temp(N0, zip1, zip2, ls1, ls2, NP, SIZE)
     % Update temp items
     [temp_ind_swt, temp_ind_nswt] = remove_item(N0, zip1, zip2, ls1, ls2, NP, SIZE);
-    temp_ind = sort([temp_ind_nswt, temp_ind_swt]);
+    temp_ind = [temp_ind_nswt, temp_ind_swt];
     temp_NS = length(temp_ind);
 end
-function A1 = update_matrix_A1(A0, temp_NS, temp_ind, temp_ind_E)
+function [A1, temp_NS0] = update_matrix_A1(A0, A1, temp_NS, temp_NS0, temp_ind, temp_ind_E)
     % Update stoichiometric submatrix A1
-    A11 = eye(temp_NS);
-    A12 = -[A0(temp_ind, temp_ind_E), ones(temp_NS, 1)];
-    A1 = [A11, A12];
+    if temp_NS < temp_NS0
+        A11 = eye(temp_NS);
+        A12 = -[A0(temp_ind, temp_ind_E), ones(temp_NS, 1)];
+        A1 = [A11, A12];
+        temp_NS0 = temp_NS;
+    end
 end
 function A2 = update_matrix_A2(A0_T, A22, N0, NP, temp_ind, temp_ind_E)
     % Update stoichiometric submatrix A2
@@ -142,10 +149,7 @@ end
 
 function b = update_vector_b(A0, N0, NP, NatomE, temp_ind, temp_ind_E, temp_ind_nswt, G0RT)
     % Update coefficient vector b
-    for i=length(temp_ind_E):-1:1
-        E = temp_ind_E(i);
-        bi_0(i, 1) = NatomE(E) - N0(temp_ind, 1)' * A0(temp_ind, E);
-    end
+    bi_0 = (NatomE(temp_ind_E) - N0(temp_ind, 1)' * A0(temp_ind, temp_ind_E))';
     NP_0 = NP - sum(N0(temp_ind_nswt, 1));
     b = [-G0RT(temp_ind); bi_0; NP_0];
 end
@@ -159,8 +163,8 @@ function relax = relax_factor(NP, n, n_log_new, DeltaNP, SIZE)
     relax = min(1, min(e));  
 end
 
-function [N0, NP] = apply_antilog(N0, N0_log, NP_log, temp_ind)
-    N0(temp_ind, :) = [exp(N0_log), N0(temp_ind, 2)];
+function [N0, NP] = apply_antilog(N0, NP_log, temp_ind)
+    N0(temp_ind, 1) = exp(N0(temp_ind, 1));
     NP = exp(NP_log);
 end
 

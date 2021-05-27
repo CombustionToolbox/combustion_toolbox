@@ -16,7 +16,7 @@ function self = Initialize(self)
     % OH major species
     self = OH_major(self);
     % Ask problem type
-    self.PD.ProblemType = Ask_problem();
+    self.PD.ProblemType = Ask_problem(self);
 end
 %% NESTED FUNCTIONS
 function self = Compute_Species(self)
@@ -32,8 +32,33 @@ function self = Compute_Species(self)
     self.S.LS = [self.S.LS_fixed, self.M.minors_products];
     self.S.NS = length(self.S.LS);
 end
+
+function self = list_phase_species(self, LS)
+    for ind=1:length(LS)
+        Species = LS{ind};
+        if ~self.strThProp.(Species).swtCondensed
+           self.S.ind_nswt = [self.S.ind_nswt, ind];
+        else
+           self.S.ind_swt = [self.S.ind_swt, ind];
+        end
+    end
+    % Number of gaseous species
+    self.S.NG = length(self.S.ind_nswt);
+end
+
+function self = rearrange_species(self)
+    self.S.LS = self.S.LS([self.S.ind_nswt, self.S.ind_swt]);
+    if any(contains(self.S.LS,'Cbgrb'))
+       self.S.ind_Cgr = find_ind({'Cbgrb'}, self.S.LS);
+    end
+    self.S.ind_nswt = [];
+    self.S.ind_swt = [];
+    % Index gaseous and condensed species
+    self = list_phase_species(self, self.S.LS);
+end
+
 function self = Index_fixed_Species(self)
-    % List of fixed gaseous species
+    % List of fixed gaseous species and Cgr
     self.S.ind_CO2 = find_ind({'CO2'}, self.S.LS);
     self.S.ind_CO  = find_ind({'CO'}, self.S.LS);
     self.S.ind_H2O = find_ind({'H2O'}, self.S.LS);
@@ -47,28 +72,7 @@ function self = Index_fixed_Species(self)
         self.S.ind_H2,self.S.ind_O2,self.S.ind_N2,self.S.ind_He,...
         self.S.ind_Ar,self.S.ind_Cgr];
 end
-function self = list_phase_species(self, LS)
-    for ind=1:length(LS)
-        Species = LS{ind};
-        if ~self.strThProp.(Species).swtCondensed
-           self.S.ind_nswt = [self.S.ind_nswt, ind];
-        else
-           self.S.ind_swt = [self.S.ind_swt, ind];
-        end
-    end
-    % Number of gaseous species
-    self.S.NG = length(self.S.ind_nswt);
-end
-function self = rearrange_species(self)
-    self.S.LS = self.S.LS([self.S.ind_nswt, self.S.ind_swt]);
-    if any(contains(self.S.LS,'Cbgrb'))
-       self.S.ind_Cgr = find_ind({'Cbgrb'}, self.S.LS);
-    end
-    self.S.ind_nswt = [];
-    self.S.ind_swt = [];
-    % Index gaseous and condensed species
-    self = list_phase_species(self, self.S.LS);
-end
+
 function self = Stoich_Matrix(self)
     self.C.A0.value = zeros(self.S.NS,self.E.NE);
     self.C.M0.value = zeros(self.S.NS,12);
@@ -80,11 +84,11 @@ function self = Stoich_Matrix(self)
     end
     self.C.N0.value = self.C.M0.value(:, [1, 10]);
 end
+
 function self = Compute_minors_species(self)
     if self.Misc.FLAG_FIRST
         self.M.Lminors = length(self.M.minors_products);
         if self.M.Lminors > 0
-            self.Misc.FLAG_FIRST = false;
             for n=self.M.Lminors:-1:1
                 % Properties of other minor species under consideration, which can
                 % be written in the generic form C_alpha H_beta O_gamma N_omega
@@ -102,8 +106,9 @@ function self = Compute_minors_species(self)
         end
     end
 end
+
 function self = CH4_major(self)
-    if any(contains(self.M.minors_products,'CH4'))
+    if any(contains(self.M.minors_products,'CH4')) && strcmp(self.PD.method, 'SEGREGATED')
         self.M.major_CH4 = true;
         self.M.ind_m_CH4 = find_ind({'CH4'}, self.M.minors_products);
     %     self.M.ind_m_C2H2= find_ind({'C2H2_acetylene'}, self.M.minors_products);
@@ -117,22 +122,28 @@ function self = CH4_major(self)
         self.M.major_CH4 = false;
     end
 end
-function self = OH_major(self)
-    if any(contains(self.M.minors_products,'OH'))
+
+function self = OH_major(self) 
+    if any(contains(self.M.minors_products,'OH')) && strcmp(self.PD.method, 'SEGREGATED')
         self.M.major_OH = true;
         self.M.ind_m_OH = find_ind({'OH'}, self.M.minors_products);
     else
         self.M.major_OH = false;
     end
 end
-function PT = Ask_problem()
-    fn = {'TP','HP','SP','TV','EV','SV','SHOCK_I','SHOCK_R','DET','DET_OVERDRIVEN'};
-    [indx,tf] = listdlg('PromptString','Select a problem:',...
-                               'SelectionMode','single',...
-                               'ListString',fn,'ListSize',[150,120]);
-    if tf
-        PT = fn{indx};
+
+function PT = Ask_problem(self)
+    if self.Misc.FLAG_FOI
+        fn = {'TP','HP','SP','TV','EV','SV','SHOCK_I','SHOCK_R','DET','DET_OVERDRIVEN'};
+        [indx,tf] = listdlg('PromptString','Select a problem:',...
+                                   'SelectionMode','single',...
+                                   'ListString',fn,'ListSize',[150,120]);
+        if tf
+            PT = fn{indx};
+        else
+            error('Problem type not selected.')
+        end
     else
-        error('Problem type not selected.')
+        PT = self.PD.ProblemType;
     end
 end

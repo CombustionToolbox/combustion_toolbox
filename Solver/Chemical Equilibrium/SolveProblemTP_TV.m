@@ -18,21 +18,29 @@ PD = app.PD;
 strThProp = app.strThProp;
 % -----------------------------------
 
-[N_CC, phi_c0, FLAG_SOOT] = CalculateProductsCC(app, strR, phi, pP, TP);
-P = SetSpecies(C.M0.value, S.LS, N_CC', TP, S.ind_fixed, strThProp);
-if strcmpi(PD.CompleteOrIncomplete,'INCOMPLETE')
-    if ~app.PD.FLAG_GIBBS
-        % N_CC matrix with number of moles and swtCondesated of each species
-        N_CC = P(:, [1,10]);
-        % Compute number of moles of M.minor_products
-        [N_IC, STOP] = CalculateProductsIC(app, N_CC, phi, pP, TP, strR.v, phi_c0, FLAG_SOOT);
-    else
-        [N_IC, STOP] = Equilibrium(app, pP, TP, strR);
+if strcmp(app.PD.method, 'SEGREGATED')
+    [N_CC, phi_c0, FLAG_SOOT, STOP] = CalculateProductsCC(app, strR, phi, pP, TP);
+    P = SetSpecies(C.M0.value, S.LS, N_CC', TP, S.ind_fixed, strThProp);
+    if strcmpi(PD.CompleteOrIncomplete,'INCOMPLETE')
+    % N_CC matrix with number of moles and swtCondesated of each species
+    N_CC = P(:, [1,10]);
+    % Compute number of moles of M.minor_products
+    [N_IC, STOP] = CalculateProductsIC_2019(app, N_CC, phi, pP, TP, strR.v, phi_c0, FLAG_SOOT);
     end
+else
+    if strcmp(app.PD.method, 'GIBBS')
+        [N_IC, STOP] = Equilibrium(app, pP, TP, strR);
+    elseif strcmp(app.PD.method, 'GIBBS_SOOT')
+        [N_IC, STOP] = Equilibrium_soot(app, pP, TP, strR);
+    end
+    phi_c0 = Compute_phi_c(app.PD.Fuel);
+end
+
+if strcmpi(PD.CompleteOrIncomplete,'COMPLETE')
+    STOP = 0;
+else
     % Compute properties of all species
     P = SetSpecies(C.M0.value, S.LS, N_IC(S.ind_all, 1), TP, S.ind_all, strThProp);
-else
-    STOP = 0;
 end
 
 if strfind(PD.ProblemType,'P') == 2 % PD.ProblemType = 'TP', 'HP', or 'SP'

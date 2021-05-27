@@ -52,7 +52,7 @@ NAr    = NatomE(E.ind_Ar); % 18 = find(strcmp(Elements,'Ar'))
 % Initial guess for the overall number of moles of gaseous species in the
 % product mixture
 
-NP = sum(N_CC(:,1).*(1-N_CC(:,2))); % Sum of num of moles of gases-(1-swt), with swt == condensed phase.
+NP = sum(N_CC(:, 1).*(1-N_CC(:, 2))); % Sum of num of moles of gases-(1-swt), with swt == condensed phase.
 % NP = sum(N_CC(:,1));
 
 if strfind(PD.ProblemType,'P') == 2 % PD.ProblemType = 'TP', 'HP', or 'SP'
@@ -73,20 +73,8 @@ k1  = exp(-DG0_I/R0TP);
 k2  = exp(-DG0_II/R0TP);
 if M.major_CH4
     g_CH4 = species_g0('CH4',TP,strThProp);
-    g_C2H2 = species_g0('C2H2_acetylene',TP,strThProp);
-    g_C6H6 = species_g0('C6H6',TP,strThProp);
-    % DG0_VIII   = g_CH4*1000;
-    
     DG0_VIII   = (species_g0('CH3',TP,strThProp)-species_g0('H',TP,strThProp)-g_CH4)*1000;
-    
     k8  = exp(-DG0_VIII/R0TP);
-    
-    
-    DG0_IX = -(g_C6H6-3*g_C2H2)*1000;
-    k9 =  exp(-DG0_IX/R0TP);
-    
-    DG0_X = -(species_g0('H',TP,strThProp)+species_g0('CH',TP,strThProp))*1000;
-    k10 = exp(-DG0_X/R0TP);
 end
 if M.major_OH
     g_OH = species_g0('OH',TP,strThProp);
@@ -604,7 +592,7 @@ end
 %         pause(0.5);
     end % 1 < PHI < PHI_C OR ~SOOT
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    function [P_IC,DeltaNP] = incomplete_phi_5(P_IC,E,S,M,C)
+    function [P_IC, DeltaNP] = incomplete_phi_5(P_IC,E,S,M,C)
         error('NOT IMPLEMENTED YET');
 %         DeltaNP = 1;
 %         while abs(DeltaNP/NP) > C.tolN

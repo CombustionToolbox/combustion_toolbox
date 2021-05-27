@@ -35,5 +35,5 @@ function self = ProblemDescription()
     self.N_Oxidizer = [];
     self.S_Inert = [];
     self.N_Inert = [];
-    self.FLAG_GIBBS = true;
+    self.method = 'GIBBS';
 end

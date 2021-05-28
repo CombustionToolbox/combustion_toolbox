@@ -1,4 +1,4 @@
-function [N0, STOP] = Equilibrium_2(app, pP, TP, strR)
+function [N0, STOP] = Equilibrium(app, pP, TP, strR)
 % Generalized Gibbs minimization method
 
 % Abbreviations ---------------------

@@ -52,26 +52,20 @@ p = p1*1e5 + r1*u1^2*(1-V/V1); % pressure downstream        [Pa]
 p = p/1e5;                     % pressure downstream        [bar]
 T = T1*p*V/(p1*V1);            % Temperature downstream     [K]
 % COMPUTE PROPERTIES OF THE PRODUCTS AT THE GIVEN CONDITIONS
-% state;
 strP = state(app, strR, r, T, phi, pP);
 h = strP.h/strP.mi*1e3; % enthalpy upstream   [J/kg]
 p = strP.p;            % pressure downstream [bar]
 u = u1*r1/r;         % velocity downstream [m/s]. Continuity equation
-% u = u1^2*(r1/r)^2);         % velocity downstream [m/s]. Continuity equation
-% u = soundspeed_eq(strP,phi,p,T,E,S,C,M,PD,TN,strThProp);
+% u = soundspeed_eq(app, strP, phi, p, T);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % START LOOP
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 while((abs(deltaT) > TN.ERRFT*T) || (abs(deltaV) > TN.ERRFV*V)) 
     j = j + 1;
     if(j == 500)
         disp(['shock_incident did not converge for u1 = ',num2str(u1)])
         return
-%     elseif ~mod(j,50)
-% %         TN.ERRFT = 1e-3;
-% %         TN.ERRFV = 1e-3;
-%         u1 = u1 + .01;
-%         u = u1*r1/r;
     end
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % CALCULATE FH & FP FOR GUESS 1
@@ -84,7 +78,6 @@ while((abs(deltaT) > TN.ERRFT*T) || (abs(deltaV) > TN.ERRFV*V))
     Vper = V;
     rper = 1/Vper;
 
-%     stateper;
     strP = state(app, strR, rper, Tper, phi, pP);
     uper = u1*r1/rper;
     hper = strP.h/strP.mi*1e3;
@@ -102,7 +95,6 @@ while((abs(deltaT) > TN.ERRFT*T) || (abs(deltaV) > TN.ERRFV*V))
     Vper = V + DV;
     rper = 1/Vper;
 
-%     stateper;
     strP = state(app, strR, rper, Tper, phi, pP);
     uper = u1*r1/rper;
     hper = strP.h/strP.mi*1e3;
@@ -145,12 +137,10 @@ while((abs(deltaT) > TN.ERRFT*T) || (abs(deltaV) > TN.ERRFV*V))
     V = V + deltaV;
     r = 1/V;
     
-%     state;
     strP = state(app, strR, r, T, phi, pP);
     h = strP.h/strP.mi*1e3;
     p = strP.p;
     u = u1*r1/r;
-%     u = soundspeed_eq(strP,phi,p,T,E,S,C,M,PD,TN,strThProp);
     % PRINT SAMPLING RESULTS
 %     if(mod(j,nfrec)==0)
 %         disp('----------------------------------------------------')
@@ -163,7 +153,6 @@ while((abs(deltaT) > TN.ERRFT*T) || (abs(deltaV) > TN.ERRFV*V))
 %         fprintf('  h = %8.3f [kJ/kg] \n',h*1e-3)        
 %     end
 end
-% j
 % SOLUTION PLANAR INCIDENT SHOCK 
 T2 = T; % temperature downstream     [K]
 V2 = V; % specific volume downstream [m3/kg]
@@ -199,7 +188,7 @@ str2.V = V2;
 str2.p = p2;
 str2.h = h2*str2.mi/1e3;
 
-str2.error_problem = max(abs(deltaT),abs(deltaV));
+str2.error_problem = max(abs(deltaT), abs(deltaV));
 end
 
 function strP = state(app, strR, r, T, phi, pP)

@@ -20,14 +20,15 @@
 % Last update: 25-May-2021 10:27
 %% INITIALIZATION
 addpath(genpath(pwd));
-% app = App();
+app = App();
 % app = App('Soot formation');
-app = App('HC/02/N2 extended');
+% app = App('HC/02/N2 extended');
 % app = App('HC/02/N2 rich');
 % app = App('Hydrogen');
 % app = App('Nasa all');
 % app = App('Cbgrb'); 
 % app = App('air'); 
+% app = App({'Mgbcrb','MgObcrb','NO','O'}); 
 %% REACTION: COMPLETE OR INCOMPLETE
 % app.PD.CompleteOrIncomplete = 'complete';
 app.PD.CompleteOrIncomplete = 'incomplete';
@@ -35,17 +36,18 @@ app.PD.CompleteOrIncomplete = 'incomplete';
 app.Misc.save_Excel = false;
 app.TN.factor_c = 1; % factor_c = 1 (default).
 %% SOLVER: SEGREGATED, GIBBS OR GIBBS_SOOT
-% app.PD.method = 'SEGREGATED';
-app.PD.method = 'GIBBS';
-% app.PD.method = 'GIBBS_SOOT';
+% app.PD.solver = 'SEGREGATED';
+app.PD.solver = 'GIBBS';
+% app.PD.solver = 'GIBBS_REDUCED';
+% app.PD.solver = 'GIBBS_SOOT';
 %% CHECK SPECIES MINOR PRODUCTS --> SELECTED DATABASE (strThProp)
 [app.strThProp,app.E,app.S,app.M,app.C] = check_database(app.strMaster,app.strThProp,app.E,app.S,app.M,app.C);
 %% PROBLEM CONDITIONS
 app.PD.TR.value = 300;
 % app.PD.TR.vector.value = 300:50:700;
-app.PD.pR.value = 1;
-app.PD.phi.value = 0.5:0.01:1.5;
-% app.PD.phi.value = 3;
+app.PD.pR.value = 1.01325;
+% app.PD.phi.value = 0.5:0.01:2;
+app.PD.phi.value = 1;
 %% INITIALIZATION
 app = Initialize(app);
 %% PROBLEM TYPE
@@ -97,14 +99,16 @@ app.PD.S_Fuel = {'CH4'}; app.PD.N_Fuel = 1;
 % app.PD.S_Fuel = {'C6H6'}; app.PD.N_Fuel = 1; 
 % app.PD.S_Fuel = {'C2H4'}; app.PD.N_Fuel = 1;
 % app.PD.S_Fuel = {'H2'}; app.PD.N_Fuel = 1;
-
+% app.PD.S_Fuel = {'Mgbcrb'}; app.PD.N_Fuel = 1;
 app = Define_F(app);
 %% DEFINE OXIDIZER
 app.PD.S_Oxidizer = {'O2'}; app.PD.N_Oxidizer = app.PD.phi_t/app.PD.phi.value(i);
+% app.PD.S_Oxidizer = {'O2'}; app.PD.N_Oxidizer = 0.5;
 app = Define_O(app);
 %% DEFINE DILUENTS/INERTS
 app.PD.proportion_N2_O2 = 79/21;
 app.PD.S_Inert = {'N2'}; app.PD.N_Inert = app.PD.phi_t/app.PD.phi.value(i) * app.PD.proportion_N2_O2;
+% app.PD.S_Inert = {'N2'}; app.PD.N_Inert = app.PD.N_Oxidizer * app.PD.proportion_N2_O2;
 app = Define_I(app);
 %% COMPUTE PROPERTIES
 app = Define_FOI(app, i);

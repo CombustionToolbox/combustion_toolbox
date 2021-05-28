@@ -145,13 +145,13 @@ end
 
 function PT = Ask_problem(self)
     if self.Misc.FLAG_FOI
+        try
         fn = {'TP','HP','SP','TV','EV','SV','SHOCK_I','SHOCK_R','DET','DET_OVERDRIVEN'};
-        [indx,tf] = listdlg('PromptString','Select a problem:',...
+        [indx, ~] = listdlg('PromptString','Select a problem:',...
                                    'SelectionMode','single',...
                                    'ListString',fn,'ListSize',[150,120]);
-        if tf
-            PT = fn{indx};
-        else
+        PT = fn{indx};
+        catch
             error('Problem type not selected.')
         end
     else

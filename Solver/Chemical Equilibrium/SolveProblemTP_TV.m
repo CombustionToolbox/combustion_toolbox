@@ -18,7 +18,7 @@ PD = app.PD;
 strThProp = app.strThProp;
 % -----------------------------------
 
-if strcmp(app.PD.method, 'SEGREGATED')
+if strcmp(app.PD.solver, 'SEGREGATED')
     [N_CC, phi_c0, FLAG_SOOT, STOP] = CalculateProductsCC(app, strR, phi, pP, TP);
     P = SetSpecies(C.M0.value, S.LS, N_CC', TP, S.ind_fixed, strThProp);
     if strcmpi(PD.CompleteOrIncomplete,'INCOMPLETE')
@@ -28,10 +28,12 @@ if strcmp(app.PD.method, 'SEGREGATED')
     [N_IC, STOP] = CalculateProductsIC_2019(app, N_CC, phi, pP, TP, strR.v, phi_c0, FLAG_SOOT);
     end
 else
-    if strcmp(app.PD.method, 'GIBBS')
+    if strcmpi(app.PD.solver, 'GIBBS')
         [N_IC, STOP] = Equilibrium(app, pP, TP, strR);
-    elseif strcmp(app.PD.method, 'GIBBS_SOOT')
+    elseif strcmpi(app.PD.solver, 'GIBBS_SOOT')
         [N_IC, STOP] = Equilibrium_soot(app, pP, TP, strR);
+    elseif strcmpi(app.PD.solver, 'GIBBS_REDUCED')
+    [N_IC, STOP] = Equilibrium_reduced(app, pP, TP, strR);
     end
     phi_c0 = Compute_phi_c(app.PD.Fuel);
 end

@@ -1,4 +1,6 @@
 function self = Initialize(self)
+    % Add fixed species if solver = segregated
+    self = checks_solver(self);
     % List of species that we are going to compute
     self = Compute_Species(self);
     % Index gaseous and condensed species
@@ -19,6 +21,13 @@ function self = Initialize(self)
     self.PD.ProblemType = Ask_problem(self);
 end
 %% NESTED FUNCTIONS
+function self = checks_solver(self)
+    if strcmpi(self.PD.solver, 'segregated') && ~any(contains(self.S.LS_fixed, 'Cbgrb'))
+        self.S.LS_fixed = [self.S.LS_fixed, 'Cbgrb'];
+        self.S.NS_fixed = self.S.NS_fixed + 1;
+    end
+end
+
 function self = Compute_Species(self)
     % First we eliminate from the minor species list those considered major
     % species in case the user has included any
@@ -67,10 +76,12 @@ function self = Index_fixed_Species(self)
     self.S.ind_N2  = find_ind({'N2'}, self.S.LS);
     self.S.ind_He  = find_ind({'He'}, self.S.LS);
     self.S.ind_Ar  = find_ind({'Ar'}, self.S.LS);
-    self.S.ind_Cgr  = find_ind({'Cbgrb'}, self.S.LS);
     self.S.ind_fixed = [self.S.ind_CO2,self.S.ind_CO,self.S.ind_H2O,...
         self.S.ind_H2,self.S.ind_O2,self.S.ind_N2,self.S.ind_He,...
-        self.S.ind_Ar,self.S.ind_Cgr];
+        self.S.ind_Ar];
+    if strcmpi(self.PD.solver, 'segregated')
+        self.S.ind_fixed = [self.S.ind_fixed, self.S.ind_Cgr];
+    end
 end
 
 function self = Stoich_Matrix(self)
@@ -100,7 +111,7 @@ function self = Compute_minors_species(self)
             self.C.gamma = self.C.A0.value(self.M.ind_minor, self.E.ind_O)';
             self.C.omega = self.C.A0.value(self.M.ind_minor, self.E.ind_N)';
 
-            self.S.ind_all = [self.S.ind_fixed, self.M.ind_minor];
+            self.S.ind_all = sort([self.S.ind_fixed, self.M.ind_minor]);
         else
             self.S.ind_all = self.S.ind_fixed;
         end
@@ -108,7 +119,7 @@ function self = Compute_minors_species(self)
 end
 
 function self = CH4_major(self)
-    if any(contains(self.M.minors_products,'CH4')) && strcmp(self.PD.method, 'SEGREGATED')
+    if any(contains(self.M.minors_products,'CH4')) && strcmpi(self.PD.solver, 'SEGREGATED')
         self.M.major_CH4 = true;
         self.M.ind_m_CH4 = find_ind({'CH4'}, self.M.minors_products);
     %     self.M.ind_m_C2H2= find_ind({'C2H2_acetylene'}, self.M.minors_products);
@@ -124,7 +135,7 @@ function self = CH4_major(self)
 end
 
 function self = OH_major(self) 
-    if any(contains(self.M.minors_products,'OH')) && strcmp(self.PD.method, 'SEGREGATED')
+    if any(contains(self.M.minors_products,'OH')) && strcmpi(self.PD.solver, 'SEGREGATED')
         self.M.major_OH = true;
         self.M.ind_m_OH = find_ind({'OH'}, self.M.minors_products);
     else

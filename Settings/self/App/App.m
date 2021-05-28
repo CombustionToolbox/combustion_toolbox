@@ -24,7 +24,7 @@ function app = constructor(app, minors)
     % Contained elements
     app = ContainedElements(app);
     % Definition MinorsProducts
-    if minors
+    if ~isempty(minors)
         app = MinorsProducts_self(app, minors);
     else
         app = MinorsProducts_self(app);

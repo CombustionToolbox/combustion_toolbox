@@ -26,7 +26,7 @@ for n = length(N):-1:1
         swtCondensed = strThProp.(S{n}).swtCondensed;
         mi = N(n)*strThProp.(S{n}).mm;
         mmi = strThProp.(S{n}).mm;
-        if swtCondensed == 0
+        if ~swtCondensed
             pVi = N(n)*R0*T/100; % For ideal gases
         else
             pVi = 0; % For condensed species

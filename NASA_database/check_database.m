@@ -15,7 +15,7 @@ if nargin == 6
         end
     end
     if ~isempty(n_pass)
-        [E.Elements,E.NE] = set_elements(); % sets E.Elements list
+        [E.elements,E.NE] = set_elements(); % sets E.elements list
         l_n_pass = length(n_pass);
         for i=1:l_n_pass
             Species = FullName2name(M.minors_products{n_pass(i)});
@@ -122,23 +122,23 @@ if nargin == 6
         aux = unique(cat(2,Tmp{:}));
         n_pass = [];
         for n=length(aux):-1:1
-            if any(strcmp(aux(n),E.Elements)) % Check Element existence
+            if any(strcmp(aux(n),E.elements)) % Check Element existence
                 n_pass = [n_pass, n];
             end
         end
-        E.Elements = aux(n_pass);
-        E.NE = numel(E.Elements);
+        E.elements = aux(n_pass);
+        E.NE = numel(E.elements);
         % INDEX OF EVALUABLE ELEMENTS
-        E.ind_C = find(strcmp(E.Elements,'C'));
-        E.ind_H = find(strcmp(E.Elements,'H'));
-        E.ind_O = find(strcmp(E.Elements,'O'));
-        E.ind_N = find(strcmp(E.Elements,'N'));
-        E.ind_He = find(strcmp(E.Elements,'He'));
-        E.ind_Ar = find(strcmp(E.Elements,'Ar'));
+        E.ind_C = find(strcmp(E.elements,'C'));
+        E.ind_H = find(strcmp(E.elements,'H'));
+        E.ind_O = find(strcmp(E.elements,'O'));
+        E.ind_N = find(strcmp(E.elements,'N'));
+        E.ind_He = find(strcmp(E.elements,'He'));
+        E.ind_Ar = find(strcmp(E.elements,'Ar'));
         % Element_matrix
         for i=S.NSpecies:-1:l_n_pass
             txFormula = strThProp.(S.namespecies{i,1}).txFormula;
-            strThProp.(S.namespecies{i,1}).Element_matrix = set_element_matrix(txFormula,E.Elements);
+            strThProp.(S.namespecies{i,1}).Element_matrix = set_element_matrix(txFormula,E.elements);
             C.M0.Value(i,10) = strThProp.(S.namespecies{i,1}).swtCondensed;
         end
     end
@@ -156,7 +156,7 @@ elseif nargin == 7
         end
     end
     if ~isempty(n_pass)
-        [E.Elements,E.NE] = set_elements(); % sets E.Elements list
+        [E.elements,E.NE] = set_elements(); % sets E.elements list
         l_n_pass = length(n_pass);
         for i=1:l_n_pass
             Species = FullName2name(L_Species{n_pass(i)});
@@ -263,23 +263,23 @@ elseif nargin == 7
         aux = unique(cat(2,Tmp{:}));
         n_pass = [];
         for n=length(aux):-1:1
-            if any(strcmp(aux(n),E.Elements)) % Check Element existence
+            if any(strcmp(aux(n),E.elements)) % Check Element existence
                 n_pass = [n_pass, n];
             end
         end
-        E.Elements = aux(n_pass);
-        E.NE = numel(E.Elements);
+        E.elements = aux(n_pass);
+        E.NE = numel(E.elements);
         % INDEX OF EVALUABLE ELEMENTS
-        E.ind_C = find(strcmp(E.Elements,'C'));
-        E.ind_H = find(strcmp(E.Elements,'H'));
-        E.ind_O = find(strcmp(E.Elements,'O'));
-        E.ind_N = find(strcmp(E.Elements,'N'));
-        E.ind_He = find(strcmp(E.Elements,'He'));
-        E.ind_Ar = find(strcmp(E.Elements,'Ar'));
+        E.ind_C = find(strcmp(E.elements,'C'));
+        E.ind_H = find(strcmp(E.elements,'H'));
+        E.ind_O = find(strcmp(E.elements,'O'));
+        E.ind_N = find(strcmp(E.elements,'N'));
+        E.ind_He = find(strcmp(E.elements,'He'));
+        E.ind_Ar = find(strcmp(E.elements,'Ar'));
         % Element_matrix
         for i=S.NSpecies:-1:l_n_pass
             txFormula = strThProp.(S.namespecies{i,1}).txFormula;
-            strThProp.(S.namespecies{i,1}).Element_matrix = set_element_matrix(txFormula,E.Elements);
+            strThProp.(S.namespecies{i,1}).Element_matrix = set_element_matrix(txFormula,E.elements);
             C.M0.Value(i,10) = strThProp.(S.namespecies{i,1}).swtCondensed;
         end
     end

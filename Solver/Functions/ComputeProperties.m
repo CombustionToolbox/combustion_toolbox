@@ -88,12 +88,11 @@ str.W      = 1/sum(str.Yi./SpeciesMatrix(:,12),'OmitNan');
 
 % Ngas       = sum(SpeciesMatrix(:,1));
 % Ngas       = sum(SpeciesMatrix(:,1).*(1-str.swtCond));
-
+% htest = sum(str.Yi .* str.hf) + sum(str.Yi .* str.Dht)
 Ni         = SpeciesMatrix(:,1); % [mol]
 % str.Xi     = Ni/Ngas;               % [-]
 str.Xi     = Ni/str.N;               % [-]
-ii         = find(str.Xi>0);         
-
+ii         = str.Xi>0;     
 str.S0     = sum(SpeciesMatrix(:,8)); % [kJ/K]
 % DSi        = -R0*Ni(ii).*log(str.Xi(ii)*p).*(1-swtCond(ii)); % only nonzero for noncondensed species
 DSi        = Ni(ii).*log(str.Xi(ii)*p).*(1-str.swtCond(ii)); % only nonzero for noncondensed species

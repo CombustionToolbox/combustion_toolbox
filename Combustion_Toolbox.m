@@ -22,8 +22,8 @@
 addpath(genpath(pwd));
 % app = App();
 % app = App('Soot formation');
-% app = App('HC/02/N2 extended');
-app = App('HC/02/N2 rich');
+app = App('HC/02/N2 extended');
+% app = App('HC/02/N2 rich');
 % app = App('Hydrogen');
 % app = App('Nasa all');
 % app = App('Cbgrb'); 
@@ -35,8 +35,8 @@ app.PD.CompleteOrIncomplete = 'incomplete';
 app.Misc.save_Excel = false;
 app.TN.factor_c = 1; % factor_c = 1 (default).
 %% SOLVER: SEGREGATED, GIBBS OR GIBBS_SOOT
-app.PD.method = 'SEGREGATED';
-% app.PD.method = 'GIBBS';
+% app.PD.method = 'SEGREGATED';
+app.PD.method = 'GIBBS';
 % app.PD.method = 'GIBBS_SOOT';
 %% CHECK SPECIES MINOR PRODUCTS --> SELECTED DATABASE (strThProp)
 [app.strThProp,app.E,app.S,app.M,app.C] = check_database(app.strMaster,app.strThProp,app.E,app.S,app.M,app.C);
@@ -44,7 +44,7 @@ app.PD.method = 'SEGREGATED';
 app.PD.TR.value = 300;
 % app.PD.TR.vector.value = 300:50:700;
 app.PD.pR.value = 1;
-app.PD.phi.value = 0.5:0.01:4.5;
+app.PD.phi.value = 0.5:0.01:1.5;
 % app.PD.phi.value = 3;
 %% INITIALIZATION
 app = Initialize(app);
@@ -91,8 +91,8 @@ tic
 for i=app.C.l_phi:-1:1 % Evading preallocate struct
 %% DEFINE FUEL
 % app.PD.S_Fuel = {'CH4','C2H6','C3H8'}; app.PD.N_Fuel = [0.85;0.1;0.05]; 
-% app.PD.S_Fuel = {'CH4'}; app.PD.N_Fuel = 1;
-app.PD.S_Fuel = {'C2H2_acetylene'}; app.PD.N_Fuel = 1; 
+app.PD.S_Fuel = {'CH4'}; app.PD.N_Fuel = 1;
+% app.PD.S_Fuel = {'C2H2_acetylene'}; app.PD.N_Fuel = 1; 
 % app.PD.S_Fuel = {'C3H8'}; app.PD.N_Fuel = 1;    
 % app.PD.S_Fuel = {'C6H6'}; app.PD.N_Fuel = 1; 
 % app.PD.S_Fuel = {'C2H4'}; app.PD.N_Fuel = 1;
@@ -116,7 +116,7 @@ end
 %% DISPLAY MOLAR FRACTION VS EQUIVALENCE RATIO
 app.M.display_species = {};
 % app.M.display_species = {'CO','CO2','H','HO2','H2','H2O','N2','O2'};
-app.M.display_species = {'CO','CO2','H','HO2','H2','H2O','NO','NO2','N2','O','OH','O2','Cbgrb'};
+% app.M.display_species = {'CO','CO2','H','HO2','H2','H2O','NO','NO2','N2','O','OH','O2','Cbgrb'};
 % app.M.display_species = {'Cbgrb','CO2','CO','HNC','HCN','H2','OH','H2O','O2','CH4'};
 closing(app);
 %% EXCEL I/O

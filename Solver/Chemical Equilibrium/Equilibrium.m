@@ -64,6 +64,7 @@ while STOP > C.tolN && it < itMax
     % Compute STOP criteria
     STOP = compute_STOP(NP_0, NP, x(end), N0(temp_ind, 1), x(1:temp_NS));
 end
+% N0(N0(:, 1) < C.tolN, 1) = 0;
 end
 % NESTED FUNCTIONS
 function g0 = set_g0(ls, TP, strThProp)

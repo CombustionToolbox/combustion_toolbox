@@ -4,6 +4,7 @@ function self = Miscelaneous()
     self.config.fontsize = 18;
     self.FLAG_FIRST = true;
     self.FLAG_FOI = true;
+    self.FLAG_GUI = false;
     self.save_Excel = false;
     self.timer_0 = [];
 end

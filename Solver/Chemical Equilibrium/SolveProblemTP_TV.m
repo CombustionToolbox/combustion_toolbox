@@ -18,27 +18,27 @@ PD = app.PD;
 strThProp = app.strThProp;
 % -----------------------------------
 
-if strcmp(app.PD.solver, 'SEGREGATED')
+if strcmpi(app.PD.solver, 'SEGREGATED')
     [N_CC, phi_c0, FLAG_SOOT, STOP] = CalculateProductsCC(app, strR, phi, pP, TP);
     P = SetSpecies(C.M0.value, S.LS, N_CC', TP, S.ind_fixed, strThProp);
     if strcmpi(PD.CompleteOrIncomplete,'INCOMPLETE')
     % N_CC matrix with number of moles and swtCondesated of each species
     N_CC = P(:, [1,10]);
     % Compute number of moles of M.minor_products
-    [N_IC, STOP] = CalculateProductsIC_2019(app, N_CC, phi, pP, TP, strR.v, phi_c0, FLAG_SOOT);
+    [N_IC, STOP] = CalculateProductsIC(app, N_CC, phi, pP, TP, strR.v, phi_c0, FLAG_SOOT);
     end
 else
     if strcmpi(app.PD.solver, 'GIBBS')
         [N_IC, STOP] = Equilibrium(app, pP, TP, strR);
-    elseif strcmpi(app.PD.solver, 'GIBBS_SOOT')
+    elseif strcmpi(app.PD.solver, 'GIBBS SOOT')
         [N_IC, STOP] = Equilibrium_soot(app, pP, TP, strR);
-    elseif strcmpi(app.PD.solver, 'GIBBS_REDUCED')
+    elseif strcmpi(app.PD.solver, 'GIBBS REDUCED')
     [N_IC, STOP] = Equilibrium_reduced(app, pP, TP, strR);
     end
     phi_c0 = Compute_phi_c(app.PD.Fuel);
 end
 
-if strcmpi(PD.CompleteOrIncomplete,'COMPLETE')
+if strcmpi(PD.CompleteOrIncomplete,'COMPLETE') && strcmpi(app.PD.solver, 'SEGREGATED')
     STOP = 0;
 else
     % Compute properties of all species

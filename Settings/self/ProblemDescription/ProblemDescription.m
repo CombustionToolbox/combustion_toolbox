@@ -1,7 +1,7 @@
 function self = ProblemDescription()
     self.description = "Problem description";
     self.CompleteOrIncomplete = "incomplete";
-    self.ProblemType = [];
+    self.ProblemType = 'TP'; % Initialization for GUI
     self.R_Fuel = [];
     self.R_Oxidizer = [];
     self.R_Inert = [];

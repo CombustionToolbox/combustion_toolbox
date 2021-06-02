@@ -1,6 +1,6 @@
 function strMaster = ParseThermoInp(reducedDB)
 if ~exist('strMaster', 'var')
-    if exist('strMaster.mat', 'file') && reducedDB
+    if exist('strMaster.mat', 'file') && ~reducedDB
         fprintf('Loading NASA database ... ')
         load('strMaster.mat' , 'strMaster');
     elseif exist('strMaster_reduced.mat', 'file') && reducedDB

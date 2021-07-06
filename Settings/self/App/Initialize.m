@@ -119,7 +119,7 @@ function self = Compute_minors_species(self)
 end
 
 function self = CH4_major(self)
-    if any(contains(self.M.minors_products,'CH4')) && strcmpi(self.PD.solver, 'SEGREGATED')
+    if any(contains(self.M.minors_products,'CH4')) && strcmpi(self.PD.solver, 'SEGREGATED') && strcmpi(self.PD.CompleteOrIncomplete, 'INCOMPLETE')
         self.M.major_CH4 = true;
         self.M.ind_m_CH4 = find_ind({'CH4'}, self.M.minors_products);
     %     self.M.ind_m_C2H2= find_ind({'C2H2_acetylene'}, self.M.minors_products);
@@ -135,7 +135,7 @@ function self = CH4_major(self)
 end
 
 function self = OH_major(self) 
-    if any(contains(self.M.minors_products,'OH')) && strcmpi(self.PD.solver, 'SEGREGATED')
+    if any(contains(self.M.minors_products,'OH')) && strcmpi(self.PD.solver, 'SEGREGATED') && strcmpi(self.PD.CompleteOrIncomplete, 'INCOMPLETE')
         self.M.major_OH = true;
         self.M.ind_m_OH = find_ind({'OH'}, self.M.minors_products);
     else

@@ -1,4 +1,4 @@
-%% COMBUSTION TOOLBOX
+%% Combustion toolbox
 % TYPE OF PROBLEMS:
 %
 % * TP ------> Equilibrium composition at defined T and p
@@ -20,15 +20,15 @@
 % Last update: 25-May-2021 10:27
 %% INITIALIZATION
 addpath(genpath(pwd));
-% app = App();
+app = App();
 % app = App('Soot formation');
 % app = App('HC/02/N2 extended');
 % app = App('HC/02/N2 rich');
-app = App('Hydrogen');
+% app = App('Hydrogen');
 % app = App('Nasa all');
 % app = App('Cbgrb'); 
 % app = App('air'); 
-% app = App({'Mgbcrb','MgObcrb','NO','O'}); 
+% app = App({'Mgbcrb','MgObcrb','NO','NO2','N2O3','N2O','Mg','MgN','MgO','Mg2','N','N3','O','O3'}); 
 %% REACTION: COMPLETE OR INCOMPLETE
 % app.PD.CompleteOrIncomplete = 'complete';
 app.PD.CompleteOrIncomplete = 'incomplete';
@@ -36,8 +36,8 @@ app.PD.CompleteOrIncomplete = 'incomplete';
 app.Misc.save_Excel = false;
 app.TN.factor_c = 1; % factor_c = 1 (default).
 %% SOLVER: SEGREGATED, GIBBS OR GIBBS_SOOT
-app.PD.solver = 'SEGREGATED';
-% app.PD.solver = 'GIBBS';
+% app.PD.solver = 'SEGREGATED';
+app.PD.solver = 'GIBBS';
 % app.PD.solver = 'GIBBS REDUCED';
 % app.PD.solver = 'GIBBS SOOT';
 %% CHECK SPECIES MINOR PRODUCTS --> SELECTED DATABASE (strThProp)
@@ -46,8 +46,8 @@ app.PD.solver = 'SEGREGATED';
 app.PD.TR.value = 300;
 % app.PD.TR.vector.value = 300:50:700;
 app.PD.pR.value = 1.01325;
-app.PD.phi.value = 0.1:0.01:3;
-% app.PD.phi.value = 3;
+% app.PD.phi.value = 0.1:0.01:3;
+app.PD.phi.value = 1;
 %% INITIALIZATION
 app = Initialize(app);
 %% PROBLEM TYPE
@@ -93,12 +93,12 @@ tic
 for i=app.C.l_phi:-1:1 % Evading preallocate struct
 %% DEFINE FUEL
 % app.PD.S_Fuel = {'CH4','C2H6','C3H8'}; app.PD.N_Fuel = [0.85;0.1;0.05]; 
-% app.PD.S_Fuel = {'CH4'}; app.PD.N_Fuel = 1;
+app.PD.S_Fuel = {'CH4'}; app.PD.N_Fuel = 1;
 % app.PD.S_Fuel = {'C2H2_acetylene'}; app.PD.N_Fuel = 1; 
 % app.PD.S_Fuel = {'C3H8'}; app.PD.N_Fuel = 1;    
 % app.PD.S_Fuel = {'C6H6'}; app.PD.N_Fuel = 1; 
 % app.PD.S_Fuel = {'C2H4'}; app.PD.N_Fuel = 1;
-app.PD.S_Fuel = {'H2'}; app.PD.N_Fuel = 1;
+% app.PD.S_Fuel = {'H2'}; app.PD.N_Fuel = 1;
 % app.PD.S_Fuel = {'Mgbcrb'}; app.PD.N_Fuel = 1;
 app = Define_F(app);
 %% DEFINE OXIDIZER
@@ -118,9 +118,9 @@ app = SolveProblem(app, i);
 results(app, i);
 end
 %% DISPLAY RESULTS (PLOTS)
-% app.M.display_species = {};
+app.M.display_species = {};
 % app.M.display_species = {'CO','CO2','H','HO2','H2','H2O','N2','O2'};
-app.M.display_species = {'CO','CO2','H','HO2','H2','H2O','NO','NO2','N2','O','OH','O2','Cbgrb'};
+% app.M.display_species = {'CO','CO2','H','HO2','H2','H2O','NO','NO2','N2','O','OH','O2','Cbgrb'};
 % app.M.display_species = {'Cbgrb','CO2','CO','HNC','HCN','H2','OH','H2O','O2','CH4'};
 closing(app);
 %% EXCEL I/O

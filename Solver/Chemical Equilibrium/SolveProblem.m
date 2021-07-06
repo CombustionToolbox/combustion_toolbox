@@ -6,7 +6,6 @@ switch app.PD.ProblemType
         app.PS.strP{i} = SolveProblemTP_TV(app, app.PS.strR{i},app.PD.phi.value(i),app.PD.pR.value, app.PD.TP.value);
     case {'HP'}
         if i==app.C.l_phi
-            % app.PS.strP{i} = SolveProblemHP_test(app.PS.strR{i},app.PD.phi.value(i),app.PD.pR.value); % Newton-Raphson-worse convergence!!
             app.PS.strP{i} = SolveProblemHP(app, app.PS.strR{i}, app.PD.phi.value(i), app.PD.pR.value);
         else
             app.PS.strP{i} = SolveProblemHP_EV_fast(app, app.PS.strR{i},app.PD.phi.value(i),app.PD.pR.value,app.PS.strP{i+1});
@@ -31,15 +30,15 @@ switch app.PD.ProblemType
         u1 = app.PD.u1.value(i);
         if strcmp(app.PD.ProblemType,'SHOCK_I')
             if i==app.C.l_phi
-                [app.PS.strR{i},app.PS.strP{i}] = SolveProblemSHOCK_I(app, app.PS.strR{i}, app.PD.phi.value(i), app.PD.pR.value, app.PD.TR.value, u1);
+                [app.PS.strR{i}, app.PS.strP{i}] = SolveProblemSHOCK_I(app, app.PS.strR{i}, app.PD.phi.value(i), app.PD.pR.value, app.PD.TR.value, u1);
             else
-                [app.PS.strR{i},app.PS.strP{i}] = SolveProblemSHOCK_I_fast(app, app.PS.strR{i},app.PD.phi.value(i),app.PD.pR.value,app.PD.TR.value,u1,app.PS.strP{i+1});
+                [app.PS.strR{i}, app.PS.strP{i}] = SolveProblemSHOCK_I_fast(app, app.PS.strR{i}, app.PD.phi.value(i), app.PD.pR.value, app.PD.TR.value, u1, app.PS.strP{i+1});
             end
         else
             if i==app.C.l_phi
-                [app.PS.strR{i},app.PS.str2{i},app.PS.strP{i}] = SolveProblemSHOCK_R(app, app.PS.strR{i},app.PD.phi.value(i),app.PD.pR.value,app.PD.TR.value,u1);
+                [app.PS.strR{i}, app.PS.str2{i}, app.PS.strP{i}] = SolveProblemSHOCK_R(app, app.PS.strR{i}, app.PD.phi.value(i), app.PD.pR.value, app.PD.TR.value, u1);
             else
-                [app.PS.strR{i},app.PS.str2{i},app.PS.strP{i}] = SolveProblemSHOCK_R_fast(app, app.PS.strR{i},app.PD.phi.value(i),app.PD.pR.value,app.PD.TR.value,u1,app.PS.str2{i+1},app.PS.strP{i+1});
+                [app.PS.strR{i}, app.PS.str2{i}, app.PS.strP{i}] = SolveProblemSHOCK_R_fast(app, app.PS.strR{i}, app.PD.phi.value(i), app.PD.pR.value, app.PD.TR.value, u1, app.PS.str2{i+1}, app.PS.strP{i+1});
             end
         end
     case 'DET'

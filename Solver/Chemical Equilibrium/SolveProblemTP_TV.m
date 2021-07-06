@@ -30,6 +30,7 @@ if strcmpi(app.PD.solver, 'SEGREGATED')
 else
     if strcmpi(app.PD.solver, 'GIBBS')
         [N_IC, STOP] = Equilibrium(app, pP, TP, strR);
+%         [N_IC, TP, STOP] = Equilibrium_HP(app, pP, strR); % TEST
     elseif strcmpi(app.PD.solver, 'GIBBS SOOT')
         [N_IC, STOP] = Equilibrium_soot(app, pP, TP, strR);
     elseif strcmpi(app.PD.solver, 'GIBBS REDUCED')

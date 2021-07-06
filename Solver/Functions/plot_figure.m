@@ -14,7 +14,7 @@ if nargin == 4
     config.fontsize  = 18;
     config.tit = {'Figure'};
     config.labelx = '$x$';
-    config.labelx = '$y$';
+    config.labely = '$y$';
 end
 if nargin == 5
     if isstruct(varargin{1})
@@ -51,7 +51,7 @@ config.tit = strrep(config.tit,'%','\%');
 f = figure;
 set(f,'units','normalized','innerposition',[0.1 0.1 0.9 0.8],...
     'outerposition',[0.1 0.1 0.9 0.8])
-set(axes,'LineWidth',config.linewidth,'FontSize',config.fontsize,'BoxStyle','full')
+set(axes,'LineWidth',config.linewidth,'FontSize',config.fontsize-2,'BoxStyle','full')
 
 grid on; box on; hold on; axis tight
 
@@ -61,7 +61,7 @@ xlim([min(x),1.02*max(x)])
 ylim([min(y),1.02*max(y)])
 plot(x,y,'LineWidth',config.linewidth);
 if nargin == 4
-    legend(leg,'FontSize',config.fontsize,'Location','northeast','interpreter','latex');
+    legend(leg,'FontSize',config.fontsize-2,'Location','northeast','interpreter','latex');
 end
 title({strcat('$',config.tit,'$')},'Interpreter','latex','FontSize',config.fontsize+4);
 

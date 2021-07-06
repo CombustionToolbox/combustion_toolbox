@@ -13,8 +13,6 @@ function displaysweepresults(varargin)
 % help displaysweepresults
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 nfrec = 3;
-linewidth = 2;
-fontsize = 18;
 
 if nargin < 4
     error('Error: Not enough input arguments. Function: displaysweepresults.');
@@ -23,7 +21,7 @@ str = varargin{1};
 x = varargin{2};
 NameSpecies = varargin{3};
 mintol = varargin{4};
-labelx = varargin{5}; 
+config = varargin{5}; 
 NE = length(NameSpecies);
 if nargin == 6
     display_species = varargin{6}; 
@@ -34,11 +32,11 @@ if length(x)>1
     f = figure;
     set(f,'units','normalized','innerposition',[0.05 0.05 0.9 0.9],...
         'outerposition',[0.05 0.05 0.9 0.9]);
-    set(axes,'LineWidth',linewidth-0.4,'FontSize',fontsize,'BoxStyle','full')
+    set(axes,'LineWidth',config.linewidth,'FontSize',config.fontsize-2,'BoxStyle','full')
     grid minor; box on; hold on; 
 
-    xlabel(labelx,'FontSize',fontsize+10,'interpreter','latex');
-    ylabel('Molar fraction $X_i$','FontSize',fontsize+10,'interpreter','latex');
+    xlabel(config.labelx,'FontSize',config.fontsize,'interpreter','latex');
+    ylabel(config.labely,'FontSize',config.fontsize,'interpreter','latex');
     
     Nstruct = length(str);
 %     Nspecies = length(str{1}.Xi);
@@ -62,7 +60,7 @@ if length(x)>1
         NE = numel(all_ind);  
         colorbw = brewermap(NE,'Spectral');
         for i=1:numel(all_ind)
-            dl = plot(x,Xi_phi(all_ind(i),:),'LineWidth',linewidth,'color',colorbw(i,:));
+            dl = plot(x,Xi_phi(all_ind(i),:),'LineWidth',config.linewidth,'color',colorbw(i,:));
 %             if mod(i,nfrec)==0
 %                 loc_label = 'right';
 %             else
@@ -86,7 +84,7 @@ if length(x)>1
         NE = numel(all_ind);  
         colorbw = brewermap(NE,'Spectral');
         for i=1:numel(all_ind)
-            dl = plot(x,Xi_phi(all_ind(i),:),'LineWidth',linewidth,'color',colorbw(i,:));
+            dl = plot(x,Xi_phi(all_ind(i),:),'LineWidth',config.linewidth,'color',colorbw(i,:));
 %             if mod(i,nfrec)==0
 %                 loc_label = 'right';
 %             else
@@ -108,10 +106,8 @@ if length(x)>1
     else
         ylim([mintol,1])
     end
-%     ylim([1e-16 1])
-    % ylim([-inf 1])
-    % ylim([0 1])
-    legend(leg,'FontSize',16,'Location','northeastoutside','interpreter','latex');
+
+    legend(leg,'FontSize',config.fontsize-2,'Location','northeastoutside','interpreter','latex');
     % tit = strcat('Molar fraction $X_i$');
     % title({tit},'Interpreter','latex','FontSize',16);
     % filename2 = strcat(fpath,filename);

@@ -14,34 +14,40 @@ function displaysweepresults(varargin)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 nfrec = 3;
 
-if nargin < 4
+if nargin < 5
     error('Error: Not enough input arguments. Function: displaysweepresults.');
 end
-str = varargin{1};
-x = varargin{2};
-NameSpecies = varargin{3};
-mintol = varargin{4};
-config = varargin{5}; 
+app = varargin{1};
+str = varargin{2};
+x = varargin{3};
+NameSpecies = varargin{4};
+mintol = varargin{5};
+config = varargin{6}; 
 NE = length(NameSpecies);
-if nargin == 6
-    display_species = varargin{6}; 
+if nargin == 7
+    display_species = varargin{7}; 
 end
 if length(x)>1
     % Plot configuration
     % color = colours;
-    f = figure;
-    set(f,'units','normalized','innerposition',[0.05 0.05 0.9 0.9],...
-        'outerposition',[0.05 0.05 0.9 0.9]);
-    set(axes,'LineWidth',config.linewidth,'FontSize',config.fontsize-2,'BoxStyle','full')
-    grid minor; box on; hold on; 
-
-    xlabel(config.labelx,'FontSize',config.fontsize,'interpreter','latex');
-    ylabel(config.labely,'FontSize',config.fontsize,'interpreter','latex');
+    if ~app.Misc.FLAG_GUI
+        f = figure;
+        set(f,'units','normalized','innerposition',[0.05 0.05 0.9 0.9],...
+            'outerposition',[0.05 0.05 0.9 0.9]);
+        set(axes,'LineWidth',config.linewidth,'FontSize',config.fontsize-2,'BoxStyle','full')
+    else
+        f = app.UIAxes;
+        cla(f);
+    end
+    grid(f, 'off'); box(f, 'off'); hold(f, 'on'); 
+    
+    xlabel(f, config.labelx,'FontSize',config.fontsize,'interpreter','latex');
+    ylabel(f, config.labely,'FontSize',config.fontsize,'interpreter','latex');
     
     Nstruct = length(str);
 %     Nspecies = length(str{1}.Xi);
     Xi_phi = zeros(length(str{1}.Xi),Nstruct);
-    if nargin == 5
+    if nargin == 6
 %         for i=1:Nstruct
 %             Xi_phi(:,i) = str{i}.Xi;
 %         end
@@ -60,7 +66,7 @@ if length(x)>1
         NE = numel(all_ind);  
         colorbw = brewermap(NE,'Spectral');
         for i=1:numel(all_ind)
-            dl = plot(x,Xi_phi(all_ind(i),:),'LineWidth',config.linewidth,'color',colorbw(i,:));
+            dl = plot(f, x, Xi_phi(all_ind(i),:),'LineWidth',config.linewidth,'color',colorbw(i,:));
 %             if mod(i,nfrec)==0
 %                 loc_label = 'right';
 %             else
@@ -68,7 +74,7 @@ if length(x)>1
 %             end
 %             label(dl,NameSpecies{ind(i)},'FontSize',fontsize,'location',loc_label);
         end
-    elseif nargin == 6
+    elseif nargin == 7
         for i=1:Nstruct
             Xi_phi(:,i) = str{i}.Xi;
         end
@@ -84,7 +90,7 @@ if length(x)>1
         NE = numel(all_ind);  
         colorbw = brewermap(NE,'Spectral');
         for i=1:numel(all_ind)
-            dl = plot(x,Xi_phi(all_ind(i),:),'LineWidth',config.linewidth,'color',colorbw(i,:));
+            dl = plot(f, x,Xi_phi(all_ind(i),:),'LineWidth',config.linewidth,'color',colorbw(i,:));
 %             if mod(i,nfrec)==0
 %                 loc_label = 'right';
 %             else
@@ -96,23 +102,23 @@ if length(x)>1
     leg =NameSpecies(all_ind);
     
     % plot(phi,Xminor,'color','k','LineWidth',1.2);
-    set(gca,'yscale','log')
+    set(f,'yscale','log')
     
-    xlim([min(x),max(x)])
+%     xlim(f, [min(x),max(x)])
     
     ymin = 10^floor(log(abs(min(Xi_phi(Xi_phi>0))))/log(10));
     if ymin > mintol
-        ylim([ymin,1])
+        ylim(f, [ymin,1])
     else
-        ylim([mintol,1])
+        ylim(f, [mintol,1])
     end
 
-    legend(leg,'FontSize',config.fontsize-2,'Location','northeastoutside','interpreter','latex');
+    legend(f, leg,'FontSize',config.fontsize-6,'Location','northeastoutside','interpreter','latex');
     % tit = strcat('Molar fraction $X_i$');
     % title({tit},'Interpreter','latex','FontSize',16);
     % filename2 = strcat(fpath,filename);
     % saveas(fig,filename2,'epsc');
-    movegui(f,'center')
+%     movegui(f,'center')
 else
     error('Funtion displaysweepresults - It is necessary at least 2 cases to display the results.')
 end

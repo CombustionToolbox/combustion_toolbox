@@ -4,7 +4,6 @@ function [N0, STOP] = Equilibrium(app, pP, TP, strR)
 % Abbreviations ---------------------
 S = app.S;
 C = app.C;
-strThProp = app.strThProp;
 % -----------------------------------
 
 N0 = C.N0.value;
@@ -33,7 +32,7 @@ temp_NS0 = temp_NS + 1;
 % Initialize species vector N0 
 N0(temp_ind, 1) = 0.1/temp_NS;
 % Dimensionless Standard Gibbs free energy 
-g0 = set_g0(S.LS, TP, strThProp);
+g0 = set_g0(S.LS, TP, app.strThProp);
 G0RT = g0/R0TP;
 % Construction of part of matrix A (complete)
 [A1, temp_NS0] = update_matrix_A1(A0, [], temp_NS, temp_NS0, temp_ind, temp_ind_E);

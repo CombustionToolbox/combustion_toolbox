@@ -18,9 +18,9 @@ if numel(phi)>1 && all(phi(2:end) ~= phi(1)) && ~strcmp(ProblemType,'DET_OVERDRI
     app.Misc.config.labelx = 'Equivalence Ratio $\phi$';
     app.Misc.config.labely = 'Molar fraction $X_i$';
     if isempty(display_species)
-        displaysweepresults(strP, phi, LS, mintol_display, app.Misc.config);
+        displaysweepresults(app, strP, phi, LS, mintol_display, app.Misc.config);
     else
-        displaysweepresults(strP, phi, LS, mintol_display, app.Misc.config, display_species);
+        displaysweepresults(app, strP, phi, LS, mintol_display, app.Misc.config, display_species);
     end
     if ~any(strcmp(ProblemType,{'TP','TV'}))
         app.Misc.config.labely = 'Temperature $T [K]$';

@@ -46,8 +46,8 @@ app.PD.solver = 'GIBBS';
 app.PD.TR.value = 300;
 % app.PD.TR.vector.value = 300:50:700;
 app.PD.pR.value = 1.01325;
-% app.PD.phi.value = 0.1:0.01:3;
-app.PD.phi.value = 1;
+app.PD.phi.value = 0.1:0.01:3;
+% app.PD.phi.value = 1;
 %% INITIALIZATION
 app = Initialize(app);
 %% PROBLEM TYPE

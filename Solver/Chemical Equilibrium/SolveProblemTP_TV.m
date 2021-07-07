@@ -15,12 +15,11 @@ E = app.E;
 S = app.S;
 C = app.C;
 PD = app.PD;
-strThProp = app.strThProp;
 % -----------------------------------
 
 if strcmpi(app.PD.solver, 'SEGREGATED')
     [N_CC, phi_c0, FLAG_SOOT, STOP] = CalculateProductsCC(app, strR, phi, pP, TP);
-    P = SetSpecies(C.M0.value, S.LS, N_CC', TP, S.ind_fixed, strThProp);
+    P = SetSpecies(C.M0.value, S.LS, N_CC', TP, S.ind_fixed, app.strThProp);
     if strcmpi(PD.CompleteOrIncomplete,'INCOMPLETE')
     % N_CC matrix with number of moles and swtCondesated of each species
     N_CC = P(:, [1,10]);
@@ -43,7 +42,7 @@ if strcmpi(PD.CompleteOrIncomplete,'COMPLETE') && strcmpi(app.PD.solver, 'SEGREG
     STOP = 0;
 else
     % Compute properties of all species
-    P = SetSpecies(C.M0.value, S.LS, N_IC(S.ind_all, 1), TP, S.ind_all, strThProp);
+    P = SetSpecies(C.M0.value, S.LS, N_IC(S.ind_all, 1), TP, S.ind_all, app.strThProp);
 end
 
 if strfind(PD.ProblemType,'P') == 2 % PD.ProblemType = 'TP', 'HP', or 'SP'

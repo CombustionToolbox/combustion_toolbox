@@ -17,7 +17,7 @@ function [app, minors] = initialize(varargin)
     app = struct();
     minors = [];
     if nargin
-        if isa(varargin{1,1}, 'combustion_toolbox')
+        if isa(varargin{1,1}, 'combustion_toolbox_app')
             app = varargin{1,1};
             if nargin == 2
                 minors = varargin{1,2};
@@ -47,7 +47,7 @@ function app = constructor(app, minors)
 end
 
 function app = check_GUI(app)
-    if isa(app, 'combustion_toolbox')
+    if isa(app, 'combustion_toolbox_app')
         app.Misc.FLAG_GUI = true;
     end
 end

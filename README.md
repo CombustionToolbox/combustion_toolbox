@@ -1,5 +1,5 @@
 # Combustion Toolbox
-A MATLAB/GUI based thermochemical code
+A MATLAB-GUI based open-source tool for solving combustion problems.
 
 Table of contents
 =================

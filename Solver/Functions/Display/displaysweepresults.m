@@ -34,15 +34,16 @@ if length(x)>1
         f = figure;
         set(f,'units','normalized','innerposition',[0.05 0.05 0.9 0.9],...
             'outerposition',[0.05 0.05 0.9 0.9]);
+        axes = gca;
         set(axes,'LineWidth',config.linewidth,'FontSize',config.fontsize-2,'BoxStyle','full')
     else
-        f = app.UIAxes;
-        cla(f);
+        axes = app.UIAxes;
+        cla(axes);
     end
-    grid(f, 'off'); box(f, 'off'); hold(f, 'on'); 
+    grid(axes, 'off'); box(axes, 'off'); hold(axes, 'on'); axes.Layer = 'Top';
     
-    xlabel(f, config.labelx,'FontSize',config.fontsize,'interpreter','latex');
-    ylabel(f, config.labely,'FontSize',config.fontsize,'interpreter','latex');
+    xlabel(axes, config.labelx,'FontSize',config.fontsize,'interpreter','latex');
+    ylabel(axes, config.labely,'FontSize',config.fontsize,'interpreter','latex');
     
     Nstruct = length(str);
 %     Nspecies = length(str{1}.Xi);
@@ -66,7 +67,7 @@ if length(x)>1
         NE = numel(all_ind);  
         colorbw = brewermap(NE,'Spectral');
         for i=1:numel(all_ind)
-            dl = plot(f, x, Xi_phi(all_ind(i),:),'LineWidth',config.linewidth,'color',colorbw(i,:));
+            dl = plot(axes, x, Xi_phi(all_ind(i),:),'LineWidth',config.linewidth,'color',colorbw(i,:));
 %             if mod(i,nfrec)==0
 %                 loc_label = 'right';
 %             else
@@ -90,7 +91,7 @@ if length(x)>1
         NE = numel(all_ind);  
         colorbw = brewermap(NE,'Spectral');
         for i=1:numel(all_ind)
-            dl = plot(f, x,Xi_phi(all_ind(i),:),'LineWidth',config.linewidth,'color',colorbw(i,:));
+            dl = plot(axes, x,Xi_phi(all_ind(i),:),'LineWidth',config.linewidth,'color',colorbw(i,:));
 %             if mod(i,nfrec)==0
 %                 loc_label = 'right';
 %             else
@@ -102,23 +103,23 @@ if length(x)>1
     leg =NameSpecies(all_ind);
     
     % plot(phi,Xminor,'color','k','LineWidth',1.2);
-    set(f,'yscale','log')
+    set(axes,'yscale','log')
     
-%     xlim(f, [min(x),max(x)])
+    xlim(axes, [min(x),max(x)])
     
     ymin = 10^floor(log(abs(min(Xi_phi(Xi_phi>0))))/log(10));
     if ymin > mintol
-        ylim(f, [ymin,1])
+        ylim(axes, [ymin,1])
     else
-        ylim(f, [mintol,1])
+        ylim(axes, [mintol,1])
     end
 
-    legend(f, leg,'FontSize',config.fontsize-6,'Location','northeastoutside','interpreter','latex');
+    legend(axes, leg,'FontSize',config.fontsize-6,'Location','northeastoutside','interpreter','latex');
     % tit = strcat('Molar fraction $X_i$');
     % title({tit},'Interpreter','latex','FontSize',16);
     % filename2 = strcat(fpath,filename);
     % saveas(fig,filename2,'epsc');
-%     movegui(f,'center')
+%     movegui(axes,'center')
 else
     error('Funtion displaysweepresults - It is necessary at least 2 cases to display the results.')
 end

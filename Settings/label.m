@@ -46,10 +46,12 @@ function [htext] = label(h,textString,varargin)
 % Fixed for R2014b in January 2015. 
 % 
 % See also annotation, text, and legend. 
+% Modified by A. Cuadra-Lara PhD canditate at the University Carlos III de
+% Madrid. Added functionality with UIAxes.
 %% Initial input error checks: 
 
 assert(ishandle(h)==1,'Unrecognized object handle.')
-assert(isempty(get(0,'children'))==0,'No current axes are open.') 
+% assert(isempty(get(0,'children'))==0,'No current axes are open.') 
 assert(isnumeric(textString)==0,'Label given by textString must be a string.') 
 assert(nargin>=2,'Must input an object handle and corresponding label string.') 
 
@@ -57,6 +59,7 @@ assert(nargin>=2,'Must input an object handle and corresponding label string.')
 
 location = 'left'; 
 followSlope = false; 
+flag_UIAxes = false;
 
 %% Parse inputs
 
@@ -73,7 +76,13 @@ if any(tmp)
     varargin = varargin(~tmp); 
 end
 
-
+tmp = strcmpi(varargin,'axes'); 
+if any(tmp)
+    f = varargin{find(tmp)+1}; 
+    tmp(find(tmp)+1)=1; 
+    varargin = varargin(~tmp);
+    flag_UIAxes = true;
+end
 %% 
 
 color = get(h,'color'); 
@@ -81,11 +90,15 @@ xdata = get(h,'XData');
 assert(isvector(xdata)==1,'Plotted data must be vector or scalar.') 
 ydata = get(h,'YData'); 
 
-gcax = get(gca,'xlim'); 
-gcay = get(gca,'ylim'); 
+if ~flag_UIAxes
+    f = gca;
+end
+
+gcax = get(f,'xlim'); 
+gcay = get(f,'ylim'); 
 
 if followSlope
-    pbp = kearneyplotboxpos(gca); % A modified version of Kelly Kearney's plotboxpos function is included as a subfunction below.  
+    pbp = kearneyplotboxpos(f); % A modified version of Kelly Kearney's plotboxpos function is included as a subfunction below.  
 
     % slope is scaled because of axes and plot box may not be equal and square:
     gcaf = pbp(4)/pbp(3); 
@@ -151,7 +164,7 @@ end
 
 
 % Create the label: 
-htext = text(x(1),y(1),textString,'color',color,'horizontalalignment',horizontalAlignment,...
+htext = text(f, x(1),y(1),textString,'color',color,'horizontalalignment',horizontalAlignment,...
     'verticalalignment',verticalAlignment,'rotation',theta); 
 
 % Add any user-defined preferences: 

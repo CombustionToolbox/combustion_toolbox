@@ -5,6 +5,7 @@ function self = Miscelaneous()
     self.FLAG_FIRST = true;
     self.FLAG_FOI = true;
     self.FLAG_GUI = false;
+    self.FLAG_LABELS = false;
     self.save_Excel = false;
     self.timer_0 = [];
 end

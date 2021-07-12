@@ -65,7 +65,4 @@ if nargin == 4
 end
 title({strcat('$',config.tit,'$')},'Interpreter','latex','FontSize',config.fontsize+4);
 
-% movegui(f,'center');
-% filename2 = strcat(fpath,filename);
-% saveas(fig,filename2,'epsc');
 end

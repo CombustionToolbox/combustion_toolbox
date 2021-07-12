@@ -34,6 +34,13 @@ elseif any(strcmp(ProblemType,{'SHOCK_I'}))
         app.Misc.config.labelx = 'Incident velocity $u_1$';
         app.Misc.config.labely = 'Temperature $T [K]$';
         plot_figure(app.PD.u1.value,strP,'u','T',app.Misc.config,app.PD.CompleteOrIncomplete); 
+elseif any(strcmp(ProblemType,{'SHOCK_R'}))
+        app.Misc.config.labelx = 'Incident velocity $u_1$';
+        app.Misc.config.labely = 'Temperature $T [K]$';
+        app.Misc.config.tit = 'SHOCK_I';
+        ax = plot_figure(app.PD.u1.value,app.PS.str2,'u','T',app.Misc.config,app.PD.CompleteOrIncomplete); 
+        app.Misc.config.tit = 'SHOCK_R';
+        plot_figure(app.PD.u1.value,app.PS.strP,'u','T',app.Misc.config,app.PD.CompleteOrIncomplete, ax, {'$SHOCK_I$', '$SHOCK_R$'}); 
 elseif numel(phi)>1 && all(phi(2:end) == phi(1))
     app.Misc.config.labelx = 'Critical Equivalence Ratio $\phi_c$';
     app.Misc.config.labely = 'Temperature $T [K]$';

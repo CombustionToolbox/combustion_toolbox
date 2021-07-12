@@ -1,125 +1,113 @@
-function displaysweepresults(varargin)
+function displaysweepresults(app, str, xvar)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % DISPLAY SWEEP RESULTS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % INPUT:
 %   varangin = [str,phi,display_species]
 %   str = Prop. of state x (phi,species,...)
-%   phi = equivalence ratio [-]
-%   display_species = display selected species 
+%   xvar = x variable
 % OUTPUT:
-%   results on command window
+%   Plot: Molar fractions of str for the range xvar given
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % help displaysweepresults
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Default parameters
 nfrec = 3;
 
-if nargin < 5
-    error('Error: Not enough input arguments. Function: displaysweepresults.');
+% Get inputs
+str = app.PS.strP;
+xvar = app.PD.phi.value;
+display_species = app.M.display_species;
+NameSpecies = app.S.LS;
+mintol = app.C.mintol_display;
+
+% Function
+if length(xvar)>1
+    axes = set_figure(app);
+    [yvar, all_ind, indlabel] = get_parameters(str, NameSpecies, display_species, mintol);
+    plot_line(app, axes, xvar, yvar, all_ind, indlabel, NameSpecies)
+    set_limits_axes(app, axes, xvar, yvar, mintol);
+    set_legeds(app, axes, NameSpecies(all_ind));
 end
-app = varargin{1};
-str = varargin{2};
-x = varargin{3};
-NameSpecies = varargin{4};
-mintol = varargin{5};
-config = varargin{6}; 
-NE = length(NameSpecies);
-if nargin == 7
-    display_species = varargin{7}; 
+
 end
-if length(x)>1
-    % Plot configuration
-    % color = colours;
-    if ~app.Misc.FLAG_GUI
+function axes = set_figure(app)
+    % Set figure
+%     if ~app.Misc.FLAG_GUI
         f = figure;
         set(f,'units','normalized','innerposition',[0.05 0.05 0.9 0.9],...
             'outerposition',[0.05 0.05 0.9 0.9]);
         axes = gca;
-        set(axes,'LineWidth',config.linewidth,'FontSize',config.fontsize-2,'BoxStyle','full')
-    else
-        axes = app.UIAxes;
-        cla(axes);
-    end
+        set(axes,'LineWidth',app.Misc.config.linewidth,'FontSize',app.Misc.config.fontsize-2,'BoxStyle','full')
+%     else
+%         axes = app.UIAxes;
+%         cla(axes);
+%     end
     grid(axes, 'off'); box(axes, 'off'); hold(axes, 'on'); axes.Layer = 'Top';
     
-    xlabel(axes, config.labelx,'FontSize',config.fontsize,'interpreter','latex');
-    ylabel(axes, config.labely,'FontSize',config.fontsize,'interpreter','latex');
-    
-    Nstruct = length(str);
-%     Nspecies = length(str{1}.Xi);
-    Xi_phi = zeros(length(str{1}.Xi),Nstruct);
-    if nargin == 6
-%         for i=1:Nstruct
-%             Xi_phi(:,i) = str{i}.Xi;
-%         end
-%         j = any(Xi_phi'>mintol);
-%         
-%         NE = sum(j);
-        all_ind = [];
-        for i=1:Nstruct
-            Xi_phi(:,i) = str{i}.Xi;
-            j = str{i}.Xi>mintol;
-            ind = find(j>0);
-            all_ind = [all_ind; ind];
-            %     Xminor(i) = sum(str(i).Xi(~j));
-        end
-        all_ind = unique(all_ind);
-        NE = numel(all_ind);  
-        colorbw = brewermap(NE,'Spectral');
-        for i=1:numel(all_ind)
-            dl = plot(axes, x, Xi_phi(all_ind(i),:),'LineWidth',config.linewidth,'color',colorbw(i,:));
-%             if mod(i,nfrec)==0
-%                 loc_label = 'right';
-%             else
-%                 loc_label = 'left';
-%             end
-%             label(dl,NameSpecies{ind(i)},'FontSize',fontsize,'location',loc_label);
-        end
-    elseif nargin == 7
-        for i=1:Nstruct
-            Xi_phi(:,i) = str{i}.Xi;
-        end
-        all_ind = [];
-        for i = 1:length(NameSpecies)
-            if any(strcmpi(NameSpecies{i},display_species))
-                all_ind = [all_ind, i];
-            end
-        end
-        k = any(Xi_phi(all_ind,:)'>mintol);
-        all_ind = all_ind(k);
-        
-        NE = numel(all_ind);  
-        colorbw = brewermap(NE,'Spectral');
-        for i=1:numel(all_ind)
-            dl = plot(axes, x,Xi_phi(all_ind(i),:),'LineWidth',config.linewidth,'color',colorbw(i,:));
-%             if mod(i,nfrec)==0
-%                 loc_label = 'right';
-%             else
-%                 loc_label = 'left';
-%             end
-%             label(dl,NameSpecies{j(i)},'FontSize',fontsize,'location',loc_label);
-        end
+    xlabel(axes, app.Misc.config.labelx,'FontSize',app.Misc.config.fontsize,'interpreter','latex');
+    ylabel(axes, app.Misc.config.labely,'FontSize',app.Misc.config.fontsize,'interpreter','latex');
+end
+
+function plot_line(app, axes, xvar, yvar, indy, indlabel, label_name)
+    NE = numel(indy);  
+    colorbw = brewermap(NE, 'Spectral');
+    for i=1:numel(indy)
+        dl = plot(axes, xvar, yvar(indy(i),:), 'LineWidth', app.Misc.config.linewidth, 'color', colorbw(i,:));
+        label_line(app, axes, dl, label_name{indlabel(i)}, i)
     end
-    leg =NameSpecies(all_ind);
-    
-    % plot(phi,Xminor,'color','k','LineWidth',1.2);
+end
+
+function label_line(app, axes, dl, label_name, i)
+    if app.Misc.FLAG_LABELS
+        if mod(i,nfrec)==0
+            loc_label = 'right';
+        else
+            loc_label = 'left';
+        end
+        label(dl, label_name, 'FontSize', app.Misc.config.fontsize,...
+            'location', loc_label, 'axes', axes);
+    end
+end
+
+function set_limits_axes(app, axes, xvar, yvar, mintol)
     set(axes,'yscale','log')
-    
-    xlim(axes, [min(x),max(x)])
-    
-    ymin = 10^floor(log(abs(min(Xi_phi(Xi_phi>0))))/log(10));
+    xlim(axes, [min(xvar),max(xvar)])
+    ymin = 10^floor(log(abs(min(yvar(yvar>0))))/log(10));
     if ymin > mintol
         ylim(axes, [ymin,1])
     else
         ylim(axes, [mintol,1])
     end
+end
 
-    legend(axes, leg,'FontSize',config.fontsize-6,'Location','northeastoutside','interpreter','latex');
-    % tit = strcat('Molar fraction $X_i$');
-    % title({tit},'Interpreter','latex','FontSize',16);
-    % filename2 = strcat(fpath,filename);
-    % saveas(fig,filename2,'epsc');
-%     movegui(axes,'center')
-else
-    error('Funtion displaysweepresults - It is necessary at least 2 cases to display the results.')
+function set_legeds(app, axes, legends_name)
+    legend(axes, legends_name,'FontSize',app.Misc.config.fontsize-6,'Location','northeastoutside','interpreter','latex');
+end
+
+function [yvar, all_ind, indlabel] = get_parameters(str, NameSpecies, display_species, mintol)
+    all_ind = [];
+    Nstruct = length(str);
+    yvar = zeros(length(str{1}.Xi),Nstruct);
+    if isempty(display_species)
+        for i=Nstruct:-1:1
+            yvar(:,i) = str{i}.Xi;
+            j = str{i}.Xi > mintol;
+            ind = find(j>0);
+            all_ind = [all_ind; ind];
+        end
+        all_ind = unique(all_ind);
+        indlabel = all_ind;
+    else
+        for i=Nstruct:-1:1
+            yvar(:,i) = str{i}.Xi;
+        end
+        for i = 1:length(NameSpecies)
+            if any(strcmpi(NameSpecies{i}, display_species))
+                all_ind = [all_ind, i];
+            end
+        end
+        indlabel = any(yvar(all_ind,:)'>mintol);
+        all_ind = all_ind(indlabel);
+    end
 end

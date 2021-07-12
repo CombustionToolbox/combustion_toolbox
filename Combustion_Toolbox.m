@@ -22,12 +22,12 @@
 addpath(genpath(pwd));
 % app = App();
 % app = App('Soot formation');
-app = App('HC/02/N2 extended');
+% app = App('HC/02/N2 extended');
 % app = App('HC/02/N2 rich');
 % app = App('Hydrogen');
 % app = App('Nasa all');
 % app = App('Cbgrb'); 
-% app = App('air'); 
+app = App('air'); 
 % app = App({'RP_1'});
 % app = App({'Mgbcrb','MgObcrb','NO','NO2','N2O3','N2O','Mg','MgN','MgO','Mg2','N','N3','O','O3'}); 
 %% REACTION: COMPLETE OR INCOMPLETE
@@ -47,7 +47,7 @@ app.PD.solver = 'GIBBS';
 app.PD.TR.value = 300;
 % app.PD.TR.vector.value = 300:50:700;
 app.PD.pR.value = 1.01325;
-app.PD.phi.value = 0.05:0.01:2;
+app.PD.phi.value = 0.5:0.01:2;
 % app.PD.phi.value = 1;
 %% INITIALIZATION
 app = Initialize(app);
@@ -77,15 +77,15 @@ switch app.PD.ProblemType
         app.PD.vP_vR.value = 0.5:0.01:2; app.PD.phi.value = 1*ones(1,length(app.PD.vP_vR.value));
     case 'SHOCK_I' % * SHOCK_I: CALCULATE PLANAR INCIDENT SHOCK WAVE
         app.PD.ProblemType = 'SHOCK_I';
-        app.PD.u1.value = 400:200:2000; app.PD.phi.value = ones(1,length(app.PD.u1.value));
+        app.PD.u1.value = 400:50:2000; app.PD.phi.value = ones(1,length(app.PD.u1.value));
     case 'SHOCK_R' % * SHOCK_R: CALCULATE PLANAR POST-REFLECTED SHOCK STATE
         app.PD.ProblemType = 'SHOCK_R';
-        app.PD.u1.value = 400:50:3000; app.PD.phi.value = ones(1,length(app.PD.u1.value));
+        app.PD.u1.value = 400:50:2000; app.PD.phi.value = ones(1,length(app.PD.u1.value));
     case 'DET' % * DET: CALCULATE CHAPMAN-JOUGET STATE (CJ UPPER STATE)
         app.PD.ProblemType = 'DET';
 %         app.PD.TR_vector.value = app.PD.TR.value;
     case 'DET_OVERDRIVEN' % * DET_OVERDRIVEN: CALCULATE OVERDRIVEN DETONATION
-        app.PD.ProblemType = 'DET_OVERDRIVEN';
+        app.PD.ProblemType = 'DET_OVERDRIVEN';  
         app.PD.overdriven.value  = 1:0.1:1.5;
 end
 %% CONSTANT
@@ -94,7 +94,7 @@ tic
 for i=app.C.l_phi:-1:1 % Evading preallocate struct
 %% DEFINE FUEL
 % app.PD.S_Fuel = {'CH4','C2H6','C3H8'}; app.PD.N_Fuel = [0.85;0.1;0.05]; 
-app.PD.S_Fuel = {'CH4'}; app.PD.N_Fuel = 1;
+% app.PD.S_Fuel = {'CH4'}; app.PD.N_Fuel = 1;
 % app.PD.S_Fuel = {'RP_1'}; app.PD.N_Fuel = 1;
 % app.PD.S_Fuel = {'C2H2_acetylene'}; app.PD.N_Fuel = 1; 
 % app.PD.S_Fuel = {'C3H8'}; app.PD.N_Fuel = 1;    

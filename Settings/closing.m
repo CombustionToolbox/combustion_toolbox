@@ -17,11 +17,7 @@ app.Misc.config.tit = ProblemType;
 if numel(phi)>1 && all(phi(2:end) ~= phi(1)) && ~strcmp(ProblemType,'DET_OVERDRIVEN')
     app.Misc.config.labelx = 'Equivalence Ratio $\phi$';
     app.Misc.config.labely = 'Molar fraction $X_i$';
-    if isempty(display_species)
-        displaysweepresults(app, strP, phi, LS, mintol_display, app.Misc.config);
-    else
-        displaysweepresults(app, strP, phi, LS, mintol_display, app.Misc.config, display_species);
-    end
+    displaysweepresults(app, strP, phi);
     if ~any(strcmp(ProblemType,{'TP','TV'}))
         app.Misc.config.labely = 'Temperature $T [K]$';
         plot_figure(phi,strP,'phi','T',app.Misc.config,app.PD.CompleteOrIncomplete);

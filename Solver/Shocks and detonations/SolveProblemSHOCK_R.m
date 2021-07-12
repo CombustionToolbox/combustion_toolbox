@@ -1,8 +1,8 @@
-function [str1,str2,str3] = SolveProblemSHOCK_R(strR,phi,p1,T1,u1,E,S,C,M,PD,TN,strThProp)
+function [str1,str2,str3] = SolveProblemSHOCK_R(app, strR, phi, p1, T1, u1)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % CALCULATE PLANAR INCIDENT SHOCK STATE
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-[str1,str2] = SolveProblemSHOCK_I(strR,phi,p1,T1,u1,E,S,C,M,PD,TN,strThProp);
+[str1,str2] = SolveProblemSHOCK_I(app, strR, phi, p1, T1, u1);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % CALCULATE POST-REFLECTED SHOCK STATE
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -64,7 +64,7 @@ p = p/1e5;
 T = T2*p*V/(p2*V2);
 
 % state;
-strP = state(strR,r,T,phi,pP,E,S,C,M,PD,TN,strThProp);
+strP = state(app, strR, r, T, phi, pP);
 h = strP.h/strP.mi*1e3;
 p = strP.p;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -88,7 +88,7 @@ while((abs(deltaT) > TN.ERRFT*T) || (abs(deltaV) > TN.ERRFV*V))
     rper = 1/Vper;
     
 %     stateper;
-    strP = state(strR,rper,Tper,phi,pP,E,S,C,M,PD,TN,strThProp);
+    strP = state(app, strR, rper, Tper, phi, pP);
     hper = strP.h/strP.mi*1e3;
     pper = strP.p;
     
@@ -107,7 +107,7 @@ while((abs(deltaT) > TN.ERRFT*T) || (abs(deltaV) > TN.ERRFV*V))
     rper = 1/Vper;
     
 %     stateper;
-    strP = state(strR,rper,Tper,phi,pP,E,S,C,M,PD,TN,strThProp);
+    strP = state(app, strR, rper, Tper, phi, pP);
     hper = strP.h/strP.mi*1e3;
     pper = strP.p;
     
@@ -151,7 +151,7 @@ while((abs(deltaT) > TN.ERRFT*T) || (abs(deltaV) > TN.ERRFV*V))
     V = V + deltaV;
     r = 1/V;
 %     state;
-    strP = state(strR,r,T,phi,pP,E,S,C,M,PD,TN,strThProp);
+    strP = state(app, strR, r, T, phi, pP);
     h = strP.h/strP.mi*1e3;
     p = strP.p;
 %     UR = (p-p2)*1e5/(u2*r2)-u2; % NASA
@@ -199,11 +199,11 @@ str3.h = h3*str3.mi/1e3;
 str3.error_problem = max(abs(deltaT),abs(deltaV));
 end
 
-function strP = state(strR,r,T,phi,pP,E,S,C,M,PD,TN,strThProp)
+function strP = state(app, strR, r, T, phi, pP)
 % Calculate frozen state given T & rho
 strR.v = strR.mi/r*1e3;
 TP = T; % vP = vR (computed from R);
 % Equilibrium composition at defined T and constant v
-PD.ProblemType = 'TV';
-strP = SolveProblemTP_TV(strR,phi,pP,TP,E,S,C,M,PD,TN,strThProp);
+app.PD.ProblemType = 'TV';
+strP = SolveProblemTP_TV(app, strR, phi, pP, TP);
 end

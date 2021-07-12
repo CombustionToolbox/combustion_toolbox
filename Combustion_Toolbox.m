@@ -28,6 +28,7 @@ app = App('HC/02/N2 extended');
 % app = App('Nasa all');
 % app = App('Cbgrb'); 
 % app = App('air'); 
+% app = App({'RP_1'});
 % app = App({'Mgbcrb','MgObcrb','NO','NO2','N2O3','N2O','Mg','MgN','MgO','Mg2','N','N3','O','O3'}); 
 %% REACTION: COMPLETE OR INCOMPLETE
 % app.PD.CompleteOrIncomplete = 'complete';
@@ -94,6 +95,7 @@ for i=app.C.l_phi:-1:1 % Evading preallocate struct
 %% DEFINE FUEL
 % app.PD.S_Fuel = {'CH4','C2H6','C3H8'}; app.PD.N_Fuel = [0.85;0.1;0.05]; 
 app.PD.S_Fuel = {'CH4'}; app.PD.N_Fuel = 1;
+% app.PD.S_Fuel = {'RP_1'}; app.PD.N_Fuel = 1;
 % app.PD.S_Fuel = {'C2H2_acetylene'}; app.PD.N_Fuel = 1; 
 % app.PD.S_Fuel = {'C3H8'}; app.PD.N_Fuel = 1;    
 % app.PD.S_Fuel = {'C6H6'}; app.PD.N_Fuel = 1; 

@@ -33,7 +33,8 @@ elseif any(strcmp(ProblemType,{'SV'}))
 elseif any(strcmp(ProblemType,{'SHOCK_I'}))
         app.Misc.config.labelx = 'Incident velocity $u_1$';
         app.Misc.config.labely = 'Temperature $T [K]$';
-        plot_figure(app.PD.u1.value,strP,'u','T',app.Misc.config,app.PD.CompleteOrIncomplete); 
+        plot_figure(app.PD.u1.value,strP,'u','T',app.Misc.config,app.PD.CompleteOrIncomplete);
+        plot_hugoniot(app);
 elseif any(strcmp(ProblemType,{'SHOCK_R'}))
         app.Misc.config.labelx = 'Incident velocity $u_1$';
         app.Misc.config.labely = 'Temperature $T [K]$';

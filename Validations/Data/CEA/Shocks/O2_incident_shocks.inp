@@ -1,0 +1,7 @@
+problem   
+      shock  inc  eq  u1=4375,4924,5541,6236,7017,7897,8886,10000, t,k=300,300,300,300,300,300,300,300, p,atm=1,1,1,1,1,1,1,1,
+react 
+  name=O2 moles=1 t,k=300
+output  
+     trace=1e-16 siunits short
+end

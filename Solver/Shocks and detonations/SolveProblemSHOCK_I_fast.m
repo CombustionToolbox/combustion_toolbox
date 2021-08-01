@@ -57,7 +57,7 @@ while((abs(deltaT) > TN.ERRFT*T) || (abs(deltaV) > TN.ERRFV*V))
     FP = (p*1e5+r*u^2)-(p1*1e5+r1*u1^2);
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     %TEMPERATURE PERTURBATION
-    DT = T*0.02;
+    DT = 0.02*T;
     Tper = T+DT;
     Vper = V;
     rper = 1/Vper;

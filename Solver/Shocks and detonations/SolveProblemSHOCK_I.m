@@ -68,12 +68,11 @@ while((abs(deltaT) > TN.ERRFT*T) || (abs(deltaV) > TN.ERRFV*V))
     FP = (p*1e5+r*u^2)-(p1*1e5+r1*u1^2);
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     %TEMPERATURE PERTURBATION
-    DT = T*0.02;
+    DT = 0.02*T;
     Tper = T+DT;
     Vper = V;
     rper = 1/Vper;
 
-%     stateper;
     strP = state(app, strR, rper, Tper, phi, pP);
     uper = u1*r1/rper;
     hper = strP.h/strP.mi*1e3;
@@ -91,7 +90,6 @@ while((abs(deltaT) > TN.ERRFT*T) || (abs(deltaV) > TN.ERRFV*V))
     Vper = V + DV;
     rper = 1/Vper;
 
-%     stateper;
     strP = state(app, strR, rper, Tper, phi, pP);
     uper = u1*r1/rper;
     hper = strP.h/strP.mi*1e3;
@@ -134,7 +132,6 @@ while((abs(deltaT) > TN.ERRFT*T) || (abs(deltaV) > TN.ERRFV*V))
     V = V + deltaV;
     r = 1/V;
     
-%     state;
     strP = state(app, strR, r, T, phi, pP);
     h = strP.h/strP.mi*1e3;
     p = strP.p;

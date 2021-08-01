@@ -22,14 +22,16 @@
 addpath(genpath(pwd));
 % app = App();
 % app = App('Soot formation');
-% app = App('HC/02/N2 extended');
+app = App('HC/02/N2 extended');
 % app = App('HC/02/N2 rich');
 % app = App('Hydrogen');
 % app = App('Nasa all');
 % app = App('Cbgrb'); 
-app = App('air'); 
+% app = App('air'); 
+% app = App('IDEAL_AIR'); 
 % app = App({'RP_1'});
 % app = App({'Mgbcrb','MgObcrb','NO','NO2','N2O3','N2O','Mg','MgN','MgO','Mg2','N','N3','O','O3'}); 
+% app = App({'O2'});
 %% REACTION: COMPLETE OR INCOMPLETE
 % app.PD.CompleteOrIncomplete = 'complete';
 app.PD.CompleteOrIncomplete = 'incomplete';
@@ -47,8 +49,8 @@ app.PD.solver = 'GIBBS';
 app.PD.TR.value = 300;
 % app.PD.TR.vector.value = 300:50:700;
 app.PD.pR.value = 1.01325;
-app.PD.phi.value = 0.5:0.01:2;
-% app.PD.phi.value = 1;
+% app.PD.phi.value = 0.5:0.01:2;
+app.PD.phi.value = 1;
 %% INITIALIZATION
 app = Initialize(app);
 %% PROBLEM TYPE
@@ -56,7 +58,7 @@ switch app.PD.ProblemType
     case 'TP' % * TP: Equilibrium composition at defined T and p
         app.PD.ProblemType = 'TP';
 %         app.PD.TP.value = [300:10:2000];
-        app.PD.TP.value = 2000;
+%         app.PD.TP.value = 2000;
     case 'HP' % * HP: Adiabatic T and composition at constant p
         app.PD.ProblemType = 'HP';
         % app.PD.pR.value = logspace(0,2,20); app.PD.phi.value = 1*ones(1,length(app.PD.pR.value));
@@ -77,7 +79,11 @@ switch app.PD.ProblemType
         app.PD.vP_vR.value = 0.5:0.01:2; app.PD.phi.value = 1*ones(1,length(app.PD.vP_vR.value));
     case 'SHOCK_I' % * SHOCK_I: CALCULATE PLANAR INCIDENT SHOCK WAVE
         app.PD.ProblemType = 'SHOCK_I';
-        app.PD.u1.value = 400:50:2000; app.PD.phi.value = ones(1,length(app.PD.u1.value));
+%         u1 = logspace(2, 5, 30);
+%         u1 = u1(u1<12000); u1 = u1(u1>=360);
+%         u1 = 45000;
+        u1 = [351,433,534,658,811,1000,1233,1520,1874,2310,2848,3511,4329,5337,6579,8111,10000,12328];
+        app.PD.u1.value = u1; app.PD.phi.value = ones(1,length(app.PD.u1.value));
     case 'SHOCK_R' % * SHOCK_R: CALCULATE PLANAR POST-REFLECTED SHOCK STATE
         app.PD.ProblemType = 'SHOCK_R';
         app.PD.u1.value = 400:50:2000; app.PD.phi.value = ones(1,length(app.PD.u1.value));
@@ -86,7 +92,8 @@ switch app.PD.ProblemType
 %         app.PD.TR_vector.value = app.PD.TR.value;
     case 'DET_OVERDRIVEN' % * DET_OVERDRIVEN: CALCULATE OVERDRIVEN DETONATION
         app.PD.ProblemType = 'DET_OVERDRIVEN';  
-        app.PD.overdriven.value  = 1:0.1:1.5;
+        app.PD.overdriven.value  = 1:1:5;
+%         app.PD.overdriven.value = 2;
 end
 %% CONSTANT
 app.C.l_phi = length(app.PD.phi.value);
@@ -94,7 +101,7 @@ tic
 for i=app.C.l_phi:-1:1 % Evading preallocate struct
 %% DEFINE FUEL
 % app.PD.S_Fuel = {'CH4','C2H6','C3H8'}; app.PD.N_Fuel = [0.85;0.1;0.05]; 
-% app.PD.S_Fuel = {'CH4'}; app.PD.N_Fuel = 1;
+app.PD.S_Fuel = {'CH4'}; app.PD.N_Fuel = 1;
 % app.PD.S_Fuel = {'RP_1'}; app.PD.N_Fuel = 1;
 % app.PD.S_Fuel = {'C2H2_acetylene'}; app.PD.N_Fuel = 1; 
 % app.PD.S_Fuel = {'C3H8'}; app.PD.N_Fuel = 1;    

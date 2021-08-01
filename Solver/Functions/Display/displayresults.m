@@ -21,7 +21,7 @@ if nargin == 5
     fprintf('-----------------------------------------------------------\n');
     fprintf('Problem type: %s  | phi = %4.3f\n',ProblemType,strR.phi);
     fprintf('-----------------------------------------------------------\n');
-    if strcmpi(ProblemType,'SHOCK_I') || strcmpi(ProblemType,'DET')
+    if strcmpi(ProblemType,'SHOCK_I') || contains(ProblemType,'DET')
         fprintf('\t\t\t  |   STATE 1   |      STATE 2\n');
     else
         fprintf('\t\t\t  |   REACTANTS |     PRODUCTS\n');
@@ -34,7 +34,7 @@ if nargin == 5
     fprintf('s [kJ/(kg-K)] |\t %10.3f\t|\t%10.3f\n',strR.S,strP.S);
     fprintf('cp [kJ/(kg-K)]|\t %10.3f\t|\t%10.3f\n',strR.cP/strR.mi*1e-3,strP.cP/strP.mi*1e-3);
     fprintf('gamma [-]     |\t %10.3f\t|\t%10.3f\n',strR.cP/strR.cV,strP.cP/strP.cV);
-    if strcmpi(ProblemType,'SHOCK_I')||strcmpi(ProblemType,'SHOCK_R')||strcmpi(ProblemType,'DET')
+    if strcmpi(ProblemType,'SHOCK_I')||strcmpi(ProblemType,'SHOCK_R')||contains(ProblemType,'DET')
         fprintf('u [m/s]       |\t %10.3f\t|\t%10.3f\n',strR.u,strP.u);
     end
     fprintf('-----------------------------------------------------------\n');

@@ -1,3 +1,3 @@
 # CONTRIBUTORS
-* **Samuel Delbarre** - *Validation and debuging process*
+* **Samuel Delbarre** - *Validation and debuging process - MATLAB version*
 

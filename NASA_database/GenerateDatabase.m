@@ -32,19 +32,13 @@ tic
 %     'Ar','CH4','H2O','H2','H','OH','He','Cbgrb'};
 
 %%% gri30-x.cti except 'CH2(s)' + others
-% SpeciesList = {'H2', 'H', 'O', 'O2', 'OH', 'H2O', 'HO2', 'H2O2', 'C',...
-%     'CH', 'CH2', 'CH3', 'CH4', 'CO', 'CO2', 'HCO',...
-%     'CH2O', 'CH2OH', 'CH3O', 'CH3OH', 'C2H', 'C2H2', 'C2H3', 'C2H4',...
-%     'C2H5', 'C2H6', 'HCCO', 'CH2CO', 'HCCOH', 'N', 'NH', 'NH2', 'NH3',...
-%     'NNH', 'NO', 'NO2', 'N2O', 'HNO', 'CN', 'HCN', 'H2CN', 'HCNN', 'HCNO',...
-%     'NCO', 'N2', 'Ar', 'C3H7', 'C3H8', 'CH2CHO', 'CH3CHO','He'};
 
-SpeciesList = {'H2', 'H', 'O', 'O2', 'OH', 'H2O', 'HO2', 'H2O2', 'C',...
+SpeciesList = {'H2', 'H', 'O', 'O2', 'O3', 'OH', 'H2O', 'HO2', 'H2O2', 'C',...
     'CH', 'CH2', 'CH3', 'CH4', 'CO', 'CO2', 'HCO',...
     'CH2OH', 'CH3O', 'CH3OH', 'C2H', 'C2H4',...
     'C2H5', 'C2H6', 'HCCO', 'N', 'NH', 'NH2', 'NH3',...
-    'NO', 'NO2', 'N2O', 'HNO', 'CN', 'HCN',...
-    'NCO', 'N2', 'Ar', 'C3H8','C2','C2H2_acetylene','C6H6',...
+    'NO', 'NO2', 'NO3', 'N2O', 'N2O3', 'N2O4', 'HNO', 'CN', 'HCN',...
+    'NCO', 'N2', 'N3', 'Ar', 'C3H8','C2','C2H2_acetylene','C6H6',...
     'C8H18_isooctane','C2H5OH','He','Cbgrb'};
 
 %  NASA *: CH4 + 2O2 + 7.52N2
@@ -93,7 +87,12 @@ SpeciesList = {'H2', 'H', 'O', 'O2', 'OH', 'H2O', 'HO2', 'H2O2', 'C',...
 %     'H2','N','NH3','NO','NO2','N2O','N2H4','N2O5','O','O3','He','Ar','CO2','CO','O2','N2','HO2','NH2',...
 %     'H2O2','Cbgrb','HCO','CH4','CH3','HCN','CN','C2','CH','C2H2_acetylene','C6H6'};
 
-SpeciesList = {'RP_1'};
+% SpeciesList = {'RP_1'};
+
+% SpeciesList = {'O2','N2','O','O3','N','NO','NO2','NO3','N2O','N2O3','N2O4','N3'};
+
+% SpeciesList = {'O2','N2','O','O3','N','NO','NO2','NO3','N2O','N2O3','N2O4','N3',...
+%     'C','C2','CO','CO2','CN','Ar','CH4','H2O','H2','H','He','OH','Cbgrb','F','F2'};
 
 fprintf('Generating short NASA database ... ')
 for i = 1:length(SpeciesList)
@@ -129,9 +128,8 @@ for i = 1:length(SpeciesList)
             g0_vector  = [];
             
             Tmin = max(tRange{1}(1),200);
-            Tmax = min(tRange{ctTInt}(2),6000);
-            for T = [linspace(Tmin,298.15,4), linspace(350,Tmax,60)]
-                
+            Tmax = min(tRange{ctTInt}(2),20000);
+            for T = [linspace(Tmin,298.15,10), linspace(350,Tmax,100)]
                 [txFormula, mm, Cp0, Cv0, Hf0, H0, Ef0, E0, S0, DfG0] = SpeciesThermProp(strMaster,SpeciesList{i},T,'molar',0);
                 T_vector   = [  T_vector; T     ];
                 DhT_vector = [DhT_vector; H0-Hf0];
@@ -139,16 +137,35 @@ for i = 1:length(SpeciesList)
                 s0_vector  = [ s0_vector; S0    ];
                 cp_vector  = [ cp_vector; Cp0   ];
                 cv_vector  = [ cv_vector; Cv0   ];
-                g0_vector  = [ g0_vector; DfG0  ];
+%                 g0_vector  = [ g0_vector; DfG0  ];
+                g0_vector  = [ g0_vector; H0 - T*S0 ];
             end
             
             strThProp.(Species).T   =   T_vector;
-            strThProp.(Species).DhT = DhT_vector;
+            strThProp.(Species).DhT = DhT_vector; 
             strThProp.(Species).DeT = DeT_vector;
             strThProp.(Species).s0  =  s0_vector;
             strThProp.(Species).cp  =  cp_vector;
             strThProp.(Species).cv  =  cv_vector;
             strThProp.(Species).g0  =  g0_vector;
+            
+            % INTERPOLATION CURVES
+            strThProp.(Species).cPcurve = griddedInterpolant(strThProp.(Species).T,strThProp.(Species).cp,'pchip','pchip');
+            strThProp.(Species).cVcurve = griddedInterpolant(strThProp.(Species).T,strThProp.(Species).cv,'pchip','pchip');
+            strThProp.(Species).DeTcurve = griddedInterpolant(strThProp.(Species).T,strThProp.(Species).DeT,'pchip','pchip');
+            strThProp.(Species).DhTcurve = griddedInterpolant(strThProp.(Species).T,strThProp.(Species).DhT,'pchip','pchip');
+            strThProp.(Species).s0curve = griddedInterpolant(strThProp.(Species).T,strThProp.(Species).s0,'pchip','pchip');
+            strThProp.(Species).g0curve = griddedInterpolant(strThProp.(Species).T,strThProp.(Species).g0,'pchip','pchip');
+            
+            % DATA COEFFICIENTS NASA 9 POLYNOMIAL
+            strThProp.(Species).ctTInt = strMaster.(Species).ctTInt;
+            strThProp.(Species).tRange = strMaster.(Species).tRange;
+            strThProp.(Species).tExponents = strMaster.(Species).tExponents;
+            strThProp.(Species).ctTInt = strMaster.(Species).ctTInt;
+            strThProp.(Species).a = strMaster.(Species).a;
+            strThProp.(Species).b  = strMaster.(Species).b;
+            
+            strThProp.(Species).Hf0 = strMaster.(Species).Hf0;
         else
             
             Tref = tRange(1);
@@ -169,13 +186,6 @@ for i = 1:length(SpeciesList)
             strThProp.(Species).cv  = [];
             strThProp.(Species).g0  = [];
         end
-        % INTERPOLATION CURVES
-        strThProp.(Species).cPcurve = griddedInterpolant(strThProp.(Species).T,strThProp.(Species).cp,'spline');
-        strThProp.(Species).cVcurve = griddedInterpolant(strThProp.(Species).T,strThProp.(Species).cv,'spline');
-        strThProp.(Species).DeTcurve = griddedInterpolant(strThProp.(Species).T,strThProp.(Species).DeT,'spline');
-        strThProp.(Species).DhTcurve = griddedInterpolant(strThProp.(Species).T,strThProp.(Species).DhT,'spline');
-        strThProp.(Species).s0curve = griddedInterpolant(strThProp.(Species).T,strThProp.(Species).s0,'spline');
-        strThProp.(Species).g0curve = griddedInterpolant(strThProp.(Species).T,strThProp.(Species).g0,'spline');
     else
         fprintf(['\n- Species ''',SpeciesList{i},''' does not exist as a field in strMaster structure ... '])
     end

@@ -1,4 +1,4 @@
-function [strP] = SolveProblemHP(app, strR,phi,pP)
+function [strP] = SolveProblemHP(app, strR, phi, pP)
 % CALCULATE ADIABATIC T AND COMPOSITION AT CONSTANT P (HP)
 %
 % INPUT:
@@ -28,7 +28,7 @@ if app.C.firstrow
         Q  = strP.h - strR.h;
         %           fun = griddedInterpolant([Q_l Q Q_r],[TP_l TP TP_r],'makima');
         %           TP = interp1([Q_l Q_r Q],[TP_l TP_r TP],0);
-        TP = interp1([Q_l Q_r],[TP_l TP_r],0);
+        % TP = interp1([Q_l Q_r],[TP_l TP_r],0);
         %           TP = fun(0);
     elseif isnan(Q_l) && ~isnan(Q_r)
         TP = TP_r-100;
@@ -39,7 +39,7 @@ if app.C.firstrow
         strP = SolveProblemTP_TV(app, strR, phi, pP, TP);
         Q  = strP.h - strR.h;
         %           fun = griddedInterpolant([Q_l Q Q_r],[TP_l TP TP_r],'makima');
-        TP = interp1([Q_l Q_r Q],[TP_l TP_r TP],0);
+        % TP = interp1([Q_l Q_r Q],[TP_l TP_r TP],0);
         %           TP = fun(0);
     end
 end

@@ -12,8 +12,7 @@ REname = [];
 % look for entries in the Reference_form_of_elements_with_T_intervals list
 % that partially match with the desired species and then check each one
 % sucessivelly
-% j = find(~cellfun(@isempty,strfind(Reference_form_of_elements_with_T_intervals,Species)));
-% contains 50% faster!
+
 j = find(contains(Reference_form_of_elements_with_T_intervals,Species));
 for i = 1:length(j)
     % disp(num2str(i))

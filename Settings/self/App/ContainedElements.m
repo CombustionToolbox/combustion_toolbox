@@ -1,6 +1,6 @@
 function self = ContainedElements(self)
-    for k = length(self.S.namespecies):-1:1
-        Species = self.S.namespecies{k};
+    for k = self.S.NS_DB:-1:1
+        Species = self.S.LS_DB{k};
         % Change uppercase 'L' to  lowercase 'l'
         Species(strfind(Species,'AL')+1)='l';
         Species(strfind(Species,'CL')+1)='l';
@@ -19,7 +19,7 @@ function self = ContainedElements(self)
     aux = unique(cat(2,Tmp{:}));
     n_pass = [];
     for n=length(aux):-1:1
-        if any(strcmp(aux(n),self.E.elements)) % Check Element existence
+        if any(strcmp(aux(n), self.E.elements)) % Check Element existence
             n_pass = [n_pass, n];
         end
     end   
@@ -29,6 +29,4 @@ function self = ContainedElements(self)
     self.E.ind_H = find(strcmp(self.E.elements,'H'));
     self.E.ind_O = find(strcmp(self.E.elements,'O'));
     self.E.ind_N = find(strcmp(self.E.elements,'N'));
-    self.E.ind_He = find(strcmp(self.E.elements,'He'));
-    self.E.ind_Ar = find(strcmp(self.E.elements,'Ar'));
 end

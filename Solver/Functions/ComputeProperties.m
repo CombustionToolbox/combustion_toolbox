@@ -1,8 +1,11 @@
-function str =  ComputeProperties(A0,SpeciesMatrix,p,T,ind_C,ind_H)
-R0 = 8.3144598; % [J/(K mol)]. Universal gas constant
-str.NatomE = sum(SpeciesMatrix(:,1).*A0);
-str.x     = str.NatomE(ind_C); % NatomE(find(strcmp(Elements,'C')));
-str.y     = str.NatomE(ind_H); % NatomE(find(strcmp(Elements,'H')));
+function str =  ComputeProperties(self, SpeciesMatrix, p, T)
+
+R0 = self.C.R0; % [J/(K mol)]. Universal gas constant
+str.NatomE = sum(SpeciesMatrix(:,1) .* self.C.A0.value);
+str.x     = str.NatomE(self.E.ind_C);
+str.y     = str.NatomE(self.E.ind_H);
+str.z     = str.NatomE(self.E.ind_O);
+str.w     = str.NatomE(self.E.ind_N);
 
 str.N      = sum(SpeciesMatrix(:,1)); %[mol]
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

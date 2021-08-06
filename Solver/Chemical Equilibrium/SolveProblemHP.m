@@ -11,20 +11,20 @@ function [strP] = SolveProblemHP(app, strR, phi, pP)
 if app.C.firstrow
     TP_l = 800;
     TP_r = 1500;
-    strP = SolveProblemTP_TV(app, strR, phi, pP, TP_l);
+    strP = SolveProblemTP_TV(app, strR, pP, TP_l);
     if isnan(strP.h)
         TP_l = TP_l+100;
-        strP = SolveProblemTP_TV(app, strR, phi, pP, TP_l);
+        strP = SolveProblemTP_TV(app, strR, pP, TP_l);
     end
     Q_l  = strP.h - strR.h;
-    strP = SolveProblemTP_TV(app, strR, phi, pP, TP_r);
+    strP = SolveProblemTP_TV(app, strR, pP, TP_r);
     Q_r  = strP.h - strR.h;
     
     if Q_l*Q_r > 0 || (isnan(Q_l) && isnan(Q_r))
         TP = 2500;
     elseif abs(Q_l)<abs(Q_r) || abs(Q_l)>=abs(Q_r)
         TP = TP_r - (TP_r-TP_l)/(Q_r-Q_l)*Q_r;
-        strP = SolveProblemTP_TV(app, strR, phi, pP, TP);
+        strP = SolveProblemTP_TV(app, strR, pP, TP);
         Q  = strP.h - strR.h;
         %           fun = griddedInterpolant([Q_l Q Q_r],[TP_l TP TP_r],'makima');
         %           TP = interp1([Q_l Q_r Q],[TP_l TP_r TP],0);
@@ -36,7 +36,7 @@ if app.C.firstrow
         TP = TP_l+100;
     else
         TP = TP_r - (TP_r-TP_l)/(Q_r-Q_l)*Q_r;
-        strP = SolveProblemTP_TV(app, strR, phi, pP, TP);
+        strP = SolveProblemTP_TV(app, strR, pP, TP);
         Q  = strP.h - strR.h;
         %           fun = griddedInterpolant([Q_l Q Q_r],[TP_l TP TP_r],'makima');
         % TP = interp1([Q_l Q_r Q],[TP_l TP_r TP],0);
@@ -51,10 +51,10 @@ itMax = 30;
 it = 0;
 while (abs(DeltaT) > 1e-4 || abs(Q) > 1e-4 ) && it<itMax
     it = it+1;
-    strP = SolveProblemTP_TV(app, strR, phi, pP, TP);
+    strP = SolveProblemTP_TV(app, strR, pP, TP);
     Q  = strP.h - strR.h;
     gx = abs(Q-TP);
-    strP_aux = SolveProblemTP_TV(app, strR, phi, pP, gx);
+    strP_aux = SolveProblemTP_TV(app, strR, pP, gx);
     Q_aux  = strP_aux.h - strR.h;
     gx2 = abs(Q_aux-gx);
     if abs(gx2-2*gx+TP) > tol0

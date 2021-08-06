@@ -13,26 +13,8 @@ end
 end
 function strThProp = get_Database(strMaster)
 tic
-% SpeciesList = {'O2', 'N2', 'CO2', 'H2O', 'CO', 'H2', 'C(gr)', ...               % Major products
-%                'O', 'H', 'OH', 'NO', ...                                        % Most abundant minor products
-%                'HCO', 'HO2', 'C2', 'CH', 'CH2', 'CH3', ...                      % Other C-H-O minor products
-%                'N', 'NO2', 'N2O', 'NH3', 'NH2', 'NH', 'HCN', 'CN', ...          % Other C-H-O-N minor products
-%                'Ar', 'He', ...                                                  % Diluents (noble gases)
-%                'CH4', 'C2H6', 'C2H4', 'C2H2,acetylene', 'C3H8', 'C6H6', ...     % Gaseous hydrocarbons
-%                'CH3OH', 'C2H5OH', ...                                           % Gaseous alcohols
-%                'JP-10(L)', 'O2(L)', 'H2O(L)', 'C2H5OH(L)' ...                   % Liquid or cryogenic reactants
-%               };
-%
-
-% SpeciesList = {'O2','N2','CH4','N','CO2','H2O','CO','H2','O',...
-%     'H','OH','NO','NO2','N2O','He','Ar','C3H8','H2O2','C'};
-
-%%% airNASA9ions.cti + others
-% SpeciesList = {'O2','N2','O','N','NO','C','C2','CO','CO2','CN',...
-%     'Ar','CH4','H2O','H2','H','OH','He','Cbgrb'};
 
 %%% gri30-x.cti except 'CH2(s)' + others
-
 SpeciesList = {'H2', 'H', 'O', 'O2', 'O3', 'OH', 'H2O', 'HO2', 'H2O2', 'C',...
     'CH', 'CH2', 'CH3', 'CH4', 'CO', 'CO2', 'HCO',...
     'CH2OH', 'CH3O', 'CH3OH', 'C2H', 'C2H4',...

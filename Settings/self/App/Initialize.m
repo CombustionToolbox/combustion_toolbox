@@ -1,4 +1,6 @@
 function self = Initialize(self)
+    % Check if minors products species are contained in DB
+    [self.strThProp, self.E, self.S, self.M, self.C] = check_database(app.strMaster,app.strThProp,app.E,app.S,app.M,app.C);
     % Add fixed species if solver = segregated
     self = checks_solver(self);
     % List of species that we are going to compute

@@ -15,8 +15,6 @@ function displaysweepresults(app, str, xvar)
 nfrec = 3;
 
 % Get inputs
-str = app.PS.strP;
-xvar = app.PD.phi.value;
 display_species = app.M.display_species;
 NameSpecies = app.S.LS;
 mintol = app.C.mintol_display;
@@ -27,7 +25,7 @@ if length(xvar)>1
     [yvar, all_ind, indlabel] = get_parameters(str, NameSpecies, display_species, mintol);
     plot_line(app, axes, xvar, yvar, all_ind, indlabel, NameSpecies)
     set_limits_axes(app, axes, xvar, yvar, mintol);
-    set_legeds(app, axes, NameSpecies(all_ind));
+    set_legends(app, axes, NameSpecies(all_ind));
 end
 
 end
@@ -81,14 +79,14 @@ function set_limits_axes(app, axes, xvar, yvar, mintol)
     end
 end
 
-function set_legeds(app, axes, legends_name)
+function set_legends(app, axes, legends_name)
     legend(axes, legends_name,'FontSize',app.Misc.config.fontsize-6,'Location','northeastoutside','interpreter','latex');
 end
 
 function [yvar, all_ind, indlabel] = get_parameters(str, NameSpecies, display_species, mintol)
     all_ind = [];
     Nstruct = length(str);
-    yvar = zeros(length(str{1}.Xi),Nstruct);
+    yvar = zeros(length(str.Xi),Nstruct);
     if isempty(display_species)
         for i=Nstruct:-1:1
             yvar(:,i) = str{i}.Xi;

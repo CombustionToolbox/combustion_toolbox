@@ -1,4 +1,4 @@
-function [txFormula, mm, Cp0, Cv0, Hf0, H0, Ef0, E0, S0, DfG0] = SpeciesThermProp(strMaster,Species,T,MassOrMolar,echo)
+function [txFormula, mm, Cp0, Cv0, Hf0, H0, Ef0, E0, S0, DfG0] = SpeciesThermProp(strDB,Species,T,MassOrMolar,echo)
 
 if nargin < 5, echo = 0; end
 
@@ -13,7 +13,7 @@ if nargin < 5, echo = 0; end
 %
 % Sample application
 %
-% >> [txFormula, mm, Cp0, Cv0, Hf0, H0, Ef0, E0, S0] = SpeciesThermProp(strMaster,'CO',1000,'molar')
+% >> [txFormula, mm, Cp0, Cv0, Hf0, H0, Ef0, E0, S0] = SpeciesThermProp(strDB,'CO',1000,'molar')
 % -------------------------------
 % Possible phases of this species
 % - CO
@@ -49,8 +49,6 @@ if name(end)=='+'
     name=[name(1:end-1) 'plus'];
 elseif name(end)=='-'
     name=[name(1:end-1) 'minus'];
-else
-
 end
 ind=regexp(name,'[()]');
 name(ind)='b';
@@ -62,11 +60,11 @@ end
 
 Species = name;
 
-% If the given species does not exist in strMaster, abort the program
-if ~isfield(strMaster,Species)
+% If the given species does not exist in strDB, abort the program
+if ~isfield(strDB, Species)
     if echo==1
         disp( '-------------------------------')
-        disp(['Species ''',Species,''' does not exist as a field in strMaster structure'])
+        disp(['Species ''',Species,''' does not exist as a field in strDB structure'])
         disp('Program aborted!')
         disp('-------------------------------')
     end
@@ -87,11 +85,11 @@ end
 n_open_parenthesis = detect_location_of_phase_specifier(Species_with_parenthesis);
 
 % If it does exist, look for other possible states of aggregation of the 
-% same species in strMaster
+% same species in strDB
 if echo==1    
     % Look for other possible states of aggregation of the same species in
-    % strMaster
-    names = fieldnames(strMaster);
+    % strDB
+    names = fieldnames(strDB);
     any_other_phase = strfind(names,Species(1:n_open_parenthesis-1));
     any_other_phase_index = find(~cellfun(@isempty,any_other_phase));
 
@@ -105,10 +103,10 @@ if echo==1
                 name_other_phase = name_other_phase_with_parenthesis;
                 name_other_phase(name_other_phase(:)=='(') = 'b';
                 name_other_phase(name_other_phase(:)==')') = 'b';
-                if ~iscell(strMaster.(name_other_phase).tRange)
-                    disp(['> ',name_other_phase_with_parenthesis,' [',num2str(strMaster.(name_other_phase).tRange(1)),' K]'])
+                if ~iscell(strDB.(name_other_phase).tRange)
+                    disp(['> ',name_other_phase_with_parenthesis,' [',num2str(strDB.(name_other_phase).tRange(1)),' K]'])
                 else
-                    disp(['> ',name_other_phase_with_parenthesis,' [',num2str(strMaster.(name_other_phase).tRange{1}(1)),' - ',num2str(strMaster.(name_other_phase).tRange{strMaster.(name_other_phase).ctTInt}(2)),' K]'])
+                    disp(['> ',name_other_phase_with_parenthesis,' [',num2str(strDB.(name_other_phase).tRange{1}(1)),' - ',num2str(strDB.(name_other_phase).tRange{strDB.(name_other_phase).ctTInt}(2)),' K]'])
                 end
             end
         end
@@ -118,21 +116,17 @@ end
 
 % If it does exist, read the corresponding field and store it in the
 % following variables
-name         = strMaster.(Species).name;
-FullName     = strMaster.(Species).FullName;
-comments     = strMaster.(Species).comments;
-ctTInt       = strMaster.(Species).ctTInt;
-txRefCode    = strMaster.(Species).txRefCode;
-txFormula    = strMaster.(Species).txFormula;
-swtCondensed = sign(strMaster.(Species).swtCondensed);
-mm           = strMaster.(Species).mm;
-Hf0          = strMaster.(Species).Hf0;
-tRange       = strMaster.(Species).tRange;
-tExponents   = strMaster.(Species).tExponents;
-Hf298Del0    = strMaster.(Species).Hf298Del0;
+
+ctTInt       = strDB.(Species).ctTInt;
+txFormula    = strDB.(Species).txFormula;
+swtCondensed = sign(strDB.(Species).swtCondensed);
+mm           = strDB.(Species).mm;
+Hf0          = strDB.(Species).Hf0;
+tRange       = strDB.(Species).tRange;
+tExponents   = strDB.(Species).tExponents;
 
 % set Elements and Reference_form_of_elements_with_T_intervals lists
-[Elements,NE] = set_elements(); % sets Elements list
+[Elements, NE] = set_elements(); % sets Elements list
 Element_matrix = set_element_matrix(txFormula,Elements); % sets Element_matrix matrix
 set_reference_form_of_elements_with_T_intervals; % sets Reference_form_of_elements_with_T_intervals list
 
@@ -148,13 +142,13 @@ Delta_n_per_mole = sum(Element_matrix(1,:)==[1, 7, 8, 9, 17]')/2 ...
                  + sum(Element_matrix(1,:)==[2, 10, 18, 36, 54, 86]');
 Delta_n = 1 - swtCondensed - dot(Delta_n_per_mole,Element_matrix(2,:));
 
-R0 = 8.3144598;
+R0 = 8.3144598; % [J/(K-mol)]. Universal gas constant
 % Check if there is at least one temperature interval and, in that case,
 % check that the specified temperature is within limits. If it is not, then
 % abort, otherwise keep on running
 if ctTInt > 0
-    a = strMaster.(Species).a;
-    b = strMaster.(Species).b;
+    a = strDB.(Species).a;
+    b = strDB.(Species).b;
 
     Tref = 298.15;
 
@@ -175,6 +169,9 @@ if ctTInt > 0
         if (T >= tRange{i}(1)) && (T <= tRange{i}(2))
             tInterval = i;
         end
+    end
+    if T > tRange{i}(2)
+        tInterval = i;
     end
     
     % Compute the thermochemical data at the specified temperature using
@@ -202,19 +199,7 @@ if ctTInt > 0
         if echo==1
             disp([Species,' is not Ref-Elm.'])
         end
-        GP = H0 - T.*S0;
-        GR = zeros(1,size(Element_matrix,2));
-        for i = 1:size(Element_matrix,2)
-            nu_i = Element_matrix(2,i);
-            [iRE_i, REname_i] = isRefElm(Reference_form_of_elements_with_T_intervals,Elements{Element_matrix(1,i)},T);
-%             [~, REname_i] = isRefElm(Reference_form_of_elements_with_T_intervals,upper(Elements{Element_matrix(1,i)}),T);
-%             [~, ~, ~, ~, ~, H0_i, ~, ~, S0_i, ~] = SpeciesThermProp(strMaster,REname_i,T,'molar',0);
-            [txFormula_i, mm_i, Cp0_i, Cv0_i, Hf0_i, H0_i, Ef0_i, E0_i, S0_i, DfG0_i] = SpeciesThermProp(strMaster,REname_i,T,'molar',0);
-            GR(i) = nu_i*(H0_i - T.*S0_i);
-            if any(Element_matrix(1,i)==[1, 7, 8, 9, 17, 35]), GR(i) = GR(i)/2; end
-        end
-        GR = sum(GR);
-        DfG0 = GP-GR;
+        DfG0 = H0 - T.*S0;
     else
         if echo==1
             disp([REname,' is Ref-Elm.'])
@@ -242,7 +227,6 @@ if ctTInt > 0
 % points instead of 298.15 K
 
 else
-    
     if T ~= tRange(1)
         disp(['T - out of range for ',name_with_parenthesis(Species),' [',num2str(tRange(1)),' K]'])
         Cp0  = [];
@@ -275,5 +259,6 @@ else
         Hf0 = Hf0/(mm/1000);
         Ef0 = Ef0/(mm/1000);
     end
-    
+end
+
 end

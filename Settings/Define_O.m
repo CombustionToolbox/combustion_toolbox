@@ -1,6 +1,6 @@
-function app = Define_O(app)
-if ~isempty(app.PD.S_Oxidizer)
-    app.PD.R_Oxidizer = SetSpecies(app.C.M0.value,app.PD.S_Oxidizer,app.PD.N_Oxidizer,app.PD.TR.value,find_ind(app.PD.S_Oxidizer,app.S.LS), app.strThProp);
+function self = Define_O(self)
+if ~isempty(self.PD.S_Oxidizer)
+    self.PD.R_Oxidizer = SetSpecies(self, self.PD.S_Oxidizer, self.PD.N_Oxidizer, self.PD.TR.value);
 else
-    app.PD.R_Oxidizer = 0;
+    self.PD.R_Oxidizer = 0;
 end

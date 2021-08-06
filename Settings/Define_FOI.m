@@ -1,4 +1,5 @@
-function app = Define_FOI(app, i)
+function self = Define_FOI(self, i)
 % COMPUTE PROPERTIES OF THE REACTIVES FOR THE GIVEN CONDITIONS
-R = app.PD.R_Fuel+app.PD.R_Oxidizer+app.PD.R_Inert;
-app.PS.strR{i} = ComputeProperties(app.C.A0.value,R,app.PD.pR.value,app.PD.TR.value,app.E.ind_C,app.E.ind_H); app.PS.strR{i}.phi = app.PD.phi.value(i);
+R = self.PD.R_Fuel + self.PD.R_Oxidizer + self.PD.R_Inert;
+self.PS.strR{i} = ComputeProperties(self, R, self.PD.pR.value, self.PD.TR.value);
+self.PS.strR{i}.phi = self.PD.phi.value(i);

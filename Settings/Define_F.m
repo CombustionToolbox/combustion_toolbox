@@ -1,16 +1,18 @@
-function app = Define_F(app)
-if ~isempty(app.PD.S_Fuel)
-    app = Check_FOI(app, app.PD.S_Fuel);
-    app.PD.R_Fuel = SetSpecies(app.C.M0.value,app.PD.S_Fuel,app.PD.N_Fuel,app.PD.TR.value,find_ind(app.PD.S_Fuel,app.S.LS), app.strThProp);
-    app.PS.strR_Fuel = ComputeProperties(app.C.A0.value,app.PD.R_Fuel,app.PD.pR.value,app.PD.TR.value,app.E.ind_C,app.E.ind_H);
-    app.PD.Fuel.x = app.PS.strR_Fuel.NatomE(app.E.ind_C); 
-    app.PD.Fuel.y = app.PS.strR_Fuel.NatomE(app.E.ind_H); 
-    app.PD.Fuel.z = app.PS.strR_Fuel.NatomE(app.E.ind_O); app.PS.strR_Fuel.z = app.PD.Fuel.z;
-    app.PD.Fuel.w = app.PS.strR_Fuel.NatomE(app.E.ind_N); app.PS.strR_Fuel.w = app.PD.Fuel.w;
-    app.PD.Fuel.eps = 0;
-    app.PD.phi_t = app.PD.Fuel.x+app.PD.Fuel.y/4-app.PD.Fuel.z/2;
+function self = Define_F(self)
+if ~isempty(self.PD.S_Fuel)
+    self = Check_FOI(self, self.PD.S_Fuel);
+    self.PD.R_Fuel = SetSpecies(self, self.PD.S_Fuel, self.PD.N_Fuel, self.PD.TR.value);
+    self.PS.strR_Fuel = ComputeProperties(self, self.PD.R_Fuel, self.PD.pR.value, self.PD.TR.value);
+    self.PD.Fuel.x = self.PS.strR_Fuel.x;
+    self.PD.Fuel.y = self.PS.strR_Fuel.y;
+    self.PD.Fuel.z = self.PS.strR_Fuel.z;
+    self.PD.Fuel.w = self.PS.strR_Fuel.w;
+    
+    self.PD.phi_t = self.PD.Fuel.x+self.PD.Fuel.y/4-self.PD.Fuel.z/2;
 else
-    app.PD.R_Fuel = 0; app.PD.phi_t = 1; app.PD.Fuel.x = 0; app.PD.Fuel.y = 0;
-    app.PD.Fuel.z = 0; app.PD.Fuel.eps = 1e-1; app.C.FLAG_Fuel = 0;
+    self.PD.R_Fuel = 0; self.PD.phi_t = 1; 
+    self.PD.Fuel.x = 0; self.PD.Fuel.y = 0;
+    self.PD.Fuel.z = 0; self.PD.Fuel.w = 0;
+    self.C.FLAG_Fuel = 0;
 end
 

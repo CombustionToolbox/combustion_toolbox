@@ -1,5 +1,5 @@
 %{ 
-COMBUSTION PYTOOLBOX @v0.0.2
+COMBUSTION TOOLBOX @v0.0.2
 
 Type of problems:
     * TP ------> Equilibrium composition at defined T and p
@@ -21,12 +21,14 @@ Type of problems:
 Last update Fri Aug 6 00:28:00 2021
 ----------------------------------------------------------------------
 %}
+
 addpath(genpath(pwd));
+
 %% INITIALIZE
 % app = App('Soot formation');
 % app = App('HC/02/N2 extended');
-% app = App('HC/02/N2 rich');
-app = App('Ideal_air');
+app = App('HC/02/N2 rich');
+% app = App('Ideal_air');
 %% PROBLEM CONDITIONS
 app.PD.TR.value = 300;
 app.PD.pR.value = 1.01325;
@@ -78,15 +80,14 @@ app.C.l_phi = length(app.PD.phi.value);
 tic
 for i=app.C.l_phi:-1:1 % Evading preallocate struct
 %% DEFINE FUEL
-% app.PD.S_Fuel = {'CH4'}; app.PD.N_Fuel = 1;
-app.PD.S_Fuel = {'N2'}; app.PD.N_Fuel = 1;
+app.PD.S_Fuel = {'CH4'}; app.PD.N_Fuel = 1;
 app = Define_F(app);
 %% DEFINE OXIDIZER
-% app.PD.S_Oxidizer = {'O2'}; app.PD.N_Oxidizer = app.PD.phi_t/app.PD.phi.value(i);
+app.PD.S_Oxidizer = {'O2'}; app.PD.N_Oxidizer = app.PD.phi_t/app.PD.phi.value(i);
 app = Define_O(app);
 %% DEFINE DILUENTS/INERTS
 app.PD.proportion_N2_O2 = 79/21;
-% app.PD.S_Inert = {'N2'}; app.PD.N_Inert = app.PD.phi_t/app.PD.phi.value(i) * app.PD.proportion_N2_O2;
+app.PD.S_Inert = {'N2'}; app.PD.N_Inert = app.PD.phi_t/app.PD.phi.value(i) * app.PD.proportion_N2_O2;
 app = Define_I(app);
 %% COMPUTE PROPERTIES
 app = Define_FOI(app, i);

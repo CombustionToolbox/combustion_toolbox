@@ -1,16 +1,13 @@
-function [strThProp,E,S,M,C] = check_database(varargin)
-%%%% CHECK LIST OF MINOR SPECIES
-% Checks if any specie of the app.M.minor_products considered are not included
-% in the selected database strThProp. In case some is missing compute it.
-% IF THE MINOR-SPECIE IS NOT DECLARE AS REACTANT THE THEORY WILL FAIL!!
-if nargin == 6
-    strMaster = varargin{1}; strThProp = varargin{2};
-    E = varargin{3}; S = varargin{4}; M = varargin{5};
-    C = varargin{6};
-    M.Lminors = length(M.minors_products);
+function [strThProp,E,S,C] = check_database(varargin)
+%% CHECK THAT SPECIES ARE IN DB 
+
+if nargin == 3
+    self = varargin{1}; strMaster = varargin{2}; strThProp = varargin{3};
+    E = self.E; S = self.S; C = self.C;
+
     n_pass = [];
-    for n = 1:M.Lminors
-        if ~any(strcmp(S.namespecies,M.minors_products{n}))
+    for n = 1:S.NS
+        if ~any(strcmp(S.LS_DB, S.LS{n}))
             n_pass = [n_pass, n];
         end
     end
@@ -18,9 +15,9 @@ if nargin == 6
         [E.elements,E.NE] = set_elements(); % sets E.elements list
         l_n_pass = length(n_pass);
         for i=1:l_n_pass
-            Species = FullName2name(M.minors_products{n_pass(i)});
+            Species = FullName2name(S.LS{n_pass(i)});
             
-            if isfield(strMaster,Species)
+            if isfield(strMaster, Species)
                 % disp(SpeciesList{n_pass(i)})
                 ctTInt = strMaster.(Species).ctTInt;
                 tRange = strMaster.(Species).tRange;
@@ -28,10 +25,10 @@ if nargin == 6
                 
                 if ctTInt > 0
                     
-                    [txFormula, mm, Cp0, Cv0, Hf0, H0, Ef0, E0, S0, DfG0] = SpeciesThermProp(strMaster,M.minors_products{n_pass(i)},298.15,'molar',0);
+                    [txFormula, mm, Cp0, Cv0, Hf0, H0, Ef0, E0, S0, DfG0] = SpeciesThermProp(strMaster,S.LS{n_pass(i)},298.15,'molar',0);
                     
                     strThProp.(Species).name = Species;
-                    strThProp.(Species).FullName = M.minors_products{n_pass(i)};
+                    strThProp.(Species).FullName = S.LS{n_pass(i)};
                     strThProp.(Species).txFormula = txFormula;
                     strThProp.(Species).mm = mm;
                     strThProp.(Species).hf = Hf0;
@@ -47,7 +44,7 @@ if nargin == 6
                     g0_vector  = [];
                     
                     Tmin = max(tRange{1}(1),200);
-                    Tmax = min(tRange{ctTInt}(2),6000);
+                    Tmax = min(tRange{ctTInt}(2), 20000);
                     for T = [linspace(Tmin,298.15,4), linspace(350,Tmax,60)]
                         
                         [txFormula, mm, Cp0, Cv0, Hf0, H0, Ef0, E0, S0, DfG0] = SpeciesThermProp(strMaster,M.minors_products{n_pass(i)},T,'molar',0);
@@ -100,10 +97,10 @@ if nargin == 6
         end
         
         % CONTAINED ELEMENTS
-        S.namespecies = fieldnames(strThProp); % In case any of the minor products didnt exist in strMaster
-        S.NSpecies = numel(S.namespecies);
-        for k = length(S.namespecies):-1:1
-            Species = S.namespecies{k};
+        S.LS_DB = fieldnames(strThProp); % In case any of the minor products didnt exist in strMaster
+        S.NS_DB = numel(S.LS_DB);
+        for k = S.NS_DB:-1:1
+            Species = S.LS_DB{k};
             % Change uppercase 'L' to  lowercase 'l'
             Species(strfind(Species,'AL')+1)='l';
             Species(strfind(Species,'CL')+1)='l';
@@ -137,21 +134,20 @@ if nargin == 6
         E.ind_Ar = find(strcmp(E.elements,'Ar'));
         % Element_matrix
         for i=S.NSpecies:-1:l_n_pass
-            txFormula = strThProp.(S.namespecies{i,1}).txFormula;
-            strThProp.(S.namespecies{i,1}).Element_matrix = set_element_matrix(txFormula,E.elements);
-            C.M0.Value(i,10) = strThProp.(S.namespecies{i,1}).swtCondensed;
+            txFormula = strThProp.(S.LS_DB{i,1}).txFormula;
+            strThProp.(S.LS_DB{i,1}).Element_matrix = set_element_matrix(txFormula,E.elements);
+            C.M0.Value(i,10) = strThProp.(S.LS_DB{i,1}).swtCondensed;
         end
     end
     %%%% CHECK SPECIFIC LIST OF SPECIES
-elseif nargin == 7
-    strMaster = varargin{1}; strThProp = varargin{2};
-    E = varargin{3}; S = varargin{4}; M = varargin{5};
-    C = varargin{6}; L_Species = varargin{7};
+elseif nargin == 4
+    self = varargin{1}; strMaster = varargin{2}; strThProp = varargin{3};
+    E = self.E; S = self.S; C = self.C; LS_check = varargin{4};
     
-    Lminors = length(L_Species);
+    Lminors = length(LS_check);
     n_pass = [];
     for n = 1:Lminors
-        if ~any(strcmp(S.namespecies,L_Species{n}))
+        if ~any(strcmp(S.LS_DB, LS_check{n}))
             n_pass = [n_pass, n];
         end
     end
@@ -159,7 +155,7 @@ elseif nargin == 7
         [E.elements,E.NE] = set_elements(); % sets E.elements list
         l_n_pass = length(n_pass);
         for i=1:l_n_pass
-            Species = FullName2name(L_Species{n_pass(i)});
+            Species = FullName2name(LS_check{n_pass(i)});
             
             if isfield(strMaster,Species)
                 % disp(SpeciesList{n_pass(i)})
@@ -169,10 +165,10 @@ elseif nargin == 7
                 
                 if ctTInt > 0
                     
-                    [txFormula, mm, Cp0, Cv0, Hf0, H0, Ef0, E0, S0, DfG0] = SpeciesThermProp(strMaster,L_Species{n_pass(i)},298.15,'molar',0);
+                    [txFormula, mm, Cp0, Cv0, Hf0, H0, Ef0, E0, S0, DfG0] = SpeciesThermProp(strMaster,LS_check{n_pass(i)},298.15,'molar',0);
                     
                     strThProp.(Species).name = Species;
-                    strThProp.(Species).FullName = L_Species{n_pass(i)};
+                    strThProp.(Species).FullName = LS_check{n_pass(i)};
                     strThProp.(Species).txFormula = txFormula;
                     strThProp.(Species).mm = mm;
                     strThProp.(Species).hf = Hf0;
@@ -188,10 +184,10 @@ elseif nargin == 7
                     g0_vector  = [];
                     
                     Tmin = max(tRange{1}(1),200);
-                    Tmax = min(tRange{ctTInt}(2),6000);
+                    Tmax = min(tRange{ctTInt}(2), 20000);
                     for T = [linspace(Tmin,298.15,4), linspace(350,Tmax,60)]
                         
-                        [txFormula, mm, Cp0, Cv0, Hf0, H0, Ef0, E0, S0, DfG0] = SpeciesThermProp(strMaster,L_Species{n_pass(i)},T,'molar',0);
+                        [txFormula, mm, Cp0, Cv0, Hf0, H0, Ef0, E0, S0, DfG0] = SpeciesThermProp(strMaster,LS_check{n_pass(i)},T,'molar',0);
                         T_vector   = [  T_vector; T     ];
                         DhT_vector = [DhT_vector; H0-Hf0];
                         DeT_vector = [DeT_vector; E0-Ef0];
@@ -212,10 +208,10 @@ elseif nargin == 7
                     
                     Tref = tRange(1);
                     
-                    [txFormula, mm, Cp0, Cv0, Hf0, H0, Ef0, E0, S0, DfG0] = SpeciesThermProp(strMaster,L_Species{n_pass(i)},Tref,'molar',0);
+                    [txFormula, mm, Cp0, Cv0, Hf0, H0, Ef0, E0, S0, DfG0] = SpeciesThermProp(strMaster,LS_check{n_pass(i)},Tref,'molar',0);
                     
                     strThProp.(Species).name = Species;
-                    strThProp.(Species).FullName = L_Species{n_pass(i)};
+                    strThProp.(Species).FullName = LS_check{n_pass(i)};
                     strThProp.(Species).txFormula = txFormula;
                     strThProp.(Species).mm  = mm;
                     strThProp.(Species).hf  = Hf0;
@@ -241,10 +237,10 @@ elseif nargin == 7
         end
         
         % CONTAINED ELEMENTS
-        S.namespecies = fieldnames(strThProp); % In case any of the minor products didnt exist in strMaster
-        S.NSpecies = numel(S.namespecies);
-        for k = length(S.namespecies):-1:1
-            Species = S.namespecies{k};
+        S.LS_DB = fieldnames(strThProp); % In case any of the minor products didnt exist in strMaster
+        S.NSpecies = numel(S.LS_DB);
+        for k = length(S.LS_DB):-1:1
+            Species = S.LS_DB{k};
             % Change uppercase 'L' to  lowercase 'l'
             Species(strfind(Species,'AL')+1)='l';
             Species(strfind(Species,'CL')+1)='l';
@@ -278,9 +274,9 @@ elseif nargin == 7
         E.ind_Ar = find(strcmp(E.elements,'Ar'));
         % Element_matrix
         for i=S.NSpecies:-1:l_n_pass
-            txFormula = strThProp.(S.namespecies{i,1}).txFormula;
-            strThProp.(S.namespecies{i,1}).Element_matrix = set_element_matrix(txFormula,E.elements);
-            C.M0.Value(i,10) = strThProp.(S.namespecies{i,1}).swtCondensed;
+            txFormula = strThProp.(S.LS_DB{i,1}).txFormula;
+            strThProp.(S.LS_DB{i,1}).Element_matrix = set_element_matrix(txFormula,E.elements);
+            C.M0.Value(i,10) = strThProp.(S.LS_DB{i,1}).swtCondensed;
         end
     end
 end

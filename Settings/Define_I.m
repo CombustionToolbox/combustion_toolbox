@@ -1,9 +1,9 @@
-function app = Define_I(app)
-if ~isempty(app.PD.S_Inert)
-    app.PD.R_Inert = SetSpecies(app.C.M0.value,app.PD.S_Inert,app.PD.N_Inert,app.PD.TR.value,find_ind(app.PD.S_Inert,app.S.LS), app.strThProp);
+function self = Define_I(self)
+if ~isempty(self.PD.S_Inert)
+    self.PD.R_Inert = SetSpecies(self, self.PD.S_Inert, self.PD.N_Inert, self.PD.TR.value);
 else
-    app.PD.R_Inert = 0; % case without inert gases
+    self.PD.R_Inert = 0; % case without inert gases
 end
-if ~isempty(app.PD.S_Oxidizer) || ~isempty(app.PD.S_Inert)
-    app.PS.strR_Oxidizer = ComputeProperties(app.C.A0.value,app.PD.R_Oxidizer+app.PD.R_Inert,app.PD.pR.value,app.PD.TR.value,app.E.ind_C,app.E.ind_H);
+if ~isempty(self.PD.S_Oxidizer) || ~isempty(self.PD.S_Inert)
+    self.PS.strR_Oxidizer = ComputeProperties(self, self.PD.R_Oxidizer + self.PD.R_Inert, self.PD.pR.value, self.PD.TR.value);
 end

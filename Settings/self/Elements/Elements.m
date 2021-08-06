@@ -6,6 +6,4 @@ function self = Elements()
    self.ind_H = [];
    self.ind_O = [];
    self.ind_N = [];
-   self.ind_He = [];
-   self.ind_Ar = [];
 end

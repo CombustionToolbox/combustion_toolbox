@@ -1,7 +1,7 @@
 function self = Species()
     self.description = "Data of the chemical species";
-    self.namespecies = []; % List species Database
-    self.Nspecies = []; % Number species Database
+    self.LS_DB = []; % List species Database
+    self.NS_DB = []; % Number species Database
     self.NG = []; % Number gaseous species
     self.NS = []; % Number species
     self.LS = []; % List of species

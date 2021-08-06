@@ -14,9 +14,5 @@ function self = Constants()
     self.tolN = 1e-14;  % Tolerance of the segregated numerical method
     self.tolPhiSoot = 1e-6;  % Tolerance of the soot formation equivalence ratio numerical method
     self.filename = 'output';
-    self.alpha = [];
-    self.beta = [];
-    self.gamma = [];
-    self.omega = [];
     self.l_phi = []; % length phi vector
 end

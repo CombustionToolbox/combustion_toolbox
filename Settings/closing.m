@@ -47,3 +47,6 @@ elseif numel(phi)>1 && all(phi(2:end) == phi(1))
     app.Misc.config.labely = 'Temperature $T [K]$';
     plot_figure(strP,strP,'phi_c','T',app.Misc.config,app.PD.CompleteOrIncomplete);
 end
+
+%% EXCEL I/O
+ExportExcel(app);

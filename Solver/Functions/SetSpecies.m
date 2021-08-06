@@ -3,11 +3,10 @@ function M = SetSpecies(self, Species, N, T)
 %   function M = SetSpecies_new(A0,N,T)
 %   DESCRIPTION: Create the stoichiometric matrix
 %   INPUT:
-%       A0 = unity stoichiometric matrix
-%       Species  = species contained in the system 
-%       N  = number of moles of each specie  
-%       T  = Temperature of the specie       
-%       id = index of the species            
+%       self    = contains necessary data
+%       Species = species contained in the system 
+%       N       = number of moles of each species
+%       T       = Temperature of the species  
 %   OUTPUT:
 %       M = properties matrix           
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

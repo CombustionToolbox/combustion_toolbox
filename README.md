@@ -1,4 +1,4 @@
-# Combustion Toolbox
+# Combustion Toolbox ![visitors](https://visitor-badge.glitch.me/badge?page_id=https://github.com/AlbertoCuadra/combustion_toolbox/)   ![repo size](https://img.shields.io/github/repo-size/AlbertoCuadra/combustion_toolbox) ![last modified](https://img.shields.io/github/last-commit/AlbertoCuadra/combustion_toolbox)
 A MATLAB-GUI based open-source tool for solving combustion problems.
 
 Website: https://combustiontoolbox.netlify.app/

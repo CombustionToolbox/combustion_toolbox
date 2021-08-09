@@ -128,7 +128,7 @@ for i = 1:length(SpeciesList)
             g0_vector  = [];
             
             Tmin = max(tRange{1}(1),200);
-            Tmax = min(tRange{ctTInt}(2),20000);
+            Tmax = min(tRange{ctTInt}(2),6000);
             for T = [linspace(Tmin,298.15,10), linspace(350,Tmax,100)]
                 [txFormula, mm, Cp0, Cv0, Hf0, H0, Ef0, E0, S0, DfG0] = SpeciesThermProp(strMaster,SpeciesList{i},T,'molar',0);
                 T_vector   = [  T_vector; T     ];

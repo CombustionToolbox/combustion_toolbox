@@ -40,5 +40,5 @@ for n = length(N):-1:1
         pVi = 0;
     end
     ind = find_ind(Species(n), self.S.LS);
-    M(ind,:) = [N(n), N(n)*[hfi, DhTi, efi, DeTi, cPi, cVi, s0i], pVi, swtCondensed, mi, mmi];
+    M(ind, :) = [N(n), N(n)*[hfi, DhTi, efi, DeTi, cPi, cVi, s0i], pVi, swtCondensed, mi, mmi];
 end

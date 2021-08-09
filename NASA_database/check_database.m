@@ -47,7 +47,7 @@ if nargin == 3
                     Tmax = min(tRange{ctTInt}(2), 20000);
                     for T = [linspace(Tmin,298.15,4), linspace(350,Tmax,60)]
                         
-                        [txFormula, mm, Cp0, Cv0, Hf0, H0, Ef0, E0, S0, DfG0] = SpeciesThermProp(strMaster,M.minors_products{n_pass(i)},T,'molar',0);
+                        [txFormula, mm, Cp0, Cv0, Hf0, H0, Ef0, E0, S0, DfG0] = SpeciesThermProp(strMaster,S.LS{n_pass(i)},T,'molar',0);
                         T_vector   = [  T_vector; T     ];
                         DhT_vector = [DhT_vector; H0-Hf0];
                         DeT_vector = [DeT_vector; E0-Ef0];
@@ -68,10 +68,10 @@ if nargin == 3
                     
                     Tref = tRange(1);
                     
-                    [txFormula, mm, Cp0, Cv0, Hf0, H0, Ef0, E0, S0, DfG0] = SpeciesThermProp(strMaster,M.minors_products{n_pass(i)},Tref,'molar',0);
+                    [txFormula, mm, Cp0, Cv0, Hf0, H0, Ef0, E0, S0, DfG0] = SpeciesThermProp(strMaster,S.LS{n_pass(i)},Tref,'molar',0);
                     
                     strThProp.(Species).name = Species;
-                    strThProp.(Species).FullName = M.minors_products{n_pass(i)};
+                    strThProp.(Species).FullName = S.LS{n_pass(i)};
                     strThProp.(Species).txFormula = txFormula;
                     strThProp.(Species).mm  = mm;
                     strThProp.(Species).hf  = Hf0;
@@ -92,7 +92,7 @@ if nargin == 3
                 strThProp.(Species).s0curve = griddedInterpolant(strThProp.(Species).T,strThProp.(Species).s0);
                 strThProp.(Species).g0curve = griddedInterpolant(strThProp.(Species).T,strThProp.(Species).g0);
             else
-                fprintf(['\n- Species ''',M.minors_products{n_pass(i)},''' does not exist as a field in strMaster structure ... '])
+                fprintf(['\n- Species ''',S.LS{n_pass(i)},''' does not exist as a field in strMaster structure ... '])
             end
         end
         
@@ -133,7 +133,7 @@ if nargin == 3
         E.ind_He = find(strcmp(E.elements,'He'));
         E.ind_Ar = find(strcmp(E.elements,'Ar'));
         % Element_matrix
-        for i=S.NSpecies:-1:l_n_pass
+        for i=S.NS:-1:l_n_pass
             txFormula = strThProp.(S.LS_DB{i,1}).txFormula;
             strThProp.(S.LS_DB{i,1}).Element_matrix = set_element_matrix(txFormula,E.elements);
             C.M0.Value(i,10) = strThProp.(S.LS_DB{i,1}).swtCondensed;
@@ -232,13 +232,13 @@ elseif nargin == 4
                 strThProp.(Species).s0curve = griddedInterpolant(strThProp.(Species).T,strThProp.(Species).s0);
                 strThProp.(Species).g0curve = griddedInterpolant(strThProp.(Species).T,strThProp.(Species).g0);
             else
-                fprintf(['\n- Species ''',M.minors_products{n_pass(i)},''' does not exist as a field in strMaster structure ... '])
+                fprintf(['\n- Species ''',S.LS{n_pass(i)},''' does not exist as a field in strMaster structure ... '])
             end
         end
         
         % CONTAINED ELEMENTS
         S.LS_DB = fieldnames(strThProp); % In case any of the minor products didnt exist in strMaster
-        S.NSpecies = numel(S.LS_DB);
+        S.NS = numel(S.LS_DB);
         for k = length(S.LS_DB):-1:1
             Species = S.LS_DB{k};
             % Change uppercase 'L' to  lowercase 'l'
@@ -273,7 +273,7 @@ elseif nargin == 4
         E.ind_He = find(strcmp(E.elements,'He'));
         E.ind_Ar = find(strcmp(E.elements,'Ar'));
         % Element_matrix
-        for i=S.NSpecies:-1:l_n_pass
+        for i=S.NS:-1:l_n_pass
             txFormula = strThProp.(S.LS_DB{i,1}).txFormula;
             strThProp.(S.LS_DB{i,1}).Element_matrix = set_element_matrix(txFormula,E.elements);
             C.M0.Value(i,10) = strThProp.(S.LS_DB{i,1}).swtCondensed;

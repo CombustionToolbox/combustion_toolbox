@@ -21,9 +21,9 @@
 %% INITIALIZATION
 addpath(genpath(pwd));
 % app = App();
-% app = App('Soot formation');
+app = App('Soot formation');
 % app = App('HC/02/N2 extended');
-app = App('HC/02/N2 rich');
+% app = App('HC/02/N2 rich');
 % app = App('Hydrogen');
 % app = App('Nasa all');
 % app = App('Cbgrb'); 

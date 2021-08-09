@@ -4,7 +4,7 @@ function [N0, STOP] = equilibrium(app, pP, TP, strR)
 % Abbreviations ---------------------
 S = app.S;
 C = app.C;
-TN = app.TN; 
+TN = app.TN;
 % -----------------------------------
 
 N0 = C.N0.value;

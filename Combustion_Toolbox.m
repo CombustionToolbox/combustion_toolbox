@@ -58,7 +58,7 @@ switch app.PD.ProblemType
     case 'TP' % * TP: Equilibrium composition at defined T and p
         app.PD.ProblemType = 'TP';
 %         app.PD.TP.value = [300:10:2000];
-%         app.PD.TP.value = 2000;
+        app.PD.TP.value = 2000;
     case 'HP' % * HP: Adiabatic T and composition at constant p
         app.PD.ProblemType = 'HP';
         % app.PD.pR.value = logspace(0,2,20); app.PD.phi.value = 1*ones(1,length(app.PD.pR.value));

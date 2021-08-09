@@ -170,9 +170,7 @@ if ctTInt > 0
             tInterval = i;
         end
     end
-    if T > tRange{i}(2)
-        tInterval = i;
-    end
+
     
     % Compute the thermochemical data at the specified temperature using
     % the polynomial coefficients in the selected temperature interval. All

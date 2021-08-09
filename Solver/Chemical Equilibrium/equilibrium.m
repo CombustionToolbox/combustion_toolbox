@@ -70,7 +70,7 @@ end
 function g0 = set_g0(ls, TP, strThProp)
     for i=length(ls):-1:1
         species = ls{i};
-        g0(i, 1) = species_g0(species, TP, strThProp)* 1e3;
+        g0(i, 1) = species_g0(species, TP, strThProp) * 1e3;
     end
 end
 

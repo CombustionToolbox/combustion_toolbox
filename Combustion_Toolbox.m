@@ -19,25 +19,26 @@ Type of problems:
          Universidad Carlos III de Madrid
                   
 Last update Fri Aug 6 00:28:00 2021
-----------------------------------------------------------------------
+---------------------------------------------------------------------- 
 %}
 
 addpath(genpath(pwd));
 
 %% INITIALIZE
-% app = App('Soot formation');
+app = App('Soot formation');
 % app = App('HC/02/N2 extended');
-app = App('HC/02/N2 rich');
+% app = App('HC/02/N2 rich');
 % app = App('Ideal_air');
 %% PROBLEM CONDITIONS
 app.PD.TR.value = 300;
 app.PD.pR.value = 1.01325;
-% app.PD.phi.value = 0.5:0.01:5;
-app.PD.phi.value = 1;
+app.PD.phi.value = 0.5:0.01:5;
+% app.PD.phi.value = 1;
 %% PROBLEM TYPE
 switch app.PD.ProblemType
     case 'TP' % * TP: Equilibrium composition at defined T and p
         app.PD.ProblemType = 'TP';
+        app.PD.pP.value = app.PD.pR.value;
 %         app.PD.TP.value = [300:10:2000];
         app.PD.TP.value = 2000;
     case 'HP' % * HP: Adiabatic T and composition at constant p
@@ -78,7 +79,7 @@ end
 %% CONSTANT
 app.C.l_phi = length(app.PD.phi.value);
 tic
-for i=app.C.l_phi:-1:1 % Evading preallocate struct
+for i=app.C.l_phi:-1:1
 %% DEFINE FUEL
 app.PD.S_Fuel = {'CH4'}; app.PD.N_Fuel = 1;
 app = Define_F(app);
@@ -97,6 +98,6 @@ app = SolveProblem(app, i);
 results(app, i);
 end
 %% DISPLAY RESULTS (PLOTS)
-app.M.display_species = {};
-% app.M.display_species = {'CO','CO2','H','HO2','H2','H2O','NO','NO2','N2','O','OH','O2','Cbgrb'};
+app.Misc.display_species = {};
+% app.Misc.display_species = {'CO','CO2','H','HO2','H2','H2O','NO','NO2','N2','O','OH','O2','Cbgrb'};
 closing(app);

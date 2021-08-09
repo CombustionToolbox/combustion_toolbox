@@ -12,7 +12,6 @@ else
 end
 end
 function strThProp = get_Database(strMaster)
-tic
 
 %%% gri30-x.cti except 'CH2(s)' + others
 SpeciesList = {'H2', 'H', 'O', 'O2', 'O3', 'OH', 'H2O', 'HO2', 'H2O2', 'C',...
@@ -116,11 +115,10 @@ for i = 1:length(SpeciesList)
                 T_vector   = [  T_vector; T     ];
                 DhT_vector = [DhT_vector; H0-Hf0];
                 DeT_vector = [DeT_vector; E0-Ef0];
-                s0_vector  = [ s0_vector; S0    ];
-                cp_vector  = [ cp_vector; Cp0   ];
-                cv_vector  = [ cv_vector; Cv0   ];
-%                 g0_vector  = [ g0_vector; DfG0  ];
-                g0_vector  = [ g0_vector; H0 - T*S0 ];
+                s0_vector  = [s0_vector; S0    ];
+                cp_vector  = [cp_vector; Cp0   ];
+                cv_vector  = [cv_vector; Cv0   ];
+                g0_vector  = [g0_vector; H0 - T*S0];
             end
             
             strThProp.(Species).T   =   T_vector;
@@ -132,12 +130,12 @@ for i = 1:length(SpeciesList)
             strThProp.(Species).g0  =  g0_vector;
             
             % INTERPOLATION CURVES
-            strThProp.(Species).cPcurve = griddedInterpolant(strThProp.(Species).T,strThProp.(Species).cp,'pchip','pchip');
-            strThProp.(Species).cVcurve = griddedInterpolant(strThProp.(Species).T,strThProp.(Species).cv,'pchip','pchip');
-            strThProp.(Species).DeTcurve = griddedInterpolant(strThProp.(Species).T,strThProp.(Species).DeT,'pchip','pchip');
-            strThProp.(Species).DhTcurve = griddedInterpolant(strThProp.(Species).T,strThProp.(Species).DhT,'pchip','pchip');
-            strThProp.(Species).s0curve = griddedInterpolant(strThProp.(Species).T,strThProp.(Species).s0,'pchip','pchip');
-            strThProp.(Species).g0curve = griddedInterpolant(strThProp.(Species).T,strThProp.(Species).g0,'pchip','pchip');
+            strThProp.(Species).cPcurve = griddedInterpolant(strThProp.(Species).T,strThProp.(Species).cp, 'pchip', 'pchip');
+            strThProp.(Species).cVcurve = griddedInterpolant(strThProp.(Species).T,strThProp.(Species).cv, 'pchip', 'pchip');
+            strThProp.(Species).DeTcurve = griddedInterpolant(strThProp.(Species).T,strThProp.(Species).DeT, 'pchip', 'pchip');
+            strThProp.(Species).DhTcurve = griddedInterpolant(strThProp.(Species).T,strThProp.(Species).DhT, 'pchip', 'pchip');
+            strThProp.(Species).s0curve = griddedInterpolant(strThProp.(Species).T,strThProp.(Species).s0, 'pchip', 'pchip');
+            strThProp.(Species).g0curve = griddedInterpolant(strThProp.(Species).T,strThProp.(Species).g0, 'pchip', 'pchip');
             
             % DATA COEFFICIENTS NASA 9 POLYNOMIAL
             strThProp.(Species).ctTInt = strMaster.(Species).ctTInt;
@@ -146,8 +144,6 @@ for i = 1:length(SpeciesList)
             strThProp.(Species).ctTInt = strMaster.(Species).ctTInt;
             strThProp.(Species).a = strMaster.(Species).a;
             strThProp.(Species).b  = strMaster.(Species).b;
-            
-            strThProp.(Species).Hf0 = strMaster.(Species).Hf0;
         else
             
             Tref = tRange(1);
@@ -169,9 +165,8 @@ for i = 1:length(SpeciesList)
             strThProp.(Species).g0  = [];
         end
     else
-        fprintf(['\n- Species ''',SpeciesList{i},''' does not exist as a field in strMaster structure ... '])
+        fprintf(['\n- Species ''', SpeciesList{i}, ''' does not exist as a field in strMaster structure ... '])
     end
     
 end
-toc
 end

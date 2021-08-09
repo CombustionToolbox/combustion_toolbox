@@ -10,8 +10,6 @@ function self = Constants()
     self.MassorMolar = 'mass';
     self.firstrow = true;
     self.mintol_display = 1e-14;
-    self.mintol = 1e-5;
-    self.tolN = 1e-14;  % Tolerance of the segregated numerical method
     self.filename = 'output';
     self.l_phi = []; % length phi vector
 end

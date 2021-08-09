@@ -4,6 +4,7 @@ function [N0, STOP] = Equilibrium(app, pP, TP, strR)
 % Abbreviations ---------------------
 S = app.S;
 C = app.C;
+TN = app.TN;
 % -----------------------------------
 
 N0 = C.N0.value;
@@ -18,16 +19,16 @@ NP = NP_0;
 it = 0;
 % itMax = 500;
 itMax = 50 + round(S.NS/2);
-SIZE = -log(C.tolN);
+SIZE = -log(TN.tolN);
 STOP = 1.;
 
 % Find indeces of the species/elements that we have to remove from the stoichiometric matrix A0
 % for the sum of elements whose value is <= tolN
-ind_A0_E0 = remove_elements(NatomE, A0, C.tolN);
+ind_A0_E0 = remove_elements(NatomE, A0, TN.tolN);
 % List of indices with nonzero values
-[temp_ind_nswt, temp_ind_swt, temp_ind_E, temp_NE] = temp_values(S, NatomE, C.tolN);
+[temp_ind_nswt, temp_ind_swt, temp_ind_E, temp_NE] = temp_values(S, NatomE, TN.tolN);
 % Update temp values
-[temp_ind, temp_ind_swt, temp_ind_nswt, temp_NS] = update_temp(N0, N0(ind_A0_E0, 1), ind_A0_E0, temp_ind_swt, temp_ind_nswt, C.tolN, SIZE);
+[temp_ind, temp_ind_swt, temp_ind_nswt, temp_NS] = update_temp(N0, N0(ind_A0_E0, 1), ind_A0_E0, temp_ind_swt, temp_ind_nswt, TN.tolN, SIZE);
 temp_NS0 = temp_NS + 1;
 % Initialize species vector N0 
 N0(temp_ind, 1) = 0.1/temp_NS;
@@ -39,7 +40,7 @@ G0RT = g0/R0TP;
 A22 = zeros(temp_NE + 1);
 A0_T = A0';
 
-while STOP > C.tolN && it < itMax
+while STOP > TN.tolN && it < itMax
     it = it + 1;
     % Gibbs free energy
     G0RT(temp_ind_nswt) =  g0(temp_ind_nswt) / R0TP + log(N0(temp_ind_nswt, 1) / NP) + log(pP);
@@ -63,7 +64,7 @@ while STOP > C.tolN && it < itMax
     % Compute STOP criteria
     STOP = compute_STOP(NP_0, NP, x(end), N0(temp_ind, 1), x(1:temp_NS));
 end
-% N0(N0(:, 1) < C.tolN, 1) = 0;
+% N0(N0(:, 1) < TN.tolN, 1) = 0;
 end
 % NESTED FUNCTIONS
 function g0 = set_g0(ls, TP, strThProp)

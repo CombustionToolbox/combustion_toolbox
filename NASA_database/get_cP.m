@@ -1,10 +1,11 @@
 function cP = get_cP(species, T, strDB)
-    if strDB(species).ctTInt > 0
-        a = strDB.(Species).a;
-        b = strDB.(Species).b;
-        tRange       = strDB.(Species).tRange;
-        tExponents   = strDB.(Species).tExponents;
-        
+    if strDB.(species).ctTInt > 0
+        a = strDB.(species).a;
+        b = strDB.(species).b;
+        tRange       = strDB.(species).tRange;
+        tExponents   = strDB.(species).tExponents;
+        ctTInt       = strDB.(species).ctTInt;
+        R0           = 8.3144598;
         if (T < tRange{1}(1)) || (T > tRange{ctTInt}(2))
             cP = species_cP(species, T, strDB);
             return

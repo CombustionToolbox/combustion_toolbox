@@ -1,9 +1,9 @@
-function strP = Equilibrate(varargin)
+function strP = equilibrate(varargin)
     try
         self = varargin{1};
         strR = varargin{2}{1,1};
         pP = varargin{3};
-        if nargin == 4, strP = varargin{4}; else, strP = []; end
+        if nargin == 4, strP = varargin{4}{1,1}; else, strP = []; end
         % get attribute of the specified transformations
         attr_name = get_attr_name(self);
         % compute initial guess
@@ -20,23 +20,6 @@ end
 
 
 %%% NESTED FUNCTIONS
-function strP = equilibrate_T(self, strR, pP, TP)
-    % Compute number of moles 
-    [N, DeltaNP] = Equilibrium(self, pP, TP, strR);
-    % Compute properties of all species
-    P = SetSpecies(self, self.S.LS, N(:, 1), TP);
-
-    if strfind(self.PD.ProblemType, 'P') == 2
-        strP = ComputeProperties(self, P, pP, TP);
-    else
-        NP = sum(P(:, 1) * (1 - P(:, 10)));
-        pP = (NP * TP * self.C.R0 / (strR.v/1e3)) / 1e5;
-        strP = ComputeProperties(self, P, pP, TP);
-    end    
-    strP.error_moles = DeltaNP;
-end
-
-
 function attr_name = get_attr_name(self)
     if any(strcmpi(self.PD.ProblemType, {'TP', 'TV'}))
         attr_name = 'T';

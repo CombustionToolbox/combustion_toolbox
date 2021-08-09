@@ -4,7 +4,8 @@ COMBUSTION TOOLBOX @v0.0.2
 Type of problems:
     * TP ------> Equilibrium composition at defined T and p
     * HP ------> Adiabatic T and composition at constant p
-    * SP ------> Isentropic compression/expansion to a specified p
+    * SP ------> Isentropic compression/expansion to 
+a specified p
     * TV ------> Equilibrium composition at defined T and constant v
     * EV ------> Adiabatic T and composition at constant v
     * SV ------> Isentropic compression/expansion to a specified v
@@ -33,7 +34,7 @@ app = App('Soot formation');
 app.PD.TR.value = 300;
 app.PD.pR.value = 1.01325;
 app.PD.phi.value = 0.5:0.01:5;
-% app.PD.phi.value = 1;
+app.PD.phi.value = 2.5;
 %% PROBLEM TYPE
 switch app.PD.ProblemType
     case 'TP' % * TP: Equilibrium composition at defined T and p
@@ -43,17 +44,18 @@ switch app.PD.ProblemType
         app.PD.TP.value = 2000;
     case 'HP' % * HP: Adiabatic T and composition at constant p
         app.PD.ProblemType = 'HP';
-        % app.PD.pR.value = logspace(0,2,20); app.PD.phi.value = 1*ones(1,length(app.PD.pR.value));
+        app.PD.pP.value = app.PD.pR.value;
     case 'SP' % * SP: Isentropic (i.e., adiabatic) compression/expansion to a specified p
         app.PD.ProblemType = 'SP';
         app.PD.pP.value = 10:1:50; app.PD.phi.value = 1*ones(1,length(app.PD.pP.value));
 %         app.PD.pP.value = 10*ones(1,length(app.PD.phi.value));
     case 'TV' % * TV: Equilibrium composition at defined T and constant v
         app.PD.ProblemType = 'TV';
-        app.PD.TP.value = 4000;
+        app.PD.TP.value = 2000;
+        app.PD.pP.value = app.PD.pR.value; % guess
     case 'EV' % * EV: Equilibrium composition at Adiabatic T and constant v
         app.PD.ProblemType = 'EV';
-        app.PD.pR.value = app.PD.pR.value;
+        app.PD.pP.value = app.PD.pR.value;
         % app.PD.pR.value = logspace(0,2,20); app.PD.phi.value = 1*ones(1,length(app.PD.pR.value));
     case 'SV' % * SV: Isentropic (i.e., fast adiabatic) compression/expansion to a specified v
         app.PD.ProblemType = 'SV';

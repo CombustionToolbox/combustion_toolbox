@@ -72,5 +72,5 @@ else
 end
 
 app.S.LS = unique(app.S.LS);
-app.S.NS = numel(app.S.LS);
+app.S.NS = length(app.S.LS);
 end

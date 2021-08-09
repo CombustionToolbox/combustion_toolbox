@@ -7,7 +7,7 @@ function x = steff_guess(self, strR, pP, attr_name)
     
     if g_l * g_r > 0 && g_l < g_r
         x = x_l - 50;
-    elseif g_l * g_r > 0 || (np.isnan(g_l) && isnan(g_r))
+    elseif g_l * g_r > 0 || (isnan(g_l) && isnan(g_r))
         x = 2000;
     elseif isnan(g_l) && ~isnan(g_r)
         x = x_r - 100;

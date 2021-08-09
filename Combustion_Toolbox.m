@@ -22,8 +22,8 @@
 addpath(genpath(pwd));
 % app = App();
 % app = App('Soot formation');
-app = App('HC/02/N2 extended');
-% app = App('HC/02/N2 rich');
+% app = App('HC/02/N2 extended');
+app = App('HC/02/N2 rich');
 % app = App('Hydrogen');
 % app = App('Nasa all');
 % app = App('Cbgrb'); 
@@ -50,7 +50,7 @@ app.PD.TR.value = 300;
 % app.PD.TR.vector.value = 300:50:700;
 app.PD.pR.value = 1.01325;
 % app.PD.phi.value = 0.5:0.01:2;
-app.PD.phi.value = 1;
+app.PD.phi.value = 2.5;
 %% INITIALIZATION
 app = Initialize(app);
 %% PROBLEM TYPE

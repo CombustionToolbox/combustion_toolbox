@@ -5,12 +5,6 @@ function self = Check_FOI(self, FOI_species)
         for i=1:numel(FOI_species)
             if ~strcmp(self.S.LS, FOI_species(i))                 
                 self.S.LS = [self.S.LS, FOI_species(i)];
-                try 
-                    self.M.ind_minor = [self.M.ind_minor, self.M.ind_minor(end) + 1];
-                catch
-                    self.M.ind_minor = 1;
-                end
-                self.M.Lminors = numel(self.S.LS);
                 FLAG = true;
             end
         end

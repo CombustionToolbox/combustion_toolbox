@@ -3,7 +3,7 @@ function app = App(varargin)
     app.E = Elements();
     app.S = Species();
     app.C = Constants();
-    app.Misc = Miscelaneous();
+    app.Misc = Miscellaneous();
     app.PD = ProblemDescription();
     app.PS = ProblemSolution();
     app.TN = TunningProperties();
@@ -29,21 +29,21 @@ function [app, LS] = initialize(varargin)
 end
 
 function app = constructor(app, LS)
-    % Timer
-    app.Misc.timer_0 = tic;
     % FLAG_GUI
     app = check_GUI(app);
     % Set Database
     reducedDB = false;
     app = set_Database(app, reducedDB);
-    % Set Contained elements
-    app = ContainedElements(app);
     % Set ListSpecies
     if ~isempty(LS)
         app = ListSpecies(app, LS);
     else
         app = ListSpecies(app);
     end
+    % Set Contained elements
+    app = ContainedElements(app);
+    % Timer
+    app.Misc.timer_0 = tic;
 end
 
 function app = check_GUI(app)

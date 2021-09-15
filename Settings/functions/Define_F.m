@@ -15,4 +15,3 @@ else
     self.PD.Fuel.z = 0; self.PD.Fuel.w = 0;
     self.C.FLAG_Fuel = 0;
 end
-

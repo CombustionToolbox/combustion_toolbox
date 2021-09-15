@@ -33,8 +33,8 @@ app = App('Soot formation');
 %% PROBLEM CONDITIONS
 app.PD.TR.value = 300;
 app.PD.pR.value = 1.01325;
-app.PD.phi.value = 0.5:0.01:5;
-% app.PD.phi.value = 2.5;
+% app.PD.phi.value = 0.5:0.01:5;
+app.PD.phi.value = 2;
 %% PROBLEM TYPE
 switch app.PD.ProblemType
     case 'TP' % * TP: Equilibrium composition at defined T and p
@@ -80,7 +80,6 @@ switch app.PD.ProblemType
 end
 %% CONSTANT
 app.C.l_phi = length(app.PD.phi.value);
-tic
 for i=app.C.l_phi:-1:1
 %% DEFINE FUEL
 app.PD.S_Fuel = {'CH4'}; app.PD.N_Fuel = 1;

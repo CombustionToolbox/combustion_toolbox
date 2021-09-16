@@ -26,10 +26,10 @@ Last update Fri Aug 6 00:28:00 2021
 addpath(genpath(pwd));
 
 %% INITIALIZE
-app = App('Soot formation');
+% app = App('Soot formation');
 % app = App('HC/02/N2 extended');
 % app = App('HC/02/N2 rich');
-% app = App('Ideal_air');
+app = App('Ideal_air');
 %% PROBLEM CONDITIONS
 app.PD.TR.value = 300;
 app.PD.pR.value = 1.01325;
@@ -64,9 +64,9 @@ switch app.PD.ProblemType
     case 'SHOCK_I' % * SHOCK_I: CALCULATE PLANAR INCIDENT SHOCK WAVE
         app.PD.ProblemType = 'SHOCK_I';
 %          u1 = logspace(2, 5, 500);
-%          u1 = u1(u1<40000); u1 = u1(u1>=360);
-        %u1 = [356,433,534,658,811,1000,1233,1520,1874,2310,2848,3511,4329,5337,6579,8111,10000,12328];
-        u1 = 2000;
+%          u1 = u1(u1<20000); u1 = u1(u1>=360);
+        u1 = [356,433,534,658,811,1000,1233,1520,1874,2310,2848,3511,4329,5337,6579,8111,10000,12328];
+%         u1 = 2000;
         app.PD.u1.value = u1; app.PD.phi.value = ones(1,length(app.PD.u1.value));
     case 'SHOCK_R' % * SHOCK_R: CALCULATE PLANAR POST-REFLECTED SHOCK STATE
         app.PD.ProblemType = 'SHOCK_R';

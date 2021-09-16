@@ -48,38 +48,38 @@ while ctLine<2500
     str.name = FullName2name(str.FullName);
     str.comments = tline(19:end);
     tline = fgetl(fid);
-    str.ctTInt = str2num(tline(1:2));
+    str.ctTInt = str2double(tline(1:2));
     str.txRefCode = tline(4:9);
     str.txFormula = tline(11:50);
-    str.swtCondensed = str2num(tline(51:52));
-    str.mm = str2num(tline(53:65));
-    str.Hf0 = str2num(tline(66:80)); % J/mol
+    str.swtCondensed = str2double(tline(51:52));
+    str.mm = str2double(tline(53:65));
+    str.Hf0 = str2double(tline(66:80)); % J/mol
     
     if str.ctTInt ==0
         
         tline = fgetl(fid);
-        str.tRange = str2num(tline(1:22));
-        str.tExponents = str2num(tline(24:63));
-        str.Hf298Del0 = str2num(tline(66:end));
+        str.tRange = str2double(tline(1:22));
+        str.tExponents = str2double(tline(24:63));
+        str.Hf298Del0 = str2double(tline(66:end));
     end
     for ctInterval=1:str.ctTInt
         tline = fgetl(fid);
-        str.tRange{ctInterval} = str2num(tline(1:22));
-        str.tExponents{ctInterval} = str2num(tline(24:63));
-        str.Hf298Del0{ctInterval} = str2num(tline(66:end));
+        str.tRange{ctInterval} = str2double(tline(1:22));
+        str.tExponents{ctInterval} = str2double(tline(24:63));
+        str.Hf298Del0{ctInterval} = str2double(tline(66:end));
         
         tline = fgetl(fid);
-        a1 = str2num(tline(1:16));
-        a2 = str2num(tline((1:16)+16));
-        a3 = str2num(tline((1:16)+32));
-        a4 = str2num(tline((1:16)+48));
-        a5 = str2num(tline((1:16)+64));
+        a1 = str2double(tline(1:16));
+        a2 = str2double(tline((1:16)+16));
+        a3 = str2double(tline((1:16)+32));
+        a4 = str2double(tline((1:16)+48));
+        a5 = str2double(tline((1:16)+64));
         tline = fgetl(fid);
-        a6 = str2num(tline(1:16));
-        a7 = str2num(tline((1:16)+16));
-        a8 = 0; %str2num(tline((1:16)+32));
-        b1 = str2num(tline((1:16)+48));
-        b2 = str2num(tline((1:16)+64));
+        a6 = str2double(tline(1:16));
+        a7 = str2double(tline((1:16)+16));
+        a8 = 0; %str2double(tline((1:16)+32));
+        b1 = str2double(tline((1:16)+48));
+        b2 = str2double(tline((1:16)+64));
         str.a{ctInterval}=[a1 a2 a3 a4 a5 a6 a7 a8];
         str.b{ctInterval}=[b1 b2];
     end

@@ -26,15 +26,15 @@ Last update Fri Aug 6 00:28:00 2021
 addpath(genpath(pwd));
 
 %% INITIALIZE
-% app = App('Soot formation');
-app = App('HC/02/N2 extended');
+app = App('Soot formation');
+% app = App('HC/02/N2 extended');
 % app = App('HC/02/N2 rich');
 % app = App('Ideal_air');
 %% PROBLEM CONDITIONS
 app.PD.TR.value = 300;
 app.PD.pR.value = 1.01325;
-% app.PD.phi.value = 0.5:0.01:5;
-app.PD.phi.value = 2;
+app.PD.phi.value = 0.5:0.01:5;
+% app.PD.phi.value = 5;
 %% PROBLEM TYPE
 switch app.PD.ProblemType
     case 'TP' % * TP: Equilibrium composition at defined T and p

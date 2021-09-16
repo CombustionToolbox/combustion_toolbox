@@ -26,8 +26,8 @@ Last update Fri Aug 6 00:28:00 2021
 addpath(genpath(pwd));
 
 %% INITIALIZE
-app = App('Soot formation');
-% app = App('HC/02/N2 extended');
+% app = App('Soot formation');
+app = App('HC/02/N2 extended');
 % app = App('HC/02/N2 rich');
 % app = App('Ideal_air');
 %% PROBLEM CONDITIONS

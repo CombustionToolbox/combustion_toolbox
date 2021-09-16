@@ -75,6 +75,6 @@ else
     app.S.LS = LS{1,1};
 end
 
-app.S.LS = unique(app.S.LS);
+app.S.LS = unique(app.S.LS, 'stable');
 app.S.NS = length(app.S.LS);
 end

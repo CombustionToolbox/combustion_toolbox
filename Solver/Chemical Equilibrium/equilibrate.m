@@ -1,9 +1,9 @@
 function strP = equilibrate(varargin)
     try
         self = varargin{1};
-        strR = varargin{2}{1,1};
+        strR = get_struct(varargin, 2);
         pP = varargin{3};
-        if nargin == 4, strP = varargin{4}{1,1}; else, strP = []; end
+        if nargin == 4, strP = get_struct(varargin, 4); else, strP = []; end
         % get attribute of the specified transformations
         attr_name = get_attr_name(self);
         % compute initial guess
@@ -20,6 +20,15 @@ end
 
 
 %%% NESTED FUNCTIONS
+function str = get_struct(var, i)
+    try
+        str = var{i}{1,1};
+    catch
+        str = var{i};
+    end
+end
+
+
 function attr_name = get_attr_name(self)
     if any(strcmpi(self.PD.ProblemType, {'TP', 'TV'}))
         attr_name = 'T';

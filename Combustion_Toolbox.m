@@ -1,5 +1,5 @@
 %{ 
-COMBUSTION TOOLBOX @v0.0.2
+COMBUSTION TOOLBOX @v0.0.21
 
 Type of problems:
     * TP ------> Equilibrium composition at defined T and p
@@ -19,17 +19,17 @@ a specified p
          PhD Candidate - Group Fluid Mechanics
          Universidad Carlos III de Madrid
                   
-Last update Fri Aug 6 00:28:00 2021
+Last update Fri Sep 17 09:28:00 2021
 ---------------------------------------------------------------------- 
 %}
 
 addpath(genpath(pwd));
 
 %% INITIALIZE
-% app = App('Soot formation');
+app = App('Soot formation');
 % app = App('HC/02/N2 extended');
 % app = App('HC/02/N2 rich');
-app = App('Ideal_air');
+% app = App('Ideal_air');
 %% PROBLEM CONDITIONS
 app.PD.TR.value = 300;
 app.PD.pR.value = 1.01325;

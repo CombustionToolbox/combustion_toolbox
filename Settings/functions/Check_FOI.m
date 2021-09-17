@@ -5,6 +5,7 @@ function self = Check_FOI(self, FOI_species)
         for i=1:numel(FOI_species)
             if ~strcmp(self.S.LS, FOI_species(i))                 
                 self.S.LS = [self.S.LS, FOI_species(i)];
+                self.S.NS = length(self.S.LS);
                 FLAG = true;
             end
         end

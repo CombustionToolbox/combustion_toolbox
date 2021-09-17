@@ -1,4 +1,4 @@
-function [str1,str2,guess] = SolveProblemDET_OVERDRIVEN(app, strR, phi, p1, T1, guess, overdriven)
+function [str1,str2,guess] = SolveProblemDET_OVERDRIVEN(app, strR, p1, T1, guess, overdriven)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % CALCULATE CHAPMAN-JOUGET STATE (CJ UPPER STATE - STRONG DETONATION)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -22,7 +22,7 @@ while  ((counter <= 3) || (g <= Goodness))
     w1 = zeros(1,numsteps+1);
     rr = zeros(1,numsteps+1);
     for x = min:step:max
-        [str1,str2,guess_shock] = SolveProblemDET_inloop(app, strR, phi, p1, T1, x, guess);
+        [str1, str2, guess_shock] = SolveProblemDET_inloop(app, strR, p1, T1, x, guess);
         w1(i) = str1.u;
         rr(i) = str2.rho/strR.rho;
         
@@ -86,7 +86,7 @@ for i=length(overdriven):-1:1
 % guess_shock(3) = dnew;
 % TN.guess_shock = guess_shock;
 % [str1,str2] = SolveProblemSHOCK_I(strR,phi,p1,T1,U_cj,E,S,C,M,PD,TN,strThProp);
-[str1.overdriven{i},str2.overdriven{i}] = SolveProblemSHOCK_Jouget_I(app, strR, phi, p1, T1, U_cj(i));
+[str1.overdriven{i},str2.overdriven{i}] = SolveProblemSHOCK_Jouget_I(app, strR, p1, T1, U_cj(i));
 if i==1
     % guess(1) = str2.T;
     % guess(2) = U_cj;

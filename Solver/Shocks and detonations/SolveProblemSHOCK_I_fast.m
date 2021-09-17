@@ -1,4 +1,4 @@
-function [str1,str2] = SolveProblemSHOCK_I_fast(app, strR, phi, p1, T1, u1, str2)
+function [str1,str2] = SolveProblemSHOCK_I_fast(app, strR, p1, T1, u1, str2)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % CALCULATE PLANAR INCIDENT SHOCK WAVE
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -174,13 +174,4 @@ str2.p = p2;
 str2.h = h2*str2.mi/1e3;
 
 str2.error_problem = max(abs(deltaT),abs(deltaV));
-end
-
-function strP = state(self, strR, r, T, pP)
-% Calculate frozen state given T & rho
-strR.v = strR.mi/r*1e3;
-self.PD.TP.value = T;
-% Equilibrium composition at defined T and constant v
-self.PD.ProblemType = 'TV';
-strP = equilibrate(self, strR, pP);
 end

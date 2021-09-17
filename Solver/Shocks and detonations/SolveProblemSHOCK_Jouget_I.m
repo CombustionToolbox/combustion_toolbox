@@ -1,4 +1,4 @@
-function [str1,str2] = SolveProblemSHOCK_Jouget_I(app, strR, phi, p1, T1, u1)
+function [str1,str2] = SolveProblemSHOCK_Jouget_I(app, strR, p1, T1, u1)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % CALCULATE PLANAR INCIDENT SHOCK WAVE
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -52,7 +52,7 @@ p = p1*1e5 + r1*u1^2*(1-V/V1); % pressure downstream        [Pa]
 p = p/1e5;                     % pressure downstream        [bar]
 T = T1*p*V/(p1*V1);            % Temperature downstream     [K]
 % COMPUTE PROPERTIES OF THE PRODUCTS AT THE GIVEN CONDITIONS
-strP = state(app, strR, r, T, phi, pP);
+strP = state(app, strR, r, T, pP);
 h = strP.h/strP.mi*1e3; % enthalpy upstream   [J/kg]
 p = strP.p;            % pressure downstream [bar]
 u = u1*r1/r;         % velocity downstream [m/s]. Continuity equation
@@ -78,7 +78,7 @@ while((abs(deltaT) > TN.ERRFT*T) || (abs(deltaV) > TN.ERRFV*V))
     Vper = V;
     rper = 1/Vper;
 
-    strP = state(app, strR, rper, Tper, phi, pP);
+    strP = state(app, strR, rper, Tper, pP);
     uper = u1*r1/rper;
     hper = strP.h/strP.mi*1e3;
     pper = strP.p;
@@ -95,7 +95,7 @@ while((abs(deltaT) > TN.ERRFT*T) || (abs(deltaV) > TN.ERRFV*V))
     Vper = V + DV;
     rper = 1/Vper;
 
-    strP = state(app, strR, rper, Tper, phi, pP);
+    strP = state(app, strR, rper, Tper, pP);
     uper = u1*r1/rper;
     hper = strP.h/strP.mi*1e3;
     pper = strP.p;
@@ -137,7 +137,7 @@ while((abs(deltaT) > TN.ERRFT*T) || (abs(deltaV) > TN.ERRFV*V))
     V = V + deltaV;
     r = 1/V;
     
-    strP = state(app, strR, r, T, phi, pP);
+    strP = state(app, strR, r, T, pP);
     h = strP.h/strP.mi*1e3;
     p = strP.p;
     u = u1*r1/r;
@@ -189,13 +189,4 @@ str2.p = p2;
 str2.h = h2*str2.mi/1e3;
 
 str2.error_problem = max(abs(deltaT), abs(deltaV));
-end
-
-function strP = state(app, strR, r, T, phi, pP)
-% Calculate frozen state given T & rho
-strR.v = strR.mi/r*1e3;
-TP = T; % vP = vR (computed from R);
-% Equilibrium composition at defined T and constant v
-app.PD.ProblemType = 'TV';
-strP = SolveProblemTP_TV(app, strR, phi, pP, TP);
 end

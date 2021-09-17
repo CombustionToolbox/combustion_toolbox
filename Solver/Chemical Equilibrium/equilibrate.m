@@ -4,7 +4,7 @@ function strP = equilibrate(varargin)
         strR = get_struct(varargin, 2);
         pP = varargin{3};
         if nargin == 4, strP = get_struct(varargin, 4); else, strP = []; end
-        % get attribute of the specified transformations
+        % get attribute xx of the specified transformations
         attr_name = get_attr_name(self);
         % compute initial guess
         guess = get_guess(self, strR, pP, attr_name, strP);

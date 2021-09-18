@@ -50,7 +50,7 @@ T = T1*p*V/(p1*V1);            % Temperature downstream     [K]
 % COMPUTE PROPERTIES OF THE PRODUCTS AT THE GIVEN CONDITIONS
 % state;
 strP = state(app, strR, r, T, pP);
-h = strP.h/strP.mi*1e3; % enthalpy upstream   [J/kg]
+h = strP.h/strP.mi*1e3; % enthalpy upstream   [J/kg] == [m2/s2]
 p = strP.p;             % pressure downstream [bar]
 u = u1*r1/r;            % velocity downstream [m/s]. Continuity equation
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

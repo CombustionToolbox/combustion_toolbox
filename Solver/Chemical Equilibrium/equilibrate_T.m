@@ -1,6 +1,10 @@
 function strP = equilibrate_T(self, strR, pP, TP)
     % Compute number of moles 
     [N, DeltaNP] = equilibrium(self, pP, TP, strR);
+    % Compute thermodynamic derivates
+    [dNi_T, dN_T] = equilibrium_dT(self, N, TP, strR);
+    self.dNi_T = dNi_T;
+    self.dN_T = dN_T;
     % Compute properties of all species
     P = SetSpecies(self, self.S.LS, N(:, 1), TP);
 

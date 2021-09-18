@@ -106,3 +106,12 @@ str.T = T; % [K]
 str.e = str.h - sum(Ni(ii))*R0*T*1e-3; % THIS WORKS!!!
 str.gamma = str.cP/str.cV;
 str.sound = sqrt(str.gamma*p*1e5/str.rho);
+
+%%%%%%% TEST
+% if T>1500
+% str.cP_r = sum([SpeciesMatrix(1:6, 2); SpeciesMatrix(9:end-1, 2)]/T *1e3 .* SpeciesMatrix(SpeciesMatrix(1:end-1, 1) > 0) .* self.dNi_T(1:end-1)) + ...
+%     sum(SpeciesMatrix(end, 2)/T *1e3 .* self.dNi_T(end));
+% str.cP = str.cP + str.cP_r;
+% str.dVdT_p = 1 + self.dN_T;
+% end
+

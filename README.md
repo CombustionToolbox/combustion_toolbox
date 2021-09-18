@@ -12,7 +12,7 @@ As a first step towards the development of a wider-scope thermochemical tool, in
 ---
 ⚠️ **NOTE**
 
-- The shock and detonations routines are based on Caltech’s Shock and Detonation Toolbox [Browne et. al (2008)](https://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.181.1150&rep=rep1&type=pdf). This is going to be replaced by with a specific in-house routine.
+- The shock and detonations routines are based on Caltech’s Shock and Detonation Toolbox [Browne et. al (2008)](https://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.181.1150&rep=rep1&type=pdf). This is going to be replaced ith a specific in-house routine.
 - At the moment, the Python version does not have all the capabilities that the MATLAB version has. I will continue with the development of this version adding all the remaining capabilities. I will also add a GUI using Qt and Pyside2.
 
 ---

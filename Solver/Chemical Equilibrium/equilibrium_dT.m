@@ -13,6 +13,7 @@ R0TP = C.R0 * TP; % [J/(mol)]
 % NatomE = N_CC(:,1)' * A0;
 NatomE = strR.NatomE;
 NP = sum(N0(:, 1));
+dNi_T = zeros(length(N0), 1);
 
 SIZE = -log(TN.tolN);
 % Find indeces of the species/elements that we have to remove from the stoichiometric matrix A0
@@ -36,8 +37,8 @@ A = update_matrix_A(A0_T, A1, A22, N0, NP, temp_ind_nswt, temp_ind_swt, temp_ind
 b = update_vector_b(temp_ind, temp_ind_E, H0RT);
 % Solve of the linear system A*x = b
 x = A\b;
-dNi_T = x(1:temp_NS);
-dN_T  = x(end);
+dNi_T(temp_ind) = x(1:temp_NS);
+dN_T = x(end);
 end
 % NESTED FUNCTIONS
 function h0 = set_h0(ls, TP, strThProp)
@@ -84,13 +85,6 @@ function [ls1, ls2] = remove_item(N0, n, ind, ls1, ls2, NP, SIZE)
             end
         end
     end
-%     bool = log(zip1./NP) < -SIZE;
-%     bool1 = bool & N0(zip2, 2);
-%     bool2 = bool & ~N0(zip2, 2);
-%     ind1 = logical(sum(ls1(:)==zip2(bool1), 2)); if ~ind1, ind1=[]; end
-%     ind2 = logical(sum(ls2(:)==zip2(bool2), 2)); if ~ind2, ind2=[]; end
-%     ls1(ind1) = [];
-%     ls2(ind2) = [];
 end
 
 function [temp_ind, temp_ind_swt, temp_ind_nswt, temp_NG, temp_NS] = update_temp(N0, zip1, zip2, ls1, ls2, NP, SIZE)
@@ -128,25 +122,4 @@ end
 function b = update_vector_b(temp_ind, temp_ind_E, H0RT)
     % Update coefficient vector b
     b = [H0RT(temp_ind); zeros(length(temp_ind_E) + 1, 1)];
-end
-
-function relax = relax_factor(NP, n, n_log_new, DeltaNP, SIZE)
-    % Compute relaxation factor
-    bool = log(n)/log(NP) <= -SIZE & n_log_new >= 0;
-    e = ones(length(n), 1);
-    e(bool) = abs(-log(n(bool)/NP) - 9.2103404 ./ (n_log_new(bool) - DeltaNP));
-    e(~bool) = min(2./max(5*abs(DeltaNP), abs(n_log_new(~bool))), exp(2));          
-    relax = min(1, min(e));  
-end
-
-function [N0, NP] = apply_antilog(N0, NP_log, temp_ind)
-    N0(temp_ind, 1) = exp(N0(temp_ind, 1));
-    NP = exp(NP_log);
-end
-
-function DeltaN = compute_STOP(NP_0, NP, DeltaNP, zip1, zip2)
-    DeltaN1 = max(max(zip1 .* abs(zip2) / NP));
-    DeltaN3 = NP_0 * abs(DeltaNP) / NP;
-    % Deltab = [abs(bi - sum(N0[:, 0] * A0[:, i])) for i, bi in enumerate(x[S.NS:-1]) if bi > 1e-6]
-    DeltaN = max(DeltaN1, DeltaN3);
 end

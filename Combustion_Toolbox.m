@@ -28,9 +28,9 @@ addpath(genpath(pwd));
 %% INITIALIZE
 % app = App('Soot formation');
 % app = App('HC/02/N2');
-app = App('HC/02/N2 extended');
+% app = App('HC/02/N2 extended');
 % app = App('HC/02/N2 rich');
-% app = App('Ideal_air');
+app = App('Ideal_air');
 %% PROBLEM CONDITIONS
 app.PD.TR.value = 300;
 app.PD.pR.value = 1.01325;
@@ -81,6 +81,7 @@ switch app.PD.ProblemType
 end
 %% CONSTANT
 app.C.l_phi = length(app.PD.phi.value);
+tic
 for i=app.C.l_phi:-1:1
 %% DEFINE FUEL
 % app.PD.S_Fuel = {'CH4'}; app.PD.N_Fuel = 1;
@@ -99,6 +100,7 @@ app = SolveProblem(app, i);
 %% DISPLAY RESULTS COMMAND WINDOW
 results(app, i);
 end
+toc
 %% DISPLAY RESULTS (PLOTS)
 app.Misc.display_species = {};
 % app.Misc.display_species = {'CO','CO2','H','HO2','H2','H2O','NO','NO2','N2','O','OH','O2','Cbgrb'};

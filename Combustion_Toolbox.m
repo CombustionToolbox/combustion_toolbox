@@ -64,10 +64,11 @@ switch app.PD.ProblemType
         app.PD.vP_vR.value = 0.5:0.01:2; app.PD.phi.value = 1*ones(1,length(app.PD.vP_vR.value));
     case 'SHOCK_I' % * SHOCK_I: CALCULATE PLANAR INCIDENT SHOCK WAVE
         app.PD.ProblemType = 'SHOCK_I';
-%          u1 = logspace(2, 5, 500);
-%          u1 = u1(u1<20000); u1 = u1(u1>=360);
+%         u1 = logspace(2, 5, 500);
+%         u1 = u1(u1<20000); u1 = u1(u1>=360);
 %         u1 = [356,433,534,658,811,1000,1233,1520,1874,2310,2848,3511,4329,5337,6579,8111,10000,12328];
-        u1 = 2000;
+        u1 = linspace(360, 9000, 1000);
+%         u1 = 2000;
         app.PD.u1.value = u1; app.PD.phi.value = ones(1,length(app.PD.u1.value));
     case 'SHOCK_R' % * SHOCK_R: CALCULATE PLANAR POST-REFLECTED SHOCK STATE
         app.PD.ProblemType = 'SHOCK_R';
@@ -81,6 +82,7 @@ switch app.PD.ProblemType
 end
 %% CONSTANT
 app.C.l_phi = length(app.PD.phi.value);
+tic
 for i=app.C.l_phi:-1:1
 %% DEFINE FUEL
 % app.PD.S_Fuel = {'CH4'}; app.PD.N_Fuel = 1;
@@ -99,6 +101,7 @@ app = SolveProblem(app, i);
 %% DISPLAY RESULTS COMMAND WINDOW
 results(app, i);
 end
+toc
 %% DISPLAY RESULTS (PLOTS)
 app.Misc.display_species = {};
 % app.Misc.display_species = {'CO','CO2','H','HO2','H2','H2O','NO','NO2','N2','O','OH','O2','Cbgrb'};

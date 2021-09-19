@@ -1,10 +1,10 @@
-function [dNi_T, dN_T] = equilibrium_dT(app, N0, TP, strR)
+function [dNi_T, dN_T] = equilibrium_dT(self, N0, TP, strR)
 % Generalized Gibbs minimization method
 
 % Abbreviations ---------------------
-S = app.S;
-C = app.C;
-TN = app.TN;
+S = self.S;
+C = self.C;
+TN = self.TN;
 % -----------------------------------
 
 A0 = C.A0.value;
@@ -25,7 +25,7 @@ ind_A0_E0 = remove_elements(NatomE, A0, TN.tolN);
 [temp_ind, temp_ind_swt, temp_ind_nswt, temp_NG, temp_NS] = update_temp(N0, N0(ind_A0_E0, 1), ind_A0_E0, temp_ind_swt, temp_ind_nswt, TN.tolN, SIZE);
 temp_NS0 = temp_NS + 1;
 % Dimensionless Standard-state enthalpy
-h0 = set_h0(S.LS, TP, app.strThProp);
+h0 = set_h0(S.LS, TP, self.strThProp);
 H0RT =  h0 / R0TP;
 % Construction of part of matrix A (complete)
 [A1, ~] = update_matrix_A1(A0, [], temp_NG, temp_NS, temp_NS0, temp_ind, temp_ind_E);

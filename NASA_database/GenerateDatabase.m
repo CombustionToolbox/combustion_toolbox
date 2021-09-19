@@ -103,6 +103,7 @@ for i = 1:length(SpeciesList)
             T_vector   = [];
             DhT_vector = [];
             DeT_vector = [];
+            h0_vector  = [];
             s0_vector  = [];
             cp_vector  = [];
             cv_vector  = [];
@@ -115,25 +116,28 @@ for i = 1:length(SpeciesList)
                 T_vector   = [  T_vector; T     ];
                 DhT_vector = [DhT_vector; H0-Hf0];
                 DeT_vector = [DeT_vector; E0-Ef0];
-                s0_vector  = [s0_vector; S0    ];
-                cp_vector  = [cp_vector; Cp0   ];
-                cv_vector  = [cv_vector; Cv0   ];
-                g0_vector  = [g0_vector; H0 - T*S0];
+                h0_vector  = [h0_vector;  H0    ];
+                s0_vector  = [s0_vector;  S0    ];
+                cp_vector  = [cp_vector;  Cp0   ];
+                cv_vector  = [cv_vector;  Cv0   ];
+                g0_vector  = [g0_vector;  H0 - T*S0];
             end
             
-            strThProp.(Species).T   =   T_vector;
+            strThProp.(Species).T   = T_vector;
             strThProp.(Species).DhT = DhT_vector; 
             strThProp.(Species).DeT = DeT_vector;
-            strThProp.(Species).s0  =  s0_vector;
-            strThProp.(Species).cp  =  cp_vector;
-            strThProp.(Species).cv  =  cv_vector;
-            strThProp.(Species).g0  =  g0_vector;
+            strThProp.(Species).h0  = h0_vector; 
+            strThProp.(Species).s0  = s0_vector;
+            strThProp.(Species).cp  = cp_vector;
+            strThProp.(Species).cv  = cv_vector;
+            strThProp.(Species).g0  = g0_vector;
             
             % INTERPOLATION CURVES
             strThProp.(Species).cPcurve = griddedInterpolant(strThProp.(Species).T,strThProp.(Species).cp, 'pchip', 'pchip');
             strThProp.(Species).cVcurve = griddedInterpolant(strThProp.(Species).T,strThProp.(Species).cv, 'pchip', 'pchip');
-            strThProp.(Species).DeTcurve = griddedInterpolant(strThProp.(Species).T,strThProp.(Species).DeT, 'pchip', 'pchip');
             strThProp.(Species).DhTcurve = griddedInterpolant(strThProp.(Species).T,strThProp.(Species).DhT, 'pchip', 'pchip');
+            strThProp.(Species).DeTcurve = griddedInterpolant(strThProp.(Species).T,strThProp.(Species).DeT, 'pchip', 'pchip');
+            strThProp.(Species).h0curve = griddedInterpolant(strThProp.(Species).T,strThProp.(Species).h0, 'pchip', 'pchip');
             strThProp.(Species).s0curve = griddedInterpolant(strThProp.(Species).T,strThProp.(Species).s0, 'pchip', 'pchip');
             strThProp.(Species).g0curve = griddedInterpolant(strThProp.(Species).T,strThProp.(Species).g0, 'pchip', 'pchip');
             

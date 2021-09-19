@@ -43,7 +43,7 @@ end
 function h0 = set_h0(ls, TP, strThProp)
     for i=length(ls):-1:1
         species = ls{i};
-        h0(i, 1) = strThProp.(species).hf + (species_DhT(species, TP, strThProp)) * 1e3;
+        h0(i, 1) = species_h0(species, TP, strThProp) * 1e3;
     end
 end
 

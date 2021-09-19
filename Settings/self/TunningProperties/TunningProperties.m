@@ -10,4 +10,5 @@ function self = TunningProperties()
     self.tolN = 1e-14; % Tolerance of the gibbs minimization method
     self.tol0 = 1e-3;  % Tolerance of the root finding algorithm
     self.root_method = @steff; % Method for root finding
+    self.tol_shocks = 5e-5;  % Tolerance of shocks routines
 end

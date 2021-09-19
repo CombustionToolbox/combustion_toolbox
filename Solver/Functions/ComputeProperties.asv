@@ -108,8 +108,10 @@ str.gamma = str.cP/str.cV;
 str.sound = sqrt(str.gamma*p*1e5/str.rho);
 
 %%%%%%% TEST
-if T>
-str.cP_r = sum([SpeciesMatrix(1:6, 2); SpeciesMatrix(9:end-1, 2)]/T *1e3 .* SpeciesMatrix(SpeciesMatrix(1:end-1, 1) > 0) .* self.dNi_T(1:end-1)) + ...
-    sum(SpeciesMatrix(end, 2)/T *1e3 .* self.dNi_T(end));
-str.cP_e = str.cP + str.cP_r;
+if T>1500
+    H0_j = (SpeciesMatrix(:, 2) + SpeciesMatrix(:, 3)) * 1e3;
+str.cP_r = sum([H0_j(1:6)/T .* SpeciesMatrix(1:6, 1); H0_j(9:end)/T .* SpeciesMatrix(9:end, 1)] .* self.dNi_T);
+str.cP = str.cP + str.cP_r;
+str.dVdT_p = 1 + self.dN_T;
+end
 

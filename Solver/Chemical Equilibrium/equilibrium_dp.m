@@ -1,10 +1,10 @@
-function [dNi_p, dN_p] = equilibrium_dp(app, N0, strR)
+function [dNi_p, dN_p] = equilibrium_dp(self, N0, strR)
 % Generalized Gibbs minimization method
 
 % Abbreviations ---------------------
-S = app.S;
-C = app.C;
-TN = app.TN;
+S = self.S;
+C = self.C;
+TN = self.TN;
 % -----------------------------------
 
 A0 = C.A0.value;

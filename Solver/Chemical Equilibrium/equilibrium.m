@@ -51,10 +51,10 @@ while STOP > TN.tolN && it < itMax
     % Solve of the linear system A*x = b
     x = A\b;
     % Calculate correction factor
-    e = relax_factor(NP, N0(temp_ind, 1), x(1:temp_NS), x(end), SIZE);
+    lambda = relax_factor(NP, N0(temp_ind, 1), x(1:temp_NS), x(end), SIZE);
     % Apply correction
-    N0(temp_ind, 1) = log(N0(temp_ind, 1)) + e * x(1:temp_NS);
-    NP_log = log(NP) + e * x(end);
+    N0(temp_ind, 1) = log(N0(temp_ind, 1)) + lambda * x(1:temp_NS);
+    NP_log = log(NP) + lambda * x(end);
     % Apply antilog
     [N0, NP] = apply_antilog(N0, NP_log, temp_ind);
     % Update temp values in order to remove species with moles < tolerance
@@ -158,10 +158,10 @@ end
 function relax = relax_factor(NP, n, n_log_new, DeltaNP, SIZE)
     % Compute relaxation factor
     bool = log(n)/log(NP) <= -SIZE & n_log_new >= 0;
-    e = ones(length(n), 1);
-    e(bool) = abs(-log(n(bool)/NP) - 9.2103404 ./ (n_log_new(bool) - DeltaNP));
-    e(~bool) = min(2./max(5*abs(DeltaNP), abs(n_log_new(~bool))), exp(2));          
-    relax = min(1, min(e));  
+    lambda = ones(length(n), 1);
+    lambda(bool) = abs(-log(n(bool)/NP) - 9.2103404 ./ (n_log_new(bool) - DeltaNP));
+    lambda(~bool) = min(2./max(5*abs(DeltaNP), abs(n_log_new(~bool))), exp(2));          
+    relax = min(1, min(lambda));  
 end
 
 function [N0, NP] = apply_antilog(N0, NP_log, temp_ind)

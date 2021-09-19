@@ -11,4 +11,5 @@ function self = TunningProperties()
     self.tol0 = 1e-3;  % Tolerance of the root finding algorithm
     self.root_method = @steff; % Method for root finding
     self.tol_shocks = 5e-5;  % Tolerance of shocks routines
+    self.volumeBoundRation = 5; % Initial guess ratio shocks
 end

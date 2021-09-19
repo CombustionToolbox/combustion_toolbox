@@ -77,7 +77,7 @@ str.h      = str.hf + str.DhT;         % [kJ]
 str.ef     = sum(SpeciesMatrix(:,4));  % [kJ]
 str.DeT    = sum(SpeciesMatrix(:,5));  % [kJ]
 str.e      = str.ef + str.DeT;         % [kJ]
-str.cP     = sum(SpeciesMatrix(:,6));  % [J/K]    
+str.cP     = sum(SpeciesMatrix(:,6));  % [J/K]     
 str.cV     = sum(SpeciesMatrix(:,7));  % [J/K]   
 str.pv     = sum(SpeciesMatrix(:,9));
 str.p      = p;
@@ -106,13 +106,17 @@ str.T = T; % [K]
 str.e = str.h - sum(Ni(ii))*R0*T*1e-3; % THIS WORKS!!!
 str.gamma = str.cP/str.cV;
 str.sound = sqrt(str.gamma*p*1e5/str.rho);
-
-%%%%%%% TEST
-if T>1500
+% Correction of: cP, cV, gamma and speed of sound as consequence of the
+% chemical reaction
+if isfield(self, 'dNi_T')
     H0_j = (SpeciesMatrix(:, 2) + SpeciesMatrix(:, 3)) * 1e3;
-    str.cP_r = sum([H0_j(1:6)/T ; H0_j(9:end)/T ] .* self.dNi_T);
+    str.cP_r = sum(H0_j/T .* self.dNi_T);
     str.cP = str.cP + str.cP_r;
-    str.dVdT_p = 1 + self.dN_T;
-%     test = str.cP / str.mi * 1e-3
+    str.dVdT_p =  1 + self.dN_T;
+    str.dVdp_T = -1 + self.dN_P;
+    str.cV = str.cP + (str.pv/T * str.dVdT_p^2) / str.dVdp_T *1e2;
+    str.gamma = str.cP/str.cV;
+    str.sound = sqrt(str.gamma*p*1e5/str.rho);
 end
+
 

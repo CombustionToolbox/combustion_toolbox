@@ -116,7 +116,8 @@ if isfield(self, 'dNi_T')
     str.dVdp_T = -1 + self.dN_P;
     str.cV = str.cP + (str.pv/T * str.dVdT_p^2) / str.dVdp_T *1e2;
     str.gamma = str.cP/str.cV;
-    str.sound = sqrt(str.gamma*p*1e5/str.rho);
+    str.gamma_s = - str.gamma / str.dVdp_T;
+    str.sound = sqrt(str.gamma_s*p*1e5/str.rho);
 end
 
 

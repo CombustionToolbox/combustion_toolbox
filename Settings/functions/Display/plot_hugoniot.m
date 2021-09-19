@@ -12,7 +12,7 @@ if nargin > 1
 else
     ax = set_figure(config);
 end
-%%% CHECK TIT FOR LATEX
+%%% CHECK TITLE COMPATIBILITY LATEX
 config.tit = strrep(config.tit,'%','\%');
 %%%
 x1 = cell2vector(app.PS.strR, 'rho');
@@ -22,7 +22,7 @@ y2 = cell2vector(app.PS.strP, 'p');
 x = x2./x1;
 y = y2./y1;
 % Plot configuration
-    plot(ax, 1./x, y, 'LineWidth', config.linewidth);
+plot(ax, 1./x, y, 'LineWidth', config.linewidth);
 end
 
 function ax = set_figure(config)

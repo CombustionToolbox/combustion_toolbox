@@ -1,5 +1,5 @@
 %{ 
-COMBUSTION TOOLBOX @v0.3.0
+COMBUSTION TOOLBOX @v0.3.1 - beta
 
 Type of problems:
     * TP ------> Equilibrium composition at defined T and p
@@ -66,8 +66,8 @@ switch app.PD.ProblemType
         app.PD.ProblemType = 'SHOCK_I';
 %          u1 = logspace(2, 5, 500);
 %          u1 = u1(u1<20000); u1 = u1(u1>=360);
-        u1 = [356,433,534,658,811,1000,1233,1520,1874,2310,2848,3511,4329,5337,6579,8111,10000,12328];
-%         u1 = 2000;
+%         u1 = [356,433,534,658,811,1000,1233,1520,1874,2310,2848,3511,4329,5337,6579,8111,10000,12328];
+        u1 = 2000;
         app.PD.u1.value = u1; app.PD.phi.value = ones(1,length(app.PD.u1.value));
     case 'SHOCK_R' % * SHOCK_R: CALCULATE PLANAR POST-REFLECTED SHOCK STATE
         app.PD.ProblemType = 'SHOCK_R';
@@ -83,7 +83,7 @@ end
 app.C.l_phi = length(app.PD.phi.value);
 for i=app.C.l_phi:-1:1
 %% DEFINE FUEL
-app.PD.S_Fuel = {'CH4'}; app.PD.N_Fuel = 1;
+% app.PD.S_Fuel = {'CH4'}; app.PD.N_Fuel = 1;
 app = Define_F(app);
 %% DEFINE OXIDIZER
 app.PD.S_Oxidizer = {'O2'}; app.PD.N_Oxidizer = app.PD.phi_t/app.PD.phi.value(i);

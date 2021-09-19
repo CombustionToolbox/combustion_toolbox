@@ -7,13 +7,19 @@ R0 = C.R0;           % Universal gas constant [J/(mol-K)]
 gamma1 = str1.gamma; % adiabatic index  [-]
 str1.u = u1;         % velocity preshock [m/s]
 M1 = u1/str1.sound;  % Mach number preshock [-]
+V1 = 1/str1.rho;
+V = V1/TN.volumeBoundRation;
 % Miscelaneous
 it = 0;
 itMax = 50;
 STOP = 1.;
 % Initial estimates of p2/p1 and T2/T1
-p2p1 = (2*gamma1 * M1^2 - gamma1 + 1) / (gamma1 + 1);
-T2T1 = p2p1 * (2/M1^2 + gamma1 - 1) / (gamma1 + 1);
+% p2p1 = (2*gamma1 * M1^2 - gamma1 + 1) / (gamma1 + 1);
+% T2T1 = p2p1 * (2/M1^2 + gamma1 - 1) / (gamma1 + 1);
+
+p2p1 = (1 + str1.rho * u1^2 * (1 - V/V1)) * 1e-5;
+T2T1 = p2p1 * V / V1;
+
 p2 = p2p1 * str1.p * 1e5; % [Pa]
 T2 = T2T1 * str1.T;
 while STOP > TN.tol_shocks && it < itMax
@@ -79,8 +85,8 @@ end
 
 function relax = relax_factor(x)
     % Compute relaxation factor
-%     factor = [0.40546511; 0.04879016];
-    factor = [0.40546511; 0.40546511];
+    factor = [0.40546511; 0.04879016];
+%     factor = [0.40546511; 0.40546511];
     lambda = factor ./ abs(x);
     relax = min(1, min(lambda));  
 end

@@ -1,27 +1,18 @@
-function [str1,str2] = shock_incident(self, str1, u1)
+function [str1,str2] = shock_incident(varargin)
+% Unpack input data
+[self, str1, str2] = unpack(varargin);
 % Abbreviations ---------------------
 C = self.C;
 TN = self.TN;
 % -----------------------------------
 R0 = C.R0;           % Universal gas constant [J/(mol-K)]
-gamma1 = str1.gamma; % adiabatic index  [-]
-str1.u = u1;         % velocity preshock [m/s]
-M1 = u1/str1.sound;  % Mach number preshock [-]
-V1 = 1/str1.rho;
-V = V1/TN.volumeBoundRation;
 % Miscelaneous
 it = 0;
 itMax = 50;
 STOP = 1.;
 % Initial estimates of p2/p1 and T2/T1
-% p2p1 = (2*gamma1 * M1^2 - gamma1 + 1) / (gamma1 + 1);
-% T2T1 = p2p1 * (2/M1^2 + gamma1 - 1) / (gamma1 + 1);
-
-p2p1 = (1 + str1.rho * u1^2 * (1 - V/V1)) * 1e-5;
-T2T1 = p2p1 * V / V1;
-
-p2 = p2p1 * str1.p * 1e5; % [Pa]
-T2 = T2T1 * str1.T;
+[p2, T2, p2p1, T2T1] = get_guess(str1, str2, TN);
+% Loop
 while STOP > TN.tol_shocks && it < itMax
     it = it + 1;
     % Construction of the Jacobian matrix and vector b
@@ -45,6 +36,41 @@ end
 str2 = save_state(self, str1, T2, p2, STOP);
 end
 % NESTED FUNCTIONS
+function [self, str1, str2] = unpack(x)
+    % Unpack input data
+    self = x{1};
+    str1 = x{2};
+    u1   = x{3};
+    str1.u = u1; % velocity preshock [m/s]
+    if length(x) == 4
+        str2 = x{4};
+    else
+        str2 = [];
+    end
+end
+
+function [p2, T2, p2p1, T2T1] = get_guess(str1, str2, TN)
+    if isempty(str2)
+        V1 = 1/str1.rho; % [m3/kg]
+        V = V1/TN.volumeBoundRation;
+
+        % p2p1 = (2*gamma1 * M1^2 - gamma1 + 1) / (gamma1 + 1);
+        % T2T1 = p2p1 * (2/M1^2 + gamma1 - 1) / (gamma1 + 1);
+
+        p2p1 = (1 + str1.rho * str1.u^2 * (1 - V/V1)) * 1e-5;
+        T2T1 = p2p1 * V / V1;
+
+        p2 = p2p1 * str1.p * 1e5; % [Pa]
+        T2 = T2T1 * str1.T;       % [K]
+    else
+        p2 = str2.p * 1e5; % [Pa]
+        T2 = str2.T;       % [K]
+
+        p2p1 = p2 / (str1.p * 1e5);
+        T2T1 = T2 / str1.T;
+    end
+end
+
 function [J, b] = update_system(self, str1, p2, T2, R0)
     % Update Jacobian matrix and vector b
     r1 = str1.rho;

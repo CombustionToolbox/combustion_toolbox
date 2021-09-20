@@ -25,8 +25,8 @@ if nargin == 3
                 
                 if ctTInt > 0
                     
-                    [txFormula, mm, Cp0, Cv0, Hf0, H0, Ef0, E0, S0, DfG0] = SpeciesThermProp(strMaster,S.LS{n_pass(i)},298.15,'molar',0);
-                    
+                    [txFormula, mm, Cp0, Cv0, Hf0, H0, Ef0, E0, S0, DfG0] = SpeciesThermProp(strMaster, S.LS{n_pass(i)},298.15,'molar',0);
+            
                     strThProp.(Species).name = Species;
                     strThProp.(Species).FullName = S.LS{n_pass(i)};
                     strThProp.(Species).txFormula = txFormula;
@@ -34,36 +34,55 @@ if nargin == 3
                     strThProp.(Species).hf = Hf0;
                     strThProp.(Species).ef = Ef0;
                     strThProp.(Species).swtCondensed = swtCondensed;
-                    
+
                     T_vector   = [];
                     DhT_vector = [];
                     DeT_vector = [];
+                    h0_vector  = [];
                     s0_vector  = [];
                     cp_vector  = [];
                     cv_vector  = [];
                     g0_vector  = [];
-                    
+
                     Tmin = max(tRange{1}(1),200);
-                    Tmax = min(tRange{ctTInt}(2), 20000);
-                    for T = [linspace(Tmin,298.15,4), linspace(350,Tmax,60)]
-                        
-                        [txFormula, mm, Cp0, Cv0, Hf0, H0, Ef0, E0, S0, DfG0] = SpeciesThermProp(strMaster,S.LS{n_pass(i)},T,'molar',0);
+                    Tmax = min(tRange{ctTInt}(2),20000);
+                    for T = [linspace(Tmin,298.15,10), linspace(350,Tmax,100)]
+                        [txFormula, mm, Cp0, Cv0, Hf0, H0, Ef0, E0, S0, DfG0] = SpeciesThermProp(strMaster, S.LS{i},T,'molar',0);
                         T_vector   = [  T_vector; T     ];
                         DhT_vector = [DhT_vector; H0-Hf0];
                         DeT_vector = [DeT_vector; E0-Ef0];
-                        s0_vector  = [ s0_vector; S0    ];
-                        cp_vector  = [ cp_vector; Cp0   ];
-                        cv_vector  = [ cv_vector; Cv0   ];
-                        g0_vector  = [ g0_vector; DfG0  ];
+                        h0_vector  = [h0_vector;  H0    ];
+                        s0_vector  = [s0_vector;  S0    ];
+                        cp_vector  = [cp_vector;  Cp0   ];
+                        cv_vector  = [cv_vector;  Cv0   ];
+                        g0_vector  = [g0_vector;  H0 - T*S0];
                     end
-                    
-                    strThProp.(Species).T   =   T_vector;
-                    strThProp.(Species).DhT = DhT_vector;
+
+                    strThProp.(Species).T   = T_vector;
+                    strThProp.(Species).DhT = DhT_vector; 
                     strThProp.(Species).DeT = DeT_vector;
-                    strThProp.(Species).s0  =  s0_vector;
-                    strThProp.(Species).cp  =  cp_vector;
-                    strThProp.(Species).cv  =  cv_vector;
-                    strThProp.(Species).g0  =  g0_vector;
+                    strThProp.(Species).h0  = h0_vector; 
+                    strThProp.(Species).s0  = s0_vector;
+                    strThProp.(Species).cp  = cp_vector;
+                    strThProp.(Species).cv  = cv_vector;
+                    strThProp.(Species).g0  = g0_vector;
+
+                    % INTERPOLATION CURVES
+                    strThProp.(Species).cPcurve = griddedInterpolant(strThProp.(Species).T,strThProp.(Species).cp, 'pchip', 'pchip');
+                    strThProp.(Species).cVcurve = griddedInterpolant(strThProp.(Species).T,strThProp.(Species).cv, 'pchip', 'pchip');
+                    strThProp.(Species).DhTcurve = griddedInterpolant(strThProp.(Species).T,strThProp.(Species).DhT, 'pchip', 'pchip');
+                    strThProp.(Species).DeTcurve = griddedInterpolant(strThProp.(Species).T,strThProp.(Species).DeT, 'pchip', 'pchip');
+                    strThProp.(Species).h0curve = griddedInterpolant(strThProp.(Species).T,strThProp.(Species).h0, 'pchip', 'pchip');
+                    strThProp.(Species).s0curve = griddedInterpolant(strThProp.(Species).T,strThProp.(Species).s0, 'pchip', 'pchip');
+                    strThProp.(Species).g0curve = griddedInterpolant(strThProp.(Species).T,strThProp.(Species).g0, 'pchip', 'pchip');
+
+                    % DATA COEFFICIENTS NASA 9 POLYNOMIAL
+                    strThProp.(Species).ctTInt = strMaster.(Species).ctTInt;
+                    strThProp.(Species).tRange = strMaster.(Species).tRange;
+                    strThProp.(Species).tExponents = strMaster.(Species).tExponents;
+                    strThProp.(Species).ctTInt = strMaster.(Species).ctTInt;
+                    strThProp.(Species).a = strMaster.(Species).a;
+                    strThProp.(Species).b  = strMaster.(Species).b;
                 else
                     
                     Tref = tRange(1);
@@ -84,15 +103,8 @@ if nargin == 3
                     strThProp.(Species).cv  = [];
                     strThProp.(Species).g0  = [];
                 end
-                % INTERPOLATION CURVES
-                strThProp.(Species).cPcurve = griddedInterpolant(strThProp.(Species).T,strThProp.(Species).cp);
-                strThProp.(Species).cVcurve = griddedInterpolant(strThProp.(Species).T,strThProp.(Species).cv);
-                strThProp.(Species).DeTcurve = griddedInterpolant(strThProp.(Species).T,strThProp.(Species).DeT);
-                strThProp.(Species).DhTcurve = griddedInterpolant(strThProp.(Species).T,strThProp.(Species).DhT);
-                strThProp.(Species).s0curve = griddedInterpolant(strThProp.(Species).T,strThProp.(Species).s0);
-                strThProp.(Species).g0curve = griddedInterpolant(strThProp.(Species).T,strThProp.(Species).g0);
             else
-                fprintf(['\n- Species ''',S.LS{n_pass(i)},''' does not exist as a field in strMaster structure ... '])
+                fprintf(['\n- Species ''', S.LS{n_pass(i)},''' does not exist as a field in strMaster structure ... '])
             end
         end
         

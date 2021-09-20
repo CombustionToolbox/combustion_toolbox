@@ -1,5 +1,5 @@
 %{ 
-COMBUSTION TOOLBOX @v0.3.3-beta
+COMBUSTION TOOLBOX @v0.3.3
 
 Type of problems:
     * TP ------> Equilibrium composition at defined T and p

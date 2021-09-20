@@ -1,11 +1,11 @@
-function [str1,str2] = shock_incident(varargin)
+function [str1, str2] = shock_incident(varargin)
 % Unpack input data
 [self, str1, str2] = unpack(varargin);
-% Abbreviations ---------------------
+% Abbreviations 
 C = self.C;
 TN = self.TN;
-% -----------------------------------
-R0 = C.R0;           % Universal gas constant [J/(mol-K)]
+% Constants
+R0 = C.R0; % Universal gas constant [J/(mol-K)]
 % Miscelaneous
 it = 0;
 itMax = 50;
@@ -31,7 +31,8 @@ while STOP > TN.tol_shocks && it < itMax
     % Compute STOP criteria
     STOP = compute_STOP(x);
 end
-
+% Check convergence
+print_convergence(STOP, TN.tol_shocks);
 % Save state
 str2 = save_state(self, str1, T2, p2, STOP);
 end
@@ -41,8 +42,9 @@ function [self, str1, str2] = unpack(x)
     self = x{1};
     str1 = x{2};
     u1   = x{3};
-    str1.u = u1; % velocity preshock [m/s]
-    if length(x) == 4
+    str1.u = u1;       % velocity preshock [m/s] - laboratory fixed
+    str1.w_shock = u1; % velocity preshock [m/s] - shock fixed
+    if length(x) > 3
         str2 = x{4};
     else
         str2 = [];
@@ -57,7 +59,7 @@ function [p2, T2, p2p1, T2T1] = get_guess(str1, str2, TN)
         % p2p1 = (2*gamma1 * M1^2 - gamma1 + 1) / (gamma1 + 1);
         % T2T1 = p2p1 * (2/M1^2 + gamma1 - 1) / (gamma1 + 1);
 
-        p2p1 = (1 + str1.rho * str1.u^2 * (1 - V/V1)) * 1e-5;
+        p2p1 = 1 + (str1.rho * str1.u^2  / str1.p * (1 - V/V1)) * 1e-5;
         T2T1 = p2p1 * V / V1;
 
         p2 = p2p1 * str1.p * 1e5; % [Pa]
@@ -87,13 +89,13 @@ function [J, b] = update_system(self, str1, p2, T2, R0)
     cP2 = str2.cP / str2.mi; % [J/(K-kg)]
     
     alpha = (W1 * u1^2) / (R0 * T1);
-    J1 = -r1 / r2 * alpha * dVdp_T - p2 / p1;
-    J2 = -r1 / r2 * alpha * dVdT_p;
-    b1 = p2 / p1 - 1 + alpha * (r1 / r2 - 1);
+    J1 = -r1/r2 * alpha * dVdp_T - p2 / p1;
+    J2 = -r1/r2 * alpha * dVdT_p;
+    b1 = p2/p1 - 1 + alpha * (r1/r2 - 1);
     
-    J3 = -u1^2 / R0 * (r1 / r2)^2 * dVdp_T + T2 / W2 * (dVdT_p - 1);
-    J4 = -u1^2 / R0 * (r1 / r2)^2 * dVdT_p - T2 * cP2 / R0;
-    b2 = (h2 - h1) / R0 - u1^2 / (2*R0) * (1 - (r1 / r2)^2);
+    J3 = -u1^2 / R0 * (r1/r2)^2 * dVdp_T + T2 / W2 * (dVdT_p - 1);
+    J4 = -u1^2 / R0 * (r1/r2)^2 * dVdT_p - T2 * cP2 / R0;
+    b2 = (h2 - h1) / R0 - u1^2 / (2*R0) * (1 - (r1/r2)^2);
     
     J = [J1 J2; J3 J4];
     b = [b1; b2];
@@ -136,6 +138,13 @@ end
 
 function str2 = save_state(self, str1, T2, p2, STOP)
     str2 = state(self, str1, T2, p2);
-    str2.u = str1.u - str1.u * str1.rho / str2.rho; % velocity of the gases in the shock tube
+    str2.v_shock = str1.u * str1.rho / str2.rho;
+    str2.u = str1.u - str2.v_shock; % velocity postshock [m/s] - laboratory fixed
     str2.error_problem = STOP;
+end
+
+function print_convergence(STOP, TOL)
+    if STOP > TOL
+        fprint('Convergence error: %.2f', STOP);
+    end
 end

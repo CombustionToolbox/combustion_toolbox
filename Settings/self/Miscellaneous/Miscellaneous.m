@@ -1,4 +1,4 @@
-function self = Miscelaneous()
+function self = Miscellaneous()
     self.description = "Constants and tolerances";
     self.config.linewidth = 1.8;
     self.config.fontsize = 22;

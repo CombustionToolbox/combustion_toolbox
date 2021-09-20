@@ -67,12 +67,14 @@ switch app.PD.ProblemType
 %         u1 = logspace(2, 5, 500);
 %         u1 = u1(u1<20000); u1 = u1(u1>=360);
 %         u1 = [356,433,534,658,811,1000,1233,1520,1874,2310,2848,3511,4329,5337,6579,8111,10000,12328];
-        u1 = linspace(360, 9000, 1000);
-%         u1 = 2000;
+%         u1 = linspace(360, 9000, 1000);
+        u1 = 2000;
         app.PD.u1.value = u1; app.PD.phi.value = ones(1,length(app.PD.u1.value));
     case 'SHOCK_R' % * SHOCK_R: CALCULATE PLANAR POST-REFLECTED SHOCK STATE
         app.PD.ProblemType = 'SHOCK_R';
-        app.PD.u1.value = 400:50:2000; app.PD.phi.value = ones(1,length(app.PD.u1.value));
+%         u1 = linspace(400, 3000, 1000);
+        u1 = 2000;
+        app.PD.u1.value = u1; app.PD.phi.value = ones(1,length(app.PD.u1.value));
     case 'DET' % * DET: CALCULATE CHAPMAN-JOUGET STATE (CJ UPPER STATE)
         app.PD.ProblemType = 'DET';
 %         app.PD.TR_vector.value = app.PD.TR.value;

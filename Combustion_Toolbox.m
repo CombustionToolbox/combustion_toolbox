@@ -68,15 +68,15 @@ switch app.PD.ProblemType
         app.PD.ProblemType = 'SHOCK_I';
 %         u1 = logspace(2, 5, 500);
 %         u1 = u1(u1<20000); u1 = u1(u1>=360);
-        u1 = [356,433,534,658,811,1000,1233,1520,1874,2310,2848,3511,4329,5337,6579,8111,10000,12328, 15000];
+%         u1 = [356,433,534,658,811,1000,1233,1520,1874,2310,2848,3511,4329,5337,6579,8111,10000,12328];
 %         u1 = [356,433,534,658,811,1000,1233,1520,1874,2310,2848,3511,4329,5337,6579];
-%         u1 = linspace(360, 9000, 1000);
+        u1 = linspace(360, 9000, 1000);
 %         u1 = 2000;
         app.PD.u1.value = u1; app.PD.phi.value = ones(1,length(app.PD.u1.value));
     case 'SHOCK_R' % * SHOCK_R: CALCULATE PLANAR POST-REFLECTED SHOCK STATE
         app.PD.ProblemType = 'SHOCK_R';
-%         u1 = linspace(400, 3000, 1000);
-        u1 = 2000;
+        u1 = linspace(400, 6000, 1000);
+%         u1 = 2000;
         app.PD.u1.value = u1; app.PD.phi.value = ones(1,length(app.PD.u1.value));
     case 'DET' % * DET: CALCULATE CHAPMAN-JOUGET STATE (CJ UPPER STATE)
         app.PD.ProblemType = 'DET';
@@ -93,11 +93,11 @@ for i=app.C.l_phi:-1:1
 % app.PD.S_Fuel = {'CH4'}; app.PD.N_Fuel = 1;
 app = Define_F(app);
 %% DEFINE OXIDIZER
-app.PD.S_Oxidizer = {'H2'}; app.PD.N_Oxidizer = app.PD.phi_t/app.PD.phi.value(i);
+app.PD.S_Oxidizer = {'O2'}; app.PD.N_Oxidizer = app.PD.phi_t/app.PD.phi.value(i);
 app = Define_O(app);
 %% DEFINE DILUENTS/INERTS
-% app.PD.proportion_N2_O2 = 79/21;
-% app.PD.S_Inert = {'N2'}; app.PD.N_Inert = app.PD.phi_t/app.PD.phi.value(i) * app.PD.proportion_N2_O2;
+app.PD.proportion_N2_O2 = 79/21;
+app.PD.S_Inert = {'N2'}; app.PD.N_Inert = app.PD.phi_t/app.PD.phi.value(i) * app.PD.proportion_N2_O2;
 app = Define_I(app);
 %% COMPUTE PROPERTIES
 app = Define_FOI(app, i);

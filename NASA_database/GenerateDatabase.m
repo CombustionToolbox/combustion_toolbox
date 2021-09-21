@@ -14,7 +14,7 @@ end
 function strThProp = get_Database(strMaster)
 
 %%% gri30-x.cti except 'CH2(s)' + others
-SpeciesList = {'H2', 'H', 'O', 'O2', 'O3', 'OH', 'H2O', 'HO2', 'H2O2', 'C',...
+SpeciesList = {'eminus', 'H2', 'H', 'O', 'O2', 'O3', 'OH', 'H2O', 'HO2', 'H2O2', 'C',...
     'CH', 'CH2', 'CH3', 'CH4', 'CO', 'CO2', 'HCO',...
     'CH2OH', 'CH3O', 'CH3OH', 'C2H', 'C2H4',...
     'C2H5', 'C2H6', 'HCCO', 'N', 'NH', 'NH2', 'NH3',...
@@ -109,9 +109,15 @@ for i = 1:length(SpeciesList)
             cv_vector  = [];
             g0_vector  = [];
             
-            Tmin = max(tRange{1}(1),200);
-            Tmax = min(tRange{ctTInt}(2),20000);
-            for T = [linspace(Tmin,298.15,10), linspace(350,Tmax,100)]
+            Tmin = max(tRange{1}(1), 200);
+            Tmax = min(tRange{ctTInt}(2), 20000);
+            if abs(Tmin - 298.15) < 1e4 
+                Trange1 = 298.15;
+            else
+                Trange1 = linspace(Tmin, 298.15, 10);
+            end
+            Trange2 = linspace(350, Tmax, 100);
+            for T = [Trange1, Trange2]
                 [txFormula, mm, Cp0, Cv0, Hf0, H0, Ef0, E0, S0, DfG0] = SpeciesThermProp(strMaster,SpeciesList{i},T,'molar',0);
                 T_vector   = [  T_vector; T     ];
                 DhT_vector = [DhT_vector; H0-Hf0];

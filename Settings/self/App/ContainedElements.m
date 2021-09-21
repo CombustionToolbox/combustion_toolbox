@@ -30,4 +30,5 @@ function self = ContainedElements(self)
     self.E.ind_H = find(strcmp(self.E.elements,'H'));
     self.E.ind_O = find(strcmp(self.E.elements,'O'));
     self.E.ind_N = find(strcmp(self.E.elements,'N'));
+    self.E.ind_E = find(strcmp(self.E.elements,'E'));
 end

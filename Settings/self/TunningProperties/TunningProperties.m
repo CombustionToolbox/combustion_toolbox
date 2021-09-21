@@ -12,4 +12,5 @@ function self = TunningProperties()
     self.root_method = @steff; % Method for root finding
     self.tol_shocks = 5e-5;  % Tolerance of shocks routines
     self.volumeBoundRation = 5; % Initial guess ratio shocks
+    self.tol_pi_e = 1e-4; % Tolerance of the Lagrangian multiplier for ions divided by RT
 end

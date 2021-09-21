@@ -151,6 +151,7 @@ if nargin == 3
         E.ind_N = find(strcmp(E.elements,'N'));
         E.ind_He = find(strcmp(E.elements,'He'));
         E.ind_Ar = find(strcmp(E.elements,'Ar'));
+        E.ind_E = find(strcmp(E.elements,'E'));
         % Element_matrix
         for i=S.NS:-1:l_n_pass
             txFormula = strThProp.(S.LS_DB{i,1}).txFormula;

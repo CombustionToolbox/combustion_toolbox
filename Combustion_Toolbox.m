@@ -1,5 +1,5 @@
 %{ 
-COMBUSTION TOOLBOX @v0.3.3
+COMBUSTION TOOLBOX @v0.3.4-beta
 
 Type of problems:
     * TP ------> Equilibrium composition at defined T and p
@@ -19,7 +19,7 @@ a specified p
          PhD Candidate - Group Fluid Mechanics
          Universidad Carlos III de Madrid
                   
-Last update Fri Sep 20 16:40:00 2021
+Last update Fri Sep 21 2021
 ---------------------------------------------------------------------- 
 %}
 

@@ -2,6 +2,7 @@ function [N0, STOP] = equilibrium(app, pP, TP, strR)
 % Generalized Gibbs minimization method
 
 % Abbreviations ---------------------
+E = app.E;
 S = app.S;
 C = app.C;
 TN = app.TN;
@@ -21,14 +22,21 @@ it = 0;
 itMax = 50 + round(S.NS/2);
 SIZE = -log(TN.tolN);
 STOP = 1.;
-
+STOP_ions = 1.;
+flag_ions_first = true;
 % Find indeces of the species/elements that we have to remove from the stoichiometric matrix A0
 % for the sum of elements whose value is <= tolN
+flag_ions = contains(S.LS, 'minus') | contains(S.LS, 'plus');
+aux = NatomE;
+if any(flag_ions)
+    NatomE(E.ind_E) = 1; % Fictitious value
+end
 ind_A0_E0 = remove_elements(NatomE, A0, TN.tolN);
+NatomE = aux;
 % List of indices with nonzero values
-[temp_ind_nswt, temp_ind_swt, temp_ind_E, temp_NE] = temp_values(S, NatomE, TN.tolN);
+[temp_ind_nswt, temp_ind_swt, flag_ions, temp_ind_E, temp_NE] = temp_values(E.ind_E, S, NatomE, TN.tolN);
 % Update temp values
-[temp_ind, temp_ind_swt, temp_ind_nswt, temp_NS] = update_temp(N0, N0(ind_A0_E0, 1), ind_A0_E0, temp_ind_swt, temp_ind_nswt, TN.tolN, SIZE);
+[temp_ind, temp_ind_swt, temp_ind_nswt, flag_ions, temp_NS] = update_temp(N0, N0(ind_A0_E0, 1), ind_A0_E0, temp_ind_swt, temp_ind_nswt, flag_ions, TN.tolN, SIZE);
 temp_NS0 = temp_NS + 1;
 % Initialize species vector N0 
 N0(temp_ind, 1) = 0.1/temp_NS;
@@ -40,29 +48,40 @@ G0RT = g0/R0TP;
 A22 = zeros(temp_NE + 1);
 A0_T = A0';
 
-while STOP > TN.tolN && it < itMax
+while (STOP > TN.tolN || STOP_ions > TN.tol_pi_e) && it < itMax 
     it = it + 1;
     % Gibbs free energy
     G0RT(temp_ind_nswt) =  g0(temp_ind_nswt) / R0TP + log(N0(temp_ind_nswt, 1) / NP) + log(pP);
     % Construction of matrix A
     A = update_matrix_A(A0_T, A1, A22, N0, NP, temp_ind, temp_ind_E);
     % Construction of vector b            
-    b = update_vector_b(A0, N0, NP, NatomE, temp_ind, temp_ind_E, temp_ind_nswt, G0RT);
+    b = update_vector_b(A0, N0, NP, NatomE, E.ind_E, flag_ions, temp_ind, temp_ind_E, temp_ind_nswt, G0RT);
     % Solve of the linear system A*x = b
     x = A\b;
-    % Calculate correction factor
+    % Compute correction factor
     lambda = relax_factor(NP, N0(temp_ind, 1), x(1:temp_NS), x(end), SIZE);
+    % Compute and apply correction of the Lagrangian multiplier for ions divided by RT
+    lambda_ions = ions_factor(N0, A0, temp_ind_nswt, E.ind_E, flag_ions);
     % Apply correction
+    if any(flag_ions) && flag_ions_first
+        N0_wions =  log(N0(temp_ind_nswt(flag_ions), 1)) + A0(temp_ind_nswt(flag_ions), E.ind_E) * lambda_ions;
+    end
     N0(temp_ind, 1) = log(N0(temp_ind, 1)) + lambda * x(1:temp_NS);
+    if any(flag_ions)
+        if abs(lambda_ions) > TN.tol_pi_e && flag_ions_first
+            N0(temp_ind_nswt(flag_ions), 1) = N0_wions;
+            flag_ions_first = false;
+        end
+    end
     NP_log = log(NP) + lambda * x(end);
     % Apply antilog
     [N0, NP] = apply_antilog(N0, NP_log, temp_ind);
     % Update temp values in order to remove species with moles < tolerance
-    [temp_ind, temp_ind_swt, temp_ind_nswt, temp_NS] = update_temp(N0, N0(temp_ind, 1), temp_ind, temp_ind_swt, temp_ind_nswt, NP, SIZE);
+    [temp_ind, temp_ind_swt, temp_ind_nswt, flag_ions, temp_NS] = update_temp(N0, N0(temp_ind, 1), temp_ind, temp_ind_swt, temp_ind_nswt, flag_ions, NP, SIZE);
     % Update matrix A
     [A1, temp_NS0] = update_matrix_A1(A0, A1, temp_NS, temp_NS0, temp_ind, temp_ind_E);
     % Compute STOP criteria
-    STOP = compute_STOP(NP_0, NP, x(end), N0(temp_ind, 1), x(1:temp_NS));
+    [STOP, STOP_ions] = compute_STOP(NP_0, NP, x(end), N0(temp_ind, 1), x(1:temp_NS), lambda_ions, flag_ions, flag_ions_first);
 end
 % N0(N0(:, 1) < TN.tolN, 1) = 0;
 end
@@ -91,23 +110,33 @@ function ind_A0_E0 = remove_elements(NatomE, A0, tol)
     ind_A0_E0 = find_ind_Matrix(A0, bool_E0);
 end
 
-function [temp_ind_nswt, temp_ind_swt, temp_ind_E, temp_NE] = temp_values(S, NatomE, tol)
+function [temp_ind_nswt, temp_ind_swt, flag_ions, temp_ind_E, temp_NE] = temp_values(ind_E, S, NatomE, tol)
     % List of indices with nonzero values and lengths
+    flag_ions = contains(S.LS, 'minus') | contains(S.LS, 'plus');
+    if any(flag_ions)
+        NatomE(ind_E) = 1; % Fictitious value
+    end
+    
     temp_ind_E = find(NatomE > tol);
     temp_ind_nswt = S.ind_nswt;
     temp_ind_swt = S.ind_swt;
     temp_NE = length(temp_ind_E);
 end
 
-function [ls1, ls2] = remove_item(N0, n, ind, ls1, ls2, NP, SIZE)
+function [temp_ind_swt, temp_ind_nswt, flag_ions] = remove_item(N0, n, ind, temp_ind_swt, temp_ind_nswt, flag_ions, NP, SIZE)
     % Remove species from the computed indeces list of gaseous and condensed
     % species and append the indeces of species that we have to remove
     for i=1:length(n)
         if log(n(i)/NP) < -SIZE
             if N0(ind(i), 2)
-                ls1(ls1==ind(i)) = [];
+                temp_ind_swt(temp_ind_swt==ind(i)) = [];
             else
-                ls2(ls2==ind(i)) = [];
+                temp_ind_nswt(temp_ind_nswt==ind(i)) = [];
+                try
+                    flag_ions(ind(i)) = [];
+                catch
+                    continue
+                end
             end
         end
     end
@@ -120,9 +149,9 @@ function [ls1, ls2] = remove_item(N0, n, ind, ls1, ls2, NP, SIZE)
 %     ls2(ind2) = [];
 end
 
-function [temp_ind, temp_ind_swt, temp_ind_nswt, temp_NS] = update_temp(N0, zip1, zip2, ls1, ls2, NP, SIZE)
+function [temp_ind, temp_ind_swt, temp_ind_nswt, flag_ions, temp_NS] = update_temp(N0, zip1, zip2, temp_ind_swt, temp_ind_nswt, flag_ions, NP, SIZE)
     % Update temp items
-    [temp_ind_swt, temp_ind_nswt] = remove_item(N0, zip1, zip2, ls1, ls2, NP, SIZE);
+    [temp_ind_swt, temp_ind_nswt, flag_ions] = remove_item(N0, zip1, zip2, temp_ind_swt, temp_ind_nswt, flag_ions, NP, SIZE);
     temp_ind = [temp_ind_nswt, temp_ind_swt];
     temp_NS = length(temp_ind);
 end
@@ -148,9 +177,12 @@ function A = update_matrix_A(A0_T, A1, A22, N0, NP, temp_ind, temp_ind_E)
     A = [A1; A2];
 end
 
-function b = update_vector_b(A0, N0, NP, NatomE, temp_ind, temp_ind_E, temp_ind_nswt, G0RT)
+function b = update_vector_b(A0, N0, NP, NatomE, ind_E, flag_ions, temp_ind, temp_ind_E, temp_ind_nswt, G0RT)
     % Update coefficient vector b
     bi_0 = (NatomE(temp_ind_E) - N0(temp_ind, 1)' * A0(temp_ind, temp_ind_E))';
+    if any(flag_ions)
+        bi_0(ind_E) = 0;
+    end
     NP_0 = NP - sum(N0(temp_ind_nswt, 1));
     b = [-G0RT(temp_ind); bi_0; NP_0];
 end
@@ -164,14 +196,30 @@ function relax = relax_factor(NP, n, n_log_new, DeltaNP, SIZE)
     relax = min(1, min(lambda));  
 end
 
+function relax = ions_factor(N0, A0, temp_ind_nswt, ind_E, flag_ions)
+    if any(flag_ions)
+        relax = -sum(A0(temp_ind_nswt, ind_E)    .* N0(temp_ind_nswt, 1))/ ...
+                 sum(A0(temp_ind_nswt, ind_E).^2 .* N0(temp_ind_nswt, 1));
+    else
+        relax = [];
+    end 
+end
+
 function [N0, NP] = apply_antilog(N0, NP_log, temp_ind)
     N0(temp_ind, 1) = exp(N0(temp_ind, 1));
     NP = exp(NP_log);
 end
 
-function DeltaN = compute_STOP(NP_0, NP, DeltaNP, zip1, zip2)
+function [DeltaN, Delta_ions] = compute_STOP(NP_0, NP, DeltaNP, zip1, zip2, lambda_ions, flag_ions, flag_ions_first)
     DeltaN1 = max(max(zip1 .* abs(zip2) / NP));
     DeltaN3 = NP_0 * abs(DeltaNP) / NP;
     % Deltab = [abs(bi - sum(N0[:, 0] * A0[:, i])) for i, bi in enumerate(x[S.NS:-1]) if bi > 1e-6]
     DeltaN = max(DeltaN1, DeltaN3);
+    if flag_ions_first
+        Delta_ions = 0;
+    elseif any(flag_ions)
+        Delta_ions = abs(lambda_ions);
+    else
+        Delta_ions = 0;
+    end
 end

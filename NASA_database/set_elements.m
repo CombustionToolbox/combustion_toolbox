@@ -118,6 +118,6 @@ Elements = {
 'Lv';  % 116
 'Ts';  % 117
 'Og';  % 118
-'e'};  % 119 % Electron
+'E'};  % 119 % Electron
 
 NE = numel(Elements);

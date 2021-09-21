@@ -7,12 +7,13 @@ function self = ContainedElements(self)
         Species(strfind(Species,'TL')+1)='l';
         Species(strfind(Species,'FL')+1)='l';
         % -----------------------------------------------
+        Species(strfind(Species,'eminus')) = 'E';
         Species(Species>='0' & Species<='9') = ' ';
 
         [idx0,idxf] = regexp(Species,"minus"); Species(idx0:idxf) = ' ';
         [idx0,idxf] = regexp(Species,"plus"); Species(idx0:idxf) = ' ';
 
-        idx = find([(Species>='A' & Species<='Z') | (Species=='e'), true]);
+        idx = find([(Species>='A' & Species<='Z'), true]);
         lgt = diff(idx);
         Tmp{k,1} = strtrim(mat2cell(Species, 1, lgt));
     end

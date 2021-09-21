@@ -12,7 +12,7 @@ function self = ContainedElements(self)
         [idx0,idxf] = regexp(Species,"minus"); Species(idx0:idxf) = ' ';
         [idx0,idxf] = regexp(Species,"plus"); Species(idx0:idxf) = ' ';
 
-        idx = find([(Species>='A' & Species<='Z'), true]);
+        idx = find([(Species>='A' & Species<='Z') | (Species=='e'), true]);
         lgt = diff(idx);
         Tmp{k,1} = strtrim(mat2cell(Species, 1, lgt));
     end

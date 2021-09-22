@@ -79,4 +79,8 @@ end
 
 app.S.LS = unique(app.S.LS, 'stable');
 app.S.NS = length(app.S.LS);
+
+if any(contains(app.S.LS, 'minus')) || any(contains(app.S.LS, 'plus'))
+    app.PD.ionization = true;
+end
 end

@@ -18,7 +18,7 @@ function pP = compute_pressure(self, strR, TP, N)
 end
 
 function [N, DeltaNP] = select_equilibrium(self, pP, TP, strR)
-    if self.PD.ionization
+    if ~self.PD.ionization
         % Compute numer of moles without ionization
         [N, DeltaNP] = equilibrium(self, pP, TP, strR);
     else

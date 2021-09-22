@@ -35,8 +35,8 @@ addpath(genpath(pwd));
 % app = App({'O2','N2','O','O3','N','NO','NO2','NO3','N2O','N2O3','N2O4','N3', ...
 %     'eminus', 'Nplus', 'Nplus', 'NOplus', 'NO2minus', 'NO3minus', 'N2plus', 'N2minus', 'N2Oplus', ...
 %      'Oplus', 'Ominus', 'O2plus', 'O2minus'});
-%  app = App({'N2', 'N', 'N3', 'eminus', 'N2plus', 'N2minus', 'Nplus', 'Nplus'});
-  app = App({'N2', 'N', 'N3'});
+ app = App({'N2', 'N', 'N3', 'eminus', 'N2plus', 'N2minus', 'Nplus', 'Nplus'});
+%   app = App({'N2', 'N', 'N3'});
 %% PROBLEM CONDITIONS
 app.PD.TR.value = 300;
 app.PD.pR.value = 1.01325;
@@ -70,12 +70,12 @@ switch app.PD.ProblemType
         app.PD.vP_vR.value = 0.5:0.01:2; app.PD.phi.value = 1*ones(1,length(app.PD.vP_vR.value));
     case 'SHOCK_I' % * SHOCK_I: CALCULATE PLANAR INCIDENT SHOCK WAVE
         app.PD.ProblemType = 'SHOCK_I';
-        u1 = logspace(2, 5, 500);
-        u1 = u1(u1<9000); u1 = u1(u1>=360);
+%         u1 = logspace(2, 5, 500);
+%         u1 = u1(u1<9000); u1 = u1(u1>=360);
 %         u1 = [356,433,534,658,811,1000,1233,1520,1874,2310,2848,3511,4329,5337,6579,8111,10000,12328];
 %         u1 = [356,433,534,658,811,1000,1233,1520,1874,2310,2848,3511,4329,5337,6579];
 %         u1 = linspace(360, 9000, 1000);
-%         u1 = 9000;
+        u1 = 9000;
         app.PD.u1.value = u1; app.PD.phi.value = ones(1,length(app.PD.u1.value));
     case 'SHOCK_R' % * SHOCK_R: CALCULATE PLANAR POST-REFLECTED SHOCK STATE
         app.PD.ProblemType = 'SHOCK_R';

@@ -23,8 +23,9 @@ This project is also part of my PhD.
 
 ## Examples
 
-![](https://github.com/AlbertoCuadra/ThermochemicalCode_Python/blob/master/Validations/HP_CH4.svg)
-  **Figure 1:** *Adiabatic temperature and composition at constant pressure for methane with air.*
+![](https://github.com/AlbertoCuadra/combustion_toolbox/blob/master/Validations/Hugoniot_benchmarking.svg)
+  **Figure 1:** *Hugoniot curves for different molecular gases at pre-shock temperature $T_1 = 300 K$ and pressure $p_1 = 1 atm$ \[symbols:
+numerical results obtained with NASA’s Chemical Equilibrium with Applications (CEA) code excluding ionization\].*
 
 ## Contributing
 

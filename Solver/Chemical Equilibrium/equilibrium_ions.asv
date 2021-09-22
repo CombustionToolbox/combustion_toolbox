@@ -1,4 +1,4 @@
-function [N0, STOP] = equilibrium(app, pP, TP, strR)
+function [N0, STOP] = equilibrium_ions(app, pP, TP, strR)
 % Generalized Gibbs minimization method
 
 % Abbreviations ---------------------
@@ -81,7 +81,7 @@ while (STOP > TN.tolN || STOP_ions > TN.tol_pi_e) && it < itMax
     % Update matrix A
     [A1, temp_NS0] = update_matrix_A1(A0, A1, temp_NS, temp_NS0, temp_ind, temp_ind_E);
     % Compute STOP criteria
-     [STOP, STOP_ions] = compute_STOP(NP_0, NP, x(end), N0(temp_ind, 1), x(1:temp_NS), lambda_ions, flag_ions, flag_ions_first);
+    [STOP, STOP_ions] = compute_STOP(NP_0, NP, x(end), N0(temp_ind, 1), x(1:temp_NS), lambda_ions, flag_ions, flag_ions_first);
 end
 % N0(N0(:, 1) < TN.tolN, 1) = 0;
 end
@@ -213,12 +213,12 @@ end
 function [DeltaN, Delta_ions] = compute_STOP(NP_0, NP, DeltaNP, zip1, zip2, lambda_ions, flag_ions, flag_ions_first)
     DeltaN1 = max(max(zip1 .* abs(zip2) / NP));
     DeltaN3 = NP_0 * abs(DeltaNP) / NP;
-    % Deltab = [abs(bi - sum(N0[:, 0] * A0[:, i])) for i, bi in enumerate(x[S.NS:-1]) if bi > 1e-6]
+    DeltaN = [abs(bi - sum(N0[:, 0] * A0[:, i])) for i, bi in enumerate(x[S.NS:-1]) if bi > 1e-6]
     DeltaN = max(DeltaN1, DeltaN3);
     if flag_ions_first
+        Delta_ions = 0;
+    elseif any(flag_ions)
         Delta_ions = abs(lambda_ions);
-    elseif
-        any(flag_ions)
     else
         Delta_ions = 0;
     end

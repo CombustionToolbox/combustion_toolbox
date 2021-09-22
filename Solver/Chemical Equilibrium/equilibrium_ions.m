@@ -61,7 +61,7 @@ while (STOP > TN.tolN || STOP_ions > TN.tol_pi_e) && it < itMax
     % Compute correction factor
     lambda = relax_factor(NP, N0(temp_ind, 1), x(1:temp_NS), x(end), SIZE);
     % Compute and apply correction of the Lagrangian multiplier for ions divided by RT
-    lambda_ions = ions_factor(N0, A0, temp_ind_nswt, E.ind_E, flag_ions);
+    [lambda_ions, DeltaN3] = ions_factor(N0, A0, temp_ind_nswt, E.ind_E, flag_ions);
     % Apply correction
     if any(flag_ions) && flag_ions_first
         N0_wions =  log(N0(temp_ind_nswt(flag_ions), 1)) + A0(temp_ind_nswt(flag_ions), E.ind_E) * lambda_ions;
@@ -81,7 +81,7 @@ while (STOP > TN.tolN || STOP_ions > TN.tol_pi_e) && it < itMax
     % Update matrix A
     [A1, temp_NS0] = update_matrix_A1(A0, A1, temp_NS, temp_NS0, temp_ind, temp_ind_E);
     % Compute STOP criteria
-    [STOP, STOP_ions] = compute_STOP(NP_0, NP, x(end), N0(temp_ind, 1), x(1:temp_NS), lambda_ions, flag_ions, flag_ions_first);
+    [STOP, STOP_ions] = compute_STOP(NP_0, NP, x(end), N0(temp_ind, 1), x(1:temp_NS), lambda_ions, flag_ions, flag_ions_first, DeltaN3);
 end
 % N0(N0(:, 1) < TN.tolN, 1) = 0;
 end
@@ -140,13 +140,6 @@ function [temp_ind_swt, temp_ind_nswt, flag_ions] = remove_item(N0, n, ind, temp
             end
         end
     end
-%     bool = log(zip1./NP) < -SIZE;
-%     bool1 = bool & N0(zip2, 2);
-%     bool2 = bool & ~N0(zip2, 2);
-%     ind1 = logical(sum(ls1(:)==zip2(bool1), 2)); if ~ind1, ind1=[]; end
-%     ind2 = logical(sum(ls2(:)==zip2(bool2), 2)); if ~ind2, ind2=[]; end
-%     ls1(ind1) = [];
-%     ls2(ind2) = [];
 end
 
 function [temp_ind, temp_ind_swt, temp_ind_nswt, flag_ions, temp_NS] = update_temp(N0, zip1, zip2, temp_ind_swt, temp_ind_nswt, flag_ions, NP, SIZE)
@@ -196,10 +189,11 @@ function relax = relax_factor(NP, n, n_log_new, DeltaNP, SIZE)
     relax = min(1, min(lambda));  
 end
 
-function relax = ions_factor(N0, A0, temp_ind_nswt, ind_E, flag_ions)
+function [relax, DeltaN3] = ions_factor(N0, A0, temp_ind_nswt, ind_E, flag_ions)
     if any(flag_ions)
         relax = -sum(A0(temp_ind_nswt, ind_E)    .* N0(temp_ind_nswt, 1))/ ...
                  sum(A0(temp_ind_nswt, ind_E).^2 .* N0(temp_ind_nswt, 1));
+        DeltaN3 = abs(sum(N0(temp_ind_nswt, 1) .* A0(temp_ind_nswt, ind_E)));
     else
         relax = [];
     end 
@@ -210,11 +204,10 @@ function [N0, NP] = apply_antilog(N0, NP_log, temp_ind)
     NP = exp(NP_log);
 end
 
-function [DeltaN, Delta_ions] = compute_STOP(NP_0, NP, DeltaNP, zip1, zip2, lambda_ions, flag_ions, flag_ions_first)
+function [DeltaN, Delta_ions] = compute_STOP(NP_0, NP, DeltaNP, zip1, zip2, lambda_ions, flag_ions, flag_ions_first, DeltaN3)
     DeltaN1 = max(max(zip1 .* abs(zip2) / NP));
-    DeltaN3 = NP_0 * abs(DeltaNP) / NP;
-    % Deltab = [abs(bi - sum(N0[:, 0] * A0[:, i])) for i, bi in enumerate(x[S.NS:-1]) if bi > 1e-6]
-    DeltaN = max(DeltaN1, DeltaN3);
+    DeltaN2 = NP_0 * abs(DeltaNP) / NP;
+    DeltaN  = max(DeltaN1, max(DeltaN2, DeltaN3));
     if flag_ions_first
         Delta_ions = 0;
     elseif any(flag_ions)

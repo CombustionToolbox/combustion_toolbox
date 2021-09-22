@@ -25,7 +25,7 @@ This project is also part of my PhD.
 
 ![]<img src="https://github.com/AlbertoCuadra/combustion_toolbox/blob/master/Validations/Hugoniot_benchmarking.svg" width="400">
 
-**Figure 1:** *Hugoniot curves for different molecular gases at pre-shock temperature <img src="https://render.githubusercontent.com/render/math?math=e^{i%20\pi} = -1"> $T_1 = 300 K$ and pressure $p_1 = 1 atm$ \[symbols: numerical results obtained with NASA’s Chemical Equilibrium with Applications (CEA) code excluding ionization\].*
+**Figure 1:** *Hugoniot curves for different molecular gases at pre-shock temperature <img src="https://render.githubusercontent.com/render/math?math=T_1=300%20K"> and pressure <img src="https://render.githubusercontent.com/render/math?math=p_1%20amt"> \[symbols: numerical results obtained with NASA’s Chemical Equilibrium with Applications (CEA) code excluding ionization\].*
 
 ## Contributing
 

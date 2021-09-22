@@ -21,9 +21,10 @@ The code computes the equilibrium composition by minimization of the Gibbs–Hel
 
 This project is also part of my PhD.
 
-## Some examples
+## Examples
 
-
+![](https://github.com/AlbertoCuadra/ThermochemicalCode_Python/blob/master/Validations/HP_CH4.svg)
+  **Figure 1:** *Adiabatic temperature and composition at constant pressure for methane with air.*
 
 ## Contributing
 

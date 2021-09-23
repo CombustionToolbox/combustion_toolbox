@@ -47,8 +47,8 @@ A.C. is deeply grateful to Samuel Delbarre for his help in the validation and de
 
 ## Citing Combustion Toolbox
 
-```
-@misc{cantera,
+```latex
+@misc{combustiontoolbox,
     author = "Alberto Cuadra and Marcos Vera",
     title = "Combustion Toolbox: A MATLAB-GUI based open-source tool for solving combustion problems",
     year = 2021,

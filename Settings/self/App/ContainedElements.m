@@ -9,7 +9,8 @@ function self = ContainedElements(self)
         % -----------------------------------------------
         Species(strfind(Species,'eminus')) = 'E';
         Species(Species>='0' & Species<='9') = ' ';
-
+        
+        [idx0,idxf] = regexp(Species,"bLb"); Species(idx0:idxf) = ' ';
         [idx0,idxf] = regexp(Species,"minus"); Species(idx0:idxf) = ' ';
         [idx0,idxf] = regexp(Species,"plus"); Species(idx0:idxf) = ' ';
 

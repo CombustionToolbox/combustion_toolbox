@@ -7,6 +7,7 @@ function self = ContainedElements(self)
         Species(strfind(Species,'TL')+1)='l';
         Species(strfind(Species,'FL')+1)='l';
         % -----------------------------------------------
+        Species(strfind(Species,'eminus')) = 'E';
         Species(Species>='0' & Species<='9') = ' ';
 
         [idx0,idxf] = regexp(Species,"minus"); Species(idx0:idxf) = ' ';
@@ -29,4 +30,5 @@ function self = ContainedElements(self)
     self.E.ind_H = find(strcmp(self.E.elements,'H'));
     self.E.ind_O = find(strcmp(self.E.elements,'O'));
     self.E.ind_N = find(strcmp(self.E.elements,'N'));
+    self.E.ind_E = find(strcmp(self.E.elements,'E'));
 end

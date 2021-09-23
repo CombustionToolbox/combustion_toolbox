@@ -44,9 +44,15 @@ if nargin == 3
                     cv_vector  = [];
                     g0_vector  = [];
 
-                    Tmin = max(tRange{1}(1),200);
-                    Tmax = min(tRange{ctTInt}(2),20000);
-                    for T = [linspace(Tmin,298.15,10), linspace(350,Tmax,100)]
+                    Tmin = max(tRange{1}(1), 200);
+                    Tmax = min(tRange{ctTInt}(2), 20000);
+                    if abs(Tmin - 298.15) < 1e4 
+                        Trange1 = 298.15;
+                    else
+                        Trange1 = linspace(Tmin, 298.15, 10);
+                    end
+                    Trange2 = linspace(350, Tmax, 100);
+                    for T = [Trange1, Trange2]
                         [txFormula, mm, Cp0, Cv0, Hf0, H0, Ef0, E0, S0, DfG0] = SpeciesThermProp(strMaster, S.LS{i},T,'molar',0);
                         T_vector   = [  T_vector; T     ];
                         DhT_vector = [DhT_vector; H0-Hf0];
@@ -119,6 +125,7 @@ if nargin == 3
             Species(strfind(Species,'TL')+1)='l';
             Species(strfind(Species,'FL')+1)='l';
             % -----------------------------------------------
+            Species(strfind(Species,'eminus')) = 'E';
             Species(Species>='0' & Species<='9') = ' ';
             
             [idx0,idxf] = regexp(Species,"minus"); Species(idx0:idxf) = ' ';
@@ -144,6 +151,7 @@ if nargin == 3
         E.ind_N = find(strcmp(E.elements,'N'));
         E.ind_He = find(strcmp(E.elements,'He'));
         E.ind_Ar = find(strcmp(E.elements,'Ar'));
+        E.ind_E = find(strcmp(E.elements,'E'));
         % Element_matrix
         for i=S.NS:-1:l_n_pass
             txFormula = strThProp.(S.LS_DB{i,1}).txFormula;

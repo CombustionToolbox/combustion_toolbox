@@ -43,4 +43,4 @@ See also the list of [contributors](https://github.com/AlbertoCuadra/combustion_
 
 ## Acknowledgments
 
-A.C. is deeply grateful to Samuel Delbarre for his help in the validation and debuging process of the segregated method (deprecated).
+A.C. is deeply grateful to Samuel Delbarre for his help in the validation and debugging process of the segregated method and the old routines for shocks (both deprecated).

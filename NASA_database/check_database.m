@@ -101,9 +101,11 @@ if nargin == 3
                     strThProp.(Species).mm  = mm;
                     strThProp.(Species).hf  = Hf0;
                     strThProp.(Species).ef  = Ef0;
+                    strThProp.(Species).swtCondensed = swtCondensed;
                     strThProp.(Species).T   = Tref;
                     strThProp.(Species).DhT = [];
                     strThProp.(Species).DeT = [];
+                    strThProp.(Species).h0  = [];
                     strThProp.(Species).s   = [];
                     strThProp.(Species).cp  = [];
                     strThProp.(Species).cv  = [];

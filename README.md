@@ -47,6 +47,7 @@ A.C. is deeply grateful to Samuel Delbarre for his help in the validation and de
 
 ## Citing Combustion Toolbox
 
+```
 @misc{cantera,
     author = "Alberto Cuadra and Marcos Vera",
     title = "Combustion Toolbox: A MATLAB-GUI based open-source tool for solving combustion problems",
@@ -54,4 +55,4 @@ A.C. is deeply grateful to Samuel Delbarre for his help in the validation and de
     note = "Version 0.3.4",
     doi = {.../zenodo....}
 }
-
+```

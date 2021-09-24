@@ -4,8 +4,7 @@ COMBUSTION TOOLBOX @v0.3.45
 Type of problems:
     * TP ------> Equilibrium composition at defined T and p
     * HP ------> Adiabatic T and composition at constant p
-    * SP ------> Isentropic compression/expansion to 
-a specified p
+    * SP ------> Isentropic compression/expansion to a specified p
     * TV ------> Equilibrium composition at defined T and constant v
     * EV ------> Adiabatic T and composition at constant v
     * SV ------> Isentropic compression/expansion to a specified v

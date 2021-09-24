@@ -26,7 +26,7 @@ Last update Sep 23 2021
 addpath(genpath(pwd));
 
 %% INITIALIZE
-% app = App('Soot formation');
+app = App('Soot formation');
 % app = App('HC/02/N2');
 % app = App('HC/02/N2 extended');
 % app = App('HC/02/N2 rich');
@@ -35,12 +35,12 @@ addpath(genpath(pwd));
 % app = App({'O2','N2','O','O3','N','NO','NO2','NO3','N2O','N2O3','N2O4','N3', ...
 %     'eminus', 'Nplus', 'Nplus', 'NOplus', 'NO2minus', 'NO3minus', 'N2plus', 'N2minus', 'N2Oplus', ...
 %      'Oplus', 'Ominus', 'O2plus', 'O2minus'});
-app = App({'H2bLb', 'O2bLb'});
+% app = App({'H2bLb', 'O2bLb'});
 %% PROBLEM CONDITIONS
 app.PD.TR.value = 300;
 app.PD.pR.value = 1.01325;
-% app.PD.phi.value = 0.5:0.01:2;
-app.PD.phi.value = 1;
+app.PD.phi.value = 0.5:0.01:5;
+% app.PD.phi.value = 1;
 %% PROBLEM TYPE
 switch app.PD.ProblemType
     case 'TP' % * TP: Equilibrium composition at defined T and p

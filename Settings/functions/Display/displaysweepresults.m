@@ -48,11 +48,31 @@ function axes = set_figure(self)
 end
 
 function plot_line(self, axes, xvar, yvar, indy, indlabel, label_name)
-    NE = numel(indy);  
-    colorbw = brewermap(NE, 'Spectral');
+    NE = numel(indy);
+    maxLdisplay = 12;
+    if NE > maxLdisplay
+        NUM_COLORS = maxLdisplay;
+    else
+        NUM_COLORS = NE;
+    end
+    LINE_STYLES = {'-', '--', ':'};
+    NUM_STYLES  = length(LINE_STYLES);
+
+    colorbw = brewermap(NUM_COLORS, 'Spectral');
+
+    k = 1;
+    z = 1;
     for i=1:numel(indy)
-        dl = plot(axes, xvar, yvar(indy(i),:), 'LineWidth', self.Misc.config.linewidth, 'color', colorbw(i,:));
+        dl = plot(axes, xvar, yvar(indy(i),:), 'LineWidth', self.Misc.config.linewidth, 'color', colorbw(k,:), 'LineStyle', LINE_STYLES(z));
         label_line(self, axes, dl, label_name{indlabel(i)}, i)
+        k = k + 1;
+        if k == maxLdisplay
+            k = 1;
+            z = z + 1;
+            if z ==NUM_STYLES
+                z = 1;
+            end
+        end
     end
 end
 

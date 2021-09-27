@@ -18,9 +18,13 @@ function self = list_phase_species(self, LS)
            self.S.ind_nswt = [self.S.ind_nswt, ind];
         else
            self.S.ind_swt = [self.S.ind_swt, ind];
+           if ~self.strThProp.(Species).ctTInt
+              self.S.ind_cryogenic = [self.S.ind_cryogenic, ind];
+           end
         end
     end
     self.S.LS = self.S.LS([self.S.ind_nswt, self.S.ind_swt]);
+    self.S.NS = length(self.S.LS);
     self.S.NG = length(self.S.ind_nswt);
 end
 

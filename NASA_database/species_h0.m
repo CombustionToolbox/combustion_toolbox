@@ -5,4 +5,8 @@ function h0i = species_h0(Species,T,strThProp)
 % T for the chemical species
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-h0i = strThProp.(Species).h0curve(T)/1000;
+try
+    h0i = strThProp.(Species).h0curve(T)/1000;
+catch
+    h0i = strThProp.(Species).h0/1000;
+end

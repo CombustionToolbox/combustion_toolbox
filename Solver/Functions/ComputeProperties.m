@@ -1,14 +1,14 @@
 function str =  ComputeProperties(self, SpeciesMatrix, p, T)
 
 R0 = self.C.R0; % [J/(K mol)]. Universal gas constant
-str.NatomE = sum(SpeciesMatrix(:,1) .* self.C.A0.value);
+str.NatomE = sum(SpeciesMatrix(:, 1) .* self.C.A0.value);
 
 if isempty(self.E.ind_C), str.x = 0; else, str.x = str.NatomE(self.E.ind_C); end
 if isempty(self.E.ind_H), str.y = 0; else, str.y = str.NatomE(self.E.ind_H); end
 if isempty(self.E.ind_O), str.z = 0; else, str.z = str.NatomE(self.E.ind_O); end
 if isempty(self.E.ind_N), str.w = 0; else, str.w = str.NatomE(self.E.ind_N); end
 
-str.N      = sum(SpeciesMatrix(:,1)); %[mol]
+str.N      = sum(SpeciesMatrix(:, 1)); %[mol] 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%% MARCOS: rho and mass fractions computations
 % Ni = SpeciesMatrix(:,1); % number of moles of species i in the mixture
@@ -85,7 +85,7 @@ str.p      = p;
 str.v      = str.pv/str.p;
 str.swtCond = SpeciesMatrix(:,10);
 str.mi     = sum(SpeciesMatrix(:,11))*1e-3; % [kg]
-str.rho    = str.mi/str.v*1e3;                 % [kg/m^3]
+str.rho    = str.mi/str.v*1e3;              % [kg/m^3]
 
 str.Yi     = SpeciesMatrix(:,11)./str.mi*1e-3;   % [-]
 str.W      = 1/sum(str.Yi./SpeciesMatrix(:,12),'OmitNan');
@@ -103,6 +103,7 @@ DSi        = Ni(ii).*log(str.Xi(ii)*p).*(1-str.swtCond(ii)); % only nonzero for 
 str.DS     = -R0*sum(DSi); % [J/K]
 str.S      = (str.S0+str.DS*1e-3)/str.mi; % [kJ/(kg-K)]
 str.T = T; % [K]
+str.g = str.h - str.T * str.S * str.mi; % [kJ]
 % str.e = str.h - sum(Ni(ii).*(1-str.swtCond(ii)))*R0*T*1e-3; % THIS WORKS!!!
 str.e = str.h - sum(Ni(ii))*R0*T*1e-3; % THIS WORKS!!!
 str.gamma = str.cP/str.cV;

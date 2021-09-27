@@ -5,7 +5,11 @@ function g0i = species_g0(Species,T,strThProp)
 % T for the chemical species
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-g0i = strThProp.(Species).g0curve(T)/1000;
+try
+    g0i = strThProp.(Species).g0curve(T)/1000;
+catch
+    g0i = strThProp.(Species).g0/1000;
+end
 %  tic, for T=300:100:3000 ; species_g0_new(strThProp,'CO',1800), end, toc
 
 % Tref = 273.15;

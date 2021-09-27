@@ -34,7 +34,10 @@ function strThProp = get_Database(strMaster)
 
 % SpeciesList = {'H2', 'H', 'Hplus', 'Hminus', 'H2plus', 'H2minus', 'eminus'};
 
-SpeciesList = {'H2bLb','O2bLb'};
+SpeciesList = {'CO2', 'CO', 'H2O', 'H2', 'O2', 'N2', 'He', 'Ar',...
+                'OH','H','O','HO2','NO','HCO','CH4','CH3',...
+                'NO2','NH3','NH2','N','HCN','CN','N2O','C2','CH',...
+                'H2bLb','O2bLb','RP_1'};
 
 %  NASA *: CH4 + 2O2 + 7.52N2
 % SpeciesList = {'C','CN','CO2','H','O2','CH','C3','C5','NH','O','CO',...
@@ -161,7 +164,7 @@ for i = 1:length(SpeciesList)
             strThProp.(Species).s0curve = griddedInterpolant(strThProp.(Species).T,strThProp.(Species).s0, 'pchip', 'pchip');
             strThProp.(Species).g0curve = griddedInterpolant(strThProp.(Species).T,strThProp.(Species).g0, 'pchip', 'pchip');
             
-            % DATA COEFFICIENTS NASA 9 POLYNOMIAL
+            % DATA COEFFICIENTS NASA 9 POLYNOMIAL (ONLY GASES)
             strThProp.(Species).ctTInt = strMaster.(Species).ctTInt;
             strThProp.(Species).tRange = strMaster.(Species).tRange;
             strThProp.(Species).tExponents = strMaster.(Species).tExponents;
@@ -182,13 +185,15 @@ for i = 1:length(SpeciesList)
             strThProp.(Species).ef  = Ef0;
             strThProp.(Species).swtCondensed = swtCondensed;
             strThProp.(Species).T   = Tref;
-            strThProp.(Species).DhT = [];
-            strThProp.(Species).DeT = [];
-            strThProp.(Species).h0  = [];
-            strThProp.(Species).s   = [];
-            strThProp.(Species).cp  = [];
-            strThProp.(Species).cv  = [];
-            strThProp.(Species).g0  = [];
+            strThProp.(Species).DhT = 0;
+            strThProp.(Species).DeT = 0;
+            strThProp.(Species).h0  = H0;
+            strThProp.(Species).s0  = S0;
+            strThProp.(Species).cp  = Cp0;
+            strThProp.(Species).cv  = Cv0;
+            strThProp.(Species).g0  = DfG0;
+            
+            strThProp.(Species).ctTInt = 0;
         end
     else
         fprintf(['\n- Species ''', SpeciesList{i}, ''' does not exist as a field in strMaster structure ... '])

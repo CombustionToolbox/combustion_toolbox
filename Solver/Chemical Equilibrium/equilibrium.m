@@ -1,10 +1,10 @@
-function [N0, STOP] = equilibrium(app, pP, TP, strR)
+function [N0, STOP] = equilibrium(self, pP, TP, strR)
 % Generalized Gibbs minimization method
 
 % Abbreviations ---------------------
-S = app.S;
-C = app.C;
-TN = app.TN;
+S = self.S;
+C = self.C;
+TN = self.TN;
 % -----------------------------------
 
 N0 = C.N0.value;
@@ -26,14 +26,15 @@ STOP = 1.;
 % for the sum of elements whose value is <= tolN
 ind_A0_E0 = remove_elements(NatomE, A0, TN.tolN);
 % List of indices with nonzero values
-[temp_ind_nswt, temp_ind_swt, temp_ind_E, temp_NE] = temp_values(S, NatomE, TN.tolN);
+[temp_ind_nswt, temp_ind_swt, temp_ind_cryogenic, temp_ind_E, temp_NE] = temp_values(S, NatomE, TN.tolN);
 % Update temp values
-[temp_ind, temp_ind_swt, temp_ind_nswt, temp_NS] = update_temp(N0, N0(ind_A0_E0, 1), ind_A0_E0, temp_ind_swt, temp_ind_nswt, TN.tolN, SIZE);
+[temp_ind, temp_ind_swt, temp_ind_nswt, temp_NG, ~] = update_temp(N0, N0(ind_A0_E0, 1), ind_A0_E0, temp_ind_swt, temp_ind_nswt, TN.tolN, SIZE);
+[temp_ind, temp_ind_swt, temp_NS] = check_cryogenic(temp_ind, temp_ind_swt, temp_ind_cryogenic);
 temp_NS0 = temp_NS + 1;
 % Initialize species vector N0 
-N0(temp_ind, 1) = 0.1/temp_NS;
+N0(temp_ind, 1) = NP_0/temp_NS;
 % Dimensionless Standard Gibbs free energy 
-g0 = set_g0(S.LS, TP, app.strThProp);
+g0 = set_g0(S.LS, TP, self.strThProp);
 G0RT = g0/R0TP;
 % Construction of part of matrix A (complete)
 [A1, temp_NS0] = update_matrix_A1(A0, [], temp_NS, temp_NS0, temp_ind, temp_ind_E);
@@ -58,7 +59,7 @@ while STOP > TN.tolN && it < itMax
     % Apply antilog
     [N0, NP] = apply_antilog(N0, NP_log, temp_ind);
     % Update temp values in order to remove species with moles < tolerance
-    [temp_ind, temp_ind_swt, temp_ind_nswt, temp_NS] = update_temp(N0, N0(temp_ind, 1), temp_ind, temp_ind_swt, temp_ind_nswt, NP, SIZE);
+    [temp_ind, temp_ind_swt, temp_ind_nswt, temp_NG, temp_NS] = update_temp(N0, N0(temp_ind, 1), temp_ind, temp_ind_swt, temp_ind_nswt, NP, SIZE);
     % Update matrix A
     [A1, temp_NS0] = update_matrix_A1(A0, A1, temp_NS, temp_NS0, temp_ind, temp_ind_E);
     % Compute STOP criteria
@@ -91,11 +92,12 @@ function ind_A0_E0 = remove_elements(NatomE, A0, tol)
     ind_A0_E0 = find_ind_Matrix(A0, bool_E0);
 end
 
-function [temp_ind_nswt, temp_ind_swt, temp_ind_E, temp_NE] = temp_values(S, NatomE, tol)
+function [temp_ind_nswt, temp_ind_swt, temp_ind_cryogenic, temp_ind_E, temp_NE] = temp_values(S, NatomE, tol)
     % List of indices with nonzero values and lengths
     temp_ind_E = find(NatomE > tol);
     temp_ind_nswt = S.ind_nswt;
     temp_ind_swt = S.ind_swt;
+    temp_ind_cryogenic = S.ind_cryogenic;
     temp_NE = length(temp_ind_E);
 end
 
@@ -120,12 +122,14 @@ function [ls1, ls2] = remove_item(N0, n, ind, ls1, ls2, NP, SIZE)
 %     ls2(ind2) = [];
 end
 
-function [temp_ind, temp_ind_swt, temp_ind_nswt, temp_NS] = update_temp(N0, zip1, zip2, ls1, ls2, NP, SIZE)
+function [temp_ind, temp_ind_swt, temp_ind_nswt, temp_NG, temp_NS] = update_temp(N0, zip1, zip2, ls1, ls2, NP, SIZE)
     % Update temp items
     [temp_ind_swt, temp_ind_nswt] = remove_item(N0, zip1, zip2, ls1, ls2, NP, SIZE);
     temp_ind = [temp_ind_nswt, temp_ind_swt];
+    temp_NG = length(temp_ind_nswt);
     temp_NS = length(temp_ind);
 end
+
 function [A1, temp_NS0] = update_matrix_A1(A0, A1, temp_NS, temp_NS0, temp_ind, temp_ind_E)
     % Update stoichiometric submatrix A1
     if temp_NS < temp_NS0
@@ -135,6 +139,22 @@ function [A1, temp_NS0] = update_matrix_A1(A0, A1, temp_NS, temp_NS0, temp_ind, 
         temp_NS0 = temp_NS;
     end
 end
+
+function [temp_ind, temp_ind_swt, temp_NS] = check_cryogenic(temp_ind, temp_ind_swt, temp_ind_cryogenic)
+    try
+        temp_ind = setdiff(temp_ind, temp_ind_cryogenic);
+        temp_ind_swt = setdiff(temp_ind_swt, temp_ind_cryogenic);
+        try
+            temp_ind_swt(1);
+        catch
+            temp_ind_swt = [];
+        end
+    catch
+        % do nothing
+    end
+    temp_NS = length(temp_ind);
+end
+
 function A2 = update_matrix_A2(A0_T, A22, N0, NP, temp_ind, temp_ind_E)
     % Update stoichiometric submatrix A2
     A21 = [N0(temp_ind, 1)' .* A0_T(temp_ind_E, temp_ind); N0(temp_ind, 1)'];

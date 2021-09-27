@@ -249,11 +249,11 @@ else
         
     Cp0  = 0;
     Cv0  = 0;
-    H0   = 0;
-    E0   = 0;
+    H0   = Hf0;
     Ef0  = Hf0 - Delta_n * R0 * Tref;
+    E0   = Ef0;
     S0   = 0;
-    DfG0 = 0;
+    DfG0 = Hf0;
     
     if strcmpi(MassOrMolar,'mass')
         Hf0 = Hf0/(mm/1000);

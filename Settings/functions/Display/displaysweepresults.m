@@ -63,7 +63,7 @@ function plot_line(self, axes, xvar, yvar, indy, indlabel, label_name)
     k = 1;
     z = 1;
     for i=1:numel(indy)
-        dl = plot(axes, xvar, yvar(indy(i),:), 'LineWidth', self.Misc.config.linewidth, 'color', colorbw(k,:), 'LineStyle', LINE_STYLES(z));
+        dl = plot(axes, xvar, yvar(indy(i),:), 'LineWidth', self.Misc.config.linewidth, 'color', colorbw(k,:), 'LineStyle', LINE_STYLES{z});
         label_line(self, axes, dl, label_name{indlabel(i)}, i)
         k = k + 1;
         if k == maxLdisplay

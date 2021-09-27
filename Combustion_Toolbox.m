@@ -37,7 +37,7 @@ app = App('HC/02/N2 propellants');
 %      'Oplus', 'Ominus', 'O2plus', 'O2minus'});
 % app = App({'H2bLb', 'O2bLb'});
 %% PROBLEM CONDITIONS
-app.PD.TR.value = 150;
+app.PD.TR.value = 300;
 app.PD.pR.value = 1.01325;
 % app.PD.phi.value = 0.5:0.01:5;
 app.PD.phi.value = 1.15;

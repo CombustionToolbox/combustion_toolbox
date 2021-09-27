@@ -20,9 +20,9 @@ SIZE = -log(TN.tolN);
 % for the sum of elements whose value is <= tolN
 ind_A0_E0 = remove_elements(NatomE, A0, TN.tolN);
 % List of indices with nonzero values
-[temp_ind_nswt, temp_ind_swt, temp_ind_E, temp_NE] = temp_values(S, NatomE, TN.tolN);
+[temp_ind_nswt, temp_ind_swt, temp_ind_cryogenic, temp_ind_E, temp_NE] = temp_values(S, NatomE, TN.tolN);
 % Update temp values
-[temp_ind, temp_ind_swt, temp_ind_nswt, temp_NG, temp_NS] = update_temp(N0, N0(ind_A0_E0, 1), ind_A0_E0, temp_ind_swt, temp_ind_nswt, TN.tolN, SIZE);
+[temp_ind, temp_ind_swt, temp_ind_nswt, temp_NG, temp_NS] = update_temp(N0, N0(ind_A0_E0, 1), ind_A0_E0, temp_ind_swt, temp_ind_nswt, temp_ind_cryogenic, TN.tolN, SIZE);
 temp_NS0 = temp_NS + 1;
 % Dimensionless Standard-state enthalpy
 h0 = set_h0(S.LS, TP, self.strThProp);
@@ -65,11 +65,12 @@ function ind_A0_E0 = remove_elements(NatomE, A0, tol)
     ind_A0_E0 = find_ind_Matrix(A0, bool_E0);
 end
 
-function [temp_ind_nswt, temp_ind_swt, temp_ind_E, temp_NE] = temp_values(S, NatomE, tol)
+function [temp_ind_nswt, temp_ind_swt, temp_ind_cryogenic, temp_ind_E, temp_NE] = temp_values(S, NatomE, tol)
     % List of indices with nonzero values and lengths
     temp_ind_E = find(NatomE > tol);
     temp_ind_nswt = S.ind_nswt;
     temp_ind_swt = S.ind_swt;
+    temp_ind_cryogenic = S.ind_cryogenic;
     temp_NE = length(temp_ind_E);
 end
 
@@ -87,13 +88,15 @@ function [ls1, ls2] = remove_item(N0, n, ind, ls1, ls2, NP, SIZE)
     end
 end
 
-function [temp_ind, temp_ind_swt, temp_ind_nswt, temp_NG, temp_NS] = update_temp(N0, zip1, zip2, ls1, ls2, NP, SIZE)
+function [temp_ind, temp_ind_swt, temp_ind_nswt, temp_NG, temp_NS] = update_temp(N0, zip1, zip2, ls1, ls2, temp_ind_cryogenic, NP, SIZE)
     % Update temp items
     [temp_ind_swt, temp_ind_nswt] = remove_item(N0, zip1, zip2, ls1, ls2, NP, SIZE);
     temp_ind = [temp_ind_nswt, temp_ind_swt];
+    [temp_ind, temp_ind_swt] = check_cryogenic(temp_ind, temp_ind_swt, temp_ind_cryogenic);
     temp_NG = length(temp_ind_nswt);
     temp_NS = length(temp_ind);
 end
+
 function [A1, temp_NS0] = update_matrix_A1(A0, A1, temp_NG, temp_NS, temp_NS0, temp_ind, temp_ind_E)
     % Update stoichiometric submatrix A1
     if temp_NS < temp_NS0
@@ -104,6 +107,21 @@ function [A1, temp_NS0] = update_matrix_A1(A0, A1, temp_NG, temp_NS, temp_NS0, t
         temp_NS0 = temp_NS;
     end
 end
+
+function [temp_ind, temp_ind_swt] = check_cryogenic(temp_ind, temp_ind_swt, temp_ind_cryogenic)
+    try
+        temp_ind = setdiff(temp_ind, temp_ind_cryogenic);
+        temp_ind_swt = setdiff(temp_ind_swt, temp_ind_cryogenic);
+        try
+            temp_ind_swt(1);
+        catch
+            temp_ind_swt = [];
+        end
+    catch
+        % do nothing
+    end
+end
+
 function A2 = update_matrix_A2(A0_T, A22, N0, NP, temp_ind_nswt, temp_ind_swt, temp_ind_E, temp_NG, temp_NS)
     % Update stoichiometric submatrix A2
     A21_1 = [N0(temp_ind_nswt, 1)' .* A0_T(temp_ind_E, temp_ind_nswt); N0(temp_ind_nswt, 1)'];

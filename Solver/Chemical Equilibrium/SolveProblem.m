@@ -21,8 +21,13 @@ switch self.PD.ProblemType
             end
         end
     case {'DET'}
-%         [self.PS.strR{i},self.PS.strP{i},self.TN.guess] = SolveProblemDET(self, self.PS.strR{i},self.PD.pR.value,self.PD.TR.value, self.TN.guess);
-        [self.PS.strR{i}, self.PS.strP{i}] = cj_detonation(self, self.PS.strR{i});
+%         if i==self.C.l_phi
+%             [self.PS.strR{i},self.PS.strP{i},self.TN.guess] = SolveProblemDET(self, self.PS.strR{i},self.PD.pR.value,self.PD.TR.value, self.TN.guess);
+            [self.PS.strR{i}, self.PS.strP{i}] = cj_detonation(self, self.PS.strR{i});
+%         else
+%             [self.PS.strR{i},self.PS.strP{i},self.TN.guess] = SolveProblemDET(self, self.PS.strR{i},self.PD.pR.value,self.PD.TR.value, self.TN.guess);
+%             [self.PS.strR{i}, self.PS.strP{i}] = cj_detonation(self, self.PS.strR{i}, self.PS.strP{i+1});
+%         end
     case 'DET_OVERDRIVEN'
         [self.PS.strR{i},self.PS.strP{i},self.TN.guess] = SolveProblemDET_OVERDRIVEN(self, self.PS.strR{i},self.PD.pR.value,self.PD.TR.value,self.TN.guess, self.PD.overdriven.value);
     otherwise

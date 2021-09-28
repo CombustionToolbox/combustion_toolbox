@@ -12,8 +12,6 @@ itMax = 50;
 STOP = 1.;
 % Initial estimates of p2/p1 and T2/T1
 [p2, T2, p2p1, T2T1] = get_guess(self, str1, str2);
-T_guess = T2;
-p_guess = p2;
 % Loop
 while STOP > TN.tol_shocks && it < itMax
     it = it + 1;
@@ -37,8 +35,6 @@ end
 print_convergence(STOP, TN.tol_shocks);
 % Save state
 [str1, str2] = save_state(self, str1, T2, p2, STOP);
-str2.T_guess = T_guess;
-str2.p_guess = p_guess;
 end
 % NESTED FUNCTIONS
 function [self, str1, str2] = unpack(x)
@@ -53,26 +49,26 @@ function [self, str1, str2] = unpack(x)
 end
 
 function [p2, T2, p2p1, T2T1] = get_guess(self, str1, str2)
-    if isempty(str2)
-%         try
-            [p2p1, T2T1, ~, ~, Q] = compute_guess_cj(self, str1, str1.phi);
-%             print_guess(T2T1, p2p1, str1.T, str1.p, Q)
-%         catch
-%             p2p1 = 15;
-%             T2T1 = 6;
-%         end
+    if isempty(str2)        
+%         p2p1 = 15;
+%         T2T1 = 6;
+        
+%         fprintf('\n\n START \n\n');
+        [p2p1, T2T1, ~, ~, Q] = compute_guess_cj(self, str1, str1.phi);
+        str1.T
+        str1.p
         p2 = p2p1 * str1.p * 1e5; % [Pa]
         T2 = T2T1 * str1.T;       % [K]
     else
         p2 = str2.p * 1e5; % [Pa]
         T2 = str2.T;       % [K]
+% 
         p2p1 = p2 / (str1.p * 1e5);
         T2T1 = T2 / str1.T;
     end
 end
 
-function print_guess(T2T1, p2p1, T1, p1, Q)
-    fprintf('\n\n START \n\n');
+function print_guess(T2T1, p2p1, T1, p1)
     fprintf('   GUESS:\n');
     fprintf('T2   [K]: %.2f\n', T2T1 * T1);
     fprintf('p2 [bar]: %.2f\n', p2p1 * p1);

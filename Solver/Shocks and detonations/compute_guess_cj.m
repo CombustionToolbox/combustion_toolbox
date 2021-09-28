@@ -3,34 +3,40 @@ function [P, T, M1, R, Q] = compute_guess_cj(self, str1, phi)
     gamma  = str1.gamma;
     a1     = str1.sound;
     P      = 15;
-    lambda = 0.2;
     % Compute moles considering COMPLETE combustion
-    [N_2, LS] = complete_combustion(self, str1, phi);
-    [P, T, M1, R, Q] = body_guess_cj(self, P, N_2, LS, gamma, a1);
+    [N_2_cc, LS] = complete_combustion(self, str1, phi);
+    [P, T, M1, M2, R, Q] = body_guess_cj(self, P, N_2_cc, LS, gamma, a1);
     % Compute moles considering INCOMPLETE combustion
-    it = 0; itMax = 2; STOP = 1;
-    while STOP > 1e-1 && it < itMax
+    [~, ind_a, ind_b] = intersect(self.S.LS, LS);
+    N_2 = zeros(1, length(self.S.LS));
+    N_2(ind_a) = N_2_cc(ind_b);
+    LS = self.S.LS;
+    
+    lambda = 2 - sqrt(1 + M2^2);
+    it = 0; itMax = 3; STOP = 1;
+    while STOP > 1e-2 && it < itMax
         it = it + 1;
         
-        P_0 = P; T_0 = T; M1_0 = M1; R_0 = R; Q_0 = Q;
+        P_0 = P; T_0 = T; N_2_0 = N_2;
         
         p2 = P_0 * str1.p;
         T2 = T_0 * str1.T;
+        
         N_2 = equilibrium(self, p2, T2, str1); N_2 = N_2(:, 1)';
-        LS = self.S.LS;
-        [P, T, M1, R, Q] = body_guess_cj(self, P_0, N_2, LS, gamma, a1);
+        
+        N_2 = N_2_0  + lambda .* (N_2 - N_2_0);
+        
+        [P, T, M1, ~, R, Q] = body_guess_cj(self, P_0, N_2, LS, gamma, a1);
+        
         P  = P_0  + lambda * (P - P_0);
         T  = T_0  + lambda * (T - T_0);
-        M1 = M1_0 + lambda * (real(M1) - M1_0);
-        R  = R_0  + lambda * (R - R_0);
-        Q  = Q_0  + lambda * (Q - Q_0);
         
-        STOP = norm([P - P_0, T - T_0, M1 - M1_0, R - R_0, Q - Q_0]);
+        STOP = norm([P - P_0, T - T_0]);
     end
 end
 
 % NESTED FUNCTIONS
-function [P, T, M1, R, Q] = body_guess_cj(self, P, N_2, LS, gamma, a1)
+function [P, T, M1, M2, R, Q] = body_guess_cj(self, P, N_2, LS, gamma, a1)
     % Get enthalpy of formation [J/mol] and some parameters
     [hfi_1, hfi_2, N_1, Yi_fuel, W_fuel] = get_hf0_molar(self, N_2, LS);
     % Compute heat release - molar base [J/mol]
@@ -44,8 +50,9 @@ function [P, T, M1, R, Q] = body_guess_cj(self, P, N_2, LS, gamma, a1)
     % Compute jump relations and upstream Mach number (M1 >= Mcj)
     x = compute_M1_R1(P, gamma, Q, Mcj);
     M1 = x(1); R = x(2);
+    M2 = compute_M2(gamma, Q, M1);
     % Check M1 >= Mcj
-    [P, R, M1] = check_CJ_condition(self, P, R, gamma, Q, M1, Mcj);
+    [P, R, M1, M2] = check_CJ_condition(self, P, R, gamma, Q, M1, M2, Mcj);
     T = P / R;
 end
 
@@ -71,11 +78,12 @@ function hfi = loop_hf0_molar(N, LS, strThProp)
     hfi(isinf(hfi)) = 0;
 end
 
-function [P, R, M1] = check_CJ_condition(self, P, R, gamma, Q, M1, Mcj)
+function [P, R, M1, M2] = check_CJ_condition(self, P, R, gamma, Q, M1, M2, Mcj)
     if M1 < Mcj || strcmpi(self.PD.ProblemType, 'DET')
-        M1 = Mcj;
+        M1 = 1.001*Mcj;
         P  = compute_P(gamma, Q, M1);
         R  = compute_R(gamma, Q, M1);
+        M2 = compute_M2(gamma, Q, M1);
     end
 end
 
@@ -85,6 +93,10 @@ end
 
 function R = compute_R(gamma, Q, M1)
     R = real(((gamma + 1) * M1^2) / (gamma * M1^2 + 1 - ((M1^2 - 1)^2 - 4*Q*M1^2)^(1/2)));
+end
+
+function M2 = compute_M2(gamma, Q, M1)
+    M2 = ((gamma * M1^2 + 1 - ((M1^2 - 1)^2 - 4*Q * M1^2)^(1/2)) / (gamma * M1^2 + 1 + gamma * ((M1^2 - 1)^2 - 4*Q * M1^2)^(1/2)))^(1/2);
 end
 
 function x = compute_M1_R1(P, gamma, Q, Mcj)

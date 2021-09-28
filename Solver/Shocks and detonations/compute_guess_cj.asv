@@ -1,14 +1,41 @@
-function [P, T, M1, R] = compute_guess_cj(self, str1, phi)
+function [P, T, M1, R, Q] = compute_guess_cj(self, str1, phi)
     % Paramenters
-    gamma = str1.gamma;
-    a1    = str1.sound;
-    P     = 15;
-    % Compute moles considering complete combustion
-    [N_2, species] = complete_combustion(self, str1, phi);
-    % Get enthalpy of formation [J/kg]
-    hfi_2 = get_hf0(N_2, species, self.strThProp);
-    % Compute heat release
-    q = sum(N_2 .* hfi_2) - str1.hf / str1.mi * 1e3;
+    gamma  = str1.gamma;
+    a1     = str1.sound;
+    P      = 15;
+    lambda = 0.3;
+    % Compute moles considering COMPLETE combustion
+    [N_2, LS] = complete_combustion(self, str1, phi);
+%     N_2 = [0.851047417141040;0.148952332552276;1.88698491874805;0.0490306938608200;0.232188235003022;8.30492354887204;0;0;0.117035621789885;0.0108078138881817;0.0149515202260989;0.000123230842696834;0.109576289281395;2.43556026273620e-07;3.30150346427211e-14;1.21423109256752e-13;0.000101008502659270;3.82516072988824e-07;3.55257515786401e-07;4.10890070503264e-06;6.64185701676797e-09;1.08681644460415e-10;2.37353118778312e-05;5.84189380611071e-14;2.71059052235339e-14]';
+%     LS  =  self.S.LS;
+%     P   = 16.636 * str1.p;
+    [P, T, M1, R, Q] = body_guess_cj(self, P, N_2, LS, gamma, a1);
+%     % Compute moles considering INCOMPLETE combustion
+    it = 1; 
+    while STOP > 1e-1 && it < itMax
+        P_0 = P; T_0 = T; M1_0 = M1; R_0 = R; Q_0 = Q;
+        
+        p2 = P_0 * str1.p;
+        T2 = T_0 * str1.T;
+        N_2 = equilibrium(self, p2, T2, str1); N_2 = N_2(:, 1)';
+        LS = self.S.LS;
+        [P, T, M1, R, Q] = body_guess_cj(self, P_0, N_2, LS, gamma, a1);
+        P = P_0 + lambda * (P - P_0);
+        T = T_0 + lambda * (T - T_0);
+        M1 = M1_0 + lambda * (real(M1) - M1_0);
+        R = R_0 + lambda * (R - R_0);
+        Q = Q_0 + lambda * (Q - Q_0);
+    end
+end
+
+% NESTED FUNCTIONS
+function [P, T, M1, R, Q] = body_guess_cj(self, P, N_2, LS, gamma, a1)
+    % Get enthalpy of formation [J/mol] and some parameters
+    [hfi_1, hfi_2, N_1, Yi_fuel, W_fuel] = get_hf0_molar(self, N_2, LS);
+    % Compute heat release - molar base [J/mol]
+    q_molar = - sum(N_2 .* hfi_2) + sum(N_1 .* hfi_1);
+    % Compute heat release - molar base [J/kg_mixture]
+    q = q_molar * Yi_fuel / W_fuel;
     % Compute dimensionless heat release
     Q = (gamma^2 - 1) / (2*a1^2) * q;
     % Compute minimum upstream Mach number (CJ condition)
@@ -17,39 +44,52 @@ function [P, T, M1, R] = compute_guess_cj(self, str1, phi)
     x = compute_M1_R1(P, gamma, Q, Mcj);
     M1 = x(1); R = x(2);
     % Check M1 >= Mcj
-    [P, R, M1] = check_CJ_condition(P, R, gamma, Q, M1, Mcj);
+    [P, R, M1] = check_CJ_condition(self, P, R, gamma, Q, M1, Mcj);
     T = P / R;
 end
 
-% NESTED FUNCTIONS
-function hfi = get_hf0(N0, species, strThProp)
-    for i = length(N0):-1:1
-        mi = N0(i) * strThProp.(species{i}).mm;   % [kg]
-        hfi(i) = strThProp.(species{i}).hf ./ mi; % [J/kg]
+function [hfi_1, hfi_2, N_1, Yi_fuel, W_fuel] = get_hf0_molar(self, N_2, LS_2)
+    LS_1 = [self.PD.S_Fuel, self.PD.S_Oxidizer, self.PD.S_Inert];
+    N_1  = [self.PD.N_Fuel, self.PD.N_Oxidizer, self.PD.N_Inert];
+    
+    hfi_1 = loop_hf0_molar(N_1, LS_1, self.strThProp);
+    hfi_2 = loop_hf0_molar(N_2, LS_2, self.strThProp);
+    
+    R = self.PD.R_Fuel + self.PD.R_Oxidizer + self.PD.R_Inert;
+    mi = sum(R(:,11)) * 1e-3;
+    Yi = R(:,11) ./ mi * 1e-3;
+    Yi_fuel = sum(Yi(self.PD.R_Fuel(:, 1) > 0));
+    W_fuel  = self.PS.strR_Fuel.W * 1e-3; % [kg/mol]
+end
+
+function hfi = loop_hf0_molar(N, LS, strThProp)
+    for i = length(N):-1:1
+        hfi(i) = strThProp.(LS{i}).hf; % [J/mol]
     end
     hfi(isnan(hfi)) = 0;
     hfi(isinf(hfi)) = 0;
 end
 
-function [P, R, M1] = check_CJ_condition(P, R, gamma, Q, M1, Mcj)
-    if M1 < Mcj || sctrmpi(app.PD.
+function [P, R, M1] = check_CJ_condition(self, P, R, gamma, Q, M1, Mcj)
+    if M1 < Mcj || strcmpi(self.PD.ProblemType, 'DET')
         M1 = Mcj;
         P  = compute_P(gamma, Q, M1);
-        R = compute_R(gamma, Q, M1);
+        R  = compute_R(gamma, Q, M1);
     end
 end
 
 function P = compute_P(gamma, Q, M1)
-    P = (gamma * M1^2 + 1 + gamma * ((M1^2 - 1)^2 - 4*Q*M1^2)^(1/2)) / (gamma + 1);
+    P = real((gamma * M1^2 + 1 + gamma * ((M1^2 - 1)^2 - 4*Q*M1^2)^(1/2)) / (gamma + 1));
 end
 
 function R = compute_R(gamma, Q, M1)
-    R = ((gamma + 1) * M1^2) / (gamma * M1^2 + 1 - ((M1^2 - 1)^2 - 4*Q*M1^2)^(1/2));
+    R = real(((gamma + 1) * M1^2) / (gamma * M1^2 + 1 - ((M1^2 - 1)^2 - 4*Q*M1^2)^(1/2)));
 end
 
 function x = compute_M1_R1(P, gamma, Q, Mcj)
     Rcj = compute_R(gamma, Q, Mcj);   
-    x = fsolve(@(x) root2d(x, P, gamma, Q), [Mcj, Rcj]);
+    options = optimset('Display','off');
+    x = real(fsolve(@(x) root2d(x, P, gamma, Q), [Mcj, Rcj], options));
 end
 
 function F = root2d(x, P, gamma, Q)
@@ -57,4 +97,11 @@ function F = root2d(x, P, gamma, Q)
     % x(1) == M1; x(2) == R
     F(1) = x(2) - ((gamma + 1) * x(1)^2) / (gamma * x(1)^2 + 1 - ((x(1)^2 - 1)^2 - 4*Q*x(1)^2)^(1/2));
     F(2) = x(1) - (P - 1) * (1 - x(2)^(-1)) / gamma;
+end
+
+function F = root2d_test(x, P, gamma, R)
+    %    F == lhs - rhs = 0
+    % x(1) == M1; x(2) == Q
+    F(1) = R - ((gamma + 1) * x(1)^2) / (gamma * x(1)^2 + 1 - ((x(1)^2 - 1)^2 - 4*x(2)*x(1)^2)^(1/2));
+    F(2) = x(1) - (P - 1) * (1 - R^(-1)) / gamma;
 end

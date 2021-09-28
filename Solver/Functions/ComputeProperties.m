@@ -104,8 +104,8 @@ str.DS     = -R0*sum(DSi); % [J/K]
 str.S      = (str.S0+str.DS*1e-3)/str.mi; % [kJ/(kg-K)]
 str.T = T; % [K]
 str.g = str.h - str.T * str.S * str.mi; % [kJ]
-% str.e = str.h - sum(Ni(ii).*(1-str.swtCond(ii)))*R0*T*1e-3; % THIS WORKS!!!
-str.e = str.h - sum(Ni(ii))*R0*T*1e-3; % THIS WORKS!!!
+str.e = str.h - sum(Ni(ii).*(1-str.swtCond(ii)))*R0*T*1e-3; % THIS WORKS!!!
+% str.e = str.h - sum(Ni(ii))*R0*T*1e-3; % THIS WORKS!!!
 str.gamma = str.cP/str.cV;
 str.sound = sqrt(str.gamma*p*1e5/str.rho);
 % Correction of: cP, cV, gamma and speed of sound as consequence of the

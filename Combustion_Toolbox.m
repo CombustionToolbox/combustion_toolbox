@@ -25,9 +25,9 @@ Last update Sep 28 2021
 addpath(genpath(pwd));
 
 %% INITIALIZE
-% app = App('Soot formation');
+app = App('Soot formation');
 % app = App('HC/02/N2');
-app = App('HC/02/N2 extended');
+% app = App('HC/02/N2 extended');
 % app = App('HC/02/N2 rich');
 % app = App('HC/02/N2 propellants');
 % app = App('Ideal_air');
@@ -39,15 +39,15 @@ app = App('HC/02/N2 extended');
 %% PROBLEM CONDITIONS
 app.PD.TR.value = 300;
 app.PD.pR.value = 1.01325;
-% app.PD.phi.value = 0.5:0.01:5;
-app.PD.phi.value = 0.9;
+app.PD.phi.value = 0.25:0.1:5;
+% app.PD.phi.value = 1.5;
 %% PROBLEM TYPE
 switch app.PD.ProblemType
     case 'TP' % * TP: Equilibrium composition at defined T and p
         app.PD.ProblemType = 'TP';
         app.PD.pP.value = app.PD.pR.value;
 %         app.PD.TP.value = [300:10:2000];
-        app.PD.TP.value = 2000;
+        app.PD.TP.value = 1000;
     case 'HP' % * HP: Adiabatic T and composition at constant p
         app.PD.ProblemType = 'HP';
         app.PD.pP.value = app.PD.pR.value;
@@ -92,7 +92,7 @@ app.C.l_phi = length(app.PD.phi.value);
 tic
 for i=app.C.l_phi:-1:1
 %% DEFINE FUEL
-app.PD.S_Fuel = {'CH4'}; app.PD.N_Fuel = 1;
+app.PD.S_Fuel = {'H2'}; app.PD.N_Fuel = 1;
 app = Define_F(app);
 %% DEFINE OXIDIZER
 app.PD.S_Oxidizer = {'O2'}; app.PD.N_Oxidizer = app.PD.phi_t/app.PD.phi.value(i);

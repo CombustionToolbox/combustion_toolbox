@@ -11,7 +11,7 @@ it = 0;
 itMax = 50;
 STOP = 1.;
 % Initial estimates of p2/p1 and T2/T1
-[p2, T2, p2p1, T2T1] = get_guess(str1, str2);
+[p2, T2, p2p1, T2T1] = get_guess(self, str1, str2);
 % Loop
 while STOP > TN.tol_shocks && it < itMax
     it = it + 1;
@@ -48,10 +48,12 @@ function [self, str1, str2] = unpack(x)
     end
 end
 
-function [p2, T2, p2p1, T2T1] = get_guess(str1, str2)
+function [p2, T2, p2p1, T2T1] = get_guess(self, str1, str2)
     if isempty(str2)        
         p2p1 = 15;
         T2T1 = 6;
+        
+        [p2p1, T2T1, ~, ~] = compute_guess_cj(self, str1, str1.phi);
         
         p2 = p2p1 * str1.p * 1e5; % [Pa]
         T2 = T2T1 * str1.T;       % [K]

@@ -11,7 +11,7 @@ it = 0;
 itMax = 50;
 STOP = 1.;
 % Initial estimates of p2/p1 and T2/T1
-[p2, T2, p2p1, T2T1] = get_guess(self, str1, str2);
+[p2, T2, p2p1, T2T1, STOP] = get_guess(self, str1, str2);
 T_guess = T2;
 p_guess = p2;
 % Loop
@@ -52,9 +52,9 @@ function [self, str1, str2] = unpack(x)
     end
 end
 
-function [p2, T2, p2p1, T2T1] = get_guess(self, str1, str2)
+function [p2, T2, p2p1, T2T1, STOP] = get_guess(self, str1, str2)
     if isempty(str2)
-        [p2p1, T2T1, ~, ~, Q] = compute_guess_det(self, str1, str1.phi, 1);
+        [p2p1, T2T1, ~, ~, Q, STOP] = compute_guess_det(self, str1, str1.phi, 1);
 %             print_guess(T2T1, p2p1, str1.T, str1.p, Q)
 
         p2 = p2p1 * str1.p * 1e5; % [Pa]
@@ -64,6 +64,7 @@ function [p2, T2, p2p1, T2T1] = get_guess(self, str1, str2)
         T2 = str2.T;       % [K]
         p2p1 = p2 / (str1.p * 1e5);
         T2T1 = T2 / str1.T;
+        STOP = [];
     end
 end
 
@@ -141,7 +142,6 @@ function [str1, str2] = save_state(self, str1, T2, p2, STOP)
     str2 = state(self, str1, T2, p2);
     str2.u = str2.sound; % velocity postshock [m/s] - laboratory fixed
     str2.error_problem = STOP;
-    
     str1.u = str2.u * str2.rho / str1.rho;
 end
 

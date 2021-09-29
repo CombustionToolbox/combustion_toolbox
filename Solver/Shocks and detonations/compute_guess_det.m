@@ -1,9 +1,9 @@
-function [P, T, M1, R, Q] = compute_guess_det(self, str1, phi, overdriven)
+function [P, T, M1, R, Q, STOP] = compute_guess_det(self, str1, phi, overdriven)
     % Paramenters
     gamma1 = str1.gamma;
     a1     = str1.sound;
     DeltaQ = 0;
-    itMax  = 3;
+    itMax  = 5;
     % Compute moles considering COMPLETE combustion
     [N_2_cc, LS] = complete_combustion(self, str1, phi);
     [hfi_1, N_1, Yi_fuel, W_fuel] = compute_hfi_1_molar(self);
@@ -18,7 +18,7 @@ function [P, T, M1, R, Q] = compute_guess_det(self, str1, phi, overdriven)
     lambda = 2 - sqrt(1 + M2^2);
     
     it = 0; STOP = 1;
-    while STOP > 1e-2 && it < itMax
+    while STOP > self.TN.tol_shocks && it < itMax
         it = it + 1;
         
         P_0 = P; T_0 = T; N_2_0 = N_2;

@@ -65,9 +65,6 @@ function [p2, T2, p2p1, T2T1] = get_guess(str1, str2, TN)
         p2 = p2p1 * str1.p * 1e5; % [Pa]
         T2 = T2T1 * str1.T;       % [K]
            
-%         p2 = 948.977;
-%         T2 = 25000;
-%         
 %         p2p1 = p2/str1.p;
 %         T2T1 = T2/str1.T;
     else

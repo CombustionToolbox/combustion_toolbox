@@ -54,13 +54,9 @@ end
 
 function [p2, T2, p2p1, T2T1] = get_guess(self, str1, str2)
     if isempty(str2)
-%         try
-            [p2p1, T2T1, ~, ~, Q] = compute_guess_cj(self, str1, str1.phi);
+        [p2p1, T2T1, ~, ~, Q] = compute_guess_det(self, str1, str1.phi, 1);
 %             print_guess(T2T1, p2p1, str1.T, str1.p, Q)
-%         catch
-%             p2p1 = 15;
-%             T2T1 = 6;
-%         end
+
         p2 = p2p1 * str1.p * 1e5; % [Pa]
         T2 = T2T1 * str1.T;       % [K]
     else

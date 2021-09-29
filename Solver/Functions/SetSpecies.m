@@ -22,9 +22,9 @@ for n = length(N):-1:1
     if length(self.strThProp.(Species{n}).T) > 1
         DhTi = species_DhT(Species{n},T,self.strThProp);
         DeTi = species_DeT(Species{n},T,self.strThProp);
-        cPi = species_cP(Species{n},T,self.strThProp);
-        cVi = species_cV(Species{n},T,self.strThProp);
-        s0i = species_s0(Species{n},T,self.strThProp);
+        cPi  = species_cP(Species{n},T,self.strThProp);
+        cVi  = species_cV(Species{n},T,self.strThProp);
+        s0i  = species_s0(Species{n},T,self.strThProp);
         if ~swtCondensed
             pVi = N(n)*R0*T/100; % For ideal gases
         else
@@ -33,11 +33,11 @@ for n = length(N):-1:1
     else
         DhTi = 0;
         DeTi = 0;
-        cPi = 0;
-        cVi = 0;
-        s0i = 0;
-        pVi = 0;
+        cPi  = 0;
+        cVi  = 0;
+        s0i  = 0;
+        pVi  = 0;
     end   
     ind = find_ind(Species(n), self.S.LS);
-    M(ind, :) = [N(n), N(n)*[hfi, DhTi, efi, DeTi, cPi, cVi, s0i], pVi, swtCondensed, mi, mmi];
+    M(ind, :) = [N(n), N(n) * [hfi, DhTi, efi, DeTi, cPi, cVi, s0i], pVi, swtCondensed, mi, mmi];
 end

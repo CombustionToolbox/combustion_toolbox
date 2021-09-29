@@ -32,6 +32,10 @@ Figures are postprocesed with [Veusz](https://github.com/veusz/veusz) and [Inksc
 
 Please read [CONTRIBUTING.md](https://gist.github.com/PurpleBooth/b24679402957c63ec426) for details on our code of conduct, and the process for submitting pull requests to us.
 
+Please send feedback or inquiries to [acuadra@ing.uc3m.es](mailto:acuadra@ing.uc3m.es)
+
+Thank you for testing Combustion Toolbox!
+
 ## Authors
 
 * **[Alberto Cuadra-Lara](https://albertocuadra.netlify.app/)<sup>1</sup>** - *Main Developer and App designer*

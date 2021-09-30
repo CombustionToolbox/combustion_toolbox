@@ -53,10 +53,10 @@ A.C. is deeply grateful to Samuel Delbarre for his help in the validation and de
 
 ```bibtex
 @misc{combustiontoolbox,
-    author = "Alberto Cuadra",
+    author = "Alberto Cuadra and Marcos Vera",
     title = "Combustion Toolbox: A MATLAB-GUI based open-source tool for solving combustion problems",
     year = 2021,
-    note = "Version 0.3.4",
+    note = "Version 0.3.7",
     doi = {.../zenodo....}
 }
 ```

@@ -32,7 +32,7 @@ while STOP > TN.tol_shocks && it < itMax
     STOP = compute_STOP(x);
 end
 % Check convergence
-print_convergence(STOP, TN.tol_shocks);
+print_convergence(STOP, TN.tol_shocks, T2);
 % Save state
 str2 = save_state(self, str1, T2, p2, STOP);
 end
@@ -146,8 +146,14 @@ function str2 = save_state(self, str1, T2, p2, STOP)
     str2.error_problem = STOP;
 end
 
-function print_convergence(STOP, TOL)
+function print_convergence(STOP, TOL, T)
     if STOP > TOL
-        fprintf('Convergence error: %.2f', STOP);
+        fprintf('***********************************************************\n')
+        fprintf('Convergence error: %.2f\n', STOP);
+    end
+    if T > 2e4
+        fprintf('***********************************************************\n')
+        fprintf('Validity of the next results compromise\n')
+        fprintf('Thermodynamic properties fitted to 20000 K\n');
     end
 end

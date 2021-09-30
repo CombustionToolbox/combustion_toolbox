@@ -69,7 +69,7 @@ function plot_line(self, axes, xvar, yvar, indy, indlabel, label_name)
         if k == maxLdisplay
             k = 1;
             z = z + 1;
-            if z ==NUM_STYLES
+            if z > NUM_STYLES
                 z = 1;
             end
         end

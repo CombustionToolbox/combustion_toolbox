@@ -18,6 +18,8 @@ NameSpecies = varargin{end};
 
 if nargin == 5
     strR = varargin{1}; strP = varargin{2};
+    
+    fprintf('***********************************************************\n');
     fprintf('-----------------------------------------------------------\n');
     fprintf('Problem type: %s  | phi = %4.3f\n',ProblemType,strR.phi);
     fprintf('-----------------------------------------------------------\n');
@@ -71,6 +73,7 @@ if nargin == 5
     fprintf('***********************************************************\n\n\n');
 elseif nargin == 6
     str1 = varargin{1}; str2 = varargin{2}; str3 = varargin{3};
+    fprintf('***********************************************************\n');
     fprintf('-----------------------------------------------------------\n');
     fprintf('Problem type: %s  | phi = %4.3f\n',ProblemType,str1.phi);
     fprintf('-----------------------------------------------------------\n');

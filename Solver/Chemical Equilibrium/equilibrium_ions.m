@@ -67,12 +67,12 @@ while (STOP > TN.tolN || STOP_ions > TN.tol_pi_e) && it < itMax
         N0_wions =  log(N0(temp_ind_nswt(flag_ions), 1)) + A0(temp_ind_nswt(flag_ions), E.ind_E) * lambda_ions;
     end
     N0(temp_ind, 1) = log(N0(temp_ind, 1)) + lambda * x(1:temp_NS);
-    if any(flag_ions)
-        if abs(lambda_ions) > TN.tol_pi_e && flag_ions_first
-            N0(temp_ind_nswt(flag_ions), 1) = N0_wions;
-            flag_ions_first = false;
-        end
-    end
+%     if any(flag_ions)
+%         if abs(lambda_ions) > TN.tol_pi_e && flag_ions_first
+%             N0(temp_ind_nswt(flag_ions), 1) = N0_wions;
+%             flag_ions_first = false;
+%         end
+%     end
     NP_log = log(NP) + lambda * x(end);
     % Apply antilog
     [N0, NP] = apply_antilog(N0, NP_log, temp_ind);
@@ -126,6 +126,7 @@ end
 function [temp_ind_swt, temp_ind_nswt, flag_ions] = remove_item(N0, n, ind, temp_ind_swt, temp_ind_nswt, flag_ions, NP, SIZE)
     % Remove species from the computed indeces list of gaseous and condensed
     % species and append the indeces of species that we have to remove
+    k = 0;
     for i=1:length(n)
         if log(n(i)/NP) < -SIZE
             if N0(ind(i), 2)
@@ -133,7 +134,8 @@ function [temp_ind_swt, temp_ind_nswt, flag_ions] = remove_item(N0, n, ind, temp
             else
                 temp_ind_nswt(temp_ind_nswt==ind(i)) = [];
                 try
-                    flag_ions(ind(i)) = [];
+                    flag_ions(ind(i)-k) = [];
+                    k = k+1;
                 catch
                     continue
                 end

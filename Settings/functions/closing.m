@@ -22,6 +22,10 @@ if numel(phi)>1 && all(phi(2:end) ~= phi(1)) && ~strcmp(ProblemType,'DET_OVERDRI
         app.Misc.config.labely = 'Temperature $T [K]$';
         plot_figure(phi,strP,'phi','T',app.Misc.config,app.PD.CompleteOrIncomplete);
     end
+elseif any(strcmp(ProblemType,{'TP'})) && length(phi) > 1
+        app.Misc.config.labelx = 'Temperature $T [K]$';
+        app.Misc.config.labely = 'Molar fraction $X_i$';
+        displaysweepresults(app, strP, app.PD.range);
 elseif any(strcmp(ProblemType,{'SP'}))
         app.Misc.config.labelx = 'Pressure $p [bar]$';
         app.Misc.config.labely = 'Temperature $T [K]$';

@@ -36,7 +36,7 @@ NatomE = aux;
 % List of indices with nonzero values
 [temp_ind_nswt, temp_ind_swt, flag_ions, temp_ind_E, temp_NE] = temp_values(E.ind_E, S, NatomE, TN.tolN);
 % Update temp values
-[temp_ind, temp_ind_swt, temp_ind_nswt, flag_ions, temp_NS] = update_temp(N0, N0(ind_A0_E0, 1), ind_A0_E0, temp_ind_swt, temp_ind_nswt, flag_ions, TN.tolN, SIZE);
+[temp_ind, temp_ind_swt, temp_ind_nswt, flag_ions, temp_NS, ~, ~] = update_temp(N0, N0(ind_A0_E0, 1), ind_A0_E0, temp_ind_swt, temp_ind_nswt, temp_ind_E, E, flag_ions, [], TN.tolN, SIZE);
 temp_NS0 = temp_NS + 1;
 % Initialize species vector N0 
 N0(temp_ind, 1) = 0.1/temp_NS;
@@ -63,21 +63,20 @@ while (STOP > TN.tolN || STOP_ions > TN.tol_pi_e) && it < itMax
     % Compute and apply correction of the Lagrangian multiplier for ions divided by RT
     [lambda_ions, DeltaN3] = ions_factor(N0, A0, temp_ind_nswt, E.ind_E, flag_ions);
     % Apply correction
-    if any(flag_ions) && flag_ions_first
+    if any(flag_ions) 
         N0_wions =  log(N0(temp_ind_nswt(flag_ions), 1)) + A0(temp_ind_nswt(flag_ions), E.ind_E) * lambda_ions;
     end
     N0(temp_ind, 1) = log(N0(temp_ind, 1)) + lambda * x(1:temp_NS);
-%     if any(flag_ions)
-%         if abs(lambda_ions) > TN.tol_pi_e && flag_ions_first
-%             N0(temp_ind_nswt(flag_ions), 1) = N0_wions;
-%             flag_ions_first = false;
-%         end
-%     end
+    if any(flag_ions) 
+        if abs(lambda_ions) > TN.tol_pi_e 
+            N0(temp_ind_nswt(flag_ions), 1) = N0_wions;
+        end
+    end
     NP_log = log(NP) + lambda * x(end);
     % Apply antilog
     [N0, NP] = apply_antilog(N0, NP_log, temp_ind);
     % Update temp values in order to remove species with moles < tolerance
-    [temp_ind, temp_ind_swt, temp_ind_nswt, flag_ions, temp_NS] = update_temp(N0, N0(temp_ind, 1), temp_ind, temp_ind_swt, temp_ind_nswt, flag_ions, NP, SIZE);
+    [temp_ind, temp_ind_swt, temp_ind_nswt, flag_ions, temp_NS, temp_ind_E, A22] = update_temp(N0, N0(temp_ind, 1), temp_ind, temp_ind_swt, temp_ind_nswt, temp_ind_E, E, flag_ions, A22, NP, SIZE);
     % Update matrix A
     [A1, temp_NS0] = update_matrix_A1(A0, A1, temp_NS, temp_NS0, temp_ind, temp_ind_E);
     % Compute STOP criteria
@@ -123,7 +122,7 @@ function [temp_ind_nswt, temp_ind_swt, flag_ions, temp_ind_E, temp_NE] = temp_va
     temp_NE = length(temp_ind_E);
 end
 
-function [temp_ind_swt, temp_ind_nswt, flag_ions] = remove_item(N0, n, ind, temp_ind_swt, temp_ind_nswt, flag_ions, NP, SIZE)
+function [temp_ind_swt, temp_ind_nswt, temp_ind_E, flag_ions, A22] = remove_item(N0, n, ind, temp_ind_swt, temp_ind_nswt, temp_ind_E, E, flag_ions, A22, NP, SIZE)
     % Remove species from the computed indeces list of gaseous and condensed
     % species and append the indeces of species that we have to remove
     k = 0;
@@ -136,6 +135,10 @@ function [temp_ind_swt, temp_ind_nswt, flag_ions] = remove_item(N0, n, ind, temp
                 try
                     flag_ions(ind(i)-k) = [];
                     k = k+1;
+                    if ~any(flag_ions)
+                    	temp_ind_E(E.ind_E) = [];
+                        A22 = zeros(length(temp_ind_E) + 1);
+                    end
                 catch
                     continue
                 end
@@ -144,9 +147,9 @@ function [temp_ind_swt, temp_ind_nswt, flag_ions] = remove_item(N0, n, ind, temp
     end
 end
 
-function [temp_ind, temp_ind_swt, temp_ind_nswt, flag_ions, temp_NS] = update_temp(N0, zip1, zip2, temp_ind_swt, temp_ind_nswt, flag_ions, NP, SIZE)
+function [temp_ind, temp_ind_swt, temp_ind_nswt, flag_ions, temp_NS, temp_ind_E, A22] = update_temp(N0, zip1, zip2, temp_ind_swt, temp_ind_nswt, temp_ind_E, E, flag_ions, A22, NP, SIZE)
     % Update temp items
-    [temp_ind_swt, temp_ind_nswt, flag_ions] = remove_item(N0, zip1, zip2, temp_ind_swt, temp_ind_nswt, flag_ions, NP, SIZE);
+    [temp_ind_swt, temp_ind_nswt, temp_ind_E, flag_ions, A22] = remove_item(N0, zip1, zip2, temp_ind_swt, temp_ind_nswt, temp_ind_E, E, flag_ions, A22, NP, SIZE);
     temp_ind = [temp_ind_nswt, temp_ind_swt];
     temp_NS = length(temp_ind);
 end
@@ -193,11 +196,12 @@ end
 
 function [relax, DeltaN3] = ions_factor(N0, A0, temp_ind_nswt, ind_E, flag_ions)
     if any(flag_ions)
-        relax = -sum(A0(temp_ind_nswt, ind_E)    .* N0(temp_ind_nswt, 1))/ ...
+        relax = -sum(A0(temp_ind_nswt, ind_E) .* N0(temp_ind_nswt, 1))/ ...
                  sum(A0(temp_ind_nswt, ind_E).^2 .* N0(temp_ind_nswt, 1));
         DeltaN3 = abs(sum(N0(temp_ind_nswt, 1) .* A0(temp_ind_nswt, ind_E)));
     else
         relax = [];
+        DeltaN3 = 0;
     end 
 end
 

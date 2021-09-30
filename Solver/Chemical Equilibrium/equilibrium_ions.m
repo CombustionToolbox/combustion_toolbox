@@ -63,13 +63,14 @@ while (STOP > TN.tolN || STOP_ions > TN.tol_pi_e) && it < itMax
     % Compute and apply correction of the Lagrangian multiplier for ions divided by RT
     [lambda_ions, DeltaN3] = ions_factor(N0, A0, temp_ind_nswt, E.ind_E, flag_ions);
     % Apply correction
-    if any(flag_ions) 
-        N0_wions =  log(N0(temp_ind_nswt(flag_ions), 1)) + A0(temp_ind_nswt(flag_ions), E.ind_E) * lambda_ions;
+    if any(flag_ions) && flag_ions_first
+        N0_ions =  log(N0(temp_ind_nswt(flag_ions), 1)) + A0(temp_ind_nswt(flag_ions), E.ind_E) * lambda_ions;
     end
     N0(temp_ind, 1) = log(N0(temp_ind, 1)) + lambda * x(1:temp_NS);
-    if any(flag_ions) 
+    if any(flag_ions) && flag_ions_first
         if abs(lambda_ions) > TN.tol_pi_e 
-            N0(temp_ind_nswt(flag_ions), 1) = N0_wions;
+            N0(temp_ind_nswt(flag_ions), 1) = N0_ions;
+            flag_ions_first = false;
         end
     end
     NP_log = log(NP) + lambda * x(end);
@@ -82,6 +83,8 @@ while (STOP > TN.tolN || STOP_ions > TN.tol_pi_e) && it < itMax
     % Compute STOP criteria
     [STOP, STOP_ions] = compute_STOP(NP_0, NP, x(end), N0(temp_ind, 1), x(1:temp_NS), lambda_ions, flag_ions, flag_ions_first, DeltaN3);
 end
+% Check convergence
+print_convergence(STOP, TN.tolN, STOP_ions, TN.tol_pi_e, TP);
 % N0(N0(:, 1) < TN.tolN, 1) = 0;
 end
 % NESTED FUNCTIONS
@@ -198,7 +201,8 @@ function [relax, DeltaN3] = ions_factor(N0, A0, temp_ind_nswt, ind_E, flag_ions)
     if any(flag_ions)
         relax = -sum(A0(temp_ind_nswt, ind_E) .* N0(temp_ind_nswt, 1))/ ...
                  sum(A0(temp_ind_nswt, ind_E).^2 .* N0(temp_ind_nswt, 1));
-        DeltaN3 = abs(sum(N0(temp_ind_nswt, 1) .* A0(temp_ind_nswt, ind_E)));
+%         DeltaN3 = abs(sum(N0(temp_ind_nswt, 1) .* A0(temp_ind_nswt, ind_E)));
+        DeltaN3 = abs(relax);
     else
         relax = [];
         DeltaN3 = 0;
@@ -220,5 +224,21 @@ function [DeltaN, Delta_ions] = compute_STOP(NP_0, NP, DeltaNP, zip1, zip2, lamb
         Delta_ions = abs(lambda_ions);
     else
         Delta_ions = 0;
+    end
+end
+
+function print_convergence(STOP_1, TOL_1, STOP_2, TOL_2, T)
+    if STOP_1 > TOL_1
+        fprintf('***********************************************************\n')
+        fprintf('Convergence error number of moles:   %.2f\n', STOP_1);
+    end
+    if STOP_2 > TOL_2
+        fprintf('***********************************************************\n')
+        fprintf('Convergence error in charge balance: %.2f\n', STOP_2);
+    end
+    if T > 2e4
+        fprintf('***********************************************************\n')
+        fprintf('Validity of the next results compromise\n')
+        fprintf('Thermodynamic properties fitted to 20000 K\n');
     end
 end

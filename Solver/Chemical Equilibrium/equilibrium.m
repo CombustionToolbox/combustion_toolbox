@@ -65,6 +65,8 @@ while STOP > TN.tolN && it < itMax
     % Compute STOP criteria
     STOP = compute_STOP(NP_0, NP, x(end), N0(temp_ind, 1), x(1:temp_NS));
 end
+% Check convergence
+print_convergence(STOP, TOL, T)
 % N0(N0(:, 1) < TN.tolN, 1) = 0;
 end
 % NESTED FUNCTIONS
@@ -194,4 +196,16 @@ function DeltaN = compute_STOP(NP_0, NP, DeltaNP, zip1, zip2)
     DeltaN3 = NP_0 * abs(DeltaNP) / NP;
     % Deltab = [abs(bi - sum(N0[:, 0] * A0[:, i])) for i, bi in enumerate(x[S.NS:-1]) if bi > 1e-6]
     DeltaN = max(DeltaN1, DeltaN3);
+end
+
+function print_convergence(STOP, TOL, T)
+    if STOP > TOL
+        fprintf('***********************************************************\n')
+        fprintf('Convergence error number of moles:   %.2f\n', STOP);
+    end
+    if T > 2e4
+        fprintf('***********************************************************\n')
+        fprintf('Validity of the next results compromise\n')
+        fprintf('Thermodynamic properties fitted to 20000 K\n');
+    end
 end

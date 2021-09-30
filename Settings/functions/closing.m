@@ -26,20 +26,20 @@ elseif any(strcmp(ProblemType,{'TP'})) && length(phi) > 1
         app.Misc.config.labelx = 'Temperature $T [K]$';
         app.Misc.config.labely = 'Molar fraction $X_i$';
         displaysweepresults(app, strP, app.PD.range);
-elseif any(strcmp(ProblemType,{'SP'}))
+elseif any(strcmp(ProblemType,{'SP'})) && length(phi) > 1
         app.Misc.config.labelx = 'Pressure $p [bar]$';
         app.Misc.config.labely = 'Temperature $T [K]$';
         plot_figure(app.PD.pP.value,strP,'p','T',app.Misc.config,app.PD.CompleteOrIncomplete);
-elseif any(strcmp(ProblemType,{'SV'}))
+elseif any(strcmp(ProblemType,{'SV'})) && length(phi) > 1
         app.Misc.config.labelx = 'Volume ratio $v_P/v_R$';
         app.Misc.config.labely = 'Temperature $T [K]$';
         plot_figure(app.PD.vP_vR.value,strP,'v_P/v_R','T',app.Misc.config,app.PD.CompleteOrIncomplete);     
-elseif any(strcmp(ProblemType,{'SHOCK_I'}))
+elseif any(strcmp(ProblemType,{'SHOCK_I'})) && length(phi) > 1
         app.Misc.config.labelx = 'Incident velocity $u_1$';
         app.Misc.config.labely = 'Temperature $T [K]$';
         plot_figure(app.PD.u1.value,strP,'u','T',app.Misc.config,app.PD.CompleteOrIncomplete);
         plot_hugoniot(app);
-elseif any(strcmp(ProblemType,{'SHOCK_R'}))
+elseif any(strcmp(ProblemType,{'SHOCK_R'})) && length(phi) > 1
         app.Misc.config.labelx = 'Incident velocity $u_1$';
         app.Misc.config.labely = 'Temperature $T [K]$';
         app.Misc.config.tit = 'SHOCK_I';

@@ -11,16 +11,20 @@ else
     fprintf('NASA short database already loaded\n')
 end
 end
+
+% NESTED FUNCTIONS
 function strThProp = get_Database(strMaster)
 
+SpeciesList = fieldnames(strMaster);
+
 %%% gri30-x.cti except 'CH2(s)' + others
-SpeciesList = {'H2', 'H', 'O', 'O2', 'O3', 'OH', 'H2O', 'HO2', 'H2O2', 'C',...
-    'CH', 'CH2', 'CH3', 'CH4', 'CO', 'CO2', 'HCO',...
-    'CH2OH', 'CH3O', 'CH3OH', 'C2H', 'C2H4',...
-    'C2H5', 'C2H6', 'HCCO', 'N', 'NH', 'NH2', 'NH3', 'N2H4',...
-    'NO', 'NO2', 'NO3', 'N2O', 'N2O3', 'N2O4', 'HNO', 'CN', 'HCN',...
-    'NCO', 'N2', 'N3', 'Ar', 'C3H8','C2','C2H2_acetylene','C6H6',...
-    'C8H18_isooctane','C2H5OH','He','Cbgrb'};
+% SpeciesList = {'H2', 'H', 'O', 'O2', 'O3', 'OH', 'H2O', 'HO2', 'H2O2', 'C',...
+%     'CH', 'CH2', 'CH3', 'CH4', 'CO', 'CO2', 'HCO',...
+%     'CH2OH', 'CH3O', 'CH3OH', 'C2H', 'C2H4',...
+%     'C2H5', 'C2H6', 'HCCO', 'N', 'NH', 'NH2', 'NH3', 'N2H4',...
+%     'NO', 'NO2', 'NO3', 'N2O', 'N2O3', 'N2O4', 'HNO', 'CN', 'HCN',...
+%     'NCO', 'N2', 'N3', 'Ar', 'C3H8','C2','C2H2_acetylene','C6H6',...
+%     'C8H18_isooctane','C2H5OH','He','Cbgrb'};
 
 % SpeciesList = {'O2','N2','O','O3','N','NO','NO2','NO3','N2O','N2O3','N2O4','N3', ...
 %     'eminus', 'Arplus', 'Nminus', 'Nplus', 'NOplus', 'NO2minus', 'NO3minus', 'N2plus', 'N2minus', 'N2Oplus', ...
@@ -131,13 +135,13 @@ for i = 1:length(SpeciesList)
             
             Tmin = max(tRange{1}(1), 200);
             Tmax = min(tRange{ctTInt}(2), 20000);
-            if abs(Tmin - 298.15) < 1e4 
-                Trange1 = 298.15;
-            else
-                Trange1 = linspace(Tmin, 298.15, 10);
-            end
-            Trange2 = linspace(350, Tmax, 100);
-            for T = [Trange1, Trange2]
+%             if abs(Tmin - 298.15) < 1e4 
+%                 Trange1 = 298.15;
+%             else
+%                 Trange1 = linspace(Tmin, 298.15, 10);
+%             end
+            Trange = linspace(Tmin, Tmax, 100);
+            for T = Trange
                 [txFormula, mm, Cp0, Cv0, Hf0, H0, Ef0, E0, S0, DfG0] = SpeciesThermProp(strMaster,SpeciesList{i},T,'molar',0);
                 T_vector   = [  T_vector; T     ];
                 DhT_vector = [DhT_vector; H0-Hf0];

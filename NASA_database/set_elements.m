@@ -1,6 +1,7 @@
 function [Elements,NE] = set_elements()
 Elements = {
 'H';   %  1 
+'D';   %  1 - Deuterium - Heavy hydrogen (^2H)
 'He';  %  2 
 'Li';  %  3 
 'Be';  %  4 
@@ -118,6 +119,6 @@ Elements = {
 'Lv';  % 116
 'Ts';  % 117
 'Og';  % 118
-'E'};  % 119 % Electron
+'E'};   % 119 % Electron
 
 NE = numel(Elements);

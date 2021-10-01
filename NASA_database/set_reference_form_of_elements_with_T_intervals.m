@@ -38,7 +38,7 @@ Reference_form_of_elements_with_T_intervals = {
 'Be(b) [1543-1563]';
 'Be(L) [1563-6000]';
 'Br2(L) [265.9-6000]';
-'C(gr) [200-20000]';
+'C(gr) [200-20000]'; % The range is 200-6000, but with our formulation is okay we doesn't use it.
 'Ca(a) [200-716]';
 'Ca(b) [716-1115]';
 'Ca(L) [1115-6000]';

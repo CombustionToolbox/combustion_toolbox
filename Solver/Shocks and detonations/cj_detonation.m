@@ -64,7 +64,7 @@ function [p2, T2, p2p1, T2T1, STOP] = get_guess(self, str1, str2)
         T2 = str2.T;       % [K]
         p2p1 = p2 / (str1.p * 1e5);
         T2T1 = T2 / str1.T;
-        STOP = [];
+        STOP = 1;
     end
 end
 

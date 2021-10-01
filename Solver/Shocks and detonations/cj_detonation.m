@@ -9,7 +9,6 @@ R0 = C.R0; % Universal gas constant [J/(mol-K)]
 % Miscelaneous
 it = 0;
 itMax = 50;
-STOP = 1.;
 % Initial estimates of p2/p1 and T2/T1
 [p2, T2, p2p1, T2T1, STOP] = get_guess(self, str1, str2);
 T_guess = T2;

@@ -126,7 +126,7 @@ tRange       = strDB.(Species).tRange;
 tExponents   = strDB.(Species).tExponents;
 
 % set Elements and Reference_form_of_elements_with_T_intervals lists
-[Elements, NE] = set_elements(); % sets Elements list
+[Elements, ~] = set_elements(); % sets Elements list
 Element_matrix = set_element_matrix(txFormula,Elements); % sets Element_matrix matrix
 set_reference_form_of_elements_with_T_intervals; % sets Reference_form_of_elements_with_T_intervals list
 

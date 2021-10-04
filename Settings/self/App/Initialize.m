@@ -48,7 +48,7 @@ function PT = Ask_problem(self)
         fn = {'TP','HP','SP','TV','EV','SV','SHOCK_I','SHOCK_R','DET','DET_OVERDRIVEN'};
         [indx, ~] = listdlg('PromptString','Select a problem:',...
                                    'SelectionMode','single',...
-                                   'ListString',fn,'ListSize',[150,120]);
+                                   'ListString',fn,'ListSize',[150,150]);
         PT = fn{indx};
         catch
             error('Problem type not selected.')

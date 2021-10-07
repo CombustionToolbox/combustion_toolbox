@@ -38,8 +38,8 @@ app = App('Soot formation');
 %% PROBLEM CONDITIONS
 app.PD.TR.value  = 300;
 app.PD.pR.value  = 1 * 1.01325;
-% app.PD.phi.value = 0.25:0.01:5;
-app.PD.phi.value = 1;
+app.PD.phi.value = 0.25:0.01:5;
+% app.PD.phi.value = 1;
 %% PROBLEM TYPE
 switch app.PD.ProblemType
     case 'TP' % * TP: Equilibrium composition at defined T and p

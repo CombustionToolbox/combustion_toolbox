@@ -37,7 +37,7 @@ Please send feedback or inquiries to [acuadra@ing.uc3m.es](mailto:acuadra@ing.uc
 
 Thank you for testing Combustion Toolbox!
 
-## Authors
+## Developers
 
 * **[Alberto Cuadra-Lara](https://albertocuadra.netlify.app/)<sup>1</sup>** - *Main Developer and App designer*
 * **Marcos Vera<sup>1</sup>** - *Developer*

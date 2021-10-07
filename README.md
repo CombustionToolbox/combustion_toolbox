@@ -22,6 +22,14 @@ The code computes the equilibrium composition by minimization of the Gibbs–Hel
 
 This project is also part of my PhD.
 
+---
+⚠️ **NOTE**
+
+- At the moment, this is a preview of the tool and does **not** include the new GUI. The first final version v1.0.0 is expected to be released in late 2021. Check out the  upcoming features of [Combustion Toolbox v1.0.0](https://github.com/AlbertoCuadra/combustion_toolbox/projects/2).
+
+---
+
+
 ## Examples
 
 <img src="https://github.com/AlbertoCuadra/combustion_toolbox/blob/master/Validations/Hugoniot_benchmarking.svg" width="400">

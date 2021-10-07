@@ -36,7 +36,7 @@ print_convergence(STOP, TN.tol_shocks, T2);
 % Save state
 str2 = save_state(self, str1, T2, p2, STOP);
 end
-% NESTED FUNCTIONS
+% SUB-PASS FUNCTIONS
 function [self, str1, str2] = unpack(x)
     % Unpack input data
     self = x{1};

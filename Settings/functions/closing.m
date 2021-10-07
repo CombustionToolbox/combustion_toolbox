@@ -64,5 +64,10 @@ elseif strcmp(ProblemType,{'DET_OVERDRIVEN'}) && length(phi) > 1
 %     plot_figure(mix2, mix2,'phi_c','T',app.Misc.config,app.PD.CompleteOrIncomplete);
 end
 
+if strcmp(ProblemType,{'DET'}) && length(phi) > 1
+    app.Misc.config.labelx = 'Incident velocity $u_1$';
+    app.Misc.config.labely = 'Temperature $T [K]$';
+    plot_figure(mix1, mix2, 'u', 'T', app.Misc.config, app.PD.CompleteOrIncomplete);
+end
 %% EXCEL I/O
 ExportExcel(app);

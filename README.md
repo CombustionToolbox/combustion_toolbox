@@ -36,7 +36,11 @@ This project is also part of the PhD of [Alberto Cuadra-Lara](https://www.acuadr
 
 **Figure 1:** *Hugoniot curves for different molecular gases at pre-shock temperature T1 = 300 K and pressure p1 = 1 atm \[numerical results obtained with Combustion Toolbox (lines) and contrasted with NASA’s Chemical Equilibrium with Applications (CEA) code excluding ionization (symbols)\].*
 
-Figures are postprocesed with [Veusz](https://github.com/veusz/veusz) and [Inkscape](https://inkscape.org/). 
+<img src="https://github.com/AlbertoCuadra/combustion_toolbox/blob/master/GUI/snapshots/snapshot_1.svg" width="400">
+
+**Figure 2:** *Snapshot of the GUI.*
+
+Figure 1 is postprocesed with [Veusz](https://github.com/veusz/veusz) and [Inkscape](https://inkscape.org/). 
 ## Contributing
 
 Please read [CONTRIBUTING.md](https://gist.github.com/PurpleBooth/b24679402957c63ec426) for details on our code of conduct, and the process for submitting pull requests to us.

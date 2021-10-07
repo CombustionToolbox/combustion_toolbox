@@ -48,6 +48,7 @@ Thank you for testing Combustion Toolbox!
 ## Developers
 
 * **[Alberto Cuadra-Lara](https://acuadralara.com/)<sup>1</sup>** - *Main Developer and App designer*
+* **César Huete<sup>1</sup>** - *Developer*
 * **Marcos Vera<sup>1</sup>** - *Developer*
 
 <sup>1</sup>  Grupo de Mecánica de Fluidos, Universidad Carlos III, Av. Universidad 30, 28911, Leganés, Spain
@@ -58,7 +59,7 @@ See also the list of [contributors](https://github.com/AlbertoCuadra/combustion_
 
 ```bibtex
 @misc{combustiontoolbox,
-    author = "Alberto Cuadra and Marcos Vera",
+    author = "Alberto Cuadra, César Huete and Marcos Vera",
     title = "Combustion Toolbox: A MATLAB-GUI based open-source tool for solving combustion problems",
     year = 2021,
     note = "Version 0.3.541",

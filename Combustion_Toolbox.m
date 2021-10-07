@@ -38,8 +38,8 @@ app = App('Soot formation');
 %% PROBLEM CONDITIONS
 app.PD.TR.value  = 300;
 app.PD.pR.value  = 1 * 1.01325;
-app.PD.phi.value = 0.25:0.01:5;
-% app.PD.phi.value = 1;
+% app.PD.phi.value = 0.25:0.01:5;
+app.PD.phi.value = 1;
 %% PROBLEM TYPE
 switch app.PD.ProblemType
     case 'TP' % * TP: Equilibrium composition at defined T and p
@@ -83,7 +83,7 @@ switch app.PD.ProblemType
 %         app.PD.TR_vector.value = app.PD.TR.value;
     case 'DET_OVERDRIVEN' % * DET_OVERDRIVEN: CALCULATE OVERDRIVEN DETONATION
         app.PD.ProblemType = 'DET_OVERDRIVEN';  
-        app.PD.overdriven.value  = 1:1:5;
+        app.PD.overdriven.value  = 1:0.1:10; app.PD.phi.value = 1*ones(1,length(app.PD.overdriven.value));
 end
 %% LOOP
 app.C.l_phi = length(app.PD.phi.value);

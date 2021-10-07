@@ -2,15 +2,15 @@
 COMBUSTION TOOLBOX @v0.3.54
 
 Type of problems:
-    * TP ------> Equilibrium composition at defined T and p
-    * HP ------> Adiabatic T and composition at constant p
-    * SP ------> Isentropic compression/expansion to a specified p
-    * TV ------> Equilibrium composition at defined T and constant v
-    * EV ------> Adiabatic T and composition at constant v
-    * SV ------> Isentropic compression/expansion to a specified v
-    * SHOCK_I -> Planar incident shock wave
-    * SHOCK_R -> Planar reflected shock wave
-    * DET -----> Chapman-Jouget Detonation (CJ upper state)
+    * TP -----------------> Equilibrium composition at defined T and p
+    * HP -----------------> Adiabatic T and composition at constant p
+    * SP -----------------> Isentropic compression/expansion to a specified p
+    * TV -----------------> Equilibrium composition at defined T and constant v
+    * EV -----------------> Adiabatic T and composition at constant v
+    * SV -----------------> Isentropic compression/expansion to a specified v
+    * SHOCK_I ------------> Planar incident shock wave
+    * SHOCK_R ------------> Planar reflected shock wave
+    * DET ----------------> Chapman-Jouget Detonation (CJ upper state)
     * DET_OVERDRIVEN -----> Overdriven Detonation    
     
 
@@ -90,7 +90,7 @@ app.C.l_phi = length(app.PD.phi.value);
 tic
 for i=app.C.l_phi:-1:1
 % DEFINE FUEL
-app.PD.S_Fuel = {'H2'}; app.PD.N_Fuel = 1;
+app.PD.S_Fuel = {'CH4'}; app.PD.N_Fuel = 1;
 app = Define_F(app);
 % DEFINE OXIDIZER
 app.PD.S_Oxidizer = {'O2'}; app.PD.N_Oxidizer = app.PD.phi_t/app.PD.phi.value(i);

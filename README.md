@@ -42,7 +42,9 @@ This project is also part of the PhD of [Alberto Cuadra-Lara](https://www.acuadr
     <img src="https://github.com/AlbertoCuadra/combustion_toolbox/blob/master/GUI/Snapshots/snapshot_1.svg" width="600">
 </p>
 <h1 align="center">**Figure 2:** *Snapshot of the GUI.*</h1>
+
 Figure 1 is postprocesed with [Veusz](https://github.com/veusz/veusz) and [Inkscape](https://inkscape.org/). 
+
 ## Contributing
 
 Please read [CONTRIBUTING.md](https://gist.github.com/PurpleBooth/b24679402957c63ec426) for details on our code of conduct, and the process for submitting pull requests to us.

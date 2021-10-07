@@ -56,7 +56,7 @@ A.C. is deeply grateful to Samuel Delbarre for his help in the validation and de
     author = "Alberto Cuadra and Marcos Vera",
     title = "Combustion Toolbox: A MATLAB-GUI based open-source tool for solving combustion problems",
     year = 2021,
-    note = "Version 0.3.51",
+    note = "Version 0.3.53",
     doi = {.../zenodo....}
 }
 ```

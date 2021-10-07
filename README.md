@@ -46,10 +46,6 @@ Thank you for testing Combustion Toolbox!
 
 See also the list of [contributors](https://github.com/AlbertoCuadra/combustion_toolbox/blob/master/CONTRIBUTORS.md) who participated in this project.
 
-## Acknowledgments
-
-A.C. is deeply grateful to Samuel Delbarre for his help in the validation and debugging process of the segregated method and the old routines for shocks (both now deprecated).
-
 ## Citing Combustion Toolbox
 
 ```bibtex

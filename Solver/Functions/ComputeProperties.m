@@ -85,7 +85,7 @@ str.p      = p;
 str.v      = str.pv/str.p;
 str.swtCond = SpeciesMatrix(:,10);
 str.mi     = sum(SpeciesMatrix(:,11))*1e-3; % [kg]
-str.rho    = str.mi/str.v*1e3;              % [kg/m^3]
+str.rho    = str.mi/str.v*1e3;              % [kg/m3]
 
 str.Yi     = SpeciesMatrix(:,11)./str.mi*1e-3;   % [-]
 str.W      = 1/sum(str.Yi./SpeciesMatrix(:,12),'OmitNan');

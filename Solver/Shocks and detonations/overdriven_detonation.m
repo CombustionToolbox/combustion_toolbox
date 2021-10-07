@@ -1,14 +1,10 @@
 function [str1, str2] = overdriven_detonation(varargin)
 % Unpack input data
-[self, str1, str2] = unpack(varargin);
+[self, str1, ~] = unpack(varargin);
 
-if isempty(str2)
-    [str1, str2] = cj_detonation(self, str1);
-else
-    [str1, str2] = cj_detonation(self, str1, str2);
-end
+[str1, ~] = cj_detonation(self, str1);
+[str1, str2] = shock_incident(self, str1, str1.u * str1.overdriven);
 
-[str1, str2] = shock_incident(self, str1, str1.u * str1.overdriven, str2);
 
 end
 

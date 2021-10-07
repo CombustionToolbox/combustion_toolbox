@@ -24,11 +24,7 @@ switch self.PD.ProblemType
         end
     case 'DET_OVERDRIVEN'
         overdriven = self.PD.overdriven.value(i);
-        if i==self.C.l_phi
-            [self.PS.strR{i}, self.PS.strP{i}] = overdriven_detonation(self, self.PS.strR{i}, overdriven);
-        else
-            [self.PS.strR{i}, self.PS.strP{i}] = overdriven_detonation(self, self.PS.strR{i}, overdriven, self.PS.strP{i+1});
-        end
+        [self.PS.strR{i}, self.PS.strP{i}] = overdriven_detonation(self, self.PS.strR{i}, overdriven);
     otherwise
         if i == self.C.l_phi
             self.PS.strP{i} = equilibrate(self, self.PS.strR(i), self.PD.pP.value);

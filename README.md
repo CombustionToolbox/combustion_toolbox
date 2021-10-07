@@ -47,9 +47,9 @@ Thank you for testing Combustion Toolbox!
 
 ## Developers
 
-* **[Alberto Cuadra-Lara](https://acuadralara.com/)<sup>1</sup>** - *Main Developer and App designer*
-* **César Huete<sup>1</sup>** - *Developer*
-* **Marcos Vera<sup>1</sup>** - *Developer*
+* **[Alberto Cuadra-Lara](https://acuadralara.com/)** - *Main Developer and App designer*
+* **César Huete** - *Developer*
+* **Marcos Vera** - *Developer*
 
 <sup>1</sup>  Grupo de Mecánica de Fluidos, Universidad Carlos III, Av. Universidad 30, 28911, Leganés, Spain
 

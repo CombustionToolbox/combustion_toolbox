@@ -3,7 +3,7 @@
 
 A MATLAB-GUI based open-source tool for solving combustion problems.
 
-% Website: https://combustiontoolbox.netlify.app/
+<!-- Website: https://combustiontoolbox.netlify.app/ -->
 
 
 ## Introduction

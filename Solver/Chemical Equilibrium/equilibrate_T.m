@@ -1,6 +1,6 @@
 function strP = equilibrate_T(self, strR, pP, TP)
     % Compute number of moles 
-    [N, DeltaNP] = select_equilibrium(self, pP, TP, strR);
+    [N, DeltaNP, DeltaNP_ions] = select_equilibrium(self, pP, TP, strR);
     % Compute thermodynamic derivates
     [dNi_T, dN_T] = equilibrium_dT(self, N, TP, strR);
     [dNi_p, dN_p] = equilibrium_dp(self, N, strR);
@@ -9,25 +9,27 @@ function strP = equilibrate_T(self, strR, pP, TP)
     % Compute properties matrix
     P = SetSpecies(self, self.S.LS, N(:, 1), TP);
     % Compute properties of final mixture
-    strP = compute_properties(self, strR, P, pP, TP, DeltaNP);
+    strP = compute_properties(self, strR, P, pP, TP, DeltaNP, DeltaNP_ions);
 end
-% NESTED FUNCTIONS
+
+% SUB-PASS FUNCTIONS
 function pP = compute_pressure(self, strR, TP, N)
     % Compute pressure of product mixture
     pP = (N * TP * self.C.R0 / (strR.v/1e3)) / 1e5;
 end
 
-function [N, DeltaNP] = select_equilibrium(self, pP, TP, strR)
+function [N, DeltaNP, DeltaNP_ions] = select_equilibrium(self, pP, TP, strR)
     if ~self.PD.ionization
         % Compute numer of moles without ionization
         [N, DeltaNP] = equilibrium(self, pP, TP, strR);
+        DeltaNP_ions = 0;
     else
         % Compute numer of moles with ionization
-        [N, DeltaNP] = equilibrium_ions(self, pP, TP, strR);
+        [N, DeltaNP, DeltaNP_ions] = equilibrium_ions(self, pP, TP, strR);
     end
 end
 
-function strP = compute_properties(self, strR, P, pP, TP, DeltaNP)
+function strP = compute_properties(self, strR, P, pP, TP, DeltaNP, DeltaNP_ions)
     % Compute properties of final mixture
     if strfind(self.PD.ProblemType, 'P') == 2
         strP = ComputeProperties(self, P, pP, TP);
@@ -37,4 +39,5 @@ function strP = compute_properties(self, strR, P, pP, TP, DeltaNP)
         strP = ComputeProperties(self, P, pP, TP);
     end    
     strP.error_moles = DeltaNP;
+    strP.error_moles_ions = DeltaNP_ions;
 end

@@ -1,4 +1,4 @@
-function [N0, STOP] = equilibrium_ions(app, pP, TP, strR)
+function [N0, STOP, STOP_ions] = equilibrium_ions(app, pP, TP, strR)
 % Generalized Gibbs minimization method
 
 % Abbreviations ---------------------
@@ -72,8 +72,6 @@ while STOP > TN.tolN && it < itMax
 end
 % Check convergence of charge balance (ionized species)
 [N0, STOP_ions] = check_convergence_ions(N0, A0, E.ind_E, temp_ind_nswt, temp_ind_ions, TN.tolN, TN.tol_pi_e);
-% Print convergence if error
-print_convergence(STOP, TN.tolN, STOP_ions, TN.tol_pi_e);
 % N0(N0(:, 1) < TN.tolN, 1) = 0;
 end
 % NESTED FUNCTIONS
@@ -237,15 +235,4 @@ function [N0, STOP] = recompute_ions(N0, A0, ind_E, temp_ind_nswt, temp_ind_ions
     if ~any(Xi_ions > TOL)
         STOP = 0;
     end 
-end
-
-function print_convergence(STOP_1, TOL_1, STOP_2, TOL_2)
-    if STOP_1 > TOL_1
-        fprintf('***********************************************************\n')
-        fprintf('Convergence error number of moles:   %.2f\n', STOP_1);
-    end
-    if STOP_2 > TOL_2
-        fprintf('***********************************************************\n')
-        fprintf('Convergence error in charge balance: %.2f\n', STOP_2);
-    end
 end

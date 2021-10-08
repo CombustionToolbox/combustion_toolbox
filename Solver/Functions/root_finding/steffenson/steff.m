@@ -18,10 +18,8 @@ function [x, ERR] = steff(self, strR, pP, attr_name, x)
         else
             x = fx;
         end
-        ERR = abs(g_aux - g) / (1 + abs(g_aux));
-    
-        ERR = max(abs(ERR), abs(g));
-        
+
+        ERR = max(abs((x - fx) / x), abs(g_aux - g));
     end
     print_error_root(it, self.TN.itMax, x, ERR);
 end

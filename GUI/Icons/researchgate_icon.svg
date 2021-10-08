@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   aria-label="Research Gate"
+   role="img"
+   viewBox="0 0 512 512"
+   version="1.1"
+   id="svg10"
+   sodipodi:docname="researchgate_icon_130843.svg"
+   inkscape:version="1.1 (c68e22c387, 2021-05-23)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs14" />
+  <sodipodi:namedview
+     id="namedview12"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     showgrid="false"
+     inkscape:zoom="0.58695387"
+     inkscape:cx="172.92671"
+     inkscape:cy="237.66774"
+     inkscape:window-width="1920"
+     inkscape:window-height="1009"
+     inkscape:window-x="-8"
+     inkscape:window-y="370"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg10" />
+  <rect
+     width="512"
+     height="512"
+     rx="15%"
+     fill="#00d0af"
+     id="rect2"
+     style="fill:#577a95;fill-opacity:1" />
+  <g
+     fill="#feffff"
+     id="g8">
+    <path
+       d="m271 383c-15-4-23-10-36-26-9-12-26-39-35-53l-6-11h-24l0 34c1 43 0 42 19 45l10 1 0 4 0 4h-80l0-4c0-4 1-4 9-6 10-2 14-5 15-14 1-4 1-31 1-79-0-70-1-72-3-77-3-5-7-7-18-8-4-1-5-1-5-5v-4l43-1c55-1 65 0 81 11 15 10 22 24 20 43-1 21-17 42-37 50-4 1-7 3-7 3 0 2 17 28 28 43 15 21 27 32 36 37 4 2 9 3 10 3 3 0 3 1 3 4 0 3-1 5-2 5-5 2-19 2-26 0zm-57-109c14-7 22-18 23-35 1-13-2-22-10-30-9-10-25-14-48-12l-10 1v39c0 36 0 40 2 40 1 0 9 1 18 0 14-0 17-1 24-4z"
+       id="path4" />
+    <path
+       d="m321 228c-25-4-34-20-32-61 1-21 3-30 11-38 7-7 13-9 25-10 13-1 21 2 29 8 5 4 9 10 9 13 0 1-3 2-6 4l-6 3-3-3c-5-6-9-9-14-11-10-3-20 2-25 11-3 5-3 6-3 29 0 22 0 25 3 29 4 7 12 11 21 10 13-1 20-10 20-24v-7l-10-0-10-0v-13h36l-0 15c-0 12-1 16-3 22-6 15-23 24-42 22z"
+       id="path6" />
+  </g>
+</svg>

@@ -7,9 +7,9 @@ function [x, ERR] = steff(self, strR, pP, attr_name, x)
     end
     it = 0; g = 1.0; ERR = 1.0;
     
-    while (abs(ERR) > self.TN.tol0 || abs(g) > self.TN.tol0) && it < self.TN.itMax
+    while ERR > self.TN.tol0 && it < self.TN.itMax
         it = it + 1;
-        g = get_gpoint(self, strR, pP, attr_name, x);
+        [g, g_rel]= get_gpoint(self, strR, pP, attr_name, x);
         fx = abs(g - x);
         g_aux  = get_gpoint(self, strR, pP, attr_name, fx);
         fx2 = abs(g_aux - fx);
@@ -19,7 +19,7 @@ function [x, ERR] = steff(self, strR, pP, attr_name, x)
             x = fx;
         end
 
-        ERR = max(abs((x - fx) / x), abs(g_aux - g));
+        ERR = max(abs((x - fx) / x), abs(g_rel));
     end
     print_error_root(it, self.TN.itMax, x, ERR);
 end

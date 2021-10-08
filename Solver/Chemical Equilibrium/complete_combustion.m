@@ -1,4 +1,4 @@
-function [N0, species] = complete_combustion(self, str, phi)
+function [N0, species] = complete_combustion(self, mix, phi)
 % 
 % Parameters ---------------------
 Fuel = self.PD.Fuel;
@@ -6,9 +6,9 @@ phi_c = Compute_phi_c(Fuel);
 % -----------------------------------
 species = {'CO2', 'CO', 'H2O', 'H2', 'O2'};
 
-if isempty(self.E.ind_C), x = 0; phi_c = inf; else, x = str.NatomE(self.E.ind_C); end
-if isempty(self.E.ind_H), y = 0; else, y = str.NatomE(self.E.ind_H); end
-if isempty(self.E.ind_O), z = 0; else, z = str.NatomE(self.E.ind_O); end
+if isempty(self.E.ind_C), x = 0; phi_c = inf; else, x = mix.NatomE(self.E.ind_C); end
+if isempty(self.E.ind_H), y = 0; else, y = mix.NatomE(self.E.ind_H); end
+if isempty(self.E.ind_O), z = 0; else, z = mix.NatomE(self.E.ind_O); end
 
 if phi <= 1
     % case of lean or stoichiometric mixtures

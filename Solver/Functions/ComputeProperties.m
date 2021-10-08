@@ -1,14 +1,14 @@
-function str =  ComputeProperties(self, SpeciesMatrix, p, T)
+function mix =  ComputeProperties(self, SpeciesMatrix, p, T)
 
 R0 = self.C.R0; % [J/(K mol)]. Universal gas constant
-str.NatomE = sum(SpeciesMatrix(:, 1) .* self.C.A0.value);
+mix.NatomE = sum(SpeciesMatrix(:, 1) .* self.C.A0.value);
 
-if isempty(self.E.ind_C), str.x = 0; else, str.x = str.NatomE(self.E.ind_C); end
-if isempty(self.E.ind_H), str.y = 0; else, str.y = str.NatomE(self.E.ind_H); end
-if isempty(self.E.ind_O), str.z = 0; else, str.z = str.NatomE(self.E.ind_O); end
-if isempty(self.E.ind_N), str.w = 0; else, str.w = str.NatomE(self.E.ind_N); end
+if isempty(self.E.ind_C), mix.x = 0; else, mix.x = mix.NatomE(self.E.ind_C); end
+if isempty(self.E.ind_H), mix.y = 0; else, mix.y = mix.NatomE(self.E.ind_H); end
+if isempty(self.E.ind_O), mix.z = 0; else, mix.z = mix.NatomE(self.E.ind_O); end
+if isempty(self.E.ind_N), mix.w = 0; else, mix.w = mix.NatomE(self.E.ind_N); end
 
-str.N      = sum(SpeciesMatrix(:, 1)); %[mol] 
+mix.N      = sum(SpeciesMatrix(:, 1)); %[mol] 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%% MARCOS: rho and mass fractions computations
 % Ni = SpeciesMatrix(:,1); % number of moles of species i in the mixture
@@ -72,54 +72,53 @@ str.N      = sum(SpeciesMatrix(:, 1)); %[mol]
 %%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%
-str.hf     = sum(SpeciesMatrix(:,2));  % [kJ]
-str.DhT    = sum(SpeciesMatrix(:,3));  % [kJ]
-str.h      = str.hf + str.DhT;         % [kJ]
-str.ef     = sum(SpeciesMatrix(:,4));  % [kJ]
-str.DeT    = sum(SpeciesMatrix(:,5));  % [kJ]
-str.e      = str.ef + str.DeT;         % [kJ]
-str.cP     = sum(SpeciesMatrix(:,6));  % [J/K]     
-str.cV     = sum(SpeciesMatrix(:,7));  % [J/K]   
-str.pv     = sum(SpeciesMatrix(:,9));
-str.p      = p;
-str.v      = str.pv/str.p;
-str.swtCond = SpeciesMatrix(:,10);
-str.mi     = sum(SpeciesMatrix(:,11))*1e-3; % [kg]
-str.rho    = str.mi/str.v*1e3;              % [kg/m3]
+mix.hf     = sum(SpeciesMatrix(:,2));  % [kJ]
+mix.DhT    = sum(SpeciesMatrix(:,3));  % [kJ]
+mix.h      = mix.hf + mix.DhT;         % [kJ]
+mix.ef     = sum(SpeciesMatrix(:,4));  % [kJ]
+mix.DeT    = sum(SpeciesMatrix(:,5));  % [kJ]
+mix.e      = mix.ef + mix.DeT;         % [kJ]
+mix.cP     = sum(SpeciesMatrix(:,6));  % [J/K]     
+mix.cV     = sum(SpeciesMatrix(:,7));  % [J/K]   
+mix.pv     = sum(SpeciesMatrix(:,9));
+mix.p      = p;
+mix.v      = mix.pv/mix.p;
+mix.swtCond = SpeciesMatrix(:,10);
+mix.mi     = sum(SpeciesMatrix(:,11))*1e-3; % [kg]
+mix.rho    = mix.mi/mix.v*1e3;              % [kg/m3]
 
-str.Yi     = SpeciesMatrix(:,11)./str.mi*1e-3;   % [-]
-str.W      = 1/sum(str.Yi./SpeciesMatrix(:,12),'OmitNan');
+mix.Yi     = SpeciesMatrix(:,11)./mix.mi*1e-3;   % [-]
+mix.W      = 1/sum(mix.Yi./SpeciesMatrix(:,12),'OmitNan');
 
 % Ngas       = sum(SpeciesMatrix(:,1));
 % Ngas       = sum(SpeciesMatrix(:,1).*(1-str.swtCond));
 % htest = sum(str.Yi .* str.hf) + sum(str.Yi .* str.Dht)
 Ni         = SpeciesMatrix(:,1); % [mol]
 % str.Xi     = Ni/Ngas;               % [-]
-str.Xi     = Ni/str.N;               % [-]
-ii         = str.Xi>0;     
-str.S0     = sum(SpeciesMatrix(:,8)); % [kJ/K]
-% DSi        = -R0*Ni(ii).*log(str.Xi(ii)*p).*(1-swtCond(ii)); % only nonzero for noncondensed species
-DSi        = Ni(ii).*log(str.Xi(ii)*p).*(1-str.swtCond(ii)); % only nonzero for noncondensed species
-str.DS     = -R0*sum(DSi); % [J/K]
-str.S      = (str.S0+str.DS*1e-3)/str.mi; % [kJ/(kg-K)]
-str.T = T; % [K]
-str.g = str.h - str.T * str.S * str.mi; % [kJ]
-str.e = str.h - sum(Ni(ii).*(1-str.swtCond(ii)))*R0*T*1e-3; % THIS WORKS!!!
+mix.Xi     = Ni/mix.N;               % [-]
+ii         = mix.Xi>0;     
+mix.S0     = sum(SpeciesMatrix(:,8)); % [kJ/K]
+DSi        = Ni(ii).*log(mix.Xi(ii)*p).*(1-mix.swtCond(ii)); % only nonzero for noncondensed species
+mix.DS     = -R0*sum(DSi) * 1e-3; % [kJ/K]
+mix.S      = (mix.S0 + mix.DS) / mix.mi; % [kJ/(kg-K)]
+mix.T = T; % [K]
+mix.g = mix.h - mix.T * mix.S * mix.mi; % [kJ]
+mix.e = mix.h - sum(Ni(ii).*(1-mix.swtCond(ii)))*R0*T*1e-3; % THIS WORKS!!!
 % str.e = str.h - sum(Ni(ii))*R0*T*1e-3; % THIS WORKS!!!
-str.gamma = str.cP/str.cV;
-str.sound = sqrt(str.gamma*p*1e5/str.rho);
+mix.gamma = mix.cP/mix.cV;
+mix.sound = sqrt(mix.gamma*p*1e5/mix.rho);
 % Correction of: cP, cV, gamma and speed of sound as consequence of the
 % chemical reaction
 if isfield(self, 'dNi_T')
     H0_j = (SpeciesMatrix(:, 2) + SpeciesMatrix(:, 3)) * 1e3;
-    str.cP_r = sum(H0_j/T .* self.dNi_T);
-    str.cP = str.cP + str.cP_r;
-    str.dVdT_p =  1 + self.dN_T;
-    str.dVdp_T = -1 + self.dN_P;
-    str.cV = str.cP + (str.pv/T * str.dVdT_p^2) / str.dVdp_T *1e2;
-    str.gamma = str.cP/str.cV;
-    str.gamma_s = - str.gamma / str.dVdp_T;
-    str.sound = sqrt(str.gamma_s*p*1e5/str.rho);
+    mix.cP_r = sum(H0_j/T .* self.dNi_T);
+    mix.cP = mix.cP + mix.cP_r;
+    mix.dVdT_p =  1 + self.dN_T;
+    mix.dVdp_T = -1 + self.dN_P;
+    mix.cV = mix.cP + (mix.pv/T * mix.dVdT_p^2) / mix.dVdp_T *1e2;
+    mix.gamma = mix.cP/mix.cV;
+    mix.gamma_s = - mix.gamma / mix.dVdp_T;
+    mix.sound = sqrt(mix.gamma_s*p*1e5/mix.rho);
 end
 
 

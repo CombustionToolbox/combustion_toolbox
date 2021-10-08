@@ -18,7 +18,7 @@ function [x, ERR] = newton(self, strR, pP, attr_name, x0)
     print_error_root(it, self.TN.itMax, x, ERR);
 end
 
-%%% NESTED FUNCTIONS
+%%% SUB-PASS FUNCTIONS
 function [f, fprime] = get_ratio_newton(self, strR, pP, attr_name, x)
     strP = equilibrate_T(self, strR, pP, x);
     f = strP.(attr_name) - strR.(attr_name);

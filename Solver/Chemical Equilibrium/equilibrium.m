@@ -17,7 +17,6 @@ NP_0 = 0.1;
 NP = NP_0;
 
 it = 0;
-% itMax = 500;
 itMax = 50 + round(S.NS/2);
 SIZE = -log(TN.tolN);
 STOP = 1.;

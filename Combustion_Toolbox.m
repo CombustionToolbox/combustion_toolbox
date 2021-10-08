@@ -24,9 +24,9 @@ Last update Oct 08 2021
 addpath(genpath(pwd));
 
 %% INITIALIZE
-app = App('Soot formation');    
+% app = App('Soot formation');    
 % app = App('HC/02/N2');
-% app = App('HC/02/N2 extended');
+app = App('HC/02/N2 extended');
 % app = App('HC/02/N2 rich');
 % app = App('HC/02/N2 propellants');
 % app = App('Ideal_air');
@@ -38,8 +38,8 @@ app = App('Soot formation');
 %% PROBLEM CONDITIONS
 app.PD.TR.value  = 300;
 app.PD.pR.value  = 1 * 1.01325;
-app.PD.phi.value = 0.25:0.01:5;
-% app.PD.phi.value = 0.1;
+% app.PD.phi.value = 0.25:0.01:5;
+app.PD.phi.value = 1;
 %% PROBLEM TYPE
 switch app.PD.ProblemType
     case 'TP' % * TP: Equilibrium composition at defined T and p
@@ -51,8 +51,8 @@ switch app.PD.ProblemType
         app.PD.pP.value = app.PD.pR.value;
     case 'SP' % * SP: Isentropic (i.e., adiabatic) compression/expansion to a specified p
         app.PD.ProblemType = 'SP';
-        app.PD.pP.value = 10:1:50; app.PD.phi.value = 1*ones(1,length(app.PD.pP.value));
-%         app.PD.pP.value = 10*ones(1,length(app.PD.phi.value));
+        app.PD.pP.value = 10:1:50; app.PD.phi.value = 1*ones(1, length(app.PD.pP.value));
+%         app.PD.pP.value = 10*ones(1, length(app.PD.phi.value));
     case 'TV' % * TV: Equilibrium composition at defined T and constant v
         app.PD.ProblemType = 'TV';
         app.PD.TP.value = 2000;
@@ -64,7 +64,7 @@ switch app.PD.ProblemType
     case 'SV' % * SV: Isentropic (i.e., fast adiabatic) compression/expansion to a specified v
         app.PD.ProblemType = 'SV';
         % REMARK! vP_vR > 1 --> expansion, vP_vR < 1 --> compression
-        app.PD.vP_vR.value = 0.5:0.01:2; app.PD.phi.value = 1*ones(1,length(app.PD.vP_vR.value));
+        app.PD.vP_vR.value = 0.5:0.01:2; app.PD.phi.value = 1*ones(1, length(app.PD.vP_vR.value));
     case 'SHOCK_I' % * SHOCK_I: CALCULATE PLANAR INCIDENT SHOCK WAVE
         app.PD.ProblemType = 'SHOCK_I';
         u1 = logspace(2, 5, 500);

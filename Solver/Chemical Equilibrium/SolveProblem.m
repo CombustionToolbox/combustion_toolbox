@@ -26,10 +26,15 @@ switch self.PD.ProblemType
         overdriven = self.PD.overdriven.value(i);
         [self.PS.strR{i}, self.PS.strP{i}] = overdriven_detonation(self, self.PS.strR{i}, overdriven);
     otherwise
-        if i == self.C.l_phi
-            self.PS.strP{i} = equilibrate(self, self.PS.strR(i), self.PD.pP.value);
+        if length(self.PD.pP.value) > 1
+            pP = self.PD.pP.value(i);
         else
-            self.PS.strP{i} = equilibrate(self, self.PS.strR(i), self.PD.pP.value, self.PS.strP(i + 1));
+            pP = self.PD.pP.value;
+        end
+        if i == self.C.l_phi
+            self.PS.strP{i} = equilibrate(self, self.PS.strR(i), pP);
+        else
+            self.PS.strP{i} = equilibrate(self, self.PS.strR(i), pP, self.PS.strP(i + 1));
         end
 end
 end

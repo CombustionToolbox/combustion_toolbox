@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   height="1.04167in"
+   style="shape-rendering:geometricPrecision; text-rendering:geometricPrecision; image-rendering:optimizeQuality; fill-rule:evenodd; clip-rule:evenodd"
+   version="1.1"
+   viewBox="0 0 201 201"
+   width="1.04167in"
+   xml:space="preserve"
+   id="svg18"
+   sodipodi:docname="linkedin_icon.svg"
+   inkscape:version="1.1 (c68e22c387, 2021-05-23)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"><sodipodi:namedview
+     id="namedview20"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:document-units="in"
+     showgrid="false"
+     inkscape:zoom="3.0051943"
+     inkscape:cx="58.398886"
+     inkscape:cy="96.99872"
+     inkscape:window-width="1080"
+     inkscape:window-height="1849"
+     inkscape:window-x="1912"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg18" /><defs
+     id="defs4"><style
+       type="text/css"
+       id="style2">
+   <![CDATA[
+    .fil1 {fill:#FEFEFE}
+    .fil0 {fill:#379AD0}
+   ]]>
+  </style></defs><g
+     id="Layer_x0020_1"><g
+       id="_541895288"><rect
+         class="fil0"
+         height="201"
+         rx="19"
+         ry="19"
+         id="rect6"
+         width="201.06367"
+         x="0"
+         y="0"
+         style="fill:#577a95;fill-opacity:1" /><g
+         id="g14"><polygon
+           class="fil1"
+           points="39,102 39,162 68,162 68,97 68,80 39,80 "
+           id="polygon8" /><path
+           class="fil1"
+           d="M54 39c-8,0 -15,7 -15,15 0,7 7,14 15,14 7,0 14,-7 14,-14 0,-8 -7,-15 -14,-15z"
+           id="path10" /><path
+           class="fil1"
+           d="M161 105c-2,-15 -9,-25 -30,-25 -12,0 -20,5 -24,11l0 0 0 -11 -23 0 0 16 0 66 24 0 0 -41c0,-10 2,-21 15,-21 13,0 14,13 14,22l0 40 25 0 0 -45 0 0c0,-4 0,-8 -1,-12z"
+           id="path12" /></g></g></g></svg>

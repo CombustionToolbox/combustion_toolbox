@@ -12,7 +12,7 @@ function [x, ERR] = newton(self, strR, pP, attr_name, x0)
         x = abs(x0 - f0 / fprime0);
         
         f = get_gpoint(self, strR, pP, attr_name, x);
-        ERR = max(abs((x - x0) / x), abs(f - f0));
+        ERR = max(abs((x - x0) / x), abs((f - f0) / f));
         x0 = x;
     end
     print_error_root(it, self.TN.itMax, x, ERR);

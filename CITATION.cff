@@ -1,3 +1,5 @@
+# YAML 1.2
+---
 cff-version: 1.2.0
 message: "If you use this software, please cite it using these metadata."
 title: "Combustion Toolbox: A MATLAB-GUI based open-source tool for solving combustion problems"

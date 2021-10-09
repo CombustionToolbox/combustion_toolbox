@@ -24,13 +24,13 @@ authors:
     orcid: "https://orcid.org/0000-0001-6878-1788"
 cff-version: "1.1.0"
 keywords: 
-  - "open-source"
-  - app
-  - matlab
-  - "matlab-toolbox"
   - thermochemistry
-  - shock
   - "chemical-equilibrium"
+  - shock waves
   - detonation
-  - appdesigner
+  - MATLAB
+  - app
+  - toolbox
+  - "open-source"
+  
 license: "GPL-3.0"

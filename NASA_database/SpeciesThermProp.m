@@ -1,4 +1,4 @@
-function [txFormula, mm, Cp0, Cv0, Hf0, H0, Ef0, E0, S0, DfG0] = SpeciesThermProp(strDB,Species,T,MassOrMolar,echo)
+function [txFormula, mm, Cp0, Cv0, Hf0, H0, Ef0, E0, S0, DfG0] = SpeciesThermProp(DB, species, T, MassOrMolar, echo)
 
 if nargin < 5, echo = 0; end
 
@@ -32,19 +32,19 @@ if nargin < 5, echo = 0; end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Change lowercase 'l' to uppercase 'L'
-Species(strfind(Species,'Al')+1)='L';
-Species(strfind(Species,'Cl')+1)='L';
-Species(strfind(Species,'Tl')+1)='L';
-Species(strfind(Species,'Fl')+1)='L';
+species(strfind(species,'Al')+1)='L';
+species(strfind(species,'Cl')+1)='L';
+species(strfind(species,'Tl')+1)='L';
+species(strfind(species,'Fl')+1)='L';
 
 % Store species name with parenthesis (i.e., the name appearing in NASA's
 % document tables)
-Species_with_parenthesis = Species;
+Species_with_parenthesis = species;
 
 % Substitute opening and closing parenthesis and other reserved characters 
 % by 'b' in order to format the species name as in the thermo.inp
 % electronic database 
-name = Species;
+name = species;
 if name(end)=='+'
     name=[name(1:end-1) 'plus'];
 elseif name(end)=='-'
@@ -58,13 +58,13 @@ if regexp(name(1),'[0-9]')
     name=['num_' name];
 end
 
-Species = name;
+species = name;
 
 % If the given species does not exist in strDB, abort the program
-if ~isfield(strDB, Species)
+if ~isfield(DB, species)
     if echo==1
         disp( '-------------------------------')
-        disp(['Species ''',Species,''' does not exist as a field in strDB structure'])
+        disp(['Species ''',species,''' does not exist as a field in strDB structure'])
         disp('Program aborted!')
         disp('-------------------------------')
     end
@@ -85,12 +85,12 @@ end
 n_open_parenthesis = detect_location_of_phase_specifier(Species_with_parenthesis);
 
 % If it does exist, look for other possible states of aggregation of the 
-% same species in strDB
+% same species in DB
 if echo==1    
     % Look for other possible states of aggregation of the same species in
     % strDB
-    names = fieldnames(strDB);
-    any_other_phase = strfind(names,Species(1:n_open_parenthesis-1));
+    names = fieldnames(DB);
+    any_other_phase = strfind(names,species(1:n_open_parenthesis-1));
     any_other_phase_index = find(~cellfun(@isempty,any_other_phase));
 
     if ~isempty(any_other_phase_index)
@@ -99,14 +99,14 @@ if echo==1
         for i = 1:length(any_other_phase_index)
             name_other_phase_with_parenthesis = name_with_parenthesis(names{any_other_phase_index(i)});
             n_open_parenthesis_other_phase = detect_location_of_phase_specifier(name_other_phase_with_parenthesis); 
-            if strcmp(name_other_phase_with_parenthesis(1:n_open_parenthesis_other_phase-1),Species(1:n_open_parenthesis-1))
+            if strcmp(name_other_phase_with_parenthesis(1:n_open_parenthesis_other_phase-1),species(1:n_open_parenthesis-1))
                 name_other_phase = name_other_phase_with_parenthesis;
                 name_other_phase(name_other_phase(:)=='(') = 'b';
                 name_other_phase(name_other_phase(:)==')') = 'b';
-                if ~iscell(strDB.(name_other_phase).tRange)
-                    disp(['> ',name_other_phase_with_parenthesis,' [',num2str(strDB.(name_other_phase).tRange(1)),' K]'])
+                if ~iscell(DB.(name_other_phase).tRange)
+                    disp(['> ',name_other_phase_with_parenthesis,' [',num2str(DB.(name_other_phase).tRange(1)),' K]'])
                 else
-                    disp(['> ',name_other_phase_with_parenthesis,' [',num2str(strDB.(name_other_phase).tRange{1}(1)),' - ',num2str(strDB.(name_other_phase).tRange{strDB.(name_other_phase).ctTInt}(2)),' K]'])
+                    disp(['> ',name_other_phase_with_parenthesis,' [',num2str(DB.(name_other_phase).tRange{1}(1)),' - ',num2str(DB.(name_other_phase).tRange{DB.(name_other_phase).ctTInt}(2)),' K]'])
                 end
             end
         end
@@ -117,13 +117,13 @@ end
 % If it does exist, read the corresponding field and store it in the
 % following variables
 
-ctTInt       = strDB.(Species).ctTInt;
-txFormula    = strDB.(Species).txFormula;
-swtCondensed = sign(strDB.(Species).swtCondensed);
-mm           = strDB.(Species).mm;
-Hf0          = strDB.(Species).Hf0;
-tRange       = strDB.(Species).tRange;
-tExponents   = strDB.(Species).tExponents;
+ctTInt       = DB.(species).ctTInt;
+txFormula    = DB.(species).txFormula;
+swtCondensed = sign(DB.(species).swtCondensed);
+mm           = DB.(species).mm;
+Hf0          = DB.(species).Hf0;
+tRange       = DB.(species).tRange;
+tExponents   = DB.(species).tExponents;
 
 % set Elements and Reference_form_of_elements_with_T_intervals lists
 [Elements, ~] = set_elements(); % sets Elements list
@@ -147,13 +147,13 @@ R0 = 8.3144598; % [J/(K-mol)]. Universal gas constant
 % check that the specified temperature is within limits. If it is not, then
 % abort, otherwise keep on running
 if ctTInt > 0
-    a = strDB.(Species).a;
-    b = strDB.(Species).b;
+    a = DB.(species).a;
+    b = DB.(species).b;
 
     Tref = 298.15;
 
     if (T < tRange{1}(1)) || (T > tRange{ctTInt}(2)) && (echo==1)
-        disp(['T - out of range [',num2str(tRange{1}(1)),' - ',num2str(tRange{ctTInt}(2)),' K] for ',name_with_parenthesis(Species)])
+        disp(['T - out of range [',num2str(tRange{1}(1)),' - ',num2str(tRange{ctTInt}(2)),' K] for ',name_with_parenthesis(species)])
         Cp0  = [];
         Cv0  = [];
         H0   = [];
@@ -164,16 +164,8 @@ if ctTInt > 0
         return
     end
 
-    % Select the appropriate temperature interval
-    for i = 1:ctTInt
-        if (T >= tRange{i}(1)) && (T <= tRange{i}(2))
-            tInterval = i;
-        end
-    end
-    if T > tRange{i}(2)
-        tInterval = i;
-    end
-    
+    % Get temperature interval
+    tInterval = get_interval(species, T, DB);
     % Compute the thermochemical data at the specified temperature using
     % the polynomial coefficients in the selected temperature interval. All
     % magnitudes are computed in a per mole basis  
@@ -194,10 +186,10 @@ if ctTInt > 0
     % disp(['Species = ',Species])
     % name_with_parenthesis(Species)
     
-    [iRE, REname] = isRefElm(Reference_form_of_elements_with_T_intervals,Species(1:n_open_parenthesis-1),T);
+    [iRE, REname] = isRefElm(Reference_form_of_elements_with_T_intervals,species(1:n_open_parenthesis-1),T);
     if (~iRE)
         if echo==1
-            disp([Species,' is not Ref-Elm.'])
+            disp([species,' is not Ref-Elm.'])
         end
         DfG0 = H0 - T.*S0;
     else
@@ -228,7 +220,7 @@ if ctTInt > 0
 
 else
     if T ~= tRange(1)
-        disp(['T - out of range for ',name_with_parenthesis(Species),' [',num2str(tRange(1)),' K]'])
+        disp(['T - out of range for ',name_with_parenthesis(species),' [',num2str(tRange(1)),' K]'])
         Cp0  = [];
         Cv0  = [];
         H0   = [];

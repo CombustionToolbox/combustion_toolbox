@@ -1,18 +1,18 @@
-function g0 = get_g0(app, species, T, strDB)
-    if strDB.(species).ctTInt > 0
+function g0 = get_g0(app, species, T, DB)
+    if DB.(species).ctTInt > 0
         R0 = 8.3144598;
-        a = strDB.(species).a;
-        b = strDB.(species).b;
-        ctTInt       = strDB.(species).ctTInt;
-        tRange       = strDB.(species).tRange;
-        tExponents   = strDB.(species).tExponents;
-        Element_matrix = set_element_matrix(strDB.(species).txFormula,app.E.Elements);
+        a = DB.(species).a;
+        b = DB.(species).b;
+        ctTInt       = DB.(species).ctTInt;
+        tRange       = DB.(species).tRange;
+        tExponents   = DB.(species).tExponents;
+        Element_matrix = set_element_matrix(DB.(species).txFormula,app.E.Elements);
         
         if (T < tRange{1}(1)) || (T > tRange{ctTInt}(2))
-            cP = species_cP(species, T, strDB);
-            h0 = species_DhT(species, T, strDB);
-            s0 = species_s0(species, T, strDB);
-            g0 = species_g0(species, T, strDB);
+            cP = species_cP(species, T, DB);
+            h0 = species_DhT(species, T, DB);
+            s0 = species_s0(species, T, DB);
+            g0 = species_g0(species, T, DB);
             return
         else
             for i = 1:ctTInt

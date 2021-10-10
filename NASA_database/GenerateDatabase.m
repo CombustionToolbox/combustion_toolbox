@@ -15,10 +15,10 @@ end
 % NESTED FUNCTIONS
 function strThProp = get_Database(strMaster)
 
-SpeciesList = fieldnames(strMaster);
+LS = fieldnames(strMaster);
 
 %%% gri30-x.cti except 'CH2(s)' + others
-% SpeciesList = {'H2', 'H', 'O', 'O2', 'O3', 'OH', 'H2O', 'HO2', 'H2O2', 'C',...
+% LS = {'H2', 'H', 'O', 'O2', 'O3', 'OH', 'H2O', 'HO2', 'H2O2', 'C',...
 %     'CH', 'CH2', 'CH3', 'CH4', 'CO', 'CO2', 'HCO',...
 %     'CH2OH', 'CH3O', 'CH3OH', 'C2H', 'C2H4',...
 %     'C2H5', 'C2H6', 'HCCO', 'N', 'NH', 'NH2', 'NH3', 'N2H4',...
@@ -26,34 +26,34 @@ SpeciesList = fieldnames(strMaster);
 %     'NCO', 'N2', 'N3', 'Ar', 'C3H8','C2','C2H2_acetylene','C6H6',...
 %     'C8H18_isooctane','C2H5OH','He','Cbgrb'};
 
-% SpeciesList = {'O2','N2','O','O3','N','NO','NO2','NO3','N2O','N2O3','N2O4','N3', ...
+% LS = {'O2','N2','O','O3','N','NO','NO2','NO3','N2O','N2O3','N2O4','N3', ...
 %     'eminus', 'Arplus', 'Nminus', 'Nplus', 'NOplus', 'NO2minus', 'NO3minus', 'N2plus', 'N2minus', 'N2Oplus', ...
 %      'Oplus', 'Ominus', 'O2plus', 'O2minus'};
  
 
-% SpeciesList = {'O2','N2','O','N'};
+% LS = {'O2','N2','O','N'};
 
-% SpeciesList = {'N2', 'N', 'N3', 'eminus', 'N2plus', 'N2minus', 'Nplus', 'Nplus'};
+% LS = {'N2', 'N', 'N3', 'eminus', 'N2plus', 'N2minus', 'Nplus', 'Nplus'};
 
-% SpeciesList = {'N2', 'N', 'N3'};
+% LS = {'N2', 'N', 'N3'};
 
-% SpeciesList = {'O3', 'O2', 'O', 'Oplus', 'Ominus', 'O2plus', 'O2minus', 'eminus'};
+% LS = {'O3', 'O2', 'O', 'Oplus', 'Ominus', 'O2plus', 'O2minus', 'eminus'};
 
-% SpeciesList = {'H2', 'H', 'Hplus', 'Hminus', 'H2plus', 'H2minus', 'eminus'};
+% LS = {'H2', 'H', 'Hplus', 'Hminus', 'H2plus', 'H2minus', 'eminus'};
 
-% SpeciesList = {'CO2', 'CO', 'H2O', 'H2', 'O2', 'N2', 'He', 'Ar',...
+% LS = {'CO2', 'CO', 'H2O', 'H2', 'O2', 'N2', 'He', 'Ar',...
 %                 'OH','H','O','HO2','NO','HCO','CH4','CH3',...
 %                 'NO2','NH3','NH2','N','HCN','CN','N2O','C2','CH',...
 %                 'H2bLb','O2bLb','RP_1'};
 
 %  NASA *: CH4 + 2O2 + 7.52N2
-% SpeciesList = {'C','CN','CO2','H','O2','CH','C3','C5','NH','O','CO',...
+% LS = {'C','CN','CO2','H','O2','CH','C3','C5','NH','O','CO',...
 %     'C2','C4','H2','N','NO','N2','OH','CH4','H2O','He','Ar','Cbgrb'};
 
 
 % NASA ALL: CH4 + 2O2 + 7.52N2
 % EXCEPTIONS: 'THDCPD_exo', 'C6H14bLb_n_hexa','H2Obcrb','bHCOOHb2' ,'bCH3COOHb2'
-% SpeciesList = {'C','CH3','CH4','CN','CO2','C2H','CH2CO_ketene',...
+% LS = {'C','CH3','CH4','CN','CO2','C2H','CH2CO_ketene',...
 %     'C2H3_vinyl','C2H4','CH3COOH','C2H6','CH3OCH3','CNC','C2O',...
 %     'C3H3_2_propynl','C3H6O_propanal',...
 %     'C3H8','CNCOCN','C4H2_butadiyne','C4H6_1butyne','C4H8_1_butene',...
@@ -84,126 +84,102 @@ SpeciesList = fieldnames(strMaster);
 %     'He','Ar','Cbgrb'};
 
 % SHOCK NASA O2+N2 + OTHERS
-% SpeciesList = {'O2','N2','O','O3','N','NO','NO2','NO3','N2O','N2O3','N2O4','N3',...
+% LS = {'O2','N2','O','O3','N','NO','NO2','NO3','N2O','N2O3','N2O4','N3',...
 %     'C','C2','CO','CO2','CN','Ar','CH4','H2O','H2','H','He','OH','Cbgrb'};
 
 % HYDROGEN
-% SpeciesList = {'H','HNO','HNO3','H2O','NH','NH2OH','NO3','N2H2','N2O3','N3','OH','HNO2',...
+% LS = {'H','HNO','HNO3','H2O','NH','NH2OH','NO3','N2H2','N2O3','N3','OH','HNO2',...
 %                 'H2','N','NH3','NO2','N2O','N2H4','N2O5','O','O3','O2','N2','HO2','NH2','H2O2',...
 %                 'N3H','NH2NO2'};
 
-% SpeciesList = {'RP_1'};
+% LS = {'RP_1'};
 
-% SpeciesList = {'O2','N2','O','O3','N','NO','NO2','NO3','N2O','N2O3','N2O4','N3'};
+% LS = {'O2','N2','O','O3','N','NO','NO2','NO3','N2O','N2O3','N2O4','N3'};
 
-% SpeciesList = {'O2','N2','O','O3','N','NO','NO2','NO3','N2O','N2O3','N2O4','N3',...
+% LS = {'O2','N2','O','O3','N','NO','NO2','NO3','N2O','N2O3','N2O4','N3',...
 %     'C','C2','CO','CO2','CN','Ar','CH4','H2O','H2','H','He','OH','Cbgrb','F','F2'};
 
 fprintf('Generating short NASA database ... ')
-for i = 1:length(SpeciesList)
-    
-    Species = FullName2name(SpeciesList{i});
-    
-    if isfield(strMaster,Species)
+for i = 1:length(LS)
+    species = FullName2name(LS{i});
+    if isfield(strMaster,species)
         
-        % disp(SpeciesList{i})
-        
-        ctTInt = strMaster.(Species).ctTInt;
-        tRange = strMaster.(Species).tRange;
-        swtCondensed = sign(strMaster.(Species).swtCondensed);
+        ctTInt = strMaster.(species).ctTInt;
+        tRange = strMaster.(species).tRange;
+        swtCondensed = sign(strMaster.(species).swtCondensed);
         
         if ctTInt > 0
             
-            [txFormula, mm, Cp0, Cv0, Hf0, H0, Ef0, E0, S0, DfG0] = SpeciesThermProp(strMaster,SpeciesList{i},298.15,'molar',0);
+            [txFormula, mm, Cp0, Cv0, Hf0, H0, Ef0, E0, S0, DfG0] = SpeciesThermProp(strMaster,LS{i},298.15,'molar',0);
             
-            strThProp.(Species).name = Species;
-            strThProp.(Species).FullName = SpeciesList{i};
-            strThProp.(Species).txFormula = txFormula;
-            strThProp.(Species).mm = mm;
-            strThProp.(Species).hf = Hf0;
-            strThProp.(Species).ef = Ef0;
-            strThProp.(Species).swtCondensed = swtCondensed;
+            strThProp.(species).name = species;
+            strThProp.(species).FullName = LS{i};
+            strThProp.(species).txFormula = txFormula;
+            strThProp.(species).mm = mm;
+            strThProp.(species).hf = Hf0;
+            strThProp.(species).ef = Ef0;
+            strThProp.(species).swtCondensed = swtCondensed;
             
-            T_vector   = [];
-            DhT_vector = [];
-            DeT_vector = [];
-            h0_vector  = [];
-            s0_vector  = [];
-            cp_vector  = [];
-            cv_vector  = [];
-            g0_vector  = [];
-            
+            NT   = 100;
             Tmin = max(tRange{1}(1), 200);
             Tmax = min(tRange{ctTInt}(2), 20000);
-%             if abs(Tmin - 298.15) < 1e4 
-%                 Trange1 = 298.15;
-%             else
-%                 Trange1 = linspace(Tmin, 298.15, 10);
-%             end
-            Trange = linspace(Tmin, Tmax, 100);
-            for T = Trange
-                [txFormula, mm, Cp0, Cv0, Hf0, H0, Ef0, E0, S0, DfG0] = SpeciesThermProp(strMaster,SpeciesList{i},T,'molar',0);
-                T_vector   = [  T_vector; T     ];
-                DhT_vector = [DhT_vector; H0-Hf0];
-                DeT_vector = [DeT_vector; E0-Ef0];
-                h0_vector  = [h0_vector;  H0    ];
-                s0_vector  = [s0_vector;  S0    ];
-                cp_vector  = [cp_vector;  Cp0   ];
-                cv_vector  = [cv_vector;  Cv0   ];
-                g0_vector  = [g0_vector;  H0 - T*S0];
+            T_vector = linspace(Tmin, Tmax, NT);
+
+            for j = NT:-1:1
+                [~, ~, Cp0, Cv0, Hf0, H0, Ef0, E0, S0, ~] = SpeciesThermProp(strMaster, LS{i}, T_vector(j), 'molar', 0);
+                DhT_vector(j) = H0 - Hf0;
+                DeT_vector(j) = E0 - Ef0;
+                h0_vector(j)  = H0;
+                s0_vector(j)  = S0;
+                cp_vector(j)  = Cp0;
+                cv_vector(j)  = Cv0;
+                g0_vector(j)  = H0 - T_vector(j) * S0;
             end
             
-            strThProp.(Species).T   = T_vector;
-            strThProp.(Species).DhT = DhT_vector; 
-            strThProp.(Species).DeT = DeT_vector;
-            strThProp.(Species).h0  = h0_vector; 
-            strThProp.(Species).s0  = s0_vector;
-            strThProp.(Species).cp  = cp_vector;
-            strThProp.(Species).cv  = cv_vector;
-            strThProp.(Species).g0  = g0_vector;
-            
+            strThProp.(species).T = T_vector;
+
             % INTERPOLATION CURVES
-            strThProp.(Species).cPcurve = griddedInterpolant(strThProp.(Species).T,strThProp.(Species).cp, 'pchip', 'linear');
-            strThProp.(Species).cVcurve = griddedInterpolant(strThProp.(Species).T,strThProp.(Species).cv, 'pchip', 'linear');
-            strThProp.(Species).DhTcurve = griddedInterpolant(strThProp.(Species).T,strThProp.(Species).DhT, 'pchip', 'linear');
-            strThProp.(Species).DeTcurve = griddedInterpolant(strThProp.(Species).T,strThProp.(Species).DeT, 'pchip', 'linear');
-            strThProp.(Species).h0curve = griddedInterpolant(strThProp.(Species).T,strThProp.(Species).h0, 'pchip', 'linear');
-            strThProp.(Species).s0curve = griddedInterpolant(strThProp.(Species).T,strThProp.(Species).s0, 'pchip', 'linear');
-            strThProp.(Species).g0curve = griddedInterpolant(strThProp.(Species).T,strThProp.(Species).g0, 'pchip', 'linear');
+            strThProp.(species).cPcurve  = griddedInterpolant(T_vector, cp_vector, 'pchip', 'linear');
+            strThProp.(species).cVcurve  = griddedInterpolant(T_vector, cv_vector, 'pchip', 'linear');
+            strThProp.(species).DhTcurve = griddedInterpolant(T_vector, DhT_vector, 'pchip', 'linear');
+            strThProp.(species).DeTcurve = griddedInterpolant(T_vector, DeT_vector, 'pchip', 'linear');
+            strThProp.(species).h0curve  = griddedInterpolant(T_vector, h0_vector, 'pchip', 'linear');
+            strThProp.(species).s0curve  = griddedInterpolant(T_vector, s0_vector, 'pchip', 'linear');
+            strThProp.(species).g0curve  = griddedInterpolant(T_vector, g0_vector, 'pchip', 'linear');
             
             % DATA COEFFICIENTS NASA 9 POLYNOMIAL (ONLY GASES)
-            strThProp.(Species).ctTInt = strMaster.(Species).ctTInt;
-            strThProp.(Species).tRange = strMaster.(Species).tRange;
-            strThProp.(Species).tExponents = strMaster.(Species).tExponents;
-            strThProp.(Species).ctTInt = strMaster.(Species).ctTInt;
-            strThProp.(Species).a = strMaster.(Species).a;
-            strThProp.(Species).b  = strMaster.(Species).b;
+            strThProp.(species).ctTInt = strMaster.(species).ctTInt;
+            strThProp.(species).tRange = strMaster.(species).tRange;
+            strThProp.(species).tExponents = strMaster.(species).tExponents;
+            strThProp.(species).ctTInt = strMaster.(species).ctTInt;
+            strThProp.(species).a = strMaster.(species).a;
+            strThProp.(species).b  = strMaster.(species).b;
         else
             
             Tref = tRange(1);
             
-            [txFormula, mm, Cp0, Cv0, Hf0, H0, Ef0, E0, S0, DfG0] = SpeciesThermProp(strMaster,SpeciesList{i},Tref,'molar',0);
+            [txFormula, mm, Cp0, Cv0, Hf0, H0, Ef0, E0, S0, DfG0] = SpeciesThermProp(strMaster,LS{i},Tref,'molar',0);
             
-            strThProp.(Species).name = Species;
-            strThProp.(Species).FullName = SpeciesList{i};
-            strThProp.(Species).txFormula = txFormula;
-            strThProp.(Species).mm  = mm;
-            strThProp.(Species).hf  = Hf0;
-            strThProp.(Species).ef  = Hf0;
-            strThProp.(Species).swtCondensed = swtCondensed;
-            strThProp.(Species).T   = Tref;
-            strThProp.(Species).DhT = 0;
-            strThProp.(Species).DeT = 0;
-            strThProp.(Species).h0  = H0;
-            strThProp.(Species).s0  = S0;
-            strThProp.(Species).cp  = Cp0;
-            strThProp.(Species).cv  = Cv0;
-            strThProp.(Species).g0  = DfG0;
+            strThProp.(species).name = species;
+            strThProp.(species).FullName = LS{i};
+            strThProp.(species).txFormula = txFormula;
+            strThProp.(species).mm  = mm;
+            strThProp.(species).hf  = Hf0;
+            strThProp.(species).ef  = Hf0;
+            strThProp.(species).swtCondensed = swtCondensed;
+            strThProp.(species).T   = Tref;
+            strThProp.(species).DhT = 0;
+            strThProp.(species).DeT = 0;
+            strThProp.(species).h0  = H0;
+            strThProp.(species).s0  = S0;
+            strThProp.(species).cp  = Cp0;
+            strThProp.(species).cv  = Cv0;
+            strThProp.(species).g0  = DfG0;
             
-            strThProp.(Species).ctTInt = 0;
+            strThProp.(species).ctTInt = 0;
         end
     else
-        fprintf(['\n- Species ''', SpeciesList{i}, ''' does not exist as a field in strMaster structure ... '])
+        fprintf(['\n- Species ''', LS{i}, ''' does not exist as a field in strMaster structure ... '])
     end
     
 end

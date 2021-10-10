@@ -8,7 +8,9 @@ function app = App(varargin)
     app.PS = ProblemSolution();
     app.TN = TunningProperties();
     app = constructor(app, LS);
-    app = Initialize(app);
+    if ~isa(varargin{1,1}, 'combustion_toolbox_app') || ~isa(varargin{1,1}, 'combustion_toolbox_app_exported') || ~isa(varargin{1,1}, 'combustion_toolbox_app_original')
+        app = Initialize(app);
+    end
 end
 
 function [app, LS] = initialize(varargin)
@@ -17,7 +19,7 @@ function [app, LS] = initialize(varargin)
     app = struct();
     LS = [];
     if nargin
-        if isa(varargin{1,1}, 'combustion_toolbox_app') || isa(varargin{1,1}, 'combustion_toolbox_app_exported')
+        if isa(varargin{1,1}, 'combustion_toolbox_app') || isa(varargin{1,1}, 'combustion_toolbox_app_exported') || isa(varargin{1,1}, 'combustion_toolbox_app_original')
             app = varargin{1,1};
             if nargin == 2
                 LS = varargin{1,2};
@@ -47,7 +49,7 @@ function app = constructor(app, LS)
 end
 
 function app = check_GUI(app)
-    if isa(app, 'combustion_toolbox_app') || isa(app, 'combustion_toolbox_app_exported')
+    if isa(app, 'combustion_toolbox_app') || isa(app, 'combustion_toolbox_app_exported') || isa(app, 'combustion_toolbox_app_original')
         app.Misc.FLAG_GUI = true;
     end
 end

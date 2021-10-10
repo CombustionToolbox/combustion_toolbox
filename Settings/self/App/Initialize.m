@@ -23,6 +23,9 @@ function self = list_phase_species(self, LS)
            end
         end
     end
+    self.S.ind_nswt = unique(self.S.ind_nswt);
+    self.S.ind_swt  = unique(self.S.ind_swt);
+    self.S.ind_cryogenic = unique(self.S.ind_cryogenic);
     self.S.LS = self.S.LS([self.S.ind_nswt, self.S.ind_swt]);
     self.S.NS = length(self.S.LS);
     self.S.NG = length(self.S.ind_nswt);

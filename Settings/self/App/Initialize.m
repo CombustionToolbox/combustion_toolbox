@@ -10,7 +10,7 @@ function self = Initialize(self)
 end
 
 
-%% NESTED FUNCTIONS
+%% SUB-PASS FUNCTIONS
 function self = list_phase_species(self, LS)
     for ind=1:length(LS)
         Species = LS{ind};

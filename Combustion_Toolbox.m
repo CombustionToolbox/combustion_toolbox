@@ -1,5 +1,5 @@
 %{ 
-COMBUSTION TOOLBOX @v0.3.6
+COMBUSTION TOOLBOX @v0.3.61
 
 Type of problems:
     * TP -----------------> Equilibrium composition at defined T and p
@@ -18,7 +18,7 @@ Type of problems:
          PhD Candidate - Group Fluid Mechanics
          Universidad Carlos III de Madrid
                   
-Last update Oct 08 2021
+Last update Oct 10 2021
 ---------------------------------------------------------------------- 
 %}
 addpath(genpath(pwd));
@@ -34,7 +34,6 @@ app = App('HC/02/N2 extended');
 % app = App({'O2','N2','O','O3','N','NO','NO2','NO3','N2O','N2O3','N2O4','N3', ...
 %     'eminus', 'Nminus', 'Nplus', 'NOplus', 'NO2minus', 'NO3minus', 'N2plus', 'N2minus', 'N2Oplus', ...
 %      'Oplus', 'Ominus', 'O2plus', 'O2minus'});
-% app = App({'H2bLb', 'O2bLb'});
 %% PROBLEM CONDITIONS
 app.PD.TR.value  = 300;
 app.PD.pR.value  = 1 * 1.01325;

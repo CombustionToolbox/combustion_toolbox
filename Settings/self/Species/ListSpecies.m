@@ -1,7 +1,7 @@
-function app = ListSpecies(varargin)
+function self = ListSpecies(varargin)
 % Specify List of Species
 
-app = varargin{1,1};
+self = varargin{1,1};
 if nargin < 2
     LS = 'HC/02/N2 EXTENDED';
 else
@@ -9,25 +9,25 @@ else
 end
     
 if strcmpi(LS, 'HC/02/N2 EXTENDED')
-    app.S.LS = {'CO2', 'CO', 'H2O', 'H2', 'O2', 'N2', 'He', 'Ar',...
+    self.S.LS = {'CO2', 'CO', 'H2O', 'H2', 'O2', 'N2', 'He', 'Ar',...
                 'OH','H','O','HO2','NO','HCO','CH4','CH3',...
                 'NO2','NH3','NH2','N','HCN','CN','N2O','C2','CH'};
             
 elseif strcmpi(LS, 'HC/02/N2')
-    app.S.LS = {'CO2', 'CO', 'H2O', 'H2', 'O2', 'N2', 'He', 'Ar'};
+    self.S.LS = {'CO2', 'CO', 'H2O', 'H2', 'O2', 'N2', 'He', 'Ar'};
     
 elseif strcmpi(LS, 'HC/02/N2 RICH')
-    app.S.LS = {'CO2', 'CO', 'H2O', 'H2', 'O2', 'N2', 'He', 'Ar',...
+    self.S.LS = {'CO2', 'CO', 'H2O', 'H2', 'O2', 'N2', 'He', 'Ar',...
                 'HCN','H','OH','O','CN','NH3','CH4','C2H4','CH3',...
                 'NO','HCO','NH2','NH','N','CH'};
             
 elseif strcmpi(LS, 'SOOT FORMATION')
-    app.S.LS = {'CO2', 'CO', 'H2O', 'H2', 'O2', 'N2', 'He', 'Ar',...
+    self.S.LS = {'CO2', 'CO', 'H2O', 'H2', 'O2', 'N2', 'He', 'Ar',...
                 'HCN','H','OH','O','CN','NH3','CH4','C2H4','CH3',...
                 'NO','HCO','NH2','NH','N','CH','Cbgrb'};
             
 elseif strcmpi(LS, 'SOOT FORMATION EXTENDED')
-    app.S.LS = {'CO2', 'CO', 'H2O', 'H2', 'O2', 'N2', 'He', 'Ar',...
+    self.S.LS = {'CO2', 'CO', 'H2O', 'H2', 'O2', 'N2', 'He', 'Ar',...
                 'H', 'O', 'OH', 'HO2', 'H2O2',...
                 'CH', 'CH2', 'CH3', 'CH4', 'HCO',...
                 'CH2OH', 'CH3O', 'CH3OH', 'C2H', 'C2H4',...
@@ -40,7 +40,7 @@ elseif strcmpi(LS, 'SOOT FORMATION EXTENDED')
                 'CH3CN','C3H6_propylene','HCOOH'};
             
 elseif strcmpi(LS, 'NASA ALL')
-    app.S.LS = {'CO2', 'CO', 'H2O', 'H2', 'O2', 'N2', 'He', 'Ar',...
+    self.S.LS = {'CO2', 'CO', 'H2O', 'H2', 'O2', 'N2', 'He', 'Ar',...
                 'CH3','CH4','CN','CO2','C2H','CH2CO_ketene',...
                 'C2H3_vinyl','C2H4','CH3COOH','C2H6','CH3OCH3','CNC','C2O',...
                 'C3H3_2_propynl','C3H6O_propanal',...
@@ -71,33 +71,41 @@ elseif strcmpi(LS, 'NASA ALL')
                 'N','NH2','NO','N2H2','N2O3','N3','OH','CH3OHbLb','C6H5NH2bLb','C'};
             
 elseif strcmpi(LS, 'AIR')
-    app.S.LS = {'O2','N2','O','O3','N','NO','NO2','NO3','N2O','N2O3','N2O4','N3','C','CO','CO2',...
+    self.S.LS = {'O2','N2','O','O3','N','NO','NO2','NO3','N2O','N2O3','N2O4','N3','C','CO','CO2',...
                 'Ar','H2O','H2','H','He'};
             
 elseif strcmpi(LS, 'IDEAL_AIR')
-    app.S.LS = {'O2','N2','O','O3','N','NO','NO2','NO3','N2O','N2O3','N2O4','N3'};
+    self.S.LS = {'O2','N2','O','O3','N','NO','NO2','NO3','N2O','N2O3','N2O4','N3'};
     
 elseif strcmpi(LS, 'HYDROGEN')
-    app.S.LS = {'H','HNO','HNO3','H2O','NH','NH2OH','NO3','N2H2','N2O3','N3','OH','HNO2',...
+    self.S.LS = {'H','HNO','HNO3','H2O','NH','NH2OH','NO3','N2H2','N2O3','N3','OH','HNO2',...
                 'H2','N','NH3','NO2','N2O','N2H4','N2O5','O','O3','O2','N2','HO2','NH2','H2O2',...
                 'N3H','NH2NO2'};
             
 elseif strcmpi(LS, 'HYDROGEN_L')
-    app.S.LS = {'H','H2O','OH','H2','O','O3','O2','HO2','H2O2','H2bLb','O2bLb'};
+    self.S.LS = {'H','H2O','OH','H2','O','O3','O2','HO2','H2O2','H2bLb','O2bLb'};
     
 elseif strcmpi(LS, 'HC/02/N2 PROPELLANTS')
-    app.S.LS = {'CO2', 'CO', 'H2O', 'H2', 'O2', 'N2', 'He', 'Ar',...
+    self.S.LS = {'CO2', 'CO', 'H2O', 'H2', 'O2', 'N2', 'He', 'Ar',...
                 'OH','H','O','HO2','NO','HCO','CH4','CH3',...
                 'NO2','NH3','NH2','N','HCN','CN','N2O','C2','CH',...
                 'H2bLb','O2bLb','RP_1'};
 else
-    app.S.LS = LS{1,1};
+    self.S.LS = LS{1,1};
 end
 
-app.S.LS = unique(app.S.LS, 'stable');
-app.S.NS = length(app.S.LS);
+self.S.LS = unique(self.S.LS, 'stable');
+self.S.NS = length(self.S.LS);
+self.S.LS_formula = get_formula(self.S.LS, self.strThProp);
 
-if any(contains(app.S.LS, 'minus')) || any(contains(app.S.LS, 'plus'))
-    app.PD.ionization = true;
+if any(contains(self.S.LS, 'minus')) || any(contains(self.S.LS, 'plus'))
+    self.PD.ionization = true;
 end
+end
+
+% SUB-PASS FUNCTIONS
+function LS_formula = get_formula(LS, DB)
+    for i=length(LS):-1:1
+        LS_formula{i} = DB.(LS{i}).txFormula;
+    end
 end

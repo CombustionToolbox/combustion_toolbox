@@ -35,7 +35,7 @@ function app = constructor(app, LS)
     app = check_GUI(app);
     % Set Database
     reducedDB = false;
-    app = set_Database(app, reducedDB);
+    app = set_DB(app, reducedDB);
     % Set ListSpecies
     if ~isempty(LS)
         app = ListSpecies(app, LS);

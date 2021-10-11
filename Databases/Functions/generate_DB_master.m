@@ -1,4 +1,4 @@
-function DB_master = ParseThermoInp(reducedDB)
+function DB_master = generate_DB_master(reducedDB)
 if ~exist('DB_msaster', 'var')
     if exist('DB_master.mat', 'file') && ~reducedDB
         fprintf('Loading NASA database ... ')
@@ -9,7 +9,7 @@ if ~exist('DB_msaster', 'var')
     else
         DB_master = get_DB_master();
         if reducedDB
-            DB_master = DB_master_reduced(DB_master);
+            DB_master = generate_DB_master_reduced(DB_master);
         end
     end
     fprintf('OK!\n');
@@ -58,28 +58,28 @@ while ctLine<2500
     if str.ctTInt ==0
         
         tline = fgetl(fid);
-        str.tRange = str2double(tline(1:22));
-        str.tExponents = str2double(tline(24:63));
+        str.tRange = str2num(tline(1:22));
+        str.tExponents = str2num(tline(24:63));
         str.Hf298Del0 = str2double(tline(66:end));
     end
     for ctInterval=1:str.ctTInt
         tline = fgetl(fid);
-        str.tRange{ctInterval} = str2double(tline(1:22));
-        str.tExponents{ctInterval} = str2double(tline(24:63));
+        str.tRange{ctInterval} = str2num(tline(1:22));
+        str.tExponents{ctInterval} = str2num(tline(24:63));
         str.Hf298Del0{ctInterval} = str2double(tline(66:end));
         
         tline = fgetl(fid);
-        a1 = str2double(tline(1:16));
-        a2 = str2double(tline((1:16)+16));
-        a3 = str2double(tline((1:16)+32));
-        a4 = str2double(tline((1:16)+48));
-        a5 = str2double(tline((1:16)+64));
+        a1 = str2num(tline(1:16));
+        a2 = str2num(tline((1:16)+16));
+        a3 = str2num(tline((1:16)+32));
+        a4 = str2num(tline((1:16)+48));
+        a5 = str2num(tline((1:16)+64));
         tline = fgetl(fid);
-        a6 = str2double(tline(1:16));
-        a7 = str2double(tline((1:16)+16));
-        a8 = 0; %str2double(tline((1:16)+32));
-        b1 = str2double(tline((1:16)+48));
-        b2 = str2double(tline((1:16)+64));
+        a6 = str2num(tline(1:16));
+        a7 = str2num(tline((1:16)+16));
+        a8 = 0; %str2num(tline((1:16)+32));
+        b1 = str2num(tline((1:16)+48));
+        b2 = str2num(tline((1:16)+64));
         str.a{ctInterval}=[a1 a2 a3 a4 a5 a6 a7 a8];
         str.b{ctInterval}=[b1 b2];
     end

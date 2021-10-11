@@ -1,30 +1,34 @@
 function ax = plot_hugoniot(varargin)
-app = varargin(1);
-app = app{1,1};
+app  = varargin(1); app = app{1,1};
+mix1 = varargin(2); mix1 = mix1{1,1};
+mix2 = varargin(3); mix2 = mix2{1,1};
+
 app.Misc.config.labelx = '$R^{-1}$';
 app.Misc.config.labely = '$P$';
 config = app.Misc.config;
 
         
-if nargin > 1
-    ax = varargin(2);
+if nargin > 3
+    ax = varargin(4);
     ax = ax{1,1};
+    legend
 else
     ax = set_figure(config);
 end
 %%% CHECK TITLE COMPATIBILITY LATEX
 config.tit = strrep(config.tit,'%','\%');
 %%%
-x1 = cell2vector(app.PS.strR, 'rho');
-x2 = cell2vector(app.PS.strP, 'rho');
-y1 = cell2vector(app.PS.strR, 'p');
-y2 = cell2vector(app.PS.strP, 'p');
+x1 = cell2vector(mix1, 'rho');
+x2 = cell2vector(mix2, 'rho');
+y1 = cell2vector(mix1, 'p');
+y2 = cell2vector(mix2, 'p');
 x = x2./x1;
 y = y2./y1;
 % Plot configuration
 plot(ax, 1./x, y, 'LineWidth', config.linewidth);
 end
 
+%%% SUB-PASS FUNCTIONS
 function ax = set_figure(config)
     f = figure;
     set(f,'units','normalized','innerposition',[0.1 0.1 0.9 0.8],...

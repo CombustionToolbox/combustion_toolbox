@@ -1,4 +1,4 @@
-function cVi = species_cV(Species,T,strThProp)
+function cVi = species_cV(species, T, DB)
 % global strThProp
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
@@ -6,4 +6,4 @@ function cVi = species_cV(Species,T,strThProp)
 % specified chemical species (Species) at the specified temperature (T)
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-cVi = strThProp.(Species).cVcurve(T);
+cVi = DB.(species).cVcurve(T);

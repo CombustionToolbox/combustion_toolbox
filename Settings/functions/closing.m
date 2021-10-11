@@ -62,7 +62,7 @@ elseif strcmp(ProblemType,{'DET_OVERDRIVEN'}) && length(phi) > 1
     app.Misc.config.labelx = 'Overdriven ratio $u_1/u_{cj}$';
     app.Misc.config.labely = 'Temperature $T [K]$';
     plot_figure(mix1, mix2, 'overdriven', 'T', app.Misc.config, app.PD.CompleteOrIncomplete);
-    plot_hugoniot(app);
+    plot_hugoniot(app, mix1, mix2);
 % elseif numel(phi)>1 && all(phi(2:end) == phi(1))
 %     app.Misc.config.labelx = 'Critical Equivalence Ratio $\phi_c$';
 %     app.Misc.config.labely = 'Temperature $T [K]$';

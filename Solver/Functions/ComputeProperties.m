@@ -21,9 +21,9 @@ mix.N      = sum(SpeciesMatrix(:, 1)); %[mol]
 % 
 % Yi_times_WM = zeros(size(Xi));
 % 
-% fnm = fieldnames(strThProp);
+% fnm = fieldnames(DB);
 % for i = 1:numel(fnm)
-%     Wi = strThProp.(fnm{i}).mm/1000;
+%     Wi = DB.(fnm{i}).mm/1000;
 %     MM = MM + Wi*Ni(i);
 %     WM = WM + Wi*Xi(i);
 %     Yi_times_WM(i) = Wi*Xi(i);

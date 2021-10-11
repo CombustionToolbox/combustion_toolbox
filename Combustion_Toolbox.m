@@ -13,7 +13,7 @@ Type of problems:
     * DET ----------------> Chapman-Jouget Detonation (CJ upper state)
     * DET_OVERDRIVEN -----> Overdriven Detonation    
     
-
+    
 @author: Alberto Cuadra Lara
          PhD Candidate - Group Fluid Mechanics
          Universidad Carlos III de Madrid
@@ -37,7 +37,7 @@ app = App('Soot formation');
 %% PROBLEM CONDITIONS
 app.PD.TR.value  = 300;
 app.PD.pR.value  = 1 * 1.01325;
-app.PD.phi.value = 0.5:0.01:2;
+app.PD.phi.value = 0.5:0.01:5;
 % app.PD.phi.value = 1;
 %% PROBLEM TYPE
 switch app.PD.ProblemType
@@ -89,7 +89,7 @@ app.C.l_phi = length(app.PD.phi.value);
 tic
 for i=app.C.l_phi:-1:1
 % DEFINE FUEL
-% app.PD.S_Fuel = {'CH4'}; app.PD.N_Fuel = 1;
+app.PD.S_Fuel = {'CH4'}; app.PD.N_Fuel = 1;
 app = Define_F(app);
 % DEFINE OXIDIZER
 app.PD.S_Oxidizer = {'O2'}; app.PD.N_Oxidizer = app.PD.phi_t/app.PD.phi.value(i);

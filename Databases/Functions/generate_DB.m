@@ -1,10 +1,10 @@
-function DB = GenerateDatabase(DB_master)
+function DB = generate_DB(DB_master)
 if ~exist('DB', 'var')
     if exist('DB.mat', 'file')
         fprintf('NASA short database loaded from main path ... ')
         load('DB.mat', 'DB');
     else
-        DB = get_Database(DB_master); % struct with tabulated data of selected species.
+        DB = get_DB(DB_master); % struct with tabulated data of selected species.
     end
     fprintf('OK!\n');
 else
@@ -13,7 +13,7 @@ end
 end
 
 % NESTED FUNCTIONS
-function DB = get_Database(DB_master)
+function DB = get_DB(DB_master)
 
 LS = fieldnames(DB_master);
 
@@ -110,7 +110,7 @@ for i = 1:length(LS)
         
         if ctTInt > 0
             
-            [txFormula, mm, Cp0, Cv0, Hf0, H0, Ef0, E0, S0, DfG0] = SpeciesThermProp(DB_master,LS{i},298.15,'molar',0);
+            [txFormula, mm, Cp0, Cv0, Hf0, H0, Ef0, E0, S0, DfG0] = get_speciesProperties(DB_master, LS{i}, 298.15, 'molar', 0);
             
             DB.(species).name = species;
             DB.(species).FullName = LS{i};
@@ -126,7 +126,7 @@ for i = 1:length(LS)
             T_vector = linspace(Tmin, Tmax, NT);
 
             for j = NT:-1:1
-                [~, ~, Cp0, Cv0, Hf0, H0, Ef0, E0, S0, ~] = SpeciesThermProp(DB_master, LS{i}, T_vector(j), 'molar', 0);
+                [~, ~, Cp0, Cv0, Hf0, H0, Ef0, E0, S0, ~] = get_speciesProperties(DB_master, LS{i}, T_vector(j), 'molar', 0);
                 DhT_vector(j) = H0 - Hf0;
                 DeT_vector(j) = E0 - Ef0;
                 h0_vector(j)  = H0;
@@ -158,7 +158,7 @@ for i = 1:length(LS)
             
             Tref = tRange(1);
             
-            [txFormula, mm, Cp0, Cv0, Hf0, H0, Ef0, E0, S0, DfG0] = SpeciesThermProp(DB_master,LS{i},Tref,'molar',0);
+            [txFormula, mm, Cp0, Cv0, Hf0, H0, Ef0, E0, S0, DfG0] = get_speciesProperties(DB_master, LS{i}, Tref, 'molar', 0);
             
             DB.(species).name = species;
             DB.(species).FullName = LS{i};

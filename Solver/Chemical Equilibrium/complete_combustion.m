@@ -29,7 +29,7 @@ else
     elseif phi >= phi_c
         % general case of rich mixtures with hydrogens (H), carbons (C) and soot
         T  = 1000;
-        N0 = compute_moles_rich_soot(y, z, T, self.C.R0, self.strThProp);
+        N0 = compute_moles_rich_soot(y, z, T, self.C.R0, self.DB);
     end
 end
 end

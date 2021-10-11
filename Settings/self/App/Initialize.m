@@ -1,6 +1,6 @@
 function self = Initialize(self)
     % Check if minors products species are contained in DB
-    [self.strThProp, self.E, self.S, self.C] = check_database(self, self.strMaster, self.strThProp);
+    [self.DB, self.E, self.S, self.C] = check_database(self, self.DB_master, self.DB);
     % Sort species: first gaseous species, secondly condensed species
     self = list_phase_species(self, self.S.LS);
     % Stoichiometric Matrix
@@ -14,11 +14,11 @@ end
 function self = list_phase_species(self, LS)
     for ind=1:length(LS)
         Species = LS{ind};
-        if ~self.strThProp.(Species).swtCondensed
+        if ~self.DB.(Species).swtCondensed
            self.S.ind_nswt = [self.S.ind_nswt, ind];
         else
            self.S.ind_swt = [self.S.ind_swt, ind];
-           if ~self.strThProp.(Species).ctTInt
+           if ~self.DB.(Species).ctTInt
               self.S.ind_cryogenic = [self.S.ind_cryogenic, ind];
            end
         end
@@ -36,10 +36,10 @@ function self = Stoich_Matrix(self)
     self.C.A0.value = zeros(self.S.NS,self.E.NE);
     self.C.M0.value = zeros(self.S.NS,12);
     for i=1:self.S.NS
-        txFormula = self.strThProp.(self.S.LS{i}).txFormula;
-        self.strThProp.(self.S.LS{i}).Element_matrix = set_element_matrix(txFormula,self.E.elements);
-        self.C.A0.value(i,self.strThProp.(self.S.LS{i}).Element_matrix(1,:)) = self.strThProp.(self.S.LS{i}).Element_matrix(2,:);
-        self.C.M0.value(i,10) = self.strThProp.(self.S.LS{i}).swtCondensed;    
+        txFormula = self.DB.(self.S.LS{i}).txFormula;
+        self.DB.(self.S.LS{i}).Element_matrix = set_element_matrix(txFormula,self.E.elements);
+        self.C.A0.value(i,self.DB.(self.S.LS{i}).Element_matrix(1,:)) = self.DB.(self.S.LS{i}).Element_matrix(2,:);
+        self.C.M0.value(i,10) = self.DB.(self.S.LS{i}).swtCondensed;    
     end
     self.C.N0.value = self.C.M0.value(:, [1, 10]);
 end

@@ -1,15 +1,15 @@
-function strMaster = ParseThermoInp(reducedDB)
-if ~exist('strMaster', 'var')
-    if exist('strMaster.mat', 'file') && ~reducedDB
+function DB_master = ParseThermoInp(reducedDB)
+if ~exist('DB_msaster', 'var')
+    if exist('DB_master.mat', 'file') && ~reducedDB
         fprintf('Loading NASA database ... ')
-        load('strMaster.mat' , 'strMaster');
-    elseif exist('strMaster_reduced.mat', 'file') && reducedDB
+        load('DB_master.mat' , 'DB_master');
+    elseif exist('DB_master_reduced.mat', 'file') && reducedDB
         fprintf('Loading Reduced NASA database ... ')
-        load('strMaster_reduced.mat' , 'strMaster');
+        load('DB_master_reduced.mat' , 'DB_master');
     else
-        strMaster = get_strMaster();
+        DB_master = get_DB_master();
         if reducedDB
-            strMaster = strMaster_reduced(strMaster);
+            DB_master = DB_master_reduced(DB_master);
         end
     end
     fprintf('OK!\n');
@@ -18,7 +18,7 @@ else
 end
 end
 
-function strMaster = get_strMaster()
+function DB_master = get_DB_master()
 fid=fopen('thermo.inp'); % loads full database
 clc
 fprintf('Loading NASA database ... ')
@@ -84,7 +84,7 @@ while ctLine<2500
         str.b{ctInterval}=[b1 b2];
     end
     
-    strMaster.(str.name)=str;
+    DB_master.(str.name)=str;
     clear str
 end
 

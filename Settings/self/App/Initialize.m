@@ -1,6 +1,6 @@
 function self = Initialize(self)
     % Check if minors products species are contained in DB
-    [self.DB, self.E, self.S, self.C] = check_database(self, self.DB_master, self.DB);
+    [self.DB, self.E, self.S, self.C] = check_DB(self, self.DB_master, self.DB);
     % Sort species: first gaseous species, secondly condensed species
     self = list_phase_species(self, self.S.LS);
     % Stoichiometric Matrix

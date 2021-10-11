@@ -1,13 +1,13 @@
-function cP = get_cP(species, T, strDB)
-    if strDB.(species).ctTInt > 0
-        a = strDB.(species).a;
-        b = strDB.(species).b;
-        tRange       = strDB.(species).tRange;
-        tExponents   = strDB.(species).tExponents;
-        ctTInt       = strDB.(species).ctTInt;
+function cP = get_cP(species, T, DB)
+    if DB.(species).ctTInt > 0
+        a = DB.(species).a;
+        b = DB.(species).b;
+        tRange       = DB.(species).tRange;
+        tExponents   = DB.(species).tExponents;
+        ctTInt       = DB.(species).ctTInt;
         R0           = 8.3144598;
         if (T < tRange{1}(1)) || (T > tRange{ctTInt}(2))
-            cP = species_cP(species, T, strDB);
+            cP = species_cP(species, T, DB);
             return
         else
             for i = 1:ctTInt

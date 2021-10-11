@@ -29,9 +29,9 @@ function [P, T, M1, R, Q, STOP] = compute_guess_det(self, str1, phi, overdriven)
         N_2 = equilibrium(self, p2, T2, str1); N_2 = N_2(:, 1)';
         N_2 = N_2_0  + lambda .* (N_2 - N_2_0);
         
-        W2 = compute_W(N_2, LS, self.strThProp);
+        W2 = compute_W(N_2, LS, self.DB);
 
-        gamma2 = compute_gamma(N_2, T * str1.T, LS, self.strThProp);
+        gamma2 = compute_gamma(N_2, T * str1.T, LS, self.DB);
         gamma2 = gamma1 + lambda * (gamma2 - gamma1);
 
         [P, T, M1, ~, R, Q] = body_guess_cj(self, N_2, LS, gamma1, DeltaQ, overdriven, a1, hfi_1, N_1, Yi_fuel, W_fuel);
@@ -48,7 +48,7 @@ end
 % NESTED FUNCTIONS
 function [P, T, M1, M2, R, Q] = body_guess_cj(self, N_2, LS, gamma, DeltaQ, overdriven, a1, hfi_1, N_1, Yi_fuel, W_fuel)
     % Get enthalpy of formation [J/mol] and some parameters
-    hfi_2 = compute_hfi_molar(N_2, LS, self.strThProp);
+    hfi_2 = compute_hfi_molar(N_2, LS, self.DB);
     % Compute heat release - molar base [J/mol]
     q_molar = - sum(N_2 .* hfi_2) + sum(N_1 .* hfi_1);
     % Compute heat release - molar base [J/kg_mixture]
@@ -68,7 +68,7 @@ end
 function [hfi_1, N_1, Yi_fuel, W_fuel] = compute_hfi_1_molar(self)
     LS_1 = [self.PD.S_Fuel, self.PD.S_Oxidizer, self.PD.S_Inert];
     N_1  = [self.PD.N_Fuel, self.PD.N_Oxidizer, self.PD.N_Inert];
-    hfi_1 = compute_hfi_molar(N_1, LS_1, self.strThProp);
+    hfi_1 = compute_hfi_molar(N_1, LS_1, self.DB);
     R = self.PD.R_Fuel + self.PD.R_Oxidizer + self.PD.R_Inert;
     mi = sum(R(:,11)) * 1e-3;
     Yi = R(:,11) ./ mi * 1e-3;

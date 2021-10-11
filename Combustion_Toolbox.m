@@ -24,9 +24,9 @@ Last update Oct 10 2021
 addpath(genpath(pwd));
 
 %% INITIALIZE
-% app = App('Soot formation');    
+app = App('Soot formation');
 % app = App('HC/02/N2');
-app = App('HC/02/N2 extended');
+% app = App('HC/02/N2 extended');
 % app = App('HC/02/N2 rich');
 % app = App('HC/02/N2 propellants');
 % app = App('Ideal_air');
@@ -89,7 +89,7 @@ app.C.l_phi = length(app.PD.phi.value);
 tic
 for i=app.C.l_phi:-1:1
 % DEFINE FUEL
-app.PD.S_Fuel = {'CH4'}; app.PD.N_Fuel = 1;
+% app.PD.S_Fuel = {'CH4'}; app.PD.N_Fuel = 1;
 app = Define_F(app);
 % DEFINE OXIDIZER
 app.PD.S_Oxidizer = {'O2'}; app.PD.N_Oxidizer = app.PD.phi_t/app.PD.phi.value(i);

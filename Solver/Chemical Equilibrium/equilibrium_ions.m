@@ -39,7 +39,7 @@ temp_NS0 = temp_NS + 1;
 % Initialize species vector N0 
 N0(temp_ind, 1) = 0.1/temp_NS;
 % Dimensionless Standard Gibbs free energy 
-g0 = set_g0(S.LS, TP, app.strThProp);
+g0 = set_g0(S.LS, TP, app.DB);
 G0RT = g0/R0TP;
 % Construction of part of matrix A (complete)
 [A1, temp_NS0] = update_matrix_A1(A0, [], temp_NS, temp_NS0, temp_ind, temp_ind_E);
@@ -75,10 +75,10 @@ end
 % N0(N0(:, 1) < TN.tolN, 1) = 0;
 end
 % NESTED FUNCTIONS
-function g0 = set_g0(ls, TP, strThProp)
+function g0 = set_g0(ls, TP, DB)
     for i=length(ls):-1:1
         species = ls{i};
-        g0(i, 1) = species_g0(species, TP, strThProp) * 1e3;
+        g0(i, 1) = species_g0(species, TP, DB) * 1e3;
     end
 end
 

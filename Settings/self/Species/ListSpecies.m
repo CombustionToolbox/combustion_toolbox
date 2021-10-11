@@ -96,7 +96,7 @@ end
 
 self.S.LS = unique(self.S.LS, 'stable');
 self.S.NS = length(self.S.LS);
-self.S.LS_formula = get_formula(self.S.LS, self.strThProp);
+self.S.LS_formula = get_formula(self.S.LS, self.DB);
 
 if any(contains(self.S.LS, 'minus')) || any(contains(self.S.LS, 'plus'))
     self.PD.ionization = true;

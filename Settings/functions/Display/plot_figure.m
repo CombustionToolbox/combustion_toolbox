@@ -69,7 +69,8 @@ function ax = set_figure(config, x, y)
         'outerposition',[0.1 0.1 0.9 0.8])
     ax = axes(f);
     set(ax,'LineWidth',config.linewidth,'FontSize',config.fontsize-2,'BoxStyle','full')
-    grid(ax, 'on'); box(ax, 'on'); hold(ax, 'on'); axis(ax, 'tight');
+%     grid(ax, 'on'); box(ax, 'on');
+    hold(ax, 'on'); axis(ax, 'tight');
     xlabel(ax, config.labelx,'FontSize',config.fontsize,'interpreter','latex');
     ylabel(ax, config.labely,'FontSize',config.fontsize,'interpreter','latex');
     title({strcat('$',config.tit,'$')},'Interpreter','latex','FontSize',config.fontsize+4);

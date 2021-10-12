@@ -39,7 +39,7 @@ print_convergence(STOP, TN.tol_shocks);
 str2.T_guess = T_guess;
 str2.p_guess = p_guess;
 end
-% NESTED FUNCTIONS
+% SUB-PASS FUNCTIONS
 function [self, str1, str2] = unpack(x)
     % Unpack input data
     self = x{1};

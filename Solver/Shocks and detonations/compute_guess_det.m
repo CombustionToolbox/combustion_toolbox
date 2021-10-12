@@ -45,7 +45,7 @@ function [P, T, M1, R, Q, STOP] = compute_guess_det(self, str1, phi, overdriven)
     end
 end
 
-% NESTED FUNCTIONS
+% SUB-PASS FUNCTIONS
 function [P, T, M1, M2, R, Q] = body_guess_cj(self, N_2, LS, gamma, DeltaQ, overdriven, a1, hfi_1, N_1, Yi_fuel, W_fuel)
     % Get enthalpy of formation [J/mol] and some parameters
     hfi_2 = compute_hfi_molar(N_2, LS, self.DB);

@@ -25,7 +25,7 @@ else
         % general case of rich mixtures with hydrogens (H) and carbons (C)
 %         N0 = compute_moles_rich_appr(x, y, z);
         T  = 1500;
-        N0 = compute_moles_rich(x, y, z, T, self.C.R0, self.strThProp);
+        N0 = compute_moles_rich(x, y, z, T, self.C.R0, self.DB);
     elseif phi >= phi_c
         % general case of rich mixtures with hydrogens (H), carbons (C) and soot
         T  = 1000;

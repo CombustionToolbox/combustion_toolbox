@@ -47,7 +47,7 @@ This project is also part of the PhD of [Alberto Cuadra-Lara](https://www.acuadr
     <img src="https://github.com/AlbertoCuadra/combustion_toolbox/blob/master/Validations/Tests/DET_CH4_AIR.svg" width="1200">
 </p>
 
-**Figure 3:** *Example CJ detonation for lean to rich CH4-air mixtures: (a) variation of molar fraction, (b) variation of temperature. The computational time was of 14.69 seconds using a Intel(R) Core(TM) i7-8700 CPU @ 3.20GHz 3.19 GHz.*
+**Figure 3:** *Example CJ detonation for lean to rich CH4-air mixtures: (a) variation of molar fraction, (b) variation of temperature. The computational time was of 14.69 seconds using a Intel(R) Core(TM) i7-8700 CPU @ 3.20GHz.*
 
 Figure 1 is postprocesed with [Veusz](https://github.com/veusz/veusz) and [Inkscape](https://inkscape.org/). 
 

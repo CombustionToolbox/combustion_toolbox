@@ -8,7 +8,7 @@ TN = self.TN;
 R0 = C.R0; % Universal gas constant [J/(mol-K)]
 % Miscelaneous
 it = 0;
-itMax = 50;
+itMax = TN.it_shocks;
 STOP = 1.;
 % Calculate post-shock state (2)
 [str1, str2] = shock_incident(self, str1, str1.u, str2);

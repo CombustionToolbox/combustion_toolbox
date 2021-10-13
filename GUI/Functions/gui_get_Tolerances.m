@@ -1,5 +1,6 @@
 function self = gui_get_Tolerances(self)
-    self.C.tolN = self.TraceoptionEditField.Value;              % Tolerance of the gibbs minimization method
+    % Get tolerance from GUI and update values
+    self.C.tolN = self.TraceoptionEditField.Value;                % Tolerance of the gibbs minimization method
     self.C.tol0 = self.RootFindingMethodEditField.Value;          % Tolerance of the root finding algorithm
     self.C.itMax = self.MaxiterationsRFMEditField.Value;          % Max number of iterations - root finding method
     self.C.root_T0_l = self.RFMT0_LEditField.Value;               % First guess T[K] left branch - root finding method

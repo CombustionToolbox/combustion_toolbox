@@ -1,5 +1,16 @@
 function gui_ReactantsValueChanged(self)
-    % Get value changed from item Reactants and update self variable + GUI
+    % Update reactants & GUI
+    self = gui_update_Reactants(self);
+    % Update UITable_R2 (species, numer of moles, mole fractions)
+    self.UITable_R2.Data = self.UITable_R.Data(:, 1:3); 
+    % Get temperature of the mixture
+    self.UITable_R.Data(:, 5) = {sscanf(self.PR1.Value, '%f')};
+    % Update equivalence ratio 
+    self.edit_phi2.Value = self.edit_phi.Value;
+end
+
+% SUB-PASS FUNCTIONS
+function self = gui_update_Reactants(self)
     switch self.Reactants.Value
         case '1' % No species selected
             self.UITable_R.Data  = [];
@@ -25,9 +36,4 @@ function gui_ReactantsValueChanged(self)
             self.UITable_R.Data = {'N2', Ni(1), Xi(1), 'Inert'; 'O2', Ni(2), Xi(2), 'Oxidant'; 'Ar', Ni(3), Xi(3), 'Inert'; 'CO2', Ni(4), Xi(4), 'Oxidant'; 'CH4', Ni(5), Xi(5), 'Fuel'};
             self.UITable_P.Data = self.UITable_R.Data(:, 1);
     end
-    
-    % Update UITable_R2 (species, numer of moles, mole fractions)
-    self.UITable_R2.Data = self.UITable_R.Data(:, 1:3); 
-    % Get temperature of the mixture
-    self.UITable_R.Data(:, 5) = {sscanf(self.PR1.Value, '%f')};
 end

@@ -1,6 +1,6 @@
 function M = SetSpecies(self, species, N, T)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%   function M = SetSpecies_new(A0,N,T)
+%   function M = SetSpecies(self, species, N, T)
 %   DESCRIPTION: Create the stoichiometric matrix
 %   INPUT:
 %       self    = contains necessary data

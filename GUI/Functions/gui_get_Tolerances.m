@@ -1,4 +1,4 @@
-function self = gui_get_Tolerances(self)
+function self = gui_get_tolerances(self)
     % Get tolerance from GUI and update values
     self.C.tolN = self.TraceoptionEditField.Value;                % Tolerance of the gibbs minimization method
     self.C.tol0 = self.RootFindingMethodEditField.Value;          % Tolerance of the root finding algorithm

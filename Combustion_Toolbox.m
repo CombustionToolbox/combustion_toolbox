@@ -78,22 +78,14 @@ end
 app.C.l_phi = length(app.PD.phi.value);
 tic
 for i=app.C.l_phi:-1:1
-% DEFINE FUEL
-app.PD.S_Fuel = {'CH4'}; app.PD.N_Fuel = 1;
-app = Define_F(app);
-% DEFINE OXIDIZER
-app.PD.S_Oxidizer = {'O2'}; app.PD.N_Oxidizer = app.PD.phi_t/app.PD.phi.value(i);
-app = Define_O(app);
-% DEFINE DILUENTS/INERTS
-app.PD.proportion_N2_O2 = 79/21;
-app.PD.S_Inert = {'N2'}; app.PD.N_Inert = app.PD.phi_t/app.PD.phi.value(i) * app.PD.proportion_N2_O2;
-app = Define_I(app);
-% COMPUTE PROPERTIES
-app = Define_FOI(app, i);
-% PROBLEM TYPE
+% DEFINE FUEL | default: app.PD.N_Fuel = 1
+app.PD.S_Fuel = {'CH4'};
+% DEFINE OXIDIZER | default: app.PD.N_Fuel = self.PD.phi_t/self.PD.phi.value(i)
+app.PD.S_Oxidizer = {'O2'};
+% DEFINE DILUENTS/INERTS | default: self.PD.phi_t/self.PD.phi.value(i) * 79/21;
+app.PD.S_Inert = {'N2'};
+% SOLVE SELECTED PROBLEM
 app = SolveProblem(app, i);
-% DISPLAY RESULTS COMMAND WINDOW
-results(app, i);
 end
 toc
 %% DISPLAY RESULTS (PLOTS)

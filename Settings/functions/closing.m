@@ -3,10 +3,7 @@ function closing(app)
 mix1 = app.PS.strR;
 mix2 = app.PS.strP;
 phi = app.PD.phi.value;
-display_species = app.Misc.display_species;
 timer_0 = app.Misc.timer_0;
-LS = app.S.LS;
-mintol_display = app.C.mintol_display;
 ProblemType = app.PD.ProblemType;
 % -----------------------------------
 

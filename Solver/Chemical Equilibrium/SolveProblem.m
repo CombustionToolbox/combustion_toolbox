@@ -1,14 +1,35 @@
-function self = SolveProblem(self, i)
-% COMPUTE PROPERTIES
-self = Define_FOI(self, i);
-% SOLVE SELECTED PROBLEM
-self = selectProblem(self, i);
-% DISPLAY RESULTS COMMAND WINDOW
-results(self, i);
+function self = SolveProblem(self)
+self = get_FLAG_N(self);
+self.C.l_phi = length(self.PD.phi.value);
+for i=self.C.l_phi:-1:1
+    % COMPUTE PROPERTIES INITIAL MIXTURE
+    self = Define_FOI(self, i);
+    % SOLVE SELECTED PROBLEM
+    self = selectProblem(self, i);
+    % DISPLAY RESULTS COMMAND WINDOW
+    results(self, i);
+end
 end
 
 % SUB-PASS FUNCTIONS
+function self = get_FLAG_N(self)
+    % Flag if the number of moles of fuel, oxidant and inert species
+    % is specified. If not, consider 1 mole for the fuel and calculate
+    % the remaining moles from the equivalence relation.
+    if isempty(self.PD.N_Fuel)
+        self.Misc.FLAG_N_Fuel = false;
+    end
+    if isempty(self.PD.N_Oxidizer)
+        self.Misc.FLAG_N_Oxidizer = false;
+    end
+    if isempty(self.PD.N_Inert)
+        self.Misc.FLAG_N_Inert = false;
+    end
+end
+
+
 function self = selectProblem(self, i)
+    % Solve selected problem
     switch self.PD.ProblemType
         case {'SHOCK_I', 'SHOCK_R'}
             u1 = self.PD.u1.value(i);

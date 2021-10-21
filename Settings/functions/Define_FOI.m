@@ -1,13 +1,19 @@
 function self = Define_FOI(self, i)
 % DEFINE FUEL
-self.PD.N_Fuel = 1;
+if ~self.Misc.FLAG_N_Fuel
+    self.PD.N_Fuel = 1;
+end
 self = Define_F(self);
 % DEFINE OXIDIZER
-self.PD.N_Oxidizer = self.PD.phi_t/self.PD.phi.value(i);
+if ~self.Misc.FLAG_N_Oxidizer
+    self.PD.N_Oxidizer = self.PD.phi_t/self.PD.phi.value(i);
+end
 self = Define_O(self);
 % DEFINE DILUENTS/INERTS
-self.PD.proportion_N2_O2 = 79/21;
-self.PD.N_Inert = self.PD.phi_t/self.PD.phi.value(i) * self.PD.proportion_N2_O2;
+if ~self.Misc.FLAG_N_Inert
+    self.PD.proportion_N2_O2 = 79/21;
+    self.PD.N_Inert = self.PD.phi_t/self.PD.phi.value(i) * self.PD.proportion_N2_O2;
+end
 self = Define_I(self);
 % COMPUTE PROPERTIES OF THE REACTIVES FOR THE GIVEN CONDITIONS
 R = self.PD.R_Fuel + self.PD.R_Oxidizer + self.PD.R_Inert;
@@ -20,10 +26,10 @@ end
 
 % SUB-PASS FUNCTIONS
 function merged = merged_cells(cells)
-    merged = cell(1, numel(cells));
+    merged = [];
     for j = 1:length(cells)
         for i = 1:length(cells{j})
-            merged(j+i-1) = cells{i, j};
+            merged = [merged, cells{i, j}];
         end
     end
 end

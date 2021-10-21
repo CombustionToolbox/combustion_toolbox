@@ -8,12 +8,12 @@ self.PS.strR{i}.LS  = merged_cells({self.PD.S_Fuel, self.PD.S_Oxidizer, self.PD.
 self.PS.strR{i}.ind_LS = ind_LS;
 end
 
-% NESTED FUNCTIONS
+% SUB-PASS FUNCTIONS
 function merged = merged_cells(cells)
-    merged = [];
+    merged = cell(1, numel(cells));
     for j = 1:length(cells)
         for i = 1:length(cells{j})
-            merged = [merged, cells{i, j}];
+            merged(j+i-1) = cells{i, j};
         end
     end
 end

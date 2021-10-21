@@ -80,9 +80,9 @@ tic
 for i=app.C.l_phi:-1:1
 % DEFINE FUEL | default: app.PD.N_Fuel = 1
 app.PD.S_Fuel = {'CH4'};
-% DEFINE OXIDIZER | default: app.PD.N_Fuel = self.PD.phi_t/self.PD.phi.value(i)
+% DEFINE OXIDIZER | default: app.PD.N_Oxidizer = app.PD.phi_t/app.PD.phi.value(i)
 app.PD.S_Oxidizer = {'O2'};
-% DEFINE DILUENTS/INERTS | default: self.PD.phi_t/self.PD.phi.value(i) * 79/21;
+% DEFINE DILUENTS/INERTS | default: app.PD.N_Inert = app.PD.phi_t/app.PD.phi.value(i) * 79/21;
 app.PD.S_Inert = {'N2'};
 % SOLVE SELECTED PROBLEM
 app = SolveProblem(app, i);

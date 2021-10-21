@@ -42,30 +42,23 @@ app.PD.phi.value = 0.5:0.01:5;
 %% PROBLEM TYPE
 switch app.PD.ProblemType
     case 'TP' % * TP: Equilibrium composition at defined T and p
-        app.PD.ProblemType = 'TP';
         app.PD.pP.value = app.PD.pR.value;
         app.PD.TP.value = 3000;
     case 'HP' % * HP: Adiabatic T and composition at constant p
-        app.PD.ProblemType = 'HP';
         app.PD.pP.value = app.PD.pR.value;
     case 'SP' % * SP: Isentropic (i.e., adiabatic) compression/expansion to a specified p
-        app.PD.ProblemType = 'SP';
         app.PD.pP.value = 10:1:50; app.PD.phi.value = 1*ones(1, length(app.PD.pP.value));
 %         app.PD.pP.value = 10*ones(1, length(app.PD.phi.value));
     case 'TV' % * TV: Equilibrium composition at defined T and constant v
-        app.PD.ProblemType = 'TV';
         app.PD.TP.value = 2000;
         app.PD.pP.value = app.PD.pR.value; % guess
     case 'EV' % * EV: Equilibrium composition at Adiabatic T and constant v
-        app.PD.ProblemType = 'EV';
         app.PD.pP.value = app.PD.pR.value;
         % app.PD.pR.value = logspace(0,2,20); app.PD.phi.value = 1*ones(1,length(app.PD.pR.value));
     case 'SV' % * SV: Isentropic (i.e., fast adiabatic) compression/expansion to a specified v
-        app.PD.ProblemType = 'SV';
         % REMARK! vP_vR > 1 --> expansion, vP_vR < 1 --> compression
         app.PD.vP_vR.value = 0.5:0.01:2; app.PD.phi.value = 1*ones(1, length(app.PD.vP_vR.value));
     case 'SHOCK_I' % * SHOCK_I: CALCULATE PLANAR INCIDENT SHOCK WAVE
-        app.PD.ProblemType = 'SHOCK_I';
         u1 = logspace(2, 5, 500);
         u1 = u1(u1<20000); u1 = u1(u1>=360);
 %         u1 = [356,433,534,658,811,1000,1233,1520,1874,2310,2848,3511,4329,5337,6579,8111,9500,12328,15999,18421,21210,24421,28118,32375,37276,42919,49417,56899,65513];
@@ -73,15 +66,12 @@ switch app.PD.ProblemType
 %         u1 = 20000;
         app.PD.u1.value = u1; app.PD.phi.value = ones(1,length(app.PD.u1.value));
     case 'SHOCK_R' % * SHOCK_R: CALCULATE PLANAR POST-REFLECTED SHOCK STATE
-        app.PD.ProblemType = 'SHOCK_R';
         u1 = linspace(400, 6000, 1000);
 %         u1 = 2000;
         app.PD.u1.value = u1; app.PD.phi.value = ones(1,length(app.PD.u1.value));
     case 'DET' % * DET: CALCULATE CHAPMAN-JOUGET STATE (CJ UPPER STATE)
-        app.PD.ProblemType = 'DET';
 %         app.PD.TR_vector.value = app.PD.TR.value;
     case 'DET_OVERDRIVEN' % * DET_OVERDRIVEN: CALCULATE OVERDRIVEN DETONATION
-        app.PD.ProblemType = 'DET_OVERDRIVEN';  
         app.PD.overdriven.value  = 1:0.1:10; app.PD.phi.value = 1*ones(1,length(app.PD.overdriven.value));
 end
 %% LOOP

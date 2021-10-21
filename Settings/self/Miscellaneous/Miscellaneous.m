@@ -9,6 +9,6 @@ function self = Miscellaneous()
     self.FLAG_LABELS = false;
     self.save_Excel = false;
     self.timer_0 = [];
-    self.display_species = [];
+    self.display_species = {};
     self.i = [];
 end

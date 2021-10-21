@@ -1,13 +1,13 @@
-function [prop, flag_prop] = gui_get_prop(app, prop, name)
-    if prop(1) == '['
+function [value, flag_prop] = gui_get_prop(app, name, value)
+    if value(1) == '['
         flag_prop = true;
-        prop = sscanf(prop, '[%f:%f:%f]');
-        prop = prop(1):prop(2):prop(3);
-        app.PD.phi.value = app.PD.phi.value(1)*ones(1,numel(prop));
+        value = sscanf(value, '[%f:%f:%f]');
+        value = value(1):value(2):value(3);
+        app.PD.phi.value = app.PD.phi.value(1)*ones(1,length(value));
     else
         flag_prop = false;
-        prop = sscanf(prop,'%f');
-        if isempty(prop); prop = app.PD.(name).value; return; end
-        app.PD.(name).value = prop;
+        value = sscanf(value,'%f');
+        if isempty(value); value = app.PD.(name).value; return; end
+        app.PD.(name).value = value;
     end
 end

@@ -89,6 +89,6 @@ app = SolveProblem(app, i);
 end
 toc
 %% DISPLAY RESULTS (PLOTS)
-app.Misc.display_species = {};
+% Uncomment to specify a custom set of species to be displayed
 % app.Misc.display_species = {'CO','CO2','H','HO2','H2','H2O','NO','NO2','N2','O','OH','O2','Cbgrb'};
 closing(app);

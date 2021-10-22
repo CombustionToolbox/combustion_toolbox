@@ -32,4 +32,4 @@ self = set_prop(self, 'TP', 3000);
 %% SOLVE PROBLEM
 self = SolveProblem(self, 'TV');
 %% DISPLAY RESULTS (PLOTS)
-closing(self);
+postResults(self);

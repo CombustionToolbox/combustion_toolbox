@@ -5,8 +5,6 @@ function self = Initialize(self)
     self = list_phase_species(self, self.S.LS);
     % Stoichiometric Matrix
     self = Stoich_Matrix(self);
-    % Ask problem type
-    self.PD.ProblemType = Ask_problem(self);
 end
 
 

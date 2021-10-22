@@ -24,7 +24,7 @@
 %% INITIALIZE
 self = App('Air_ions');
 %% INITIAL CONDITIONS
-self = set_prop(self, 'TR', 300, 'pR', 1 * 1.01325, 'phi', 0.5:0.01:5);
+self = set_prop(self, 'TR', 300, 'pR', 1 * 1.01325);
 self.PD.S_Oxidizer = {'O2'};
 self.PD.S_Inert    = {'N2', 'Ar', 'CO2'};
 self.PD.proportion_inerts_O2 = [78.084, 0.9365, 0.0319] ./ 20.9476;

@@ -8,7 +8,7 @@ function app = App(varargin)
     app.PS = ProblemSolution();
     app.TN = TunningProperties();
     app = constructor(app, LS);
-    if ~isa(varargin{1,1}, 'combustion_toolbox_app') || ~isa(varargin{1,1}, 'combustion_toolbox_app_develop') || ~isa(varargin{1,1}, 'combustion_toolbox_app_original')
+    if ~nargin || ~isa(varargin{1,1}, 'combustion_toolbox_app') || ~isa(varargin{1,1}, 'combustion_toolbox_app_develop') || ~isa(varargin{1,1}, 'combustion_toolbox_app_original')
         app = Initialize(app);
     end
 end

@@ -20,7 +20,7 @@
 %% INITIALIZE
 self = App('Air');
 %% INITIAL CONDITIONS
-self = set_prop(self, 'TR', 300, 'pR', 1 * 1.01325, 'phi', 0.5:0.01:5);
+self = set_prop(self, 'TR', 300, 'pR', 1 * 1.01325);
 self.PD.S_Oxidizer = {'O2'};
 self.PD.S_Inert    = {'N2', 'Ar', 'CO2'};
 self.PD.proportion_inerts_O2 = [78.084, 0.9365, 0.0319] ./ 20.9476;
@@ -30,4 +30,4 @@ self = set_prop(self, 'u1', u1, 'phi', self.PD.phi.value(1) * ones(1, length(u1)
 %% SOLVE PROBLEM
 self = SolveProblem(self, 'SHOCK_R');
 %% DISPLAY RESULTS (PLOTS)
-closing(self);
+postResults(self);

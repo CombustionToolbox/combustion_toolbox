@@ -76,7 +76,7 @@ See also the list of [contributors](https://github.com/AlbertoCuadra/combustion_
     author = "Alberto Cuadra, César Huete and Marcos Vera",
     title = "Combustion Toolbox: A MATLAB-GUI based open-source tool for solving combustion problems",
     year = 2021,
-    note = "Version 0.3.7",
-    doi = {https://doi.org/10.5281/zenodo.5592304}
+    note = "Version 0.3.72",
+    doi = {https://doi.org/10.5281/zenodo.5592828}
 }
 ```

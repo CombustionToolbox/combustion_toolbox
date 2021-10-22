@@ -30,4 +30,4 @@ self = set_prop(self, 'u1', u1, 'phi', self.PD.phi.value(1) * ones(1, length(u1)
 %% SOLVE PROBLEM
 self = SolveProblem(self, 'SHOCK_I');
 %% DISPLAY RESULTS (PLOTS)
-closing(self);
+postResults(self);

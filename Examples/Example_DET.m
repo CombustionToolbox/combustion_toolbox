@@ -34,4 +34,4 @@ self.PD.proportion_inerts_O2 = [78.084, 0.9365, 0.0319] ./ 20.9476;
 %% SOLVE PROBLEM
 self = SolveProblem(self, 'DET');
 %% DISPLAY RESULTS (PLOTS)
-closing(self);
+postResults(self);

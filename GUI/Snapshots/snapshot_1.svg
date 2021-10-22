@@ -7,7 +7,7 @@
    viewBox="0 0 154.85567 201.72688"
    version="1.1"
    id="svg5"
-   inkscape:version="1.1 (c68e22c387, 2021-05-23)"
+   inkscape:version="1.1.1 (3bf5ae0d25, 2021-09-20)"
    sodipodi:docname="snapshot_1.svg"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
@@ -28,15 +28,15 @@
      fit-margin-left="0"
      fit-margin-right="0"
      fit-margin-bottom="0"
-     inkscape:zoom="0.75722503"
-     inkscape:cx="223.84363"
-     inkscape:cy="332.13376"
+     inkscape:zoom="3.0289001"
+     inkscape:cx="91.617415"
+     inkscape:cy="750.27235"
      inkscape:window-width="1920"
      inkscape:window-height="1009"
      inkscape:window-x="-8"
      inkscape:window-y="370"
      inkscape:window-maximized="1"
-     inkscape:current-layer="layer1" />
+     inkscape:current-layer="surface41518" />
   <defs
      id="defs2">
     <g
@@ -11417,7 +11417,7 @@
       <use
          xlink:href="#image41562"
          mask="url(#mask4-9)"
-         transform="matrix(0.022919,0,0,0.0232964,2.251282,538.80681)"
+         transform="matrix(0.022919,0,0,0.0232964,2.251282,547.80681)"
          id="use5556"
          x="0"
          y="0"

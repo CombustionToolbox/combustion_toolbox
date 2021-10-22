@@ -1,21 +1,26 @@
-%{
-  EXAMPLE: SHOCK_I_IONIZATION
+% -------------------------------------------------------------------------
+% EXAMPLE: SHOCK_I_IONIZATION
+%
+% Compute pre-shock and post-shock state for a planar incident shock wave
+% at standard conditions, a set of 39 species considered and a set of
+% initial shock front velocities (u1) contained in (360, 20000) [m/s]
+%    
+% Air_ions == {'O2','N2','O','O3','N','NO','NO2','NO3','N2O','N2O3',...
+%              'N2O4','N3','eminus','Nminus','Nplus','NOplus','NO2minus',...
+%              'NO3minus','N2plus','N2minus','N2Oplus','Oplus','Ominus',...
+%              'O2plus', 'O2minus,'CO2','CO','COplus','C','Cplus',...
+%              'Cminus','CN','CNplus','CNminus','CNN','NCO','NCN','Ar',...
+%              'Arplus'}
+%   
+% See wiki or ListSpecies() for more predefined sets of species
+%
+% @author: Alberto Cuadra Lara
+%          PhD Candidate - Group Fluid Mechanics
+%          Universidad Carlos III de Madrid
+%                 
+% Last update Oct 22 2021
+% -------------------------------------------------------------------------
 
-  Compute pre-shock and post-shock state for a planar incident shock wave
-  at standard conditions, a set of 20 species considered and a set of
-  initial shock front velocities (u1) contained in (360, 20000) [m/s]
-    
-  Air == {'O2','N2','O','O3','N','NO','NO2','NO3','N2O','N2O3','N2O4',...
-          'N3','C','CO','CO2','Ar','H2O','H2','H','He'}
-    
-  See wiki or ListSpecies() for more predefined sets of species
-
-  @author: Alberto Cuadra Lara
-         PhD Candidate - Group Fluid Mechanics
-         Universidad Carlos III de Madrid
-                  
-  Last update Oct 22 2021
-%}
 %% INITIALIZE
 self = App('Air_ions');
 %% INITIAL CONDITIONS

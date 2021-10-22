@@ -1,4 +1,4 @@
-function closing(app)
+function postResults(app)
 % Abbreviations ---------------------
 mix1 = app.PS.strR;
 mix2 = app.PS.strP;

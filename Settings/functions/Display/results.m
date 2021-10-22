@@ -1,7 +1,9 @@
-function results(app, i)
-    if ~strcmp(app.PD.ProblemType,'SHOCK_R') 
-        displayresults(app.PS.strR{i},app.PS.strP{i},app.PD.ProblemType,app.C.mintol_display,app.S.LS);
-    else
-        displayresults(app.PS.strR{i},app.PS.str2{i},app.PS.strP{i},app.PD.ProblemType,app.C.mintol_display,app.S.LS); % Display all results SHOCK_R
+function results(self, i)
+    if self.Misc.FLAG_RESULTS
+        if ~strcmp(self.PD.ProblemType,'SHOCK_R') 
+            displayresults(self.PS.strR{i},self.PS.strP{i},self.PD.ProblemType,self.C.mintol_display,self.S.LS);
+        else
+            displayresults(self.PS.strR{i},self.PS.str2{i},self.PS.strP{i},self.PD.ProblemType,self.C.mintol_display,self.S.LS); % Display all results SHOCK_R
+        end
     end
 end

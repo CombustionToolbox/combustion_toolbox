@@ -1,16 +1,16 @@
-function gui_ConsoleValueChanged(app, event)
-    if strcmp('clear', app.Console.Value{1,1})
-        ClearButtonPushed(app, event);
+function gui_ConsoleValueChanged(self, event)
+    if strcmp('clear', self.Console.Value{1,1})
+        ClearButtonPushed(self, event);
         output = ' ';
     else
         try
-            output = evalc(app.Console.Value{1,1});
+            output = evalc(self.Console.Value{1,1});
         catch error
             output = error.message;
         end
     end
-    if ~isempty(output) || strcmp('clc', app.Console.Value{1,1})
-        app.Console_text.Value = output;
+    if ~isempty(output) || strcmp('clc', self.Console.Value{1,1})
+        self.Console_text.Value = output;
     end
-    app.Console.Value = '';
+    self.Console.Value = '';
 end

@@ -32,4 +32,4 @@ self = set_prop(self, 'pP', self.PD.pR.value, 'TP', 3000);
 %% SOLVE PROBLEM
 self = SolveProblem(self, 'TP');
 %% DISPLAY RESULTS (PLOTS)
-closing(self);
+postResults(self);

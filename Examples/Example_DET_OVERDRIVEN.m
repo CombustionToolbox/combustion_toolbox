@@ -1,23 +1,24 @@
-%{
-  EXAMPLE: DET_OVERDRIVEN
+% -------------------------------------------------------------------------
+% EXAMPLE: DET_OVERDRIVEN
+%
+% Compute pre-shock and post-shock state for a planar overdriven detonation
+% considering Chapman-Jouguet (CJ) theory for a stoichiometric CH4-air
+% mixture at standard conditions, a set of 24 species considered and a set
+% of overdrives contained in (1,10) [-].
+%   
+% Soot formation == {'CO2', 'CO', 'H2O', 'H2', 'O2', 'N2', 'He', 'Ar',...
+%                    'HCN','H','OH','O','CN','NH3','CH4','C2H4','CH3',...
+%                    'NO','HCO','NH2','NH','N','CH','Cbgrb'}
+%   
+% See wiki or ListSpecies() for more predefined sets of species
+%
+% @author: Alberto Cuadra Lara
+%          PhD Candidate - Group Fluid Mechanics
+%          Universidad Carlos III de Madrid
+%                 
+% Last update Oct 22 2021
+% -------------------------------------------------------------------------
 
-  Compute pre-shock and post-shock state for a planar overdriven detonation
-  considering Chapman-Jouguet (CJ) theory for a stoichiometric CH4-air
-  mixture at standard conditions, a set of 24 species considered and a set
-  of overdrives contained in (1,10) [-].
-    
-  Soot formation == {'CO2', 'CO', 'H2O', 'H2', 'O2', 'N2', 'He', 'Ar',...
-                     'HCN','H','OH','O','CN','NH3','CH4','C2H4','CH3',...
-                     'NO','HCO','NH2','NH','N','CH','Cbgrb'}
-    
-  See wiki or ListSpecies() for more predefined sets of species
-
-  @author: Alberto Cuadra Lara
-         PhD Candidate - Group Fluid Mechanics
-         Universidad Carlos III de Madrid
-                  
-  Last update Oct 22 2021
-%}
 %% INITIALIZE
 self = App('Soot Formation');
 %% INITIAL CONDITIONS

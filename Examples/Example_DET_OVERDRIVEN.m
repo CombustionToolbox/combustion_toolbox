@@ -34,4 +34,4 @@ self = set_prop(self, 'overdriven', overdriven, 'phi', self.PD.phi.value(1) * on
 %% SOLVE PROBLEM
 self = SolveProblem(self, 'DET_OVERDRIVEN');
 %% DISPLAY RESULTS (PLOTS)
-closing(self);
+postResults(self);

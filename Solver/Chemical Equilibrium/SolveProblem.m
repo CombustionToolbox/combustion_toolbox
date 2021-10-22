@@ -1,4 +1,9 @@
-function self = SolveProblem(self)
+function self = SolveProblem(self, ProblemType)
+% Save Problem Type
+self.PD.ProblemType = ProblemType;
+% Check inputs
+self = check_inputs(self);
+% Get Flags and length of the loop
 self = get_FLAG_N(self);
 self.C.l_phi = length(self.PD.phi.value);
 for i=self.C.l_phi:-1:1
@@ -12,22 +17,6 @@ end
 end
 
 % SUB-PASS FUNCTIONS
-function self = get_FLAG_N(self)
-    % Flag if the number of moles of fuel, oxidant and inert species
-    % is specified. If not, consider 1 mole for the fuel and calculate
-    % the remaining moles from the equivalence relation.
-    if isempty(self.PD.N_Fuel)
-        self.Misc.FLAG_N_Fuel = false;
-    end
-    if isempty(self.PD.N_Oxidizer)
-        self.Misc.FLAG_N_Oxidizer = false;
-    end
-    if isempty(self.PD.N_Inert)
-        self.Misc.FLAG_N_Inert = false;
-    end
-end
-
-
 function self = selectProblem(self, i)
     % Solve selected problem
     switch self.PD.ProblemType

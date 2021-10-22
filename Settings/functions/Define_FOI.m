@@ -11,8 +11,7 @@ end
 self = Define_O(self);
 % DEFINE DILUENTS/INERTS
 if ~self.Misc.FLAG_N_Inert
-    self.PD.proportion_N2_O2 = 79/21;
-    self.PD.N_Inert = self.PD.phi_t/self.PD.phi.value(i) * self.PD.proportion_N2_O2;
+    self.PD.N_Inert = self.PD.phi_t/self.PD.phi.value(i) .* self.PD.proportion_inerts_O2;
 end
 self = Define_I(self);
 % COMPUTE PROPERTIES OF THE REACTIVES FOR THE GIVEN CONDITIONS
@@ -27,9 +26,7 @@ end
 % SUB-PASS FUNCTIONS
 function merged = merged_cells(cells)
     merged = [];
-    for j = 1:length(cells)
-        for i = 1:length(cells{j})
-            merged = [merged, cells{i, j}];
-        end
+    for i = 1:length(cells)
+        merged = [merged, cells{i}];
     end
 end

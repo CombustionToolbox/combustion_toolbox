@@ -31,7 +31,7 @@ This project is also part of the PhD of [Alberto Cuadra-Lara](https://www.acuadr
 The [tutorial](https://github.com/AlbertoCuadra/combustion_toolbox/wiki/Tutorial) will help you get started using Combustion Toolbox on your pc.
 
 ## Examples
-We have several examples of what Combustion Toolbox can do. Here we show some plots obtained from Combustion Toolbox.
+We have several examples of what Combustion Toolbox can do. Here we show some results obtained from Combustion Toolbox and a preview of the upcoming GUI.
 
 <p align="left">
     <img src="https://github.com/AlbertoCuadra/combustion_toolbox/blob/master/Validations/Hugoniot_benchmarking.svg" width="400">

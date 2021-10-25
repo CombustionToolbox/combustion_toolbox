@@ -11,16 +11,16 @@ abstract: |
     This project is also part of the PhD of [Alberto Cuadra-Lara](https://www.acuadralara.com/)."
 authors: 
   -
-    family-names: "Cuadra Lara"
-    given-names: Alberto
+    family-names: "Cuadra"
+    given-names: A
     orcid: "https://orcid.org/0000-0001-8280-2426"
   -
-    family-names: "Huete de Lira"
-    given-names: "César"
+    family-names: "Huete"
+    given-names: C
     orcid: "https://orcid.org/0000-0002-3227-8520"
   -
-    family-names: "Vera Coello"
-    given-names: Marcos
+    family-names: "Vera"
+    given-names: M
     orcid: "https://orcid.org/0000-0001-6878-1788"
 cff-version: "1.1.0"
 keywords: 

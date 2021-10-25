@@ -1,5 +1,6 @@
 # Combustion Toolbox
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.5592828.svg)](https://doi.org/10.5281/zenodo.5592828)
+[![File Exchange](https://www.mathworks.com/matlabcentral/images/matlab-file-exchange.svg)](https://es.mathworks.com/matlabcentral/fileexchange/101088-combustion-toolbox)
 ![repo size](https://img.shields.io/github/repo-size/AlbertoCuadra/combustion_toolbox)
 ![last modified](https://img.shields.io/github/last-commit/AlbertoCuadra/combustion_toolbox)
 ![license](https://img.shields.io/github/license/AlbertoCuadra/combustion_toolbox)

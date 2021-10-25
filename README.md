@@ -1,5 +1,8 @@
 # Combustion Toolbox
-[![DOI](https://zenodo.org/badge/214183123.svg)](https://doi.org/10.5281/zenodo.5554911)  ![repo size](https://img.shields.io/github/repo-size/AlbertoCuadra/combustion_toolbox) ![last modified](https://img.shields.io/github/last-commit/AlbertoCuadra/combustion_toolbox) ![license](https://img.shields.io/github/license/AlbertoCuadra/combustion_toolbox)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.5592828.svg)](https://doi.org/10.5281/zenodo.5592828)
+![repo size](https://img.shields.io/github/repo-size/AlbertoCuadra/combustion_toolbox)
+![last modified](https://img.shields.io/github/last-commit/AlbertoCuadra/combustion_toolbox)
+![license](https://img.shields.io/github/license/AlbertoCuadra/combustion_toolbox)
 
 A MATLAB-GUI based open-source tool for solving combustion problems.
 

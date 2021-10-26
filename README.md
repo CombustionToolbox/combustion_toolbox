@@ -67,7 +67,7 @@ Thank you for testing Combustion Toolbox!
 
 ## Developers
 
-* **[Alberto Cuadra-Lara](https://acuadralara.com/)** - *Main Developer and App designer*
+* **[Alberto Cuadra-Lara](https://acuadralara.com/)** - *Core Developer and App designer*
 * **César Huete** - *Developer*
 * **Marcos Vera** - *Developer*
 

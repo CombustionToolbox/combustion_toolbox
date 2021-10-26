@@ -54,7 +54,7 @@ function [P, T, M1, M2, R, Q] = body_guess_cj(self, N_2, LS, gamma, DeltaQ, over
     % Compute heat release - molar base [J/kg_mixture]
     q = q_molar * Yi_fuel / W_fuel;
     % Compute dimensionless heat release | with correction
-    Q = (gamma^2 - 1) / (2*a1^2) * q + DeltaQ; 
+    Q = abs((gamma^2 - 1) / (2*a1^2) * q + DeltaQ); 
     % Compute minimum upstream Mach number (CJ condition)
     Mcj = sqrt(1 + Q) + sqrt(Q);
     % Compute jump relations and upstream Mach number (M1 >= Mcj)

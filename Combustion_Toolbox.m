@@ -1,5 +1,5 @@
 % -------------------------------------------------------------------------
-% COMBUSTION TOOLBOX @v0.3.72
+% COMBUSTION TOOLBOX @v0.3.74
 % A MATLAB-GUI based open-source tool for solving combustion problems.
 %
 % Type of problems:
@@ -18,10 +18,10 @@
 % LIST OF TUTORIAL SCRIPTS:
 %   * Example_TP
 %   * Example_HP
-%   * Example_SP
+%   * Example_SP (not yet)
 %   * Example_TV
 %   * Example_EV
-%   * Example_SV
+%   * Example_SV (not yet)
 %   * Example_SHOCK_I
 %   * Example_SHOCK_I_IONIZATION
 %   * Example_SHOCK_R

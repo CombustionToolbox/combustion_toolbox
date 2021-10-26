@@ -5,12 +5,12 @@ if ~self.Misc.FLAG_N_Fuel
 end
 self = Define_F(self);
 % DEFINE OXIDIZER
-if ~self.Misc.FLAG_N_Oxidizer
+if ~self.Misc.FLAG_N_Oxidizer && ~isempty(self.PD.S_Oxidizer)
     self.PD.N_Oxidizer = self.PD.phi_t/self.PD.phi.value(i);
 end
 self = Define_O(self);
 % DEFINE DILUENTS/INERTS
-if ~self.Misc.FLAG_N_Inert
+if ~self.Misc.FLAG_N_Inert && ~isempty(self.PD.S_Inert)
     self.PD.N_Inert = self.PD.phi_t/self.PD.phi.value(i) .* self.PD.proportion_inerts_O2;
 end
 self = Define_I(self);

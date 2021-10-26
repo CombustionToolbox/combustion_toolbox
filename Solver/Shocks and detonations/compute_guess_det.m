@@ -16,7 +16,7 @@ function [P, T, M1, R, Q, STOP] = compute_guess_det(self, str1, phi, overdriven)
     LS = self.S.LS;
     W1 = str1.W;
     lambda = 2 - sqrt(1 + M2^2);
-    
+    P = P/3; T = T/3; % complete reaction gives too high values
     it = 0; STOP = 1;
     while STOP > self.TN.tol_shocks && it < itMax
         it = it + 1;

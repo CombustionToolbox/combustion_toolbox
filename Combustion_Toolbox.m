@@ -28,7 +28,7 @@
 %   * Example_DET
 %   * Example_DET_OVERDRIVEN
 %
-% Please send feedback or inquiries to acuadra@ing.uc3m.es
+% Please to send feedback or inquiries run uifeedback
 % Thank you for testing Combustion Toolbox!
 %
 % @author: Alberto Cuadra Lara

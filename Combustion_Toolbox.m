@@ -1,5 +1,5 @@
 % -------------------------------------------------------------------------
-% COMBUSTION TOOLBOX @v0.3.74
+% COMBUSTION TOOLBOX @v0.3.75
 % A MATLAB-GUI based open-source tool for solving combustion problems.
 %
 % Type of problems:
@@ -28,14 +28,14 @@
 %   * Example_DET
 %   * Example_DET_OVERDRIVEN
 %
-% Please send feedback or inquiries to acuadra@ing.uc3m.es
+% Please to send feedback or inquiries run uifeedback
 % Thank you for testing Combustion Toolbox!
 %
 % @author: Alberto Cuadra Lara
 %          PhD Candidate - Group Fluid Mechanics
 %          Universidad Carlos III de Madrid
 %                  
-% Last update Oct 22 2021
+% Last update Oct 26 2021
 % -------------------------------------------------------------------------
 help Combustion_Toolbox.m
 

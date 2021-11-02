@@ -5,7 +5,7 @@
 ![last modified](https://img.shields.io/github/last-commit/AlbertoCuadra/combustion_toolbox)
 ![license](https://img.shields.io/github/license/AlbertoCuadra/combustion_toolbox)
 
-A MATLAB-GUI based open-source tool for solving gaseous combustion problems.
+A MATLAB-GUI based open-source thermochemistry tool for solving gaseous combustion problems.
 
 <!-- Website: https://combustiontoolbox.netlify.app/ -->
 :top: There is also a (less complete) [Python version](https://github.com/AlbertoCuadra/Combustion-PyToolbox)

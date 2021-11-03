@@ -9,7 +9,7 @@ function app = App(varargin)
     app.PS = ProblemSolution();
     app.TN = TunningProperties();
     app = constructor(app, LS, FLAG_FAST);
-    if ~nargin || ~isa(varargin{1,1}, 'combustion_toolbox_app') || ~isa(varargin{1,1}, 'combustion_toolbox_app_develop') || ~isa(varargin{1,1}, 'combustion_toolbox_app_original') || ~strcmpi(varargin{1,1}, 'fast')
+    if ~nargin || ~isa(varargin{1,1}, 'combustion_toolbox_app') || ~isa(varargin{1,1}, 'combustion_toolbox_app_develop') || ~isa(varargin{1,1}, 'combustion_toolbox_app_original') || (~strcmpi(varargin{1,1}, 'fast') && nargin < 4) 
         app = Initialize(app);
     end
 end

@@ -3,12 +3,16 @@ function obj = gui_CalculateButtonPushed(obj)
     % predefined plots.
     try
         % Initialize
-        app = App('Soot formation');
+        app = App('fast', obj.DB_master, obj.DB, 'Soot formation');
         % Get initial conditions
         app = get_input_constrains(obj, app);
         app = get_current_reactants_gui(obj, app);
         % Solve selected problem
         app = SolveProblem(app, app.PD.ProblemType);
+        % Save results
+%         results = save_results(obj, app);
+        % Update GUI
+        
         % Display results (plots)
         postResults(app);
     catch ME
@@ -20,6 +24,21 @@ function obj = gui_CalculateButtonPushed(obj)
 end
 
 % SUB-PASS FUNCTIONS
+function results = save_results(obj, app)
+    results.strR = app.PS.strR{i};
+    results.strP = app.PS.strP{i};
+    results(i).numberProblemType = obj.NPT;
+    results(i).numberReactants = obj.NR;
+    results(i).CompleteOrIncomplete = obj.Reaction.Items{obj.selected_Reaction};
+    results(i).reaction = obj.Reaction.Value;
+    results(i).data_P = obj.data_P{i};
+    results(i).data_R = obj.data_R;
+    results(i).F = obj.FuelEditField.Value;
+    results(i).OF = obj.OFEditField.Value;
+    results(i).phi = obj.PD.phi.value(i);
+    results(i).NameSpecies = obj.S.LS;
+end
+
 function app = get_input_constrains(obj, app)
     [app.PD.TR.value, app.FLAG_PR1] = gui_get_prop(obj, 'TR', obj.PR1.Value);
     [app.PD.pR.value, app.FLAG_PR2] = gui_get_prop(obj, 'pR', obj.PR2.Value);

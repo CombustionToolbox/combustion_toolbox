@@ -1,87 +1,185 @@
-function gui_ReactantsValueChanged(self, event)
-    % Update reactants & GUI
-    self = gui_update_Reactants(self, event);
-    % Update equivalence ratio 
-    self.edit_phi2.Value = self.edit_phi.Value;
+function gui_ReactantsValueChanged(obj, event)
+    % Update values of the UITable items:
+    % 1. with a given predefined set of reactants
+    % 2. with the new species added in the finder
+    try
+        % Initialize app (fast: transfer DB)
+        app = App('fast', obj.DB_master, obj.DB);
+        % Update reactants & GUI
+        obj = gui_update_Reactants(obj, event, app);
+        % Update equivalence ratio 
+        obj.edit_phi2.Value = obj.edit_phi.Value;
+    catch ME
+      errorMessage = sprintf('Error in function %s() at line %d.\n\nError Message:\n%s', ...
+      ME.stack(1).name, ME.stack(1).line, ME.message);
+      fprintf('%s\n', errorMessage);
+      uiwait(warndlg(errorMessage));
+    end
 end
 
 % SUB-PASS FUNCTIONS
-function self = gui_update_Reactants(self, event)
+function obj = gui_update_Reactants(obj, event, app)
     FLAG_IDEAL_AIR = true;
-    % Get temperature of the mixture
-    T = sscanf(self.PR1.Value, '%f');
-    switch self.Reactants.Value
-        case '1' % No species selected
-            gui_empty_Reactants(self);
-            return
-        case '2' % AIR
-            FLAG_FUEL = false;
-            phi_ratio = 1;
-            [~, ~, Data] = compute_reactants(phi_ratio, T, FLAG_IDEAL_AIR, FLAG_FUEL);
-            self.UITable_R.Data = Data;
-        case '3' % METHANE + AIR
-            FLAG_FUEL = true;
-            phi_ratio = 2;
-            [Ni, Xi, Data] = compute_reactants(phi_ratio, T, FLAG_IDEAL_AIR, FLAG_FUEL);
-            self.UITable_R.Data = [Data; {'CH4', Ni(3), Xi(3), 'Fuel', T}];
+    if strcmp(obj.Reactants.Value, '1') % No species selected
+        gui_empty_Reactants(obj);
+        return
+    end
+    % Default value of equivalence ratio is 1
+    % Set species in the mixture
+    switch obj.Reactants.Value
+        case '2' % Air
+            app = set_air(app, FLAG_IDEAL_AIR);
+        case '3' % Methane + Air
+            app = set_air(app, FLAG_IDEAL_AIR);
+            app.PD.S_Fuel = {'CH4'};
+        case '4' % Ethane + Air
+            app = set_air(app, FLAG_IDEAL_AIR);
+            app.PD.S_Fuel = {'C2H6'};
+        case '5' % Propane + Air
+            app = set_air(app, FLAG_IDEAL_AIR);
+            app.PD.S_Fuel = {'C3H8'};
+        case '6' % Acetylene + Air
+            app = set_air(app, FLAG_IDEAL_AIR);
+            app.PD.S_Fuel = {'C2H2_acetylene'};
+        case '7' % Ethylene + Air
+            app = set_air(app, FLAG_IDEAL_AIR);
+            app.PD.S_Fuel = {'C2H4'};
+        case '8' % Bencene + Air
+            app = set_air(app, FLAG_IDEAL_AIR);
+            app.PD.S_Fuel = {'C6H6'};
+        case '9' % Iso-octane + Air
+            app = set_air(app, FLAG_IDEAL_AIR);
+            app.PD.S_Fuel = {'C8H18_isooctane'};
+        case '10' % Hydrogen + Air
+            app = set_air(app, FLAG_IDEAL_AIR);
+            app.PD.S_Fuel = {'H2'};
+        case '11' % Carbon monoxide + Air
+            app = set_air(app, FLAG_IDEAL_AIR);
+            app.PD.S_Fuel = {'CO'};
+        case '12' % Methanol + Air
+            app = set_air(app, FLAG_IDEAL_AIR);
+            app.PD.S_Fuel = {'CH3OH'};
+        case '13' % Ethanol + Air
+            app = set_air(app, FLAG_IDEAL_AIR);
+            app.PD.S_Fuel = {'C2H5OH'};
+        case '14' % Natural Gas + Air
+            app = set_air(app, FLAG_IDEAL_AIR);
+            app.PD.S_Fuel = {'CH4','C2H6','C3H8'};
+            app.PD.N_Fuel = [0.85, 0.1, 0.05];
+        case '15' % Syngas + Air
+            app = set_air(app, FLAG_IDEAL_AIR);
+            app.PD.S_Fuel = {'CO','H2'};  
+            app.PD.N_Fuel = [0.5, 0.5];
         otherwise % SET NEW SPECIES
             try
-                species = seeker_species(self, event);
+                species = gui_seeker_species(obj, event);
             catch
                 message = {'Species not found.'};
-                uialert(self.UIFigure, message, 'Warning', 'Icon', 'warning');
+                uialert(obj.UIFigure, message, 'Warning', 'Icon', 'warning');
                 return
             end
-            % Add species to the table
-            self.UITable_R.Data = [self.UITable_R.Data;{species, 0, 0, 'Fuel', T}];
+            % Get data of the current mixture
+            if ~isempty(obj.UITable_R.Data)
+                obj = gui_get_typeSpecies(obj);
+                % Set current mixture
+                current_species = obj.UITable_R.Data(:, 1);
+                current_moles = obj.UITable_R.Data(:, 2);
+                app = get_current_state_gui(obj, app, current_species, current_moles);
+            end
+            % Add new species to the mixture (fuel by default)
+            app.PD.S_Fuel = [app.PD.S_Fuel, {species}];
+            app.PD.N_Fuel = [app.PD.N_Fuel, 0];
     end
-    self.UITable_P.Data = self.UITable_R.Data(:, 1);    % Update UITable_P  (species, numer of moles, mole fractions, temperature)
-    self.UITable_R2.Data = self.UITable_R.Data(:, 1:3); % Update UITable_R2 (species, numer of moles, mole fractions)
-    % Find if there are fuels in the mixture to compute the equivalence ratio
-    self = gui_get_typeSpecies(self);
-    % Compute equivalence ratio
-    
+    % Compute properties of the mixture
+    [obj, app] = gui_compute_propReactants(obj, app);
+    % Update UITable classes
+    obj = gui_update_UITable_R(obj, app);
+    obj.UITable_P.Data = obj.UITable_R.Data(:, 1);    % (species, numer of moles, mole fractions, temperature)
+    obj.UITable_R2.Data = obj.UITable_R.Data(:, 1:3); % (species, numer of moles, mole fractions)
 end
 
-function self = gui_empty_Reactants(self)
-    self.UITable_R.Data  = [];
-    self.UITable_P.Data  = [];
-    self.UITable_R2.Data = [];
+% SUB-PASS FUNCTIONS
+function app = get_current_state_gui(obj, app, species, moles)
+    % Get the species and the number of moles of the current data in
+    % UITable_R
+    app = get_current_species_gui(obj, app, species, moles, 'S_Fuel', 'N_Fuel', 'ind_Fuel');
+    app = get_current_species_gui(obj, app, species, moles, 'S_Oxidizer', 'N_Oxidizer', 'ind_Oxidizer');
+    app = get_current_species_gui(obj, app, species, moles, 'S_Inert', 'N_Inert', 'ind_Inert');
 end
 
-function species = seeker_species(self, event)
-    seekSpecies = event.Value;
-    listSpecies = self.S.LS_DB;
-    index = 0;
-    seekIndex = false;
-    while ~seekIndex
-        index = index + 1;
-        seekIndex = startsWith(listSpecies{index}, seekSpecies, 'IgnoreCase', false);
+function app = get_current_species_gui(obj, app, species, moles, species_name, moles_name, ind_name)
+    % Get the species and the number of moles of the current data in
+    % UITable_R for a given category (Fuel, Oxidizer, Inert)
+    app.PD.(species_name) = species(obj.(ind_name))';
+    try
+        app.PD.(moles_name) = cell2vector(moles(obj.(ind_name)));
+    catch 
+        app.PD.(moles_name) = [];
     end
-    if index
-        species = listSpecies{index}; % Species found in the Database
+end
+
+function obj = gui_update_UITable_R(obj, app)
+    % Update data in the UITable_R with the next order: Inert -> Oxidizer -> Fuel
+    species = [app.PD.S_Inert, app.PD.S_Oxidizer, app.PD.S_Fuel];
+    Nspecies = length(species); 
+    if isempty(app.PD.S_Fuel)
+        app.PD.N_Fuel = []; % Set to 1 by default
+    end
+    moles = [app.PD.N_Inert, app.PD.N_Oxidizer, app.PD.N_Fuel];
+    molar_fraction = moles/sum(moles); % It is easier to recompute
+    typeSpecies = get_typeSpecies(app);
+    temperature =  create_cell_ntimes(app.PD.TR.value, Nspecies);
+    obj.UITable_R.Data = [species; vector2cell(moles); vector2cell(molar_fraction); typeSpecies; temperature]';
+end
+
+function C = vector2cell(value)
+    % Create cell array from vector
+    for i=length(value):-1:1
+        C(i) = {value(i)};
+    end
+end
+
+function C = create_cell_ntimes(varargin)
+    % Create cell array with the same string n-times
+    if nargin > 2
+        value = varargin{1};
+        C = varargin{3};
+    elseif nargin > 1
+        value = varargin{1};
+        n = varargin{2};
+        C = cell(1, n);
     else
-        species = []; % Species not found in the Database
+        error('Error sub-pass fuinction @create_cell_ntimes inside @guiReactantsValueChanged');
     end
+    % Set value
+    C(:) = {value};
 end
 
-function [Ni, Xi, Data] = compute_reactants(phi_ratio, Temperature, FLAG_IDEAL_AIR, FLAG_FUEL)
-    Ni = compute_N_air(phi_ratio, FLAG_IDEAL_AIR);
-    if FLAG_FUEL
-        Ni = [Ni, 1];
-    end
-    Xi = Ni / sum(Ni);
+function typeSpecies = get_typeSpecies(app)
+    % Create cell array with the type of species in the mixture
+    typeFuel     = create_cell_ntimes('Fuel', length(app.PD.N_Fuel));
+    typeOxidizer = create_cell_ntimes('Oxidizer', length(app.PD.N_Oxidizer));
+    typeInert    = create_cell_ntimes('Inert', length(app.PD.N_Inert));
+    typeSpecies  = [typeInert, typeOxidizer, typeFuel];
+end
+
+function app = set_air(app, FLAG_IDEAL_AIR)
+    % Incluide air in the mixture
     if FLAG_IDEAL_AIR
-        Data = {'N2', Ni(1), Xi(1), 'Inert', Temperature; 'O2', Ni(2), Xi(2), 'Oxidant', Temperature};
+        app.PD.S_Oxidizer = {'O2'};
+        app.PD.S_Inert = {'N2'};
+        app.PD.proportion_inerts_O2 = 79/21;
     else
-        Data = {'N2', Ni(1), Xi(1), 'Inert', Temperature; 'O2', Ni(2), Xi(2), 'Oxidant', Temperature; 'Ar', Ni(3), Xi(3), 'Inert', Temperature; 'CO2', Ni(4), Xi(4), 'Oxidant', Temperature};
+        app.PD.S_Oxidizer = {'O2'};
+        app.PD.S_Inert = {'N2', 'Ar', 'CO2'};
+        app.PD.proportion_inerts_O2 = [78.084, 0.9365, 0.0319] ./ 20.9476;
     end
 end
 
-function Ni_air = compute_N_air(phi_ratio, FLAG_IDEAL_AIR)
-    if FLAG_IDEAL_AIR
-        Ni_air = [phi_ratio * 0.79/0.21, phi_ratio];
-    else
-        Ni_air = [phi_ratio * 0.78084/0.209476, phi_ratio, phi_ratio * 0.009365/0.209476, phi_ratio * 0.009365/0.209476];
-    end
+function obj = gui_empty_Reactants(obj)
+    % Clear data UITables and set to default the value of the equivalence ratio (-)
+    obj.UITable_R.Data  = [];
+    obj.UITable_P.Data  = [];
+    obj.UITable_R2.Data = [];
+    obj.edit_phi.Value = '-';
 end

@@ -7,7 +7,14 @@ S = app.S;
 C = app.C;
 TN = app.TN;
 % -----------------------------------
-
+% Set List of Species to List of Products
+C.A0.value = C.A0.value(self.Misc.index_LS_original, :);
+C.M0.value = C.M0.value(self.Misc.index_LS_original, :);
+C.N0.value = C.N0.value(self.Misc.index_LS_original, :);
+S.ind_nswt = intersect(S.ind_nswt, self.Misc.index_LS_original);
+S.ind_swt = intersect(S.ind_swt, self.Misc.index_LS_original);
+S.ind_cryogenic = intersect(S.ind_cryogenic, self.Misc.index_LS_original);
+% -----------------------------------
 N0 = C.N0.value;
 A0 = C.A0.value;
 R0TP = C.R0 * TP; % [J/(mol)]

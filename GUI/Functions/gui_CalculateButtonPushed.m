@@ -44,7 +44,6 @@ function results = save_results(obj, app)
     results.mix2 = app.PS.strP;
     results.ProblemType = obj.ProblemType.Value;
     results.reaction = obj.Reaction.Value;
-    results.CompleteOrIncomplete = obj.Reaction.Items{obj.Reaction.Value};
     results.LS = obj.LS;
     results.LS_products = obj.LS_products;
     % 2. Save results in the UITree 

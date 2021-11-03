@@ -1,15 +1,29 @@
 function self = Initialize(self)
-    % Check if minors products species are contained in DB
-    [self.DB, self.E, self.S, self.C] = check_DB(self, self.DB_master, self.DB);
-    % Sort species: first gaseous species, secondly condensed species
-    self = list_phase_species(self, self.S.LS);
-    % Stoichiometric Matrix
-    self = Stoich_Matrix(self);
+    % 1. Check that all species are contained in the DataBase
+    % 2. Establish cataloged list of species according to the state of the 
+    %    phase (gaseous or condensed). It also obtains the indices of 
+    %    cryogenic liquid species, e.g., liquified gases. 
+    % 3. Compute Stoichiometric Matrix
+    try
+        % Check if minors products species are contained in DB
+        [self.DB, self.E, self.S, self.C] = check_DB(self, self.DB_master, self.DB);
+        % Sort species: first gaseous species, secondly condensed species
+        self = list_phase_species(self, self.S.LS);
+        % Stoichiometric Matrix
+        self = Stoich_Matrix(self);
+    catch ME
+      errorMessage = sprintf('Error in function %s() at line %d.\n\nError Message:\n%s', ...
+      ME.stack(1).name, ME.stack(1).line, ME.message);
+      fprintf('%s\n', errorMessage);
+      uiwait(warndlg(errorMessage));
+    end
 end
 
-
-%% SUB-PASS FUNCTIONS
+% SUB-PASS FUNCTIONS
 function self = list_phase_species(self, LS)
+    % Establish cataloged list of species according to the state of the 
+    % phase (gaseous or condensed). It also obtains the indices of 
+    % cryogenic liquid species, e.g., liquified gases.
     for ind=1:length(LS)
         Species = LS{ind};
         if ~self.DB.(Species).swtCondensed
@@ -31,8 +45,9 @@ end
 
 
 function self = Stoich_Matrix(self)
-    self.C.A0.value = zeros(self.S.NS,self.E.NE);
-    self.C.M0.value = zeros(self.S.NS,12);
+    % Create stoichiometric matrix
+    self.C.A0.value = zeros(self.S.NS, self.E.NE);
+    self.C.M0.value = zeros(self.S.NS, 12);
     for i=1:self.S.NS
         txFormula = self.DB.(self.S.LS{i}).txFormula;
         self.DB.(self.S.LS{i}).Element_matrix = set_element_matrix(txFormula,self.E.elements);

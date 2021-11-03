@@ -2,17 +2,19 @@ function obj = gui_CalculateButtonPushed(obj)
     % Solve selected problem, update GUI with the results and generate
     % predefined plots.
     try
-        % Initialize
-        app = App('fast', obj.DB_master, obj.DB, 'Soot formation');
+        % Get List of Species considered (reactants + products)
+        obj = get_listSpecies_gui(obj);
+        % Initialize variable app
+        app = App('fast', obj.DB_master, obj.DB, obj.LS);
         % Get initial conditions
         app = get_input_constrains(obj, app);
         app = get_current_reactants_gui(obj, app);
         % Solve selected problem
         app = SolveProblem(app, app.PD.ProblemType);
         % Save results
-%         results = save_results(obj, app);
-        % Update GUI
-        
+        results = save_results(obj, app);
+        % Update GUI with the last results of the set
+        obj = update_results_gui(obj, results);
         % Display results (plots)
         postResults(app);
     catch ME
@@ -24,19 +26,28 @@ function obj = gui_CalculateButtonPushed(obj)
 end
 
 % SUB-PASS FUNCTIONS
+function obj = update_results_gui(obj, app)
+    % Update GUI with the results computed
+end
+
+function obj = get_listSpecies_gui(obj)
+    obj.LS = obj.listbox_LS.Value;
+    if isempty(obj.LS)
+        % Get default value
+        obj.LS = 'HC/02/N2 EXTENDED';
+    end
+end
 function results = save_results(obj, app)
-    results.strR = app.PS.strR{i};
-    results.strP = app.PS.strP{i};
-    results(i).numberProblemType = obj.NPT;
-    results(i).numberReactants = obj.NR;
-    results(i).CompleteOrIncomplete = obj.Reaction.Items{obj.selected_Reaction};
-    results(i).reaction = obj.Reaction.Value;
-    results(i).data_P = obj.data_P{i};
-    results(i).data_R = obj.data_R;
-    results(i).F = obj.FuelEditField.Value;
-    results(i).OF = obj.OFEditField.Value;
-    results(i).phi = obj.PD.phi.value(i);
-    results(i).NameSpecies = obj.S.LS;
+    % Save results in the UITree
+    % 1. Save data 
+    results.mix1 = app.PS.strR;
+    results.mix2 = app.PS.strP;
+    results.ProblemType = obj.ProblemType.Value;
+    results.reaction = obj.Reaction.Value;
+    results.CompleteOrIncomplete = obj.Reaction.Items{obj.Reaction.Value};
+    results.LS = obj.LS;
+    results.LS_products = obj.LS_products;
+    % 2. Save results in the UITree 
 end
 
 function app = get_input_constrains(obj, app)

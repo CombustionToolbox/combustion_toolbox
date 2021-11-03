@@ -1,19 +1,26 @@
 function self = SolveProblem(self, ProblemType)
-% Save Problem Type
-self.PD.ProblemType = ProblemType;
-% Check inputs
-self = check_inputs(self);
-% Get Flags and length of the loop
-self = get_FLAG_N(self);
-self.C.l_phi = length(self.PD.phi.value);
-for i=self.C.l_phi:-1:1
-    % COMPUTE PROPERTIES INITIAL MIXTURE
-    self = Define_FOI(self, i);
-    % SOLVE SELECTED PROBLEM
-    self = selectProblem(self, i);
-    % DISPLAY RESULTS COMMAND WINDOW
-    results(self, i);
-end
+    try
+        % Save Problem Type
+        self.PD.ProblemType = ProblemType;
+        % Check inputs
+        self = check_inputs(self);
+        % Get Flags and length of the loop
+        self = get_FLAG_N(self);
+        self.C.l_phi = length(self.PD.phi.value);
+        for i=self.C.l_phi:-1:1
+            % COMPUTE PROPERTIES INITIAL MIXTURE
+            self = Define_FOI(self, i);
+            % SOLVE SELECTED PROBLEM
+            self = selectProblem(self, i);
+            % DISPLAY RESULTS COMMAND WINDOW
+            results(self, i);
+        end
+    catch ME
+        errorMessage = sprintf('Error in function %s() at line %d.\n\nError Message:\n%s', ...
+                               ME.stack(1).name, ME.stack(1).line, ME.message);
+        fprintf('%s\n', errorMessage);
+        uiwait(warndlg(errorMessage));
+    end
 end
 
 % SUB-PASS FUNCTIONS

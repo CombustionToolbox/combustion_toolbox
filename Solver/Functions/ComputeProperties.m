@@ -110,8 +110,9 @@ mix.sound = sqrt(mix.gamma*p*1e5/mix.rho);
 % Correction of: cP, cV, gamma and speed of sound as consequence of the
 % chemical reaction
 if isfield(self, 'dNi_T')
-    H0_j = (SpeciesMatrix(:, 2) + SpeciesMatrix(:, 3)) * 1e3;
-    mix.cP_r = sum(H0_j/T .* self.dNi_T);
+    ind = SpeciesMatrix(:, 1) > 0;
+    H0_j = (SpeciesMatrix(ind, 2) + SpeciesMatrix(ind, 3)) * 1e3;
+    mix.cP_r = sum(H0_j/T .* self.dNi_T(ind));
     mix.cP = mix.cP + mix.cP_r;
     mix.dVdT_p =  1 + self.dN_T;
     mix.dVdp_T = -1 + self.dN_P;

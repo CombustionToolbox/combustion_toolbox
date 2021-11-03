@@ -1,24 +1,20 @@
 function mix2 = equilibrate(varargin)
-    try
-        self = varargin{1};
-        mix1 = get_struct(varargin, 2);
-        pP = varargin{3};
-        if nargin == 4, mix2 = get_struct(varargin, 4); else, mix2 = []; end
-        % get attribute xx of the specified transformations
-        attr_name = get_attr_name(self);
-        % compute initial guess
-        guess = get_guess(self, mix1, pP, attr_name, mix2);
-        % root finding: find the value x that satisfies f(x) = mix2.xx(x) - mix1.xx = 0
-        [x, ERR] = root_finding(self, mix1, pP, attr_name, guess);
-        % compute properties
-        mix2 = equilibrate_T(self, mix1, pP, x);
-        % check convergence in case the problemType is TP (defined Temperature and Pressure)
-        print_convergence(mix2.error_moles, self.TN.tolN, mix2.error_moles_ions, self.TN.tol_pi_e, self.PD.ProblemType)
-        % save error - root finding
-        mix2.error_problem = ERR;
-    catch
-        error("An exception occurred: error Equilibrate.m")
-    end
+    self = varargin{1};
+    mix1 = get_struct(varargin, 2);
+    pP = varargin{3};
+    if nargin == 4, mix2 = get_struct(varargin, 4); else, mix2 = []; end
+    % get attribute xx of the specified transformations
+    attr_name = get_attr_name(self);
+    % compute initial guess
+    guess = get_guess(self, mix1, pP, attr_name, mix2);
+    % root finding: find the value x that satisfies f(x) = mix2.xx(x) - mix1.xx = 0
+    [x, ERR] = root_finding(self, mix1, pP, attr_name, guess);
+    % compute properties
+    mix2 = equilibrate_T(self, mix1, pP, x);
+    % check convergence in case the problemType is TP (defined Temperature and Pressure)
+    print_convergence(mix2.error_moles, self.TN.tolN, mix2.error_moles_ions, self.TN.tol_pi_e, self.PD.ProblemType)
+    % save error - root finding
+    mix2.error_problem = ERR;
 end
 
 %%% SUB-PASS FUNCTIONS

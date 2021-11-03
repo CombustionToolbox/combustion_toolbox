@@ -8,6 +8,8 @@ end
 % SUB-PASS FUNCTIONS
 function self = gui_update_Reactants(self, event)
     FLAG_IDEAL_AIR = true;
+    % Get temperature of the mixture
+    T = sscanf(self.PR1.Value, '%f');
     switch self.Reactants.Value
         case '1' % No species selected
             gui_empty_Reactants(self);
@@ -15,29 +17,30 @@ function self = gui_update_Reactants(self, event)
         case '2' % AIR
             FLAG_FUEL = false;
             phi_ratio = 1;
-            [~, ~, Data] = compute_reactants(phi_ratio, FLAG_IDEAL_AIR, FLAG_FUEL);
+            [~, ~, Data] = compute_reactants(phi_ratio, T, FLAG_IDEAL_AIR, FLAG_FUEL);
             self.UITable_R.Data = Data;
         case '3' % METHANE + AIR
             FLAG_FUEL = true;
             phi_ratio = 2;
-            [Ni, Xi, Data] = compute_reactants(phi_ratio, FLAG_IDEAL_AIR, FLAG_FUEL);
-            self.UITable_R.Data = [Data; {'CH4', Ni(3), Xi(3), 'Fuel'}];
+            [Ni, Xi, Data] = compute_reactants(phi_ratio, T, FLAG_IDEAL_AIR, FLAG_FUEL);
+            self.UITable_R.Data = [Data; {'CH4', Ni(3), Xi(3), 'Fuel', T}];
         otherwise % SET NEW SPECIES
             try
                 species = seeker_species(self, event);
             catch
                 message = {'Species not found.'};
                 uialert(self.UIFigure, message, 'Warning', 'Icon', 'warning');
-                
-                gui_empty_Reactants(self);
                 return
             end
-            self.UITable_R.Data = {species, 0, 0, 'Fuel'};
+            % Add species to the table
+            self.UITable_R.Data = [self.UITable_R.Data;{species, 0, 0, 'Fuel', T}];
     end
     self.UITable_P.Data = self.UITable_R.Data(:, 1);    % Update UITable_P  (species, numer of moles, mole fractions, temperature)
     self.UITable_R2.Data = self.UITable_R.Data(:, 1:3); % Update UITable_R2 (species, numer of moles, mole fractions)
-    % Get temperature of the mixture
-    self.UITable_R.Data(:, 5) = {sscanf(self.PR1.Value, '%f')};
+    % Find if there are fuels in the mixture to compute the equivalence ratio
+    self = gui_get_typeSpecies(self);
+    % Compute equivalence ratio
+    
 end
 
 function self = gui_empty_Reactants(self)
@@ -62,16 +65,16 @@ function species = seeker_species(self, event)
     end
 end
 
-function [Ni, Xi, Data] = compute_reactants(phi_ratio, FLAG_IDEAL_AIR, FLAG_FUEL)
+function [Ni, Xi, Data] = compute_reactants(phi_ratio, Temperature, FLAG_IDEAL_AIR, FLAG_FUEL)
     Ni = compute_N_air(phi_ratio, FLAG_IDEAL_AIR);
     if FLAG_FUEL
         Ni = [Ni, 1];
     end
     Xi = Ni / sum(Ni);
     if FLAG_IDEAL_AIR
-        Data = {'N2', Ni(1), Xi(1), 'Inert'; 'O2', Ni(2), Xi(2), 'Oxidant'};
+        Data = {'N2', Ni(1), Xi(1), 'Inert', Temperature; 'O2', Ni(2), Xi(2), 'Oxidant', Temperature};
     else
-        Data = {'N2', Ni(1), Xi(1), 'Inert'; 'O2', Ni(2), Xi(2), 'Oxidant'; 'Ar', Ni(3), Xi(3), 'Inert'; 'CO2', Ni(4), Xi(4), 'Oxidant'};
+        Data = {'N2', Ni(1), Xi(1), 'Inert', Temperature; 'O2', Ni(2), Xi(2), 'Oxidant', Temperature; 'Ar', Ni(3), Xi(3), 'Inert', Temperature; 'CO2', Ni(4), Xi(4), 'Oxidant', Temperature};
     end
 end
 

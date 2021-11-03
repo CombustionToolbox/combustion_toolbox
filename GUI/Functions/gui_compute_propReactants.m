@@ -24,9 +24,12 @@ function [obj, app] = gui_compute_propReactants(obj, app)
         obj.edit_OF.Value = 1/app.PS.strR{1}.FO;
         obj.edit_F.Value = app.PS.strR{1}.percentage_Fuel;
     else
+        app.PS.strR{1}.percentage_Fuel = 0;
+        app.PS.strR{1}.OF = 0;
+        app.PS.strR{1}.phi = '-';
         % Update GUI
-        obj.edit_phi.Value = '-';
-        obj.edit_OF.Value = 0;
-        obj.edit_F.Value = 0;
+        obj.edit_phi.Value = app.PS.strR{1}.phi;
+        obj.edit_OF.Value = app.PS.strR{1}.OF;
+        obj.edit_F.Value = app.PS.strR{1}.percentage_Fuel;
     end
 end

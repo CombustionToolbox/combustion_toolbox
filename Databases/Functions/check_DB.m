@@ -1,5 +1,5 @@
 function [strThProp,E,S,C] = check_DB(varargin)
-%% CHECK THAT SPECIES ARE IN DATABASE 
+% CHECK THAT SPECIES ARE IN DATABASE 
 
 if nargin == 3
     self = varargin{1}; strMaster = varargin{2}; strThProp = varargin{3};

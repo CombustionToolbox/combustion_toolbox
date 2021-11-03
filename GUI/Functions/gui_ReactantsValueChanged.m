@@ -19,7 +19,7 @@ end
 
 % SUB-PASS FUNCTIONS
 function obj = gui_update_Reactants(obj, event, app)
-    FLAG_IDEAL_AIR = true;
+    FLAG_IDEAL_AIR = obj.IdealAirCheckBox.Value;
     if strcmp(obj.Reactants.Value, '1') % No species selected
         gui_empty_Reactants(obj);
         return
@@ -80,11 +80,7 @@ function obj = gui_update_Reactants(obj, event, app)
             end
             % Get data of the current mixture
             if ~isempty(obj.UITable_R.Data)
-                obj = gui_get_typeSpecies(obj);
-                % Set current mixture
-                current_species = obj.UITable_R.Data(:, 1);
-                current_moles = obj.UITable_R.Data(:, 2);
-                app = get_current_state_gui(obj, app, current_species, current_moles);
+                app = get_current_reactants_gui(obj, app, current_species, current_moles);
             end
             % Add new species to the mixture (fuel by default)
             app.PD.S_Fuel = [app.PD.S_Fuel, {species}];
@@ -99,25 +95,6 @@ function obj = gui_update_Reactants(obj, event, app)
 end
 
 % SUB-PASS FUNCTIONS
-function app = get_current_state_gui(obj, app, species, moles)
-    % Get the species and the number of moles of the current data in
-    % UITable_R
-    app = get_current_species_gui(obj, app, species, moles, 'S_Fuel', 'N_Fuel', 'ind_Fuel');
-    app = get_current_species_gui(obj, app, species, moles, 'S_Oxidizer', 'N_Oxidizer', 'ind_Oxidizer');
-    app = get_current_species_gui(obj, app, species, moles, 'S_Inert', 'N_Inert', 'ind_Inert');
-end
-
-function app = get_current_species_gui(obj, app, species, moles, species_name, moles_name, ind_name)
-    % Get the species and the number of moles of the current data in
-    % UITable_R for a given category (Fuel, Oxidizer, Inert)
-    app.PD.(species_name) = species(obj.(ind_name))';
-    try
-        app.PD.(moles_name) = cell2vector(moles(obj.(ind_name)));
-    catch 
-        app.PD.(moles_name) = [];
-    end
-end
-
 function obj = gui_update_UITable_R(obj, app)
     % Update data in the UITable_R with the next order: Inert -> Oxidizer -> Fuel
     species = [app.PD.S_Inert, app.PD.S_Oxidizer, app.PD.S_Fuel];

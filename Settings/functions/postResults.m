@@ -60,10 +60,6 @@ elseif strcmp(ProblemType,{'DET_OVERDRIVEN'}) && length(phi) > 1
     app.Misc.config.labely = 'Temperature $T [K]$';
     plot_figure(mix1, mix2, 'overdriven', 'T', app.Misc.config, app.PD.CompleteOrIncomplete);
     plot_hugoniot(app, mix1, mix2);
-% elseif numel(phi)>1 && all(phi(2:end) == phi(1))
-%     app.Misc.config.labelx = 'Critical Equivalence Ratio $\phi_c$';
-%     app.Misc.config.labely = 'Temperature $T [K]$';
-%     plot_figure(mix2, mix2,'phi_c','T',app.Misc.config,app.PD.CompleteOrIncomplete);
 end
 
 if strcmp(ProblemType,{'DET'}) && length(phi) > 1

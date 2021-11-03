@@ -6,7 +6,11 @@ S = self.S;
 C = self.C;
 TN = self.TN;
 % -----------------------------------
-
+% Set List of Species to List of Products
+C.A0.value = C.A0.value(self.Misc.index_LS_original, :);
+C.M0.value = C.M0.value(self.Misc.index_LS_original, :);
+C.N0.value = C.N0.value(self.Misc.index_LS_original, :);
+% -----------------------------------
 A0 = C.A0.value;
 % Initialization
 % NatomE = N_CC(:,1)' * A0;

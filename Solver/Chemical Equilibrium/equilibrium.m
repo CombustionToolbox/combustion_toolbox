@@ -6,12 +6,15 @@ S = self.S;
 C = self.C;
 TN = self.TN;
 % -----------------------------------
-
+% Set List of Species to List of Products
+C.A0.value = C.A0.value(self.Misc.index_LS_original, :);
+C.M0.value = C.M0.value(self.Misc.index_LS_original, :);
+C.N0.value = C.N0.value(self.Misc.index_LS_original, :);
+% -----------------------------------
 N0 = C.N0.value;
 A0 = C.A0.value;
 R0TP = C.R0 * TP; % [J/(mol)]
 % Initialization
-% NatomE = N_CC(:,1)' * A0;
 NatomE = strR.NatomE;
 NP_0 = 0.1;
 NP = NP_0;
@@ -66,6 +69,7 @@ while STOP > TN.tolN && it < itMax
 end
 % N0(N0(:, 1) < TN.tolN, 1) = 0;
 end
+
 % SUB-PASS FUNCTIONS
 function g0 = set_g0(ls, TP, DB)
     for i=length(ls):-1:1

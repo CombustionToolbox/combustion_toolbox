@@ -1,6 +1,8 @@
-function self = gui_get_typeSpecies(self)
-    typeSpecies = self.UITable_R.Data(:, 4);
-    self.ind_Fuel     = contains(typeSpecies, 'Fuel');
-    self.ind_Oxidizer = contains(typeSpecies, 'Oxidant');
-    self.ind_Inert    = contains(typeSpecies, 'Inert');
+function obj = gui_get_typeSpecies(obj)
+    % Function that obtains the indexes of the different type of species in
+    % the mixture
+    typeSpecies = obj.UITable_R.Data(:, 4);
+    obj.ind_Fuel     = contains(typeSpecies, 'Fuel');
+    obj.ind_Oxidizer = contains(typeSpecies, 'Oxidizer');
+    obj.ind_Inert    = contains(typeSpecies, 'Inert');
 end

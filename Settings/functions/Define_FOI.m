@@ -1,5 +1,8 @@
 function self = Define_FOI(self, i)
     % Set up mixture: fuel, oxidizer and diluent/inert species
+
+    % Check reactant species are contained in the list of products (initial computations)
+    self = Check_FOI(self, [self.PD.S_Fuel, self.PD.S_Oxidizer, self.PD.S_Inert]);
     % Define Fuel
     if ~self.Misc.FLAG_N_Fuel
         self.PD.N_Fuel = 1;

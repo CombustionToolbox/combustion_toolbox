@@ -8,7 +8,7 @@ function obj = gui_CalculateButtonPushed(obj)
         app = App('fast', obj.DB_master, obj.DB, obj.LS);
         % Get initial conditions
         app = get_input_constrains(obj, app);
-        app = get_current_reactants_gui(obj, app);
+        app = gui_get_reactants(obj, app);
         % Solve selected problem
         app = SolveProblem(app, app.PD.ProblemType);
         % Save results

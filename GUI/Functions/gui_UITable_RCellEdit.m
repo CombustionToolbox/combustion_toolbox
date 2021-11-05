@@ -7,6 +7,8 @@ function gui_UITable_RCellEdit(obj, event)
         app = gui_get_reactants(obj, event, app);
         % Compute properties of the mixture
         app = gui_compute_propReactants(obj, app);
+        % Update temperature of the mixture (if needed)
+        update_temperature_mixture(obj, app);
         % Update UITable classes
         gui_update_UITable_R(obj, app);
         obj.UITable_P.Data = obj.UITable_R.Data(:, 1);    % (species, numer of moles, mole fractions, temperature)
@@ -19,4 +21,10 @@ function gui_UITable_RCellEdit(obj, event)
       fprintf('%s\n', errorMessage);
       uiwait(warndlg(errorMessage));
     end
+end
+
+function update_temperature_mixture(obj, app)
+    % Get temperature of the mixture (if needed)
+    temperature = compute_temperature_mixture(app, obj.UITable_R.Data(:, 1), obj.UITable_R.Data(:, 2), obj.UITable_R.Data(:, 5));
+    obj.PR1.Value = sprintf('%.4f', temperature);
 end

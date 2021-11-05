@@ -1,28 +1,34 @@
 function app = App(varargin)
     % Function that create a struct called app with all the data needed
-    [app, LS, FLAG_FAST] = initialize(varargin);
-    app.E = Elements();
-    app.S = Species();
-    app.C = Constants();
-    app.Misc = Miscellaneous();
-    app.PD = ProblemDescription();
-    app.PS = ProblemSolution();
-    app.TN = TunningProperties();
-    app = constructor(app, LS, FLAG_FAST);
-    if ~nargin || ~isa(varargin{1,1}, 'combustion_toolbox_app') || ~isa(varargin{1,1}, 'combustion_toolbox_app_develop') || ~isa(varargin{1,1}, 'combustion_toolbox_app_original') || (~strcmpi(varargin{1,1}, 'fast') && nargin < 4) 
-        app = Initialize(app);
+    try
+        [app, LS, FLAG_FAST] = initialize(varargin);
+        app.E = Elements();
+        app.S = Species();
+        app.C = Constants();
+        app.Misc = Miscellaneous();
+        app.PD = ProblemDescription();
+        app.PS = ProblemSolution();
+        app.TN = TunningProperties();
+        app = constructor(app, LS, FLAG_FAST);
+        if ~nargin || ~isa(varargin{1,1}, 'combustion_toolbox_app') || ~isa(varargin{1,1}, 'combustion_toolbox_app_develop') || ~isa(varargin{1,1}, 'combustion_toolbox_app_original') || (~strcmpi(varargin{1,1}, 'fast') && nargin < 4) 
+            app = Initialize(app);
+        end
+    catch ME
+      errorMessage = sprintf('Error in function %s() at line %d.\n\nError Message:\n%s', ...
+      ME.stack(1).name, ME.stack(1).line, ME.message);
+      fprintf('%s\n', errorMessage);
+      uiwait(warndlg(errorMessage));
     end
 end
 
 function [app, LS, FLAG_FAST] = initialize(varargin)
     varargin = varargin{1,1};
-    nargin = numel(varargin);
+    nargin = length(varargin); % If varargin is empty, by default nargin will return 1, not 0.
     app = struct();
     LS = [];
+    FLAG_FAST = false;
     if nargin
-        if ~strcmpi(varargin{1,1}, 'fast')
-            FLAG_FAST = false;
-        else
+        if strcmpi(varargin{1,1}, 'fast')
             FLAG_FAST = true;
             app.DB_master = varargin{1,2};
             app.DB = varargin{1,3};

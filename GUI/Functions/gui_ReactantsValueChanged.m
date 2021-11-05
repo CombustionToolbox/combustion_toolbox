@@ -24,7 +24,10 @@ function obj = gui_update_Reactants(obj, event, app)
         gui_empty_Reactants(obj);
         return
     end
-    % Default value of equivalence ratio is 1
+    % Get equivalence ratio (phi) from GUI
+    if ~strcmp(obj.edit_phi.Value, '-') % Default value phi = 1 (stoichiometric)
+        app.PD.phi.value = gui_get_prop(app, 'phi', obj.edit_phi.Value);
+    end
     % Set species in the mixture
     switch obj.Reactants.Value
         case '2' % Air

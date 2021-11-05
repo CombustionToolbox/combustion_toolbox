@@ -39,11 +39,21 @@ end
 
 function moles = gui_get_moles(obj, event)
     % Get number of moles of each species in the mixture
-    if event.Indices(1, 2) ~= 3 
-        moles = obj.UITable_R.Data(:, 2);
-    else % compute moles from mole fractions
-        total_moles = sum(cell2vector(obj.UITable_R.Data(:, 2)));
-        mole_fractions = cell2vector(obj.UITable_R.Data(:, 3));
-        moles = mole_fractions * total_moles;
+    try
+        if event.Indices(1, 2) ~= 3 
+            moles = obj.UITable_R.Data(:, 2);
+        else 
+            % compute moles from mole fractions
+             moles = gui_compute_moles_from_molar_fractions(obj);
+        end
+    catch
+         moles = gui_compute_moles_from_molar_fractions(obj);
     end
+end
+
+function moles = gui_compute_moles_from_molar_fractions(obj)
+    % compute moles from mole fractions
+    total_moles = sum(cell2vector(obj.UITable_R.Data(:, 2)));
+    mole_fractions = cell2vector(obj.UITable_R.Data(:, 3));
+    moles = mole_fractions * total_moles;
 end

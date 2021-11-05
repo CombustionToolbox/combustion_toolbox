@@ -96,12 +96,10 @@ function DB = get_DB(DB_master)
                 DB.(species).cp  = Cp0;
                 DB.(species).cv  = Cv0;
                 DB.(species).g0  = DfG0;
-                
                 DB.(species).ctTInt = 0;
             end
         else
             fprintf(['\n- Species ''', LS{i}, ''' does not exist as a field in strMaster structure ... '])
         end
-        
     end
 end

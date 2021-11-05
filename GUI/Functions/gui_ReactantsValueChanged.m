@@ -1,14 +1,25 @@
 function gui_ReactantsValueChanged(obj, event)
-    % Update values of the UITable items:
-    % 1. with a given predefined set of reactants
-    % 2. with the new species added in the finder
+    % Update values of the UITable items with:
+    % - a given predefined set of reactants
+    % - the new species added in the finder
     try
         % Initialize app (fast: transfer DB)
         app = App('fast', obj.DB_master, obj.DB);
-        % Update reactants & GUI
-        obj = gui_update_Reactants(obj, event, app);
-        % Update equivalence ratio 
-        obj.edit_phi2.Value = obj.edit_phi.Value;
+        % If the empty item was selected clear UITable and return
+        if strcmp(obj.Reactants.Value, '1') % No species selected
+            gui_empty_Reactants(obj);
+            return
+        end
+        % Set reactant species
+        app = gui_set_reactants(obj, event, app);
+        % Compute properties of the mixture
+        app = gui_compute_propReactants(obj, app);
+        % Update UITable classes
+        gui_update_UITable_R(obj, app);
+        obj.UITable_P.Data = obj.UITable_R.Data(:, 1);    % (species, numer of moles, mole fractions, temperature)
+        obj.UITable_R2.Data = obj.UITable_R.Data(:, 1:3); % (species, numer of moles, mole fractions)
+        % Update GUI: equivalence ratio, O/F and percentage Fuel
+        gui_update_phi(obj, app);
     catch ME
       errorMessage = sprintf('Error in function %s() at line %d.\n\nError Message:\n%s', ...
       ME.stack(1).name, ME.stack(1).line, ME.message);
@@ -18,12 +29,13 @@ function gui_ReactantsValueChanged(obj, event)
 end
 
 % SUB-PASS FUNCTIONS
-function obj = gui_update_Reactants(obj, event, app)
+function app = gui_set_reactants(obj, event, app)
+    % Set reactant species from the standard set drop down
+
+    % Check type of air
+    % - ideal:     21.0000% O2, 79.0000% N2
+    % - non-ideal: 21.0000% O2, 78.0840% N2, 0.9365% Ar, 0.0319% CO2
     FLAG_IDEAL_AIR = obj.IdealAirCheckBox.Value;
-    if strcmp(obj.Reactants.Value, '1') % No species selected
-        gui_empty_Reactants(obj);
-        return
-    end
     % Get equivalence ratio (phi) from GUI
     if ~strcmp(obj.edit_phi.Value, '-') % Default value phi = 1 (stoichiometric)
         app.PD.phi.value = gui_get_prop(app, 'phi', obj.edit_phi.Value);
@@ -89,16 +101,9 @@ function obj = gui_update_Reactants(obj, event, app)
             app.PD.S_Fuel = [app.PD.S_Fuel, {species}];
             app.PD.N_Fuel = [app.PD.N_Fuel, 0];
     end
-    % Compute properties of the mixture
-    [obj, app] = gui_compute_propReactants(obj, app);
-    % Update UITable classes
-    obj = gui_update_UITable_R(obj, app);
-    obj.UITable_P.Data = obj.UITable_R.Data(:, 1);    % (species, numer of moles, mole fractions, temperature)
-    obj.UITable_R2.Data = obj.UITable_R.Data(:, 1:3); % (species, numer of moles, mole fractions)
 end
 
-% SUB-PASS FUNCTIONS
-function obj = gui_update_UITable_R(obj, app)
+function gui_update_UITable_R(obj, app)
     % Update data in the UITable_R with the next order: Inert -> Oxidizer -> Fuel
     species = [app.PD.S_Inert, app.PD.S_Oxidizer, app.PD.S_Fuel];
     Nspecies = length(species); 

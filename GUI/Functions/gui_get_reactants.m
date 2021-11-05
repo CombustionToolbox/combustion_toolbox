@@ -9,9 +9,9 @@ function app = gui_get_reactants(obj, event, app)
     % Get number of moles of each species in the mixture
     moles = gui_get_moles(obj, event);
     % Set mixture into variable app
-    app = gui_set_species(obj, app, species, moles, 'S_Fuel', 'N_Fuel', 'ind_Fuel');
-    app = gui_set_species(obj, app, species, moles, 'S_Oxidizer', 'N_Oxidizer', 'ind_Oxidizer');
-    app = gui_set_species(obj, app, species, moles, 'S_Inert', 'N_Inert', 'ind_Inert');
+    app = gui_set_species_moles(obj, app, species, moles, 'S_Fuel', 'N_Fuel', 'ind_Fuel');
+    app = gui_set_species_moles(obj, app, species, moles, 'S_Oxidizer', 'N_Oxidizer', 'ind_Oxidizer');
+    app = gui_set_species_moles(obj, app, species, moles, 'S_Inert', 'N_Inert', 'ind_Inert');
     % Compute proportion inerts/O2
     app = compute_proportion_inerts_O2(app);
 end
@@ -26,7 +26,7 @@ function obj = gui_get_typeSpecies(obj)
     obj.ind_Inert    = contains(typeSpecies, 'Inert');
 end
 
-function app = gui_set_species(obj, app, species, moles, species_name, moles_name, ind_name)
+function app = gui_set_species_moles(obj, app, species, moles, species_name, moles_name, ind_name)
     % Get the species and the number of moles of the current data in
     % UITable_R for a given category (Fuel, Oxidizer, Inert)
     app.PD.(species_name) = species(obj.(ind_name))';

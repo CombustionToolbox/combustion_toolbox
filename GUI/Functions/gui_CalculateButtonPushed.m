@@ -1,4 +1,4 @@
-function obj = gui_CalculateButtonPushed(obj)
+function obj = gui_CalculateButtonPushed(obj, event)
     % Solve selected problem, update GUI with the results and generate
     % predefined plots.
     try
@@ -8,7 +8,7 @@ function obj = gui_CalculateButtonPushed(obj)
         app = App('fast', obj.DB_master, obj.DB, obj.LS);
         % Get initial conditions
         app = get_input_constrains(obj, app);
-        app = gui_get_reactants(obj, app);
+        app = gui_get_reactants(obj, event, app);
         % Solve selected problem
         app = SolveProblem(app, app.PD.ProblemType);
         % Save results

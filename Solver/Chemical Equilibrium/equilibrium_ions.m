@@ -169,7 +169,7 @@ function b = update_vector_b(A0, N0, NP, NatomE, ind_E, temp_ind_ions, temp_ind,
     % Update coefficient vector b
     bi_0 = (NatomE(temp_ind_E) - N0(temp_ind, 1)' * A0(temp_ind, temp_ind_E))';
     if any(temp_ind_ions)
-        bi_0(ind_E) = 0;
+        bi_0(temp_ind_E == ind_E) = 0;
     end
     NP_0 = NP - sum(N0(temp_ind_nswt, 1));
     b = [-G0RT(temp_ind); bi_0; NP_0];

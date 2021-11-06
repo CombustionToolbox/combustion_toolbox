@@ -81,7 +81,7 @@ elseif strcmpi(LS, 'AIR_IONS')
                  'CO2','CO','COplus','C','Cplus','Cminus','CN','CNplus','CNminus','CNN',...
                  'NCO','NCN','Ar','Arplus'};
 
-elseif strcmpi(LS, 'IDEAL_AIR')
+elseif strcmpi(LS, 'IDEAL_AIR') || strcmpi(LS, 'AIR_IDEAL')
     self.S.LS = {'O2','N2','O','O3','N','NO','NO2','NO3','N2O','N2O3','N2O4','N3'};
     
 elseif strcmpi(LS, 'HYDROGEN')

@@ -1,4 +1,4 @@
-function [R, P] = theo_diatomic_shocks_sym(varargin)
+function [R, P] = therm_effects_diatomic_sym(varargin)
     % Get parameters
     [T, alpha, Br, theta_r, theta_v, theta_d] = get_parameters(varargin);
     % Definitions general case (dissociation)

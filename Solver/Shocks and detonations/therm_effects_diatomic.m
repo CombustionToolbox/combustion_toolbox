@@ -1,4 +1,4 @@
-function [R, P, M1, M2] = theo_diatomic_shocks(varargin)
+function [R, P, M1, M2] = therm_effects_diatomic(varargin)
     global Infty steps
     Infty = 1e6; steps = 1e6;
     % Get parameters

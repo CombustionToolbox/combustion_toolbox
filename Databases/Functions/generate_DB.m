@@ -19,7 +19,7 @@ function DB = get_DB(DB_master)
     % Generate Database with thermochemical interpolation curves for the
     % species contained in DB_master
     LS = fieldnames(DB_master);
-    
+
     fprintf('Generating short NASA database ... ')
     for i = 1:length(LS)
         species = FullName2name(LS{i});
@@ -86,7 +86,7 @@ function DB = get_DB(DB_master)
                 DB.(species).txFormula = txFormula;
                 DB.(species).mm  = mm;
                 DB.(species).hf  = Hf0;
-                DB.(species).ef  = Hf0;
+                DB.(species).ef  = Ef0;
                 DB.(species).swtCondensed = swtCondensed;
                 DB.(species).T   = Tref;
                 DB.(species).DhT = 0;

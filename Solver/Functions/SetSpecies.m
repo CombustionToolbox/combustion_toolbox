@@ -14,7 +14,7 @@ M = self.C.M0.value;
 R0 = self.C.R0;
 
 for n = length(N):-1:1
-    mi = N(n)*self.DB.(species{n}).mm;
+    mi = N(n) * self.DB.(species{n}).mm;
     mmi = self.DB.(species{n}).mm;
     hfi = self.DB.(species{n}).hf/1000;
     efi = self.DB.(species{n}).ef/1000;

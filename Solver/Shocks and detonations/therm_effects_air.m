@@ -3,10 +3,9 @@ function r = therm_effects_air(varargin)
 %     load test.mat
     % Get RH jump conditions
     self = compute_shock(varargin);
-    [r.R, r.P, r.T, r.M1, r.M2, r.Gammas] = get_parameters(self);
-%     save test_O2.mat
-
-
+     [r.R, r.P, r.T, r.M1, r.M2, r.Gammas] = get_parameters(self);
+%    [R, P, T, M1, M2, Gammas] = get_parameters(self);
+%     save test_O2.mat  
 
     Nl = 1e4;
     Ns = 1e4;
@@ -279,10 +278,6 @@ function T3D = f_T3D(T3Dr, T3Da)
 end
 
 
-
-
-
-
 function [R, P, T, M1, M2, Gammas] = get_parameters(self)
     R = cell2vector(self.PS.strP, 'rho') ./ cell2vector(self.PS.strR, 'rho');
     P = cell2vector(self.PS.strP, 'p') ./ cell2vector(self.PS.strR, 'p');
@@ -311,12 +306,12 @@ function self = compute_shock(varargin)
     % Initial conditions
     self = set_prop(self, 'TR', T, 'pR', 1.01325 * p);
     self.PD.S_Oxidizer = {'O2'};
-%     self.PD.S_Inert    = {'N2', 'Ar', 'CO2'};
+    self.PD.S_Inert    = {'N2', 'Ar', 'CO2'};
 %     self.PD.proportion_inerts_O2 = [78.084, 0.9365, 0.0319] ./ 20.9476;
     % Additional inputs
 %     u1 = logspace(2, 5, 500); u1 = u1(u1<20000); u1 = u1(u1>=360);
     u1 = logspace(2, 5, 2e4); u1 = u1(u1<15000); u1 = u1(u1>=360);
-%     u1 = [5e3, 5e3+1];
+%     u1 = [10000, 12000];
     self = set_prop(self, 'u1', u1, 'phi', self.PD.phi.value(1) * ones(1, length(u1)));
     % Solve problem
     self = SolveProblem(self, 'SHOCK_I');

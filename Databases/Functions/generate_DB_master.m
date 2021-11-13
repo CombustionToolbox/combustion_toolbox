@@ -2,9 +2,9 @@ function DB_master = generate_DB_master(varargin)
     % Generate Database MASTER
     reducedDB = varargin{1,1};
     if nargin > 1
-    thermoFile = varargin{1,2};
+        thermoFile = varargin{1,2};
     else
-    thermoFile = 'thermo.inp'; 
+        thermoFile = 'thermo.inp';
     end
 
     if ~exist('DB_master', 'var')
@@ -32,8 +32,6 @@ function DB_master = generate_DB_master(varargin)
     switch thermoFile
         case 'thermo.inp'
             msg = 'Loading NASA database ... ';
-        case 'thermo_explo.inp'
-            msg = 'Loading NASA database + Explosives database ... ';
         otherwise
             msg = 'Loading an unkown database ... ';
     end

@@ -2,10 +2,14 @@ function obj = gui_CalculateButtonPushed(obj, event)
     % Solve selected problem, update GUI with the results and generate
     % predefined plots.
     try
+        % Set lamp to Working color
+        obj.Lamp.Color = obj.color_lamp_working;
         % Get List of Species considered (reactants + products)
         obj = get_listSpecies_gui(obj);
         % Initialize variable app
         app = App('fast', obj.DB_master, obj.DB, obj.LS);
+        % Set FLAG GUI
+        app.Misc.FLAG_GUI = true;
         % Get initial conditions
         app = get_input_constrains(obj, app);
         app = gui_get_reactants(obj, event, app);
@@ -17,11 +21,16 @@ function obj = gui_CalculateButtonPushed(obj, event)
         obj = update_results_gui(obj, results);
         % Display results (plots)
         postResults(app);
+        % Set lamp to Done color
+        obj.Lamp.Color = obj.color_lamp_done;
     catch ME
-      errorMessage = sprintf('Error in function %s() at line %d.\n\nError Message:\n%s', ...
-      ME.stack(1).name, ME.stack(1).line, ME.message);
-      fprintf('%s\n', errorMessage);
-      uiwait(warndlg(errorMessage));
+        % Set lamp to Error color
+        obj.Lamp.Color = obj.color_lamp_error;
+        % Print error
+        errorMessage = sprintf('Error in function %s() at line %d.\n\nError Message:\n%s', ...
+        ME.stack(1).name, ME.stack(1).line, ME.message);
+        fprintf('%s\n', errorMessage);
+        uiwait(warndlg(errorMessage));
     end
 end
 
@@ -34,7 +43,7 @@ function obj = get_listSpecies_gui(obj)
     obj.LS = obj.listbox_LS.Value;
     if isempty(obj.LS)
         % Get default value
-        obj.LS = 'HC/02/N2 EXTENDED';
+        obj.LS = 'Soot Formation';
     end
 end
 function results = save_results(obj, app)

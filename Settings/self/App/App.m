@@ -32,6 +32,9 @@ function [app, LS, FLAG_FAST] = initialize(varargin)
             FLAG_FAST = true;
             app.DB_master = varargin{1,2};
             app.DB = varargin{1,3};
+            if nargin == 4
+                LS = varargin{1,4};
+            end
             return
         end
         if isa(varargin{1,1}, 'combustion_toolbox_app') || isa(varargin{1,1}, 'combustion_toolbox_app_develop') || isa(varargin{1,1}, 'combustion_toolbox_app_original')

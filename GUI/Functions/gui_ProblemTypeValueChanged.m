@@ -1,10 +1,10 @@
 function gui_ProblemTypeValueChanged(obj)
     % Clear GUI results tab (except UITree) and update GUI items for the problem selected
 
-    % Clear results tab (except UITree)
+    % 1. Clear results tab (except UITree)
     gui_clear_results(obj);
 
-    % Update GUI items depending of the problem selected    
+    % 2. Update GUI items depending of the problem selected    
     switch obj.ProblemType.Value
         case 'TP' % * TP: Equilibrium composition at defined T and p
             % Update input items
@@ -12,10 +12,10 @@ function gui_ProblemTypeValueChanged(obj)
             % Update Additional constraints panel
             obj.AdditionalconstraintsPanel.Visible = 'off';
             % Set default input values
-            obj.text_TR.Value = 300; 
-            obj.text_pR.Value = 1;
-            obj.text_TP.Value = 2500;
-            obj.text_pP.Value = 1;
+            obj.PR1.Value = '300'; 
+            obj.PR2.Value = '1';
+            obj.PP1.Value = '2500';
+            obj.PP2.Value = obj.PR2.Value;
             % Set visible item volume ratio
             obj.text_vP_vR.Visible = 'off'; 
             % Set invisible shocks/detonation items
@@ -31,10 +31,9 @@ function gui_ProblemTypeValueChanged(obj)
             obj.text_RP.Visible = 'on'; obj.text_R2.Visible = 'off'; obj.text_P2.Visible = 'off';
             obj.text_RP4.Visible = 'off';
             % Set default input values
-            obj.text_TR.Value = 300;
-            obj.text_pR.Value = 1;
-            obj.text_TP.Value = 0;
-            obj.text_pP.Value = 1;
+            obj.PR1.Value = '300';
+            obj.PR2.Value = '1';
+            obj.PP2.Value = obj.PR2.Value;
             % Set visible item volume ratio
             obj.text_vP_vR.Visible = 'off'; 
             % Set invisible shocks/detonation items
@@ -50,10 +49,9 @@ function gui_ProblemTypeValueChanged(obj)
             obj.text_RP3.Text = 'Constant Entropy: SP = SR';
             obj.text_RP4.Visible = 'off'; 
             % Set default input values
-            obj.text_TR.Value = 300;
-            obj.text_pR.Value = 20;
-            obj.text_TP.Value = 0;
-            obj.text_pP.Value = 20;
+            obj.PR1.Value = '300';
+            obj.PR2.Value = '20';
+            obj.PP2.Value = obj.PR2.Value;
             % Set visible item volume ratio
             obj.text_vP_vR.Visible = 'off'; 
             % Set invisible shocks/detonation items
@@ -69,10 +67,10 @@ function gui_ProblemTypeValueChanged(obj)
             obj.text_RP3.Text = 'Constant Volume: vP = vR';
             obj.text_RP4.Visible = 'off'; 
             % Set default input values
-            obj.text_TR.Value = 300;
-            obj.text_pR.Value = 1;
-            obj.text_TP.Value = 2500;
-            obj.text_pP.Value = obj.text_pR.Value;
+            obj.PR1.Value = '300';
+            obj.PR2.Value = '1';
+            obj.PP1.Value = '2500';
+            obj.PP2.Value = obj.PR2.Value;
             % Set visible item volume ratio
             obj.text_vP_vR.Visible = 'off'; 
             % Set invisible shocks/detonation items
@@ -88,10 +86,9 @@ function gui_ProblemTypeValueChanged(obj)
             obj.text_RP3.Text = 'Constant Internal energy: eP = eR';
             obj.text_RP4.Visible = 'on'; obj.text_RP4.Text = 'Constant Volume: vP = vR';
             % Set default input values
-            obj.text_TR.Value = 1000;
-            obj.text_pR.Value = 1;
-            obj.text_TP.Value = 0;
-            obj.text_pP.Value = obj.text_pR.Value;
+            obj.PR1.Value = '1000';
+            obj.PR2.Value = '1';
+            obj.PP2.Value = obj.PR2.Value;
             % Set visible item volume ratio
             obj.text_vP_vR.Visible = 'off'; 
             % Set invisible shocks/detonation items
@@ -107,10 +104,9 @@ function gui_ProblemTypeValueChanged(obj)
             obj.text_RP3.Text = 'Constant Entropy: SP = SR';
             obj.text_RP4.Visible = 'on'; obj.text_RP4.Text = 'Volume Products/Reactants';
             % Set default input values
-            obj.text_TR.Value = 300;
-            obj.text_pR.Value = 1;
-            obj.text_TP.Value = 0;
-            obj.text_pP.Value = obj.text_pR.Value;
+            obj.PR1.Value = '300';
+            obj.PR2.Value = '1';
+            obj.PP2.Value = obj.PR2.Value;
             obj.PP4.Value = '0.5';
             % Set visible item volume ratio
             obj.text_vP_vR.Visible = 'on'; 
@@ -127,10 +123,8 @@ function gui_ProblemTypeValueChanged(obj)
             obj.text_RP3.Text = 'Shock velocity [m/s]'; 
             obj.text_RP4.Visible = 'on'; obj.text_RP4.Text = 'Mach number [-]'; 
             % Set default input values
-            obj.text_TR.Value = 300;
-            obj.text_pR.Value = 1;
-            obj.text_TP.Value = 0;
-            obj.text_pP.Value = 0;
+            obj.PR1.Value = '300';
+            obj.PR2.Value = '1';
             obj.PR3.Value = '0';
             obj.PR4.Value = '0';
             % Set visible item volume ratio
@@ -148,10 +142,8 @@ function gui_ProblemTypeValueChanged(obj)
             obj.text_RP3.Text = 'Shock velocity [m/s]'; 
             obj.text_RP4.Visible = 'on'; obj.text_RP4.Text = 'Mach number [-]';
             % Set default input values
-            obj.text_TR.Value = 300;
-            obj.text_pR.Value = 1;
-            obj.text_TP.Value = 0;
-            obj.text_pP.Value = 0;
+            obj.PR1.Value = '300';
+            obj.PR2.Value = '1';
             obj.PR3.Value = '0';
             obj.PR4.Value = '0';
             % Set visible item volume ratio
@@ -166,10 +158,8 @@ function gui_ProblemTypeValueChanged(obj)
             % Update Additional constraints panel
             obj.AdditionalconstraintsPanel.Visible = 'off';
             % Set default input values
-            obj.text_TR.Value = 300;
-            obj.text_pR.Value = 1;
-            obj.text_TP.Value = 0;
-            obj.text_pP.Value = 0;
+            obj.PR1.Value = '300';
+            obj.PR2.Value = '1';
             % Set visible item volume ratio
             obj.text_vP_vR.Visible = 'off'; 
             % Set invisible shocks/detonation items
@@ -185,10 +175,8 @@ function gui_ProblemTypeValueChanged(obj)
             obj.text_RP3.Text = 'Overdriven parameter [-]'; 
             obj.text_RP4.Visible = 'off'; 
             % Set default input values
-            obj.text_TR.Value = 300;
-            obj.text_pR.Value = 1;
-            obj.text_TP.Value = 0;
-            obj.text_pP.Value = 0;
+            obj.PR1.Value = '300';
+            obj.PR2.Value = '1';
             % Set visible item volume ratio
             obj.text_vP_vR.Visible = 'off'; 
             % Set invisible shocks/detonation items

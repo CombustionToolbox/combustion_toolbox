@@ -17,12 +17,12 @@ function vector = cell2vector(varargin)
         if nargin == 1
             % Return the values of a cell as a vector
             for i=Nstruct:-1:1
-                vector(i) = str{i};
+                vector(:, i) = str{i};
             end
         else
             % Return the field of a struct as a vector
             for i=Nstruct:-1:1
-                vector(i) = str{i}.(field);
+                vector(:, i) = str{i}.(field);
             end
         end
     catch

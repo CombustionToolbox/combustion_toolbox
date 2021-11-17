@@ -1,295 +1,304 @@
 function r = therm_effects_air(varargin)
 %     load test_O2.mat
-%     load test.mat
+%     load CombustionToolboxAir.mat R P T M1 M2 Gammas
+%     r.R = R; r.P = P; r.T = T; r.M1 = M1; r.M2 = M2; r.Gammas = Gammas;
+%     clearvars R P T M1 M2 Gammas;
+
     % Get RH jump conditions
     self = compute_shock(varargin);
-     [r.R, r.P, r.T, r.M1, r.M2, r.Gammas] = get_parameters(self);
-%    [R, P, T, M1, M2, Gammas] = get_parameters(self);
-%     save test_O2.mat  
-
-    Nl = 1e4;
-    Ns = 1e4;
-    zeta_l = linspace(0, 1, Nl)';
-    zeta_s = linspace(1, 1e5, Ns)'; 
+    [r.R, r.P, r.T, r.M1, r.M2, r.Gammas, r.alpha] = get_parameters(self);
+    
+%     [R, P, T, M1, M2, Gammas] = get_parameters(self);
+%     save thermo_num_air.mat  
+%
+%     Nl = 1e4;
+%     Ns = 1e4;
+%     zeta_l = linspace(0, 1, Nl)';
+%     zeta_s = linspace(1, 1e5, Ns)'; 
 %     zeta = [zeta_l; zeta_s];
 
-%     thetaOfzeta = f_thetaOfzeta(r.R, r.M2, zeta);
-    
-%     sigma_a = f_sigma_a(r.R, r.M2, r.Gammas);
-    sigma_b = f_sigma_b(r.M2, r.Gammas);
-    sigma_c = f_sigma_c(r.R, r.M2, r.Gammas);
-    
-    pi_l1 = f_pi_l1(r.R, r.M2, sigma_b, sigma_c, zeta_l);
-    pi_l2 = f_pi_l2(r.R, r.M2, sigma_b, sigma_c, zeta_l);
-    pi_s  = f_pi_s(r.R, r.M2, sigma_b, sigma_c, zeta_s);
-    
-    ka = f_ka(r.M2, zeta_s);
-    wa = f_wa(r.M2, zeta_s);
-    
-    Delta_ua = f_Delta_ua(ka, wa, pi_s);
-    Delta_va = f_Delta_va(wa, pi_s);
-    
-    Omega_1_l = f_Omega_1(r.R, r.M2, zeta_l);
-    Omega_1_s = f_Omega_1(r.R, r.M2, zeta_s);
-    Omega_2 = f_Omega_2(r.R, r.M2, r.Gammas);
-    Delta_Omega_l1 = f_Delta_Omega_l1(pi_l1, Omega_1_l, Omega_2);
-    Delta_Omega_l2 = f_Delta_Omega_l2(pi_l2, Omega_1_l);
-    Delta_Omega_s  = f_Delta_Omega_s(pi_s, Omega_1_s, Omega_2);
-    
-    Delta_l = f_Delta(r.M2, zeta_l);
-    Delta_s = f_Delta(r.M2, zeta_s);
-    
-    Delta_u_l1 = f_Delta_u_l1(Delta_Omega_l1, Delta_l);
-    Delta_u_l2 = f_Delta_u_l2(Delta_Omega_l2, Delta_l);
-    Delta_u_s  = f_Delta_u_s(Delta_Omega_s  , Delta_s);
-%     Delta_u    = f_Delta_u(Delta_u_l1, Delta_u_l2, Delta_u_s, zeta);
-    
-    Delta_v_l1 = f_Delta_v_l1(r.M2, Delta_Omega_l1, Delta_l, zeta_l);
-    Delta_v_l2 = f_Delta_v_l2(r.M2, Delta_Omega_l2, Delta_l, zeta_l);
-    Delta_v_s  = f_Delta_v_s(r.M2, Delta_Omega_s, Delta_s, zeta_s);
-%     Delta_v    = f_Delta_v(Delta_v_l1, Delta_v_l2, Delta_v_s, zeta);
-    
-    PDF_3D_l = f_PDF_3D(r.R, r.M2, zeta_l);
-    PDF_3D_s = f_PDF_3D(r.R, r.M2, zeta_s);
-%     PDF_3D = f_PDF_3D(r.R, r.M2, zeta);
+%     thetaOfzeta = thetaOfzeta(r.R, r.M2);
+    Ndata = length(r.R);
+    for i=Ndata:-1:2
+        R = r.R(i); M2 = r.M2(i); Gammas = r.Gammas(i);
 
-    L3Drl = f_L3Drl(Delta_u_l1, Delta_u_l2, PDF_3D_l);
-    L3Drs = f_L3Drs(Delta_u_s, PDF_3D_s);
-    r.L3Dr = f_L3Dr(L3Drl, L3Drs);
-    r.L3Da = f_L3Da(Delta_ua, PDF_3D_s);
-    r.L3D = f_L3D(r.L3Dr, r.L3Da);
+        r.L3Dr(i) = L3Dr(R, M2, Gammas);
+        r.L3Da(i) = L3Da(R, M2, Gammas);
+    
+        r.T3Dr(i) = T3Dr(R, M2, Gammas);
+        r.T3Da(i) = T3Da(R, M2, Gammas);
+    end
+    
+    r.R = r.R(2:end);
+    r.P = r.P(2:end);
+    r.M1 = r.M1(2:end);
+    r.M2 = r.M2(2:end);
+    r.Gammas = r.Gammas(2:end);
+    r.T = r.T(2:end);
+    r.L3Dr = r.L3Dr(2:end); 
+    r.L3Da = r.L3Da(2:end);
+    r.T3Dr = r.T3Dr(2:end);
+    r.T3Da = r.T3Da(2:end);
 
-    T3Drl = f_T3Drl(Delta_v_l1, Delta_v_l2, PDF_3D_l);
-    T3Drs = f_T3Drs(Delta_v_s, PDF_3D_s);
-    r.T3Dr = f_T3Dr(T3Drl, T3Drs);
-    r.T3Da = f_T3Da(Delta_va, PDF_3D_s);
-    r.T3D = f_T3D(r.T3Dr, r.T3Da);
-
-    r.K3Dr = 1/3 * (r.L3Dr + 2*r.T3Dr);
-    r.K3Da = 1/3 * (r.L3Da + 2*r.T3Da);
-
+    r.L3D = r.L3Dr + r.L3Da;
+    r.T3D = r.T3Dr + r.T3Da;
     r.K3D = 1/3 * (r.L3D + 2*r.T3D);
+    r.Rturb3D = r.R .* sqrt(r.K3D);
+    r.RRe3D = (sqrt(r.K3D) .* sqrt((1 + 2 * r.R.^2) / 3)) ./ (r.T.^(0.7));
+    r.Anisotropy = 1 - (4 * r.L3D) ./ (3 * r.K3D + r.L3D);
+%     r.Anisotropy = 1 - (2 * r.L3D) ./ (r.L3D + r.T3D);
+%     % CHECKS
+%     j = 6000;
+%     zeta = 0.5;
+%     R = r.R(j); M2 = r.M2(j); Gammas = r.Gammas(j);
+%     check_solution(R, M2, Gammas, zeta)
 end
 
-% NESTED FUNCTIONS
-function P0 = f_P0(R)
-    P0 = @(gamma) ((gamma + 1) - (gamma - 1) .* R.^(-1)) ./ ((gamma + 1).* R.^(-1) - (gamma - 1));
+% SUB PASS FUNCTIONS
+function check_solution(R, M2, Gammas, zeta)
+    fprintf('\nCHECK SOLUTION\n\n');
+    fprintf('sigma_a        = %.6f\n', sigma_a(R, M2, Gammas));
+    fprintf('sigma_b        = %.6f\n', sigma_b(M2, Gammas));
+    fprintf('sigma_c        = %.6f\n', sigma_c(R, M2, Gammas));
+    fprintf('\n')
+    fprintf('pi_l1          = %.6f\n', pi_l1(R, M2, Gammas, zeta));
+    fprintf('pi_l2          = %.6f\n', pi_l2(R, M2, Gammas, zeta));
+    fprintf('pi_s           = %.6f\n', pi_s(R, M2, Gammas, zeta));
+    fprintf('ka             = %.6f\n', ka(M2, zeta));
+    fprintf('wa             = %.6f\n', wa(M2, zeta));
+    fprintf('\n')
+    fprintf('Delta_ua       = %.6f\n', Delta_ua(R, M2, Gammas, zeta));
+    fprintf('Delta_va       = %.6f\n', Delta_va(R, M2, Gammas, zeta));
+    fprintf('\n')
+    fprintf('Omega_1        = %.6f\n', Omega_1(R, M2, zeta));
+    fprintf('Omega_2        = %.6f\n', Omega_2(R, M2, Gammas));
+    fprintf('Delta_Omega_l1 = %.6f\n', Delta_Omega_l1(R, M2, Gammas, zeta));
+    fprintf('Delta_Omega_l2 = %.6f\n', Delta_Omega_l2(R, M2, Gammas, zeta));
+    fprintf('Delta_Omega_s  = %.6f\n', Delta_Omega_s(R, M2, Gammas, zeta));
+    fprintf('\n')
+    fprintf('Delta          = %.6f\n', Delta(M2, zeta));
+    fprintf('\n')   
+    fprintf('Delta_u_l1     = %.6f\n', Delta_u_l1(R, M2, Gammas, zeta));
+    fprintf('Delta_u_l2     = %.6f\n', Delta_u_l2(R, M2, Gammas, zeta));
+    fprintf('Delta_u_s      = %.6f\n', Delta_u_s(R, M2, Gammas, zeta));
+    fprintf('Delta_u        = %.6f\n', Delta_u(R, M2, Gammas, zeta));
+    fprintf('\n')
+    fprintf('Delta_v_l1     = %.6f\n', Delta_v_l1(R, M2, Gammas, zeta));
+    fprintf('Delta_v_l2     = %.6f\n', Delta_v_l2(R, M2, Gammas, zeta));
+    fprintf('Delta_v_s      = %.6f\n', Delta_v_s(R, M2, Gammas, zeta));
+    fprintf('Delta_v        = %.6f\n', Delta_v(R, M2, Gammas, zeta));
+    fprintf('\n')
+    fprintf('L3Drl          = %.6f\n', L3Drl(R, M2, Gammas));
+    fprintf('L3Drs          = %.6f\n', L3Drs(R, M2, Gammas));
+    fprintf('L3Dr           = %.6f\n', L3Dr(R, M2, Gammas));
+    fprintf('L3Da           = %.6f\n', L3Da(R, M2, Gammas));
+    fprintf('L3D            = %.6f\n', L3D(R, M2, Gammas));
+    fprintf('\n')
+    fprintf('T3Drl          = %.6f\n', T3Drl(R, M2, Gammas));
+    fprintf('T3Drs          = %.6f\n', T3Drs(R, M2, Gammas));
+    fprintf('T3Dr           = %.6f\n', T3Dr(R, M2, Gammas));
+    fprintf('T3Da           = %.6f\n', T3Da(R, M2, Gammas));
+    fprintf('T3D            = %.6f\n', T3D(R, M2, Gammas));
 end
 
-function Gammas = f_Gammas(M1, R, P)
-    Gammas =  7/5 * (M1(1:end-1).^2 ./ R(1:end-1).^2) .* ((P(2:end)  - P(1:end-1)) ./ (R(2:end)  - R(1:end-1))).^(-1);
+function value = P0(R)
+    value = @(gamma) ((gamma + 1) - (gamma - 1) .* R.^(-1)) ./ ((gamma + 1).* R.^(-1) - (gamma - 1)); 
 end
 
-function thetaOfzeta = f_thetaOfzeta(R, M2, zeta)
-    thetaOfzeta = atan((M2 .* R) ./ (sqrt(1 - M2.^2) .* zeta(1:end)));
+function value = compute_Gammas(M1, R, P)
+    value =  7/5 * (M1(1:end-1).^2 ./ R(1:end-1).^2) .* ((P(2:end)  - P(1:end-1)) ./ (R(2:end)  - R(1:end-1))).^(-1);
 end
 
-function sigma_a = f_sigma_a(R, M2, Gammas)
-    sigma_a =  (R  ./ (R  - 1)) .* ((1 - Gammas) ./ (2*M2));
+function value = thetaOfzeta(R, M2, zeta)
+    value = atan((M2 .* R) ./ (sqrt(1 - M2.^2) .* zeta(1:end)));
 end
 
-function sigma_b = f_sigma_b(M2, Gammas)
-    sigma_b =  (1 + Gammas) / (2*M2);
+function value = sigma_a(R, M2, Gammas)
+    value =  (R  ./ (R  - 1)) .* ((1 - Gammas) ./ (2*M2));
 end
 
-function sigma_c = f_sigma_c(R, M2, Gammas)
-    sigma_c =  (((M2.^2 .* R)) ./ (1 - M2.^2)) .* ((1 - Gammas) / 2);
+function value = sigma_b(M2, Gammas)
+    value =  (1 + Gammas) ./ (2*M2);
 end
 
-function pi_l1 = f_pi_l1(R, M2, sigma_b, sigma_c, zeta)
-    pi_l1 = ((-(1 - R.^-1) .* (sigma_b  .* zeta.^2 - sigma_c)) ./ (zeta.^2.* (1 - zeta.^2) + (sigma_b .* zeta.^2 - sigma_c).^2)) .* (zeta.^2 - (R .* M2.^2) ./ (1 - M2.^2));
+function value = sigma_c(R, M2, Gammas)
+    value =  (((M2.^2 .* (R - 1))) ./ (1 - M2.^2)) .* sigma_a(R, M2, Gammas);
 end
 
-function pi_l2 = f_pi_l2(R, M2, sigma_b, sigma_c, zeta)
-    pi_l2 = (((1 - R.^-1) .* zeta .* sqrt((1 - zeta.^2))) ./ (zeta.^2 .* (1 - zeta.^2) + (sigma_b .* zeta.^2 - sigma_c).^2)) .* (zeta.^2 - (R .* M2.^2) ./ (1 - M2.^2));
+function value = pi_l1(R, M2, Gammas, zeta)
+    value = ((-(1 - R.^-1) .* (sigma_b(M2, Gammas) .* zeta.^2 - sigma_c(R, M2, Gammas))) ./ (zeta.^2.* (1 - zeta.^2) + (sigma_b(M2, Gammas) .* zeta.^2 - sigma_c(R, M2, Gammas)).^2)) .* (zeta.^2 - (R .* M2.^2) ./ (1 - M2.^2));
 end
 
-function pi_s = f_pi_s(R, M2, sigma_b, sigma_c, zeta)
-    pi_s = ((-(1 - R.^-1)) ./ (zeta .* sqrt(zeta.^2 - 1) + sigma_b .* zeta.^2 - sigma_c)) .* (zeta.^2 - (R .* M2.^2) ./ (1 - M2.^2));
+function value = pi_l2(R, M2, Gammas, zeta)
+    value = (((1 - R.^-1) .* zeta .* sqrt((1 - zeta.^2))) ./ (zeta.^2 .* (1 - zeta.^2) + (sigma_b(M2, Gammas) .* zeta.^2 - sigma_c(R, M2, Gammas)).^2)) .* (zeta.^2 - (R .* M2.^2) ./ (1 - M2.^2));
 end
 
-function ka = f_ka(M2, zeta)
-    ka = (zeta .* M2  - sqrt(zeta.^2 - 1)) ./ (sqrt(1 - M2.^2));
+function value = pi_s(R, M2, Gammas, zeta)
+    value = ((-(1 - R.^-1)) ./ (zeta .* sqrt(zeta.^2 - 1) + sigma_b(M2, Gammas) .* zeta.^2 - sigma_c(R, M2, Gammas))) .* (zeta.^2 - (R .* M2.^2) ./ (1 - M2.^2));
 end
 
-function wa = f_wa(M2, zeta)
-    wa = (zeta - M2  .* sqrt(zeta.^2 - 1)) ./ (sqrt(1 - M2.^2));
+function value = ka(M2, zeta)
+    value = (zeta .* M2  - sqrt(zeta.^2 - 1)) ./ (sqrt(1 - M2.^2));
 end
 
-function Delta_ua = f_Delta_ua(ka, wa, pi_s)
-    Delta_ua = (ka ./ wa) .* pi_s;
+function value = wa(M2, zeta)
+    value = (zeta - M2  .* sqrt(zeta.^2 - 1)) ./ (sqrt(1 - M2.^2));
 end
 
-function Delta_va = f_Delta_va(wa, pi_s)
-    Delta_va = (1 ./ wa) .* pi_s;
+function value = Delta_ua(R, M2, Gammas, zeta)
+    value = (ka(M2, zeta) ./ wa(M2, zeta)) .* pi_s(R, M2, Gammas, zeta);
 end
 
-function Omega_1 = f_Omega_1(R, M2, zeta)
-    Omega_1 = R .* (1 + zeta.^2 .* ((1 - M2.^2) ./ (R.^2 .* M2.^2)));
+function value = Delta_va(R, M2, Gammas, zeta)
+    value = (1 ./ wa(M2, zeta)) .* pi_s(R, M2, Gammas, zeta);
 end
 
-function Omega_2 = f_Omega_2(R, M2, Gammas)
-    Omega_2 = ((R - 1) .* (1 - Gammas)) ./ (2*M2);
+function value = Omega_1(R, M2, zeta)
+    value = R .* (1 + zeta.^2 .* ((1 - M2.^2) ./ (R.^2 .* M2.^2)));
 end
 
-function Delta_Omega_l1 = f_Delta_Omega_l1(pi_l1, Omega_1, Omega_2)
-    Delta_Omega_l1 = Omega_2 .* pi_l1 + Omega_1;
+function value = Omega_2(R, M2, Gammas)
+    value = ((R - 1) .* (1 - Gammas)) ./ (2*M2);
 end
 
-function Delta_Omega_l2 = f_Delta_Omega_l2(pi_l2, Omega_2)
-    Delta_Omega_l2 = Omega_2 .* pi_l2;
+function value = Delta_Omega_l1(R, M2, Gammas, zeta)
+    value = Omega_2(R, M2, Gammas) .* pi_l1(R, M2, Gammas, zeta) + Omega_1(R, M2, zeta);
 end
 
-function Delta_Omega_s = f_Delta_Omega_s(pi_s, Omega_1, Omega_2)
-    Delta_Omega_s = Omega_2 .* pi_s + Omega_1;
+function value = Delta_Omega_l2(R, M2, Gammas, zeta)
+    value = Omega_2(R, M2, Gammas) .* pi_l2(R, M2, Gammas, zeta);
 end
 
-function Delta = f_Delta(M2, zeta)
-    Delta = 1 + ((1 - M2.^2) ./ M2.^2) .* zeta.^2;
+function value = Delta_Omega_s(R, M2, Gammas, zeta)
+    value = Omega_2(R, M2, Gammas) .* pi_s(R, M2, Gammas, zeta) + Omega_1(R, M2, zeta);
 end
 
-function Delta_u_l1 = f_Delta_u_l1(Delta_Omega_l1, Delta)
-    Delta_u_l1 = Delta_Omega_l1 ./ Delta;
+function value = Delta(M2, zeta)
+    value = 1 + ((1 - M2.^2) ./ M2.^2) .* zeta.^2;
 end
 
-function Delta_u_l2 = f_Delta_u_l2(Delta_Omega_l2, Delta)
-    Delta_u_l2 = Delta_Omega_l2 ./ Delta;
+function value = Delta_u_l1(R, M2, Gammas, zeta)
+    value = Delta_Omega_l1(R, M2, Gammas, zeta) ./ Delta(M2, zeta);
 end
 
-function Delta_u_s = f_Delta_u_s(Delta_Omega_s, Delta)
-    Delta_u_s = Delta_Omega_s ./ Delta;
+function value = Delta_u_l2(R, M2, Gammas, zeta)
+    value = Delta_Omega_l2(R, M2, Gammas, zeta) ./ Delta(M2, zeta);
 end
 
-function Delta_u = f_Delta_u(Delta_u_l1, Delta_u_l2, Delta_u_s, zeta)
-    j = 0;
-    count = 0;
-    for i=length(zeta):-1:1
-        if zeta(i) > 1
-            Delta_u(i, :) = Delta_u_s(end-j, :);
-            j = j + 1;
-        elseif zeta(i) == 1 && count < 1
-            count = count + 1;
-            Delta_u(i, :) = Delta_u_s(end-j, :);
-        elseif zeta(i) == 1 && count < 2
-            count = count + 1;
-            Delta_u(i, :) = sqrt((Delta_u_l1(i, :).^2 + Delta_u_l2(i, :).^2));
-        else
-            Delta_u(i, :) = sqrt((Delta_u_l1(i, :).^2 + Delta_u_l2(i, :).^2));
-        end
+function value = Delta_u_s(R, M2, Gammas, zeta)
+    value = Delta_Omega_s(R, M2, Gammas, zeta) ./ Delta(M2, zeta);
+end
+
+function value = Delta_u(R, M2, Gammas, zeta)
+    count = 0;   
+    if zeta > 1
+        value = Delta_u_s(R, M2, Gammas, zeta);
+    elseif zeta == 1 && count < 1
+        count = count + 1;
+        value = Delta_u_s(R, M2, Gammas, zeta);
+    elseif zeta == 1 && count < 2
+        count = count + 1;
+        value = sqrt((Delta_u_l1(R, M2, Gammas, zeta).^2 + Delta_u_l2(R, M2, Gammas, zeta).^2));
+    else
+        value = sqrt((Delta_u_l1(R, M2, Gammas, zeta).^2 + Delta_u_l2(R, M2, Gammas, zeta).^2));
     end
 end
 
-%%%
-function Delta_v_l1 = f_Delta_v_l1(M2, Delta_Omega_l1, Delta, zeta)
-    Delta_v_l1 = zeta.* ((sqrt(1 - M2.^2)) ./ M2) .* (Delta_Omega_l1 ./ Delta);
+function value = Delta_v_l1(R, M2, Gammas, zeta)
+    value = zeta.* ((sqrt(1 - M2.^2)) ./ M2) .* (Delta_Omega_l1(R, M2, Gammas, zeta) ./ Delta(M2, zeta));
 end
 
-function Delta_v_l2 = f_Delta_v_l2(M2, Delta_Omega_l2, Delta, zeta)
-    Delta_v_l2 = zeta.* ((sqrt(1 - M2.^2)) ./ M2) .* (Delta_Omega_l2 ./ Delta);
+function value = Delta_v_l2(R, M2, Gammas, zeta)
+    value = zeta.* ((sqrt(1 - M2.^2)) ./ M2) .* (Delta_Omega_l2(R, M2, Gammas, zeta) ./ Delta(M2, zeta));
 end
 
-function Delta_v_s = f_Delta_v_s(M2, Delta_Omega_s, Delta, zeta)
-    Delta_v_s = zeta.* ((sqrt(1 - M2.^2)) ./ M2) .* (Delta_Omega_s ./ Delta);
+function value = Delta_v_s(R, M2, Gammas, zeta)
+    value = zeta.* ((sqrt(1 - M2.^2)) ./ M2) .* (Delta_Omega_s(R, M2, Gammas, zeta) ./ Delta(M2, zeta));
 end
 
-function Delta_v = f_Delta_v(Delta_v_l1, Delta_v_l2, Delta_v_s, zeta)
-    j = 0;
-    count = 0;
-    for i=length(zeta):-1:1
-        if zeta(i) > 1
-            Delta_v(i, :) = Delta_v_s(end-j, :);
-            j = j + 1;
-        elseif zeta(i) == 1 && count < 1
-            count = count + 1;
-            Delta_v(i, :) = Delta_v_s(end-j, :);
-        elseif zeta(i) == 1 && count < 2
-            count = count + 1;
-            Delta_v(i, :) = sqrt((Delta_v_l1(i, :).^2 + Delta_v_l2(i, :).^2));
-        else
-            Delta_v(i, :) = sqrt((Delta_v_l1(i, :).^2 + Delta_v_l2(i, :).^2));
-        end
+function value = Delta_v(R, M2, Gammas, zeta)
+    count = 0;   
+    if zeta > 1
+        value = Delta_v_s(R, M2, Gammas, zeta);
+    elseif zeta == 1 && count < 1
+        count = count + 1;
+        value = Delta_v_s(R, M2, Gammas, zeta);
+    elseif zeta == 1 && count < 2
+        count = count + 1;
+        value = sqrt((Delta_v_l1(R, M2, Gammas, zeta).^2 + Delta_v_l2(R, M2, Gammas, zeta).^2));
+    else
+        value = sqrt((Delta_v_l1(R, M2, Gammas, zeta).^2 + Delta_v_l2(R, M2, Gammas, zeta).^2));
     end
 end
 
-function PDF_3D = f_PDF_3D(R, M2, zeta)
-    PDF_3D = 3/2 * ((M2.^4 .* R.^4 .* sqrt(1 - M2.^2)) ./ (M2.^2 .* R.^2 + zeta.^2 .* (1 - M2.^2)).^(5/2));
-end
-%%%
-
-function L3Drl = f_L3Drl(Delta_u_l1, Delta_u_l2, PDF_3D)
-    fun = (Delta_u_l1.^2 + Delta_u_l2.^2) .* PDF_3D;
-    for i=length(PDF_3D(1, :)):-1:1
-        L3Drl(i) = trapz(fun(:, i));
-    end
+function value = pdf3D(R, M2, zeta)
+    value = 3/2 * ((M2.^4 .* R.^4 .* sqrt(1 - M2.^2)) ./ (M2.^2 .* R.^2 + zeta.^2 .* (1 - M2.^2)).^(5/2));
 end
 
-function L3Drs = f_L3Drs(Delta_u_s, PDF_3D)
-    fun = Delta_u_s.^2 .* PDF_3D;
-    for i=length(PDF_3D(1, :)):-1:1
-        L3Drs(i) = trapz(fun(:, i));
-    end
+function value = L3Drl(R, M2, Gammas)
+    fun = @(zeta) (Delta_u_l1(R, M2, Gammas, zeta).^2 + Delta_u_l2(R, M2, Gammas, zeta).^2) .* pdf3D(R, M2, zeta); 
+    value = integral(fun, 0, 1, 'Waypoints', linspace(0, 1, 2e3));
 end
 
-function L3Dr = f_L3Dr(L3Drl, L3Drs)
-    L3Dr = L3Drl + L3Drs;
+function value = L3Drs(R, M2, Gammas)
+    fun = @(zeta) Delta_u_s(R, M2, Gammas, zeta).^2 .* pdf3D(R, M2, zeta);
+    value = integral(fun, 1.005, Inf, 'Waypoints', [linspace(1.005, 100, 1e4), linspace(100.01, 1e5, 1e4)]);
 end
 
-function L3Da = f_L3Da(Delta_ua, PDF_3D)
-    fun = Delta_ua.^2 .* PDF_3D;
-    for i=length(PDF_3D(1, :)):-1:1
-        L3Da(i) = trapz(fun(:, i));
-    end
+function value = L3Dr(R, M2, Gammas)
+    value = L3Drl(R, M2, Gammas) + L3Drs(R, M2, Gammas);
 end
 
-function L3D = f_L3D(L3Dr, L3Da)
-    L3D = L3Dr + L3Da;
+function value = L3Da(R, M2, Gammas)
+    fun = @(zeta) Delta_ua(R, M2, Gammas, zeta).^2 .* pdf3D(R, M2, zeta);
+    value = integral(fun, 1.005, Inf, 'Waypoints', [linspace(1.005, 100, 1e4), linspace(100.01, 1e5, 1e4)]);
 end
 
-
-
-
-function T3Drl = f_T3Drl(Delta_v_l1, Delta_v_l2, PDF_3D)
-    fun = (Delta_v_l1.^2 + Delta_v_l2.^2 + 3/2) .* PDF_3D;
-    for i=length(PDF_3D(1, :)):-1:1
-        T3Drl(i) = 0.5 * trapz(fun(:, i));
-    end
+function value = L3D(R, M2, Gammas)
+    value = L3Dr(R, M2, Gammas) + L3Da(R, M2, Gammas);
 end
 
-function T3Drs = f_T3Drs(Delta_v_s, PDF_3D)
-    fun = (Delta_v_s.^2 + 3/2).* PDF_3D;
-    for i=length(PDF_3D(1, :)):-1:1
-        T3Drs(i) = 0.5 * trapz(fun(:, i));
-    end
+function value = T3Drl(R, M2, Gammas)
+    fun = @(zeta) (Delta_v_l1(R, M2, Gammas, zeta).^2 + Delta_v_l2(R, M2, Gammas, zeta).^2 + 3/2) .* pdf3D(R, M2, zeta);
+    value =  0.5 * integral(fun, 0, 1, 'Waypoints', linspace(0, 1, 2e3));
 end
 
-function T3Dr = f_T3Dr(T3Drl, T3Drs)
-    T3Dr = T3Drl + T3Drs;
+function value = T3Drs(R, M2, Gammas)
+    fun = @(zeta) (Delta_v_s(R, M2, Gammas, zeta).^2 + 3/2).* pdf3D(R, M2, zeta);
+    value =   0.5 * integral(fun, 1.01, Inf, 'Waypoints', [linspace(1, 100, 1e4), linspace(100.01, 1e5, 1e5)]);
 end
 
-function T3Da = f_T3Da(Delta_va, PDF_3D)
-    fun = Delta_va.^2 .* PDF_3D;
-    for i=length(PDF_3D(1, :)):-1:1
-        T3Da(i) = 0.5 * trapz(fun(:, i));
-    end
+function value = T3Dr(R, M2, Gammas)
+    value = T3Drl(R, M2, Gammas) + T3Drs(R, M2, Gammas);
 end
 
-function T3D = f_T3D(T3Dr, T3Da)
-    T3D = T3Dr + T3Da;
+function value = T3Da(R, M2, Gammas)
+    fun = @(zeta) Delta_va(R, M2, Gammas, zeta).^2 .* pdf3D(R, M2, zeta);
+    value =  0.5 * integral(fun, 1.002, Inf, 'Waypoints', [linspace(1.002, 100, 1e4), linspace(100.01, 1e10, 1e4)]);
+end
+
+function value = T3D(R, M2, Gammas)
+    value = T3Dr(R, M2, Gammas) + T3Da(R, M2, Gammas);
 end
 
 
-function [R, P, T, M1, M2, Gammas] = get_parameters(self)
+function [R, P, T, M1, M2, Gammas, alpha] = get_parameters(self)
     R = cell2vector(self.PS.strP, 'rho') ./ cell2vector(self.PS.strR, 'rho');
     P = cell2vector(self.PS.strP, 'p') ./ cell2vector(self.PS.strR, 'p');
     T = cell2vector(self.PS.strP, 'T') ./ cell2vector(self.PS.strR, 'T');
     M1 = cell2vector(self.PS.strR, 'u') ./ cell2vector(self.PS.strR, 'sound');
     M2 = cell2vector(self.PS.strP, 'v_shock') ./ cell2vector(self.PS.strP, 'sound');
-    Gammas = f_Gammas(M1, R, P);
+    Gammas = compute_Gammas(M1, R, P);
+
+    Yi = cell2vector(self.PS.strP, 'Yi');
+    alpha = Yi(2, :);
+
     R = R(1:end-1);
     P = P(1:end-1);
     T = T(1:end-1);
     M1 = M1(1:end-1);
     M2 = M2(1:end-1);
+    alpha = alpha(1:end-1);
 end
 
 function self = compute_shock(varargin)
@@ -297,7 +306,7 @@ function self = compute_shock(varargin)
     if ~isempty(varargin{nargin})
         ListProducts = varargin{1}{1};
     else 
-        ListProducts = 'Air_ions';
+        ListProducts = 'Air';
     end
     if nargin > 2, T = varargin{1}{2}; else, T = 300; end % [K]
     if nargin > 3, p = varargin{1}{3}; else, p = 1; end % [bar]
@@ -306,12 +315,18 @@ function self = compute_shock(varargin)
     % Initial conditions
     self = set_prop(self, 'TR', T, 'pR', 1.01325 * p);
     self.PD.S_Oxidizer = {'O2'};
-    self.PD.S_Inert    = {'N2', 'Ar', 'CO2'};
+%     self.PD.S_Inert    = {'N2', 'Ar', 'CO2'};
 %     self.PD.proportion_inerts_O2 = [78.084, 0.9365, 0.0319] ./ 20.9476;
     % Additional inputs
-%     u1 = logspace(2, 5, 500); u1 = u1(u1<20000); u1 = u1(u1>=360);
-    u1 = logspace(2, 5, 2e4); u1 = u1(u1<15000); u1 = u1(u1>=360);
-%     u1 = [10000, 12000];
+    initial_velocity_sound = 3.529546069689621e+02;
+    u1 = linspace(initial_velocity_sound, 500, 200);
+    u1 = [u1, linspace(500.1, 3000, 1000)];
+    u1 = [u1, linspace(3000.1, 5000, 500)];
+    u1 = [u1, linspace(5000.1, 12000, 8000)];
+    u1 = [u1, linspace(12000.1, 15000, 500)];
+%     u1 = logspace(2, 5, 2e3);
+    u1 = u1(u1 < 15000); u1 = u1(u1 >= initial_velocity_sound);
+
     self = set_prop(self, 'u1', u1, 'phi', self.PD.phi.value(1) * ones(1, length(u1)));
     % Solve problem
     self = SolveProblem(self, 'SHOCK_I');

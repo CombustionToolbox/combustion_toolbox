@@ -38,6 +38,6 @@ for n = length(N):-1:1
         s0i  = 0;
         pVi  = 0;
     end   
-    ind = find_ind(species(n), self.S.LS);
+    ind = find_ind(self.S.LS, species(n));
     M(ind, :) = [N(n), N(n) * [hfi, DhTi, efi, DeTi, cPi, cVi, s0i], pVi, swtCondensed, mi, mmi];
 end

@@ -70,7 +70,7 @@ function [R, P] = therm_effects_diatomic_sym(varargin)
     Gammas_strong = f_Gammas(M1_strong, R_strong, P_strong);
 end
 
-% NESTED FUNCTIONS
+% SUB-PASS FUNCTIONS
 function P0 = f_P0(R)
     P0 = @(T, gamma) ((gamma + 1) - (gamma - 1) * R(T)^(-1)) / ((gamma + 1) * R(T)^(-1) - (gamma - 1));
 end

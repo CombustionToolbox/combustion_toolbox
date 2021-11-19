@@ -40,7 +40,7 @@ function obj = update_results_gui(obj, app)
 end
 
 function obj = get_listSpecies_gui(obj)
-    obj.LS = obj.listbox_LS.Value;
+    obj.LS = obj.listbox_Products.Items;
     if isempty(obj.LS)
         % Get default value
         obj.LS = 'Soot Formation';

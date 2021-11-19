@@ -1,11 +1,17 @@
-function gui_edit_phiValueChanged(obj)
+function gui_edit_phiValueChanged(obj, event)
     % Update moles and mole fractions of the reactant UITables for the
     % given equivalence ratio
     try
+        % If UITable_R is empty the equivalence can not change
+        if isempty(obj.UITable_R.Data) 
+            return
+        end
         % Initialize app (fast: transfer DB)
         app = App('fast', obj.DB_master, obj.DB);
+        % Set FLAG compute moles from equivalence ratio
+        FLAG_COMPUTE_FROM_PHI = true;
         % Get reactant species
-        app = gui_get_reactants(obj, event, app);
+        app = gui_get_reactants(obj, event, app, FLAG_COMPUTE_FROM_PHI);
         % Compute properties of the mixture
         app = gui_compute_propReactants(obj, app);
         % Update UITable classes

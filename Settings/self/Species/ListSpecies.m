@@ -3,20 +3,20 @@ function self = ListSpecies(varargin)
 
 self = varargin{1,1};
 if nargin < 2
-    LS = 'HC/02/N2 EXTENDED';
+    LS = 'HC/O2/N2 EXTENDED';
 else
     LS = varargin(2);
 end
-    
-if strcmpi(LS, 'HC/02/N2 EXTENDED')
+
+if strcmpi(LS, 'HC/O2/N2 EXTENDED')
     self.S.LS = {'CO2', 'CO', 'H2O', 'H2', 'O2', 'N2', 'He', 'Ar',...
                 'OH','H','O','HO2','NO','HCO','CH4','CH3',...
                 'NO2','NH3','NH2','N','HCN','CN','N2O','C2','CH'};
             
-elseif strcmpi(LS, 'HC/02/N2')
+elseif strcmpi(LS, 'HC/O2/N2')
     self.S.LS = {'CO2', 'CO', 'H2O', 'H2', 'O2', 'N2', 'He', 'Ar'};
     
-elseif strcmpi(LS, 'HC/02/N2 RICH')
+elseif strcmpi(LS, 'HC/O2/N2 RICH')
     self.S.LS = {'CO2', 'CO', 'H2O', 'H2', 'O2', 'N2', 'He', 'Ar',...
                 'HCN','H','OH','O','CN','NH3','CH4','C2H4','CH3',...
                 'NO','HCO','NH2','NH','N','CH'};
@@ -70,7 +70,7 @@ elseif strcmpi(LS, 'NASA ALL')
                 'C10H8_naphthale','C12H10_biphenyl','HCO','HNC','HNO2',...
                 'N','NH2','NO','N2H2','N2O3','N3','OH','CH3OHbLb','C6H5NH2bLb','C'};
             
-elseif strcmpi(LS, 'AIR')
+elseif strcmpi(LS, 'AIR') | strcmpi(LS, 'DISSOCIATED AIR')
     self.S.LS = {'O2','N2','O','O3','N','NO','NO2','NO3','N2O','N2O3','N2O4','N3','C','CO','CO2',...
                 'Ar','H2O','H2','H','He'};
     
@@ -99,7 +99,7 @@ self.S.LS = {'H','HNO','HNO3','H2O','NH','NH2OH','NO3','N2H2','N2O3','N3','OH','
 elseif strcmpi(LS, 'HYDROGEN_L')
     self.S.LS = {'H','H2O','OH','H2','O','O3','O2','HO2','H2O2','H2bLb','O2bLb'};
     
-elseif strcmpi(LS, 'HC/02/N2 PROPELLANTS')
+elseif strcmpi(LS, 'HC/O2/N2 PROPELLANTS')
     self.S.LS = {'CO2', 'CO', 'H2O', 'H2', 'O2', 'N2', 'He', 'Ar',...
                 'OH','H','O','HO2','NO','HCO','CH4','CH3',...
                 'NO2','NH3','NH2','N','HCN','CN','N2O','C2','CH',...

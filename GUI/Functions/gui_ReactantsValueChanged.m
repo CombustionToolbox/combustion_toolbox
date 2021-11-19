@@ -9,6 +9,8 @@ function gui_ReactantsValueChanged(obj, event)
         if strcmp(obj.Reactants.Value, '1') % No species selected
             gui_empty_UITables(obj);
             return
+        elseif isempty(obj.Reactants.Value)
+            return
         end
         % Set reactant species
         app = gui_set_reactants(obj, event, app);
@@ -16,10 +18,12 @@ function gui_ReactantsValueChanged(obj, event)
         app = gui_compute_propReactants(obj, app);
         % Update UITable classes
         gui_update_UITable_R(obj, app);
-        obj.UITable_P.Data = obj.UITable_R.Data(:, 1);    % (species, numer of moles, mole fractions, temperature)
         obj.UITable_R2.Data = obj.UITable_R.Data(:, 1:3); % (species, numer of moles, mole fractions)
         % Update GUI: equivalence ratio, O/F and percentage Fuel
         gui_update_phi(obj, app);
+        % Update GUI: Listbox species considered as products.
+        % In case frozen chemistry or ionization is considered.
+        gui_update_frozen(obj);
     catch ME
       errorMessage = sprintf('Error in function %s() at line %d.\n\nError Message:\n%s', ...
       ME.stack(1).name, ME.stack(1).line, ME.message);
@@ -95,7 +99,7 @@ function app = gui_set_reactants(obj, event, app)
             end
             % Get data of the current mixture
             if ~isempty(obj.UITable_R.Data)
-                app = gui_get_reactants(obj, app);
+                app = gui_get_reactants(obj, event, app);
             end
             % Add new species to the mixture (fuel by default)
             app.PD.S_Fuel = [app.PD.S_Fuel, {species}];

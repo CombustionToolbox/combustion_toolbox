@@ -177,6 +177,7 @@ function gui_ProblemTypeValueChanged(obj)
             % Set default input values
             obj.PR1.Value = '300';
             obj.PR2.Value = '1';
+            obj.PR3.Value = '2';
             % Set visible item volume ratio
             obj.text_vP_vR.Visible = 'off'; 
             % Set invisible shocks/detonation items

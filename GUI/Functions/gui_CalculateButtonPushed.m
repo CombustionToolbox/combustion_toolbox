@@ -81,12 +81,15 @@ function app = get_input_constrains(obj, app)
             app.PD.vP_vR.value = gui_get_prop(obj, 'vP_vR', obj.PP2.Value);
             app.PD.phi.value = 1*ones(1, length(app.PD.vP_vR.value));
         case 'SHOCK_I' % * SHOCK_I: CALCULATE PLANAR INCIDENT SHOCK WAVE
-
+            [app.PD.u1.value, app.FLAG_PR3] = gui_get_prop(obj, 'u1', obj.PR3.Value);
+            app.PD.phi.value = 1*ones(1, length(app.PD.u1.value));
         case 'SHOCK_R' % * SHOCK_R: CALCULATE PLANAR POST-REFLECTED SHOCK STATE
-
+            [app.PD.u1.value, app.FLAG_PR3] = gui_get_prop(obj, 'u1', obj.PR3.Value);
+            app.PD.phi.value = 1*ones(1, length(app.PD.u1.value));
         case 'DET' % * DET: CALCULATE CHAPMAN-JOUGET STATE (CJ UPPER STATE)
             % No additional constrains
         case 'DET_OVERDRIVEN' % * DET_OVERDRIVEN: CALCULATE OVERDRIVEN DETONATION
-
+            [app.PD.overdriven.value, app.FLAG_PR3] = gui_get_prop(obj, 'overdriven', obj.PR3.Value);
+            app.PD.phi.value = 1*ones(1, length(app.PD.overdriven.value));
     end
 end

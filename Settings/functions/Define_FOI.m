@@ -4,7 +4,7 @@ function self = Define_FOI(self, i)
     % Check reactant species are contained in the list of products (initial computations)
     self = Check_FOI(self, [self.PD.S_Fuel, self.PD.S_Oxidizer, self.PD.S_Inert]);
     % Define Fuel
-    if ~self.Misc.FLAG_N_Fuel
+    if ~self.Misc.FLAG_N_Fuel && ~self.Misc.FLAG_GUI
         self.PD.N_Fuel = 1;
     end
     self = Define_F(self);
@@ -23,7 +23,7 @@ function self = Define_FOI(self, i)
     self.PS.strR{i} = ComputeProperties(self, R, self.PD.pR.value, self.PD.TR.value);
     self.PS.strR{i}.phi = self.PD.phi.value(i);
     self.PS.strR{i}.LS  = merged_cells({self.PD.S_Fuel, self.PD.S_Oxidizer, self.PD.S_Inert});
-    [~, ind_LS, ~] = intersect(self.PS.strR{i}.LS, self.S.LS);
+    [~, ind_LS, ~] = intersect(self.S.LS, self.PS.strR{i}.LS);
     self.PS.strR{i}.ind_LS = ind_LS;
 end
 

@@ -25,10 +25,9 @@ function gui_ReactantsValueChanged(obj, event)
         % In case frozen chemistry or ionization is considered.
         gui_update_frozen(obj);
     catch ME
-      errorMessage = sprintf('Error in function %s() at line %d.\n\nError Message:\n%s', ...
-      ME.stack(1).name, ME.stack(1).line, ME.message);
-      fprintf('%s\n', errorMessage);
-      uiwait(warndlg(errorMessage));
+        message = {sprintf('Error in function %s() at line %d.\n\nError Message:\n%s', ...
+        ME.stack(1).name, ME.stack(1).line, ME.message)};
+        uialert(obj.UIFigure, message, 'Warning', 'Icon', 'warning');
     end
 end
 

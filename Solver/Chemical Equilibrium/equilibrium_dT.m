@@ -6,11 +6,6 @@ S = self.S;
 C = self.C;
 TN = self.TN;
 % -----------------------------------
-% Set List of Species to List of Products
-C.A0.value = C.A0.value(self.Misc.index_LS_original, :);
-C.M0.value = C.M0.value(self.Misc.index_LS_original, :);
-C.N0.value = C.N0.value(self.Misc.index_LS_original, :);
-% -----------------------------------
 A0 = C.A0.value;
 R0TP = C.R0 * TP; % [J/(mol)]
 % Initialization
@@ -44,7 +39,8 @@ x = A\b;
 dNi_T(temp_ind) = x(1:temp_NS);
 dN_T = x(end);
 end
-% NESTED FUNCTIONS
+
+% SUB-PASS FUNCTIONS
 function h0 = set_h0(ls, TP, DB)
     for i=length(ls):-1:1
         species = ls{i};

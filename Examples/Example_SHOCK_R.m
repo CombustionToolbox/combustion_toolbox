@@ -25,7 +25,7 @@ self.PD.S_Oxidizer = {'O2'};
 self.PD.S_Inert    = {'N2', 'Ar', 'CO2'};
 self.PD.proportion_inerts_O2 = [78.084, 0.9365, 0.0319] ./ 20.9476;
 %% ADDITIONAL INPUTS (DEPENDS OF THE PROBLEM SELECTED)
-u1 = logspace(2, 5, 500); u1 = u1(u1<20000); u1 = u1(u1>=360);
+u1 = logspace(2, 5, 500); u1 = u1(u1<10000); u1 = u1(u1>=360);
 self = set_prop(self, 'u1', u1, 'phi', self.PD.phi.value(1) * ones(1, length(u1)));
 %% SOLVE PROBLEM
 self = SolveProblem(self, 'SHOCK_R');

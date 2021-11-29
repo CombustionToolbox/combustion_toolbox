@@ -4,10 +4,8 @@ function strP = equilibrate_T(self, strR, pP, TP)
     % Compute number of moles 
     [N, DeltaNP, DeltaNP_ions] = select_equilibrium(self, pP, TP, strR);
     % Compute thermodynamic derivates
-    [dNi_T, dN_T] = equilibrium_dT(self, N, TP, strR);
-    [dNi_p, dN_p] = equilibrium_dp(self, N, strR);
-    self.dNi_T = dNi_T; self.dNi_P = dNi_p;
-    self.dN_T = dN_T; self.dN_P = dN_p;
+    [self.dNi_T, self.dN_T] = equilibrium_dT(self, N, TP, strR);
+    [self.dNi_p, self.dN_p] = equilibrium_dp(self, N, strR);
     % Compute properties matrix
     P = SetSpecies(self, self.S.LS, N(:, 1), TP);
     % Compute properties of final mixture

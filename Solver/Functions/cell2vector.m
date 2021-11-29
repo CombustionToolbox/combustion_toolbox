@@ -12,16 +12,20 @@ function vector = cell2vector(varargin)
         error('Error in @cell2vector: Too many input arguments.');
     end
     
-    Nstruct = length(str);
-    if nargin == 1
-        % Return the values of a cell as a vector
-        for i=Nstruct:-1:1
-            vector(i) = str{i};
+    try
+        Nstruct = length(str);
+        if nargin == 1
+            % Return the values of a cell as a vector
+            for i=Nstruct:-1:1
+                vector(:, i) = str{i};
+            end
+        else
+            % Return the field of a struct as a vector
+            for i=Nstruct:-1:1
+                vector(:, i) = str{i}.(field);
+            end
         end
-    else
-        % Return the field of a struct as a vector
-        for i=Nstruct:-1:1
-            vector(i) = str{i}.(field);
-        end
+    catch
+        vector = varargin{1};
     end
 end

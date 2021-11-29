@@ -1,19 +1,11 @@
-function [N0, STOP, STOP_ions] = equilibrium_ions(app, pP, TP, strR)
+function [N0, STOP, STOP_ions] = equilibrium_ions(self, pP, TP, strR)
 % Generalized Gibbs minimization method
 
 % Abbreviations ---------------------
-E = app.E;
-S = app.S;
-C = app.C;
-TN = app.TN;
-% -----------------------------------
-% Set List of Species to List of Products
-C.A0.value = C.A0.value(self.Misc.index_LS_original, :);
-C.M0.value = C.M0.value(self.Misc.index_LS_original, :);
-C.N0.value = C.N0.value(self.Misc.index_LS_original, :);
-S.ind_nswt = intersect(S.ind_nswt, self.Misc.index_LS_original);
-S.ind_swt = intersect(S.ind_swt, self.Misc.index_LS_original);
-S.ind_cryogenic = intersect(S.ind_cryogenic, self.Misc.index_LS_original);
+E = self.E;
+S = self.S;
+C = self.C;
+TN = self.TN;
 % -----------------------------------
 N0 = C.N0.value;
 A0 = C.A0.value;
@@ -46,7 +38,7 @@ temp_NS0 = temp_NS + 1;
 % Initialize species vector N0 
 N0(temp_ind, 1) = 0.1/temp_NS;
 % Dimensionless Standard Gibbs free energy 
-g0 = set_g0(S.LS, TP, app.DB);
+g0 = set_g0(S.LS, TP, self.DB);
 G0RT = g0/R0TP;
 % Construction of part of matrix A (complete)
 [A1, temp_NS0] = update_matrix_A1(A0, [], temp_NS, temp_NS0, temp_ind, temp_ind_E);
@@ -79,7 +71,6 @@ while STOP > TN.tolN && it < itMax
 end
 % Check convergence of charge balance (ionized species)
 [N0, STOP_ions] = check_convergence_ions(N0, A0, E.ind_E, temp_ind_nswt, temp_ind_ions, TN.tolN, TN.tol_pi_e);
-% N0(N0(:, 1) < TN.tolN, 1) = 0;
 end
 % NESTED FUNCTIONS
 function g0 = set_g0(ls, TP, DB)
@@ -172,7 +163,7 @@ function b = update_vector_b(A0, N0, NP, NatomE, ind_E, temp_ind_ions, temp_ind,
     % Update coefficient vector b
     bi_0 = (NatomE(temp_ind_E) - N0(temp_ind, 1)' * A0(temp_ind, temp_ind_E))';
     if any(temp_ind_ions)
-        bi_0(ind_E) = 0;
+        bi_0(temp_ind_E == ind_E) = 0;
     end
     NP_0 = NP - sum(N0(temp_ind_nswt, 1));
     b = [-G0RT(temp_ind); bi_0; NP_0];

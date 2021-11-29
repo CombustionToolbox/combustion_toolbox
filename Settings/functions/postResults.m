@@ -41,6 +41,14 @@ elseif strcmp(ProblemType,{'SHOCK_I'}) && length(phi) > 1
     app.Misc.config.labely = 'Temperature $T [K]$';
     plot_figure(app.PD.u1.value, mix2,'u','T',app.Misc.config,app.PD.CompleteOrIncomplete);
     plot_hugoniot(app, mix1, mix2);
+    app.Misc.config.labelx = 'Temperature $T$';
+    app.Misc.config.labely = 'Molar fraction $X_i$';
+    T = cell2vector(mix2, 'T');
+    displaysweepresults(app, mix2, T);
+    app.Misc.config.labelx = 'Pressure $p$';
+    app.Misc.config.labely = 'Molar fraction $X_i$';
+    p = cell2vector(mix2, 'p');
+    displaysweepresults(app, mix2, p);
         
 elseif strcmp(ProblemType,{'SHOCK_R'}) && length(phi) > 1
     mix3 = mix2;

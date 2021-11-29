@@ -1,4 +1,6 @@
 function strP = equilibrate_T(self, strR, pP, TP)
+    % Set List of Species to List of Products
+    self = set_LS_original(self);
     % Compute number of moles 
     [N, DeltaNP, DeltaNP_ions] = select_equilibrium(self, pP, TP, strR);
     % Compute thermodynamic derivates
@@ -13,6 +15,14 @@ function strP = equilibrate_T(self, strR, pP, TP)
 end
 
 % SUB-PASS FUNCTIONS
+function self = set_LS_original(self)
+    % Set List of Species to List of Products
+    self.S.LS = self.S.LS(self.Misc.index_LS_original);
+    self.C.A0.value = self.C.A0.value(self.Misc.index_LS_original, :);
+    self.C.M0.value = self.C.M0.value(self.Misc.index_LS_original, :);
+    self.C.N0.value = self.C.N0.value(self.Misc.index_LS_original, :);
+end
+
 function pP = compute_pressure(self, strR, TP, N)
     % Compute pressure of product mixture
     pP = (N * TP * self.C.R0 / (strR.v/1e3)) / 1e5;

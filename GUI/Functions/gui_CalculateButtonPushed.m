@@ -1,14 +1,18 @@
-function obj = gui_CalculateButtonPushed(obj)
+function obj = gui_CalculateButtonPushed(obj, event)
     % Solve selected problem, update GUI with the results and generate
     % predefined plots.
     try
+        % Set lamp to Working color
+        obj.Lamp.Color = obj.color_lamp_working;
         % Get List of Species considered (reactants + products)
         obj = get_listSpecies_gui(obj);
         % Initialize variable app
         app = App('fast', obj.DB_master, obj.DB, obj.LS);
+        % Set FLAG GUI
+        app.Misc.FLAG_GUI = true;
         % Get initial conditions
         app = get_input_constrains(obj, app);
-        app = get_current_reactants_gui(obj, app);
+        app = gui_get_reactants(obj, event, app);
         % Solve selected problem
         app = SolveProblem(app, app.PD.ProblemType);
         % Save results
@@ -17,11 +21,15 @@ function obj = gui_CalculateButtonPushed(obj)
         obj = update_results_gui(obj, results);
         % Display results (plots)
         postResults(app);
+        % Set lamp to Done color
+        obj.Lamp.Color = obj.color_lamp_done;
     catch ME
-      errorMessage = sprintf('Error in function %s() at line %d.\n\nError Message:\n%s', ...
-      ME.stack(1).name, ME.stack(1).line, ME.message);
-      fprintf('%s\n', errorMessage);
-      uiwait(warndlg(errorMessage));
+        % Set lamp to Error color
+        obj.Lamp.Color = obj.color_lamp_error;
+        % Print error
+        message = {sprintf('Error in function %s() at line %d.\n\nError Message:\n%s', ...
+        ME.stack(1).name, ME.stack(1).line, ME.message)};
+        uialert(obj.UIFigure, message, 'Warning', 'Icon', 'warning');
     end
 end
 
@@ -31,10 +39,10 @@ function obj = update_results_gui(obj, app)
 end
 
 function obj = get_listSpecies_gui(obj)
-    obj.LS = obj.listbox_LS.Value;
+    obj.LS = obj.listbox_Products.Items;
     if isempty(obj.LS)
         % Get default value
-        obj.LS = 'HC/02/N2 EXTENDED';
+        obj.LS = 'Soot Formation';
     end
 end
 function results = save_results(obj, app)
@@ -72,12 +80,15 @@ function app = get_input_constrains(obj, app)
             app.PD.vP_vR.value = gui_get_prop(obj, 'vP_vR', obj.PP2.Value);
             app.PD.phi.value = 1*ones(1, length(app.PD.vP_vR.value));
         case 'SHOCK_I' % * SHOCK_I: CALCULATE PLANAR INCIDENT SHOCK WAVE
-
+            [app.PD.u1.value, app.FLAG_PR3] = gui_get_prop(obj, 'u1', obj.PR3.Value);
+            app.PD.phi.value = 1*ones(1, length(app.PD.u1.value));
         case 'SHOCK_R' % * SHOCK_R: CALCULATE PLANAR POST-REFLECTED SHOCK STATE
-
+            [app.PD.u1.value, app.FLAG_PR3] = gui_get_prop(obj, 'u1', obj.PR3.Value);
+            app.PD.phi.value = 1*ones(1, length(app.PD.u1.value));
         case 'DET' % * DET: CALCULATE CHAPMAN-JOUGET STATE (CJ UPPER STATE)
             % No additional constrains
         case 'DET_OVERDRIVEN' % * DET_OVERDRIVEN: CALCULATE OVERDRIVEN DETONATION
-
+            [app.PD.overdriven.value, app.FLAG_PR3] = gui_get_prop(obj, 'overdriven', obj.PR3.Value);
+            app.PD.phi.value = 1*ones(1, length(app.PD.overdriven.value));
     end
 end

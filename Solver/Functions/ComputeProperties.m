@@ -115,7 +115,7 @@ if isfield(self, 'dNi_T')
     mix.cP_r = sum(H0_j/T .* self.dNi_T(ind));
     mix.cP = mix.cP + mix.cP_r;
     mix.dVdT_p =  1 + self.dN_T;
-    mix.dVdp_T = -1 + self.dN_P;
+    mix.dVdp_T = -1 + self.dN_p;
     mix.cV = mix.cP + (mix.pv/T * mix.dVdT_p^2) / mix.dVdp_T *1e2;
     mix.gamma = mix.cP/mix.cV;
     mix.gamma_s = - mix.gamma / mix.dVdp_T;

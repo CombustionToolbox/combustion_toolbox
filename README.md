@@ -1,5 +1,5 @@
 # Combustion Toolbox
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.5599436.svg)](https://doi.org/10.5281/zenodo.5599436)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.5734167.svg)](https://doi.org/10.5281/zenodo.5734167)
 [![File Exchange](https://www.mathworks.com/matlabcentral/images/matlab-file-exchange.svg)](https://es.mathworks.com/matlabcentral/fileexchange/101088-combustion-toolbox)
 ![repo size](https://img.shields.io/github/repo-size/AlbertoCuadra/combustion_toolbox)
 ![last modified](https://img.shields.io/github/last-commit/AlbertoCuadra/combustion_toolbox)
@@ -83,6 +83,6 @@ See also the list of [contributors](https://github.com/AlbertoCuadra/combustion_
     title = "Combustion Toolbox: A MATLAB-GUI based open-source tool for solving combustion problems",
     year = 2021,
     note = "Version 0.3.74",
-    doi = {https://doi.org/10.5281/zenodo.5599436}
+    doi = {https://doi.org/10.5281/zenodo.5734167}
 }
 ```

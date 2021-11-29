@@ -33,6 +33,7 @@ if nargin == 5
     fprintf('r [kg/m3]     |\t %10.3f\t|\t%10.3f\n', density(mix1), density(mix2));
     fprintf('h [kJ/kg]     |\t %10.3f\t|\t%10.3f\n', enthalpy_mass(mix1), enthalpy_mass(mix2));
     fprintf('e [kJ/kg]     |\t %10.3f\t|\t%10.3f\n', intEnergy_mass(mix1), intEnergy_mass(mix2));
+    fprintf('g [kJ/kg]     |\t %10.3f\t|\t%10.3f\n', gibbs_mass(mix1), gibbs_mass(mix2));
     fprintf('s [kJ/(kg-K)] |\t %10.3f\t|\t%10.3f\n', entropy_mass(mix1), entropy_mass(mix2));
     fprintf('cp [kJ/(kg-K)]|\t %10.3f\t|\t%10.3f\n', cp_mass(mix1), cp_mass(mix2));
     fprintf('gamma [-]     |\t %10.3f\t|\t%10.3f\n', adiabaticIndex(mix1), adiabaticIndex(mix2));
@@ -83,6 +84,7 @@ elseif nargin == 6
     fprintf('r [kg/m3]    |\t %10.3f\t|\t%10.3f\t|\t%10.3f\n', density(mix1), density(mix2), density(mix3));
     fprintf('h [kJ/kg]    |\t %10.3f\t|\t%10.3f\t|\t%10.3f\n', enthalpy_mass(mix1), enthalpy_mass(mix2), enthalpy_mass(mix3));
     fprintf('e [kJ/kg]    |\t %10.3f\t|\t%10.3f\t|\t%10.3f\n', intEnergy_mass(mix1), intEnergy_mass(mix2), intEnergy_mass(mix3));
+    fprintf('g [kJ/kg]    |\t %10.3f\t|\t%10.3f\n|\t%10.3f\n', gibbs_mass(mix1), gibbs_mass(mix2),  gibbs_mass(mix3));
     fprintf('s [kJ/(kg-K)]|\t %10.3f\t|\t%10.3f\t|\t%10.3f\n', entropy_mass(mix1), entropy_mass(mix2), entropy_mass(mix3));
     fprintf('u [m/s]      |\t %10.3f\t|\t%10.3f\t|\t%10.3f\n', velocity_relative(mix1), velocity_relative(mix2), velocity_relative(mix3));
     fprintf('-----------------------------------------------------------\n');

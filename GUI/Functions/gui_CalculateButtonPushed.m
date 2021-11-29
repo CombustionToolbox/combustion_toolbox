@@ -27,10 +27,9 @@ function obj = gui_CalculateButtonPushed(obj, event)
         % Set lamp to Error color
         obj.Lamp.Color = obj.color_lamp_error;
         % Print error
-        errorMessage = sprintf('Error in function %s() at line %d.\n\nError Message:\n%s', ...
-        ME.stack(1).name, ME.stack(1).line, ME.message);
-        fprintf('%s\n', errorMessage);
-        uiwait(warndlg(errorMessage));
+        message = {sprintf('Error in function %s() at line %d.\n\nError Message:\n%s', ...
+        ME.stack(1).name, ME.stack(1).line, ME.message)};
+        uialert(obj.UIFigure, message, 'Warning', 'Icon', 'warning');
     end
 end
 

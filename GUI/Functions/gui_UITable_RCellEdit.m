@@ -16,15 +16,14 @@ function gui_UITable_RCellEdit(obj, event)
         % Update GUI: equivalence ratio, O/F and percentage Fuel
         gui_update_phi(obj, app);
     catch ME
-      errorMessage = sprintf('Error in function %s() at line %d.\n\nError Message:\n%s', ...
-      ME.stack(1).name, ME.stack(1).line, ME.message);
-      fprintf('%s\n', errorMessage);
-      uiwait(warndlg(errorMessage));
+        message = {sprintf('Error in function %s() at line %d.\n\nError Message:\n%s', ...
+        ME.stack(1).name, ME.stack(1).line, ME.message)};
+        uialert(obj.UIFigure, message, 'Warning', 'Icon', 'warning');
     end
 end
 
 function update_temperature_mixture(obj, app)
     % Get temperature of the mixture (if needed)
     temperature = compute_temperature_mixture(app, obj.UITable_R.Data(:, 1), obj.UITable_R.Data(:, 2), obj.UITable_R.Data(:, 5));
-    obj.PR1.Value = sprintf('%.4f', temperature);
+    obj.PR1.Value = sprintf('%.4g', temperature);
 end

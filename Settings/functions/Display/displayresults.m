@@ -46,7 +46,7 @@ if nargin == 5
         fprintf('u [m/s]        |   %12.4f  |   %12.4f\n', velocity_relative(mix1), velocity_relative(mix2));
     end
     fprintf('-----------------------------------------------------------\n');
-    fprintf('REACTANTS        Xi [-]\n');
+    fprintf('REACTANTS          Xi [-]\n');
     %%%% SORT SPECIES COMPOSITION %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     [mix1.Xi(:),ind_sort] = sort(mix1.Xi(:),'descend');
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -54,7 +54,7 @@ if nargin == 5
     Xminor = sum(mix1.Xi(~j));
     for i=1:length(j)
         if j(i)
-            fprintf('%-12s     %1.4e\n',NameSpecies{ind_sort(i)},mix1.Xi(i));
+            fprintf('%-16s %1.4e\n',NameSpecies{ind_sort(i)},mix1.Xi(i));
         end
     end
     Nminor = length(mix1.Xi)-sum(j);
@@ -62,7 +62,7 @@ if nargin == 5
     fprintf('MINORS[+%d] %s %12.4e\n\n', Nminor, s_space_Nminor, Xminor);
     fprintf('TOTAL        %14.4e\n',sum(mix1.Xi));
     fprintf('-----------------------------------------------------------\n');
-    fprintf('PRODUCTS         Xi [-]\n');
+    fprintf('PRODUCTS           Xi [-]\n');
     %%%% SORT SPECIES COMPOSITION %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     [mix2.Xi(:),ind_sort] = sort(mix2.Xi(:),'descend');
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -70,7 +70,7 @@ if nargin == 5
     Xminor = sum(mix2.Xi(~j));
     for i=1:length(j)
         if j(i)
-            fprintf('%-12s     %1.4e\n',NameSpecies{ind_sort(i)},mix2.Xi(i));
+            fprintf('%-16s %1.4e\n',NameSpecies{ind_sort(i)},mix2.Xi(i));
         end
     end
     Nminor = length(mix2.Xi)-sum(j);
@@ -101,7 +101,7 @@ elseif nargin == 6
     fprintf('sound vel [m/s]|   %12.4f  |   %12.4f  |   %12.4f\n', soundspeed(mix1), soundspeed(mix2), soundspeed(mix3));
     fprintf('u [m/s]        |   %12.4f  |   %12.4f  |   %12.4f\n', velocity_relative(mix1), velocity_relative(mix2), velocity_relative(mix3));
     fprintf('-----------------------------------------------------------\n');
-    fprintf('STATE 1          Xi [-]\n');
+    fprintf('STATE 1            Xi [-]\n');
     %%%% SORT SPECIES COMPOSITION %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     [mix1.Xi(:),ind_sort] = sort(mix1.Xi(:),'descend');
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -109,7 +109,7 @@ elseif nargin == 6
     Xminor = sum(mix1.Xi(~j));
     for i=1:length(j)
         if j(i)
-              fprintf('%-12s \t%11.4e\n',NameSpecies{ind_sort(i)},mix1.Xi(i));
+              fprintf('%-16s %1.4e\n',NameSpecies{ind_sort(i)},mix1.Xi(i));
         end
     end
     Nminor = length(mix1.Xi)-sum(j);
@@ -117,7 +117,7 @@ elseif nargin == 6
     fprintf('MINORS[+%d] %s %12.4e\n\n', Nminor, s_space_Nminor, Xminor);
     fprintf('TOTAL        %14.4e\n',sum(mix1.Xi));
     fprintf('-----------------------------------------------------------\n');
-    fprintf('STATE 2          Xi [-]\n');
+    fprintf('STATE 2            Xi [-]\n');
     %%%% SORT SPECIES COMPOSITION %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     [mix2.Xi(:),ind_sort] = sort(mix2.Xi(:),'descend');
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -126,7 +126,7 @@ elseif nargin == 6
 
     for i=1:length(j)
         if j(i)
-              fprintf('%-12s     %1.4e\n',NameSpecies{ind_sort(i)},mix2.Xi(i));
+              fprintf('%-16s     %1.4e\n',NameSpecies{ind_sort(i)},mix2.Xi(i));
         end
     end
     Nminor = length(mix2.Xi)-sum(j);
@@ -134,7 +134,7 @@ elseif nargin == 6
     fprintf('MINORS[+%d] %s %12.4e\n\n', Nminor, s_space_Nminor, Xminor);
     fprintf('TOTAL        %14.4e\n',sum(mix2.Xi));
     fprintf('-----------------------------------------------------------\n');
-    fprintf('STATE 3          Xi [-]\n');
+    fprintf('STATE 3            Xi [-]\n');
     %%%% SORT SPECIES COMPOSITION %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     [mix3.Xi(:),ind_sort] = sort(mix3.Xi(:),'descend');
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%    
@@ -143,7 +143,7 @@ elseif nargin == 6
 
     for i=1:length(j)
         if j(i)
-              fprintf('%-12s     %1.4e\n',NameSpecies{ind_sort(i)},mix3.Xi(i));
+              fprintf('%-16s %1.4e\n',NameSpecies{ind_sort(i)},mix3.Xi(i));
         end
     end
     Nminor = length(mix3.Xi)-sum(j);

@@ -1,5 +1,5 @@
-function [x, ERR] = newton(self, strR, pP, attr_name, x0)
-    % Newton-Raphson method for finding roots
+function [x, ERR] = newton(self, mix1, pP, attr_name, x0)
+    % 1D Newton-Raphson method for finding roots
     if any(strcmpi(self.PD.ProblemType, {'TP', 'TV'}))
         x = get_transformation(self, 'TP');
         ERR = 0;
@@ -8,10 +8,10 @@ function [x, ERR] = newton(self, strR, pP, attr_name, x0)
     it = 0; ERR = 1.0;
     while abs(ERR) > self.TN.tol0 && it < self.TN.itMax
         it = it + 1;
-        [f0, fprime0] = get_ratio_newton(self, strR, pP, attr_name, x0);
+        [f0, fprime0] = get_ratio_newton(self, mix1, pP, attr_name, x0);
         x = abs(x0 - f0 / fprime0);
         
-        f = get_gpoint(self, strR, pP, attr_name, x);
+        f = get_gpoint(self, mix1, pP, attr_name, x);
         ERR = max(abs((x - x0) / x), abs((f - f0) / f));
         x0 = x;
     end
@@ -19,8 +19,8 @@ function [x, ERR] = newton(self, strR, pP, attr_name, x0)
 end
 
 %%% SUB-PASS FUNCTIONS
-function [f, fprime] = get_ratio_newton(self, strR, pP, attr_name, x)
-    strP = equilibrate_T(self, strR, pP, x);
-    f = strP.(attr_name) - strR.(attr_name);
-    fprime = get_partial_derivative(self, strP);
+function [f, fprime] = get_ratio_newton(self, mix1, pP, attr_name, x)
+    mix2 = equilibrate_T(self, mix1, pP, x);
+    f = mix2.(attr_name) - mix1.(attr_name);
+    fprime = get_partial_derivative(self, mix2);
 end

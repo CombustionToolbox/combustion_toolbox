@@ -1,4 +1,4 @@
-function [R, P] = theo_diatomic_shocks_sym(varargin)
+function [R, P] = therm_effects_diatomic_sym(varargin)
     % Get parameters
     [T, alpha, Br, theta_r, theta_v, theta_d] = get_parameters(varargin);
     % Definitions general case (dissociation)
@@ -70,7 +70,7 @@ function [R, P] = theo_diatomic_shocks_sym(varargin)
     Gammas_strong = f_Gammas(M1_strong, R_strong, P_strong);
 end
 
-% NESTED FUNCTIONS
+% SUB-PASS FUNCTIONS
 function P0 = f_P0(R)
     P0 = @(T, gamma) ((gamma + 1) - (gamma - 1) * R(T)^(-1)) / ((gamma + 1) * R(T)^(-1) - (gamma - 1));
 end

@@ -41,7 +41,7 @@ if nargin == 5
     fprintf('(dlV/dlT)p [-] |                 |   %12.4f\n', mix2.dVdT_p);
     fprintf('cp [kJ/(kg-K)] |   %12.4f  |   %12.4f\n', cp_mass(mix1), cp_mass(mix2));
     fprintf('gamma [-]      |   %12.4f  |   %12.4f\n', adiabaticIndex(mix1), adiabaticIndex_sound(mix2));
-    fprintf('son vel [m/s]  |   %12.4f  |   %12.4f\n', soundspeed(mix1), soundspeed(mix2));
+    fprintf('sound vel [m/s]|   %12.4f  |   %12.4f\n', soundspeed(mix1), soundspeed(mix2));
     if strcmpi(ProblemType,'SHOCK_I')||strcmpi(ProblemType,'SHOCK_R')||contains(ProblemType,'DET')
         fprintf('u [m/s]        |   %12.4f  |   %12.4f\n', velocity_relative(mix1), velocity_relative(mix2));
     end
@@ -98,7 +98,7 @@ elseif nargin == 6
     fprintf('(dlV/dlT)p [-] |                 |   %12.4f  |   %12.4f\n', mix2.dVdT_p, mix3.dVdT_p);
     fprintf('cp [kJ/(kg-K)] |   %12.4f  |   %12.4f  |   %12.4f\n', cp_mass(mix1), cp_mass(mix2), cp_mass(mix3));
     fprintf('gamma [-]      |   %12.4f  |   %12.4f  |   %12.4f\n', adiabaticIndex(mix1), adiabaticIndex_sound(mix2), adiabaticIndex_sound(mix3));
-    fprintf('son vel [m/s]  |   %12.4f  |   %12.4f  |   %12.4f\n', soundspeed(mix1), soundspeed(mix2), soundspeed(mix3));
+    fprintf('sound vel [m/s]|   %12.4f  |   %12.4f  |   %12.4f\n', soundspeed(mix1), soundspeed(mix2), soundspeed(mix3));
     fprintf('u [m/s]        |   %12.4f  |   %12.4f  |   %12.4f\n', velocity_relative(mix1), velocity_relative(mix2), velocity_relative(mix3));
     fprintf('-----------------------------------------------------------\n');
     fprintf('STATE 1          Xi [-]\n');

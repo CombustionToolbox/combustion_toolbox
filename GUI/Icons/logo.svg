@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="207.64922mm"
+   height="5.6948056mm"
+   viewBox="0 0 207.64922 5.6948054"
+   version="1.1"
+   id="svg5"
+   inkscape:version="1.1.1 (3bf5ae0d25, 2021-09-20)"
+   sodipodi:docname="logo.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview7"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:document-units="mm"
+     showgrid="false"
+     inkscape:zoom="0.90509668"
+     inkscape:cx="575.07669"
+     inkscape:cy="192.79708"
+     inkscape:window-width="1920"
+     inkscape:window-height="1009"
+     inkscape:window-x="-8"
+     inkscape:window-y="385"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer2"
+     fit-margin-top="0"
+     fit-margin-left="0"
+     fit-margin-right="0"
+     fit-margin-bottom="0"
+     units="mm" />
+  <defs
+     id="defs2">
+    <clipPath
+       id="clip1">
+      <path
+         d="M 302,0.429688 H 464 V 223 H 302 Z m 0,0"
+         id="path824" />
+    </clipPath>
+    <clipPath
+       id="clip2">
+      <path
+         d="M 494,61 H 736.21484 V 223 H 494 Z m 0,0"
+         id="path827" />
+    </clipPath>
+    <clipPath
+       id="clip1-7">
+      <path
+         d="M 302,0.429688 H 464 V 223 H 302 Z m 0,0"
+         id="path824-5" />
+    </clipPath>
+    <clipPath
+       id="clip2-7">
+      <path
+         d="M 494,61 H 736.21484 V 223 H 494 Z m 0,0"
+         id="path827-9" />
+    </clipPath>
+  </defs>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(2156.0021,80.019934)" />
+  <g
+     inkscape:groupmode="layer"
+     id="layer2"
+     inkscape:label="Layer 2"
+     transform="translate(2156.0021,80.019934)">
+    <g
+       id="surface48316"
+       transform="matrix(0.02558325,0,0,0.02558325,-2017.6178,-80.030194)"
+       style="fill:#577a95;fill-opacity:1">
+      <path
+         style="fill:#577a95;fill-opacity:1;fill-rule:nonzero;stroke:none"
+         d="m 277.26172,116.01563 c -9.03906,-8.73047 -21.3711,-14.10547 -34.94141,-14.10547 -22.3164,0 -40.47265,18.11718 -40.47265,40.4375 0,22.3164 18.09375,40.42968 40.41406,40.42968 13.64453,0 25.9414,-5.42968 35,-14.2539 v 46.55078 c -10.55078,5.0664 -22.51172,7.90625 -35,7.90625 -44.53125,0 -80.63281,-36.10156 -80.63281,-80.63281 0,-44.53516 36.10156,-80.636722 80.63281,-80.636722 12.5039,0 24.4375,2.847656 35,7.925781 v 46.378911"
+         id="path832" />
+      <path
+         style="fill:#577a95;fill-opacity:1;fill-rule:evenodd;stroke:none"
+         d="m 100.82813,61.164062 v 91.249998 c 0,16.69141 -13.558599,30.21875 -30.246099,30.21875 -16.6875,0 -30.21875,-13.52734 -30.21875,-30.21875 V 61.164062 H 0 V 152.39062 C 0,191.38672 31.613281,223 70.605469,223 109.60156,223 141.27344,191.38672 141.27344,152.39062 V 61.164062 h -40.44531"
+         id="path834" />
+      <g
+         clip-path="url(#clip1)"
+         clip-rule="nonzero"
+         id="g838"
+         style="fill:#577a95;fill-opacity:1">
+        <path
+           style="fill:#577a95;fill-opacity:1;fill-rule:evenodd;stroke:none"
+           d="m 378.38672,41.203125 -23.32031,60.660155 28.19531,0.0195 -0.57422,0.0664 c 22.32031,0 40.35547,18.09766 40.35547,40.41406 0,22.32422 -18.09375,40.41406 -40.41406,40.41406 -22.32032,0 -40.41407,-18.08984 -40.41407,-40.41406 l -40.1914,0.0781 c 0,44.53515 36.07422,80.55859 80.60547,80.55859 44.53515,0 80.63281,-36.10156 80.63281,-80.63672 0,-34.41797 -21.50391,-63.796874 -51.85938,-75.367186 L 437.14453,0.429688 312.42969,0.734375 v 40.429687 l 65.95703,0.03906"
+           id="path836" />
+      </g>
+      <g
+         clip-path="url(#clip2)"
+         clip-rule="nonzero"
+         id="g842"
+         style="fill:#577a95;fill-opacity:1">
+        <path
+           style="fill:#577a95;fill-opacity:1;fill-rule:evenodd;stroke:none"
+           d="m 620.02734,84.730469 c -12,-14.3125 -30.01172,-23.417969 -50.14843,-23.417969 -13.1875,0 -25.40625,3.90625 -35.67579,10.617188 l 0.15235,-10.574219 H 494.09375 V 222.87891 h 40.26172 l 0.17969,-90.98047 c 0,-16.6875 13.46875,-30.21875 30.16015,-30.21875 16.6875,0 30.14844,13.625 30.14844,30.3164 v 90.88282 h 40.48437 l 0.0117,-90.98047 c 0,-16.6875 13.47266,-30.21875 30.16016,-30.21875 16.6875,0 30.21875,13.53125 30.21875,30.21875 l -0.0703,90.98047 h 40.44922 l 0.11718,-96.19532 c 0,-36.226559 -29.5,-65.37109 -65.73047,-65.37109 -20.28125,0 -38.42578,8.960938 -50.45703,23.417969"
+           id="path840" />
+      </g>
+    </g>
+    <text
+       xml:space="preserve"
+       style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:6.83842px;line-height:1.25;font-family:Arial;-inkscape-font-specification:'Arial Italic';letter-spacing:0px;word-spacing:0px;fill:#577a95;fill-opacity:1;stroke-width:0.0155419"
+       x="-1997.0322"
+       y="-74.405266"
+       id="text4514"><tspan
+         sodipodi:role="line"
+         id="tspan4512"
+         style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:6.83842px;font-family:Arial;-inkscape-font-specification:'Arial Italic';fill:#577a95;fill-opacity:1;stroke-width:0.0155419"
+         x="-1997.0322"
+         y="-74.405266"
+         rotate="0 0 0 0 0 0">Fluid</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:6.83842px;line-height:1.25;font-family:Arial;-inkscape-font-specification:Arial;letter-spacing:0px;word-spacing:0px;fill:#577a95;fill-opacity:1;stroke-width:0.0155419"
+       x="-1980.7753"
+       y="-74.405266"
+       id="text15890"><tspan
+         sodipodi:role="line"
+         id="tspan15888"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Arial;-inkscape-font-specification:Arial;fill:#577a95;fill-opacity:1;stroke-width:0.0155419"
+         x="-1980.7753"
+         y="-74.405266">Mechanics</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:7.69324px;line-height:1.25;font-family:Arial;-inkscape-font-specification:Arial;letter-spacing:0px;word-spacing:0px;fill:#577a95;fill-opacity:1;stroke-width:0.0174845"
+       x="-2156.3853"
+       y="-74.419044"
+       id="text15890-4"><tspan
+         sodipodi:role="line"
+         id="tspan15888-8"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Arial;-inkscape-font-specification:Arial;fill:#577a95;fill-opacity:1;stroke-width:0.0174845"
+         x="-2156.3853"
+         y="-74.419044">Combustion Toolbox</tspan></text>
+  </g>
+</svg>

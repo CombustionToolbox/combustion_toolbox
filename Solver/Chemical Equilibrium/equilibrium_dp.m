@@ -6,11 +6,6 @@ S = self.S;
 C = self.C;
 TN = self.TN;
 % -----------------------------------
-% Set List of Species to List of Products
-C.A0.value = C.A0.value(self.Misc.index_LS_original, :);
-C.M0.value = C.M0.value(self.Misc.index_LS_original, :);
-C.N0.value = C.N0.value(self.Misc.index_LS_original, :);
-% -----------------------------------
 A0 = C.A0.value;
 % Initialization
 % NatomE = N_CC(:,1)' * A0;
@@ -40,7 +35,8 @@ x = A\b;
 dNi_p(temp_ind) = x(1:temp_NS);
 dN_p = x(end);
 end
-% NESTED FUNCTIONS
+
+% SUB-PASS FUNCTIONS
 function ind_A = find_ind_Matrix(A, bool)
     ls = find(bool>0);
 %     ind_A = zeros(1, length(ls));

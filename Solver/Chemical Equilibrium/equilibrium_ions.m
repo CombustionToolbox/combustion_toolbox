@@ -7,11 +7,6 @@ S = self.S;
 C = self.C;
 TN = self.TN;
 % -----------------------------------
-% Set List of Species to List of Products
-C.A0.value = C.A0.value(self.Misc.index_LS_original, :);
-C.M0.value = C.M0.value(self.Misc.index_LS_original, :);
-C.N0.value = C.N0.value(self.Misc.index_LS_original, :);
-% -----------------------------------
 N0 = C.N0.value;
 A0 = C.A0.value;
 R0TP = C.R0 * TP; % [J/(mol)]
@@ -76,7 +71,6 @@ while STOP > TN.tolN && it < itMax
 end
 % Check convergence of charge balance (ionized species)
 [N0, STOP_ions] = check_convergence_ions(N0, A0, E.ind_E, temp_ind_nswt, temp_ind_ions, TN.tolN, TN.tol_pi_e);
-% N0(N0(:, 1) < TN.tolN, 1) = 0;
 end
 % NESTED FUNCTIONS
 function g0 = set_g0(ls, TP, DB)

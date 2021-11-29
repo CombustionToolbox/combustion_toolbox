@@ -14,7 +14,7 @@ M = self.C.M0.value;
 R0 = self.C.R0;
 
 for n = length(N):-1:1
-    mi = N(n)*self.DB.(species{n}).mm;
+    mi = N(n) * self.DB.(species{n}).mm;
     mmi = self.DB.(species{n}).mm;
     hfi = self.DB.(species{n}).hf/1000;
     efi = self.DB.(species{n}).ef/1000;
@@ -38,6 +38,6 @@ for n = length(N):-1:1
         s0i  = 0;
         pVi  = 0;
     end   
-    ind = find_ind(species(n), self.S.LS);
+    ind = find_ind(self.S.LS, species(n));
     M(ind, :) = [N(n), N(n) * [hfi, DhTi, efi, DeTi, cPi, cVi, s0i], pVi, swtCondensed, mi, mmi];
 end

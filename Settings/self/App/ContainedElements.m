@@ -20,14 +20,7 @@ function self = ContainedElements(self)
         
         L_formula = [L_formula, L_E1, L_E2];
     end
-    aux = unique(L_formula);
-    n_pass = [];
-    for n=length(aux):-1:1
-        if any(strcmpi(aux(n), self.E.elements)) % Check Element existence
-            n_pass = [n_pass, n];
-        end
-    end   
-    self.E.elements = aux(n_pass);
+    self.E.elements = unique(L_formula);
     self.E.NE = numel(self.E.elements);
     self.E.ind_C = find(strcmp(self.E.elements,'C'));
     self.E.ind_H = find(strcmp(self.E.elements,'H'));

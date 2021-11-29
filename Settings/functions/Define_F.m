@@ -1,7 +1,6 @@
 function self = Define_F(self)
     % Set Fuel of the mixture
     if ~isempty(self.PD.S_Fuel)
-        self = Check_FOI(self, self.PD.S_Fuel);
         self.PD.R_Fuel = SetSpecies(self, self.PD.S_Fuel, self.PD.N_Fuel, self.PD.TR.value);
         self.PS.strR_Fuel = ComputeProperties(self, self.PD.R_Fuel, self.PD.pR.value, self.PD.TR.value);
         self.PD.Fuel.x = self.PS.strR_Fuel.x;

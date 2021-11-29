@@ -3,20 +3,20 @@ function self = ListSpecies(varargin)
 
 self = varargin{1,1};
 if nargin < 2
-    LS = 'HC/02/N2 EXTENDED';
+    LS = 'HC/O2/N2 EXTENDED';
 else
     LS = varargin(2);
 end
-    
-if strcmpi(LS, 'HC/02/N2 EXTENDED')
+
+if strcmpi(LS, 'HC/O2/N2 EXTENDED')
     self.S.LS = {'CO2', 'CO', 'H2O', 'H2', 'O2', 'N2', 'He', 'Ar',...
                 'OH','H','O','HO2','NO','HCO','CH4','CH3',...
                 'NO2','NH3','NH2','N','HCN','CN','N2O','C2','CH'};
             
-elseif strcmpi(LS, 'HC/02/N2')
+elseif strcmpi(LS, 'HC/O2/N2')
     self.S.LS = {'CO2', 'CO', 'H2O', 'H2', 'O2', 'N2', 'He', 'Ar'};
     
-elseif strcmpi(LS, 'HC/02/N2 RICH')
+elseif strcmpi(LS, 'HC/O2/N2 RICH')
     self.S.LS = {'CO2', 'CO', 'H2O', 'H2', 'O2', 'N2', 'He', 'Ar',...
                 'HCN','H','OH','O','CN','NH3','CH4','C2H4','CH3',...
                 'NO','HCO','NH2','NH','N','CH'};
@@ -70,7 +70,7 @@ elseif strcmpi(LS, 'NASA ALL')
                 'C10H8_naphthale','C12H10_biphenyl','HCO','HNC','HNO2',...
                 'N','NH2','NO','N2H2','N2O3','N3','OH','CH3OHbLb','C6H5NH2bLb','C'};
             
-elseif strcmpi(LS, 'AIR')
+elseif strcmpi(LS, 'AIR') | strcmpi(LS, 'DISSOCIATED AIR')
     self.S.LS = {'O2','N2','O','O3','N','NO','NO2','NO3','N2O','N2O3','N2O4','N3','C','CO','CO2',...
                 'Ar','H2O','H2','H','He'};
     
@@ -81,18 +81,25 @@ elseif strcmpi(LS, 'AIR_IONS')
                  'CO2','CO','COplus','C','Cplus','Cminus','CN','CNplus','CNminus','CNN',...
                  'NCO','NCN','Ar','Arplus'};
 
-elseif strcmpi(LS, 'IDEAL_AIR')
+elseif strcmpi(LS, 'IDEAL_AIR') | strcmpi(LS, 'AIR_IDEAL')
     self.S.LS = {'O2','N2','O','O3','N','NO','NO2','NO3','N2O','N2O3','N2O4','N3'};
     
 elseif strcmpi(LS, 'HYDROGEN')
     self.S.LS = {'H','HNO','HNO3','H2O','NH','NH2OH','NO3','N2H2','N2O3','N3','OH','HNO2',...
                 'H2','N','NH3','NO2','N2O','N2H4','N2O5','O','O3','O2','N2','HO2','NH2','H2O2',...
                 'N3H','NH2NO2'};
-            
+
+elseif strcmpi(LS, 'HYDROGEN_IONS')
+self.S.LS = {'H','HNO','HNO3','H2O','NH','NH2OH','NO3','N2H2','N2O3','N3','OH','HNO2',...
+            'H2','N','NH3','NO2','N2O','N2H4','N2O5','O','O3','O2','N2','HO2','NH2','H2O2',...
+            'N3H','NH2NO2', 'eminus', 'Nminus', 'Nplus', 'NOplus', 'NO2minus', 'NO3minus', ...
+            'N2plus', 'N2minus', 'N2Oplus', 'Oplus', 'Ominus', 'O2plus', 'O2minus', ...
+            'Hplus', 'Hminus', 'HO2minus', 'H2plus', 'H2minus', 'H2Oplus', 'H3Oplus'};
+
 elseif strcmpi(LS, 'HYDROGEN_L')
     self.S.LS = {'H','H2O','OH','H2','O','O3','O2','HO2','H2O2','H2bLb','O2bLb'};
     
-elseif strcmpi(LS, 'HC/02/N2 PROPELLANTS')
+elseif strcmpi(LS, 'HC/O2/N2 PROPELLANTS')
     self.S.LS = {'CO2', 'CO', 'H2O', 'H2', 'O2', 'N2', 'He', 'Ar',...
                 'OH','H','O','HO2','NO','HCO','CH4','CH3',...
                 'NO2','NH3','NH2','N','HCN','CN','N2O','C2','CH',...

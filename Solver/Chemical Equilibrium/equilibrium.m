@@ -6,11 +6,7 @@ S = self.S;
 C = self.C;
 TN = self.TN;
 % -----------------------------------
-% Set List of Species to List of Products
-C.A0.value = C.A0.value(self.Misc.index_LS_original, :);
-C.M0.value = C.M0.value(self.Misc.index_LS_original, :);
-C.N0.value = C.N0.value(self.Misc.index_LS_original, :);
-% -----------------------------------
+
 N0 = C.N0.value;
 A0 = C.A0.value;
 R0TP = C.R0 * TP; % [J/(mol)]
@@ -67,7 +63,10 @@ while STOP > TN.tolN && it < itMax
     % Compute STOP criteria
     STOP = compute_STOP(NP_0, NP, x(end), N0(temp_ind, 1), x(1:temp_NS));
 end
-% N0(N0(:, 1) < TN.tolN, 1) = 0;
+% Reconstruct original matrix (take into account all species)
+% aux = N0;
+% N0 = self.C.N0.value;
+% N0(self.Misc.index_LS_original, :) = aux;
 end
 
 % SUB-PASS FUNCTIONS

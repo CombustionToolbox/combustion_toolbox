@@ -19,7 +19,6 @@ function self = SolveProblem(self, ProblemType)
         errorMessage = sprintf('Error in function %s() at line %d.\n\nError Message:\n%s', ...
                                ME.stack(1).name, ME.stack(1).line, ME.message);
         fprintf('%s\n', errorMessage);
-        uiwait(warndlg(errorMessage));
     end
 end
 

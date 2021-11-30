@@ -15,10 +15,7 @@ NatomE = strR.NatomE;
 NP_0 = 0.1;
 NP = NP_0;
 
-it = 0;
-itMax = 50 + round(S.NS/2);
 SIZE = -log(TN.tolN);
-STOP = 1.;
 
 % Find indeces of the species/elements that we have to remove from the stoichiometric matrix A0
 % for the sum of elements whose value is <= tolN
@@ -29,47 +26,83 @@ ind_A0_E0 = remove_elements(NatomE, A0, TN.tolN);
 [temp_ind, temp_ind_swt, temp_ind_nswt, temp_NG, ~] = update_temp(N0, N0(ind_A0_E0, 1), ind_A0_E0, temp_ind_swt, temp_ind_nswt, NP, SIZE);
 [temp_ind, temp_ind_swt, temp_NS] = check_cryogenic(temp_ind, temp_ind_swt, temp_ind_cryogenic);
 temp_NS0 = temp_NS + 1;
+
+temp_ind_swt_0 = temp_ind_swt;
+temp_ind_swt = [];
+temp_ind = [temp_ind_nswt, temp_ind_swt];
+temp_NS = length(temp_ind);
 % Initialize species vector N0 
-N0(temp_ind, 1) = NP_0/temp_NS;
-% Dimensionless Standard Gibbs free energy 
+N0(temp_ind_nswt, 1) = NP_0/temp_NG;
+% Standard Gibbs free energy 
 g0 = set_g0(S.LS, TP, self.DB);
-G0RT = g0/R0TP;
-% Construction of part of matrix A (complete)
-[A1, temp_NS0] = update_matrix_A1(A0, [], temp_NS, temp_NS0, temp_ind, temp_ind_E);
+% Dimensionless Chemical potential
+muRT = g0/R0TP;
+% Construction of part of matrix A
+[A1, temp_NS0] = update_matrix_A1(A0, [], temp_NG, temp_NS, temp_NS0, temp_ind, temp_ind_E);
 A22 = zeros(temp_NE + 1);
 A0_T = A0';
+% Solve system
+x = equilibrium_loop;
+% Check condensed species
+[temp_ind, temp_ind_swt, FLAG] = check_condensed_species(A0, x, temp_ind_nswt, temp_ind_swt_0, temp_ind_E, temp_NS, muRT);
 
-while STOP > TN.tolN && it < itMax
-    it = it + 1;
-    % Gibbs free energy
-    G0RT(temp_ind_nswt) =  g0(temp_ind_nswt) / R0TP + log(N0(temp_ind_nswt, 1) / NP) + log(pP);
-    % Construction of matrix A
-    A = update_matrix_A(A0_T, A1, A22, N0, NP, temp_ind, temp_ind_E);
-    % Construction of vector b            
-    b = update_vector_b(A0, N0, NP, NatomE, temp_ind, temp_ind_E, temp_ind_nswt, G0RT);
-    % Solve of the linear system A*x = b
-    x = A\b;
-    % Calculate correction factor
-    lambda = relax_factor(NP, N0(temp_ind, 1), x(1:temp_NS), x(end), SIZE);
-    % Apply correction
-    N0(temp_ind, 1) = log(N0(temp_ind, 1)) + lambda * x(1:temp_NS);
-    NP_log = log(NP) + lambda * x(end);
-    % Apply antilog
-    [N0, NP] = apply_antilog(N0, NP_log, temp_ind);
-    % Update temp values in order to remove species with moles < tolerance
-    [temp_ind, temp_ind_swt, temp_ind_nswt, temp_NG, temp_NS] = update_temp(N0, N0(temp_ind, 1), temp_ind, temp_ind_swt, temp_ind_nswt, NP, SIZE);
-    % Update matrix A
-    [A1, temp_NS0] = update_matrix_A1(A0, A1, temp_NS, temp_NS0, temp_ind, temp_ind_E);
-    % Compute STOP criteria
-    STOP = compute_STOP(NP_0, NP, x(end), N0(temp_ind, 1), x(1:temp_NS));
+if FLAG
+    STOP = 1;
+    temp_NS = length(temp_ind);
+    [A1, temp_NS0] = update_matrix_A1(A0, A1, temp_NG, temp_NS, temp_NS0, temp_ind, temp_ind_E);
+    equilibrium_loop;
 end
-% Reconstruct original matrix (take into account all species)
-% aux = N0;
-% N0 = self.C.N0.value;
-% N0(self.Misc.index_LS_original, :) = aux;
+% NESTED FUNCTION
+function x = equilibrium_loop
+    it = 0;
+    itMax = 50 + round(S.NS/2);
+    STOP = 1.;
+    while STOP > TN.tolN && it < itMax
+        it = it + 1;
+        % Chemical potential
+        muRT(temp_ind_nswt) =  g0(temp_ind_nswt) / R0TP + log(N0(temp_ind_nswt, 1) / NP) + log(pP);
+        % Construction of matrix A
+        A = update_matrix_A(A0_T, A1, A22, N0, NP, temp_ind, temp_ind_nswt, temp_ind_swt, temp_ind_E, temp_NG);
+        % Construction of vector b            
+        b = update_vector_b(A0, N0, NP, NatomE, temp_ind, temp_ind_E, temp_ind_nswt, muRT);
+        % Solve of the linear system A*x = b
+        x = A\b;
+        % Calculate correction factor
+        lambda = relax_factor(NP, N0(temp_ind, 1), x(1:temp_NS), x(end), temp_NG, SIZE);
+        % Apply correction
+        N0(temp_ind_nswt, 1) = log(N0(temp_ind_nswt, 1)) + lambda * x(1:temp_NG);
+        N0(temp_ind_swt, 1) = N0(temp_ind_swt, 1) + lambda * x(temp_NG+1:temp_NS);
+        NP_log = log(NP) + lambda * x(end);
+        % Apply antilog
+        [N0, NP] = apply_antilog(N0, NP_log, temp_ind_nswt);
+        % Update temp values in order to remove species with moles < tolerance
+        [temp_ind, temp_ind_swt, temp_ind_nswt, temp_NG, temp_NS] = update_temp(N0, N0(temp_ind, 1), temp_ind, temp_ind_swt, temp_ind_nswt, NP, SIZE);
+        % Update matrix A
+        [A1, temp_NS0] = update_matrix_A1(A0, A1, temp_NG, temp_NS, temp_NS0, temp_ind, temp_ind_E);
+        % Compute STOP criteria
+        STOP = compute_STOP(NP_0, NP, x(end), N0(temp_ind, 1), x(1:temp_NS), temp_NG);
+    end
+end
 end
 
 % SUB-PASS FUNCTIONS
+function [temp_ind, temp_ind_swt, FLAG] = check_condensed_species(A0, x, temp_ind_nswt, temp_ind_swt_0, temp_ind_E, temp_NS, muRT)
+    % Check condensed species
+    aux = [];
+    FLAG = false;
+    for i=length(temp_ind_swt_0):-1:1
+        dG_dn = muRT(temp_ind_swt_0(i)) - dot(x(temp_NS+1:end-1), A0(temp_ind_swt_0(i), temp_ind_E));
+        if dG_dn < 0
+            aux = [aux, i];
+        end
+    end
+    if any(aux)
+        FLAG = true;
+    end
+    temp_ind_swt = temp_ind_swt_0(aux);
+    temp_ind = [temp_ind_nswt, temp_ind_swt];
+end
+
 function g0 = set_g0(ls, TP, DB)
     for i=length(ls):-1:1
         species = ls{i};
@@ -132,14 +165,15 @@ function [temp_ind, temp_ind_swt, temp_ind_nswt, temp_NG, temp_NS] = update_temp
     temp_NS = length(temp_ind);
 end
 
-function [A1, temp_NS0] = update_matrix_A1(A0, A1, temp_NS, temp_NS0, temp_ind, temp_ind_E)
+function [A1, temp_NS0] = update_matrix_A1(A0, A1, temp_NG, temp_NS, temp_NS0, temp_ind, temp_ind_E)
     % Update stoichiometric submatrix A1
-    if temp_NS < temp_NS0
+%     if temp_NS < temp_NS0
         A11 = eye(temp_NS);
+        A11(temp_NG+1:temp_NS, temp_NG+1:temp_NS) = 0;
         A12 = -[A0(temp_ind, temp_ind_E), ones(temp_NS, 1)];
         A1 = [A11, A12];
         temp_NS0 = temp_NS;
-    end
+%     end
 end
 
 function [temp_ind, temp_ind_swt, temp_NS] = check_cryogenic(temp_ind, temp_ind_swt, temp_ind_cryogenic)
@@ -157,42 +191,46 @@ function [temp_ind, temp_ind_swt, temp_NS] = check_cryogenic(temp_ind, temp_ind_
     temp_NS = length(temp_ind);
 end
 
-function A2 = update_matrix_A2(A0_T, A22, N0, NP, temp_ind, temp_ind_E)
+function A2 = update_matrix_A2(A0_T, A22, N0, NP, temp_ind, temp_ind_nswt, temp_ind_swt, temp_ind_E, temp_NG)
     % Update stoichiometric submatrix A2
-    A21 = [N0(temp_ind, 1)' .* A0_T(temp_ind_E, temp_ind); N0(temp_ind, 1)'];
+    A20 = N0(temp_ind, 1)';
+    A20(temp_NG+1:end) = 0;
+    A21 = [[N0(temp_ind_nswt, 1)' .* A0_T(temp_ind_E, temp_ind_nswt), A0_T(temp_ind_E, temp_ind_swt)]; A20];
     A22(end, end) = -NP;
     A2 = [A21, A22];
 end
 
-function A = update_matrix_A(A0_T, A1, A22, N0, NP, temp_ind, temp_ind_E)
+function A = update_matrix_A(A0_T, A1, A22, N0, NP, temp_ind, temp_ind_nswt, temp_ind_swt, temp_ind_E, temp_NG)
     % Update stoichiometric matrix A
-    A2 = update_matrix_A2(A0_T, A22, N0, NP, temp_ind, temp_ind_E);
+    A2 = update_matrix_A2(A0_T, A22, N0, NP, temp_ind, temp_ind_nswt, temp_ind_swt, temp_ind_E, temp_NG);
     A = [A1; A2];
 end
 
-function b = update_vector_b(A0, N0, NP, NatomE, temp_ind, temp_ind_E, temp_ind_nswt, G0RT)
+function b = update_vector_b(A0, N0, NP, NatomE, temp_ind, temp_ind_E, temp_ind_nswt, muRT)
     % Update coefficient vector b
     bi_0 = (NatomE(temp_ind_E) - N0(temp_ind, 1)' * A0(temp_ind, temp_ind_E))';
     NP_0 = NP - sum(N0(temp_ind_nswt, 1));
-    b = [-G0RT(temp_ind); bi_0; NP_0];
+    b = [-muRT(temp_ind); bi_0; NP_0];
 end
 
-function relax = relax_factor(NP, n, n_log_new, DeltaNP, SIZE)
+function relax = relax_factor(NP, n, n_log_new, DeltaNP, temp_NG, SIZE)
     % Compute relaxation factor
-    bool = log(n)/log(NP) <= -SIZE & n_log_new >= 0;
+    bool = false(1, length(n));
+    bool(1:temp_NG) = log(n(1:temp_NG))/log(NP) <= -SIZE & n_log_new(1:temp_NG) >= 0;
     lambda = ones(length(n), 1);
-    lambda(bool) = abs(-log(n(bool)/NP) - 9.2103404 ./ (n_log_new(bool) - DeltaNP));
     lambda(~bool) = min(2./max(5*abs(DeltaNP), abs(n_log_new(~bool))), exp(2));          
+    lambda(bool) = abs(-log(n(bool)/NP) - 9.2103404 ./ (n_log_new(bool) - DeltaNP));
     relax = min(1, min(lambda));  
 end
 
-function [N0, NP] = apply_antilog(N0, NP_log, temp_ind)
-    N0(temp_ind, 1) = exp(N0(temp_ind, 1));
+function [N0, NP] = apply_antilog(N0, NP_log, temp_ind_nswt)
+    N0(temp_ind_nswt, 1) = exp(N0(temp_ind_nswt, 1));
     NP = exp(NP_log);
 end
 
-function DeltaN = compute_STOP(NP_0, NP, DeltaNP, zip1, zip2)
-    DeltaN1 = max(max(zip1 .* abs(zip2) / NP));
+function DeltaN = compute_STOP(NP_0, NP, DeltaNP, N0, DeltaN0, temp_NG)
+    DeltaN1 = max(max(N0 .* abs(DeltaN0) / NP));
+    DeltaN1(temp_NG+1:end) = abs(DeltaN0(temp_NG+1:end)) / NP;
     DeltaN3 = NP_0 * abs(DeltaNP) / NP;
     % Deltab = [abs(bi - sum(N0[:, 0] * A0[:, i])) for i, bi in enumerate(x[S.NS:-1]) if bi > 1e-6]
     DeltaN = max(DeltaN1, DeltaN3);

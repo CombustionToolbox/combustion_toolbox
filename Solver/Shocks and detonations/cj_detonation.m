@@ -146,6 +146,6 @@ end
 
 function print_convergence(STOP, TOL)
     if STOP > TOL
-        fprintf('Convergence error: %.2f', STOP);
+        fprintf('Convergence error: %.2f%%\n', STOP);
     end
 end

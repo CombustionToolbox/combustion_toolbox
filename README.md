@@ -1,5 +1,5 @@
 <p align="left">
-    <img alt="UC3M" style="border-width:0" src="https://github.com/AlbertoCuadra/combustion_toolbox/blob/master/GUI/Icons/logo.svg" width="1000"/></a>
+    <img alt="UC3M" style="border-width:0" src="https://github.com/AlbertoCuadra/combustion_toolbox/blob/master/GUI/Icons/logo.svg" width="1500"/></a>
 </p>
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.5741229.svg)](https://doi.org/10.5281/zenodo.5741229)

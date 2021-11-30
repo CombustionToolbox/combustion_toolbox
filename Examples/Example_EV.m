@@ -1,10 +1,10 @@
 % -------------------------------------------------------------------------
 % EXAMPLE: EV
 %
-% Compute equilibrium composition at adiabatic temperature (e.g., 3000 K)
-% and constant volume for lean to rich CH4-air mixtures at standard
-% conditions, a set of 24 species considered and a set of equivalence
-% ratios (phi) contained in (0.5, 5) [-]
+% Compute equilibrium composition at adiabatic temperature and constant
+% volume for lean to rich CH4-air mixtures at standard conditions, a set
+% of 24 species considered and a set of equivalence ratios (phi) contained
+% in (0.5, 5) [-]
 %   
 % Soot formation == {'CO2', 'CO', 'H2O', 'H2', 'O2', 'N2', 'He', 'Ar',...
 %                    'HCN','H','OH','O','CN','NH3','CH4','C2H4','CH3',...

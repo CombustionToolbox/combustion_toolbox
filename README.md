@@ -1,5 +1,8 @@
-# Combustion Toolbox
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.5599436.svg)](https://doi.org/10.5281/zenodo.5599436)
+<p align="left">
+    <img alt="UC3M" style="border-width:0" src="https://github.com/AlbertoCuadra/combustion_toolbox/blob/master/GUI/Icons/logo.svg" width="1500"/></a>
+</p>
+
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.5741229.svg)](https://doi.org/10.5281/zenodo.5741229)
 [![File Exchange](https://www.mathworks.com/matlabcentral/images/matlab-file-exchange.svg)](https://es.mathworks.com/matlabcentral/fileexchange/101088-combustion-toolbox)
 ![repo size](https://img.shields.io/github/repo-size/AlbertoCuadra/combustion_toolbox)
 ![last modified](https://img.shields.io/github/last-commit/AlbertoCuadra/combustion_toolbox)
@@ -7,7 +10,6 @@
 
 A MATLAB-GUI based open-source tool for solving gaseous combustion problems.
 
-Thermochem
 <!-- Website: https://combustiontoolbox.netlify.app/ -->
 :top: There is also a (less complete) [Python version](https://github.com/AlbertoCuadra/Combustion-PyToolbox)
 
@@ -45,13 +47,13 @@ We have several examples of what Combustion Toolbox can do. Here we show some re
 **Figure 1:** *Hugoniot curves for different molecular gases at pre-shock temperature T1 = 300 K and pressure p1 = 1 atm \[numerical results obtained with Combustion Toolbox (lines) and contrasted with NASA’s Chemical Equilibrium with Applications (CEA) code excluding ionization (symbols)\]*.
     
 <p align="left">
-    <img src="https://github.com/AlbertoCuadra/combustion_toolbox/blob/master/Validations/Tests/DET_CH4_AIR.svg" width="1200">
+    <img src="https://github.com/AlbertoCuadra/combustion_toolbox/blob/master/Validations/Tests/DET_CH4_AIR_NASA.svg" width="1200">
 </p>
 
 **Figure 2:** *Example CJ detonation for lean to rich CH4-air mixtures at standard conditions: (a) variation of molar fraction, (b) variation of temperature. The computational time was of 12.70 seconds using a Intel(R) Core(TM) i7-8700 CPU @ 3.20GHz for a set of 24 species considered and a total of 451 case studies.*
 
 <p align="left">
-    <img src="https://github.com/AlbertoCuadra/combustion_toolbox/blob/master/GUI/Snapshots/snapshot_1.jpg" width="500">
+    <img src="https://github.com/AlbertoCuadra/combustion_toolbox/blob/master/GUI/Snapshots/snapshot_1.svg" width="500">
 </p>
 
 **Figure 3:** *Snapshot of the GUI*.
@@ -83,7 +85,7 @@ See also the list of [contributors](https://github.com/AlbertoCuadra/combustion_
     author = "Cuadra, A and Huete, C and Vera, M",
     title = "Combustion Toolbox: A MATLAB-GUI based open-source tool for solving combustion problems",
     year = 2021,
-    note = "Version 0.3.74",
-    doi = {https://doi.org/10.5281/zenodo.5599436}
+    note = "Version 0.3.90",
+    doi = {https://doi.org/10.5281/zenodo.5741229}
 }
 ```

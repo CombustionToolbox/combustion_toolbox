@@ -1,9 +1,0 @@
-problem    phi,eq.ratio=2.1,2.2,2.3,2.4,2.5,2.6,2.7,2.8,2.9,3,3.1,3.2,3.3,3.4,3.5,3.6,
-      det   t,k=300,  p,bar=1,
-react 
-  fuel=CO moles=1 t,k=300
-  oxid=O2 moles=0.5 t,k=300
-  oxid=N2 moles=1.8810 t,k=300
-output  
-     trace=1e-16 siunits short
-end

@@ -54,13 +54,13 @@ while ctLine<100000
         j=1;
         while ~contains(tline,'THERMODYNAMIC PROPERTIES FITTED TO 20000.K')
             if isempty(tline), break, end
-            [sp1,sp2] = regexp(tline, '(?![*,-])\S\w*\s');  
+            [sp1,sp2] = regexp(FullName2name(tline), '(?![*,-])\S\w*\s');
             [mole,~] = regexp(tline, '\s\d');
             idx = regexp(tline,'-');
             if contains(tline,'C(gr)')
                 data.X(i).mole{j,1} = 'Cbgrb';
             else
-                data.X(i).mole{j,1} = tline(sp1:sp2-1);
+                data.X(i).mole{j,1} = FullName2name(tline(sp1:sp2-1));
             end
             data.X(i).mole{j,2} = sscanf([tline(mole:idx-1),'e',tline(idx:end)],'%f'); tline = fgetl(fid);
             j=j+1;
@@ -69,3 +69,5 @@ while ctLine<100000
     ctLine=ctLine+1;
 end
 fclose(fid);
+end
+

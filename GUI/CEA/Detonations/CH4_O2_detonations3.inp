@@ -1,8 +1,0 @@
-problem    phi,eq.ratio=3.7,3.8,3.9,4,
-      det   t,k=300,  p,bar=1,
-react 
-  fuel=CH4 moles=1 t,k=300
-  oxid=O2 moles=2 t,k=300
-output  
-     trace=1e-16 siunits short
-end

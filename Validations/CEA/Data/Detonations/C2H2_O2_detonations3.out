@@ -287,28 +287,3 @@
  *O2             1.445-11
 
   * THERMODYNAMIC PROPERTIES FITTED TO 20000.K
-
- CONSERVATION EQNS NOT SATISFIED IN 8 ITERATIONS (DETON)
-
-
-                     DETONATION PROPERTIES OF AN IDEAL REACTING GAS
- CASE =                
-
-             REACTANT                       MOLES         ENERGY      TEMP
-                                                         KJ/KG-MOL      K
- FUEL        C2H2,acetylene               1.0000000    228281.530    300.000
- OXIDANT     O2                           2.5000000        54.358    300.000
-
- O/F=    0.78780  %FUEL= 55.934810  R,EQ.RATIO= 3.900000  PHI,EQ.RATIO= 3.900000
-
- UNBURNED GAS
-
- P1, BAR        
- T1, K          
- H1, KJ/KG      
- M1, (1/n)      
- GAMMA1         
- SON VEL1,M/SEC 
-
- BURNED GAS
-

@@ -53,7 +53,7 @@ We have several examples of what Combustion Toolbox can do. Here we show some re
 **Figure 2:** *Example CJ detonation for lean to rich CH4-air mixtures at standard conditions: (a) variation of molar fraction, (b) variation of temperature. The computational time was of 12.70 seconds using a Intel(R) Core(TM) i7-8700 CPU @ 3.20GHz for a set of 24 species considered and a total of 451 case studies.*
 
 <p align="left">
-    <img src="https://github.com/AlbertoCuadra/combustion_toolbox/blob/master/GUI/Snapshots/snapshot_1.jpg" width="500">
+    <img src="https://github.com/AlbertoCuadra/combustion_toolbox/blob/master/GUI/Snapshots/snapshot_1.svg" width="500">
 </p>
 
 **Figure 3:** *Snapshot of the GUI*.

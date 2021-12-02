@@ -4,18 +4,18 @@ function run_validations_CEA
     % Applications software (CEA)
     
     % TP:
-    run_validation_TP_1; 
-    run_validation_TP_2;
-    run_validation_TP_3;
-    run_validation_TP_4;
+    run_validation_TP_CEA_1; 
+    run_validation_TP_CEA_2;
+    run_validation_TP_CEA_3;
+    run_validation_TP_CEA_4;
     % HP:
-    run_validation_HP_1; 
-    run_validation_HP_2;
-    run_validation_HP_3;
-    run_validation_HP_4;
+    run_validation_HP_CEA_1; 
+    run_validation_HP_CEA_2;
+    run_validation_HP_CEA_3;
+    run_validation_HP_CEA_4;
     % DET: 
-    run_validation_DET_1;
-    run_validation_DET_2;
-    run_validation_DET_3;
-    run_validation_DET_4;
+    run_validation_DET_CEA_1;
+    run_validation_DET_CEA_2;
+    run_validation_DET_CEA_3;
+    run_validation_DET_CEA_4;
 end

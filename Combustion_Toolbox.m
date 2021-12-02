@@ -11,7 +11,7 @@
 %   * SV -----------------> Isentropic compression/expansion to a specified v
 %   * SHOCK_I ------------> Planar incident shock wave
 %   * SHOCK_R ------------> Planar reflected shock wave
-%   * DET ----------------> Chapman-Jouget Detonation (CJ upper state)
+%   * DET ----------------> Chapman-Jouget Detonation
 %   * DET_OVERDRIVEN -----> Overdriven Detonation    
 %
 % SEE THE EXAMPLES OR WIKI TO KNOW HOW TO START USING COMBUSTION TOOLBOX 

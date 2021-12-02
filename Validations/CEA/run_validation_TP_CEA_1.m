@@ -1,34 +1,31 @@
-function run_validation_HP_4
-    % Run test validation_HP_4:
+function run_validation_TP_CEA_1
+    % Run test validation_TP_CEA_1:
     % Contrasted with: NASA's Chemical Equilibrium with Applications software
-    % Problem type: Adiabatic T and composition at constant p
-    % Temperature [K]   = 300;
+    % Problem type: Equilibrium composition at defined T and p
+    % Temperature [K]   = 2500;
     % Pressure    [bar] = 1;
     % Equivalence ratio [-] = 0.5:0.01:4
-    % Initial mixture: CH4 + O2
-    % List of species considered:
-    %  {'CO2', 'CO', 'H2O', 'H2', 'O2', 'N2', 'He', 'Ar',...
-    %   'HCN','H','OH','O','CN','NH3','CH4','C2H4','CH3',...
-    %   'NO','HCO','NH2','NH','N','CH','Cbgrb'}
+    % Initial mixture: C6H6 + AIR_IDEAL (79% N2 + 21% O2)
+    % List of species considered: ListSpecies('Soot Formation Extended')
     
     % Inputs
-    Fuel = 'CH4';
+    Fuel = 'C6H6';
     prefixDataName = Fuel;
-    filename = {strcat(prefixDataName, '_O2_HP.out'), strcat(prefixDataName, '_O2_HP2.out'), strcat(prefixDataName, '_O2_HP3.out')};
+    filename = {strcat(prefixDataName, '_air1_TP.out'), strcat(prefixDataName, '_air1_TP2.out'), strcat(prefixDataName, '_air1_TP3.out')};
     LS =  'Soot Formation Extended';
     DisplaySpecies = {'CO2', 'CO', 'H2O', 'H2', 'O2', 'N2', 'He', 'Ar',...
                       'HCN','H','OH','O','CN','NH3','CH4','C2H4','CH3',...
                       'NO','HCO','NH2','NH','N','CH','Cbgrb'};
     % Combustion Toolbox
-    results_CT = run_CT('ListSpecies', LS, 'S_Fuel', Fuel,...
-                        'S_Oxidizer', 'O2', 'S_Inert', [],...
-                        'EquivalenceRatio', 0.5:0.01:4);
+    results_CT = run_CT('ProblemType', 'TP', 'Temp', 2500, 'Species', LS,...
+                        'S_Fuel', Fuel,'S_Oxidizer', 'O2',...
+                        'S_Inert', 'N2', 'EquivalenceRatio', 0.5:0.01:4);
     % Load results CEA 
     results_CEA = data_CEA(filename, DisplaySpecies);
     % Display validation (plot)
     fig1 = plot_molar_fractions_validation(results_CT, results_CEA, 'phi', 'Xi', DisplaySpecies);
     % Save plots
     folderpath = strcat(pwd,'\Validations\Figures\');
-    filename = 'validation_HP_4';
+    filename = 'validation_TP_CEA_1';
     saveas(fig1, strcat(folderpath, filename, '_molar'), 'svg');
 end

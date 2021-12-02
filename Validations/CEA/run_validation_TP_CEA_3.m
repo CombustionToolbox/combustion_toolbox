@@ -1,5 +1,5 @@
-function run_validation_TP_3
-    % Run test validation_TP_3:
+function run_validation_TP_CEA_3
+    % Run test validation_TP_CEA_3:
     % Contrasted with: NASA's Chemical Equilibrium with Applications software
     % Problem type: Equilibrium composition at defined T and p
     % Temperature [K]   = 2500;
@@ -26,6 +26,6 @@ function run_validation_TP_3
     fig1 = plot_molar_fractions_validation(results_CT, results_CEA, 'phi', 'Xi', DisplaySpecies);
     % Save plots
     folderpath = strcat(pwd,'\Validations\Figures\');
-    filename = 'validation_TP_3';
+    filename = 'validation_TP_CEA_3';
     saveas(fig1, strcat(folderpath, filename, '_molar'), 'svg');
 end

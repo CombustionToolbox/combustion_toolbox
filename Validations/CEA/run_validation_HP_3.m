@@ -23,5 +23,9 @@ function run_validation_HP_3
     % Load results CEA 
     results_CEA = data_CEA(filename, DisplaySpecies);
     % Display validation (plot)
-    plot_molar_fractions_validation(results_CT, results_CEA, 'phi', 'Xi', DisplaySpecies);
+    fig1 = plot_molar_fractions_validation(results_CT, results_CEA, 'phi', 'Xi', DisplaySpecies);
+    % Save plots
+    folderpath = strcat(pwd,'\Validations\Figures\');
+    filename = 'validation_HP_3';
+    saveas(fig1, strcat(folderpath, filename, '_molar'), 'svg');
 end

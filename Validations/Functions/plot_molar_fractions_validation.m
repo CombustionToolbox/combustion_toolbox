@@ -58,14 +58,19 @@ end
 function titlename = create_title(self)
     titlename = strcat(self.PD.ProblemType, ': ', cat_moles_species(self.PD.N_Fuel, self.PD.S_Fuel));
     if ~isempty(self.PD.S_Oxidizer) || ~isempty(self.PD.S_Inert)
-        titlename = strcat(titlename, strcat(' + ', '$\frac{', sprintf('%.3g', self.PD.phi_t), '}{\phi}($'));
+        titlename = strcat(titlename, strcat(' + ', '$\frac{', sprintf('%.3g', self.PD.phi_t), '}{\phi}$'));
+        if ~isempty(self.PD.S_Oxidizer) && ~isempty(self.PD.S_Inert)
+            titlename = strcat(titlename, '(');
+        end
         if ~isempty(self.PD.S_Oxidizer)
             titlename = strcat(titlename, cat_moles_species(1, self.PD.S_Oxidizer));
         end
         if ~isempty(self.PD.S_Inert)
             titlename = strcat(titlename, ' + ', cat_moles_species(self.PD.proportion_inerts_O2, self.PD.S_Inert));
         end
-        titlename = strcat(titlename, ')');
+        if ~isempty(self.PD.S_Oxidizer) && ~isempty(self.PD.S_Inert)
+            titlename = strcat(titlename, ')');
+        end
     end
 end
 
@@ -99,5 +104,13 @@ function speciesLatex = convert_species_latex(species)
         pos2 = index(i) - 1;
         speciesLatex = strcat(speciesLatex, species(pos1:pos2), '$_', species(pos2 + 1), '$');
         pos1 = pos2 + 2;
+    end
+    if pos1 < length(species)
+        if isletter(species(pos1))
+            aux = 0;
+        else
+            aux = 1;
+        end
+        speciesLatex = [speciesLatex, species(pos1+aux:end)];
     end
 end

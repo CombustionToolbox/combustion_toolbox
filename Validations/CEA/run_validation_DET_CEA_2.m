@@ -1,16 +1,16 @@
-function run_validation_DET_4
-    % Run test validation_DET_4:
+function run_validation_DET_CEA_2
+    % Run test validation_DET_CEA_2:
     % Contrasted with: NASA's Chemical Equilibrium with Applications software
     % Problem type: Chapman-Jouget Detonation
     % Temperature [K]   = 300;
     % Pressure    [bar] = 1;
     % Equivalence ratio [-] = 0.5:0.01:4
-    % Initial mixture: CH4 + O2
+    % Initial mixture: C2H2_acetylene + O2
     % List of species considered: ListSpecies('Soot Formation Extended')
     
     % Inputs
-    Fuel = 'CH4';
-    prefixDataName = Fuel;
+    Fuel = 'C2H2_acetylene';
+    prefixDataName = 'C2H2';
     filename = {strcat(prefixDataName, '_O2_detonations.out'), strcat(prefixDataName, '_O2_detonations2.out'), strcat(prefixDataName, '_O2_detonations3.out')};
     LS =  'Soot Formation Extended';
     DisplaySpecies = {'CO2', 'CO', 'H2O', 'H2', 'O2', 'N2', 'He', 'Ar',...
@@ -26,6 +26,6 @@ function run_validation_DET_4
     fig1 = plot_molar_fractions_validation(results_CT, results_CEA, 'phi', 'Xi', DisplaySpecies);
     % Save plots
     folderpath = strcat(pwd,'\Validations\Figures\');
-    filename = 'validation_DET_4';
+    filename = 'validation_DET_CEA_2';
     saveas(fig1, strcat(folderpath, filename, '_molar'), 'svg');
 end

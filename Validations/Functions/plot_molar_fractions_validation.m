@@ -1,4 +1,4 @@
-function plot_molar_fractions_validation(results1, results2, varname_x, varname_y, varargin)
+function plot_molar_fractions_validation(results1, results2, varname_x, varname_y, species, varargin)
     % Default values
     nfrec = 1;
     mintol_display = 1e-14;
@@ -9,7 +9,7 @@ function plot_molar_fractions_validation(results1, results2, varname_x, varname_
     dataname_y = get_dataname(varname_y);
     results1.(varname_x) = cell2vector(select_data(results1, dataname_x), varname_x);
     results1.(varname_y) = cell2vector(select_data(results1, dataname_y), varname_y);
-    LS = results1.Misc.LS_original;
+    index_species_CT = find_ind(results1.Misc.LS_original, species);
 
     f = figure;
     set(f,'units','normalized','innerposition',[0.05 0.05 0.9 0.9],...
@@ -22,14 +22,14 @@ function plot_molar_fractions_validation(results1, results2, varname_x, varname_
     set(axes,'yscale','log')
     xlim(axes, [min(results1.(varname_x)), max(results1.(varname_x))])
     ylim(axes, [mintol_display, 1])
-    colorbw = brewermap(length(LS), 'Spectral');
-    for i=1:length(LS)
-        plot(results1.(varname_x), results1.(varname_y)(i, :), 'LineWidth', config.linewidth, 'color', colorbw(i,:));
+    colorbw = brewermap(length(species), 'Spectral');
+    for i=1:length(index_species_CT)
+        plot(results1.(varname_x), results1.(varname_y)(index_species_CT(i), :), 'LineWidth', config.linewidth, 'color', colorbw(i,:));
     end
-    for i=1:length(LS)
+    for i=1:length(species)
         plot(results2.(varname_x)(1:nfrec:end), results2.(varname_y)(i, 1:nfrec:end), 'd', 'LineWidth', config.linewidth, 'color', colorbw(i,:));
     end
-    legendname = LS;
+    legendname = species;
     legend(legendname, 'FontSize', config.fontsize-6, 'Location', 'northeastoutside', 'interpreter', 'latex');
 end
 

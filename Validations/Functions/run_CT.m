@@ -55,7 +55,7 @@ function self = run_CT(varargin)
     self.PD.S_Inert    = S_Inert;
     self.PD.proportion_inerts_O2 = proportion_inerts_O2;
     % ADDITIONAL INPUTS (DEPENDS OF THE PROBLEM SELECTED)
-    self = set_prop(self, 'pP', Pressure);
+    self = set_prop(self, 'TP', Temp, 'pP', Pressure);
     % SOLVE PROBLEM
     self = SolveProblem(self, ProblemType);
 end

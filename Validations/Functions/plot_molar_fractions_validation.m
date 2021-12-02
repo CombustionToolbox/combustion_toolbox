@@ -1,10 +1,9 @@
-function plot_molar_fractions_validation(results1, results2, varname_x, varname_y, species, varargin)
+function f = plot_molar_fractions_validation(results1, results2, varname_x, varname_y, species, varargin)
     % Default values
     nfrec = 1;
     mintol_display = 1e-14;
-    config.fontsize = 18;
-    config.linewidth = 1.8;
-    
+    config = results1.Misc.config;
+
     dataname_x = get_dataname(varname_x);
     dataname_y = get_dataname(varname_y);
     results1.(varname_x) = cell2vector(select_data(results1, dataname_x), varname_x);
@@ -31,6 +30,7 @@ function plot_molar_fractions_validation(results1, results2, varname_x, varname_
     end
     legendname = species;
     legend(legendname, 'FontSize', config.fontsize-6, 'Location', 'northeastoutside', 'interpreter', 'latex');
+    title(create_title(results1), 'Interpreter', 'latex', 'FontSize', config.fontsize + 4);
 end
 
 function dataname = get_dataname(var)
@@ -52,5 +52,52 @@ function dataselected = select_data(self, dataname)
         varname = dataname(pos1:pos2);
         dataselected = dataselected.(varname);
         pos1 = index(i) + 1;
+    end
+end
+
+function titlename = create_title(self)
+    titlename = strcat(self.PD.ProblemType, ': ', cat_moles_species(self.PD.N_Fuel, self.PD.S_Fuel));
+    if ~isempty(self.PD.S_Oxidizer) || ~isempty(self.PD.S_Inert)
+        titlename = strcat(titlename, strcat(' + ', '$\frac{', sprintf('%.3g', self.PD.phi_t), '}{\phi}($'));
+        if ~isempty(self.PD.S_Oxidizer)
+            titlename = strcat(titlename, cat_moles_species(1, self.PD.S_Oxidizer));
+        end
+        if ~isempty(self.PD.S_Inert)
+            titlename = strcat(titlename, ' + ', cat_moles_species(self.PD.proportion_inerts_O2, self.PD.S_Inert));
+        end
+        titlename = strcat(titlename, ')');
+    end
+end
+
+function cat_text = cat_moles_species(moles, species)
+    N = length(species);
+    cat_text = cat_mol_species(moles(1), species{1});
+    for i=2:N
+        cat_text = strcat(cat_text, ' + ', cat_mol_species(moles(i), species{i}));
+    end
+end
+
+function cat_text = cat_mol_species(mol, species)
+    if mol == 1
+        value = [];
+    else
+        value = sprintf('%.3g', mol);
+    end
+    cat_text = strcat(value, convert_species_latex(species));
+end
+
+function speciesLatex = convert_species_latex(species)
+    index = regexp(species, '[0-9]');
+    N = length(index);
+    if ~N
+        speciesLatex = species;
+        return;
+    end
+    speciesLatex = [];
+    pos1 = 1;
+    for i=1:N
+        pos2 = index(i) - 1;
+        speciesLatex = strcat(speciesLatex, species(pos1:pos2), '$_', species(pos2 + 1), '$');
+        pos1 = pos2 + 2;
     end
 end

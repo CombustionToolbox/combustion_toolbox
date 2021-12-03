@@ -53,6 +53,8 @@ end
 function moles = gui_get_moles(obj, event, app, FLAG_COMPUTE_FROM_PHI)
     % Get number of moles of each species in the mixture
     if FLAG_COMPUTE_FROM_PHI
+        % Set equivalence ratio
+        app.PD.phi.value = gui_get_prop(app, 'phi', obj.edit_phi.Value, 'direction', 'first');
         % Get proportion of inert_O2
         obj.PD.proportion_inerts_O2 = gui_proportion_inerts_O2(obj);
         % compute moles from equivalence ratio

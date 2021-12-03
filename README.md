@@ -68,6 +68,10 @@ Please send feedback or inquiries to [acuadra@ing.uc3m.es](mailto:acuadra@ing.uc
 
 Thank you for testing Combustion Toolbox!
 
+## Acknowledgements
+Combustion Toolbox's color palette is obtained from the next repository:
+
+Stephen (2021). ColorBrewer: Attractive and Distinctive Colormaps (https://github.com/DrosteEffect/BrewerMap), GitHub. Retrieved December 3, 2021.
 ## Developers
 
 * **[Alberto Cuadra-Lara](https://acuadralara.com/)** - *Core Developer and App designer*

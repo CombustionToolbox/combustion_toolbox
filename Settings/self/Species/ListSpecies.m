@@ -112,7 +112,7 @@ self.S.LS = unique(self.S.LS, 'stable');
 self.S.NS = length(self.S.LS);
 self.S.LS_formula = get_formula(self.S.LS, self.DB);
 
-if any(contains(self.S.LS, 'minus')) || any(contains(self.S.LS, 'plus'))
+if any(get_index_ions(self))
     self.PD.ionization = true;
 end
 end

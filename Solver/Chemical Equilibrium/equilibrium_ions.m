@@ -23,7 +23,7 @@ STOP = 1.;
 flag_ions_first = true;
 % Find indeces of the species/elements that we have to remove from the stoichiometric matrix A0
 % for the sum of elements whose value is <= tolN
-temp_ind_ions = contains(S.LS, 'minus') | contains(S.LS, 'plus');
+temp_ind_ions = S.ind_ions;
 aux = NatomE;
 if any(temp_ind_ions)
     NatomE(E.ind_E) = 1; % temporal fictitious value
@@ -99,14 +99,14 @@ end
 
 function [temp_ind_nswt, temp_ind_swt, temp_ind_ions, temp_ind_E, temp_NE] = temp_values(ind_E, S, NatomE, tol)
     % List of indices with nonzero values and lengths
-    flag_ions = contains(S.LS, 'minus') | contains(S.LS, 'plus');
-    if any(flag_ions)
+    FLAG_IONS = any(S.ind_ions);
+    if FLAG_IONS
         NatomE(ind_E) = 1; % temporal fictitious value
     end
     temp_ind_E    = find(NatomE > tol);
     temp_ind_nswt = S.ind_nswt;
     temp_ind_swt  = S.ind_swt;
-    temp_ind_ions = S.ind_nswt(flag_ions);
+    temp_ind_ions = S.ind_nswt(FLAG_IONS);
     temp_NE       = length(temp_ind_E);
 end
 

@@ -11,4 +11,5 @@ function self = get_index_phase_species(self, LS)
            end
         end
     end
+    self.S.ind_ions = get_index_ions(self);
 end

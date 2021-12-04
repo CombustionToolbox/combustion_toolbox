@@ -22,4 +22,5 @@ function self = Species()
     self.ind_Ar = [];
     self.ind_fixed = [];
     self.ind_all = [];
+    self.ind_ions = [];
 end

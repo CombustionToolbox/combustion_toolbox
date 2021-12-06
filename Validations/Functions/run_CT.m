@@ -25,6 +25,8 @@ function self = run_CT(varargin)
                 Pressure = varargin{i+1};
             case {'equivalenceratio', 'phi'}
                 EquivalenceRatio = varargin{i+1};
+            case {'velocity', 'u1'}
+                Velocity = varargin{i+1};
             case {'fuel', 's_fuel'}
                 S_Fuel = varargin{i+1};
                 if ~iscell(S_Fuel) && ~isempty(S_Fuel)
@@ -40,6 +42,8 @@ function self = run_CT(varargin)
                 if ~iscell(S_Inert) && ~isempty(S_Inert)
                     S_Inert = {S_Inert};
                 end
+            case 'proportion_inerts_o2'
+                proportion_inerts_O2 = varargin{i+1};
         end
     end
     % INITIALIZE
@@ -56,6 +60,9 @@ function self = run_CT(varargin)
     self.PD.proportion_inerts_O2 = proportion_inerts_O2;
     % ADDITIONAL INPUTS (DEPENDS OF THE PROBLEM SELECTED)
     self = set_prop(self, 'TP', Temp, 'pP', Pressure);
+    if exist('Velocity', 'var')
+        self = set_prop(self, 'u1', Velocity, 'phi', 1 * ones(1, length(Velocity)));
+    end
     % SOLVE PROBLEM
     self = SolveProblem(self, ProblemType);
 end

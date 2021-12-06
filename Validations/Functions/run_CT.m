@@ -12,6 +12,7 @@ function self = run_CT(varargin)
     S_Inert    = {'N2'};
     proportion_inerts_O2 = 79/21;
     ProblemType = 'HP';
+    tolN = 1e-16;
     % GET INPUTS
     for i=1:2:nargin
         switch lower(varargin{i})
@@ -44,6 +45,8 @@ function self = run_CT(varargin)
                 end
             case 'proportion_inerts_o2'
                 proportion_inerts_O2 = varargin{i+1};
+            case 'toln'
+                tolN = varargin{i+1};
         end
     end
     % INITIALIZE
@@ -51,7 +54,7 @@ function self = run_CT(varargin)
     % MISCELLANEOUS
     self.Misc.FLAG_RESULTS = false;
     % TUNNING PROPERTIES
-    self.TN.tolN = 1e-16;
+    self.TN.tolN = tolN;
     % INITIAL CONDITIONS
     self = set_prop(self, 'TR', Temp, 'pR', 1 * Pressure, 'phi', EquivalenceRatio);
     self.PD.S_Fuel     = S_Fuel;

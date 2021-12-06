@@ -9,6 +9,6 @@ function self = TunningProperties()
     self.root_T0_r = 1500;      % First guess T[K] right branch - root finding method
     self.root_T0   = 2000;      % Guess T[K] if it's of previous range - root finding method
     self.tol_shocks = 5e-5;     % Tolerance of shocks routines
-    self.it_shocks = 30;        % Max number of iterations - shocks and detonations
+    self.it_shocks = 50;        % Max number of iterations - shocks and detonations
     self.volumeBoundRation = 5; % Initial guess ratio shocks
 end

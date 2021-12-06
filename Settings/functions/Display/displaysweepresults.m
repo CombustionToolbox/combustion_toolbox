@@ -49,16 +49,16 @@ end
 
 function plot_line(self, axes, xvar, yvar, indy, indlabel, label_name)
     NE = numel(indy);
-    maxLdisplay = 12;
+    maxLdisplay = self.Misc.config.colorpaletteLenght;
     if NE > maxLdisplay
         NUM_COLORS = maxLdisplay;
     else
         NUM_COLORS = NE;
     end
-    LINE_STYLES = {'-', '--', ':'};
+    LINE_STYLES = {'-', '--', ':', '-.'};
     NUM_STYLES  = length(LINE_STYLES);
 
-    colorbw = brewermap(NUM_COLORS, 'Spectral');
+    colorbw = brewermap(NUM_COLORS, self.Misc.config.colorpalette);
 
     k = 1;
     z = 1;

@@ -19,7 +19,9 @@ function gui_edit_phiValueChanged(obj, event)
         obj.UITable_P.Data = obj.UITable_R.Data(:, 1);    % (species, numer of moles, mole fractions, temperature)
         obj.UITable_R2.Data = obj.UITable_R.Data(:, 1:3); % (species, numer of moles, mole fractions)
         % Update GUI: equivalence ratio, O/F and percentage Fuel
-        gui_update_phi(obj, app);
+        obj.edit_phi2.Value = obj.edit_phi.Value;
+        obj.edit_OF.Value = 1/app.PS.strR{1}.FO;
+        obj.edit_F.Value = app.PS.strR{1}.percentage_Fuel;
     catch ME
         message = {sprintf('Error in function %s() at line %d.\n\nError Message:\n%s', ...
         ME.stack(1).name, ME.stack(1).line, ME.message)};

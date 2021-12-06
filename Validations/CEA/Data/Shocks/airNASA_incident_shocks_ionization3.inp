@@ -1,0 +1,7 @@
+prob
+shock inc eq u1=1369,1487,1616,1756,1908,2073,2253,2448 t,k=300,300,300,300,300,300,300,300 p,bar=1,1,1,1,1,1,1,1
+react 
+  name=Air moles=1 t,k=300
+output  
+     trace=1e-16 siunits short
+end

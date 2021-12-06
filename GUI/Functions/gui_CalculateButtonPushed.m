@@ -18,7 +18,7 @@ function obj = gui_CalculateButtonPushed(obj, event)
         % Save results
         results = save_results(obj, app);
         % Update GUI with the last results of the set
-        obj = update_results_gui(obj, results);
+        obj = gui_update_results(obj, results);
         % Display results (plots)
         postResults(app);
         % Set lamp to Done color
@@ -34,8 +34,15 @@ function obj = gui_CalculateButtonPushed(obj, event)
 end
 
 % SUB-PASS FUNCTIONS
-function obj = update_results_gui(obj, app)
-    % Update GUI with the results computed
+function obj = gui_update_results(obj, results)
+    % Update:
+    %  1. GUI with the last results computed
+    %  2. GUI-UITree with all the results
+    
+    % Update GUI with the last result computed
+    gui_write_results(obj, results, 1);
+    % Update UITree with all the results
+%     gui_addchildren(app, app.Node_Results, results)
 end
 
 function obj = get_listSpecies_gui(obj)
@@ -47,9 +54,10 @@ function obj = get_listSpecies_gui(obj)
 end
 function results = save_results(obj, app)
     % Save results in the UITree
-    % 1. Save data 
+    % 1. Save data
     results.mix1 = app.PS.strR;
     results.mix2 = app.PS.strP;
+    results.length = length(results.mix2);
     results.ProblemType = obj.ProblemType.Value;
     results.reaction = obj.Reaction.Value;
     results.LS = obj.LS;
@@ -90,5 +98,38 @@ function app = get_input_constrains(obj, app)
         case 'DET_OVERDRIVEN' % * DET_OVERDRIVEN: CALCULATE OVERDRIVEN DETONATION
             [app.PD.overdriven.value, app.FLAG_PR3] = gui_get_prop(obj, 'overdriven', obj.PR3.Value);
             app.PD.phi.value = 1*ones(1, length(app.PD.overdriven.value));
+    end
+end
+
+function gui_write_results(obj, results, i)
+    mix1 = results.mix1{i};
+    mix2 = results.mix2{i};
+    obj.text_TR.Value = temperature(mix1);
+    obj.text_TP.Value = temperature(mix2);
+    obj.text_pR.Value = pressure(mix1);
+    obj.text_pP.Value = pressure(mix1);
+    obj.text_rR.Value = density(mix1);
+    obj.text_rP.Value = density(mix2);
+    obj.text_hR.Value = enthalpy_mass(mix1);
+    obj.text_hP.Value = enthalpy_mass(mix2);
+    obj.text_eR.Value = intEnergy_mass(mix1);
+    obj.text_eP.Value = intEnergy_mass(mix2);
+    obj.text_cpR.Value = cp_mass(mix1);
+    obj.text_cpP.Value = cp_mass(mix2);
+    obj.text_sR.Value = entropy_mass(mix1);
+    obj.text_sP.Value = entropy_mass(mix2);
+    obj.text_gammaR.Value = adiabaticIndex(mix1);
+    obj.text_gammaP.Value = adiabaticIndex(mix2);
+    obj.text_WR.Value = meanMolecularWeight(mix1);
+    obj.text_WP.Value = meanMolecularWeight(mix2);
+    obj.text_soundR.Value = soundspeed(mix1);
+    obj.text_soundP.Value = soundspeed(mix2);
+    obj.text_q.Value = obj.text_hP.Value - obj.text_hR.Value;
+    obj.text_error_moles.Value = mix2.error_moles;
+    if sscanf(results.ProblemType, '%f') > 6
+        obj.text_uR.Value = velocity_relative(mix1);
+        obj.text_uP.Value = velocity_relative(mix2);
+        obj.text_MR.Value = velocity_relative(mix1)/soundspeed(mix1);
+        obj.text_MP.Value = velocity_relative(mix2)/soundspeed(mix2);
     end
 end

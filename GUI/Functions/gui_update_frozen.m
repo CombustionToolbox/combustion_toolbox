@@ -8,6 +8,6 @@ function gui_update_frozen(obj)
             obj.listbox_Products.Items = {};
         end
     else
-        gui_ReactionValueChanged(obj)
+        gui_ProductsValueChanged(obj)
     end
 end

@@ -23,4 +23,8 @@ function self = Species()
     self.ind_fixed = [];
     self.ind_all = [];
     self.ind_ions = [];
+    self.LS_lean = {'CO2', 'H2O', 'N2', 'Ar', 'O2'};
+    self.LS_rich = {'CO2', 'H2O', 'N2', 'Ar', 'CO', 'H2'};
+    self.LS_soot = {'N2', 'Ar', 'CO', 'H2', 'Cbgrb'};
+    self.FLAG_COMPLETE = false;
 end

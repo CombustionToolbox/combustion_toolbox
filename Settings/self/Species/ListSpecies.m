@@ -10,7 +10,7 @@ else
 end
 
 if nargin < 2
-    LS = 'HC/O2/N2 EXTENDED';
+    LS = 'SOOT FORMATION';
 else
     if iscell(varargin{1,2})
         self.S.LS = varargin{1,2};
@@ -20,7 +20,22 @@ else
 end
 
 if exist('LS', 'var')
-    if strcmpi(LS, 'HC/O2/N2 EXTENDED')
+    if contains(LS, 'COMPLETE', 'IgnoreCase', true) 
+        self.S.FLAG_COMPLETE = true;
+        if nargin > 2
+            EquivalenceRatio = varargin{1, 3};
+            EquivalenceRatio_soot = varargin{1, 4};
+            if EquivalenceRatio < 1
+                self.S.LS = self.S.LS_lean;
+            elseif EquivalenceRatio >= 1 && EquivalenceRatio < EquivalenceRatio_soot
+                self.S.LS = self.S.LS_rich;
+            else
+                self.S.LS = self.S.LS_soot;
+            end
+        else
+            self.S.LS = {'CO2', 'CO', 'H2O', 'H2', 'O2', 'N2', 'He', 'Ar', 'Cbgrb'};
+        end
+    elseif strcmpi(LS, 'HC/O2/N2 EXTENDED')
         self.S.LS = {'CO2', 'CO', 'H2O', 'H2', 'O2', 'N2', 'He', 'Ar',...
                     'OH','H','O','HO2','NO','HCO','CH4','CH3',...
                     'NO2','NH3','NH2','N','HCN','CN','N2O','C2','CH'};
@@ -116,6 +131,8 @@ if exist('LS', 'var')
                     'OH','H','O','HO2','NO','HCO','CH4','CH3',...
                     'NO2','NH3','NH2','N','HCN','CN','N2O','C2','CH',...
                     'H2bLb','O2bLb','RP_1'};
+    else
+        self.S.LS = LS;
     end
 end
 

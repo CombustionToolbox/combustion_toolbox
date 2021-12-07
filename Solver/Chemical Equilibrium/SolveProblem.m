@@ -7,9 +7,11 @@ function self = SolveProblem(self, ProblemType)
         % Get Flags and length of the loop
         self = get_FLAG_N(self);
         self.C.l_phi = length(self.PD.phi.value);
-        for i=self.C.l_phi:-1:1
+        for i = self.C.l_phi:-1:1
             % COMPUTE PROPERTIES INITIAL MIXTURE
             self = Define_FOI(self, i);
+            % CHECK IF LIST OF PRODUCTS CORRESPONDS WITH COMPLETE REACTION
+            self = check_complete_reaction(self, i);
             % SOLVE SELECTED PROBLEM
             self = selectProblem(self, i);
             % DISPLAY RESULTS COMMAND WINDOW
@@ -61,5 +63,21 @@ function self = selectProblem(self, i)
             else
                 self.PS.strP{i} = equilibrate(self, self.PS.strR(i), pP, self.PS.strP(i + 1));
             end
+    end
+end
+
+function self = check_complete_reaction(self, i)
+    if self.S.FLAG_COMPLETE
+        EquivalenceRatio = self.PS.strR{i}.phi;
+        EquivalenceRatio_soot = self.PS.strR{i}.phi_c;
+        if EquivalenceRatio < 1
+            LS = self.S.LS_lean;
+        elseif EquivalenceRatio >= 1 && EquivalenceRatio < EquivalenceRatio_soot
+            LS = self.S.LS_rich;
+        else
+            LS = self.S.LS_soot;
+        end
+        self.Misc.index_LS_original = find_ind(self.S.LS, LS);
+        self = reorganize_index_phase_species(self, LS);
     end
 end

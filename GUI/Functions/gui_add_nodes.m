@@ -2,18 +2,18 @@ function gui_add_nodes(obj_parent, results)
     % Function that generate nodes in a UITree and save data on them.
     % 1. Generate Nodes (childrens)
     % * Category 1: new children node: Results -> ProblemType
-    match_text = strcat('Problem Type: ', results.ProblemType);
+    match_text = strcat('Problem Type: ', results(1).ProblemType);
     category1 = set_node(obj_parent, match_text);
     % * Category 2: new children node: ProblemType -> Reactants
-    match_text = strcat('Reactants: ', results.Reactants);
+    match_text = strcat('Reactants: ', results(1).Reactants);
     category2 = set_node(category1, match_text);
     % * Category 3: new children node: Reactants -> ListProducts
-    match_text = strcat('List Products: ', results.Products);
-    category3 = set_node(category2, match_text, 'NodeData', results);
+    match_text = strcat('List Products: ', results(1).Products);
+    category3 = set_node(category2, match_text);
     % * Category 4: new children node: ListProducts -> cases
-    for i = 1:results.length
-        match_text = sprintf('Case %d', category3.UserData);
-        set_node(category3, match_text);
+    for i = 1:length(results)
+        match_text = sprintf('Case %d', category3.UserData); 
+        set_node(category3, match_text, 'NodeData', results(i));
         category3.UserData = category3.UserData + 1;
     end
 end

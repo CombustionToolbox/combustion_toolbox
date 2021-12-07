@@ -42,7 +42,7 @@ function obj = gui_update_results(obj, results)
     % Update GUI with the last result computed
     gui_write_results(obj, results, 1);
     % Update UITree with all the results
-%     gui_addchildren(app, app.Node_Results, results)
+    gui_add_nodes(obj.Node_Results, results)
 end
 
 function obj = get_listSpecies_gui(obj)
@@ -59,7 +59,11 @@ function results = save_results(obj, app)
     results.mix2 = app.PS.strP;
     results.length = length(results.mix2);
     results.ProblemType = obj.ProblemType.Value;
-    results.reaction = obj.Reaction.Value;
+    results.Reactants = obj.Reactants.Items{sscanf(obj.Reactants.Value, '%d')};
+    results.Products = obj.Products.Value;
+    if isempty(results.Products)
+        results.Products = 'Default';
+    end
     results.LS = obj.LS;
     results.LS_products = obj.LS_products;
     % 2. Save results in the UITree 

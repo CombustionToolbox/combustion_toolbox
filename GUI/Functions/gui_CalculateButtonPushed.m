@@ -49,25 +49,25 @@ function obj = get_listSpecies_gui(obj)
     obj.LS = obj.listbox_Products.Items;
     if isempty(obj.LS)
         % Get default value
-        obj.LS = 'Soot Formation';
+        obj.LS = ListSpecies([], 'Soot Formation');
     end
 end
 function results = save_results(obj, app)
-    % Save results in the UITree
-    % 1. Save data
-    results.mix1 = app.PS.strR;
-    results.mix2 = app.PS.strP;
-    results.length = length(results.mix2);
-    results.ProblemType = obj.ProblemType.Value;
-    results.Reactants = obj.Reactants.Items{sscanf(obj.Reactants.Value, '%d')};
-    results.Products = obj.Products.Value;
-    if isempty(results.Products)
-        results.Products = 'Default';
+    % Save results
+    N = length(app.PS.strR);
+    for i = N:-1:1
+        results(i).mix1 = app.PS.strR{i};
+        results(i).mix2 = app.PS.strP{i};
+        results(i).ProblemType = obj.ProblemType.Value;
+        results(i).Reactants = obj.Reactants.Items{sscanf(obj.Reactants.Value, '%d')};
+        results(i).Products = obj.Products.Value;
+        if isempty(results(i).Products)
+            results(i).Products = 'Default';   
+        end
+        results(i).LS = app.S.LS;
+        results(i).LS_products = obj.LS;
+        results(i).UITable_R_Data = obj.UITable_R.Data;
     end
-    results.LS = obj.LS;
-    results.LS_products = app.S.LS;
-    results.UITable_R_Data = obj.UITable_R.Data;
-    % 2. Save results in the UITree 
 end
 
 function app = get_input_constrains(obj, app)

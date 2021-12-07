@@ -1,8 +1,10 @@
 function strP = equilibrate_T(self, strR, pP, TP)
     % Set List of Species to List of Products
-    self = set_LS_original(self);
+    self_ListProducts = set_LS_original(self);
     % Compute number of moles 
-    [N, DeltaNP, DeltaNP_ions] = select_equilibrium(self, pP, TP, strR);
+    [N_ListProducts, DeltaNP, DeltaNP_ions] = select_equilibrium(self_ListProducts, pP, TP, strR);
+    % Reshape matrix of number of moles, N
+    N = reshape_moles(self, self_ListProducts, N_ListProducts);
     % Compute thermodynamic derivates
     [self.dNi_T, self.dN_T] = equilibrium_dT(self, N, TP, strR);
     [self.dNi_p, self.dN_p] = equilibrium_dp(self, N, strR);
@@ -48,4 +50,11 @@ function strP = compute_properties(self, strR, P, pP, TP, DeltaNP, DeltaNP_ions)
     end    
     strP.error_moles = DeltaNP;
     strP.error_moles_ions = DeltaNP_ions;
+end
+
+function N = reshape_moles(self, self_modified, N_modified)
+    % Reshape matrix of number of moles, N
+    index = find_ind(self.S.LS, self_modified.S.LS);
+    N = self.C.N0.value;
+    N(index, 1) = N_modified(:, 1);
 end

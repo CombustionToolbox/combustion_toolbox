@@ -15,6 +15,8 @@ function gui_compute_mach_or_velocity(obj, inputname)
                 M1 = u1 / soundspeed(mix1);
                 obj.PR4.Value = compute_vector_or_scalar(M1, FLAG);
             end
+        else
+            obj.PR3.Value = '-';
         end
     end
 end
@@ -22,8 +24,8 @@ end
 % SUB-PASS FUNCTIONS
 function value_char = compute_vector_or_scalar(value, FLAG)
     if FLAG
-        value_char = sprintf('[%.5g:%.5g:%.5g]', value(1), value(2) - value(1), value(end));
+        value_char = sprintf('[%.2f:%.2f:%.2f]', value(1), value(2) - value(1), value(end));
     else
-        value_char = sprintf('%.5g', value);
+        value_char = sprintf('%.2f', value);
     end
 end

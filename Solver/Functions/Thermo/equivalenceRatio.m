@@ -1,4 +1,7 @@
-function val = equivalenceRatio(mix)
+function value = equivalenceRatio(mix)
     % Get the equivalence ratio of the initial mixture [-]
-    val = mix.phi;
+    value = mix.phi;
+    if ischar(value)
+        value = nan;
+    end
 end

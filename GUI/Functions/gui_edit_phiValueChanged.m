@@ -6,14 +6,10 @@ function [obj, temp_app] = gui_edit_phiValueChanged(obj, event)
         if isempty(obj.UITable_R.Data) 
             return
         end
-        % Initialize app (fast: transfer DB)
-        temp_app = App('fast', obj.DB_master, obj.DB);
         % Set FLAG compute moles from equivalence ratio
         FLAG_COMPUTE_FROM_PHI = true;
-        % Get reactant species
-        temp_app = gui_get_reactants(obj, event, temp_app, FLAG_COMPUTE_FROM_PHI);
-        % Compute properties of the mixture
-        temp_app = gui_compute_propReactants(obj, temp_app);
+        % Create temporaly app required for preliminary calculations
+        temp_app = gui_create_temp_app(obj, event, FLAG_COMPUTE_FROM_PHI);
         % Update UITable classes
         gui_update_UITable_R(obj, temp_app);
         obj.UITable_P.Data = obj.UITable_R.Data(:, 1);    % (species, numer of moles, mole fractions, temperature)

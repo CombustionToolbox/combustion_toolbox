@@ -43,7 +43,8 @@ if nargin == 5
     fprintf('gamma [-]      |   %12.4f  |   %12.4f\n', adiabaticIndex(mix1), adiabaticIndex_sound(mix2));
     fprintf('sound vel [m/s]|   %12.4f  |   %12.4f\n', soundspeed(mix1), soundspeed(mix2));
     if strcmpi(ProblemType,'SHOCK_I')||strcmpi(ProblemType,'SHOCK_R')||contains(ProblemType,'DET')
-        fprintf('u [m/s]        |   %12.4f  |   %12.4f\n', velocity_relative(mix1), velocity_relative(mix2));
+        fprintf('u [m/s]        |   %12.4f  |   %12.4f\n', velocity_relative(mix1), mix2.v_shock);
+        fprintf('Mach number [-]|   %12.4f  |   %12.4f\n', velocity_relative(mix1)/soundspeed(mix1), mix2.v_shock/soundspeed(mix2));
     end
     fprintf('-----------------------------------------------------------\n');
     fprintf('REACTANTS          Xi [-]\n');
@@ -99,7 +100,8 @@ elseif nargin == 6
     fprintf('cp [kJ/(kg-K)] |   %12.4f  |   %12.4f  |   %12.4f\n', cp_mass(mix1), cp_mass(mix2), cp_mass(mix3));
     fprintf('gamma [-]      |   %12.4f  |   %12.4f  |   %12.4f\n', adiabaticIndex(mix1), adiabaticIndex_sound(mix2), adiabaticIndex_sound(mix3));
     fprintf('sound vel [m/s]|   %12.4f  |   %12.4f  |   %12.4f\n', soundspeed(mix1), soundspeed(mix2), soundspeed(mix3));
-    fprintf('u [m/s]        |   %12.4f  |   %12.4f  |   %12.4f\n', velocity_relative(mix1), velocity_relative(mix2), velocity_relative(mix3));
+    fprintf('u [m/s]        |   %12.4f  |   %12.4f  |   %12.4f\n', velocity_relative(mix1), mix2.v_shock, velocity_relative(mix3));
+    fprintf('Mach number [-]|   %12.4f  |   %12.4f  |   %12.4f\n', velocity_relative(mix1)/soundspeed(mix1), mix2.v_shock/soundspeed(mix2), velocity_relative(mix3)/soundspeed(mix3));
     fprintf('-----------------------------------------------------------\n');
     fprintf('STATE 1            Xi [-]\n');
     %%%% SORT SPECIES COMPOSITION %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

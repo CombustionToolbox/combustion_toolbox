@@ -43,11 +43,11 @@ function update_properties(obj, results, i)
     obj.text_soundP.Value = soundspeed(mix2);
     obj.text_q.Value = obj.text_hP.Value - obj.text_hR.Value;
     obj.text_error_moles.Value = mix2.error_moles;
-    if sscanf(results.ProblemType, '%f') > 6
+    if contains(results(i).ProblemType, 'SHOCK', 'IgnoreCase', true) || contains(results(i).ProblemType, 'DET', 'IgnoreCase', true)
         obj.text_uR.Value = velocity_relative(mix1);
-        obj.text_uP.Value = velocity_relative(mix2);
+        obj.text_uP.Value = mix2.v_shock;
         obj.text_MR.Value = velocity_relative(mix1)/soundspeed(mix1);
-        obj.text_MP.Value = velocity_relative(mix2)/soundspeed(mix2);
+        obj.text_MP.Value = mix2.v_shock/soundspeed(mix2);
     end
 end
 
@@ -69,8 +69,8 @@ function update_mixtures(obj, results, i, FLAG_REACTANTS)
         % Update GUI: ListProducts
         obj.listbox_Products.Items = results(i).LS;
     end
-    species = results.LS';
-    ind_species = find_ind(results.LS, species);
+    species = results(i).LS';
+    ind_species = find_ind(results(i).LS, species);
     [N, Xi, ind_sort] = sort_mixture(results, 'mix2', i, ind_species);
     data = table2cell(table(species(ind_sort), Xi .* N, Xi));
     obj.UITable_P.ColumnFormat(2:3) = {'short e'};

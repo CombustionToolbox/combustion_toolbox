@@ -108,7 +108,9 @@ function [temp_ind, temp_ind_swt, FLAG] = check_condensed_species(A0, x, temp_in
         aux = true;
     else
         for i=length(temp_ind_swt_0):-1:1
-            dG_dn = muRT(temp_ind_swt_0(i)) - dot(x(temp_NS+1:end-1), A0(temp_ind_swt_0(i), temp_ind_E));
+            temp_NE = length(temp_ind_E);
+%             dG_dn = muRT(temp_ind_swt_0(i)) - dot(x(temp_NS+1:end-1), A0(temp_ind_swt_0(i), temp_ind_E));
+            dG_dn = muRT(temp_ind_swt_0(i)) - dot(x(end-temp_NE:end-1), A0(temp_ind_swt_0(i), temp_ind_E));
             if dG_dn < 0
                 aux = [aux, i];
             end

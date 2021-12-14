@@ -1,15 +1,17 @@
 function r = therm_effects_air(varargin)
 %     load test_O2.mat
 %     load CombustionToolboxAir.mat R P T M1 M2 Gammas
+%       load thermo_num_air.mat
 %     r.R = R; r.P = P; r.T = T; r.M1 = M1; r.M2 = M2; r.Gammas = Gammas;
 %     clearvars R P T M1 M2 Gammas;
 
     % Get RH jump conditions
     self = compute_shock(varargin);
-    [r.R, r.P, r.T, r.M1, r.M2, r.Gammas, r.alpha] = get_parameters(self);
+%     [r.R, r.P, r.T, r.M1, r.M2, r.Gammas, r.alpha] = get_parameters(self);
     
-%     [R, P, T, M1, M2, Gammas] = get_parameters(self);
-%     save thermo_num_air.mat  
+    [R, P, T, M1, M2, Gammas] = get_parameters(self);
+%     clearvar self varargin
+    save thermo_num_air.mat  
 %
 %     Nl = 1e4;
 %     Ns = 1e4;
@@ -315,17 +317,21 @@ function self = compute_shock(varargin)
     % Initial conditions
     self = set_prop(self, 'TR', T, 'pR', 1.01325 * p);
     self.PD.S_Oxidizer = {'O2'};
-%     self.PD.S_Inert    = {'N2', 'Ar', 'CO2'};
-%     self.PD.proportion_inerts_O2 = [78.084, 0.9365, 0.0319] ./ 20.9476;
+    self.PD.S_Inert    = {'N2', 'Ar', 'CO2'};
+    self.PD.proportion_inerts_O2 = [78.084, 0.9365, 0.0319] ./ 20.9476;
     % Additional inputs
-    initial_velocity_sound = 3.529546069689621e+02;
-    u1 = linspace(initial_velocity_sound, 500, 200);
-    u1 = [u1, linspace(500.1, 3000, 1000)];
-    u1 = [u1, linspace(3000.1, 5000, 500)];
-    u1 = [u1, linspace(5000.1, 12000, 8000)];
-    u1 = [u1, linspace(12000.1, 15000, 500)];
+%     initial_velocity_sound = 3.529546069689621e+02; % N2
+%     initial_velocity_sound = 329.4216; % O2
+    initial_velocity_sound = 347.1035; % Air
+
+%     u1 = linspace(initial_velocity_sound, 500, 200);
+%     u1 = [u1, linspace(500.1, 3000, 1000)];
+%     u1 = [u1, linspace(3000.1, 5000, 500)];
+%     u1 = [u1, linspace(5000.1, 12000, 8000)];
+%     u1 = [u1, linspace(12000.1, 15000, 500)];
+    u1 = linspace(initial_velocity_sound,  10000, 1000);
 %     u1 = logspace(2, 5, 2e3);
-    u1 = u1(u1 < 15000); u1 = u1(u1 >= initial_velocity_sound);
+%     u1 = u1(u1 < 15000); u1 = u1(u1 >= initial_velocity_sound);
 
     self = set_prop(self, 'u1', u1, 'phi', self.PD.phi.value(1) * ones(1, length(u1)));
     % Solve problem

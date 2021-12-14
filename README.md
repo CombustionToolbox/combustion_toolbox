@@ -41,7 +41,7 @@ The [tutorial](https://github.com/AlbertoCuadra/combustion_toolbox/wiki/Tutorial
 We have several examples of what Combustion Toolbox can do. Here we show some results obtained from Combustion Toolbox and a preview of the upcoming GUI.
 
 <p align="left">
-    <img src="https://github.com/AlbertoCuadra/combustion_toolbox/blob/master/Validations/Hugoniot_benchmarking.svg" width="400">
+    <img src="https://github.com/AlbertoCuadra/combustion_toolbox/blob/master/Validations/Figures/Hugoniot_benchmarking.svg" width="400">
 </p>
     
 **Figure 1:** *Hugoniot curves for different molecular gases at pre-shock temperature T1 = 300 K and pressure p1 = 1 atm \[numerical results obtained with Combustion Toolbox (lines) and contrasted with NASA’s Chemical Equilibrium with Applications (CEA) code excluding ionization (symbols)\]*.
@@ -68,6 +68,10 @@ Please send feedback or inquiries to [acuadra@ing.uc3m.es](mailto:acuadra@ing.uc
 
 Thank you for testing Combustion Toolbox!
 
+## Acknowledgements
+Combustion Toolbox's color palette is obtained from the next repository:
+
+Stephen (2021). ColorBrewer: Attractive and Distinctive Colormaps (https://github.com/DrosteEffect/BrewerMap), GitHub. Retrieved December 3, 2021.
 ## Developers
 
 * **[Alberto Cuadra-Lara](https://acuadralara.com/)** - *Core Developer and App designer*

@@ -47,6 +47,20 @@ x = equilibrium_loop;
 [temp_ind, temp_ind_swt, FLAG] = check_condensed_species(A0, x, temp_ind_nswt, temp_ind_swt_0, temp_ind_E, temp_NS, muRT);
 
 if FLAG
+    if any(isnan(x))
+        NP = NP_0;
+        [temp_ind_nswt, temp_ind_swt, temp_ind_cryogenic, temp_ind_E, temp_NE] = temp_values(S, NatomE, TN.tolN);
+        % Update temp values
+        [temp_ind, temp_ind_swt, temp_ind_nswt, temp_NG, ~] = update_temp(N0, N0(ind_A0_E0, 1), ind_A0_E0, temp_ind_swt, temp_ind_nswt, NP, SIZE);
+        [temp_ind, temp_ind_swt, temp_NS] = check_cryogenic(temp_ind, temp_ind_swt, temp_ind_cryogenic);
+        temp_NS0 = temp_NS + 1;
+        % Initialize species vector N0 
+        N0(:, 1) = NP_0/temp_NS;
+        % Construction of part of matrix A
+        [A1, temp_NS0] = update_matrix_A1(A0, [], temp_NG, temp_NS, temp_NS0, temp_ind, temp_ind_E);
+        A22 = zeros(temp_NE + 1);
+        A0_T = A0';
+    end
     STOP = 1;
     temp_NS = length(temp_ind);
     [A1, temp_NS0] = update_matrix_A1(A0, A1, temp_NG, temp_NS, temp_NS0, temp_ind, temp_ind_E);
@@ -90,12 +104,16 @@ function [temp_ind, temp_ind_swt, FLAG] = check_condensed_species(A0, x, temp_in
     % Check condensed species
     aux = [];
     FLAG = false;
-    for i=length(temp_ind_swt_0):-1:1
-        temp_NE = length(temp_ind_E);
-%         dG_dn = muRT(temp_ind_swt_0(i)) - dot(x(temp_NS+1:end-1), A0(temp_ind_swt_0(i), temp_ind_E));
-        dG_dn = muRT(temp_ind_swt_0(i)) - dot(x(end-temp_NE:end-1), A0(temp_ind_swt_0(i), temp_ind_E));
-        if dG_dn < 0
-            aux = [aux, i];
+    if any(isnan(x))
+        aux = true;
+    else
+        for i=length(temp_ind_swt_0):-1:1
+            temp_NE = length(temp_ind_E);
+%             dG_dn = muRT(temp_ind_swt_0(i)) - dot(x(temp_NS+1:end-1), A0(temp_ind_swt_0(i), temp_ind_E));
+            dG_dn = muRT(temp_ind_swt_0(i)) - dot(x(end-temp_NE:end-1), A0(temp_ind_swt_0(i), temp_ind_E));
+            if dG_dn < 0
+                aux = [aux, i];
+            end
         end
     end
     if any(aux)

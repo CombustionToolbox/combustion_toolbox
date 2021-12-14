@@ -18,7 +18,7 @@ function obj = gui_CalculateButtonPushed(obj, event)
         % Save results
         results = save_results(obj, app);
         % Update GUI with the last results of the set
-        obj = update_results_gui(obj, results);
+        obj = gui_update_results(obj, results);
         % Display results (plots)
         postResults(app);
         % Set lamp to Done color
@@ -34,27 +34,40 @@ function obj = gui_CalculateButtonPushed(obj, event)
 end
 
 % SUB-PASS FUNCTIONS
-function obj = update_results_gui(obj, app)
-    % Update GUI with the results computed
+function obj = gui_update_results(obj, results)
+    % Update:
+    %  1. GUI with the last results computed
+    %  2. GUI-UITree with all the results
+    
+    % Update GUI with the last result computed
+    gui_write_results(obj, results, 1);
+    % Update UITree with all the results
+    gui_add_nodes(obj.Node_Results, results)
 end
 
 function obj = get_listSpecies_gui(obj)
     obj.LS = obj.listbox_Products.Items;
     if isempty(obj.LS)
         % Get default value
-        obj.LS = 'Soot Formation';
+        obj.LS = ListSpecies([], 'Soot Formation');
     end
 end
 function results = save_results(obj, app)
-    % Save results in the UITree
-    % 1. Save data 
-    results.mix1 = app.PS.strR;
-    results.mix2 = app.PS.strP;
-    results.ProblemType = obj.ProblemType.Value;
-    results.reaction = obj.Reaction.Value;
-    results.LS = obj.LS;
-    results.LS_products = obj.LS_products;
-    % 2. Save results in the UITree 
+    % Save results
+    N = length(app.PS.strR);
+    for i = N:-1:1
+        results(i).mix1 = app.PS.strR{i};
+        results(i).mix2 = app.PS.strP{i};
+        results(i).ProblemType = obj.ProblemType.Value;
+        results(i).Reactants = obj.Reactants.Items{sscanf(obj.Reactants.Value, '%d')};
+        results(i).Products = obj.Products.Value;
+        if isempty(results(i).Products)
+            results(i).Products = 'Default';   
+        end
+        results(i).LS = app.S.LS;
+        results(i).LS_products = obj.LS;
+        results(i).UITable_R_Data = obj.UITable_R.Data;
+    end
 end
 
 function app = get_input_constrains(obj, app)

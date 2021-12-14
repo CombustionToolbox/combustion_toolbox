@@ -7,8 +7,8 @@ function [value, flag_prop] = gui_get_prop(app, name, value, varargin)
     else
         flag_prop = false;
         value = sscanf(value,'%f');
-        if isempty(value); value = app.PD.(name).value; return; end
-        app.PD.(name).value = value;
+%         if isempty(value); value = app.PD.(name).value; return; end
+%         app.PD.(name).value = value;
     end
 
     extra_parameters = nargin - 3;

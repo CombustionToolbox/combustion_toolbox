@@ -1,7 +1,7 @@
 function f = plot_molar_fractions_validation(results1, results2, varname_x, varname_y, species, varargin)
     % Default values
     nfrec = 1;
-    mintol_display = 1e-14;
+    mintol_display = 1e-16;
     config = results1.Misc.config;
 
     dataname_x = get_dataname(varname_x);
@@ -18,7 +18,7 @@ function f = plot_molar_fractions_validation(results1, results2, varname_x, varn
     grid(axes, 'off'); box(axes, 'off'); hold(axes, 'on'); axes.Layer = 'Top';
     xlabel(axes, 'Equivalence ratio, $\phi$','FontSize',config.fontsize,'interpreter','latex');
     ylabel(axes, 'Molar fraction, $X_i$','FontSize',config.fontsize,'interpreter','latex');
-    set(axes,'xscale','log')
+%     set(axes,'xscale','log')
     set(axes,'yscale','log')
     xlim(axes, [min(results1.(varname_x)), max(results1.(varname_x))])
     ylim(axes, [mintol_display, 1])
@@ -53,7 +53,7 @@ function f = plot_molar_fractions_validation(results1, results2, varname_x, varn
     k = 1;
     z = 1;
     for i=1:length(species)
-        plot(axes, results2.(varname_x)(1:nfrec:end), results2.(varname_y)(i, 1:nfrec:end), SYMBOL_STYLES{z}, 'LineWidth', config.linewidth, 'color', colorbw(k,:));
+        plot(axes, results2.(varname_x)(1:nfrec:end), results2.(varname_y)(i, 1:nfrec:end), SYMBOL_STYLES{z}, 'LineWidth', config.linewidth, 'color', colorbw(k,:), 'MarkerFaceColor', 'white');
         k = k + 1;
         if k == maxLdisplay
             k = 1;

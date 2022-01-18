@@ -40,4 +40,4 @@
 help Combustion_Toolbox.m
 
 % INDICATE FILES ON PATH
-addpath(genpath(pwd));
+Combustion_Toolbox_setPath;

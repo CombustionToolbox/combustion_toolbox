@@ -10,6 +10,8 @@ function obj = gui_CalculateButtonPushed(obj, event)
         app = App('fast', obj.DB_master, obj.DB, obj.LS);
         % Set FLAG GUI
         app.Misc.FLAG_GUI = true;
+        % Get tolerances and tunning values
+        app = get_tunning_values(obj, app);
         % Get initial conditions
         app = get_input_constrains(obj, app);
         app = gui_get_reactants(obj, event, app);
@@ -34,6 +36,20 @@ function obj = gui_CalculateButtonPushed(obj, event)
 end
 
 % SUB-PASS FUNCTIONS
+function app = get_tunning_values(obj, app)
+    % Get tolerances and tunning values from GUI and set into app
+    app.TN.tolN = obj.TraceoptionEditField.Value;
+    app.TN.tol0 = obj.RootFindingMethodEditField.Value;
+    app.TN.tol_shocks = obj.ShocksandDetonationsEditField.Value;
+    app.C.mintol_display = obj.DisplaySpeciesEditField.Value;
+    
+    app.TN.itMax = obj.MaxiterationsRFMEditField.Value;
+    app.TN.it_shocks = obj.MaxiterationsSDEditField.Value;
+    app.TN.root_T0_l = obj.RFMT0_LEditField.Value;
+    app.TN.root_T0_r = obj.RFMT0_REditField.Value;
+    app.TN.root_T0 = obj.RFMT0EditField.Value;
+end
+
 function obj = gui_update_results(obj, results)
     % Update:
     %  1. GUI with the last results computed

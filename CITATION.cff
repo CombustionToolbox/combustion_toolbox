@@ -2,6 +2,9 @@
 ---
 cff-version: 1.2.0
 message: "If you use this software, please cite it using these metadata."
+repository-code: https://github.com/AlbertoCuadra/combustion_toolbox
+type: software
+license: "GPL-3.0"
 title: "Combustion Toolbox: A MATLAB-GUI based open-source tool for solving combustion problems"
 abstract:
     As a first step towards the development of a wider-scope thermochemical tool, in this work we present a thermochemical code with application to gaseous combustion problems recently implemented by the authors in MATLAB and Python. The MATLAB version solves six chemical equilibrium problems (TP, HP, SP, TV, EV and SV transformations; where T denotes temperature, P pressure, H enthalpy, S entropy, E internal energy and V volume), incident and reflected planar shock waves, as well as ideal detonations according to Chapman-Jouguet theory and overdriven detonations, assuming always ideal gases in all cases. The code also computes equilibrium properties of ideal plasmas, i.e., no coulombic interactions are considered. Moreover, part of our theoretical work \"Thermochemical effects on hypersonic shock waves interacting with weak turbulence\" is included. This allow us to compute from a theoretical perspective the jump conditions of an incident shock wave of a diatomic species (e.g., N2, O2, H2, F2) considering only dissociation of the species.
@@ -32,5 +35,3 @@ keywords:
   - app
   - toolbox
   - "open-source"
-  
-license: "GPL-3.0"

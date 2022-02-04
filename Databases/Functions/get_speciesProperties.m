@@ -134,12 +134,12 @@ set_reference_form_of_elements_with_T_intervals; % sets Reference_form_of_elemen
 % formation of a given species, we must determine the change in moles of
 % gases during the formation reaction of a mole of that species starting
 % from the elements in their reference state. The only elements that are
-% stable as diatomic gases are elements 1 (H), 7 (N), 8 (O), 9 (F), and 17
+% stable as diatomic gases are elements 1 (H), 8 (N), 9 (O), 10 (F), and 18
 % (Cl). The remaining elements that are stable as (monoatomic) gases are
-% the noble gases He (2), Ne (10), Ar (18), Kr (36), Xe (54), and Rn (86),
+% the noble gases He (3), Ne (11), Ar (19), Kr (37), Xe (55), and Rn (87),
 % which do not form any compound.
-Delta_n_per_mole = sum(Element_matrix(1,:)==[1, 7, 8, 9, 17]')/2 ... 
-                 + sum(Element_matrix(1,:)==[2, 10, 18, 36, 54, 86]');
+Delta_n_per_mole = sum(Element_matrix(1,:)==[1, 8, 9, 10, 18]')/2 ... 
+                 + sum(Element_matrix(1,:)==[3, 11, 19, 37, 55, 87]');
 Delta_n = 1 - swtCondensed - dot(Delta_n_per_mole,Element_matrix(2,:));
 
 R0 = 8.3144598; % [J/(K-mol)]. Universal gas constant

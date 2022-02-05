@@ -12,9 +12,8 @@
 *.mex*
 
 # Packaged app and toolbox files
-*.mlappinstall
 *.mltbx
-
+*.prj
 # Generated helpsearch folders
 helpsearch*/
 

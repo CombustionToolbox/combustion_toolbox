@@ -142,6 +142,7 @@ function [str1, str2] = save_state(self, str1, T2, p2, STOP)
     str2.u = str2.sound; % velocity postshock [m/s] - laboratory fixed
     str2.error_problem = STOP;
     str1.u = str2.u * str2.rho / str1.rho;
+    str2.v_shock = str1.u * str1.rho / str2.rho;
 end
 
 function print_convergence(STOP, TOL)

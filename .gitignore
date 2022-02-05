@@ -13,7 +13,7 @@
 
 # Packaged app and toolbox files
 *.mltbx
-
+*.prj
 # Generated helpsearch folders
 helpsearch*/
 

@@ -5,7 +5,7 @@ function self = ProblemDescription()
     self.R_Fuel = [];
     self.R_Oxidizer = [];
     self.R_Inert = [];
-    self.phi.description = "Temperature of reactants";
+    self.phi.description = "Equivalence ratio";
     self.phi.value = 1.0;
     self.phi.t = 1.0; % Theoretical value: phi = phi_t / phi.st
     self.phi_t = [];

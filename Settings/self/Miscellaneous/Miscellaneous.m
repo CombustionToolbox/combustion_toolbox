@@ -16,6 +16,7 @@ function self = Miscellaneous()
     self.FLAG_GUI = false;
     self.FLAG_LABELS = false;
     self.FLAG_PROP = [];
+    self.FLAG_LENGTH_LOOP = false;
     self.save_Excel = false;
     self.timer_0 = [];
     self.display_species = {};

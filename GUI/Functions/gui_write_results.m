@@ -61,9 +61,6 @@ function update_mixtures(obj, results, i, FLAG_REACTANTS)
         [N, Xi, ind_sort] = sort_mixture(results, 'mix1', i, ind_species);
         data = table2cell(table(species(ind_sort), Xi .* N, Xi, type, temperature));
 
-        obj.UITable_R.ColumnFormat(2:3) = {'short e'};
-        obj.UITable_R2.ColumnFormat(2:3) = {'short e'};
-
         obj.UITable_R.Data = data;
         obj.UITable_R2.Data = data(:, 1:3);
         % Update GUI: ListProducts
@@ -73,7 +70,6 @@ function update_mixtures(obj, results, i, FLAG_REACTANTS)
     ind_species = find_ind(results(i).LS, species);
     [N, Xi, ind_sort] = sort_mixture(results, 'mix2', i, ind_species);
     data = table2cell(table(species(ind_sort), Xi .* N, Xi));
-    obj.UITable_P.ColumnFormat(2:3) = {'short e'};
     obj.UITable_P.Data = data;
 end
 

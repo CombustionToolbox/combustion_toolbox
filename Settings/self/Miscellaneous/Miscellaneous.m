@@ -19,6 +19,7 @@ function self = Miscellaneous()
     self.FLAG_LENGTH_LOOP = false;
     self.save_Excel = false;
     self.timer_0 = [];
+    self.timer_loop = [];
     self.display_species = {};
     self.i = [];
 end

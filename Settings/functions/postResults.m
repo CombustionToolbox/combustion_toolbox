@@ -6,9 +6,9 @@ phi = app.PD.phi.value;
 timer_0 = app.Misc.timer_0;
 ProblemType = app.PD.ProblemType;
 % -----------------------------------
+app.Misc.timer_loop = toc(timer_0);
 
-disp('TIME:')
-toc(timer_0);
+fprintf('Elapsed time is %.6g seconds\n', app.Misc.timer_loop);
 
 app.Misc.config.tit = ProblemType;
 FLAG_PLOT_PHI = numel(phi)>1 && all(phi(2:end) ~= phi(1));

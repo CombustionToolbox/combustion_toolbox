@@ -1,40 +1,62 @@
 function self = check_inputs(self)
     % Check that all the inputs are specified
     if ~self.Misc.FLAG_CHECK_INPUTS
-        check_inputs_prop(self, 'TR');
-        check_inputs_prop(self, 'pR');
+        self = check_inputs_prop(self, 'TR');
+        self = check_inputs_prop(self, 'pR');
         check_inputs_species(self);
         switch self.PD.ProblemType
             case 'TP' % * TP: Equilibrium composition at defined T and p
-                check_inputs_prop(self, 'TP');
-                check_inputs_prop(self, 'pP');
+                self = check_inputs_prop(self, 'TP');
+                self = check_inputs_prop(self, 'pP');
             case 'HP' % * HP: Adiabatic T and composition at constant p
-                check_inputs_prop(self, 'pP');
+                self = check_inputs_prop(self, 'pP');
             case 'SP' % * SP: Isentropic (i.e., adiabatic) compression/expansion to a specified p
-                check_inputs_prop(self, 'pP');
+                self = check_inputs_prop(self, 'pP');
             case 'TV' % * TV: Equilibrium composition at defined T and constant v
-                check_inputs_prop(self, 'TP');
+                self = check_inputs_prop(self, 'TP');
                 self = set_prop(self, 'pP', self.PD.pR.value); % Guess
             case 'EV' % * EV: Equilibrium composition at Adiabatic T and constant v
                 self = set_prop(self, 'pP', self.PD.pR.value); % Guess
             case 'SV' % * SV: Isentropic (i.e., fast adiabatic) compression/expansion to a specified v
-                check_inputs_prop(self, 'vP_vR');
+                self = check_inputs_prop(self, 'vP_vR');
             case 'SHOCK_I' % * SHOCK_I: CALCULATE PLANAR INCIDENT SHOCK WAVE
-                check_inputs_prop(self, 'u1');
+                self = check_inputs_prop(self, 'u1');
             case 'SHOCK_R' % * SHOCK_R: CALCULATE PLANAR POST-REFLECTED SHOCK STATE
-                check_inputs_prop(self, 'u1');
+                self = check_inputs_prop(self, 'u1');
             case 'DET_OVERDRIVEN' % * DET_OVERDRIVEN: CALCULATE OVERDRIVEN DETONATION
-                check_inputs_prop(self, 'overdriven');
+                self = check_inputs_prop(self, 'overdriven');
         end
     end
     self.Misc.FLAG_CHECK_INPUTS = true;
 end
 
 % SUB-PASS FUNCTIONS
-function check_inputs_prop(self, name)
+function self = check_inputs_prop(self, name)
     % Check that the property is specified
     if isempty(self.PD.(name).value)
         error('ERROR: %s is not specified', self.PD.(name).description);
+    end
+    value_length = self.PD.(name).value;
+    self = set_length_phi(self, name, value_length);
+end
+
+function self = set_length_phi(self, name, value)
+    % Set length equivalence ratio
+    if ~self.Misc.FLAG_LENGTH_LOOP
+        if self.Misc.FLAGS_PROP.phi
+            self.C.l_phi = length(self.PD.phi.value);
+            self.PD.range = self.PD.phi.value;
+            self.PD.range_name = 'phi';
+            self.Misc.FLAG_LENGTH_LOOP = true;
+            return
+        end
+        if self.Misc.FLAGS_PROP.(name)
+            self.PD.phi.value = self.PD.phi.value(1) * ones(length(value));
+            self.C.l_phi = length(self.PD.phi.value);
+            self.PD.range = value;
+            self.PD.range_name = name;
+            self.Misc.FLAG_LENGTH_LOOP = true;
+        end
     end
 end
 

@@ -18,8 +18,10 @@ function self = SolveProblem(self, ProblemType)
             % DISPLAY RESULTS COMMAND WINDOW
             results(self, i);
         end
-        % RECOVER RANGE VALUES
-        self.PD.(self.PD.range_name).value = self.PD.range;
+        % RECOVER RANGE VALUES (ONLY FOR SET OF PROBLEMS)
+        if isfield(self.PD, 'range_name')
+            self.PD.(self.PD.range_name).value = self.PD.range;
+        end
     catch ME
         errorMessage = sprintf('Error in function %s() at line %d.\n\nError Message:\n%s', ...
                                ME.stack(1).name, ME.stack(1).line, ME.message);
@@ -30,8 +32,10 @@ end
 % SUB-PASS FUNCTIONS
 function self = set_problem_conditions(self, i)
     % Set problem conditions per case
-    if ~strcmpi(self.PD.range_name, 'phi')
-        self.PD.(self.PD.range_name).value = self.PD.range(i);
+    if isfield(self.PD, 'range_name')
+        if ~strcmpi(self.PD.range_name, 'phi')
+            self.PD.(self.PD.range_name).value = self.PD.range(i);
+        end
     end
 end
 

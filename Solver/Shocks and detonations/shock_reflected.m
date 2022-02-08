@@ -138,6 +138,7 @@ function str5 = save_state(self, str2, T5, p5, STOP)
     str5 = state(self, str2, T5, p5);
     str5.u = (str5.p - str2.p)*1e5 / (str2.u * str2.rho) - str2.u;
     str5.error_problem = STOP;
+    str5.v_shock = str2.u * str2.rho / str5.rho;
 end
 
 function print_convergence(STOP, TOL)

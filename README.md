@@ -30,7 +30,7 @@ This project is also part of the PhD of [Alberto Cuadra-Lara](https://www.acuadr
 ---
 ⚠️ **NOTE**
 
-- At the moment, **this is a preview of the tool** and does not include the new GUI. **The beta version of the GUI will arrive in the next few weeks**. The first final version v1.0.0 is expected to be released in late 2021. Check out the  upcoming features of [Combustion Toolbox v1.0.0](https://github.com/AlbertoCuadra/combustion_toolbox/projects/2).
+- The first final version v1.0.0 is expected to be released in April 2022. Check out the  upcoming features of [Combustion Toolbox v1.0.0](https://github.com/AlbertoCuadra/combustion_toolbox/projects/2).
 - [Wiki](https://github.com/AlbertoCuadra/combustion_toolbox/wiki) under construction :building_construction:
 
 ---

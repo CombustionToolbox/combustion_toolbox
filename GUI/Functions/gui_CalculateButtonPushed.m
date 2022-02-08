@@ -10,13 +10,13 @@ function obj = gui_CalculateButtonPushed(obj, event)
         app = App('fast', obj.DB_master, obj.DB, obj.LS);
         % Set FLAG GUI
         app.Misc.FLAG_GUI = true;
-        % Update GUI terminal
-        gui_update_terminal(obj, app, 'start');
         % Get tolerances and tunning values
         app = get_tunning_values(obj, app);
         % Get initial conditions
         app = get_input_constrains(obj, app);
         app = gui_get_reactants(obj, event, app);
+        % Update GUI terminal
+        gui_update_terminal(obj, app, 'start');
         % Solve selected problem
         app = SolveProblem(app, app.PD.ProblemType);
         % Save results

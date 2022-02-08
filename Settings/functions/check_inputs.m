@@ -1,6 +1,7 @@
 function self = check_inputs(self)
     % Check that all the inputs are specified
     if ~self.Misc.FLAG_CHECK_INPUTS
+        self.C.l_phi = length(self.PD.phi.value);
         self = check_inputs_prop(self, 'TR');
         self = check_inputs_prop(self, 'pR');
         check_inputs_species(self);

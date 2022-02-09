@@ -10,7 +10,7 @@ function gui_ProductsValueChanged(obj)
                 gui_edit_phiValueChanged(obj, []); 
             else
                 temp_app = ListSpecies(obj, obj.Products.Value);
-                obj.listbox_Products.Items = temp_app.S.LS;
+                obj.listbox_Products.Items = [obj.listbox_Products.Items, temp_app.S.LS];
             end
         end
     catch

@@ -35,5 +35,5 @@ function LS = remove_value(value, LS)
             n_pass(n) = false;
         end
     end
-    LS = value(n_pass);
+    LS = LS(n_pass);
 end

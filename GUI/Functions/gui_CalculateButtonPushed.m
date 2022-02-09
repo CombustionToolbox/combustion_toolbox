@@ -79,7 +79,11 @@ function results = save_results(obj, app)
         results(i).mix1 = app.PS.strR{i};
         results(i).mix2 = app.PS.strP{i};
         results(i).ProblemType = obj.ProblemType.Value;
-        results(i).Reactants = obj.Reactants.Items{sscanf(obj.Reactants.Value, '%d')};
+        if ischar(obj.Reactants.Value)
+            results(i).Reactants = '1';
+        else
+            results(i).Reactants = obj.Reactants.Items{sscanf(obj.Reactants.Value, '%d')};
+        end
         results(i).Products = obj.Products.Value;
         if isempty(results(i).Products)
             results(i).Products = 'Default';   

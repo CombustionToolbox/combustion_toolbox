@@ -44,12 +44,14 @@ end
 function self = set_length_phi(self, name, value)
     % Set length equivalence ratio
     if ~self.Misc.FLAG_LENGTH_LOOP
-        if self.Misc.FLAGS_PROP.phi
-            self.C.l_phi = length(self.PD.phi.value);
-            self.PD.range = self.PD.phi.value;
-            self.PD.range_name = 'phi';
-            self.Misc.FLAG_LENGTH_LOOP = true;
-            return
+        if isfield(self.Misc.FLAGS_PROP, 'phi')
+            if self.Misc.FLAGS_PROP.phi
+                self.C.l_phi = length(self.PD.phi.value);
+                self.PD.range = self.PD.phi.value;
+                self.PD.range_name = 'phi';
+                self.Misc.FLAG_LENGTH_LOOP = true;
+                return
+            end
         end
         if self.Misc.FLAGS_PROP.(name)
             self.PD.phi.value = self.PD.phi.value(1) * ones(length(value));

@@ -37,9 +37,7 @@ function app = check_ListProducts(obj, app)
             uialert(obj.UIFigure, message, 'Warning', 'Icon', 'warning');
         end
         % Update List of Products depending of the value of the equivalence ratio
-        phi = app.PS.strR{1}.phi;
-        phi_c = app.PS.strR{1}.phi_c;
-        app = ListSpecies(obj, obj.Products.Value, phi, phi_c);
+        app = ListSpecies(obj, obj.Products.Value);
         obj.listbox_Products.Items = app.S.LS;
     end
 end

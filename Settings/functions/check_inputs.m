@@ -55,13 +55,13 @@ function self = set_length_phi(self, name, value)
         end
         if self.Misc.FLAGS_PROP.(name)
             self.PD.phi.value = self.PD.phi.value(1) * ones(length(value));
+            self.Misc.FLAG_LENGTH_LOOP = true;
         else
             self.PD.phi.value = 1;
         end
         self.C.l_phi = length(self.PD.phi.value);
         self.PD.range = value;
         self.PD.range_name = name;
-        self.Misc.FLAG_LENGTH_LOOP = true;
     end
 end
 

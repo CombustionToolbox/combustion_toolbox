@@ -38,7 +38,7 @@ function mix =  ComputeProperties(self, SpeciesMatrix, p, T)
     mix.S      = (mix.S0 + mix.DS); % [kJ/K]
     mix.T = T; % [K]
     mix.g = mix.h - mix.T * mix.S; % [kJ]
-    mix.e = mix.h - sum(Ni(ii).*(1 - mix.swtCond(ii))) * R0 * T *1e-3; % THIS WORKS!!!
+    mix.e = mix.h - sum(Ni(ii) .* (1 - mix.swtCond(ii))) * R0 * T *1e-3; % THIS WORKS!!!
     mix.gamma = mix.cP/mix.cV;
     mix.sound = sqrt(mix.gamma *p * 1e5 / mix.rho);
     

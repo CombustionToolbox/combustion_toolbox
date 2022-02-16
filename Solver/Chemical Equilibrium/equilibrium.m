@@ -119,7 +119,11 @@ function [temp_ind, temp_ind_swt, FLAG] = check_condensed_species(A0, x, temp_in
     if any(aux)
         FLAG = true;
     end
-    temp_ind_swt = temp_ind_swt_0(aux);
+    if ~isempty(temp_ind_swt_0)
+        temp_ind_swt = temp_ind_swt_0(aux);
+    else
+        temp_ind_swt = [];
+    end
     temp_ind = [temp_ind_nswt, temp_ind_swt];
 end
 

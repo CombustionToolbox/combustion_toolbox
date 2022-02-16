@@ -18,32 +18,3 @@ function self = Initialize(self)
       uiwait(warndlg(errorMessage));
     end
 end
-
-% SUB-PASS FUNCTIONS
-function self = list_phase_species(self, LS)
-    % Establish cataloged list of species according to the state of the 
-    % phase (gaseous or condensed). It also obtains the indices of 
-    % cryogenic liquid species, e.g., liquified gases.
-    self = get_index_phase_species(self, LS);
-    self.S.ind_nswt = unique(self.S.ind_nswt);
-    self.S.ind_swt  = unique(self.S.ind_swt);
-    self.S.ind_cryogenic = unique(self.S.ind_cryogenic);
-    self.S.LS = self.S.LS([self.S.ind_nswt, self.S.ind_swt]);
-    self.S.NS = length(self.S.LS);
-    self.S.NG = length(self.S.ind_nswt);
-    % Reorginize index of gaseous, condensed and cryogenic species
-    self = reorganize_index_phase_species(self, self.S.LS);
-end
-
-function self = Stoich_Matrix(self)
-    % Create stoichiometric matrix
-    self.C.A0.value = zeros(self.S.NS, self.E.NE);
-    self.C.M0.value = zeros(self.S.NS, self.C.N_prop.value);
-    for i=1:self.S.NS
-        txFormula = self.DB.(self.S.LS{i}).txFormula;
-        self.DB.(self.S.LS{i}).Element_matrix = set_element_matrix(txFormula,self.E.elements);
-        self.C.A0.value(i,self.DB.(self.S.LS{i}).Element_matrix(1,:)) = self.DB.(self.S.LS{i}).Element_matrix(2,:);
-        self.C.M0.value(i,10) = self.DB.(self.S.LS{i}).swtCondensed;    
-    end
-    self.C.N0.value = self.C.M0.value(:, [1, 10]);
-end

@@ -90,7 +90,7 @@ function app = gui_set_reactants(obj, event, app)
             app.PD.N_Fuel = [0.5, 0.5];
         otherwise % SET NEW SPECIES
             try
-                species = gui_seeker_value(obj, event, app.S.LS_DB);
+                species = gui_seeker_exact_value(obj, event, app.S.LS_DB);
             catch
                 message = {'Species not found.'};
                 uialert(obj.UIFigure, message, 'Warning', 'Icon', 'warning');

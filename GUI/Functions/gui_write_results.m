@@ -24,7 +24,7 @@ function update_properties(obj, results, i)
     obj.text_TR.Value = temperature(mix1);
     obj.text_TP.Value = temperature(mix2);
     obj.text_pR.Value = pressure(mix1);
-    obj.text_pP.Value = pressure(mix1);
+    obj.text_pP.Value = pressure(mix2);
     obj.text_rR.Value = density(mix1);
     obj.text_rP.Value = density(mix2);
     obj.text_hR.Value = enthalpy_mass(mix1);

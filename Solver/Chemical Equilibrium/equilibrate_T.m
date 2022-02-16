@@ -17,7 +17,9 @@ end
 % SUB-PASS FUNCTIONS
 function self = set_LS_original(self)
     % Set List of Species to List of Products
+    self.S.ind_nswt = []; self.S.ind_swt = []; self.S.ind_cryogenic = [];
     self.S.LS = self.S.LS(self.Misc.index_LS_original);
+    self = list_phase_species(self, self.S.LS);
     self.C.A0.value = self.C.A0.value(self.Misc.index_LS_original, :);
     self.C.M0.value = self.C.M0.value(self.Misc.index_LS_original, :);
     self.C.N0.value = self.C.N0.value(self.Misc.index_LS_original, :);

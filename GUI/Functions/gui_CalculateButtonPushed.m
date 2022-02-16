@@ -78,7 +78,7 @@ function results = save_results(obj, app)
     for i = N:-1:1
         results(i).mix1 = app.PS.strR{i};
         results(i).mix2 = app.PS.strP{i};
-        results(i).ProblemType = obj.ProblemType.Value;
+        results(i).ProblemType = app.PD.ProblemType;
         if ischar(obj.Reactants.Value)
             results(i).Reactants = '1';
         else

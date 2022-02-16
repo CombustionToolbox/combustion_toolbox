@@ -2,14 +2,15 @@ function value = gui_seeker_value(obj, event, ListValues)
     % Return the value that match with the value introduced in the finder
     try
         seekValue = event.Value;
-        index = 0;
-        seekIndex = false;
-        while ~seekIndex
-            index = index + 1;
-            seekIndex = startsWith(ListValues{index}, seekValue, 'IgnoreCase', false);
+        if isempty(seekValue)
+            value = [];
+            return
         end
-        if index
-            value = ListValues{index}; % Value found in ListValues
+        for i = length(ListValues):-1:1
+            seekIndex(i) = startsWith(ListValues{i}, seekValue, 'IgnoreCase', false);
+        end
+        if any(seekIndex)
+            value = ListValues(seekIndex); % Value found in ListValues
         else
             value = []; % Value not found in ListValues
         end

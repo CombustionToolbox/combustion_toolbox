@@ -13,6 +13,9 @@ fprintf('Elapsed time is %.6g seconds\n', app.Misc.timer_loop);
 app.Misc.config.tit = ProblemType;
 FLAG_PLOT_PHI = numel(phi)>1 && all(phi(2:end) ~= phi(1));
 
+if ~isfield(app.Misc.FLAGS_PROP, 'TP')
+    app.Misc.FLAGS_PROP.TP = false;
+end
 % PLOTS REACTANTS
 if app.Misc.FLAGS_PROP.TR && length(phi) > 1
     app.Misc.config.labelx = 'Temperature reactants $T [K]$';
@@ -21,6 +24,10 @@ if app.Misc.FLAGS_PROP.TR && length(phi) > 1
 
 elseif app.Misc.FLAGS_PROP.pR && length(phi) > 1
     app.Misc.config.labelx = 'Pressure reactants $p [bar]$';
+    app.Misc.config.labely = 'Molar fraction $X_i$';
+    displaysweepresults(app, mix2, app.PD.range);
+elseif app.Misc.FLAGS_PROP.pP && length(phi) > 1
+    app.Misc.config.labelx = 'Pressure $p [bar]$';
     app.Misc.config.labely = 'Molar fraction $X_i$';
     displaysweepresults(app, mix2, app.PD.range);
 end
@@ -35,7 +42,7 @@ if ~strcmp(ProblemType,'DET_OVERDRIVEN') && FLAG_PLOT_PHI
         plot_figure(phi, mix2,'phi','T',app.Misc.config,app.PD.CompleteOrIncomplete);
     end
 
-elseif strcmp(ProblemType,{'TP'}) && length(phi) > 1
+elseif app.Misc.FLAGS_PROP.TP && length(phi) > 1
     app.Misc.config.labelx = 'Temperature $T [K]$';
     app.Misc.config.labely = 'Molar fraction $X_i$';
     displaysweepresults(app, mix2, app.PD.range);

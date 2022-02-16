@@ -120,4 +120,7 @@ function app = get_input_constrains(obj, app)
         case 'DET_OVERDRIVEN' % * DET_OVERDRIVEN: CALCULATE OVERDRIVEN DETONATION
             app = set_prop(app, 'overdriven', obj.PR3.Value);
     end
+    if contains(obj.Products.Value, 'complete', 'IgnoreCase', true)
+        app.S.FLAG_COMPLETE = true;
+    end
 end

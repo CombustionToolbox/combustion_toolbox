@@ -173,7 +173,7 @@ if ctTInt > 0
     Cv0 = Cp0 - R0;
     H0  = R0 * T * (sum(a{tInterval} .* T.^tExponents{tInterval} .* [-1   log(T) 1      1/2 1/3 1/4 1/5 0]) + b{tInterval}(1)/T);
     Ef0 = Hf0 - Delta_n * R0 * Tref;
-    E0  = Ef0 + (H0 - Hf0) - (1 - swtCondensed) * R0 * (T - Tref); % MARCOS(REVISAR SI ESTA EXPRESION ES VALIDA PARA FASES CONDENSADAS(!))
+    E0  = Ef0 + (H0 - Hf0) - (1 - swtCondensed) * R0 * (T - Tref);
     S0  = R0 *     (sum(a{tInterval} .* T.^tExponents{tInterval} .* [-1/2 -1     log(T) 1   1/2 1/3 1/4 0]) + b{tInterval}(2)  );
     
     % Compute the standar gibbs free energy of formation at the specified

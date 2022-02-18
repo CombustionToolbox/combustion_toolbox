@@ -1,5 +1,5 @@
 % -------------------------------------------------------------------------
-% COMBUSTION TOOLBOX @v0.6.0
+% COMBUSTION TOOLBOX @v0.7.0
 % A MATLAB-GUI based open-source tool for solving gaseous combustion problems.
 %
 % Type of problems:
@@ -35,7 +35,7 @@
 %          PhD Candidate - Group Fluid Mechanics
 %          Universidad Carlos III de Madrid
 %                  
-% Last update Feb 16 2022
+% Last update Feb 18 2022
 % -------------------------------------------------------------------------
 help Combustion_Toolbox.m
 

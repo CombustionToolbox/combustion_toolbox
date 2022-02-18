@@ -50,8 +50,8 @@ function gui_ProblemTypeValueChanged(obj)
             obj.text_RP4.Visible = 'off'; 
             % Set default input values
             obj.PR1.Value = '300';
-            obj.PR2.Value = '20';
-            obj.PP2.Value = obj.PR2.Value;
+            obj.PR2.Value = '1';
+            obj.PP2.Value = '100';
             % Set visible item volume ratio
             obj.text_vP_vR.Visible = 'off'; 
             % Set invisible shocks/detonation items

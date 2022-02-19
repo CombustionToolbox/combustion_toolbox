@@ -25,9 +25,7 @@ function self = Define_FOI(self, i)
     % Compute property matrix of the reactives for the given conditions
     R = self.PD.R_Fuel + self.PD.R_Oxidizer + self.PD.R_Inert;
     % Compute Temperature of the reactants (species with different temperature)
-    if ~isempty(temperatures)
-        self.PD.TR.value = compute_temperature_mixture(self, species, moles, temperatures);
-    end
+    self.PD.TR.value = compute_temperature_mixture(self, species, moles, temperatures);
     % Compute properties of the reactives for a given temperature and
     % pressure
     self.PS.strR{i} = ComputeProperties(self, R, self.PD.pR.value, self.PD.TR.value);

@@ -20,6 +20,7 @@ function self = check_inputs(self)
                 self = set_prop(self, 'pP', self.PD.pR.value); % Guess
             case 'SV' % * SV: Isentropic (i.e., fast adiabatic) compression/expansion to a specified v
                 self = check_inputs_prop(self, 'vP_vR');
+                self = set_prop(self, 'pP', self.PD.pR.value); % Guess
             case 'SHOCK_I' % * SHOCK_I: CALCULATE PLANAR INCIDENT SHOCK WAVE
                 self = check_inputs_prop(self, 'u1');
             case 'SHOCK_R' % * SHOCK_R: CALCULATE PLANAR POST-REFLECTED SHOCK STATE

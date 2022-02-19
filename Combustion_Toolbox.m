@@ -18,10 +18,10 @@
 % LIST OF TUTORIAL SCRIPTS:
 %   * Example_TP
 %   * Example_HP
-%   * Example_SP (not yet)
+%   * Example_SP
 %   * Example_TV
 %   * Example_EV
-%   * Example_SV (not yet)
+%   * Example_SV
 %   * Example_SHOCK_I
 %   * Example_SHOCK_I_IONIZATION
 %   * Example_SHOCK_R
@@ -35,7 +35,7 @@
 %          PhD Candidate - Group Fluid Mechanics
 %          Universidad Carlos III de Madrid
 %                  
-% Last update Feb 18 2022
+% Last update Feb 19 2022
 % -------------------------------------------------------------------------
 help Combustion_Toolbox.m
 

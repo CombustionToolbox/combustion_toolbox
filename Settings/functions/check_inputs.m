@@ -2,9 +2,11 @@ function self = check_inputs(self)
     % Check that all the inputs are specified
     if ~self.Misc.FLAG_CHECK_INPUTS
         self.C.l_phi = length(self.PD.phi.value);
-        self = check_inputs_prop(self, 'TR');
+        if isempty(self.PD.TR.value)
+            self = set_prop(self, 'TR', 300); % In case is not specified (species with different temperature) 
+        end
         self = check_inputs_prop(self, 'pR');
-        check_inputs_species(self);
+        self = check_inputs_species(self);
         switch self.PD.ProblemType
             case 'TP' % * TP: Equilibrium composition at defined T and p
                 self = check_inputs_prop(self, 'TP');
@@ -68,8 +70,9 @@ function self = set_length_phi(self, name, value)
     end
 end
 
-function check_inputs_species(self) 
-    % Check that species and the Nº moles are specified
+function self = check_inputs_species(self) 
+    % Check that species, the Nº moles, and the temperature of the species
+    % are specified
     if isempty(self.PD.S_Fuel) && isempty(self.PD.S_Oxidizer) && isempty(self.PD.S_Inert)
         error('ERROR: species are not specified');
     end
@@ -84,5 +87,26 @@ function check_inputs_species(self)
     end
     if length(self.PD.S_Inert) ~= length(self.PD.S_Inert)
         error('ERROR: mismatch length inert species and Nº moles');
+    end
+    self = check_input_temperatures(self, 'Fuel');
+    self = check_input_temperatures(self, 'Oxidizer');
+    self = check_input_temperatures(self, 'Inert');
+end
+
+function self = check_input_temperatures(self, name)
+    % Assign temperature of the species in case it was not defined
+    Sname = strcat('S_', name);
+    Tname = strcat('T_', name);
+    if ~isempty(self.PD.(Sname)) && isempty(self.PD.(Tname))
+        species = self.PD.(Sname);
+        N = length(species);
+        for i = N:-1:1
+            if self.DB.(species{i}).swtCondensed
+                T(i) = self.DB.(species{i}).T;
+            else
+                T(i) = self.PD.TR.value;
+            end
+        end
+        self.PD.(Tname) = T;
     end
 end

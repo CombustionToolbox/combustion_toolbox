@@ -9,9 +9,9 @@ function gui_update_UITable_R(obj, app)
     molar_fraction = moles/sum(moles); % It is easier to recompute
     typeSpecies = get_typeSpecies(app);
     if ~isempty(obj.UITable_R.Data) && Nspecies == length(obj.UITable_R.Data(:, 1))
-        temperature = obj.UITable_R.Data(:, 5)';
+        temperatures = obj.UITable_R.Data(:, 5)';
     else
-        temperature = create_cell_ntimes(app.PD.TR.value, Nspecies);
+        temperatures = create_cell_ntimes(app.PD.TR.value, Nspecies);
     end
-    obj.UITable_R.Data = [species; vector2cell(moles); vector2cell(molar_fraction); typeSpecies; temperature]';
+    obj.UITable_R.Data = [species; vector2cell(moles); vector2cell(molar_fraction); typeSpecies; temperatures]';
 end

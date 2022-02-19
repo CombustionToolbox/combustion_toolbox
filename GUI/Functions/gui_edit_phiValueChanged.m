@@ -14,10 +14,12 @@ function [obj, temp_app] = gui_edit_phiValueChanged(obj, event)
         gui_update_UITable_R(obj, temp_app);
         obj.UITable_P.Data = obj.UITable_R.Data(:, 1);    % (species, numer of moles, mole fractions, temperature)
         obj.UITable_R2.Data = obj.UITable_R.Data(:, 1:3); % (species, numer of moles, mole fractions)
-        % Update GUI: equivalence ratio, O/F and percentage Fuel
+        % Update GUI: equivalence ratio, O/F, percentage Fuel, and
+        % temperature of reactants
         obj.edit_phi2.Value = obj.edit_phi.Value;
         obj.edit_OF.Value = 1/temp_app.PS.strR{1}.FO;
         obj.edit_F.Value = temp_app.PS.strR{1}.percentage_Fuel;
+        obj.PR1.Value = sprintf('%g', round(temp_app.PD.TR.value, 2));
         % Check List of products (only in case of ListProducts == Complete reaction)
         temp_app = check_ListProducts(obj, temp_app);
     catch ME

@@ -31,9 +31,12 @@ function self = ProblemDescription()
     self.overdriven.value = []; % [-]
     self.S_Fuel = [];
     self.N_Fuel = [];
+    self.T_Fuel = [];
     self.S_Oxidizer = [];
     self.N_Oxidizer = [];
+    self.T_Oxidizer = [];
     self.S_Inert = [];
     self.N_Inert = [];
+    self.T_Inert = [];
     self.ionization = false;
 end

@@ -15,10 +15,12 @@ function app = gui_get_reactants(varargin)
     species = obj.UITable_R.Data(:, 1);
     % Get number of moles of each species in the mixture
     moles = gui_get_moles(obj, event, app, FLAG_COMPUTE_FROM_PHI);
+    % Get temperature of the species in the mixture
+    temperatures = obj.UITable_R.Data(:, 5);
     % Set mixture into variable app
-    app = gui_set_species_moles(obj, app, species, moles, 'S_Fuel', 'N_Fuel', 'ind_Fuel');
-    app = gui_set_species_moles(obj, app, species, moles, 'S_Oxidizer', 'N_Oxidizer', 'ind_Oxidizer');
-    app = gui_set_species_moles(obj, app, species, moles, 'S_Inert', 'N_Inert', 'ind_Inert');
+    app = gui_set_species_moles_temperatures(obj, app, species, moles, temperatures, 'S_Fuel', 'N_Fuel', 'T_Fuel', 'ind_Fuel');
+    app = gui_set_species_moles_temperatures(obj, app, species, moles, temperatures, 'S_Oxidizer', 'N_Oxidizer', 'T_Oxidizer', 'ind_Oxidizer');
+    app = gui_set_species_moles_temperatures(obj, app, species, moles, temperatures, 'S_Inert', 'N_Inert', 'T_Inert', 'ind_Inert');
     % Compute proportion inerts/O2
     app = compute_proportion_inerts_O2(app);
 end
@@ -39,14 +41,16 @@ function app = gui_set_species(obj, app, species, species_name, ind_name)
     app.PD.(species_name) = species(obj.(ind_name))';
 end
 
-function app = gui_set_species_moles(obj, app, species, moles, species_name, moles_name, ind_name)
-    % Get the species and the number of moles of the current data in
-    % UITable_R for a given category (Fuel, Oxidizer, Inert)
+function app = gui_set_species_moles_temperatures(obj, app, species, moles, temperatures, species_name, moles_name, temperatures_name, ind_name)
+    % Get the species and the number of moles and the temperatures of the 
+    % current data in UITable_R for a given category (Fuel, Oxidizer, Inert)
     app = gui_set_species(obj, app, species, species_name, ind_name);
     try
         app.PD.(moles_name) = cell2vector(moles(obj.(ind_name)));
+        app.PD.(temperatures_name) = cell2vector(temperatures(obj.(ind_name)));
     catch 
         app.PD.(moles_name) = [];
+        app.PD.(temperatures_name) = [];
     end
 end
 
@@ -89,7 +93,8 @@ function moles = gui_compute_moles_from_equivalence_ratio(obj, app)
     if any(obj.ind_Fuel)
         species = obj.UITable_R.Data(:, 1);
         moles(obj.ind_Fuel) = obj.UITable_R.Data(obj.ind_Fuel, 2);
-        app = gui_set_species_moles(obj, app, species, moles(obj.ind_Fuel), 'S_Fuel', 'N_Fuel', 'ind_Fuel');
+        temperatures(obj.ind_Fuel) = obj.UITable_R.Data(obj.ind_Fuel, 5);
+        app = gui_set_species_moles_temperatures(obj, app, species, moles(obj.ind_Fuel), temperatures(obj.ind_Fuel), 'S_Fuel', 'N_Fuel', 'T_Fuel', 'ind_Fuel');
         app = gui_compute_propReactants(obj, app);
     end
     if any(obj.ind_Oxidizer)

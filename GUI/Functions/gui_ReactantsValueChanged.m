@@ -102,6 +102,6 @@ function app = gui_set_reactants(obj, event, app)
             end
             % Add new species to the mixture (fuel by default)
             app.PD.S_Fuel = [app.PD.S_Fuel, {species}];
-            app.PD.N_Fuel = [app.PD.N_Fuel, 0];
+            app.PD.N_Fuel = [app.PD.N_Fuel, 1];
     end
 end

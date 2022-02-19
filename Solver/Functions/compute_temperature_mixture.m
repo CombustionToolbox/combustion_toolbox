@@ -10,43 +10,47 @@ function T = compute_temperature_mixture(self, species, moles, temperatures)
     % Output:
     %   - T: scalar with the temperature of the mixture at equilibrium
     
-    % Convert moles and temperature into vectors if needed
-    moles = cell2vector(moles);
-    temperatures = cell2vector(temperatures);
-    if length(unique(temperatures)) > 1
-        % Obtain specific heat capacity at constant volume and thermal enthalpy
-        % by evaluating each species at its initial temperature
-        cV_0 = get_property_list_species(@species_cV, species, temperatures, self.DB);
-        DhT_0 = get_property_list_species(@species_DhT, species, temperatures, self.DB);
-        % Guess of the temperature of the mixture at equilibrium
-        T = sum(moles .* temperatures .* cV_0) / sum(moles .* cV_0); 
-        % Constants
-        it = 0; ERR = 1.0;
-        % Solver: numerical 1D Newton-Raphson method
-        while abs(ERR) > self.TN.tol0 && it < self.TN.itMax
-            it = it + 1;
-            % Obtain thermal enthalpy by evaluating each species at the guess
-            % equilibrium temperature
-            DhT = get_property_list_species(@species_DhT, species, T, self.DB);
-            % Evaluate function
-            FT = sum(moles .* DhT_0) - sum(moles .* DhT);
-            % Perturb evaluated function
-            DT = T*0.02;
-            T_per = T + DT;
-            DhT_per = get_property_list_species(@species_DhT, species, T_per, self.DB);
-            FTX = sum(moles .* DhT) - sum(moles.*DhT_per);
-            % Compute derivate (1D)
-            DFTDT = (FTX - FT) / DT;
-            % Solve equation to obtain the correction factor
-            DeltaT = -DFTDT \ FT;
-            % Apply correction
-            T = T + DeltaT;
-            % Compute error
-            ERR = abs(DeltaT);
+    try
+        % Convert moles and temperature into vectors if needed
+        moles = cell2vector(moles);
+        temperatures = cell2vector(temperatures);
+        if length(unique(temperatures)) > 1
+            % Obtain specific heat capacity at constant volume and thermal enthalpy
+            % by evaluating each species at its initial temperature
+            cV_0 = get_property_list_species(@species_cV, species, temperatures, self.DB);
+            DhT_0 = get_property_list_species(@species_DhT, species, temperatures, self.DB);
+            % Guess of the temperature of the mixture at equilibrium
+            T = sum(moles .* temperatures .* cV_0) / sum(moles .* cV_0); 
+            % Constants
+            it = 0; ERR = 1.0;
+            % Solver: numerical 1D Newton-Raphson method
+            while abs(ERR) > self.TN.tol0 && it < self.TN.itMax
+                it = it + 1;
+                % Obtain thermal enthalpy by evaluating each species at the guess
+                % equilibrium temperature
+                DhT = get_property_list_species(@species_DhT, species, T, self.DB);
+                % Evaluate function
+                FT = sum(moles .* DhT_0) - sum(moles .* DhT);
+                % Perturb evaluated function
+                DT = T*0.02;
+                T_per = T + DT;
+                DhT_per = get_property_list_species(@species_DhT, species, T_per, self.DB);
+                FTX = sum(moles .* DhT) - sum(moles.*DhT_per);
+                % Compute derivate (1D)
+                DFTDT = (FTX - FT) / DT;
+                % Solve equation to obtain the correction factor
+                DeltaT = -DFTDT \ FT;
+                % Apply correction
+                T = T + DeltaT;
+                % Compute error
+                ERR = abs(DeltaT);
+            end
+        else
+            % Same temperature
+            T = temperatures(1);
         end
-    else
-        % Same temperature
-        T = temperatures(1);
+    catch
+        T = max(temperatures);
     end
 end
 

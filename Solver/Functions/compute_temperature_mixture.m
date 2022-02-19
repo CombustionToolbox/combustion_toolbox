@@ -50,7 +50,11 @@ function T = compute_temperature_mixture(self, species, moles, temperatures)
             T = temperatures(1);
         end
     catch
-        T = max(temperatures);
+        if isempty(temperatures)
+            T = self.PD.TR.value;
+        else
+            T = max(temperatures);
+        end
     end
 end
 

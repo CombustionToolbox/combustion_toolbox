@@ -4,6 +4,8 @@ function self = check_inputs(self)
         self.C.l_phi = length(self.PD.phi.value);
         if isempty(self.PD.TR.value)
             self = set_prop(self, 'TR', 300); % In case is not specified (species with different temperature) 
+        else
+            self = check_inputs_prop(self, 'TR');
         end
         self = check_inputs_prop(self, 'pR');
         self = check_inputs_species(self);
@@ -88,9 +90,11 @@ function self = check_inputs_species(self)
     if length(self.PD.S_Inert) ~= length(self.PD.S_Inert)
         error('ERROR: mismatch length inert species and Nº moles');
     end
-    self = check_input_temperatures(self, 'Fuel');
-    self = check_input_temperatures(self, 'Oxidizer');
-    self = check_input_temperatures(self, 'Inert');
+    if length(self.PD.TR.value) == 1
+        self = check_input_temperatures(self, 'Fuel');
+        self = check_input_temperatures(self, 'Oxidizer');
+        self = check_input_temperatures(self, 'Inert');
+    end
 end
 
 function self = check_input_temperatures(self, name)

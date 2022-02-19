@@ -110,7 +110,7 @@ function app = get_input_constrains(obj, app)
         case 'EV' % * EV: Equilibrium composition at Adiabatic T and constant v
             app = set_prop(app, 'pP', obj.PP2.Value);
         case 'SV' % * SV: Isentropic (i.e., fast adiabatic) compression/expansion to a specified v
-            app = set_prop(app, 'vP_vR', obj.PP2.Value);
+            app = set_prop(app, 'vP_vR', obj.PP4.Value);
         case 'SHOCK_I' % * SHOCK_I: CALCULATE PLANAR INCIDENT SHOCK WAVE
             app = set_prop(app, 'u1', obj.PR3.Value);
         case 'SHOCK_R' % * SHOCK_R: CALCULATE PLANAR POST-REFLECTED SHOCK STATE

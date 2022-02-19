@@ -19,6 +19,7 @@
 %   * Example_TP
 %   * Example_HP
 %   * Example_HP_PROPELLANTS
+%   * Example_HP_MIXTEMP
 %   * Example_SP
 %   * Example_TV
 %   * Example_EV

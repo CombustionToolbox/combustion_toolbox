@@ -43,6 +43,11 @@ function update_properties(obj, results, i)
     obj.text_soundP.Value = soundspeed(mix2);
     obj.text_q.Value = obj.text_hP.Value - obj.text_hR.Value;
     obj.text_error_moles.Value = mix2.error_moles;
+    if strcmpi(results(i).ProblemType, 'TP')
+        obj.text_error_problem.Value = mix2.error_moles;
+    else
+        obj.text_error_problem.Value = mix2.error_problem;
+    end
     if contains(results(i).ProblemType, 'SHOCK', 'IgnoreCase', true) || contains(results(i).ProblemType, 'DET', 'IgnoreCase', true)
         obj.text_uR.Value = velocity_relative(mix1);
         obj.text_uP.Value = mix2.v_shock;

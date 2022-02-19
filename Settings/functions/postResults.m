@@ -25,10 +25,12 @@ elseif app.Misc.FLAGS_PROP.pR && length(phi) > 1
     app.Misc.config.labelx = 'Pressure reactants $p [bar]$';
     app.Misc.config.labely = 'Molar fraction $X_i$';
     displaysweepresults(app, mix2, app.PD.range);
-elseif app.Misc.FLAGS_PROP.pP && length(phi) > 1
-    app.Misc.config.labelx = 'Pressure $p [bar]$';
-    app.Misc.config.labely = 'Molar fraction $X_i$';
-    displaysweepresults(app, mix2, app.PD.range);
+elseif isfield(app.Misc.FLAGS_PROP, 'pP')
+    if app.Misc.FLAGS_PROP.pP && length(phi) > 1
+        app.Misc.config.labelx = 'Pressure $p [bar]$';
+        app.Misc.config.labely = 'Molar fraction $X_i$';
+        displaysweepresults(app, mix2, app.PD.range);
+    end
 end
 
 % PLOTS PRODUCTS

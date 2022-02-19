@@ -27,7 +27,11 @@ end
 
 function pP = compute_pressure(self, strR, TP, N)
     % Compute pressure of product mixture
-    pP = (N * TP * self.C.R0 / (strR.v/1e3)) / 1e5;
+    if strcmpi(self.PD.ProblemType, 'SV')
+        pP = strR.p * N/strR.N * TP/strR.T * self.PD.vP_vR.value;
+    else
+        pP = (N * TP * self.C.R0 / (strR.v/1e3)) / 1e5;
+    end
 end
 
 function [N, DeltaNP, DeltaNP_ions] = select_equilibrium(self, pP, TP, strR)

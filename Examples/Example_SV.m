@@ -2,7 +2,7 @@
 % EXAMPLE: SV
 % Compute Isentropic compression/expansion and equilibrium composition at 
 % a defined set of volume ratios (0.5, 2) for a lean CH4-air mixture at
-% standard conditions, a set of 24 species considered, and a equivalence
+% 700 K and 10 bar, a set of 24 species considered, and a equivalence
 % ratio phi 0.5 [-]
 %   
 % Soot formation == {'CO2', 'CO', 'H2O', 'H2', 'O2', 'N2', 'He', 'Ar',...
@@ -21,7 +21,7 @@
 %% INITIALIZE
 self = App('Soot formation');
 %% INITIAL CONDITIONS
-self = set_prop(self, 'TR', 700, 'pR', 1 * 1.01325, 'phi', 0.5);
+self = set_prop(self, 'TR', 700, 'pR', 10, 'phi', 0.5);
 self.PD.S_Fuel     = {'CH4'};
 self.PD.S_Oxidizer = {'O2'};
 self.PD.S_Inert    = {'N2', 'Ar', 'CO2'};

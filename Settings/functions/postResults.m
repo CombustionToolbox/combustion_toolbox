@@ -21,7 +21,6 @@ if app.Misc.FLAGS_PROP.TR && length(phi) > 1
     app.Misc.config.labelx = 'Temperature reactants $T [K]$';
     app.Misc.config.labely = 'Molar fraction $X_i$';
     displaysweepresults(app, mix2, app.PD.range);
-
 elseif app.Misc.FLAGS_PROP.pR && length(phi) > 1
     app.Misc.config.labelx = 'Pressure reactants $p [bar]$';
     app.Misc.config.labely = 'Molar fraction $X_i$';
@@ -62,7 +61,9 @@ elseif strcmp(ProblemType,{'SV'}) && length(phi) > 1
     app.Misc.config.labelx = 'Volume ratio $v_P/v_R$';
     app.Misc.config.labely = 'Temperature $T [K]$';
     plot_figure(app.PD.vP_vR.value, mix2,'v_P/v_R','T',app.Misc.config,app.PD.CompleteOrIncomplete);  
-
+    T = cell2vector(mix2, 'T');
+    displaysweepresults(app, mix2, T);
+    
 elseif strcmp(ProblemType,{'SHOCK_I'}) && length(phi) > 1
     app.Misc.config.labelx = 'Incident velocity $u_1$';
     app.Misc.config.labely = 'Temperature $T [K]$';

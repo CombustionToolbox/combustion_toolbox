@@ -25,7 +25,11 @@ if length(xvar)>1
     [yvar, all_ind, indlabel] = get_parameters(str, NameSpecies, display_species, mintol);
     plot_line(self, axes, xvar, yvar, all_ind, indlabel, NameSpecies)
     set_limits_axes(axes, xvar, yvar, mintol);
-    set_legends(self, axes, NameSpecies(all_ind));
+    species = NameSpecies(all_ind);
+    for i = length(species):-1:1
+        legendname{i} = species2latex(species{i});
+    end
+    set_legends(self, axes, legendname);
 end
 
 end

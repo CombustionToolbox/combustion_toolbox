@@ -79,7 +79,9 @@ function f = plot_molar_fractions_validation(results1, results2, varname_x, varn
         end
     end
 
-    legendname = species;
+    for i = length(species):-1:1
+        legendname{i} = species2latex(species{i});
+    end
     legend(h, legendname, 'FontSize', config.fontsize-6, 'Location', 'northeastoutside', 'interpreter', 'latex');
     title(create_title(results1), 'Interpreter', 'latex', 'FontSize', config.fontsize + 4);
 end
@@ -145,29 +147,5 @@ function cat_text = cat_mol_species(mol, species)
     else
         value = sprintf('%.3g', mol);
     end
-    cat_text = strcat(value, convert_species_latex(species));
-end
-
-function speciesLatex = convert_species_latex(species)
-    index = regexp(species, '[0-9]');
-    N = length(index);
-    if ~N
-        speciesLatex = species;
-        return;
-    end
-    speciesLatex = [];
-    pos1 = 1;
-    for i=1:N
-        pos2 = index(i) - 1;
-        speciesLatex = strcat(speciesLatex, species(pos1:pos2), '$_', species(pos2 + 1), '$');
-        pos1 = pos2 + 2;
-    end
-    if pos1 < length(species)
-        if isletter(species(pos1))
-            aux = 0;
-        else
-            aux = 1;
-        end
-        speciesLatex = [speciesLatex, species(pos1+aux:end)];
-    end
+    cat_text = strcat(value, species2latex(species));
 end

@@ -51,13 +51,15 @@ function mix =  ComputeProperties(self, SpeciesMatrix, p, T)
         if ~any(isnan(self.dNi_T)) && ~any(isinf(self.dNi_T))
             ind = SpeciesMatrix(:, 1) > 0;
             H0_j = (SpeciesMatrix(ind, 2) + SpeciesMatrix(ind, 3)) * 1e3; % [J]
-            mix.cP_r = sum(H0_j/T .* self.dNi_T(ind)); % [J/K]
+            mix.cP_r = sum(H0_j/T .* self.dNi_T(ind) .* (1 - mix.swtCond(ind))) + sum(H0_j/T .* self.dNi_T(ind) .* mix.swtCond(ind) ./ Ni(ind)); % [J/K]
             mix.cP = mix.cP + mix.cP_r; % [J/K]
             mix.cV = mix.cP + (mix.pv/T * mix.dVdT_p^2) / mix.dVdp_T * 1e5; % [J/K]
             mix.gamma = mix.cP/mix.cV; % [-]
             mix.gamma_s = - mix.gamma / mix.dVdp_T; % [-]
             mix.sound = sqrt(mix.gamma_s*p*1e5/mix.rho); % [m/s]
         end
+    else
+        mix.gamma_s = mix.gamma;
     end
 end
 

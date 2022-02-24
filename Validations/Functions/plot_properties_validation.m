@@ -1,4 +1,4 @@
-function mainfigure = plot_properties_validation(results1, results2, varsname_x, varsname_y, varargin)
+function mainfigure = plot_properties_validation(results1, results2, varsname_x, varsname_y, type, varargin)
     % Plot properties varname_y vs varname_x from CT (results1) against CEA (results2)
 
     % Default values
@@ -13,8 +13,8 @@ function mainfigure = plot_properties_validation(results1, results2, varsname_x,
         varname_x = varsname_x{i};
         varname_y = varsname_y{i};
 
-        dataname_x = get_dataname(varname_x);
-        dataname_y = get_dataname(varname_y);
+        dataname_x = get_dataname(varname_x, type);
+        dataname_y = get_dataname(varname_y, type);
         results1.(varname_x) = cell2vector(select_data(results1, dataname_x), varname_x);
         results1.(varname_y) = cell2vector(select_data(results1, dataname_y), varname_y);
     
@@ -43,10 +43,12 @@ function mainfigure = plot_properties_validation(results1, results2, varsname_x,
     end
 end
 
-function dataname = get_dataname(var)
+function dataname = get_dataname(var, type)
     if strcmpi(var, 'phi')
         dataname = 'PD.phi.value';
-    else
+    elseif strcmpi(type, 'mix1')
+        dataname = 'PS.strR';
+    elseif strcmpi(type, 'mix2')
         dataname = 'PS.strP';
     end
 end
@@ -132,7 +134,9 @@ function value = interpret_label(property)
             value = '$c_v [kJ/kg-K]$';
         case 'gamma_s'
             value = 'Adiabatic index';
+        case 'u'
+            value = 'Incident velocity $[m/s]$';
         otherwise
-            value = '';
+            value = strcat('$', property, '$');
     end
 end

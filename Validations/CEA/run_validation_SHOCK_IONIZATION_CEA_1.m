@@ -33,10 +33,15 @@
                         'tolN', tolN);
     % Load results CEA 
     results_CEA = data_CEA(filename, DisplaySpecies, find_ind(ListSpecies([], LS), DisplaySpecies));
-    % Display validation (plot)
-    fig1 = plot_molar_fractions_validation(results_CT, results_CEA, 'T', 'Xi', DisplaySpecies);
+%     % Display validations (plot)
+%     % * Molar fractions
+%     fig1 = plot_molar_fractions_validation(results_CT, results_CEA, 'T', 'Xi', DisplaySpecies);
     % Save plots
     folderpath = strcat(pwd,'\Validations\Figures\');
     filename = 'validation_SHOCK_IONIZATION_CEA_1';
-    saveas(fig1, strcat(folderpath, filename, '_molar'), 'svg');
+%     saveas(fig1, strcat(folderpath, filename, '_molar'), 'svg');
+    % * Properties
+    fig2 = plot_properties_validation(results_CT, results_CEA, {'u', 'u', 'u', 'u', 'u', 'u', 'u', 'u'}, {'T', 'p', 'rho', 'h', 'e', 'g', 'cP', 'gamma_s'});
+    % Save plots
+    saveas(fig2, strcat(folderpath, filename, '_properties'), 'svg');
 end

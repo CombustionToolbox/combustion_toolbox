@@ -30,7 +30,7 @@ function pP = compute_pressure(self, strR, TP, N)
     if strcmpi(self.PD.ProblemType, 'SV')
         pP = strR.p * N/strR.N * TP/strR.T * self.PD.vP_vR.value;
     else
-        pP = (N * TP * self.C.R0 / (strR.v/1e3)) / 1e5;
+        pP = (N * TP * self.C.R0 / strR.v) * 1e-5;
     end
 end
 

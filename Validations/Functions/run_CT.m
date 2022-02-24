@@ -5,8 +5,8 @@ function self = run_CT(varargin)
     % DEFAULT VALUES
     species = 'Soot Formation';
     Temp = 300;
-    Pressure = 1.01325;
-    EquivalenceRatio = 0.5:0.01:5;
+    Pressure = 1;
+    EquivalenceRatio = 0.5:0.01:4;
     S_Fuel = {'CH4'};
     S_Oxidizer = {'O2'};
     S_Inert    = {'N2'};
@@ -68,4 +68,13 @@ function self = run_CT(varargin)
     end
     % SOLVE PROBLEM
     self = SolveProblem(self, ProblemType);
+    % SET PROPERTIES AS CEA
+    for i = length(self.PD.range):-1:1
+        self.PS.strP{i}.h = enthalpy_mass(self.PS.strP{i});
+        self.PS.strP{i}.e = intEnergy_mass(self.PS.strP{i});
+        self.PS.strP{i}.g = gibbs_mass(self.PS.strP{i});
+        self.PS.strP{i}.s = entropy_mass(self.PS.strP{i});
+        self.PS.strP{i}.cP = cp_mass(self.PS.strP{i});
+        self.PS.strP{i}.cV = self.PS.strP{i}.cP / self.PS.strP{i}.gamma_s;
+    end
 end

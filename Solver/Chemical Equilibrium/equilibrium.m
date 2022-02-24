@@ -191,15 +191,11 @@ end
 
 function [A1, temp_NS0] = update_matrix_A1(A0, A1, temp_NG, temp_NS, temp_NS0, temp_ind, temp_ind_E)
     % Update stoichiometric submatrix A1
-%     if temp_NS < temp_NS0
-        A11 = eye(temp_NS);
-        A11(temp_NG+1:temp_NS, temp_NG+1:temp_NS) = 0;
-        A122 = ones(temp_NS, 1);
-        A122(temp_NG + 1:end, 1) = 0;
-        A12 = -[A0(temp_ind, temp_ind_E), A122];
-        A1 = [A11, A12];
-        temp_NS0 = temp_NS;
-%     end
+    A11 = eye(temp_NS);
+    A11(temp_NG+1:end, temp_NG+1:end) = 0;
+    A12 = -[A0(temp_ind, temp_ind_E), [ones(temp_NG, 1); zeros(temp_NS-temp_NG, 1)]];
+    A1 = [A11, A12];
+    temp_NS0 = temp_NS;
 end
 
 function [temp_ind, temp_ind_swt, temp_NS] = check_cryogenic(temp_ind, temp_ind_swt, temp_ind_cryogenic)

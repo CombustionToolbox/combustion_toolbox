@@ -70,6 +70,14 @@ function self = run_CT(varargin)
     self = SolveProblem(self, ProblemType);
     % SET PROPERTIES AS CEA
     for i = length(self.PD.range):-1:1
+        % Mix 1
+        self.PS.strR{i}.h = enthalpy_mass(self.PS.strR{i});
+        self.PS.strR{i}.e = intEnergy_mass(self.PS.strR{i});
+        self.PS.strR{i}.g = gibbs_mass(self.PS.strR{i});
+        self.PS.strR{i}.s = entropy_mass(self.PS.strR{i});
+        self.PS.strR{i}.cP = cp_mass(self.PS.strR{i});
+        self.PS.strR{i}.cV = self.PS.strR{i}.cP / self.PS.strR{i}.gamma_s;
+        % Mix 2
         self.PS.strP{i}.h = enthalpy_mass(self.PS.strP{i});
         self.PS.strP{i}.e = intEnergy_mass(self.PS.strP{i});
         self.PS.strP{i}.g = gibbs_mass(self.PS.strP{i});

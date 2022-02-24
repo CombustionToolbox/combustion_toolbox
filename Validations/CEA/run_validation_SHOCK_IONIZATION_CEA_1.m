@@ -33,15 +33,23 @@
                         'tolN', tolN);
     % Load results CEA 
     results_CEA = data_CEA(filename, DisplaySpecies, find_ind(ListSpecies([], LS), DisplaySpecies));
-%     % Display validations (plot)
-%     % * Molar fractions
-%     fig1 = plot_molar_fractions_validation(results_CT, results_CEA, 'T', 'Xi', DisplaySpecies);
+    % Display validations (plot)
+    % * Molar fractions
+%     fig1 = plot_molar_fractions_validation(results_CT, results_CEA.mix2, 'T', 'Xi', DisplaySpecies);
     % Save plots
     folderpath = strcat(pwd,'\Validations\Figures\');
     filename = 'validation_SHOCK_IONIZATION_CEA_1';
 %     saveas(fig1, strcat(folderpath, filename, '_molar'), 'svg');
-    % * Properties
-    fig2 = plot_properties_validation(results_CT, results_CEA, {'u', 'u', 'u', 'u', 'u', 'u', 'u', 'u'}, {'T', 'p', 'rho', 'h', 'e', 'g', 'cP', 'gamma_s'});
+    % * Properties mixture 1
+    fig2 = plot_properties_validation(results_CT, results_CEA.mix1, {'u', 'u', 'u', 'u', 'u', 'u', 'u', 'u'}, {'T', 'p', 'rho', 'h', 'e', 'g', 'cP', 'gamma_s'}, 'mix1');
     % Save plots
     saveas(fig2, strcat(folderpath, filename, '_properties'), 'svg');
+    % * Properties mixture 2 - 1
+    fig3 = plot_properties_validation(results_CT, results_CEA.mix2, {'u', 'u', 'u', 'u', 'u', 'u', 'u', 'u'}, {'T', 'p', 'rho', 'h', 'e', 'g', 'cP', 'gamma_s'}, 'mix2');
+    % Save plots
+    saveas(fig3, strcat(folderpath, filename, '_properties'), 'svg');
+    % * Properties mixture 2 - 2
+    fig3 = plot_properties_validation(results_CT, results_CEA.mix2, {'u', 'u', 'u'}, {'cV', 'dVdT_p', 'dVdp_T'}, 'mix2');
+    % Save plots
+    saveas(fig3, strcat(folderpath, filename, '_properties'), 'svg');
 end

@@ -15,15 +15,20 @@ function data = data_CEA(varargin)
         % READ DATA
         data_nasa = read_CEA(filename{j});
         % PROPERTIES
-        mix.T = data_nasa.T;
-        mix.rho = data_nasa.rho;
-        mix.S = data_nasa.S;
-        mix.g = data_nasa.G;
-        mix.cP = data_nasa.cp; % cp [kJ/kg-K]
-        mix.DhT = data_nasa.cp .* (data_nasa.T-298.15)*1e-3; % DhT_P [J/kg]
+        mix.p = data_nasa.P; % [bar]
+        mix.T = data_nasa.T; % [K]
+        mix.rho = data_nasa.rho; % [kg/m3]
+        mix.h = data_nasa.H; % [kJ/kg]
+        mix.e = data_nasa.U; % [kJ/kg]
+        mix.S = data_nasa.S; % [kJ/kg-K]
+        mix.g = data_nasa.G; % [kJ/kg]
+        mix.cP = data_nasa.cp; % [kJ/kg-K]
+        mix.gamma_s = data_nasa.gamma_s; % [-]
+        mix.cV = data_nasa.cp ./ mix.gamma_s; % [kJ/kg-K]
+        mix.DhT = data_nasa.cp .* (data_nasa.T-298.15); % [kJ/kg]
         if isfield(data_nasa,'rho2rho1')
-            mix.u_preshock = data_nasa.u1;
-            mix.u_postshock = data_nasa.u1 ./ data_nasa.rho2rho1;
+            mix.u_preshock = data_nasa.u1; % [m/s]
+            mix.u_postshock = data_nasa.u1 ./ data_nasa.rho2rho1; % [m/s]
         end
         % EQUIVALENCE RATIO
         mix.phi = data_nasa.phi;

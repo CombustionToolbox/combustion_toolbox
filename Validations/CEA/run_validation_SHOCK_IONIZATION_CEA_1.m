@@ -49,7 +49,7 @@
     % Save plots
     saveas(fig3, strcat(folderpath, filename, '_properties'), 'svg');
     % * Properties mixture 2 - 2
-    fig3 = plot_properties_validation(results_CT, results_CEA.mix2, {'u', 'u', 'u'}, {'cV', 'dVdT_p', 'dVdp_T'}, 'mix2');
+    fig4 = plot_properties_validation(results_CT, results_CEA.mix2, {'u', 'u', 'u'}, {'cV', 'dVdT_p', 'dVdp_T'}, 'mix2');
     % Save plots
-    saveas(fig3, strcat(folderpath, filename, '_properties'), 'svg');
+    saveas(fig4, strcat(folderpath, filename, '_properties'), 'svg');
 end

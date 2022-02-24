@@ -29,8 +29,8 @@ function run_validation_HP_CEA_2
     folderpath = strcat(pwd,'\Validations\Figures\');
     filename = 'validation_HP_CEA_2';
     saveas(fig1, strcat(folderpath, filename, '_molar'), 'svg');
-    % * Properties
-    fig2 = plot_properties_validation(results_CT, results_CEA, {'phi', 'phi', 'phi', 'phi', 'phi', 'phi', 'phi', 'phi'}, {'T', 'rho', 'h', 'e', 'g', 'cP', 'cV', 'gamma_s'});
+    % * Properties mixture 2
+    fig2 = plot_properties_validation(results_CT, results_CEA, {'phi', 'phi', 'phi', 'phi', 'phi', 'phi', 'phi', 'phi'}, {'T', 'rho', 'h', 'e', 'g', 'cP', 'cV', 'gamma_s'}, 'mix2');
     % Save plots
     saveas(fig2, strcat(folderpath, filename, '_properties'), 'svg');
 end

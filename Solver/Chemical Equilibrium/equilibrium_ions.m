@@ -137,6 +137,7 @@ function [temp_ind, temp_ind_swt, temp_ind_nswt, temp_ind_ions, temp_NS, temp_in
     temp_ind = [temp_ind_nswt, temp_ind_swt];
     temp_NS = length(temp_ind);
 end
+
 function [A1, temp_NS0] = update_matrix_A1(A0, A1, temp_NS, temp_NS0, temp_ind, temp_ind_E)
     % Update stoichiometric submatrix A1
     if temp_NS < temp_NS0
@@ -146,6 +147,7 @@ function [A1, temp_NS0] = update_matrix_A1(A0, A1, temp_NS, temp_NS0, temp_ind, 
         temp_NS0 = temp_NS;
     end
 end
+
 function A2 = update_matrix_A2(A0_T, A22, N0, NP, temp_ind, temp_ind_E)
     % Update stoichiometric submatrix A2
     A21 = [N0(temp_ind, 1)' .* A0_T(temp_ind_E, temp_ind); N0(temp_ind, 1)'];

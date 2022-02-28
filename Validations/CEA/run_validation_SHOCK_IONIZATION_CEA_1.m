@@ -36,20 +36,18 @@
     % Display validations (plot)
     % * Molar fractions
 %     fig1 = plot_molar_fractions_validation(results_CT, results_CEA.mix2, 'T', 'Xi', DisplaySpecies);
-    % Save plots
-    folderpath = strcat(pwd,'\Validations\Figures\');
-    filename = 'validation_SHOCK_IONIZATION_CEA_1';
-%     saveas(fig1, strcat(folderpath, filename, '_molar'), 'svg');
     % * Properties mixture 1
     fig2 = plot_properties_validation(results_CT, results_CEA.mix1, {'u', 'u', 'u', 'u', 'u', 'u', 'u', 'u'}, {'T', 'p', 'rho', 'h', 'e', 'g', 'cP', 'gamma_s'}, 'mix1');
-    % Save plots
-    saveas(fig2, strcat(folderpath, filename, '_properties'), 'svg');
     % * Properties mixture 2 - 1
     fig3 = plot_properties_validation(results_CT, results_CEA.mix2, {'u', 'u', 'u', 'u', 'u', 'u', 'u', 'u'}, {'T', 'p', 'rho', 'h', 'e', 'g', 'cP', 'gamma_s'}, 'mix2');
-    % Save plots
-    saveas(fig3, strcat(folderpath, filename, '_properties'), 'svg');
     % * Properties mixture 2 - 2
     fig4 = plot_properties_validation(results_CT, results_CEA.mix2, {'u', 'u', 'u'}, {'cV', 'dVdT_p', 'dVdp_T'}, 'mix2');
     % Save plots
+    folderpath = strcat(pwd,'\Validations\Figures\');
+    stack_trace = dbstack;
+    filename = stack_trace.name;
+%     saveas(fig1, strcat(folderpath, filename, '_molar'), 'svg');
+    saveas(fig2, strcat(folderpath, filename, '_properties'), 'svg');
+    saveas(fig3, strcat(folderpath, filename, '_properties'), 'svg');
     saveas(fig4, strcat(folderpath, filename, '_properties'), 'svg');
 end

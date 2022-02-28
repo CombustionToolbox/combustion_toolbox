@@ -21,8 +21,12 @@ function vector = cell2vector(varargin)
             end
         else
             % Return the field of a struct as a vector
-            for i=Nstruct:-1:1
-                vector(:, i) = str{i}.(field);
+            try
+                for i=Nstruct:-1:1
+                    vector(:, i) = str{i}.(field);
+                end
+            catch
+                vector = str.(field);
             end
         end
     catch

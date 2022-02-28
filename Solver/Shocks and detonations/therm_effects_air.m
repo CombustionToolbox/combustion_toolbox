@@ -10,9 +10,10 @@ function r = therm_effects_air(varargin)
 %     [r.R, r.P, r.T, r.M1, r.M2, r.Gammas, r.alpha] = get_parameters(self);
     
     [R, P, T, M1, M2, Gammas] = get_parameters(self);
-%     clearvar self varargin
+    clearvars self varargin
     save thermo_num_air.mat  
-%
+%     save thermo_num_O2.mat 
+%     save thermo_num_N2.mat 
 %     Nl = 1e4;
 %     Ns = 1e4;
 %     zeta_l = linspace(0, 1, Nl)';
@@ -108,7 +109,8 @@ function value = P0(R)
 end
 
 function value = compute_Gammas(M1, R, P)
-    value =  7/5 * (M1(1:end-1).^2 ./ R(1:end-1).^2) .* ((P(2:end)  - P(1:end-1)) ./ (R(2:end)  - R(1:end-1))).^(-1);
+%     value =  7/5 * (M1(1:end-1).^2 ./ R(1:end-1).^2) .* ((P(2:end)  - P(1:end-1)) ./ (R(2:end)  - R(1:end-1))).^(-1);
+    value =  7/5 * (M1(1:end-1).^2 ./ R(1:end-1).^2) .* compute_first_derivative(P, R).^(-1);
 end
 
 function value = thetaOfzeta(R, M2, zeta)
@@ -283,7 +285,6 @@ function value = T3D(R, M2, Gammas)
     value = T3Dr(R, M2, Gammas) + T3Da(R, M2, Gammas);
 end
 
-
 function [R, P, T, M1, M2, Gammas, alpha] = get_parameters(self)
     R = cell2vector(self.PS.strP, 'rho') ./ cell2vector(self.PS.strR, 'rho');
     P = cell2vector(self.PS.strP, 'p') ./ cell2vector(self.PS.strR, 'p');
@@ -294,13 +295,48 @@ function [R, P, T, M1, M2, Gammas, alpha] = get_parameters(self)
 
     Yi = cell2vector(self.PS.strP, 'Yi');
     alpha = Yi(2, :);
-
+    
     R = R(1:end-1);
     P = P(1:end-1);
     T = T(1:end-1);
     M1 = M1(1:end-1);
     M2 = M2(1:end-1);
     alpha = alpha(1:end-1);
+
+
+    ind = find_ind(self.S.LS, {'O2', 'N2', 'O', 'N','NO','eminus','Nplus'});
+    Xi = cell2vector(self.PS.strP, 'Xi');
+
+    Xi = Xi(:, 1:end-1);
+    XO2 = Xi(ind(1), :);
+    XN2 = Xi(ind(2), :);
+    XO = Xi(ind(3), :);
+    XN = Xi(ind(4), :);
+    XNO = Xi(ind(5), :);
+    Xeminus = Xi(ind(6), :);
+    XNplus = Xi(ind(7), :);
+
+    dXO2dM1 = compute_first_derivative(XO2, M1);
+    dXN2dM1 = compute_first_derivative(XN2, M1);
+    dXOdM1 = compute_first_derivative(XO, M1);
+    dXNdM1 = compute_first_derivative(XN, M1);
+    dXNOdM1 = compute_first_derivative(XNO, M1);
+    dXeminusdM1 = compute_first_derivative(Xeminus, M1);
+    dXNplusdM1 = compute_first_derivative(XNplus, M1);
+
+    M1_new = M1(1:end-1);
+    
+    xx = linspace(M1_new(1), M1_new(end), 250);
+    dXO2dM1 = interp1(M1_new, dXO2dM1, xx);
+    dXN2dM1 = interp1(M1_new, dXN2dM1, xx);
+    dXOdM1 = interp1(M1_new, dXOdM1, xx);
+    dXNdM1 = interp1(M1_new, dXNdM1, xx);
+    dXNOdM1 = interp1(M1_new, dXNOdM1, xx);
+    dXeminusdM1 = interp1(M1_new, dXeminusdM1, xx);
+    dXNplusdM1 = interp1(M1_new, dXNplusdM1, xx);
+
+
+    M1_new = xx;
 end
 
 function self = compute_shock(varargin)
@@ -308,7 +344,7 @@ function self = compute_shock(varargin)
     if ~isempty(varargin{nargin})
         ListProducts = varargin{1}{1};
     else 
-        ListProducts = 'Air';
+        ListProducts = 'Air_ions';
     end
     if nargin > 2, T = varargin{1}{2}; else, T = 300; end % [K]
     if nargin > 3, p = varargin{1}{3}; else, p = 1; end % [bar]
@@ -329,7 +365,7 @@ function self = compute_shock(varargin)
 %     u1 = [u1, linspace(3000.1, 5000, 500)];
 %     u1 = [u1, linspace(5000.1, 12000, 8000)];
 %     u1 = [u1, linspace(12000.1, 15000, 500)];
-    u1 = linspace(initial_velocity_sound,  10000, 1000);
+    u1 = linspace(initial_velocity_sound,  20000, 1500);
 %     u1 = logspace(2, 5, 2e3);
 %     u1 = u1(u1 < 15000); u1 = u1(u1 >= initial_velocity_sound);
 

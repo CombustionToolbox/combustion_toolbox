@@ -1,4 +1,4 @@
-function run_validations_CEA
+function run_test_CEA
     % Function that runs several tests to evaluate the quality and
     % performance of the code compare with NASA's Chemical Equilibrium with
     % Applications software (CEA)

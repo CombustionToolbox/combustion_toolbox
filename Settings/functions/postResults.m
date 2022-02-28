@@ -67,7 +67,7 @@ elseif strcmp(ProblemType,{'SV'}) && length(phi) > 1
     displaysweepresults(app, mix2, T);
     
 elseif strcmp(ProblemType,{'SHOCK_I'}) && length(phi) > 1
-    app.Misc.config.labelx = 'Incident velocity $u_1$';
+    app.Misc.config.labelx = 'Incident velocity $u_1 [m/s]$';
     app.Misc.config.labely = 'Temperature $T [K]$';
     plot_figure(app.PD.u1.value, mix2,'u','T',app.Misc.config,app.PD.CompleteOrIncomplete);
     plot_hugoniot(app, mix1, mix2);
@@ -79,7 +79,11 @@ elseif strcmp(ProblemType,{'SHOCK_I'}) && length(phi) > 1
     app.Misc.config.labely = 'Molar fraction $X_i$';
     p = cell2vector(mix2, 'p');
     displaysweepresults(app, mix2, p);
-        
+    app.Misc.config.labelx = 'Incident velocity $u_1 [m/s]$';
+    app.Misc.config.labely = 'Molar fraction $X_i$';
+    u = cell2vector(mix1, 'u');
+    displaysweepresults(app, mix2, u);
+
 elseif strcmp(ProblemType,{'SHOCK_R'}) && length(phi) > 1
     mix3 = mix2;
     mix2 = app.PS.str2;

@@ -4,7 +4,8 @@ function self = run_CT(varargin)
 
     % DEFAULT VALUES
     species = 'Soot Formation';
-    Temp = 300;
+    Temp_mix1 = 300;
+    Temp_mix2 = 2500;
     Pressure = 1;
     EquivalenceRatio = 0.5:0.01:4;
     S_Fuel = {'CH4'};
@@ -20,8 +21,10 @@ function self = run_CT(varargin)
                 ProblemType = varargin{i+1};
             case {'listspecies', 'species'}
                 species = varargin{i+1};
-            case {'temperature', 'temp', 'tr'}
-                Temp = varargin{i+1};
+            case {'tr'}
+                Temp_mix1 = varargin{i+1};
+            case {'temperature', 'temp', 'tp'}
+                Temp_mix2 = varargin{i+1};
             case {'pressure', 'pr'}
                 Pressure = varargin{i+1};
             case {'equivalenceratio', 'phi'}
@@ -56,13 +59,13 @@ function self = run_CT(varargin)
     % TUNNING PROPERTIES
     self.TN.tolN = tolN;
     % INITIAL CONDITIONS
-    self = set_prop(self, 'TR', Temp, 'pR', 1 * Pressure, 'phi', EquivalenceRatio);
+    self = set_prop(self, 'TR', Temp_mix1, 'pR', 1 * Pressure, 'phi', EquivalenceRatio);
     self.PD.S_Fuel     = S_Fuel;
     self.PD.S_Oxidizer = S_Oxidizer;
     self.PD.S_Inert    = S_Inert;
     self.PD.proportion_inerts_O2 = proportion_inerts_O2;
     % ADDITIONAL INPUTS (DEPENDS OF THE PROBLEM SELECTED)
-    self = set_prop(self, 'TP', Temp, 'pP', Pressure);
+    self = set_prop(self, 'TP', Temp_mix2, 'pP', Pressure);
     if exist('Velocity', 'var')
         self = set_prop(self, 'u1', Velocity, 'phi', 1 * ones(1, length(Velocity)));
     end
@@ -74,14 +77,14 @@ function self = run_CT(varargin)
         self.PS.strR{i}.h = enthalpy_mass(self.PS.strR{i});
         self.PS.strR{i}.e = intEnergy_mass(self.PS.strR{i});
         self.PS.strR{i}.g = gibbs_mass(self.PS.strR{i});
-        self.PS.strR{i}.s = entropy_mass(self.PS.strR{i});
+        self.PS.strR{i}.S = entropy_mass(self.PS.strR{i});
         self.PS.strR{i}.cP = cp_mass(self.PS.strR{i});
         self.PS.strR{i}.cV = self.PS.strR{i}.cP / self.PS.strR{i}.gamma_s;
         % Mix 2
         self.PS.strP{i}.h = enthalpy_mass(self.PS.strP{i});
         self.PS.strP{i}.e = intEnergy_mass(self.PS.strP{i});
         self.PS.strP{i}.g = gibbs_mass(self.PS.strP{i});
-        self.PS.strP{i}.s = entropy_mass(self.PS.strP{i});
+        self.PS.strP{i}.S = entropy_mass(self.PS.strP{i});
         self.PS.strP{i}.cP = cp_mass(self.PS.strP{i});
         self.PS.strP{i}.cV = self.PS.strP{i}.cP / self.PS.strP{i}.gamma_s;
     end

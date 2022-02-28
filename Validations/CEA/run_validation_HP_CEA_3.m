@@ -25,12 +25,12 @@ function run_validation_HP_CEA_3
     % Display validation (plot)
     % * Molar fractions
     fig1 = plot_molar_fractions_validation(results_CT, results_CEA, 'phi', 'Xi', DisplaySpecies);
-    % Save plots
-    folderpath = strcat(pwd,'\Validations\Figures\');
-    filename = 'validation_HP_CEA_3';
-    saveas(fig1, strcat(folderpath, filename, '_molar'), 'svg');
     % * Properties mixture 2
     fig2 = plot_properties_validation(results_CT, results_CEA, {'phi', 'phi', 'phi', 'phi', 'phi', 'phi', 'phi', 'phi'}, {'T', 'rho', 'h', 'e', 'g', 'cP', 'cV', 'gamma_s'}, 'mix2');
     % Save plots
+    folderpath = strcat(pwd,'\Validations\Figures\');
+    stack_trace = dbstack;
+    filename = stack_trace.name;
+    saveas(fig1, strcat(folderpath, filename, '_molar'), 'svg');
     saveas(fig2, strcat(folderpath, filename, '_properties'), 'svg');
 end

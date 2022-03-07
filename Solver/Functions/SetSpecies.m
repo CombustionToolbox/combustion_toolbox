@@ -14,8 +14,8 @@ M = self.C.M0.value;
 R0 = self.C.R0;
 
 for n = length(N):-1:1
-    mi = N(n) * self.DB.(species{n}).mm * 1e-3;       % [kg]
     mmi = self.DB.(species{n}).mm;                    % [g/mol]
+    mi  = N(n) * mmi * 1e-3;                          % [kg]
     hfi = self.DB.(species{n}).hf/1000;               % [kJ]
     efi = self.DB.(species{n}).ef/1000;               % [kJ]
     swtCondensed = self.DB.(species{n}).swtCondensed; % [bool]
@@ -26,7 +26,7 @@ for n = length(N):-1:1
         cVi  = species_cV(species{n},T,self.DB);      % [J/K]
         s0i  = species_s0(species{n},T,self.DB);      % [kJ/K]
         if ~swtCondensed
-            pVi = N(n)*R0*T * 1e-5; % For ideal gases [bar m3]
+            pVi = N(n) * R0 * T * 1e-5; % For ideal gases [bar m3]
         else
             pVi = 0; % For condensed species [bar m3]
         end

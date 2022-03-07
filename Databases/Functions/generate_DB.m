@@ -41,7 +41,7 @@ function DB = get_DB(DB_master)
                 DB.(species).ef = Ef0;
                 DB.(species).swtCondensed = swtCondensed;
                 
-                NT   = 100;
+                NT   = 200;
                 Tmin = max(tRange{1}(1), 200);
                 Tmax = min(tRange{ctTInt}(2), 20000);
                 T_vector = linspace(Tmin, Tmax, NT);

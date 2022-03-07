@@ -13,5 +13,4 @@ jobs:
         uses: matlab-actions/run-command@v1
         with:
           command: app_test
-          test-results-junit: test-results/results.xml
         

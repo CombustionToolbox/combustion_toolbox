@@ -5,7 +5,7 @@ function run_validation_HP_CEA_3
     % Temperature [K]   = 300;
     % Pressure    [bar] = 1;
     % Equivalence ratio [-] = 0.5:0.01:4
-    % Initial mixture: C2H2_acetylene + AIR_IDEAL (79% N2 + 21% O2)
+    % Initial mixture: CH4 + AIR_IDEAL (79% N2 + 21% O2)
     % List of species considered: ListSpecies('Soot Formation Extended')
     
     % Inputs

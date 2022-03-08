@@ -7,7 +7,7 @@ function error_moles = compute_error_moles_CEA(results1, results2, varname_x, va
     
     moles_CT = results1.(varname_y)(index_species_CT);
     moles_CEA = results2.(varname_y)(:, index_case_CEA);
-    index_check = moles_CT > results1.TN.tolN;
+    index_check = moles_CT > 10^floor(log10(results1.TN.tolN) + 2);
     
     error_moles = max(abs((moles_CT(index_check) - moles_CEA(index_check)) ./ moles_CT(index_check)));
 end

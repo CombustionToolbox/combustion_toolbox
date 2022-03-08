@@ -45,7 +45,7 @@ function DB = get_DB(DB_master)
                 Tmin = max(tRange{1}(1), 200);
                 Tmax = min(tRange{ctTInt}(2), 20000);
                 T_vector = linspace(Tmin, Tmax, NT);
-    
+                
                 for j = NT:-1:1
                     [~, ~, Cp0, Cv0, Hf0, H0, Ef0, E0, S0, ~] = get_speciesProperties(DB_master, LS{i}, T_vector(j), 'molar', 0);
                     DhT_vector(j) = H0 - Hf0;

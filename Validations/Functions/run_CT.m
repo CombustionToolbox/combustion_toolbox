@@ -13,7 +13,7 @@ function self = run_CT(varargin)
     S_Inert    = {'N2'};
     proportion_inerts_O2 = 79/21;
     ProblemType = 'HP';
-    tolN = 1e-16;
+    tolN = 1e-18;
     % GET INPUTS
     for i=1:2:nargin
         switch lower(varargin{i})

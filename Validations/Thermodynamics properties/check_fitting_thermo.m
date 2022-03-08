@@ -1,4 +1,4 @@
-function check_fitting_thermo(LS, range, property1, strThProp)
+function check_fitting_thermo(LS, range, property1, DB)
 % CHECK FITTING OF THERMODYNAMICS PROPERTIES FOR A GIVEN SET OF SPECIES LS
 % AND TEMPERATURES.
 
@@ -30,10 +30,10 @@ j  = 1; % item legend label
 L_legend = cell(1, 2*NS);
 for i=NS:-1:1
     % DATA NASA POLYNOMIALS
-    y(:, i) = strThProp.(LS{i}).(property1);
-    x(:, i) = strThProp.(LS{i}).T;
+    y(:, i) = DB.(LS{i}).(property1);
+    x(:, i) = DB.(LS{i}).T;
     % DATA CURVE FITTING
-    y_fun{i} = @(T) strThProp.(LS{i}).(property1_curve)(T);
+    y_fun{i} = @(T) DB.(LS{i}).(property1_curve)(T);
     eval_range(:, i) = feval(y_fun{i}, range);
 end
 

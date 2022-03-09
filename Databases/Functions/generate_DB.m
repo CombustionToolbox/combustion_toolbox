@@ -1,6 +1,15 @@
 function DB = generate_DB(DB_master)
     % Generate Database (DB) with thermochemical interpolation curves for
     % the species contained in DB_master
+    %
+    % Parameters
+    % ----------
+    %   DB_master : struct
+    %               Database with the thermodynamic data of the chemical species
+    % Returns
+    % -------
+    %          DB : struct
+    %               Database with thermochemical interpolation curves
     if ~exist('DB', 'var')
         if exist('DB.mat', 'file')
             fprintf('NASA short database loaded from main path ... ')
@@ -16,8 +25,17 @@ end
 
 % SUB-PASS FUNCTIONS
 function DB = get_DB(DB_master)
-    % Generate Database with thermochemical interpolation curves for the
-    % species contained in DB_master
+    % Generate Database (DB) with thermochemical interpolation curves for
+    % the species contained in DB_master
+    %
+    % Parameters
+    % ----------
+    %   DB_master : struct
+    %               Database with the thermodynamic data of the chemical species
+    % Returns
+    % -------
+    %          DB : struct
+    %               Database with thermochemical interpolation curves
     LS = fieldnames(DB_master);
 
     fprintf('Generating short NASA database ... ')

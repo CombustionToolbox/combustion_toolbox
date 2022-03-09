@@ -16,6 +16,7 @@ FLAG_PLOT_PHI = numel(phi)>1 && all(phi(2:end) ~= phi(1));
 if ~isfield(app.Misc.FLAGS_PROP, 'TP')
     app.Misc.FLAGS_PROP.TP = false;
 end
+
 % PLOTS REACTANTS
 if app.Misc.FLAGS_PROP.TR && length(phi) > 1
     app.Misc.config.labelx = 'Temperature reactants $T [K]$';
@@ -109,5 +110,6 @@ if strcmp(ProblemType,{'DET'}) && length(phi) > 1
     app.Misc.config.labely = 'Temperature $T [K]$';
     plot_figure(mix1, mix2, 'u', 'T', app.Misc.config, app.PD.CompleteOrIncomplete);
 end
-%% EXCEL I/O
-ExportExcel(app);
+
+% EXPORT RESULTS
+export_results(app);

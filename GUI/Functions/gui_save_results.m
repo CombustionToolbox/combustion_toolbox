@@ -58,9 +58,9 @@ end
     end
 end
 
-function gui_save_mat(filename, data_mix1, data_mix_2)
+function gui_save_mat(filename, data_mix1, data_mix2)
     % Save results as a mat file
-    save(filename, 'data_mix1', 'data_mix_2');
+    save(filename, 'data_mix1', 'data_mix2');
 end
 
 function gui_save_excel(filename, data_mix1, data_mix2, sumcases, sheet_name)

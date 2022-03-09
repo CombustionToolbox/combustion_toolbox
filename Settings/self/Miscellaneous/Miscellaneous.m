@@ -18,9 +18,11 @@ function self = Miscellaneous()
     self.FLAG_PROP = [];
     self.FLAGS_PROP.TR = false;
     self.FLAG_LENGTH_LOOP = false;
-    self.save_Excel = false;
     self.timer_0 = [];
     self.timer_loop = [];
     self.display_species = {};
-    self.i = [];
+    self.i = [];    
+    self.export_results.value = false;
+    self.export_results.format = '.xls';
+    self.export_results.filename = 'results';
 end

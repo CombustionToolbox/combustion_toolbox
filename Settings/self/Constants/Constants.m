@@ -12,6 +12,5 @@ function self = Constants()
     self.MassorMolar = 'mass';
     self.firstrow = true;
     self.mintol_display = 1e-14;
-    self.filename = 'output';
     self.l_phi = []; % length phi vector
 end

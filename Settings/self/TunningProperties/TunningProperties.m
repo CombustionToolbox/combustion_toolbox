@@ -1,6 +1,6 @@
 function self = TunningProperties()
     self.description = "Tunning properties";
-    self.tolN = 1e-14;          % Tolerance of the gibbs minimization method
+    self.tolN = 1e-15;          % Tolerance of the gibbs minimization method
     self.tol_pi_e = 1e-4;       % Tolerance of the Lagrangian multiplier for ions divided by RT
     self.tol0 = 1e-3;           % Tolerance of the root finding algorithm
     self.root_method = @steff;  % Method for root finding

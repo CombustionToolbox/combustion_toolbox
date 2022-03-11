@@ -106,7 +106,11 @@ function self = check_input_temperatures(self, name)
         N = length(species);
         for i = N:-1:1
             if self.DB.(species{i}).swtCondensed
-                T(i) = self.DB.(species{i}).T;
+                if self.PD.TR.value >= min(self.DB.(species{i}).T) && self.PD.TR.value <= max(self.DB.(species{i}).T)
+                    T(i) = self.PD.TR.value;
+                else
+                    T(i) = self.DB.(species{i}).T;
+                end
             else
                 T(i) = self.PD.TR.value;
             end

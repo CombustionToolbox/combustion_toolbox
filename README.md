@@ -6,7 +6,7 @@
 [![File Exchange](https://www.mathworks.com/matlabcentral/images/matlab-file-exchange.svg)](https://es.mathworks.com/matlabcentral/fileexchange/101088-combustion-toolbox)
 ![repo size](https://img.shields.io/github/repo-size/AlbertoCuadra/combustion_toolbox)
 ![last modified](https://img.shields.io/github/last-commit/AlbertoCuadra/combustion_toolbox)
-![license](https://img.shields.io/github/license/AlbertoCuadra/combustion_toolbox)
+[![license](https://img.shields.io/github/license/AlbertoCuadra/combustion_toolbox)](https://www.gnu.org/licenses/gpl-3.0.html)
 
 A MATLAB-GUI based open-source tool for solving gaseous combustion problems.
 

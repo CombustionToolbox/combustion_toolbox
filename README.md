@@ -13,9 +13,41 @@ A MATLAB-GUI based open-source tool for solving gaseous combustion problems.
 <!-- Website: https://combustiontoolbox.netlify.app/ -->
 :top: There is also a (less complete) [Python version](https://github.com/AlbertoCuadra/Combustion-PyToolbox)
 
-## Introduction
-In this work, we present an in-house thermochemical code (hereafter Combustion Toolbox) that can be applied to gaseous combustion problems. The code stems from the minimization of the free energy of the system by using Lagrange multipliers combined with a Newton-Raphson method, upon condition that initial gas properties are defined by two functions of states (e.g., temperature and pressure). The kernel of the code is similar as NASA’s Chemical Equilibrium with Applications (CEA) code. The corresponding thermodynamic properties of the species are modelled with NASA’s 9-coefficient polynomial fits, which ranges up to 20000 K, and the ideal gas equation of state. When temperature is not externally imposed, which demands additional information about the thermodynamical process (typically, the conservation equations applied to the system) the code retrieves a routine based on the Steffensen-Aitken root-finding algorithm to find the equilibrium temperature. With this modelization Combustion Toolbox can be used to solve processes that involve strong changes in the dynamic pressure, such as detonations and shock waves in the steady state, by providing the corresponding Rankine-Hugoniot equations. For example, to compute the properties of strong shocks in hypersonic conditions, a phenomenon that involves changes in the molecular structure of the molecules, Combustion Toolbox can be used to find the equilibrium conditions of the different phenomena undergoing behind the shock: molecular vibrational excitation up to dissociation, and electronic excitation up to ionization, thereby providing the properties of the gas in plasma state within the temperature range given by the NASA’s 9-coefficient polynomial fits.
-The tool has been equipped with a Graphical User Interface developed in MATLAB 2021 under AppDesigner in an architecturally modular format. A preview of the GUI is shown in Fig. 1 (a). The GUI has been successfully used for both teaching and research in Bachelor of Science and Master of Science over the last three years. Results have been contrasted with NASA’s CEA code, showing excellent agreement. An example of its capabilities are shown in Fig. 1 - Fig. 3. The code is available to the scientific community via Github and Zenodo, and new capabilities are under development: estimation of rocket propellant performance, and addition of non-ideal equations of state, e.g., Virial and BKW.
+
+## Features
+  - The code stems from the minimization of the free energy of the system by using Lagrange multipliers combined with a Newton-Raphson method, upon condition that initial gas properties are defined by two functions of states (e.g., temperature and pressure)
+  - When temperature is not externally imposed, the code retrieves a routine based on the Steffensen-Aitken root-finding algorithm to find the equilibrium temperature
+  - Solve processes that involve strong changes in the dynamic pressure, such as detonations and shock waves in the steady state
+  - Find the equilibrium conditions of the different phenomena undergoing behind the shock: molecular vibrational excitation up to dissociation, and electronic excitation up to ionization, thereby providing the `properties of the gas in plasma state` within the temperature range given by the NASA’s 9-coefficient polynomial fits.
+  - The corresponding thermodynamic properties of the species are modelled with `NASA’s 9-coefficient polynomial fits`, which ranges `up to 20000 K`, and the ideal gas equation of state
+  - Results are in `excellent agreement with NASA’s Chemical Equilibrium with Applications (CEA) program`, CANTERA and Caltech’s Shock and Detonation Toolbox
+  - All the routines and computations are encapsulated in a more comprehensive and user-friendly GUI
+  - The code is in it’s transition to Python
+  - Display predefined plots (e.g., molar fraction vs equilence ratio)
+  - Export results in a spreadsheet (requires Excel)
+  - Export results as a .mat format
+* `Chemical equilibrium problems`
+  - TP: Equilibrium composition at defined temperature and pressure
+  - HP: Adiabatic temperature and composition at constant pressure
+  - SP: Isentropic compression/expansion to a specified pressure
+  - TV: Equilibrium composition at defined temperature and constant volume
+  - EV: Adiabatic temperature and composition at constant volume
+  - SV: Isentropic compression/expansion to a specified volume
+* `Shock calculations:`
+  - Pre-shock and post shock states
+  - Equilibrium or frozen composition
+  - Incident or reflected shocks
+  - Chapman-Jouguet detonations and overdriven detonations
+  - Hugoniot curves
+Ideal jump conditions for a given adiabatic index and pre-shock Mach number
+* `Rocket propellant performance assuming:`
+  - Infinite-Area-Chamber model (IAC)
+  - Finite-Area-Chamber model (FAC) - under development -
+* All the routines and computations are encapsulated in a more comprehensive and `user-friendly GUI`.
+* The code `is in it’s transition to Python`.
+* Export results in a spreadsheet
+* Export results as a .mat format
+* `Display predefined plots` (e.g., molar fraction vs equilence ratio)
 
 
 <!--

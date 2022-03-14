@@ -21,7 +21,7 @@
 %% INITIALIZE
 self = App('HYDROGEN_L');
 %% INITIAL CONDITIONS
-self = set_prop(self, 'TR', 90, 'pR', 1 * 1.01325, 'phi', 1.2);
+self = set_prop(self, 'TR', 90, 'pR', 1 * 1.01325, 'phi', 2:0.01:8);
 self.PD.S_Fuel     = {'H2bLb'};
 self.PD.S_Oxidizer = {'O2bLb'};
 %% SOLVE PROBLEM

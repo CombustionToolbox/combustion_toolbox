@@ -57,8 +57,6 @@ Ideal jump conditions for a given adiabatic index and pre-shock Mach number
 ---
 -->
 
-The code computes the equilibrium composition by minimization of the Gibbs–Helmholtz free energy by using Lagrange multipliers, and employs NASA’s 9-coefficient polynomial fits to evaluate the thermodynamic properties. Results computed with **Combustion Toolbox** have been validated against, and are in good agreement with, [NASA’s Chemical Equilibrium with Applications](https://cearun.grc.nasa.gov/) (CEA) program, [CANTERA](https://cantera.org/) and [Caltech’s Shock and Detonation Toolbox](https://shepherd.caltech.edu/EDL/PublicResources/sdt/). Along with the plain code, the new tool has been `equipped with a Graphical User Interface` developed in MATLAB 2021 under AppDesigner.
-
 This project is also part of the PhD of [Alberto Cuadra-Lara](https://www.acuadralara.com/).
 
 ---

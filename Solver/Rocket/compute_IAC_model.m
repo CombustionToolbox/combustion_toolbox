@@ -3,11 +3,7 @@ function mix3 = compute_IAC_model(self, mix2, mix3)
     % model
 
     % Compute pressure guess [bar] for Infinite-Area-Chamber (IAC) 
-    if isempty(mix3)
-        pressure = guess_pressure_IAC_model(mix2);
-    else
-        pressure = mix3.p;
-    end
+    pressure = guess_pressure_IAC_model(mix2);
     % Initialization
     STOP = 1;
     it = 0;

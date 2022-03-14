@@ -19,16 +19,16 @@ end
 
 % PLOTS REACTANTS
 if app.Misc.FLAGS_PROP.TR && length(phi) > 1
-    app.Misc.config.labelx = 'Temperature reactants $T [K]$';
+    app.Misc.config.labelx = 'Temperature reactants $T$ [K]';
     app.Misc.config.labely = 'Molar fraction $X_i$';
     displaysweepresults(app, mix2, app.PD.range);
 elseif app.Misc.FLAGS_PROP.pR && length(phi) > 1
-    app.Misc.config.labelx = 'Pressure reactants $p [bar]$';
+    app.Misc.config.labelx = 'Pressure reactants $p$ [bar]';
     app.Misc.config.labely = 'Molar fraction $X_i$';
     displaysweepresults(app, mix2, app.PD.range);
 elseif isfield(app.Misc.FLAGS_PROP, 'pP')
     if app.Misc.FLAGS_PROP.pP && length(phi) > 1
-        app.Misc.config.labelx = 'Pressure $p [bar]$';
+        app.Misc.config.labelx = 'Pressure $p$ [bar]';
         app.Misc.config.labely = 'Molar fraction $X_i$';
         displaysweepresults(app, mix2, app.PD.range);
     end
@@ -40,47 +40,47 @@ if ~strcmp(ProblemType,'DET_OVERDRIVEN') && FLAG_PLOT_PHI
     app.Misc.config.labely = 'Molar fraction $X_i$';
     displaysweepresults(app, mix2, phi);
     if ~any(strcmp(ProblemType,{'TP','TV'}))
-        app.Misc.config.labely = 'Temperature $T [K]$';
+        app.Misc.config.labely = 'Temperature $T$ [K]';
         plot_figure(phi, mix2,'phi','T',app.Misc.config,app.PD.CompleteOrIncomplete);
     end
 
 elseif app.Misc.FLAGS_PROP.TP && length(phi) > 1
-    app.Misc.config.labelx = 'Temperature $T [K]$';
+    app.Misc.config.labelx = 'Temperature $T$ [K]';
     app.Misc.config.labely = 'Molar fraction $X_i$';
     displaysweepresults(app, mix2, app.PD.range);
 
 elseif (strcmp(ProblemType,{'HP'}) || strcmp(ProblemType,{'EV'})) && length(phi) > 1
-    app.Misc.config.labelx = 'Adiabatic flame temperature $T [K]$';
+    app.Misc.config.labelx = 'Adiabatic flame temperature $T$ [K]';
     app.Misc.config.labely = 'Molar fraction $X_i$';
     T = cell2vector(mix2, 'T');
     displaysweepresults(app, mix2, T);
 
 elseif strcmp(ProblemType,{'SP'}) && length(phi) > 1
-    app.Misc.config.labelx = 'Pressure $p [bar]$';
-    app.Misc.config.labely = 'Temperature $T [K]$';
+    app.Misc.config.labelx = 'Pressure $p$ [bar]';
+    app.Misc.config.labely = 'Temperature $T$ [K]';
     plot_figure(app.PD.pP.value, mix2,'p','T',app.Misc.config,app.PD.CompleteOrIncomplete);
 
 elseif strcmp(ProblemType,{'SV'}) && length(phi) > 1
     app.Misc.config.labelx = 'Volume ratio $v_P/v_R$';
-    app.Misc.config.labely = 'Temperature $T [K]$';
+    app.Misc.config.labely = 'Temperature $T$ [K]';
     plot_figure(app.PD.vP_vR.value, mix2,'v_P/v_R','T',app.Misc.config,app.PD.CompleteOrIncomplete);  
     T = cell2vector(mix2, 'T');
     displaysweepresults(app, mix2, T);
     
 elseif strcmp(ProblemType,{'SHOCK_I'}) && length(phi) > 1
-    app.Misc.config.labelx = 'Incident velocity $u_1 [m/s]$';
-    app.Misc.config.labely = 'Temperature $T [K]$';
+    app.Misc.config.labelx = 'Incident velocity $u_1$ [m/s]';
+    app.Misc.config.labely = 'Temperature $T$ [K]';
     plot_figure(app.PD.u1.value, mix2,'u','T',app.Misc.config,app.PD.CompleteOrIncomplete);
     plot_hugoniot(app, mix1, mix2);
-    app.Misc.config.labelx = 'Temperature $T [K]$';
+    app.Misc.config.labelx = 'Temperature $T$ [K]';
     app.Misc.config.labely = 'Molar fraction $X_i$';
     T = cell2vector(mix2, 'T');
     displaysweepresults(app, mix2, T);
-    app.Misc.config.labelx = 'Pressure $p [bar]$';
+    app.Misc.config.labelx = 'Pressure $p$ [bar]';
     app.Misc.config.labely = 'Molar fraction $X_i$';
     p = cell2vector(mix2, 'p');
     displaysweepresults(app, mix2, p);
-    app.Misc.config.labelx = 'Incident velocity $u_1 [m/s]$';
+    app.Misc.config.labelx = 'Incident velocity $u_1$ [m/s]';
     app.Misc.config.labely = 'Molar fraction $X_i$';
     u = cell2vector(mix1, 'u');
     displaysweepresults(app, mix2, u);
@@ -88,8 +88,8 @@ elseif strcmp(ProblemType,{'SHOCK_I'}) && length(phi) > 1
 elseif strcmp(ProblemType,{'SHOCK_R'}) && length(phi) > 1
     mix3 = mix2;
     mix2 = app.PS.str2;
-    app.Misc.config.labelx = 'Incident velocity $u_1 [m/s]$';
-    app.Misc.config.labely = 'Temperature $T [K]$';
+    app.Misc.config.labelx = 'Incident velocity $u_1$ [m/s]';
+    app.Misc.config.labely = 'Temperature $T$ [K]';
     app.Misc.config.tit = 'SHOCK_I';
     ax = plot_figure(app.PD.u1.value, mix2,'u','T',app.Misc.config,app.PD.CompleteOrIncomplete); 
     app.Misc.config.tit = 'SHOCK_R';
@@ -100,16 +100,21 @@ elseif strcmp(ProblemType,{'SHOCK_R'}) && length(phi) > 1
 
 elseif strcmp(ProblemType,{'DET_OVERDRIVEN'}) && length(phi) > 1
     app.Misc.config.labelx = 'Overdriven ratio $u_1/u_{cj}$';
-    app.Misc.config.labely = 'Temperature $T [K]$';
+    app.Misc.config.labely = 'Temperature $T$ [K]';
     plot_figure(mix1, mix2, 'overdriven', 'T', app.Misc.config, app.PD.CompleteOrIncomplete);
     plot_hugoniot(app, mix1, mix2);
 end
 
 if strcmp(ProblemType,{'DET'}) && length(phi) > 1
-    app.Misc.config.labelx = 'Incident velocity $u_1 [m/s]$';
-    app.Misc.config.labely = 'Temperature $T [K]$';
+    app.Misc.config.labelx = 'Incident velocity $u_1$ [m/s]';
+    app.Misc.config.labely = 'Temperature $T$ [K]';
     plot_figure(mix1, mix2, 'u', 'T', app.Misc.config, app.PD.CompleteOrIncomplete);
 end
 
+if strcmp(ProblemType,{'ROCKET'}) && length(phi) > 1
+    app.Misc.config.labelx = 'Equivalence Ratio $\phi$';
+    app.Misc.config.labely = 'Characteristic velocity $c^*$ [m/s]';
+    plot_figure(mix1, mix2, 'phi', 'cstar', app.Misc.config, app.PD.CompleteOrIncomplete);
+end
 % EXPORT RESULTS
 export_results(app);

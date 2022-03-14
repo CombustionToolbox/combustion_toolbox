@@ -41,7 +41,7 @@ end
 
 function self = selectProblem(self, i)
     % Solve selected problem
-    switch self.PD.ProblemType
+    switch upper(self.PD.ProblemType)
         case {'SHOCK_I', 'SHOCK_R'}
             try
                 u1 = self.PD.u1.value(i);
@@ -74,6 +74,12 @@ function self = selectProblem(self, i)
                 overdriven = self.PD.overdriven.value;
             end
             [self.PS.strR{i}, self.PS.strP{i}] = overdriven_detonation(self, self.PS.strR{i}, overdriven);
+        case 'ROCKET'
+            if i==self.C.l_phi
+                [self.PS.strR{i}, self.PS.str2{i}, self.PS.strP{i}] = rocket_performance(self, self.PS.strR{i});
+            else
+                [self.PS.strR{i}, self.PS.str2{i}, self.PS.strP{i}] = rocket_performance(self, self.PS.strR{i}, self.PS.str2{i+1}, self.PS.strP{i+1});
+            end
         otherwise
             if length(self.PD.pP.value) > 1
                 pP = self.PD.pP.value(i);

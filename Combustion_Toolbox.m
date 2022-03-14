@@ -13,6 +13,7 @@
 %   * SHOCK_R ------------> Planar reflected shock wave
 %   * DET ----------------> Chapman-Jouget Detonation
 %   * DET_OVERDRIVEN -----> Overdriven Detonation    
+%   * ROCKET -------------> Propellant rocket performance   
 %
 % SEE THE EXAMPLES OR WIKI TO KNOW HOW TO START USING COMBUSTION TOOLBOX 
 % LIST OF TUTORIAL SCRIPTS:
@@ -30,6 +31,7 @@
 %   * Example_SHOCK_R
 %   * Example_DET
 %   * Example_DET_OVERDRIVEN
+%   * Example_ROCKET
 %
 % Please to send feedback or inquiries run uifeedback
 % Thank you for testing Combustion Toolbox!

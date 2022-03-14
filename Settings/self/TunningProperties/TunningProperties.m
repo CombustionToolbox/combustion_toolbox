@@ -11,4 +11,6 @@ function self = TunningProperties()
     self.tol_shocks = 5e-5;     % Tolerance of shocks routines
     self.it_shocks = 50;        % Max number of iterations - shocks and detonations
     self.volumeBoundRation = 5; % Initial guess ratio shocks
+    self.tol_rocket = 0.4*1e-4; % Tolerance rocket performance
+    self.it_rocket = 2;         % Max number of iterations - rocket performance
 end

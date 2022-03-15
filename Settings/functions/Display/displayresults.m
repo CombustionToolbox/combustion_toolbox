@@ -47,7 +47,7 @@ if nargin == 5
         fprintf('Mach number [-]|   %12.4f  |   %12.4f\n', velocity_relative(mix1)/soundspeed(mix1), mix2.v_shock/soundspeed(mix2));
     end
     fprintf('-----------------------------------------------------------\n');
-    fprintf('REACTANTS          Xi [-]\n');
+    fprintf('REACTANTS             Xi [-]\n');
     %%%% SORT SPECIES COMPOSITION %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     [mix1.Xi(:), ind_sort] = sort(mix1.Xi(:), 'descend');
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -55,15 +55,15 @@ if nargin == 5
     Xminor = sum(mix1.Xi(~j));
     for i=1:length(j)
         if j(i)
-            fprintf('%-16s %1.4e\n', ListSpecies{ind_sort(i)}, mix1.Xi(i));
+            fprintf('%-20s %1.4e\n', ListSpecies{ind_sort(i)}, mix1.Xi(i));
         end
     end
     Nminor = length(mix1.Xi)-sum(j);
     s_space_Nminor = char(32 * ones(1, 4 - numel(num2str(Nminor))));
-    fprintf('MINORS[+%d] %s %12.4e\n\n', Nminor, s_space_Nminor, Xminor);
-    fprintf('TOTAL        %14.4e\n',sum(mix1.Xi));
+    fprintf('MINORS[+%d] %s     %12.4e\n\n', Nminor, s_space_Nminor, Xminor);
+    fprintf('TOTAL            %14.4e\n',sum(mix1.Xi));
     fprintf('-----------------------------------------------------------\n');
-    fprintf('PRODUCTS           Xi [-]\n');
+    fprintf('PRODUCTS              Xi [-]\n');
     %%%% SORT SPECIES COMPOSITION %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     [mix2.Xi(:), ind_sort] = sort(mix2.Xi(:),'descend');
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -71,13 +71,13 @@ if nargin == 5
     Xminor = sum(mix2.Xi(~j));
     for i=1:length(j)
         if j(i)
-            fprintf('%-16s %1.4e\n', ListSpecies{ind_sort(i)}, mix2.Xi(i));
+            fprintf('%-20s %1.4e\n', ListSpecies{ind_sort(i)}, mix2.Xi(i));
         end
     end
     Nminor = length(mix2.Xi) - sum(j);
     s_space_Nminor = char(32 * ones(1, 4 - numel(num2str(Nminor))));
-    fprintf('MINORS[+%d] %s %12.4e\n\n', Nminor, s_space_Nminor, Xminor);
-    fprintf('TOTAL        %14.4e\n',sum(mix2.Xi));
+    fprintf('MINORS[+%d] %s     %12.4e\n\n', Nminor, s_space_Nminor, Xminor);
+    fprintf('TOTAL            %14.4e\n',sum(mix2.Xi));
     fprintf('------------------------------------------------------------------------\n');
     fprintf('************************************************************************\n\n\n');
 elseif nargin == 6
@@ -118,9 +118,9 @@ elseif nargin == 6
     end
     
     if strcmpi(ProblemType, 'SHOCK_R')
-        fprintf('STATE 1            Xi [-]\n');
+        fprintf('STATE 1               Xi [-]\n');
     else
-        fprintf('INLET CHAMBER      Xi [-]\n');
+        fprintf('INLET CHAMBER         Xi [-]\n');
     end
     %%%% SORT SPECIES COMPOSITION %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     [mix1.Xi(:), ind_sort] = sort(mix1.Xi(:), 'descend');
@@ -129,18 +129,18 @@ elseif nargin == 6
     Xminor = sum(mix1.Xi(~j));
     for i=1:length(j)
         if j(i)
-              fprintf('%-16s %1.4e\n', ListSpecies{ind_sort(i)}, mix1.Xi(i));
+              fprintf('%-20s %1.4e\n', ListSpecies{ind_sort(i)}, mix1.Xi(i));
         end
     end
     Nminor = length(mix1.Xi) - sum(j);
     s_space_Nminor = char(32 * ones(1, 4 - numel(num2str(Nminor))));
-    fprintf('MINORS[+%d] %s %12.4e\n\n', Nminor, s_space_Nminor, Xminor);
-    fprintf('TOTAL        %14.4e\n',sum(mix1.Xi));
+    fprintf('MINORS[+%d] %s     %12.4e\n\n', Nminor, s_space_Nminor, Xminor);
+    fprintf('TOTAL            %14.4e\n',sum(mix1.Xi));
     fprintf('------------------------------------------------------------------------\n');
     if strcmpi(ProblemType, 'SHOCK_R')
-        fprintf('STATE 2            Xi [-]\n');
+        fprintf('STATE 2               Xi [-]\n');
     else
-        fprintf('OUTLET CHAMBER     Xi [-]\n');
+        fprintf('OUTLET CHAMBER        Xi [-]\n');
     end
     %%%% SORT SPECIES COMPOSITION %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     [mix2.Xi(:), ind_sort] = sort(mix2.Xi(:),'descend');
@@ -150,18 +150,18 @@ elseif nargin == 6
 
     for i=1:length(j)
         if j(i)
-              fprintf('%-16s %1.4e\n', ListSpecies{ind_sort(i)}, mix2.Xi(i));
+              fprintf('%-20s %1.4e\n', ListSpecies{ind_sort(i)}, mix2.Xi(i));
         end
     end
     Nminor = length(mix2.Xi) - sum(j);
     s_space_Nminor = char(32 * ones(1, 4 - numel(num2str(Nminor))));
-    fprintf('MINORS[+%d] %s %12.4e\n\n', Nminor, s_space_Nminor, Xminor);
-    fprintf('TOTAL        %14.4e\n', sum(mix2.Xi));
+    fprintf('MINORS[+%d] %s     %12.4e\n\n', Nminor, s_space_Nminor, Xminor);
+    fprintf('TOTAL            %14.4e\n', sum(mix2.Xi));
     fprintf('------------------------------------------------------------------------\n');
     if strcmpi(ProblemType, 'SHOCK_R')
-        fprintf('STATE 3            Xi [-]\n');
+        fprintf('STATE 3               Xi [-]\n');
     else
-        fprintf('THROAT             Xi [-]\n');
+        fprintf('THROAT                Xi [-]\n');
     end
     %%%% SORT SPECIES COMPOSITION %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     [mix3.Xi(:), ind_sort] = sort(mix3.Xi(:), 'descend');
@@ -171,13 +171,13 @@ elseif nargin == 6
 
     for i=1:length(j)
         if j(i)
-              fprintf('%-16s %1.4e\n', ListSpecies{ind_sort(i)}, mix3.Xi(i));
+              fprintf('%-20s %1.4e\n', ListSpecies{ind_sort(i)}, mix3.Xi(i));
         end
     end
     Nminor = length(mix3.Xi)-sum(j);
     s_space_Nminor = char(32 * ones(1, 4 - numel(num2str(Nminor))));
-    fprintf('MINORS[+%d] %s %12.4e\n\n', Nminor, s_space_Nminor, Xminor);
-    fprintf('TOTAL        %14.4e\n',sum(mix3.Xi));
+    fprintf('MINORS[+%d] %s     %12.4e\n\n', Nminor, s_space_Nminor, Xminor);
+    fprintf('TOTAL            %14.4e\n',sum(mix3.Xi));
     fprintf('------------------------------------------------------------------------\n');
     fprintf('************************************************************************\n\n\n');
 else

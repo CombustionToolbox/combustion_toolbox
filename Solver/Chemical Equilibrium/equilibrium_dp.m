@@ -1,40 +1,40 @@
 function [dNi_p, dN_p] = equilibrium_dp(self, N0, strR)
-% Generalized Gibbs minimization method
+    % Generalized Gibbs minimization method
 
-% Abbreviations ---------------------
-S = self.S;
-C = self.C;
-TN = self.TN;
-% -----------------------------------
-A0 = C.A0.value;
-% Initialization
-% NatomE = N_CC(:,1)' * A0;
-NatomE = strR.NatomE;
-NP = sum(N0(:, 1));
-dNi_p = zeros(length(N0), 1);
-
-SIZE = -log(TN.tolN);
-% Find indeces of the species/elements that we have to remove from the stoichiometric matrix A0
-% for the sum of elements whose value is <= tolN
-ind_A0_E0 = remove_elements(NatomE, A0, TN.tolN);
-% List of indices with nonzero values
-[temp_ind_nswt, temp_ind_swt, temp_ind_cryogenic, temp_ind_E, temp_NE] = temp_values(S, NatomE, TN.tolN);
-% Update temp values
-[temp_ind, temp_ind_swt, temp_ind_nswt, ~, ~] = update_temp(N0, N0(ind_A0_E0, 1), ind_A0_E0, temp_ind_swt, temp_ind_nswt, temp_ind_cryogenic, NP, SIZE);
-[temp_ind, temp_ind_swt, temp_ind_nswt, temp_NG, temp_NS] = update_temp(N0, N0(temp_ind, 1), temp_ind, temp_ind_swt, temp_ind_nswt, temp_ind_cryogenic, NP, SIZE);
-temp_NS0 = temp_NS + 1;
-% Construction of part of matrix A (complete)
-[A1, ~] = update_matrix_A1(A0, [], temp_NG, temp_NS, temp_NS0, temp_ind, temp_ind_E);
-A22 = zeros(temp_NE + 1);
-A0_T = A0';
-% Construction of matrix A
-A = update_matrix_A(A0_T, A1, A22, N0, NP, temp_ind_nswt, temp_ind_swt, temp_ind_E, temp_NG, temp_NS);
-% Construction of vector b            
-b = update_vector_b(temp_NG, temp_NS, temp_ind_E);
-% Solve of the linear system A*x = b
-x = A\b;
-dNi_p(temp_ind) = x(1:temp_NS);
-dN_p = x(end);
+    % Abbreviations ---------------------
+    S = self.S;
+    C = self.C;
+    TN = self.TN;
+    % -----------------------------------
+    A0 = C.A0.value;
+    % Initialization
+    % NatomE = N_CC(:,1)' * A0;
+    NatomE = strR.NatomE;
+    NP = sum(N0(:, 1));
+    dNi_p = zeros(length(N0), 1);
+    
+    SIZE = -log(TN.tolN);
+    % Find indeces of the species/elements that we have to remove from the stoichiometric matrix A0
+    % for the sum of elements whose value is <= tolN
+    ind_A0_E0 = remove_elements(NatomE, A0, TN.tolN);
+    % List of indices with nonzero values
+    [temp_ind_nswt, temp_ind_swt, temp_ind_cryogenic, temp_ind_E, temp_NE] = temp_values(S, NatomE, TN.tolN);
+    % Update temp values
+    [temp_ind, temp_ind_swt, temp_ind_nswt, temp_NG, temp_NS] = update_temp(N0, N0(ind_A0_E0, 1), ind_A0_E0, temp_ind_swt, temp_ind_nswt, temp_ind_cryogenic, NP, SIZE);
+%     [temp_ind, temp_ind_swt, temp_ind_nswt, temp_NG, temp_NS] = update_temp(N0, N0(temp_ind, 1), temp_ind, temp_ind_swt, temp_ind_nswt, temp_ind_cryogenic, NP, SIZE);
+    temp_NS0 = temp_NS + 1;
+    % Construction of part of matrix A (complete)
+    [A1, ~] = update_matrix_A1(A0, [], temp_NG, temp_NS, temp_NS0, temp_ind, temp_ind_E);
+    A22 = zeros(temp_NE + 1);
+    A0_T = A0';
+    % Construction of matrix A
+    A = update_matrix_A(A0_T, A1, A22, N0, NP, temp_ind_nswt, temp_ind_swt, temp_ind_E, temp_NG, temp_NS);
+    % Construction of vector b            
+    b = update_vector_b(temp_NG, temp_NS, temp_ind_E);
+    % Solve of the linear system A*x = b
+    x = A\b;
+    dNi_p(temp_ind) = x(1:temp_NS);
+    dN_p = x(end);
 end
 
 % SUB-PASS FUNCTIONS
@@ -99,17 +99,8 @@ function [A1, temp_NS0] = update_matrix_A1(A0, A1, temp_NG, temp_NS, temp_NS0, t
 end
 
 function [temp_ind, temp_ind_swt] = check_cryogenic(temp_ind, temp_ind_swt, temp_ind_cryogenic)
-    try
-        temp_ind = setdiff(temp_ind, temp_ind_cryogenic);
-        temp_ind_swt = setdiff(temp_ind_swt, temp_ind_cryogenic);
-        try
-            temp_ind_swt(1);
-        catch
-            temp_ind_swt = [];
-        end
-    catch
-        % do nothing
-    end
+    temp_ind = setdiff(temp_ind, temp_ind_cryogenic);
+    temp_ind_swt = setdiff(temp_ind_swt, temp_ind_cryogenic);
 end
 
 function A2 = update_matrix_A2(A0_T, A22, N0, NP, temp_ind_nswt, temp_ind_swt, temp_ind_E, temp_NG, temp_NS)

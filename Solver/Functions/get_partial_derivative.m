@@ -8,5 +8,5 @@ function value = get_partial_derivative(self, str)
     elseif strcmpi(self.PD.ProblemType, 'SV')
         value = str.cV / str.T;
     end
-    value = value * 1e-3; % units
+    value = value * 1e-3; % [kJ/K]
 end

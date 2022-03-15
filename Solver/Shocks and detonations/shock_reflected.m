@@ -1,42 +1,44 @@
 function [str1, str2, str5] = shock_reflected(varargin)
-% Unpack input data
-[self, str1, str2, str5] = unpack(varargin);
-% Abbreviations
-C = self.C;
-TN = self.TN;
-% Constants
-R0 = C.R0; % Universal gas constant [J/(mol-K)]
-% Miscelaneous
-it = 0;
-itMax = TN.it_shocks;
-STOP = 1.;
-% Calculate post-shock state (2)
-[str1, str2] = shock_incident(self, str1, str1.u, str2);
-% Initial estimates of p5/p2 and T5/T2
-[p5, T5, p5p2, T5T2] = get_guess(str2, str5);
-% Loop
-while STOP > TN.tol_shocks && it < itMax
-    it = it + 1;
-    % Construction of the Jacobian matrix and vector b
-    [J, b] = update_system(self, str2, p5, T5, R0);
-    % Solve of the linear system A*x = b
-    x = J\b;
-    % Calculate correction factor
-    lambda = relax_factor(x);
-    % Apply correction
-    [log_p5p2, log_T5T2] = apply_correction(x, p5p2, T5T2, lambda);
-    % Apply antilog
-    [p5, T5] = apply_antilog(str2, log_p5p2, log_T5T2); % [Pa] and [K]
-    % Update ratios
-    p5p2 = p5 / (str2.p * 1e5);
-    T5T2 = T5 / str2.T;
-    % Compute STOP criteria
-    STOP = compute_STOP(x);
-end
-% Check convergence
-print_convergence(STOP, TN.tol_shocks);
-% Save state
-str5 = save_state(self, str2, T5, p5, STOP);
+    % Solve planar reflected shock wave
+
+    % Unpack input data
+    [self, str1, str2, str5] = unpack(varargin);
+    % Abbreviations
+    C = self.C;
+    TN = self.TN;
+    % Constants
+    R0 = C.R0; % Universal gas constant [J/(mol-K)]
+    % Miscelaneous
+    it = 0;
+    itMax = TN.it_shocks;
+    STOP = 1.;
+    % Calculate post-shock state (2)
+    [str1, str2] = shock_incident(self, str1, str1.u, str2);
+    % Initial estimates of p5/p2 and T5/T2
+    [p5, T5, p5p2, T5T2] = get_guess(str2, str5);
+    % Loop
+    while STOP > TN.tol_shocks && it < itMax
+        it = it + 1;
+        % Construction of the Jacobian matrix and vector b
+        [J, b] = update_system(self, str2, p5, T5, R0);
+        % Solve of the linear system A*x = b
+        x = J\b;
+        % Calculate correction factor
+        lambda = relax_factor(x);
+        % Apply correction
+        [log_p5p2, log_T5T2] = apply_correction(x, p5p2, T5T2, lambda);
+        % Apply antilog
+        [p5, T5] = apply_antilog(str2, log_p5p2, log_T5T2); % [Pa] and [K]
+        % Update ratios
+        p5p2 = p5 / (str2.p * 1e5);
+        T5T2 = T5 / str2.T;
+        % Compute STOP criteria
+        STOP = compute_STOP(x);
+    end
+    % Check convergence
+    print_convergence(STOP, TN.tol_shocks);
+    % Save state
+    str5 = save_state(self, str2, T5, p5, STOP);
 end
 % NESTED FUNCTIONS
 function [self, str1, str2, str5] = unpack(x)

@@ -1,44 +1,44 @@
 function [dNi_T, dN_T] = equilibrium_dT(self, N0, TP, strR)
-% Generalized Gibbs minimization method
-
-% Abbreviations ---------------------
-S = self.S;
-C = self.C;
-TN = self.TN;
-% -----------------------------------
-A0 = C.A0.value;
-R0TP = C.R0 * TP; % [J/(mol)]
-% Initialization
-% NatomE = N_CC(:,1)' * A0;
-NatomE = strR.NatomE;
-NP = sum(N0(:, 1));
-dNi_T = zeros(length(N0), 1);
-
-SIZE = -log(TN.tolN);
-% Find indeces of the species/elements that we have to remove from the stoichiometric matrix A0
-% for the sum of elements whose value is <= tolN
-ind_A0_E0 = remove_elements(NatomE, A0, TN.tolN);
-% List of indices with nonzero values
-[temp_ind_nswt, temp_ind_swt, temp_ind_cryogenic, temp_ind_E, temp_NE] = temp_values(S, NatomE, TN.tolN);
-% Update temp values
-[temp_ind, temp_ind_swt, temp_ind_nswt, ~, ~] = update_temp(N0, N0(ind_A0_E0, 1), ind_A0_E0, temp_ind_swt, temp_ind_nswt, temp_ind_cryogenic, NP, SIZE);
-[temp_ind, temp_ind_swt, temp_ind_nswt, temp_NG, temp_NS] = update_temp(N0, N0(temp_ind, 1), temp_ind, temp_ind_swt, temp_ind_nswt, temp_ind_cryogenic, NP, SIZE);
-temp_NS0 = temp_NS + 1;
-% Dimensionless Standard-state enthalpy
-h0 = set_h0(S.LS, TP, self.DB);
-H0RT =  h0 / R0TP;
-% Construction of part of matrix A (complete)
-[A1, ~] = update_matrix_A1(A0, [], temp_NG, temp_NS, temp_NS0, temp_ind, temp_ind_E);
-A22 = zeros(temp_NE + 1);
-A0_T = A0';
-% Construction of matrix A
-A = update_matrix_A(A0_T, A1, A22, N0, NP, temp_ind_nswt, temp_ind_swt, temp_ind_E, temp_NG, temp_NS);
-% Construction of vector b            
-b = update_vector_b(temp_ind, temp_ind_E, H0RT);
-% Solve of the linear system A*x = b
-x = A\b;
-dNi_T(temp_ind) = x(1:temp_NS);
-dN_T = x(end);
+    % Generalized Gibbs minimization method
+    
+    % Abbreviations ---------------------
+    S = self.S;
+    C = self.C;
+    TN = self.TN;
+    % -----------------------------------
+    A0 = C.A0.value;
+    R0TP = C.R0 * TP; % [J/(mol)]
+    % Initialization
+    % NatomE = N_CC(:,1)' * A0;
+    NatomE = strR.NatomE;
+    NP = sum(N0(:, 1));
+    dNi_T = zeros(length(N0), 1);
+    
+    SIZE = -log(TN.tolN);
+    % Find indeces of the species/elements that we have to remove from the stoichiometric matrix A0
+    % for the sum of elements whose value is <= tolN
+    ind_A0_E0 = remove_elements(NatomE, A0, TN.tolN);
+    % List of indices with nonzero values
+    [temp_ind_nswt, temp_ind_swt, temp_ind_cryogenic, temp_ind_E, temp_NE] = temp_values(S, NatomE, TN.tolN);
+    % Update temp values
+    [temp_ind, temp_ind_swt, temp_ind_nswt, ~, ~] = update_temp(N0, N0(ind_A0_E0, 1), ind_A0_E0, temp_ind_swt, temp_ind_nswt, temp_ind_cryogenic, NP, SIZE);
+    [temp_ind, temp_ind_swt, temp_ind_nswt, temp_NG, temp_NS] = update_temp(N0, N0(temp_ind, 1), temp_ind, temp_ind_swt, temp_ind_nswt, temp_ind_cryogenic, NP, SIZE);
+    temp_NS0 = temp_NS + 1;
+    % Dimensionless Standard-state enthalpy
+    h0 = set_h0(S.LS, TP, self.DB);
+    H0RT =  h0 / R0TP;
+    % Construction of part of matrix A (complete)
+    [A1, ~] = update_matrix_A1(A0, [], temp_NG, temp_NS, temp_NS0, temp_ind, temp_ind_E);
+    A22 = zeros(temp_NE + 1);
+    A0_T = A0';
+    % Construction of matrix A
+    A = update_matrix_A(A0_T, A1, A22, N0, NP, temp_ind_nswt, temp_ind_swt, temp_ind_E, temp_NG, temp_NS);
+    % Construction of vector b            
+    b = update_vector_b(temp_ind, temp_ind_E, H0RT);
+    % Solve of the linear system A*x = b
+    x = A\b;
+    dNi_T(temp_ind) = x(1:temp_NS);
+    dN_T = x(end);
 end
 
 % SUB-PASS FUNCTIONS

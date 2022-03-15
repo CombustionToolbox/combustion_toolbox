@@ -115,25 +115,25 @@ if strcmp(ProblemType,{'ROCKET'}) && length(phi) > 1
     self.Misc.config.labelx = 'Equivalence Ratio $\phi$';
     self.Misc.config.labely = 'Characteristic velocity $c^*$ [m/s]';
     ax = plot_figure(self.PS.strR, self.PS.strP, 'phi', 'cstar', self.Misc.config, self.PD.CompleteOrIncomplete);
-    legend_name = sprintf('$p = %.2f$ [bar]', self.PS.strR.p); 
-    for i = 2:length(self)
-        legend_name{i} = sprintf('$p = %.2f$ [bar]', self{i}.PS.strR.p); 
-        ax = plot_figure(self{i}.PS.strR, self{i}.PS.strP, 'phi', 'cstar', self.Misc.config, self.PD.CompleteOrIncomplete, ax, legend_name);
-    end
+%     legend_name = sprintf('$p = %.2f$ [bar]', self.PS.strR.p); 
+%     for i = 2:length(self)
+%         legend_name{i} = sprintf('$p = %.2f$ [bar]', self{i}.PS.strR.p); 
+%         ax = plot_figure(self{i}.PS.strR, self{i}.PS.strP, 'phi', 'cstar', self.Misc.config, self.PD.CompleteOrIncomplete, ax, legend_name);
+%     end
 
-    self.Misc.config.labelx = 'Equivalence Ratio $\phi$';
-    self.Misc.config.labely = 'Temperature $T$ [K]';
-    ax = plot_figure(self.PS.strR, self.PS.strP, 'phi', 'T', self.Misc.config, self.PD.CompleteOrIncomplete);
-    for i = 2:length(self)
-        ax = plot_figure(self{i}.PS.strR, self{i}.PS.strP, 'phi', 'T', self.Misc.config, self.PD.CompleteOrIncomplete, ax, legend_name);
-    end
+%     self.Misc.config.labelx = 'Equivalence Ratio $\phi$';
+%     self.Misc.config.labely = 'Temperature $T$ [K]';
+%     ax = plot_figure(self.PS.strR, self.PS.strP, 'phi', 'T', self.Misc.config, self.PD.CompleteOrIncomplete);
+%     for i = 2:length(self)
+%         ax = plot_figure(self{i}.PS.strR, self{i}.PS.strP, 'phi', 'T', self.Misc.config, self.PD.CompleteOrIncomplete, ax, legend_name);
+%     end
 
     self.Misc.config.labelx = 'Equivalence Ratio $\phi$';
     self.Misc.config.labely = 'Specific impulse $I_sp$ [m/s]';
     ax = plot_figure(self.PS.strR, self.PS.strP, 'phi', 'I_sp', self.Misc.config, self.PD.CompleteOrIncomplete);
-    for i = 2:length(self)
-        ax = plot_figure(self{i}.PS.strR, self{i}.PS.strP, 'phi', 'I_sp', self.Misc.config, self.PD.CompleteOrIncomplete, ax, legend_name);
-    end
+%     for i = 2:length(self)
+%         ax = plot_figure(self{i}.PS.strR, self{i}.PS.strP, 'phi', 'I_sp', self.Misc.config, self.PD.CompleteOrIncomplete, ax, legend_name);
+%     end
 end
 % EXPORT RESULTS
 export_results(self);

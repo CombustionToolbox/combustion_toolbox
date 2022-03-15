@@ -110,17 +110,8 @@ function [A1, temp_NS0] = update_matrix_A1(A0, A1, temp_NG, temp_NS, temp_NS0, t
 end
 
 function [temp_ind, temp_ind_swt] = check_cryogenic(temp_ind, temp_ind_swt, temp_ind_cryogenic)
-    try
-        temp_ind = setdiff(temp_ind, temp_ind_cryogenic);
-        temp_ind_swt = setdiff(temp_ind_swt, temp_ind_cryogenic);
-        try
-            temp_ind_swt(1);
-        catch
-            temp_ind_swt = [];
-        end
-    catch
-        % do nothing
-    end
+    temp_ind = setdiff(temp_ind, temp_ind_cryogenic);
+    temp_ind_swt = setdiff(temp_ind_swt, temp_ind_cryogenic);
 end
 
 function A2 = update_matrix_A2(A0_T, A22, N0, NP, temp_ind_nswt, temp_ind_swt, temp_ind_E, temp_NG, temp_NS)

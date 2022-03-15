@@ -73,7 +73,12 @@ function self = selectProblem(self, i)
             catch
                 overdriven = self.PD.overdriven.value;
             end
-            [self.PS.strR{i}, self.PS.strP{i}] = overdriven_detonation(self, self.PS.strR{i}, overdriven);
+            if i==self.C.l_phi
+                [self.PS.strR{i}, self.PS.strP{i}] = overdriven_detonation(self, self.PS.strR{i}, overdriven);
+            else
+                [self.PS.strR{i}, self.PS.strP{i}] = overdriven_detonation(self, self.PS.strR{i}, overdriven, self.PS.strP{i+1});
+            end
+            
         case 'ROCKET'
             if i==self.C.l_phi
                 [self.PS.strR{i}, self.PS.str2{i}, self.PS.strP{i}] = rocket_performance(self, self.PS.strR{i});

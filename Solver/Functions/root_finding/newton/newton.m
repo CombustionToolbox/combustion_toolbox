@@ -11,8 +11,7 @@ function [x, ERR] = newton(self, mix1, pP, attr_name, x0)
         [f0, fprime0] = get_ratio_newton(self, mix1, pP, attr_name, x0);
         x = abs(x0 - f0 / fprime0);
         
-        f = get_gpoint(self, mix1, pP, attr_name, x);
-        ERR = max(abs((x - x0) / x), abs((f - f0) / f));
+        ERR = max(abs((x - x0) / x));
         x0 = x;
     end
     print_error_root(it, self.TN.itMax, x, ERR);

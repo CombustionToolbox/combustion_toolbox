@@ -43,4 +43,3 @@ function ax = set_figure(config)
     xlim(ax, [0, 1])
     ylim(ax, [1, 10000])
 end
-

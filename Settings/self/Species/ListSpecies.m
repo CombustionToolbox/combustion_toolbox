@@ -124,7 +124,7 @@ if exist('LS', 'var')
                 'N2plus', 'N2minus', 'N2Oplus', 'Oplus', 'Ominus', 'O2plus', 'O2minus', ...
                 'Hplus', 'Hminus', 'HO2minus', 'H2plus', 'H2minus', 'H2Oplus', 'H3Oplus'};
     
-    elseif strcmpi(LS, 'HYDROGEN_L')
+    elseif strcmpi(LS, 'HYDROGEN_L') | strcmpi(LS, 'HYDROGEN (L)')
         self.S.LS = {'H','H2O','OH','H2','O','O3','O2','HO2','H2O2','H2bLb','O2bLb'};
         
     elseif strcmpi(LS, 'HC/O2/N2 PROPELLANTS')

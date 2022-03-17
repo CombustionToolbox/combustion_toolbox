@@ -1,4 +1,4 @@
-function displaysweepresults(self, str, xvar)
+function ax = displaysweepresults(self, str, xvar)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % DISPLAY SWEEP RESULTS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -21,15 +21,15 @@ mintol = self.C.mintol_display;
 
 % Function
 if length(xvar)>1
-    axes = set_figure(self);
+    ax = set_figure(self);
     [yvar, all_ind, indlabel] = get_parameters(str, NameSpecies, display_species, mintol);
-    plot_line(self, axes, xvar, yvar, all_ind, indlabel, NameSpecies)
-    set_limits_axes(axes, xvar, yvar, mintol);
+    plot_line(self, ax, xvar, yvar, all_ind, indlabel, NameSpecies)
+    set_limits_axes(ax, xvar, yvar, mintol);
     species = NameSpecies(all_ind);
     for i = length(species):-1:1
         legendname{i} = species2latex(species{i});
     end
-    set_legends(self, axes, legendname);
+    set_legends(self, ax, legendname);
 end
 
 end

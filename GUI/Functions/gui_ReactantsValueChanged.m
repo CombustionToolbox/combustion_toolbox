@@ -88,6 +88,14 @@ function app = gui_set_reactants(obj, event, app)
             app = set_air(app, FLAG_IDEAL_AIR);
             app.PD.S_Fuel = {'CO','H2'};  
             app.PD.N_Fuel = [0.5, 0.5];
+        case '16' % LH2 + LOX
+            app.PD.S_Fuel = {'H2bLb'};
+            app.PD.S_Oxidizer = {'O2bLb'};
+            obj.Products.Value = 'Hydrogen (L)';
+            % Update List of species considered as Products
+            gui_ProductsValueChanged(obj);
+            % Update Listbox (extended settings)
+            obj.listbox_LS.Items = obj.listbox_Products.Items;
         otherwise % SET NEW SPECIES
             try
                 species = gui_seeker_exact_value(obj, event, app.S.LS_DB);

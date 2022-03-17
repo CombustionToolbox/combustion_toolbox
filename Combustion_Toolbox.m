@@ -14,6 +14,7 @@
 %   * DET ----------------> Chapman-Jouguet Detonation
 %   * DET_R --------------> Reflected Chapman-Jouguet Detonation
 %   * DET_OVERDRIVEN -----> Overdriven Detonation    
+%   * DET_OVERDRIVEN_R ---> Overdriven reflected Detonation    
 %   * ROCKET -------------> Propellant rocket performance   
 %
 % SEE THE EXAMPLES OR WIKI TO KNOW HOW TO START USING COMBUSTION TOOLBOX 

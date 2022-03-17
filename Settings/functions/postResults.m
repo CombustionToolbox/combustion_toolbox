@@ -125,6 +125,7 @@ elseif strcmp(ProblemType,{'DET_OVERDRIVEN'}) && length(phi) > 1
     % Plot Molar fractions
     self.Misc.config.labelx = 'Overdriven ratio $u_1/u_{cj}$ [m/s]';
     self.Misc.config.labely = 'Molar fraction $X_i$';
+    overdriven = cell2vector(mix1, 'overdriven');
     displaysweepresults(self, mix2, overdriven);
     % Plot Hugoniot curves
     plot_hugoniot(self, mix1, mix2);

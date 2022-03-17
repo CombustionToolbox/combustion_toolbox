@@ -22,7 +22,7 @@
 %% INITIALIZE
 self = App('Soot Formation');
 %% INITIAL CONDITIONS
-self = set_prop(self, 'TR', 300, 'pR', 1 * 1.01325, 'phi', 0.5:0.01:5);
+self = set_prop(self, 'TR', 300, 'pR', 1 * 1.01325, 'phi', 1);
 self.PD.S_Fuel     = {'CH4'};
 self.PD.S_Oxidizer = {'O2'};
 self.PD.S_Inert    = {'N2', 'Ar', 'CO2'};

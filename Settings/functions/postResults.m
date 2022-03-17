@@ -10,7 +10,8 @@ self.Misc.timer_loop = toc(timer_0);
 
 fprintf('Elapsed time is %.6g seconds\n', self.Misc.timer_loop);
 
-self.Misc.config.tit = ProblemType;
+titlename = strrep(ProblemType, '_', ' ');
+self.Misc.config.tit = titlename;
 FLAG_PLOT_PHI = numel(phi)>1 && all(phi(2:end) ~= phi(1));
 
 if ~isfield(self.Misc.FLAGS_PROP, 'TP')
@@ -35,7 +36,7 @@ elseif isfield(self.Misc.FLAGS_PROP, 'pP')
 end
 
 % PLOTS PRODUCTS
-if ~strcmp(ProblemType,'DET_OVERDRIVEN') && FLAG_PLOT_PHI
+if FLAG_PLOT_PHI
     self.Misc.config.labelx = 'Equivalence Ratio $\phi$';
     self.Misc.config.labely = 'Molar fraction $X_i$';
     displaysweepresults(self, mix2, phi);
@@ -89,13 +90,27 @@ elseif strcmp(ProblemType,{'SHOCK_I'}) && length(phi) > 1
 elseif contains(ProblemType, '_R') && length(phi) > 1
     mix3 = mix2;
     mix2 = self.PS.str2;
-    self.Misc.config.labelx = 'Incident velocity $u_1$ [m/s]';
     self.Misc.config.labely = 'Temperature $T$ [K]';
-    u = cell2vector(mix1, 'u');
+    if contains(ProblemType, {'OVERDRIVEN'})
+        self.Misc.config.labelx = 'Overdriven ratio $u_1/u_{cj}$';
+        u = cell2vector(mix1, 'overdriven');
+    else
+        self.Misc.config.labelx = 'Incident velocity $u_1$ [m/s]';
+        u = cell2vector(mix1, 'u');
+    end
     ax = plot_figure(u, mix2,'u','T',self.Misc.config,self.PD.CompleteOrIncomplete); 
     self.Misc.config.tit = 'Reflected';
     legend_name = {'Incident', 'Reflected'};
     plot_figure(u,self.PS.strP,'u','T',self.Misc.config,self.PD.CompleteOrIncomplete, ax, legend_name); 
+    % Plot Molar fractions incident state with incident velocity
+    self.Misc.config.tit = 'Incident';
+    self.Misc.config.labely = 'Molar fraction $X_i$';
+    ax = displaysweepresults(self, mix2, u);
+    set_title(ax, self.Misc.config);
+    % Plot Molar fractions reflected state with incident velocity
+    self.Misc.config.tit = 'Reflected';
+    ax = displaysweepresults(self, mix3, u);
+    set_title(ax, self.Misc.config);
     % Plot Hugoniot curves
     if strcmp(ProblemType,{'SHOCK_R'})
         ax = plot_hugoniot(self, mix1, mix2);
@@ -107,6 +122,10 @@ elseif strcmp(ProblemType,{'DET_OVERDRIVEN'}) && length(phi) > 1
     self.Misc.config.labelx = 'Overdriven ratio $u_1/u_{cj}$';
     self.Misc.config.labely = 'Temperature $T$ [K]';
     plot_figure(mix1, mix2, 'overdriven', 'T', self.Misc.config, self.PD.CompleteOrIncomplete);
+    % Plot Molar fractions
+    self.Misc.config.labelx = 'Overdriven ratio $u_1/u_{cj}$ [m/s]';
+    self.Misc.config.labely = 'Molar fraction $X_i$';
+    displaysweepresults(self, mix2, overdriven);
     % Plot Hugoniot curves
     plot_hugoniot(self, mix1, mix2);
 end

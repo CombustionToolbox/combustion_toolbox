@@ -2,7 +2,7 @@
     <img alt="UC3M" style="border-width:0" src="https://github.com/AlbertoCuadra/combustion_toolbox/blob/master/GUI/Icons/logo.svg" width="1500"/></a>
 </p>
 
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.6357683.svg)](https://doi.org/10.5281/zenodo.6357683)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.6365675.svg)](https://doi.org/10.5281/zenodo.6365675)
 [![File Exchange](https://www.mathworks.com/matlabcentral/images/matlab-file-exchange.svg)](https://es.mathworks.com/matlabcentral/fileexchange/101088-combustion-toolbox)
 ![repo size](https://img.shields.io/github/repo-size/AlbertoCuadra/combustion_toolbox)
 ![last modified](https://img.shields.io/github/last-commit/AlbertoCuadra/combustion_toolbox)
@@ -121,7 +121,7 @@ See also the list of [contributors](https://github.com/AlbertoCuadra/combustion_
     author = "Cuadra, A and Huete, C and Vera, M",
     title = "Combustion Toolbox: A MATLAB-GUI based open-source tool for solving combustion problems",
     year = 2022,
-    note = "Version 0.8.3",
-    doi = {https://doi.org/10.5281/zenodo.6357683}
+    note = "Version 0.8.7",
+    doi = {https://doi.org/10.5281/zenodo.6365675}
 }
 ```

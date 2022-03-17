@@ -150,7 +150,7 @@ function gui_ProblemTypeValueChanged(obj)
             obj.text_vP_vR.Visible = 'off'; 
             % Set invisible shocks/detonation items
             gui_visible_shocks(obj, true);
-        case 'DET' % * DET: CALCULATE CHAPMAN-JOUGET STATE (CJ UPPER STATE)
+        case 'DET' % * DET: CALCULATE CHAPMAN-JOUGUET STATE
             % Update input items
             obj.PP1.Visible = 'off'; obj.PP2.Visible = 'off';
             obj.PR3.Visible = 'off'; obj.PR4.Visible = 'off';
@@ -178,6 +178,20 @@ function gui_ProblemTypeValueChanged(obj)
             obj.PR1.Value = '300';
             obj.PR2.Value = '1';
             obj.PR3.Value = '2';
+            % Set visible item volume ratio
+            obj.text_vP_vR.Visible = 'off'; 
+            % Set invisible shocks/detonation items
+            gui_visible_shocks(obj, true);
+        case 'DET_R' % * DET: CALCULATE REFLECTED CHAPMAN-JOUGUET STATE
+            % Update input items
+            obj.PP1.Visible = 'off'; obj.PP2.Visible = 'off';
+            obj.PR3.Visible = 'off'; obj.PR4.Visible = 'off';
+            obj.PP3.Visible = 'off'; obj.PP4.Visible = 'off'; 
+            % Update Additional constraints panel
+            obj.AdditionalconstraintsPanel.Visible = 'off';
+            % Set default input values
+            obj.PR1.Value = '300';
+            obj.PR2.Value = '1';
             % Set visible item volume ratio
             obj.text_vP_vR.Visible = 'off'; 
             % Set invisible shocks/detonation items

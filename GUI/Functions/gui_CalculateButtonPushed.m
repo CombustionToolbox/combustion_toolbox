@@ -115,12 +115,10 @@ function app = get_input_constrains(obj, app)
             app = set_prop(app, 'u1', obj.PR3.Value);
         case 'SHOCK_R' % * SHOCK_R: CALCULATE PLANAR POST-REFLECTED SHOCK STATE
             app = set_prop(app, 'u1', obj.PR3.Value);
-        case 'DET' % * DET: CALCULATE CHAPMAN-JOUGUET STATE
+        case {'DET', 'DET_R'} % * DET: CALCULATE CHAPMAN-JOUGUET STATE
             % No additional constrains
-        case 'DET_OVERDRIVEN' % * DET_OVERDRIVEN: CALCULATE OVERDRIVEN DETONATION
+        case {'DET_OVERDRIVEN', 'DET_OVERDRIVEN_R'} % * DET_OVERDRIVEN: CALCULATE OVERDRIVEN DETONATION
             app = set_prop(app, 'overdriven', obj.PR3.Value);
-        case 'DET_R' % * DET_R: CALCULATE REFLECTED CHAPMAN-JOUGUET STATE
-            % No additional constrains
     end
     if contains(obj.Products.Value, 'complete', 'IgnoreCase', true)
         app.S.FLAG_COMPLETE = true;

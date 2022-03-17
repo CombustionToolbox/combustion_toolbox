@@ -45,7 +45,7 @@ function [self, str1, str2] = unpack(x)
     str1 = x{2};
     u1   = x{3};
     str1.u = u1;       % velocity preshock [m/s] - laboratory fixed
-    str1.w_shock = u1; % velocity preshock [m/s] - shock fixed
+    str1.v_shock = u1; % velocity preshock [m/s] - shock fixed
     if length(x) > 3
         str2 = x{4};
     else

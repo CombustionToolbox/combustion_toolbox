@@ -1,5 +1,5 @@
 % -------------------------------------------------------------------------
-% COMBUSTION TOOLBOX @v0.8.3
+% COMBUSTION TOOLBOX @v0.8.5
 % A MATLAB-GUI based open-source tool for solving gaseous combustion problems.
 %
 % Type of problems:
@@ -12,6 +12,7 @@
 %   * SHOCK_I ------------> Planar incident shock wave
 %   * SHOCK_R ------------> Planar reflected shock wave
 %   * DET ----------------> Chapman-Jouguet Detonation
+%   * DET_R --------------> Reflected Chapman-Jouguet Detonation
 %   * DET_OVERDRIVEN -----> Overdriven Detonation    
 %   * ROCKET -------------> Propellant rocket performance   
 %
@@ -30,6 +31,7 @@
 %   * Example_SHOCK_I_IONIZATION
 %   * Example_SHOCK_R
 %   * Example_DET
+%   * Example_DET_R
 %   * Example_DET_OVERDRIVEN
 %   * Example_ROCKET
 %
@@ -40,7 +42,7 @@
 %          PhD Candidate - Group Fluid Mechanics
 %          Universidad Carlos III de Madrid
 %                  
-% Last update March 15 2022
+% Last update March 17 2022
 % -------------------------------------------------------------------------
 help Combustion_Toolbox.m
 

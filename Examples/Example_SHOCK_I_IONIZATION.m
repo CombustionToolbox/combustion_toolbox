@@ -18,7 +18,7 @@
 %          PhD Candidate - Group Fluid Mechanics
 %          Universidad Carlos III de Madrid
 %                 
-% Last update Oct 22 2021
+% Last update March 17 2022
 % -------------------------------------------------------------------------
 
 %% INITIALIZE
@@ -30,7 +30,7 @@ self.PD.S_Inert    = {'N2', 'Ar', 'CO2'};
 self.PD.proportion_inerts_O2 = [78.084, 0.9365, 0.0319] ./ 20.9476;
 %% ADDITIONAL INPUTS (DEPENDS OF THE PROBLEM SELECTED)
 u1 = logspace(2, 5, 500); u1 = u1(u1<13000); u1 = u1(u1>=360);
-self = set_prop(self, 'u1', u1, 'phi', self.PD.phi.value(1) * ones(1, length(u1)));
+self = set_prop(self, 'u1', u1);
 %% SOLVE PROBLEM
 self = SolveProblem(self, 'SHOCK_I');
 %% DISPLAY RESULTS (PLOTS)

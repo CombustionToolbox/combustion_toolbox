@@ -56,9 +56,15 @@ function self = selectProblem(self, i)
                 end
             else
                 if i==self.C.l_phi
-                    [self.PS.strR{i}, self.PS.str2{i}, self.PS.strP{i}] = shock_reflected(self, self.PS.strR{i}, u1);
+                    % Calculate post-shock state (2)
+                    [self.PS.strR{i}, self.PS.str2{i}] = shock_incident(self, self.PS.strR{i}, u1);
+                    % Calculate post-shock state (5)
+                    [self.PS.strR{i}, self.PS.str2{i}, self.PS.strP{i}] = shock_reflected(self, self.PS.strR{i}, u1, self.PS.str2{i});
                 else
-                    [self.PS.strR{i}, self.PS.str2{i}, self.PS.strP{i}] = shock_reflected(self, self.PS.strR{i}, u1, self.PS.str2{i+1}, self.PS.strP{i+1});
+                    % Calculate post-shock state (2)
+                    [self.PS.strR{i}, self.PS.str2{i}] = shock_incident(self, self.PS.strR{i}, u1, self.PS.str2{i+1});
+                    % Calculate post-shock state (5)
+                    [self.PS.strR{i}, self.PS.str2{i}, self.PS.strP{i}] = shock_reflected(self, self.PS.strR{i}, u1, self.PS.str2{i}, self.PS.strP{i+1});
                 end
             end
         case {'DET'}
@@ -66,6 +72,18 @@ function self = selectProblem(self, i)
                 [self.PS.strR{i}, self.PS.strP{i}] = cj_detonation(self, self.PS.strR{i});
             else
                 [self.PS.strR{i}, self.PS.strP{i}] = cj_detonation(self, self.PS.strR{i}, self.PS.strP{i+1});
+            end
+        case {'DET_R'}
+            if i==self.C.l_phi
+                % Calculate post-shock state (2)
+                [self.PS.strR{i}, self.PS.str2{i}] = cj_detonation(self, self.PS.strR{i});
+                % Calculate post-shock state (5)
+                [self.PS.strR{i}, self.PS.str2{i}, self.PS.strP{i}] = shock_reflected(self, self.PS.strR{i}, self.PS.strR{i}.u, self.PS.str2{i});
+            else
+                % Calculate post-shock state (2)
+                [self.PS.strR{i}, self.PS.str2{i}] = cj_detonation(self, self.PS.strR{i}, self.PS.str2{i+1});
+                % Calculate post-shock state (5)
+                [self.PS.strR{i}, self.PS.str2{i}, self.PS.strP{i}] = shock_reflected(self, self.PS.strR{i}, self.PS.strR{i}.u, self.PS.str2{i}, self.PS.strP{i+1});
             end
         case 'DET_OVERDRIVEN'
             try

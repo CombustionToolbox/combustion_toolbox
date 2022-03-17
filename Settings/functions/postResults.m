@@ -43,8 +43,9 @@ if ~strcmp(ProblemType,'DET_OVERDRIVEN') && FLAG_PLOT_PHI
         self.Misc.config.labely = 'Temperature $T$ [K]';
         plot_figure(phi, mix2,'phi','T',self.Misc.config,self.PD.CompleteOrIncomplete);
     end
+end
 
-elseif self.Misc.FLAGS_PROP.TP && length(phi) > 1
+if self.Misc.FLAGS_PROP.TP && length(phi) > 1
     self.Misc.config.labelx = 'Temperature $T$ [K]';
     self.Misc.config.labely = 'Molar fraction $X_i$';
     displaysweepresults(self, mix2, self.PD.range);
@@ -85,23 +86,28 @@ elseif strcmp(ProblemType,{'SHOCK_I'}) && length(phi) > 1
     u = cell2vector(mix1, 'u');
     displaysweepresults(self, mix2, u);
 
-elseif strcmp(ProblemType,{'SHOCK_R'}) && length(phi) > 1
+elseif contains(ProblemType, '_R') && length(phi) > 1
     mix3 = mix2;
     mix2 = self.PS.str2;
     self.Misc.config.labelx = 'Incident velocity $u_1$ [m/s]';
     self.Misc.config.labely = 'Temperature $T$ [K]';
-    self.Misc.config.tit = 'SHOCK_I';
-    ax = plot_figure(self.PD.u1.value, mix2,'u','T',self.Misc.config,self.PD.CompleteOrIncomplete); 
-    self.Misc.config.tit = 'SHOCK_R';
-    plot_figure(self.PD.u1.value,self.PS.strP,'u','T',self.Misc.config,self.PD.CompleteOrIncomplete, ax, {'$SHOCK_I$', '$SHOCK_R$'}); 
-    ax = plot_hugoniot(self, mix1, mix2);
-    ax = plot_hugoniot(self, mix1, mix3, ax);
-    ax = plot_hugoniot(self, mix2, mix3, ax);
+    u = cell2vector(mix1, 'u');
+    ax = plot_figure(u, mix2,'u','T',self.Misc.config,self.PD.CompleteOrIncomplete); 
+    self.Misc.config.tit = 'Reflected';
+    legend_name = {'Incident', 'Reflected'};
+    plot_figure(u,self.PS.strP,'u','T',self.Misc.config,self.PD.CompleteOrIncomplete, ax, legend_name); 
+    % Plot Hugoniot curves
+    if strcmp(ProblemType,{'SHOCK_R'})
+        ax = plot_hugoniot(self, mix1, mix2);
+        ax = plot_hugoniot(self, mix2, mix3, ax);
+        set_legends(ax, legend_name, self.Misc.config)
+    end
 
 elseif strcmp(ProblemType,{'DET_OVERDRIVEN'}) && length(phi) > 1
     self.Misc.config.labelx = 'Overdriven ratio $u_1/u_{cj}$';
     self.Misc.config.labely = 'Temperature $T$ [K]';
     plot_figure(mix1, mix2, 'overdriven', 'T', self.Misc.config, self.PD.CompleteOrIncomplete);
+    % Plot Hugoniot curves
     plot_hugoniot(self, mix1, mix2);
 end
 
@@ -129,7 +135,7 @@ if strcmp(ProblemType,{'ROCKET'}) && length(phi) > 1
 %     end
 
     self.Misc.config.labelx = 'Equivalence Ratio $\phi$';
-    self.Misc.config.labely = 'Specific impulse $I_sp$ [m/s]';
+    self.Misc.config.labely = 'Specific impulse $I_{sp}$ [m/s]';
     ax = plot_figure(self.PS.strR, self.PS.strP, 'phi', 'I_sp', self.Misc.config, self.PD.CompleteOrIncomplete);
 %     for i = 2:length(self)
 %         ax = plot_figure(self{i}.PS.strR, self{i}.PS.strP, 'phi', 'I_sp', self.Misc.config, self.PD.CompleteOrIncomplete, ax, legend_name);

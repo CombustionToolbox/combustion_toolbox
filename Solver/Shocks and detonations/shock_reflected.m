@@ -12,8 +12,6 @@ function [str1, str2, str5] = shock_reflected(varargin)
     it = 0;
     itMax = TN.it_shocks;
     STOP = 1.;
-    % Calculate post-shock state (2)
-    [str1, str2] = shock_incident(self, str1, str1.u, str2);
     % Initial estimates of p5/p2 and T5/T2
     [p5, T5, p5p2, T5T2] = get_guess(str2, str5);
     % Loop
@@ -47,11 +45,10 @@ function [self, str1, str2, str5] = unpack(x)
     str1 = x{2};
     u1   = x{3};
     str1.u = u1; % velocity preshock [m/s]
-    if length(x) > 3
-        str2 = x{4};
+    str2 = x{4};
+    if length(x) > 4
         str5 = x{5};
     else
-        str2 = [];
         str5 = [];
     end
 end

@@ -109,7 +109,6 @@ function [temp_ind, temp_ind_swt, FLAG] = check_condensed_species(A0, x, temp_in
     else
         for i=length(temp_ind_swt_0):-1:1
             temp_NE = length(temp_ind_E);
-%             dG_dn = muRT(temp_ind_swt_0(i)) - dot(x(temp_NS+1:end-1), A0(temp_ind_swt_0(i), temp_ind_E));
             dG_dn = muRT(temp_ind_swt_0(i)) - dot(x(end-temp_NE:end-1), A0(temp_ind_swt_0(i), temp_ind_E));
             if dG_dn < 0
                 aux = [aux, i];
@@ -127,16 +126,8 @@ function [temp_ind, temp_ind_swt, FLAG] = check_condensed_species(A0, x, temp_in
     temp_ind = [temp_ind_nswt, temp_ind_swt];
 end
 
-function g0 = set_g0(ls, TP, DB)
-    for i=length(ls):-1:1
-        species = ls{i};
-        g0(i, 1) = species_g0(species, TP, DB) * 1e3;
-    end
-end
-
 function ind_A = find_ind_Matrix(A, bool)
     ls = find(bool>0);
-%     ind_A = zeros(1, length(ls));
     ind_A = [];
     i = 1;
     for ind = ls
@@ -172,13 +163,6 @@ function [ls1, ls2] = remove_item(N0, n, ind, ls1, ls2, NP, SIZE)
             end
         end
     end
-%     bool = log(zip1./NP) < -SIZE;
-%     bool1 = bool & N0(zip2, 2);
-%     bool2 = bool & ~N0(zip2, 2);
-%     ind1 = logical(sum(ls1(:)==zip2(bool1), 2)); if ~ind1, ind1=[]; end
-%     ind2 = logical(sum(ls2(:)==zip2(bool2), 2)); if ~ind2, ind2=[]; end
-%     ls1(ind1) = [];
-%     ls2(ind2) = [];
 end
 
 function [temp_ind, temp_ind_swt, temp_ind_nswt, temp_NG, temp_NS] = update_temp(N0, zip1, zip2, ls1, ls2, NP, SIZE)

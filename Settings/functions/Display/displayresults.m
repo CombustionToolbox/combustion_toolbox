@@ -86,7 +86,7 @@ elseif nargin == 6
     fprintf('------------------------------------------------------------------------\n');
     fprintf('Problem type: %s  | phi = %4.4f\n',ProblemType, equivalenceRatio(mix1));
     fprintf('------------------------------------------------------------------------\n');
-    if strcmpi(ProblemType, 'SHOCK_R')
+    if contains(ProblemType, '_R')
         fprintf('               |     STATE 1     |     STATE 2     |      STATE 3\n');
     else
         fprintf('               |  INLET CHAMBER  | OUTLET CHAMBER  |      THROAT \n');
@@ -105,8 +105,8 @@ elseif nargin == 6
     fprintf('cp [kJ/(kg-K)] |   %12.4f  |   %12.4f  |   %12.4f\n', cp_mass(mix1), cp_mass(mix2), cp_mass(mix3));
     fprintf('gamma [-]      |   %12.4f  |   %12.4f  |   %12.4f\n', adiabaticIndex(mix1), adiabaticIndex_sound(mix2), adiabaticIndex_sound(mix3));
     fprintf('sound vel [m/s]|   %12.4f  |   %12.4f  |   %12.4f\n', soundspeed(mix1), soundspeed(mix2), soundspeed(mix3));
-    fprintf('u [m/s]        |   %12.4f  |   %12.4f  |   %12.4f\n', velocity_relative(mix1), mix2.v_shock, velocity_relative(mix3));
-    fprintf('Mach number [-]|   %12.4f  |   %12.4f  |   %12.4f\n', velocity_relative(mix1)/soundspeed(mix1), mix2.v_shock/soundspeed(mix2), velocity_relative(mix3)/soundspeed(mix3));
+    fprintf('u [m/s]        |   %12.4f  |   %12.4f  |   %12.4f\n', velocity_relative(mix1), mix2.v_shock, mix3.v_shock);
+    fprintf('Mach number [-]|   %12.4f  |   %12.4f  |   %12.4f\n', velocity_relative(mix1)/soundspeed(mix1), mix2.v_shock/soundspeed(mix2), mix3.v_shock/soundspeed(mix3));
     fprintf('------------------------------------------------------------------------\n');
     if strcmpi(ProblemType, 'ROCKET')
         fprintf('PERFORMANCE PARAMETERS\n');    
@@ -117,7 +117,7 @@ elseif nargin == 6
         fprintf('------------------------------------------------------------------------\n');
     end
     
-    if strcmpi(ProblemType, 'SHOCK_R')
+    if contains(ProblemType, '_R')
         fprintf('STATE 1               Xi [-]\n');
     else
         fprintf('INLET CHAMBER         Xi [-]\n');
@@ -137,7 +137,7 @@ elseif nargin == 6
     fprintf('MINORS[+%d] %s     %12.4e\n\n', Nminor, s_space_Nminor, Xminor);
     fprintf('TOTAL            %14.4e\n',sum(mix1.Xi));
     fprintf('------------------------------------------------------------------------\n');
-    if strcmpi(ProblemType, 'SHOCK_R')
+    if contains(ProblemType, '_R')
         fprintf('STATE 2               Xi [-]\n');
     else
         fprintf('OUTLET CHAMBER        Xi [-]\n');
@@ -158,7 +158,7 @@ elseif nargin == 6
     fprintf('MINORS[+%d] %s     %12.4e\n\n', Nminor, s_space_Nminor, Xminor);
     fprintf('TOTAL            %14.4e\n', sum(mix2.Xi));
     fprintf('------------------------------------------------------------------------\n');
-    if strcmpi(ProblemType, 'SHOCK_R')
+    if contains(ProblemType, '_R')
         fprintf('STATE 3               Xi [-]\n');
     else
         fprintf('THROAT                Xi [-]\n');

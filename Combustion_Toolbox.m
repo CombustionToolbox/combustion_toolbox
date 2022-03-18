@@ -1,6 +1,6 @@
 % -------------------------------------------------------------------------
-% COMBUSTION TOOLBOX @v0.8.7
-% A MATLAB-GUI based open-source tool for solving gaseous combustion problems.
+% COMBUSTION TOOLBOX @v0.8.9
+% A MATLAB-GUI based open-source tool for solving gaseous combustion problems
 %
 % Type of problems:
 %   * TP -----------------> Equilibrium composition at defined T and p
@@ -43,7 +43,7 @@
 %          PhD Candidate - Group Fluid Mechanics
 %          Universidad Carlos III de Madrid
 %                  
-% Last update March 17 2022
+% Last update March 18 2022
 % -------------------------------------------------------------------------
 help Combustion_Toolbox.m
 

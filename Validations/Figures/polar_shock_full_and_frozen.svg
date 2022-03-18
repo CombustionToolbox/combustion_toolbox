@@ -21,15 +21,15 @@
      inkscape:pageopacity="0.0"
      inkscape:pagecheckerboard="0"
      showgrid="false"
-     inkscape:zoom="0.94344815"
-     inkscape:cx="410.72739"
-     inkscape:cy="104.40425"
+     inkscape:zoom="1.8868963"
+     inkscape:cx="705.12619"
+     inkscape:cy="169.85565"
      inkscape:window-width="1920"
      inkscape:window-height="1009"
      inkscape:window-x="-8"
      inkscape:window-y="312"
      inkscape:window-maximized="1"
-     inkscape:current-layer="g30260"
+     inkscape:current-layer="g2774"
      inkscape:snap-bbox="true"
      inkscape:bbox-nodes="true"
      inkscape:snap-bbox-edge-midpoints="true"
@@ -838,24 +838,6 @@
          rx="105.99417"
          ry="88.107651" />
     </mask>
-    <filter
-       id="mask-powermask-path-effect34781_inverse"
-       inkscape:label="filtermask-powermask-path-effect34781"
-       style="color-interpolation-filters:sRGB"
-       height="100"
-       width="100"
-       x="-50"
-       y="-50">
-      <feColorMatrix
-         id="mask-powermask-path-effect34781_primitive1"
-         values="1"
-         type="saturate"
-         result="fbSourceGraphic" />
-      <feColorMatrix
-         id="mask-powermask-path-effect34781_primitive2"
-         values="-1 0 0 0 1 0 -1 0 0 1 0 0 -1 0 1 0 0 0 1 0 "
-         in="fbSourceGraphic" />
-    </filter>
     <mask
        maskUnits="userSpaceOnUse"
        id="mask-powermask-path-effect34781">
@@ -1100,6 +1082,20 @@
            id="id-c2b89f87-fbe7-451d-9a7b-ca9797debbd6-7" />
       </symbol>
     </g>
+    <marker
+       style="overflow:visible"
+       id="Arrow2Mend-6"
+       refX="0"
+       refY="0"
+       orient="auto"
+       inkscape:stockid="Arrow2Mend"
+       inkscape:isstock="true">
+      <path
+         transform="scale(-0.6)"
+         d="M 8.7185878,4.0337352 -2.2072895,0.01601326 8.7185884,-4.0017078 c -1.7454984,2.3720609 -1.7354408,5.6174519 -6e-7,8.035443 z"
+         style="fill:context-stroke;fill-rule:evenodd;stroke:context-stroke;stroke-width:0.625;stroke-linejoin:round"
+         id="path26833-2" />
+    </marker>
   </defs>
   <g
      id="g459">
@@ -1124,21 +1120,6 @@
          height="1080"
          clip-path="url(#clipPath1)"
          id="rect7" />
-    </g>
-    <g
-       style="color-interpolation:sRGB;fill:#ffffff;stroke:#ffffff;color-rendering:optimizeSpeed;image-rendering:optimizeSpeed;shape-rendering:crispEdges;text-rendering:optimizeSpeed"
-       id="g15">
-      <rect
-         x="0"
-         width="649"
-         height="1080"
-         y="0"
-         style="stroke:none"
-         id="rect11" />
-      <path
-         style="stroke:none"
-         d="M 85,961 H 588 V 81 H 85 Z"
-         id="path13" />
     </g>
     <g
        style="color-interpolation:linearRGB;stroke-width:1.444;stroke-linecap:butt;stroke-linejoin:bevel;stroke-miterlimit:1;stroke-dasharray:10, 6;color-rendering:optimizeQuality;image-rendering:optimizeQuality;text-rendering:geometricPrecision"
@@ -3923,9 +3904,15 @@
         </g>
       </g>
     </g>
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="layer1"
+     inkscape:label="Layer 1">
     <g
        id="g22319"
-       transform="translate(-236,18)">
+       transform="translate(-236,18)"
+       style="font-style:normal;font-weight:normal;font-size:12px;font-family:Dialog;color-interpolation:auto;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:10;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto">
       <g
          id="g32736"
          transform="matrix(0.4,0,0,0.4,417.80013,-6.6641465)">
@@ -3942,6 +3929,16 @@
            d="m 996.534,206.99999 h 200"
            id="path26488"
            sodipodi:nodetypes="cc" />
+        <path
+           style="font-style:normal;font-weight:normal;font-size:12px;font-family:Dialog;color-interpolation:auto;fill:none;fill-opacity:1;stroke:#000000;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10;stroke-dasharray:16,8;stroke-dashoffset:0;stroke-opacity:1;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto"
+           d="m 1155.5122,302.40417 118.4928,0"
+           id="path26488-5"
+           sodipodi:nodetypes="cc" />
+        <path
+           style="font-style:normal;font-weight:normal;font-size:12px;font-family:Dialog;color-interpolation:auto;fill:none;fill-opacity:1;stroke:#000000;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10;stroke-dasharray:16,8;stroke-dashoffset:0;stroke-opacity:1;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto"
+           d="m 1220.5687,207 h 211.9451"
+           id="path26488-5-3"
+           sodipodi:nodetypes="cc" />
         <g
            id="g2774"
            style="stroke-width:2.5;stroke-miterlimit:10;stroke-dasharray:15,15;stroke-dashoffset:0">
@@ -3951,27 +3948,17 @@
              id="path26488-9"
              sodipodi:nodetypes="cc" />
           <g
-             id="g30260"
-             mask="url(#mask-powermask-path-effect34781)"
-             inkscape:path-effect="#path-effect34781"
-             style="stroke-width:2.5;stroke-miterlimit:10;stroke-dasharray:10,10;stroke-dashoffset:0">
-            <path
-               style="font-style:normal;font-weight:normal;font-size:12px;font-family:Dialog;color-interpolation:auto;fill:none;fill-opacity:1;stroke:#000000;stroke-width:2.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10;stroke-dasharray:10, 10;stroke-dashoffset:0;stroke-opacity:1;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto"
-               d="m 1222.9303,206.99999 193.7696,2e-5"
-               id="path26488-7-8"
-               sodipodi:nodetypes="cc" />
-          </g>
-          <g
              id="g30260-5"
              mask="url(#mask-powermask-path-effect3731)"
              inkscape:path-effect="#path-effect3731"
              style="font-style:normal;font-weight:normal;font-size:12px;font-family:Dialog;color-interpolation:auto;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:2.5;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:10;stroke-dasharray:10,10;stroke-dashoffset:0;stroke-opacity:1;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto"
              transform="translate(-68.36411,95.404167)">
             <path
-               style="font-style:normal;font-weight:normal;font-size:12px;font-family:Dialog;color-interpolation:auto;fill:none;fill-opacity:1;stroke:#000000;stroke-width:2.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10;stroke-dasharray:10,10;stroke-dashoffset:0;stroke-opacity:1;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto"
-               d="m 1222.9303,206.99999 137.393,2e-5"
+               style="font-style:normal;font-weight:normal;font-size:12px;font-family:Dialog;color-interpolation:auto;fill:none;fill-opacity:1;stroke:#000000;stroke-width:2.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10;stroke-dasharray:10, 10;stroke-dashoffset:0;stroke-opacity:1;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto"
                id="path26488-7-8-8"
-               sodipodi:nodetypes="cc" />
+               sodipodi:nodetypes="cc"
+               inkscape:original-d="m 1366.7946,218.69953 137.393,2e-5"
+               d="m 1366.7946,218.69953 137.393,2e-5" />
           </g>
         </g>
       </g>

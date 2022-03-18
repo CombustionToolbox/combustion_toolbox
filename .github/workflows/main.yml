@@ -1,4 +1,4 @@
-name: Test framework
+name: CI
 on: [push]
 jobs:
   my-job:

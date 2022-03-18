@@ -16,6 +16,9 @@ A MATLAB-GUI based open-source tool for solving gaseous combustion problems.
 
 
 ## Features
+
+Combustion Toolbox is a a MATLAB-GUI based tool for solving gaseous combustion problems.
+Features
   - The code stems from the minimization of the free energy of the system by using Lagrange multipliers combined with a Newton-Raphson method, upon condition that initial gas properties are defined by two functions of states (e.g., temperature and pressure)
   - When temperature is not externally imposed, the code retrieves a routine also based on Newton-Raphson method to find the equilibrium temperature
   - Solve processes that involve strong changes in the dynamic pressure, such as detonations and shock waves in the steady state
@@ -38,11 +41,13 @@ A MATLAB-GUI based open-source tool for solving gaseous combustion problems.
   - Pre-shock and post shock states
   - Equilibrium or frozen composition
   - Incident or reflected shocks
+  - Chapman-Jouguet detonations and overdriven detonations
+  - Reflected detonations
+  - Hugoniot curves
   - Oblique shocks/detonations
   - Shock polar solutions considering dissociation, ionization, and recombinantion in multi-species mixtures.
   - Chapman-Jouguet detonations and overdriven detonations
-  - Hugoniot curves
-Ideal jump conditions for a given adiabatic index and pre-shock Mach number
+  - Hugoniot curves Ideal jump conditions for a given adiabatic index and pre-shock Mach number
 * `Rocket propellant performance assuming:`
   - Infinite-Area-Chamber model (IAC)
   - Finite-Area-Chamber model (FAC) - under development -

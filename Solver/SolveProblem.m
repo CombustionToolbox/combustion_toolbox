@@ -73,11 +73,11 @@ function self = selectProblem(self, i)
             catch
                 u1 = self.PD.u1.value;
             end
-            if i==self.C.l_phi
-                    [self.PS.strR{i}, self.PS.strP{i}] = shock_oblique(self, self.PS.strR{i}, u1);
-                else
-                    [self.PS.strR{i}, self.PS.strP{i}] = shock_oblique(self, self.PS.strR{i}, u1, self.PS.strP{i+1});
-            end
+%             if i==self.C.l_phi
+                [self.PS.strR{i}, self.PS.strP{i}] = shock_oblique(self, self.PS.strR{i}, u1);
+%             else
+%                 [self.PS.strR{i}, self.PS.strP{i}] = shock_oblique(self, self.PS.strR{i}, u1, self.PS.strP{i+1});
+%             end
         case {'DET'}
             if i==self.C.l_phi
                 [self.PS.strR{i}, self.PS.strP{i}] = cj_detonation(self, self.PS.strR{i});

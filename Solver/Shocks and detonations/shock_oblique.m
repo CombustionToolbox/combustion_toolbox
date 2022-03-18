@@ -8,6 +8,7 @@ function [str1, str2] = shock_oblique(varargin)
     % Definitions
     a1 = soundspeed(str1);
     u1 = str1.u;
+    M1 = u1/a1;
     step = 1;
     w1 = linspace(a1, u1, round((u1 - a1) / step));
     N = length(w1);
@@ -39,38 +40,34 @@ function [str1, str2] = shock_oblique(varargin)
     % Save results
     str1.beta = beta(end) * 180/pi;   % [deg]
     str1.theta = theta(end) * 180/pi; % [deg]
-    str1.theta_max = theta_max; % [deg]
-    str1.theta_sonic = theta_sonic; % [deg]
-    % Plot (pressure, deflection) - shock polar
-	mainfigure = figure; hold on;
-    tiledlayout(mainfigure, 'flow');
-    nexttile;
-    ax = gca;
+    str1.theta_max = theta_max;       % [deg]
+    str1.theta_sonic = theta_sonic;   % [deg]
+    % Plot (pressure, deflection) - shock polar
+	figure(1); ax = gca;
     set(ax, 'LineWidth', config.linewidth, 'FontSize', config.fontsize-2, 'BoxStyle', 'full')
     grid(ax, 'off'); box(ax, 'off'); hold(ax, 'on'); ax.Layer = 'Top';
 
-	plot(ax, 180*theta/pi, p2,'LineWidth', config.linewidth); 
+	plot(ax, [-flip(theta), theta] * 180/pi, [flip(p2), p2], 'k', 'LineWidth', config.linewidth);
     plot(ax, theta_max, p2(ind_max), 'ko', 'LineWidth', config.linewidth, 'MarkerFaceColor', 'auto');
     plot(ax, theta(ind_sonic) * 180/pi, p2(ind_sonic), 'ks', 'LineWidth', config.linewidth, 'MarkerFaceColor', 'auto');
+    text(ax, 0, max(p2), strcat('$\mathcal{M}_1 = ', sprintf('%.2f', M1), '$'), 'VerticalAlignment', 'bottom', 'HorizontalAlignment', 'center', 'FontSize', config.fontsize-8, 'Interpreter', 'latex')
 %     text(ax, theta_max, p2(ind_max), 'detachment point \rightarrow m', 'HorizontalAlignment', 'right', 'FontSize', config.fontsize-8)
 %     text(ax, theta_sonic * 180/pi, p2(ind_sonic), 'sonic point \rightarrow s', 'HorizontalAlignment', 'right', 'FontSize', config.fontsize-8)
     xlabel(ax, 'Deflection angle $[^\circ]$', 'FontSize', config.fontsize, 'Interpreter', 'latex');
     ylabel(ax, 'Pressure [bar]','FontSize', config.fontsize, 'Interpreter', 'latex');
     ylim(ax, [1, max(p2)]);
-    % Plot (wave angle, deflection) - shock polar
-    nexttile;
-    ax = gca;
+    % Plot (wave angle, deflection) - shock polar
+    figure(2); ax = gca;
     set(ax, 'LineWidth', config.linewidth, 'FontSize', config.fontsize-2, 'BoxStyle', 'full')
     grid(ax, 'off'); box(ax, 'off'); hold(ax, 'on'); ax.Layer = 'Top';
 
-    plot(ax, 180*theta/pi, beta * 180/pi,'LineWidth', config.linewidth);  
+    plot(ax, [-flip(theta), theta] * 180/pi, [flip(beta), beta] * 180/pi, 'LineWidth', config.linewidth);  
     plot(ax, theta_max, beta(ind_max) * 180/pi, 'ko', 'LineWidth', config.linewidth, 'MarkerFaceColor', 'auto');
     plot(ax, theta(ind_sonic) * 180/pi, beta(ind_sonic) * 180/pi, 'ks', 'LineWidth', config.linewidth, 'MarkerFaceColor', 'auto');
     xlabel(ax, 'Deflection angle $[^\circ]$','FontSize', config.fontsize, 'Interpreter', 'latex');
     ylabel(ax, 'Wave angle $[^\circ]$','FontSize', config.fontsize, 'Interpreter', 'latex');
     % Plot velocity components
-    nexttile;
-    ax = gca;
+    figure(3); ax = gca;
     set(ax, 'LineWidth', config.linewidth, 'FontSize', config.fontsize-2, 'BoxStyle', 'full')
     grid(ax, 'off'); box(ax, 'off'); hold(ax, 'on'); ax.Layer = 'Top';
 

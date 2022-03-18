@@ -1,17 +1,19 @@
 function [str1, str2] = shock_oblique(varargin)
-    % Solve oblique shock as in Shock and Detonation Toolbox
+    % Solve oblique shock
 
     % Unpack input data
     [self, str1, str2] = unpack(varargin);
-    
-    w_min = soundspeed(str1);
-    w_max = str1.u;
-    w_step = 5;
-    w1 = w_min:w_step:w_max;
+    % Abbreviations
+    config = self.Misc.config;
+    % Definitions
+    a1 = soundspeed(str1);
+    u1 = str1.u;
+    step = 1;
+    w1 = linspace(a1, u1, round((u1 - a1) / step));
     N = length(w1);
-    beta_min = asin(w_min / w_max);
-    beta = asin(w1 ./ w_max);
-    v = w_max .* cos(beta);
+    beta = asin(w1 ./ u1);
+    beta_min = asin(a1 / u1);
+    v = u1 .* cos(beta);
 
     % Solve first case for initialization
     [str1, str2] = shock_incident(self, str1, w1(end), str2);
@@ -19,39 +21,62 @@ function [str1, str2] = shock_oblique(varargin)
     for i = N:-1:1
         [str1, str2] = shock_incident(self, str1, w1(i), str2);
         a2(i) = soundspeed(str2);
-        ratio = density(str1) /density(str2);
-        w2(i) = w1(i) * ratio;
+        w2(i) = str2.v_shock;
         p2(i) = pressure(str2);
-        theta(i) = beta(i) - atan(w2(i) / sqrt(w_max^2 - w1(i)^2));
-        u2(i) = sqrt(w2(i)^2 + v(i)^2);
+        theta(i) = beta(i) - atan(w2(i) / v(i));
+        u2(i) = w2(i) * csc(beta(i) - theta(i));
     end
 
-    % compute velocity components downstream in lab frame
+    % Velocity components downstream - laboratory fixed
     u2x = u2 .* cos(theta);
     u2y = u2 .* sin(theta);
+    % Sonic point
+    M2 = u2 ./ a2;
+    ind_sonic = find(M2 > 1, 1, 'last');
+    theta_sonic = theta(ind_sonic) * 180/pi;
+    % Max deflection angle
+    [theta_max, ind_max] = max(theta * 180/pi); % [deg]
+    % Save results
+    str1.beta = beta(end) * 180/pi;   % [deg]
+    str1.theta = theta(end) * 180/pi; % [deg]
+    str1.theta_max = theta_max; % [deg]
+    str1.theta_sonic = theta_sonic; % [deg]
+    % Plot (pressure, deflection) - shock polar
+	mainfigure = figure; hold on;
+    tiledlayout(mainfigure, 'flow');
+    nexttile;
+    ax = gca;
+    set(ax, 'LineWidth', config.linewidth, 'FontSize', config.fontsize-2, 'BoxStyle', 'full')
+    grid(ax, 'off'); box(ax, 'off'); hold(ax, 'on'); ax.Layer = 'Top';
 
+	plot(ax, 180*theta/pi, p2,'LineWidth', config.linewidth); 
+    plot(ax, theta_max, p2(ind_max), 'ko', 'LineWidth', config.linewidth, 'MarkerFaceColor', 'auto');
+    plot(ax, theta(ind_sonic) * 180/pi, p2(ind_sonic), 'ks', 'LineWidth', config.linewidth, 'MarkerFaceColor', 'auto');
+%     text(ax, theta_max, p2(ind_max), 'detachment point \rightarrow m', 'HorizontalAlignment', 'right', 'FontSize', config.fontsize-8)
+%     text(ax, theta_sonic * 180/pi, p2(ind_sonic), 'sonic point \rightarrow s', 'HorizontalAlignment', 'right', 'FontSize', config.fontsize-8)
+    xlabel(ax, 'Deflection angle $[^\circ]$', 'FontSize', config.fontsize, 'Interpreter', 'latex');
+    ylabel(ax, 'Pressure [bar]','FontSize', config.fontsize, 'Interpreter', 'latex');
+    ylim(ax, [1, max(p2)]);
+    % Plot (wave angle, deflection) - shock polar
+    nexttile;
+    ax = gca;
+    set(ax, 'LineWidth', config.linewidth, 'FontSize', config.fontsize-2, 'BoxStyle', 'full')
+    grid(ax, 'off'); box(ax, 'off'); hold(ax, 'on'); ax.Layer = 'Top';
 
-    % plot pressure-deflection polar
-	figure;
-	plot(180*theta/pi, p2,'k:','LineWidth',2); 
-    title(['Shock Polar Air, free-stream speed ',num2str(w_max,5),' m/s'],'FontSize', 12);
-    xlabel('deflection angle [deg]','FontSize', 12);
-    ylabel('pressure [bar]','FontSize', 12);
-    set(gca,'FontSize',12,'LineWidth',2);
-    % plot pressure-deflection polar
-    figure;
-    plot(180*theta/pi, 180*beta/pi,'k:','LineWidth',2);  
-    title(['Shock Polar Air, free-stream speed ',num2str(w_max,5),' m/s'],'FontSize', 12);
-    xlabel('deflection angle [deg]','FontSize', 12);
-    ylabel('wave angle [deg]','FontSize', 12);
-    set(gca,'FontSize',12,'LineWidth',2);
-    % plot velocity polar
-    figure;
-    plot(u2x(:), u2y(:),'k:','LineWidth',2);  
-    title(['Shock Polar Air, free-stream speed ',num2str(w_max,5),' m/s'],'FontSize', 12);
-    xlabel('u2x [m/s]','FontSize', 12);
-    ylabel('u2y [m/s]','FontSize', 12);
-    set(gca,'FontSize',12,'LineWidth',2);
+    plot(ax, 180*theta/pi, beta * 180/pi,'LineWidth', config.linewidth);  
+    plot(ax, theta_max, beta(ind_max) * 180/pi, 'ko', 'LineWidth', config.linewidth, 'MarkerFaceColor', 'auto');
+    plot(ax, theta(ind_sonic) * 180/pi, beta(ind_sonic) * 180/pi, 'ks', 'LineWidth', config.linewidth, 'MarkerFaceColor', 'auto');
+    xlabel(ax, 'Deflection angle $[^\circ]$','FontSize', config.fontsize, 'Interpreter', 'latex');
+    ylabel(ax, 'Wave angle $[^\circ]$','FontSize', config.fontsize, 'Interpreter', 'latex');
+    % Plot velocity components
+    nexttile;
+    ax = gca;
+    set(ax, 'LineWidth', config.linewidth, 'FontSize', config.fontsize-2, 'BoxStyle', 'full')
+    grid(ax, 'off'); box(ax, 'off'); hold(ax, 'on'); ax.Layer = 'Top';
+
+    plot(ax, u2x, u2y, 'LineWidth', config.linewidth);  
+    xlabel(ax, '$u_{2x}$ [m/s]', 'FontSize', config.fontsize, 'Interpreter', 'latex');
+    ylabel(ax, '$u_{2y}$ [m/s]', 'FontSize', config.fontsize, 'Interpreter', 'latex');
 end
 
 % SUB-PASS FUNCTIONS

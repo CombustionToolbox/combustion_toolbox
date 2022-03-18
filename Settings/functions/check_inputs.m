@@ -25,11 +25,11 @@ function self = check_inputs(self)
             case 'SV' % * SV: Isentropic (i.e., fast adiabatic) compression/expansion to a specified v
                 self = check_inputs_prop(self, 'vP_vR');
                 self = set_prop(self, 'pP', self.PD.pR.value); % Guess
-            case 'SHOCK_I' % * SHOCK_I: CALCULATE PLANAR INCIDENT SHOCK WAVE
+            case {'SHOCK_I', 'SHOCK_R'} % * SHOCK_I and SHOCK_R: CALCULATE PLANAR SHOCK WAVE
                 self = check_inputs_prop(self, 'u1');
-            case 'SHOCK_R' % * SHOCK_R: CALCULATE PLANAR POST-REFLECTED SHOCK STATE
+            case 'SHOCK_OBLIQUE' % * SHOCK_OBLIQUE: CALCULATE OBLIQUE SHOCK WAVE
                 self = check_inputs_prop(self, 'u1');
-            case 'DET_OVERDRIVEN' % * DET_OVERDRIVEN: CALCULATE OVERDRIVEN DETONATION
+            case {'DET_OVERDRIVEN', 'DET_OVERDRIVEN_R'} % * DET_OVERDRIVEN: CALCULATE OVERDRIVEN DETONATION
                 self = check_inputs_prop(self, 'overdriven');
         end
     end

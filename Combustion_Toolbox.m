@@ -11,8 +11,11 @@
 %   * SV -----------------> Isentropic compression/expansion to a specified v
 %   * SHOCK_I ------------> Planar incident shock wave
 %   * SHOCK_R ------------> Planar reflected shock wave
+%   * SHOCK_OBLIQUE ------> Oblique incident shock wave
+%   * SHOCK_IDEAL_GAS ----> Planar incident shock wave for a fixed adibatic index
 %   * DET ----------------> Chapman-Jouguet Detonation
 %   * DET_R --------------> Reflected Chapman-Jouguet Detonation
+%   * DET_OBLIQUE --------> Oblique Detonation
 %   * DET_OVERDRIVEN -----> Overdriven Detonation    
 %   * DET_OVERDRIVEN_R ---> Overdriven reflected Detonation    
 %   * ROCKET -------------> Propellant rocket performance   
@@ -31,9 +34,11 @@
 %   * Example_SHOCK_I
 %   * Example_SHOCK_I_IONIZATION
 %   * Example_SHOCK_R
+%   * Example_SHOCK_OBLIQUE
 %   * Example_DET
 %   * Example_DET_R
 %   * Example_DET_OVERDRIVEN
+%   * Example_DET_OVERDRIVEN_R
 %   * Example_ROCKET
 %
 % Please to send feedback or inquiries run uifeedback

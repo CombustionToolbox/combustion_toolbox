@@ -43,16 +43,15 @@ Features
   - Incident or reflected shocks
   - Chapman-Jouguet detonations and overdriven detonations
   - Reflected detonations
-  - Hugoniot curves
   - Oblique shocks/detonations
-  - Shock polar solutions considering dissociation, ionization, and recombinantion in multi-species mixtures.
-  - Chapman-Jouguet detonations and overdriven detonations
-  - Hugoniot curves Ideal jump conditions for a given adiabatic index and pre-shock Mach number
+  - Shock polar solutions considering dissociation, ionization, and recombinantion in multi-species mixtures
+  - Hugoniot curves
+  - Ideal jump conditions for a given adiabatic index and pre-shock Mach number
 * `Rocket propellant performance assuming:`
   - Infinite-Area-Chamber model (IAC)
   - Finite-Area-Chamber model (FAC) - under development -
-* All the routines and computations are encapsulated in a more comprehensive and `user-friendly GUI`.
-* The code `is in it’s transition to Python`.
+* All the routines and computations are encapsulated in a more comprehensive and `user-friendly GUI`
+* The code `is in it’s transition to Python`
 * Export results in a spreadsheet
 * Export results as a .mat format
 * `Display predefined plots` (e.g., molar fraction vs equilence ratio)

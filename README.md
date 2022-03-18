@@ -38,6 +38,8 @@ A MATLAB-GUI based open-source tool for solving gaseous combustion problems.
   - Pre-shock and post shock states
   - Equilibrium or frozen composition
   - Incident or reflected shocks
+  - Oblique shocks/detonations
+  - Shock polar solutions considering dissociation, ionization, and recombinantion in multi-species mixtures.
   - Chapman-Jouguet detonations and overdriven detonations
   - Hugoniot curves
 Ideal jump conditions for a given adiabatic index and pre-shock Mach number

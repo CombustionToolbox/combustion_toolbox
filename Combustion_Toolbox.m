@@ -31,9 +31,11 @@
 %   * Example_SHOCK_I
 %   * Example_SHOCK_I_IONIZATION
 %   * Example_SHOCK_R
+%   * Example_SHOCK_OBLIQUE
 %   * Example_DET
 %   * Example_DET_R
 %   * Example_DET_OVERDRIVEN
+%   * Example_DET_OVERDRIVEN_R
 %   * Example_ROCKET
 %
 % Please to send feedback or inquiries run uifeedback

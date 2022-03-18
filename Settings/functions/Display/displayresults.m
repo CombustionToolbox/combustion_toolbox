@@ -23,7 +23,7 @@ if nargin == 5
     fprintf('-----------------------------------------------------------\n');
     fprintf('Problem type: %s  | phi = %4.4f\n',ProblemType, equivalenceRatio(mix1));
     fprintf('-----------------------------------------------------------\n');
-    if strcmpi(ProblemType, 'SHOCK_I') || contains(ProblemType, 'DET')
+    if contains(ProblemType, 'SHOCK') || contains(ProblemType, 'DET')
         fprintf('               |    STATE 1      |       STATE 2\n');
     else
         fprintf('               |    REACTANTS    |      PRODUCTS\n');
@@ -42,9 +42,17 @@ if nargin == 5
     fprintf('cp [kJ/(kg-K)] |   %12.4f  |   %12.4f\n', cp_mass(mix1), cp_mass(mix2));
     fprintf('gamma [-]      |   %12.4f  |   %12.4f\n', adiabaticIndex(mix1), adiabaticIndex_sound(mix2));
     fprintf('sound vel [m/s]|   %12.4f  |   %12.4f\n', soundspeed(mix1), soundspeed(mix2));
-    if strcmpi(ProblemType,'SHOCK_I')||strcmpi(ProblemType,'SHOCK_R')||contains(ProblemType,'DET')
+    if contains(ProblemType, 'SHOCK') || contains(ProblemType,'DET')
         fprintf('u [m/s]        |   %12.4f  |   %12.4f\n', velocity_relative(mix1), mix2.v_shock);
         fprintf('Mach number [-]|   %12.4f  |   %12.4f\n', velocity_relative(mix1)/soundspeed(mix1), mix2.v_shock/soundspeed(mix2));
+    end
+    if contains(ProblemType, '_OBLIQUE')
+        fprintf('------------------------------------------------------------------------\n');
+        fprintf('PARAMETERS\n');
+        fprintf('wave angle[deg]|   %12.4f\n', mix1.beta);
+        fprintf('deflection[deg]|   %12.4f\n', mix1.theta);
+        fprintf('max def.  [deg]|   %12.4f\n', mix1.theta_max);
+        fprintf('sonic def.[deg]|   %12.4f\n', mix1.theta_sonic);
     end
     fprintf('-----------------------------------------------------------\n');
     fprintf('REACTANTS             Xi [-]\n');

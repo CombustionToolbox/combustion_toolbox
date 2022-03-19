@@ -98,7 +98,7 @@ We have several examples of what Combustion Toolbox can do. Here we show a previ
 **Figure 3:** *Example CJ detonation for lean to rich CH4-air mixtures at standard conditions: (a) variation of molar fraction, (b) variation of temperature. The computational time was of 12.70 seconds using a Intel(R) Core(TM) i7-8700 CPU @ 3.20GHz for a set of 24 species considered and a total of 451 case studies.*
 
 <p align="left">
-    <img src="https://github.com/AlbertoCuadra/combustion_toolbox/blob/master/Validations/Figures/polar_shock_full_and_frozen.svg" width="1000">
+    <img src="https://github.com/AlbertoCuadra/combustion_toolbox/blob/master/Validations/Figures/polar_shock_full_and_frozen_both.svg" width="1000">
 </p>
 
 **Figure 4:** *Pressure-deflection shock polar (left) and wave angle-deflection shock polar (right) for an air mixture (79% N2, 21% O2) at pre-shock temperature T1 = 300 K and pressure p1 = 1 atm, and a range of preshock Mach numbers M1 = [2, 14]; line: considering dissociation, ionization, and recombination in multi-species mixtures; dashed: considering a thermochemically frozen air mixture.*

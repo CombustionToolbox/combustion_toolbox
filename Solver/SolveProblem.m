@@ -70,14 +70,37 @@ function self = selectProblem(self, i)
         case {'SHOCK_OBLIQUE'}
             try
                 u1 = self.PD.u1.value(i);
+                theta = self.PD.theta.value;
+            catch
+                u1 = self.PD.u1.value;
+                theta = self.PD.theta.value;
+            end
+%             if i==self.C.l_phi
+                [self.PS.strR{i}, self.PS.strP{i}] = shock_oblique(self, self.PS.strR{i}, u1, theta);
+%             else
+%                 [self.PS.strR{i}, self.PS.strP{i}] = shock_oblique(self, self.PS.strR{i}, u1, self.PS.strP{i+1});
+%             end
+        case {'SHOCK_OBLIQUE_R'}
+            try
+                u1 = self.PD.u1.value(i);
             catch
                 u1 = self.PD.u1.value;
             end
 %             if i==self.C.l_phi
+                self.PD.ProblemType = 'SHOCK_OBLIQUE';
+                [self.PS.strR{i}, self.PS.strP{i}] = shock_oblique(self, self.PS.strR{i}, u1);
+                self.PD.ProblemType = 'SHOCK_OBLIQUE_R';
                 [self.PS.strR{i}, self.PS.strP{i}] = shock_oblique(self, self.PS.strR{i}, u1);
 %             else
 %                 [self.PS.strR{i}, self.PS.strP{i}] = shock_oblique(self, self.PS.strR{i}, u1, self.PS.strP{i+1});
 %             end
+        case {'SHOCK_POLAR'}
+            try
+                u1 = self.PD.u1.value(i);
+            catch
+                u1 = self.PD.u1.value;
+            end
+                [self.PS.strR{i}, self.PS.strP{i}] = shock_polar(self, self.PS.strR{i}, u1);
         case {'DET'}
             if i==self.C.l_phi
                 [self.PS.strR{i}, self.PS.strP{i}] = cj_detonation(self, self.PS.strR{i});

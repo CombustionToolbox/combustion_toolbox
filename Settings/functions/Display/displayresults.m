@@ -46,13 +46,17 @@ if nargin == 5
         fprintf('u [m/s]        |   %12.4f  |   %12.4f\n', velocity_relative(mix1), mix2.v_shock);
         fprintf('Mach number [-]|   %12.4f  |   %12.4f\n', velocity_relative(mix1)/soundspeed(mix1), mix2.v_shock/soundspeed(mix2));
     end
-    if contains(ProblemType, '_OBLIQUE')
+    if contains(ProblemType, '_OBLIQUE') || contains(ProblemType, '_POLAR')
         fprintf('------------------------------------------------------------------------\n');
         fprintf('PARAMETERS\n');
-        fprintf('wave angle[deg]|   %12.4f\n', mix1.beta);
-        fprintf('deflection[deg]|   %12.4f\n', mix1.theta);
-        fprintf('max def.  [deg]|   %12.4f\n', mix1.theta_max);
-        fprintf('sonic def.[deg]|   %12.4f\n', mix1.theta_sonic);
+        fprintf('min wave  [deg]|   %12.4f\n', mix1.beta_min);
+%         if contains(ProblemType, '_OBLIQUE')
+            fprintf('wave angle[deg]|   %12.4f\n', mix1.beta);
+            fprintf('deflection[deg]|   %12.4f\n', mix1.theta);
+%         else
+            fprintf('max def.  [deg]|   %12.4f\n', mix1.theta_max);
+            fprintf('sonic def.[deg]|   %12.4f\n', mix1.theta_sonic);
+%         end
     end
     fprintf('-----------------------------------------------------------\n');
     fprintf('REACTANTS             Xi [-]\n');

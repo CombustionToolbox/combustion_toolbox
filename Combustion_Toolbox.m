@@ -12,6 +12,7 @@
 %   * SHOCK_I ------------> Planar incident shock wave
 %   * SHOCK_R ------------> Planar reflected shock wave
 %   * SHOCK_OBLIQUE ------> Oblique incident shock wave
+%   * SHOCK_POLAR --------> Shock polar plots
 %   * SHOCK_IDEAL_GAS ----> Planar incident shock wave for a fixed adibatic index
 %   * DET ----------------> Chapman-Jouguet Detonation
 %   * DET_R --------------> Reflected Chapman-Jouguet Detonation

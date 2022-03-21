@@ -76,7 +76,7 @@ function self = selectProblem(self, i)
                 theta = self.PD.theta.value;
             end
 %             if i==self.C.l_phi
-                [self.PS.strR{i}, self.PS.strP{i}] = shock_oblique(self, self.PS.strR{i}, u1, theta);
+                [self.PS.strR{i}, self.PS.str2{i}, self.PS.strP{i}] = shock_oblique(self, self.PS.strR{i}, u1, theta);
 %             else
 %                 [self.PS.strR{i}, self.PS.strP{i}] = shock_oblique(self, self.PS.strR{i}, u1, self.PS.strP{i+1});
 %             end

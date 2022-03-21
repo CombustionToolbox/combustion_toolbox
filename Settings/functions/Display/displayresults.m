@@ -49,14 +49,14 @@ if nargin == 5
     if contains(ProblemType, '_OBLIQUE') || contains(ProblemType, '_POLAR')
         fprintf('------------------------------------------------------------------------\n');
         fprintf('PARAMETERS\n');
-        fprintf('min wave  [deg]|   %12.4f\n', mix1.beta_min);
-%         if contains(ProblemType, '_OBLIQUE')
-            fprintf('wave angle[deg]|   %12.4f\n', mix1.beta);
-            fprintf('deflection[deg]|   %12.4f\n', mix1.theta);
-%         else
-            fprintf('max def.  [deg]|   %12.4f\n', mix1.theta_max);
-            fprintf('sonic def.[deg]|   %12.4f\n', mix1.theta_sonic);
-%         end
+        fprintf('min wave  [deg]|                 |   %12.4f\n', mix2.beta_min);
+        if contains(ProblemType, '_OBLIQUE')
+            fprintf('wave angle[deg]|                 |   %12.4f\n', mix2.beta);
+            fprintf('deflection[deg]|                 |   %12.4f\n', mix2.theta);
+        else
+            fprintf('max def.  [deg]|                 |   %12.4f\n', mix2.theta_max);
+            fprintf('sonic def.[deg]|                 |   %12.4f\n', mix2.theta_sonic);
+        end
     end
     fprintf('-----------------------------------------------------------\n');
     fprintf('REACTANTS             Xi [-]\n');
@@ -100,6 +100,8 @@ elseif nargin == 6
     fprintf('------------------------------------------------------------------------\n');
     if contains(ProblemType, '_R')
         fprintf('               |     STATE 1     |     STATE 2     |      STATE 3\n');
+    elseif contains(ProblemType, '_OBLIQUE')
+        fprintf('               |     STATE 1     |     STATE 2-W   |      STATE 2-S\n');
     else
         fprintf('               |  INLET CHAMBER  | OUTLET CHAMBER  |      THROAT \n');
     end
@@ -119,17 +121,28 @@ elseif nargin == 6
     fprintf('sound vel [m/s]|   %12.4f  |   %12.4f  |   %12.4f\n', soundspeed(mix1), soundspeed(mix2), soundspeed(mix3));
     fprintf('u [m/s]        |   %12.4f  |   %12.4f  |   %12.4f\n', velocity_relative(mix1), mix2.v_shock, mix3.v_shock);
     fprintf('Mach number [-]|   %12.4f  |   %12.4f  |   %12.4f\n', velocity_relative(mix1)/soundspeed(mix1), mix2.v_shock/soundspeed(mix2), mix3.v_shock/soundspeed(mix3));
-    fprintf('------------------------------------------------------------------------\n');
-    if strcmpi(ProblemType, 'ROCKET')
+    if contains(ProblemType, '_OBLIQUE') || contains(ProblemType, '_POLAR')
+        fprintf('------------------------------------------------------------------------\n');
+        fprintf('PARAMETERS\n');
+        fprintf('min wave  [deg]|                 |   %12.4f  |   %12.4f\n', mix2.beta_min, mix3.beta_min);
+        if contains(ProblemType, '_OBLIQUE')
+            fprintf('wave angle[deg]|                 |   %12.4f  |   %12.4f\n', mix2.beta, mix3.beta);
+            fprintf('deflection[deg]|                 |   %12.4f  |   %12.4f\n', mix2.theta, mix3.theta);
+        else
+            fprintf('max def.  [deg]|                 |   %12.4f  |   %12.4f\n', mix2.theta_max);
+            fprintf('sonic def.[deg]|                 |   %12.4f  |   %12.4f\n', mix2.theta_sonic);
+        end
+    elseif strcmpi(ProblemType, 'ROCKET')
+        fprintf('------------------------------------------------------------------------\n');
         fprintf('PERFORMANCE PARAMETERS\n');    
         fprintf('CSTAR [m/s]    |                 |   %12.4f  |\n', mix3.cstar);
         fprintf('CF [-]         |                 |   %12.4f  |\n', mix3.cf);
         fprintf('Ivac [m/s]     |                 |   %12.4f  |\n', mix3.I_vac);
         fprintf('Isp  [m/s]     |                 |   %12.4f  |\n', mix3.I_sp);
-        fprintf('------------------------------------------------------------------------\n');
     end
-    
-    if contains(ProblemType, '_R')
+    fprintf('------------------------------------------------------------------------\n');
+
+    if contains(ProblemType, '_R') || contains(ProblemType, '_OBLIQUE')
         fprintf('STATE 1               Xi [-]\n');
     else
         fprintf('INLET CHAMBER         Xi [-]\n');
@@ -151,6 +164,8 @@ elseif nargin == 6
     fprintf('------------------------------------------------------------------------\n');
     if contains(ProblemType, '_R')
         fprintf('STATE 2               Xi [-]\n');
+    elseif contains(ProblemType, '_OBLIQUE')
+        fprintf('STATE 2-WEAK SHOCK    Xi [-]\n');
     else
         fprintf('OUTLET CHAMBER        Xi [-]\n');
     end
@@ -172,6 +187,8 @@ elseif nargin == 6
     fprintf('------------------------------------------------------------------------\n');
     if contains(ProblemType, '_R')
         fprintf('STATE 3               Xi [-]\n');
+    elseif contains(ProblemType, '_OBLIQUE')
+        fprintf('STATE 2-STRONG SHOCK  Xi [-]\n');
     else
         fprintf('THROAT                Xi [-]\n');
     end

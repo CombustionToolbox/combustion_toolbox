@@ -9,7 +9,7 @@ function [str1, str2] = shock_polar(varargin)
     a1 = soundspeed(str1);
     u1 = str1.u;
     M1 = u1/a1;
-    step = 0.5; % [m/s]
+    step = 5; % [m/s]
     w1 = linspace(a1 + 1, u1, (u1 - a1) / step);
     N = length(w1);
     beta = asin(w1 ./ u1);
@@ -42,13 +42,13 @@ function [str1, str2] = shock_polar(varargin)
     % Max deflection angle
     [theta_max, ind_max] = max(theta * 180/pi); % [deg]
     % Save results
-    str1.beta = beta(end) * 180/pi;             % [deg]
-    str1.theta = theta(end) * 180/pi;           % [deg]
-    str1.theta_max = theta_max;                 % [deg]
-    str1.beta_min = beta_min * 180/pi;          % [deg]
-    str1.beta_max = beta(ind_max) * 180/pi;     % [deg]
-    str1.theta_sonic = theta_sonic;             % [deg]
-    str1.beta_sonic = beta(ind_sonic) * 180/pi; % [deg]
+    str2.beta = beta(end) * 180/pi;             % [deg]
+    str2.theta = theta(end) * 180/pi;           % [deg]
+    str2.theta_max = theta_max;                 % [deg]
+    str2.beta_min = beta_min * 180/pi;          % [deg]
+    str2.beta_max = beta(ind_max) * 180/pi;     % [deg]
+    str2.theta_sonic = theta_sonic;             % [deg]
+    str2.beta_sonic = beta(ind_sonic) * 180/pi; % [deg]
     
     str2.w2 = w2;
     % Plot (pressure, deflection) - shock polar

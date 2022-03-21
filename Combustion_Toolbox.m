@@ -36,6 +36,7 @@
 %   * Example_SHOCK_I_IONIZATION
 %   * Example_SHOCK_R
 %   * Example_SHOCK_OBLIQUE
+%   * Example_SHOCK_POLAR
 %   * Example_DET
 %   * Example_DET_R
 %   * Example_DET_OVERDRIVEN

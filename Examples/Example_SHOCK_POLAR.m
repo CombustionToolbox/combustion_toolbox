@@ -17,12 +17,12 @@
 %          PhD Candidate - Group Fluid Mechanics
 %          Universidad Carlos III de Madrid
 %                 
-% Last update March 19 2021
+% Last update March 21 2021
 % -------------------------------------------------------------------------
 
 %% INITIALIZE
-% self = App('Air_ions');
-self = App({'O2', 'N2', 'Ar', 'CO2'});
+self = App('Air_ions');   
+% self = App({'O2', 'N2', 'Ar', 'CO2'}); % Frozen
 %% INITIAL CONDITIONS
 self = set_prop(self, 'TR', 300, 'pR', 1 * 1.01325);
 self.PD.S_Oxidizer = {'O2'};
@@ -31,8 +31,9 @@ self.PD.proportion_inerts_O2 = [78.084, 0.9365, 0.0319] ./ 20.9476;
 %% ADDITIONAL INPUTS (DEPENDS OF THE PROBLEM SELECTED)
 range1 = logspace(0, 1, 300); range1 = range1(range1 < 5);
 overdriven = [range1, linspace(5, 14, 30)]; overdriven = overdriven(overdriven > 1);
-overdriven = 2:2:14;
+% overdriven = 2:2:14;
 % overdriven = [2, 3, 5, 14];
+overdriven = 10;
 self = set_prop(self, 'u1', 3.472107491008314e+02 * overdriven);
 %% SOLVE PROBLEM
 self = SolveProblem(self, 'SHOCK_POLAR');

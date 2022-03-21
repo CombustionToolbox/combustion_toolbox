@@ -19,6 +19,7 @@
 
 %% INITIALIZE
 self = App('Air_ions');
+% self = App({'O2', 'N2', 'Ar', 'CO2'}); % Frozen
 %% INITIAL CONDITIONS
 self = set_prop(self, 'TR', 300, 'pR', 1 * 1.01325);
 self.PD.S_Oxidizer = {'O2'};
@@ -26,7 +27,7 @@ self.PD.S_Inert    = {'N2', 'Ar', 'CO2'};
 self.PD.proportion_inerts_O2 = [78.084, 0.9365, 0.0319] ./ 20.9476;
 %% ADDITIONAL INPUTS (DEPENDS OF THE PROBLEM SELECTED)
 overdriven = 10;
-self = set_prop(self, 'u1', 3.472107491008314e+02 * overdriven, 'theta', 43.2);
+self = set_prop(self, 'u1', 3.472107491008314e+02 * overdriven, 'theta', 51.2161);
 %% SOLVE PROBLEM
 self = SolveProblem(self, 'SHOCK_OBLIQUE');
 %% DISPLAY RESULTS (PLOTS)

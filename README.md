@@ -112,9 +112,8 @@ Please send feedback or inquiries to [acuadra@ing.uc3m.es](mailto:acuadra@ing.uc
 Thank you for testing Combustion Toolbox!
 
 ## Acknowledgements
-Combustion Toolbox's color palette is obtained from the next repository:
-
-Stephen (2021). ColorBrewer: Attractive and Distinctive Colormaps (https://github.com/DrosteEffect/BrewerMap), GitHub. Retrieved December 3, 2021.
+* Combustion Toolbox's color palette is obtained from the following repository: Stephen (2021). ColorBrewer: Attractive and Distinctive Colormaps (https://github.com/DrosteEffect/BrewerMap), GitHub. Retrieved December 3, 2021.
+* For validations, Combustion Toolbox uses CPU Info from the following repository: Ben Tordoff (2022). CPU Info (https://github.com/BJTor/CPUInfo/releases/tag/v1.3), GitHub. Retrieved March 22, 2022.
 ## Developers
 
 * **[Alberto Cuadra-Lara](https://acuadralara.com/)** - *Core Developer and App designer*

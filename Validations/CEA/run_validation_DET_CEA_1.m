@@ -25,6 +25,7 @@ function run_validation_DET_CEA_1
     fig1 = plot_molar_fractions_validation(results_CT, results_CEA, 'phi', 'Xi', DisplaySpecies);
     % Save plots
     folderpath = strcat(pwd,'\Validations\Figures\');
-    filename = 'validation_DET_CEA_1';
+    stack_trace = dbstack;
+    filename = stack_trace.name;
     saveas(fig1, strcat(folderpath, filename, '_molar'), 'svg');
 end

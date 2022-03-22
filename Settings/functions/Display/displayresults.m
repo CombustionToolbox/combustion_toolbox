@@ -59,7 +59,7 @@ if nargin == 5
         end
     end
     fprintf('-----------------------------------------------------------\n');
-    fprintf('REACTANTS             Xi [-]\n');
+    fprintf('REACTANTS               Xi [-]\n');
     %%%% SORT SPECIES COMPOSITION %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     [mix1.Xi(:), ind_sort] = sort(mix1.Xi(:), 'descend');
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -75,7 +75,7 @@ if nargin == 5
     fprintf('MINORS[+%d] %s     %12.4e\n\n', Nminor, s_space_Nminor, Xminor);
     fprintf('TOTAL            %14.4e\n',sum(mix1.Xi));
     fprintf('-----------------------------------------------------------\n');
-    fprintf('PRODUCTS              Xi [-]\n');
+    fprintf('PRODUCTS                Xi [-]\n');
     %%%% SORT SPECIES COMPOSITION %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     [mix2.Xi(:), ind_sort] = sort(mix2.Xi(:),'descend');
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -143,9 +143,9 @@ elseif nargin == 6
     fprintf('------------------------------------------------------------------------\n');
 
     if contains(ProblemType, '_R') || contains(ProblemType, '_OBLIQUE')
-        fprintf('STATE 1               Xi [-]\n');
+        fprintf('STATE 1                 Xi [-]\n');
     else
-        fprintf('INLET CHAMBER         Xi [-]\n');
+        fprintf('INLET CHAMBER           Xi [-]\n');
     end
     %%%% SORT SPECIES COMPOSITION %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     [mix1.Xi(:), ind_sort] = sort(mix1.Xi(:), 'descend');
@@ -163,11 +163,11 @@ elseif nargin == 6
     fprintf('TOTAL            %14.4e\n',sum(mix1.Xi));
     fprintf('------------------------------------------------------------------------\n');
     if contains(ProblemType, '_R')
-        fprintf('STATE 2               Xi [-]\n');
+        fprintf('STATE 2                 Xi [-]\n');
     elseif contains(ProblemType, '_OBLIQUE')
-        fprintf('STATE 2-WEAK SHOCK    Xi [-]\n');
+        fprintf('STATE 2-WEAK SHOCK      Xi [-]\n');
     else
-        fprintf('OUTLET CHAMBER        Xi [-]\n');
+        fprintf('OUTLET CHAMBER          Xi [-]\n');
     end
     %%%% SORT SPECIES COMPOSITION %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     [mix2.Xi(:), ind_sort] = sort(mix2.Xi(:),'descend');
@@ -186,11 +186,11 @@ elseif nargin == 6
     fprintf('TOTAL            %14.4e\n', sum(mix2.Xi));
     fprintf('------------------------------------------------------------------------\n');
     if contains(ProblemType, '_R')
-        fprintf('STATE 3               Xi [-]\n');
+        fprintf('STATE 3                 Xi [-]\n');
     elseif contains(ProblemType, '_OBLIQUE')
-        fprintf('STATE 2-STRONG SHOCK  Xi [-]\n');
+        fprintf('STATE 2-STRONG SHOCK    Xi [-]\n');
     else
-        fprintf('THROAT                Xi [-]\n');
+        fprintf('THROAT                  Xi [-]\n');
     end
     %%%% SORT SPECIES COMPOSITION %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     [mix3.Xi(:), ind_sort] = sort(mix3.Xi(:), 'descend');

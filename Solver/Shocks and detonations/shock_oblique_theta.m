@@ -1,4 +1,4 @@
-function [str1, str2_1, str2_2] = shock_oblique(varargin)
+function [str1, str2_1, str2_2] = shock_oblique_theta(varargin)
     % Solve oblique shock
 
     % Unpack input data
@@ -48,7 +48,7 @@ function [str1, str2_1, str2_2] = shock_oblique(varargin)
         M2 = u2 / soundspeed(str2);
     
         if STOP > TN.tol_oblique || beta < beta_min || beta > pi/2 || theta < 0 || M2 >= M1
-            error('There is not solution for the given deflection angle');
+            error('There is not solution for the given deflection angle %.2g', str1.theta);
         end
     
         % Save results

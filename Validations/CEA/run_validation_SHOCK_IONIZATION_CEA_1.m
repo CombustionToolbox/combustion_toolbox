@@ -47,7 +47,7 @@
     stack_trace = dbstack;
     filename = stack_trace.name;
 %     saveas(fig1, strcat(folderpath, filename, '_molar'), 'svg');
-    saveas(fig2, strcat(folderpath, filename, '_properties'), 'svg');
-    saveas(fig3, strcat(folderpath, filename, '_properties'), 'svg');
-    saveas(fig4, strcat(folderpath, filename, '_properties'), 'svg');
+    saveas(fig2, strcat(folderpath, filename, '_properties_1'), 'svg');
+    saveas(fig3, strcat(folderpath, filename, '_properties_2'), 'svg');
+    saveas(fig4, strcat(folderpath, filename, '_properties_3'), 'svg');
 end

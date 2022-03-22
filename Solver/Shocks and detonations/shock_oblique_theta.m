@@ -24,19 +24,15 @@ function [str1, str2_1, str2_2] = shock_oblique_theta(varargin)
         STOP = 1; it = 0; itMax = TN.it_oblique;
         while STOP > TN.tol_shocks && it < itMax
             it = it + 1;
-    
-            w1 = u1 * sin(beta_guess); % [m/s]
-            if ~contains(self.PD.ProblemType, '_R')
-                [~, str2] = shock_incident(self, str1, w1, str2);
-            else
-                [~, ~, str2] = shock_reflected(self, str1, str2.w2, str2);
-            end
-    
-            w2 = str2.v_shock;
+            % Compute incident normal velocity
+            u1n = u1 * sin(beta_guess); % [m/s]
+            % Obtain post-shock state
+            [~, str2] = shock_incident(self, str1, u1n, str2);
+            u2n = str2.v_shock;
             % Compute f0 and df0
-            f0 = f0_beta(beta_guess, theta, w2, u1);
-            df0 = df0_beta(beta_guess, w2, u1);
-            % Compute new value
+            f0 = f0_beta(beta_guess, theta, u2n, u1);
+            df0 = df0_beta(beta_guess, u2n, u1);
+            % Apply correction
             beta = beta_guess - f0 / df0;
             % Compute error
             STOP = max(abs(beta - beta_guess) / abs(beta), abs(f0));
@@ -44,7 +40,7 @@ function [str1, str2_1, str2_2] = shock_oblique_theta(varargin)
             beta_guess = beta;
         end
         
-        u2 = w2 * csc(beta - theta);
+        u2 = u2n * csc(beta - theta);
         M2 = u2 / soundspeed(str2);
     
         if STOP > TN.tol_oblique || beta < beta_min || beta > pi/2 || theta < 0 || M2 >= M1
@@ -57,7 +53,7 @@ function [str1, str2_1, str2_2] = shock_oblique_theta(varargin)
         str2.beta_min = beta_min * 180/pi; % [deg]
         str2.beta_max = beta_max * 180/pi; % [deg]
         str2.u = u2; % [m/s]
-        str2.w2 = w2; % [m/s]
+        str2.un = u2n; % [m/s]
         str2.v_shock = u2; % [m/s]
     end
 end
@@ -79,12 +75,12 @@ function [self, str1, str2] = unpack(x)
     end
 end
 
-function value = f0_beta(beta, theta, w2, u1)
+function value = f0_beta(beta, theta, u2n, u1)
     % Function to find the roots of beta
-    value = theta + atan(w2 / (u1 .* cos(beta))) - beta;
+    value = theta + atan(u2n / (u1 .* cos(beta))) - beta;
 end
 
-function value = df0_beta(beta, w2, u1)
+function value = df0_beta(beta, u2n, u1)
     % Derivative of the function to find the roots of beta
-    value = (w2 * u1 * sin(beta)) / (w2^2 + u1^2 * cos(beta)^2) - 1;
+    value = (u2n * u1 * sin(beta)) / (u2n^2 + u1^2 * cos(beta)^2) - 1;
 end

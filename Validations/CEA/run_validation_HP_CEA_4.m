@@ -1,4 +1,4 @@
-function run_validation_HP_CEA_4
+function problems_solved = run_validation_HP_CEA_4
     % Run test validation_HP_CEA_4:
     % Contrasted with: NASA's Chemical Equilibrium with Applications software
     % Problem type: Adiabatic T and composition at constant p
@@ -24,6 +24,7 @@ function run_validation_HP_CEA_4
     results_CT = run_CT('ListSpecies', LS, 'S_Fuel', Fuel,...
                         'S_Oxidizer', 'O2', 'S_Inert', [],...
                         'EquivalenceRatio', 0.5:0.01:4, 'tolN', tolN);
+    problems_solved = length(results_CT.PD.range);
     % Load results CEA 
     results_CEA = data_CEA(filename, DisplaySpecies);
     % Display validation (plot)

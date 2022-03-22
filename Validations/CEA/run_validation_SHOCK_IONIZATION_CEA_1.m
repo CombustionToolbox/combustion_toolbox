@@ -1,4 +1,4 @@
- function run_validation_SHOCK_IONIZATION_CEA_1
+ function problems_solved = run_validation_SHOCK_IONIZATION_CEA_1
     % Run test validation_SHOCK_IONIZATION_CEA_1:
     % Contrasted with: NASA's Chemical Equilibrium with Applications software
     % Problem type: Planar incident shock wave
@@ -31,6 +31,7 @@
                         'S_Oxidizer', Oxidizer, 'S_Inert', Inert,...
                         'proportion_inerts_O2', proportion_inerts_O2, 'u1', u1,...
                         'tolN', tolN);
+    problems_solved = length(results_CT.PD.range);
     % Load results CEA 
     results_CEA = data_CEA(filename, DisplaySpecies, find_ind(ListSpecies([], LS), DisplaySpecies));
     % Display validations (plot)

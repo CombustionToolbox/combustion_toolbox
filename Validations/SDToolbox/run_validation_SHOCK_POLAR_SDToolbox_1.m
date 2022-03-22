@@ -1,4 +1,4 @@
-function run_validation_SHOCK_POLAR_SDToolbox_1
+function problems_solved = run_validation_SHOCK_POLAR_SDToolbox_1
     % Run test validation_SHOCK_POLAR_SDToolbox_1
     % Contrasted with: Caltech's SD Toolbox and CANTERA
     % Problem type: Shock polar
@@ -22,6 +22,7 @@ function run_validation_SHOCK_POLAR_SDToolbox_1
                         'S_Oxidizer', Oxidizer, 'S_Inert', Inert,...
                         'proportion_inerts_O2', proportion_inerts_O2, 'u1', u1,...
                         'tolN', tolN);
+    problems_solved = get_problems_solved(results_CT.PS.strP, 'theta_range');
     % Load results SDToolbox 
     results_SDToolbox = load_struct(filename, 'data');
     % Display validation (plot)

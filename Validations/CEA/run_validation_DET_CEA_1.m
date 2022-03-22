@@ -1,4 +1,4 @@
-function run_validation_DET_CEA_1
+function problems_solved = run_validation_DET_CEA_1
     % Run test validation_DET_CEA_1:
     % Contrasted with: NASA's Chemical Equilibrium with Applications software
     % Problem type: Chapman-Jouget Detonation
@@ -19,6 +19,7 @@ function run_validation_DET_CEA_1
     results_CT = run_CT('ProblemType', 'DET', 'Species', LS,...
         'S_Fuel', 'C2H2_acetylene', 'EquivalenceRatio', 0.5:0.01:4,...
         'tolN', tolN);
+    problems_solved = length(results_CT.PD.range);
     % Load results CEA 
     results_CEA = data_CEA(filename, DisplaySpecies);
     % Display validation (plot)

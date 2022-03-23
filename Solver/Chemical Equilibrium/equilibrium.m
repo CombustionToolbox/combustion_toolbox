@@ -31,9 +31,9 @@ function [N0, STOP] = equilibrium(self, pP, TP, strR)
     temp_ind_swt = [];
     temp_ind = [temp_ind_nswt, temp_ind_swt];
     temp_NS = length(temp_ind);
-    % Initialize species vector N0 
+    % Initialize species vector N0
     N0(temp_ind_nswt, 1) = NP_0/temp_NG;
-    % Standard Gibbs free energy 
+    % Standard Gibbs free energy
     g0 = set_g0(S.LS, TP, self.DB);
     % Dimensionless Chemical potential
     muRT = g0/R0TP;

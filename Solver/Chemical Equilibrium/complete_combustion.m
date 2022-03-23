@@ -19,10 +19,10 @@ function [N0, species] = complete_combustion(self, mix, phi)
         % case of rich mixtures
         if (x == 0) && (y ~= 0)
             % if there are only hydrogens (H)
-            N0 = compute_moles_rich_hydrogen(y, z); 
+            N0 = compute_moles_rich_hydrogen(y, z);
         elseif (x ~= 0) && (y == 0) && phi < phi_c
             % if there are only carbons (C)
-            N0 = compute_moles_rich_carbon(x, z); 
+            N0 = compute_moles_rich_carbon(x, z);
         elseif phi < phi_c
             % general case of rich mixtures with hydrogens (H) and carbons (C)
     %         N0 = compute_moles_rich_appr(x, y, z);

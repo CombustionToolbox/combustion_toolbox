@@ -1,17 +1,17 @@
-function [str1, str2] = overdriven_detonation(varargin)
+function [mix1, mix2] = overdriven_detonation(varargin)
     % Solve Overdriven detonation 
 
     % Unpack input data
-    [self, str1, str2] = unpack(varargin);
+    [self, mix1, mix2] = unpack(varargin);
     % Compute CJ speed
-    if isempty(str1.cj_speed)
-        [str1_cj, ~] = cj_detonation(self, str1);
-        str1.cj_speed = str1_cj.u;
+    if isempty(mix1.cj_speed)
+        [str1_cj, ~] = cj_detonation(self, mix1);
+        mix1.cj_speed = str1_cj.u;
     end
     % Solve overdriven detonation
-    [str1, str2] = shock_incident(self, str1, str1.cj_speed * str1.overdriven, str2);
+    [mix1, mix2] = shock_incident(self, mix1, mix1.cj_speed * mix1.overdriven, mix2);
     % Assign CJ speed
-    str2.cj_speed = str1.cj_speed;
+    mix2.cj_speed = mix1.cj_speed;
 end
 
 % SUB-PASS FUNCTIONS

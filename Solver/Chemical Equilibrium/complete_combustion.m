@@ -1,41 +1,43 @@
 function [N0, species] = complete_combustion(self, mix, phi)
-% 
-% Parameters ---------------------
-Fuel = self.PD.Fuel;
-phi_c = Compute_phi_c(Fuel);
-% -----------------------------------
-species = {'CO2', 'CO', 'H2O', 'H2', 'O2'};
-
-if isempty(self.E.ind_C), x = 0; phi_c = inf; else, x = mix.NatomE(self.E.ind_C); end
-if isempty(self.E.ind_H), y = 0; else, y = mix.NatomE(self.E.ind_H); end
-if isempty(self.E.ind_O), z = 0; else, z = mix.NatomE(self.E.ind_O); end
-
-if phi <= 1
-    % case of lean or stoichiometric mixtures
-    N0 = compute_moles_1ean(x, y, z);    
-else
-    % case of rich mixtures
-    if (x == 0) && (y ~= 0)
-        % if there are only hydrogens (H)
-        N0 = compute_moles_rich_hydrogen(y, z); 
-    elseif (x ~= 0) && (y == 0) && phi < phi_c
-        % if there are only carbons (C)
-        N0 = compute_moles_rich_carbon(x, z); 
-    elseif phi < phi_c
-        % general case of rich mixtures with hydrogens (H) and carbons (C)
-%         N0 = compute_moles_rich_appr(x, y, z);
-        T  = 1500;
-        N0 = compute_moles_rich(x, y, z, T, self.C.R0, self.DB);
-    elseif phi >= phi_c
-        % general case of rich mixtures with hydrogens (H), carbons (C) and soot
-        T  = 1000;
-        N0 = compute_moles_rich_soot(y, z, T, self.C.R0, self.DB);
+    % Solve chemical equilibrium for CHNO mixtures assuming a complete
+    % combustion
+    
+    % Parameters ---------------------
+    Fuel = self.PD.Fuel;
+    phi_c = Compute_phi_c(Fuel);
+    % -----------------------------------
+    species = {'CO2', 'CO', 'H2O', 'H2', 'O2'};
+    
+    if isempty(self.E.ind_C), x = 0; phi_c = inf; else, x = mix.NatomE(self.E.ind_C); end
+    if isempty(self.E.ind_H), y = 0; else, y = mix.NatomE(self.E.ind_H); end
+    if isempty(self.E.ind_O), z = 0; else, z = mix.NatomE(self.E.ind_O); end
+    
+    if phi <= 1
+        % case of lean or stoichiometric mixtures
+        N0 = compute_moles_lean(x, y, z);    
+    else
+        % case of rich mixtures
+        if (x == 0) && (y ~= 0)
+            % if there are only hydrogens (H)
+            N0 = compute_moles_rich_hydrogen(y, z);
+        elseif (x ~= 0) && (y == 0) && phi < phi_c
+            % if there are only carbons (C)
+            N0 = compute_moles_rich_carbon(x, z);
+        elseif phi < phi_c
+            % general case of rich mixtures with hydrogens (H) and carbons (C)
+    %         N0 = compute_moles_rich_appr(x, y, z);
+            T  = 1500;
+            N0 = compute_moles_rich(x, y, z, T, self.C.R0, self.DB);
+        elseif phi >= phi_c
+            % general case of rich mixtures with hydrogens (H), carbons (C) and soot
+            T  = 1000;
+            N0 = compute_moles_rich_soot(y, z, T, self.C.R0, self.DB);
+        end
     end
-end
 end
 
 % NESTED FUNCTIONS
-function N0 = compute_moles_1ean(x, y ,z)
+function N0 = compute_moles_lean(x, y ,z)
     NCO2_0 = x;
     NCO_0  = 0;
     NH2O_0 = y/2;

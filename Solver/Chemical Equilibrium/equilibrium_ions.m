@@ -1,76 +1,76 @@
 function [N0, STOP, STOP_ions] = equilibrium_ions(self, pP, TP, strR)
-% Generalized Gibbs minimization method
-
-% Abbreviations ---------------------
-E = self.E;
-S = self.S;
-C = self.C;
-TN = self.TN;
-% -----------------------------------
-N0 = C.N0.value;
-A0 = C.A0.value;
-R0TP = C.R0 * TP; % [J/(mol)]
-% Initialization
-% NatomE = N_CC(:,1)' * A0;
-NatomE = strR.NatomE;
-NP_0 = 0.1;
-NP = NP_0;
-
-it = 0;
-itMax = 50 + round(S.NS/2);
-SIZE = -log(TN.tolN);
-STOP = 1.;
-flag_ions_first = true;
-% Find indeces of the species/elements that we have to remove from the stoichiometric matrix A0
-% for the sum of elements whose value is <= tolN
-temp_ind_ions = contains(S.LS, 'minus') | contains(S.LS, 'plus'); %S.ind_ions;
-aux = NatomE;
-if any(temp_ind_ions)
-    NatomE(E.ind_E) = 1; % temporal fictitious value
-end
-ind_A0_E0 = remove_elements(NatomE, A0, TN.tolN);
-NatomE = aux;
-% List of indices with nonzero values
-[temp_ind_nswt, temp_ind_swt, temp_ind_ions, temp_ind_E, temp_NE] = temp_values(E.ind_E, S, NatomE, TN.tolN);
-% Update temp values
-[temp_ind, temp_ind_swt, temp_ind_nswt, temp_ind_ions, temp_NS, ~, ~, ~] = update_temp(N0, N0(ind_A0_E0, 1), ind_A0_E0, temp_ind_swt, temp_ind_nswt, temp_ind_E, E, temp_ind_ions, [], TN.tolN, SIZE, flag_ions_first);
-temp_NS0 = temp_NS + 1;
-% Initialize species vector N0 
-N0(temp_ind, 1) = 0.1/temp_NS;
-% Dimensionless Standard Gibbs free energy 
-g0 = set_g0(S.LS, TP, self.DB);
-G0RT = g0/R0TP;
-% Construction of part of matrix A (complete)
-[A1, temp_NS0] = update_matrix_A1(A0, [], temp_NS, temp_NS0, temp_ind, temp_ind_E);
-A22 = zeros(temp_NE + 1);
-A0_T = A0';
-
-while STOP > TN.tolN && it < itMax 
-    it = it + 1;
-    % Gibbs free energy
-    G0RT(temp_ind_nswt) =  g0(temp_ind_nswt) / R0TP + log(N0(temp_ind_nswt, 1) / NP) + log(pP);
-    % Construction of matrix A
-    A = update_matrix_A(A0_T, A1, A22, N0, NP, temp_ind, temp_ind_E);
-    % Construction of vector b            
-    b = update_vector_b(A0, N0, NP, NatomE, E.ind_E, temp_ind_ions, temp_ind, temp_ind_E, temp_ind_nswt, G0RT);
-    % Solve of the linear system A*x = b
-    x = A\b;
-    % Compute correction factor
-    lambda = relax_factor(NP, N0(temp_ind, 1), x(1:temp_NS), x(end), SIZE);
-    % Apply correction
-    N0(temp_ind, 1) = log(N0(temp_ind, 1)) + lambda * x(1:temp_NS);
-    NP_log = log(NP) + lambda * x(end);
-    % Apply antilog
-    [N0, NP] = apply_antilog(N0, NP_log, temp_ind);
-    % Update temp values in order to remove species with moles < tolerance
-    [temp_ind, temp_ind_swt, temp_ind_nswt, temp_ind_ions, temp_NS, temp_ind_E, A22, flag_ions_first] = update_temp(N0, N0(temp_ind, 1), temp_ind, temp_ind_swt, temp_ind_nswt, temp_ind_E, E, temp_ind_ions, A22, NP, SIZE, flag_ions_first);
-    % Update matrix A
-    [A1, temp_NS0] = update_matrix_A1(A0, A1, temp_NS, temp_NS0, temp_ind, temp_ind_E);
-    % Compute STOP criteria
-    STOP = compute_STOP(NP_0, NP, x(end), N0(temp_ind, 1), x(1:temp_NS));
-end
-% Check convergence of charge balance (ionized species)
-[N0, STOP_ions] = check_convergence_ions(N0, A0, E.ind_E, temp_ind_nswt, temp_ind_ions, TN.tolN, TN.tol_pi_e);
+    % Generalized Gibbs minimization method
+    
+    % Abbreviations ---------------------
+    E = self.E;
+    S = self.S;
+    C = self.C;
+    TN = self.TN;
+    % -----------------------------------
+    N0 = C.N0.value;
+    A0 = C.A0.value;
+    R0TP = C.R0 * TP; % [J/(mol)]
+    % Initialization
+    % NatomE = N_CC(:,1)' * A0;
+    NatomE = strR.NatomE;
+    NP_0 = 0.1;
+    NP = NP_0;
+    
+    it = 0;
+    itMax = 50 + round(S.NS/2);
+    SIZE = -log(TN.tolN);
+    STOP = 1.;
+    flag_ions_first = true;
+    % Find indeces of the species/elements that we have to remove from the stoichiometric matrix A0
+    % for the sum of elements whose value is <= tolN
+    temp_ind_ions = contains(S.LS, 'minus') | contains(S.LS, 'plus'); %S.ind_ions;
+    aux = NatomE;
+    if any(temp_ind_ions)
+        NatomE(E.ind_E) = 1; % temporal fictitious value
+    end
+    ind_A0_E0 = remove_elements(NatomE, A0, TN.tolN);
+    NatomE = aux;
+    % List of indices with nonzero values
+    [temp_ind_nswt, temp_ind_swt, temp_ind_ions, temp_ind_E, temp_NE] = temp_values(E.ind_E, S, NatomE, TN.tolN);
+    % Update temp values
+    [temp_ind, temp_ind_swt, temp_ind_nswt, temp_ind_ions, temp_NS, ~, ~, ~] = update_temp(N0, N0(ind_A0_E0, 1), ind_A0_E0, temp_ind_swt, temp_ind_nswt, temp_ind_E, E, temp_ind_ions, [], TN.tolN, SIZE, flag_ions_first);
+    temp_NS0 = temp_NS + 1;
+    % Initialize species vector N0
+    N0(temp_ind, 1) = 0.1/temp_NS;
+    % Dimensionless Standard Gibbs free energy
+    g0 = set_g0(S.LS, TP, self.DB);
+    G0RT = g0/R0TP;
+    % Construction of part of matrix A (complete)
+    [A1, temp_NS0] = update_matrix_A1(A0, [], temp_NS, temp_NS0, temp_ind, temp_ind_E);
+    A22 = zeros(temp_NE + 1);
+    A0_T = A0';
+    
+    while STOP > TN.tolN && it < itMax
+        it = it + 1;
+        % Gibbs free energy
+        G0RT(temp_ind_nswt) =  g0(temp_ind_nswt) / R0TP + log(N0(temp_ind_nswt, 1) / NP) + log(pP);
+        % Construction of matrix A
+        A = update_matrix_A(A0_T, A1, A22, N0, NP, temp_ind, temp_ind_E);
+        % Construction of vector b
+        b = update_vector_b(A0, N0, NP, NatomE, E.ind_E, temp_ind_ions, temp_ind, temp_ind_E, temp_ind_nswt, G0RT);
+        % Solve of the linear system A*x = b
+        x = A\b;
+        % Compute correction factor
+        lambda = relax_factor(NP, N0(temp_ind, 1), x(1:temp_NS), x(end), SIZE);
+        % Apply correction
+        N0(temp_ind, 1) = log(N0(temp_ind, 1)) + lambda * x(1:temp_NS);
+        NP_log = log(NP) + lambda * x(end);
+        % Apply antilog
+        [N0, NP] = apply_antilog(N0, NP_log, temp_ind);
+        % Update temp values in order to remove species with moles < tolerance
+        [temp_ind, temp_ind_swt, temp_ind_nswt, temp_ind_ions, temp_NS, temp_ind_E, A22, flag_ions_first] = update_temp(N0, N0(temp_ind, 1), temp_ind, temp_ind_swt, temp_ind_nswt, temp_ind_E, E, temp_ind_ions, A22, NP, SIZE, flag_ions_first);
+        % Update matrix A
+        [A1, temp_NS0] = update_matrix_A1(A0, A1, temp_NS, temp_NS0, temp_ind, temp_ind_E);
+        % Compute STOP criteria
+        STOP = compute_STOP(NP_0, NP, x(end), N0(temp_ind, 1), x(1:temp_NS));
+    end
+    % Check convergence of charge balance (ionized species)
+    [N0, STOP_ions] = check_convergence_ions(N0, A0, E.ind_E, temp_ind_nswt, temp_ind_ions, TN.tolN, TN.tol_pi_e);
 end
 % NESTED FUNCTIONS
 function g0 = set_g0(ls, TP, DB)

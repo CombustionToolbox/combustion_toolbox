@@ -1,12 +1,12 @@
-function [str1, str2] = det_oblique(varargin)
+function [mix1, mix2] = det_oblique(varargin)
     % Solve oblique detonation
 
     % Unpack input data
-    [self, str1, str2] = unpack(varargin);
+    [self, mix1, mix2] = unpack(varargin);
     % Solve first case for initialization
-    [str1, str2] = cj_detonation(self, str1, str2);
+    [mix1, mix2] = cj_detonation(self, mix1, mix2);
 
-    w_min = velocity_relative(str1);
+    w_min = velocity_relative(mix1);
     w_max = w_min * max(self.PD.overdriven.value);
     w1 = w_min * self.PD.overdriven.value;
     N = length(w1);
@@ -15,14 +15,14 @@ function [str1, str2] = det_oblique(varargin)
     v = w_max .* cos(beta);
 
     % Solve first case for inicialization
-    [str1, str2] = shock_incident(self, str1, w1(end), str2);
+    [mix1, mix2] = shock_incident(self, mix1, w1(end), mix2);
     % Loop
     for i = N:-1:1
-        [str1, str2] = shock_incident(self, str1, w1(i), str2);
-        a2(i) = soundspeed(str2);
-        ratio = density(str1) /density(str2);
+        [mix1, mix2] = shock_incident(self, mix1, w1(i), mix2);
+        a2(i) = soundspeed(mix2);
+        ratio = density(mix1) /density(mix2);
         w2(i) = w1(i) * ratio;
-        p2(i) = pressure(str2);
+        p2(i) = pressure(mix2);
         theta(i) = beta(i) - atan(w2(i) / sqrt(w_max^2 - w1(i)^2));
         u2(i) = sqrt(w2(i)^2 + v(i)^2);
     end

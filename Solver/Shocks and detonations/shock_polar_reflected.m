@@ -1,13 +1,13 @@
-function [str1, str2, str5, str5_2] = shock_polar_reflected(varargin)
+function [mix1, mix2, mix5, mix5_2] = shock_polar_reflected(varargin)
     % Solve oblique shock
 
     % Unpack input data
-    [self, str1, str2, str5] = unpack(varargin);
+    [self, mix1, mix2, mix5] = unpack(varargin);
     % Abbreviations
     config = self.Misc.config;
     % Definitions
-    a2 = soundspeed(str2);
-    u2 = str2.u;
+    a2 = soundspeed(mix2);
+    u2 = mix2.u;
     M2 = u2/a2;
     step = 5; % [m/s]
     u2n = linspace(a2 + 1, u2, (u2 - a2) / step);
@@ -16,13 +16,13 @@ function [str1, str2, str5, str5_2] = shock_polar_reflected(varargin)
     beta_min = asin(a2 / u2);
     theta = self.PD.theta.value * 180/pi;
     % Solve first case for initialization
-    [~, ~, str5, str5_2] = shock_oblique_reflected_theta(self, str1, str2.u, str2.theta_range(end) * pi/180, str2, str5);
+    [~, ~, mix5, mix5_2] = shock_oblique_reflected_theta(self, mix1, mix2.u, mix2.theta_range(end) * pi/180, mix2, mix5);
     % Loop
     for i = N:-1:1
-        [~, ~, str5, str5_2] = shock_oblique_reflected_theta(self, str1, str2.u, str2.theta_range(end) * pi/180, str2, str5);
-        a5(i) = soundspeed(str5);
-        u5n(i) = str5.v_shock;
-        p2(i) = pressure(str5);
+        [~, ~, mix5, mix5_2] = shock_oblique_reflected_theta(self, mix1, mix2.u, mix2.theta_range(end) * pi/180, mix2, mix5);
+        a5(i) = soundspeed(mix5);
+        u5n(i) = mix5.v_shock;
+        p2(i) = pressure(mix5);
         u5(i) = u5n(i) * csc(beta(i) - theta(i));
     end
 
@@ -36,21 +36,21 @@ function [str1, str2, str5, str5_2] = shock_polar_reflected(varargin)
     % Max deflection angle
     [theta_max, ind_max] = max(theta * 180/pi); % [deg]
     % Save results
-    str5.beta = beta(end) * 180/pi;             % [deg]
-    str5.theta = theta(end) * 180/pi;           % [deg]
-    str5.theta_max = theta_max;                 % [deg]
-    str5.beta_min = beta_min * 180/pi;          % [deg]
-    str5.beta_max = beta(ind_max) * 180/pi;     % [deg]
-    str5.theta_sonic = theta_sonic;             % [deg]
-    str5.beta_sonic = beta(ind_sonic) * 180/pi; % [deg]
+    mix5.beta = beta(end) * 180/pi;             % [deg]
+    mix5.theta = theta(end) * 180/pi;           % [deg]
+    mix5.theta_max = theta_max;                 % [deg]
+    mix5.beta_min = beta_min * 180/pi;          % [deg]
+    mix5.beta_max = beta(ind_max) * 180/pi;     % [deg]
+    mix5.theta_sonic = theta_sonic;             % [deg]
+    mix5.beta_sonic = beta(ind_sonic) * 180/pi; % [deg]
     
-    str5.un = u5n;
+    mix5.un = u5n;
     % Plot (pressure, deflection) - shock polar
 	figure(1); ax = gca;
     set(ax, 'LineWidth', config.linewidth, 'FontSize', config.fontsize-2, 'BoxStyle', 'full')
     grid(ax, 'off'); box(ax, 'off'); hold(ax, 'on'); ax.Layer = 'Top'; axis(ax, 'tight')
 
-	plot(ax, [-flip(theta), theta] * 180/pi, [flip(p2), p2] / pressure(str2), 'k', 'LineWidth', config.linewidth);
+	plot(ax, [-flip(theta), theta] * 180/pi, [flip(p2), p2] / pressure(mix2), 'k', 'LineWidth', config.linewidth);
 %     plot(ax, theta_max, p2(ind_max), 'ko', 'LineWidth', config.linewidth, 'MarkerFaceColor', 'auto');
 %     plot(ax, theta(ind_sonic) * 180/pi, p2(ind_sonic), 'ks', 'LineWidth', config.linewidth, 'MarkerFaceColor', 'auto');
     text(ax, 0, max(p2), strcat('$\mathcal{M}_1 = ', sprintf('%.2g', M2), '$'), 'VerticalAlignment', 'bottom', 'HorizontalAlignment', 'center', 'FontSize', config.fontsize-8, 'Interpreter', 'latex')

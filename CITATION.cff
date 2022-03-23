@@ -61,10 +61,10 @@ cff-version: "1.1.0"
 keywords: 
   - thermochemistry
   - "chemical-equilibrium"
+  - ionization
   - hypersonics
   - shock waves
-  - detonatio
-  - ionization
+  - detonation
   - MATLAB
   - app
   - toolbox

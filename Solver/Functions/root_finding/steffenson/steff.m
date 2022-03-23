@@ -1,13 +1,13 @@
-function [x, ERR] = steff(self, strR, pP, attr_name, x)
+function [x, STOP] = steff(self, strR, pP, attr_name, x)
     % Steffenson method for finding roots
     if any(strcmpi(self.PD.ProblemType, {'TP', 'TV'}))
         x = get_transformation(self, 'TP');
-        ERR = 0;
+        STOP = 0;
         return
     end
-    it = 0; g = 1.0; ERR = 1.0;
+    it = 0; g = 1.0; STOP = 1.0;
     
-    while ERR > self.TN.tol0 && it < self.TN.itMax
+    while STOP > self.TN.tol0 && it < self.TN.itMax
         it = it + 1;
         [g, g_rel]= get_gpoint(self, strR, pP, attr_name, x);
         fx = abs(g - x);
@@ -19,7 +19,7 @@ function [x, ERR] = steff(self, strR, pP, attr_name, x)
             x = fx;
         end
 
-        ERR = max(abs((x - fx) / x), abs(g_rel));
+        STOP = max(abs((x - fx) / x), abs(g_rel));
     end
-    print_error_root(it, self.TN.itMax, x, ERR);
+    print_error_root(it, self.TN.itMax, x, STOP);
 end

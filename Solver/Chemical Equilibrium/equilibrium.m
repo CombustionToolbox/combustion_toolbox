@@ -1,102 +1,102 @@
 function [N0, STOP] = equilibrium(self, pP, TP, strR)
-% Generalized Gibbs minimization method
-
-% Abbreviations ---------------------
-S = self.S;
-C = self.C;
-TN = self.TN;
-% -----------------------------------
-
-N0 = C.N0.value;
-A0 = C.A0.value;
-R0TP = C.R0 * TP; % [J/(mol)]
-% Initialization
-NatomE = strR.NatomE;
-NP_0 = 0.1;
-NP = NP_0;
-
-SIZE = -log(TN.tolN);
-
-% Find indeces of the species/elements that we have to remove from the stoichiometric matrix A0
-% for the sum of elements whose value is <= tolN
-ind_A0_E0 = remove_elements(NatomE, A0, TN.tolN);
-% List of indices with nonzero values
-[temp_ind_nswt, temp_ind_swt, temp_ind_cryogenic, temp_ind_E, temp_NE] = temp_values(S, NatomE, TN.tolN);
-% Update temp values
-[temp_ind, temp_ind_swt, temp_ind_nswt, temp_NG, ~] = update_temp(N0, N0(ind_A0_E0, 1), ind_A0_E0, temp_ind_swt, temp_ind_nswt, NP, SIZE);
-[temp_ind, temp_ind_swt, temp_NS] = check_cryogenic(temp_ind, temp_ind_swt, temp_ind_cryogenic);
-temp_NS0 = temp_NS + 1;
-
-temp_ind_swt_0 = temp_ind_swt;
-temp_ind_swt = [];
-temp_ind = [temp_ind_nswt, temp_ind_swt];
-temp_NS = length(temp_ind);
-% Initialize species vector N0 
-N0(temp_ind_nswt, 1) = NP_0/temp_NG;
-% Standard Gibbs free energy 
-g0 = set_g0(S.LS, TP, self.DB);
-% Dimensionless Chemical potential
-muRT = g0/R0TP;
-% Construction of part of matrix A
-[A1, temp_NS0] = update_matrix_A1(A0, [], temp_NG, temp_NS, temp_NS0, temp_ind, temp_ind_E);
-A22 = zeros(temp_NE + 1);
-A0_T = A0';
-% Solve system
-x = equilibrium_loop;
-% Check condensed species
-[temp_ind, temp_ind_swt, FLAG] = check_condensed_species(A0, x, temp_ind_nswt, temp_ind_swt_0, temp_ind_E, temp_NS, muRT);
-
-if FLAG
-    if any(isnan(x))
-        NP = NP_0;
-        [temp_ind_nswt, temp_ind_swt, temp_ind_cryogenic, temp_ind_E, temp_NE] = temp_values(S, NatomE, TN.tolN);
-        % Update temp values
-        [temp_ind, temp_ind_swt, temp_ind_nswt, temp_NG, ~] = update_temp(N0, N0(ind_A0_E0, 1), ind_A0_E0, temp_ind_swt, temp_ind_nswt, NP, SIZE);
-        [temp_ind, temp_ind_swt, temp_NS] = check_cryogenic(temp_ind, temp_ind_swt, temp_ind_cryogenic);
-        temp_NS0 = temp_NS + 1;
-        % Initialize species vector N0 
-        N0(:, 1) = NP_0/temp_NS;
-        % Construction of part of matrix A
-        [A1, temp_NS0] = update_matrix_A1(A0, [], temp_NG, temp_NS, temp_NS0, temp_ind, temp_ind_E);
-        A22 = zeros(temp_NE + 1);
-        A0_T = A0';
-    end
-    STOP = 1;
+    % Generalized Gibbs minimization method
+    
+    % Abbreviations ---------------------
+    S = self.S;
+    C = self.C;
+    TN = self.TN;
+    % -----------------------------------
+    
+    N0 = C.N0.value;
+    A0 = C.A0.value;
+    R0TP = C.R0 * TP; % [J/(mol)]
+    % Initialization
+    NatomE = strR.NatomE;
+    NP_0 = 0.1;
+    NP = NP_0;
+    
+    SIZE = -log(TN.tolN);
+    
+    % Find indeces of the species/elements that we have to remove from the stoichiometric matrix A0
+    % for the sum of elements whose value is <= tolN
+    ind_A0_E0 = remove_elements(NatomE, A0, TN.tolN);
+    % List of indices with nonzero values
+    [temp_ind_nswt, temp_ind_swt, temp_ind_cryogenic, temp_ind_E, temp_NE] = temp_values(S, NatomE, TN.tolN);
+    % Update temp values
+    [temp_ind, temp_ind_swt, temp_ind_nswt, temp_NG, ~] = update_temp(N0, N0(ind_A0_E0, 1), ind_A0_E0, temp_ind_swt, temp_ind_nswt, NP, SIZE);
+    [temp_ind, temp_ind_swt, temp_NS] = check_cryogenic(temp_ind, temp_ind_swt, temp_ind_cryogenic);
+    temp_NS0 = temp_NS + 1;
+    
+    temp_ind_swt_0 = temp_ind_swt;
+    temp_ind_swt = [];
+    temp_ind = [temp_ind_nswt, temp_ind_swt];
     temp_NS = length(temp_ind);
-    [A1, temp_NS0] = update_matrix_A1(A0, A1, temp_NG, temp_NS, temp_NS0, temp_ind, temp_ind_E);
-    equilibrium_loop;
-end
-% NESTED FUNCTION
-function x = equilibrium_loop
-    it = 0;
-    itMax = 50 + round(S.NS/2);
-    STOP = 1.;
-    while STOP > TN.tolN && it < itMax
-        it = it + 1;
-        % Chemical potential
-        muRT(temp_ind_nswt) =  g0(temp_ind_nswt) / R0TP + log(N0(temp_ind_nswt, 1) / NP) + log(pP);
-        % Construction of matrix A
-        A = update_matrix_A(A0_T, A1, A22, N0, NP, temp_ind, temp_ind_nswt, temp_ind_swt, temp_ind_E, temp_NG);
-        % Construction of vector b            
-        b = update_vector_b(A0, N0, NP, NatomE, temp_ind, temp_ind_E, temp_ind_nswt, muRT);
-        % Solve of the linear system A*x = b
-        x = A\b;
-        % Calculate correction factor
-        lambda = relax_factor(NP, N0(temp_ind, 1), x(1:temp_NS), x(end), temp_NG, SIZE);
-        % Apply correction
-        N0(temp_ind_nswt, 1) = log(N0(temp_ind_nswt, 1)) + lambda * x(1:temp_NG);
-        N0(temp_ind_swt, 1) = N0(temp_ind_swt, 1) + lambda * x(temp_NG+1:temp_NS);
-        NP_log = log(NP) + lambda * x(end);
-        % Apply antilog
-        [N0, NP] = apply_antilog(N0, NP_log, temp_ind_nswt);
-        % Update temp values in order to remove species with moles < tolerance
-        [temp_ind, temp_ind_swt, temp_ind_nswt, temp_NG, temp_NS] = update_temp(N0, N0(temp_ind, 1), temp_ind, temp_ind_swt, temp_ind_nswt, NP, SIZE);
-        % Update matrix A
+    % Initialize species vector N0
+    N0(temp_ind_nswt, 1) = NP_0/temp_NG;
+    % Standard Gibbs free energy
+    g0 = set_g0(S.LS, TP, self.DB);
+    % Dimensionless Chemical potential
+    muRT = g0/R0TP;
+    % Construction of part of matrix A
+    [A1, temp_NS0] = update_matrix_A1(A0, [], temp_NG, temp_NS, temp_NS0, temp_ind, temp_ind_E);
+    A22 = zeros(temp_NE + 1);
+    A0_T = A0';
+    % Solve system
+    x = equilibrium_loop;
+    % Check condensed species
+    [temp_ind, temp_ind_swt, FLAG] = check_condensed_species(A0, x, temp_ind_nswt, temp_ind_swt_0, temp_ind_E, temp_NS, muRT);
+    
+    if FLAG
+        if any(isnan(x))
+            NP = NP_0;
+            [temp_ind_nswt, temp_ind_swt, temp_ind_cryogenic, temp_ind_E, temp_NE] = temp_values(S, NatomE, TN.tolN);
+            % Update temp values
+            [temp_ind, temp_ind_swt, temp_ind_nswt, temp_NG, ~] = update_temp(N0, N0(ind_A0_E0, 1), ind_A0_E0, temp_ind_swt, temp_ind_nswt, NP, SIZE);
+            [temp_ind, temp_ind_swt, temp_NS] = check_cryogenic(temp_ind, temp_ind_swt, temp_ind_cryogenic);
+            temp_NS0 = temp_NS + 1;
+            % Initialize species vector N0 
+            N0(:, 1) = NP_0/temp_NS;
+            % Construction of part of matrix A
+            [A1, temp_NS0] = update_matrix_A1(A0, [], temp_NG, temp_NS, temp_NS0, temp_ind, temp_ind_E);
+            A22 = zeros(temp_NE + 1);
+            A0_T = A0';
+        end
+        STOP = 1;
+        temp_NS = length(temp_ind);
         [A1, temp_NS0] = update_matrix_A1(A0, A1, temp_NG, temp_NS, temp_NS0, temp_ind, temp_ind_E);
-        % Compute STOP criteria
-        STOP = compute_STOP(NP_0, NP, x(end), N0(temp_ind, 1), x(1:temp_NS), temp_NG);
+        equilibrium_loop;
     end
-end
+    % NESTED FUNCTION
+    function x = equilibrium_loop
+        it = 0;
+        itMax = 50 + round(S.NS/2);
+        STOP = 1.;
+        while STOP > TN.tolN && it < itMax
+            it = it + 1;
+            % Chemical potential
+            muRT(temp_ind_nswt) =  g0(temp_ind_nswt) / R0TP + log(N0(temp_ind_nswt, 1) / NP) + log(pP);
+            % Construction of matrix A
+            A = update_matrix_A(A0_T, A1, A22, N0, NP, temp_ind, temp_ind_nswt, temp_ind_swt, temp_ind_E, temp_NG);
+            % Construction of vector b            
+            b = update_vector_b(A0, N0, NP, NatomE, temp_ind, temp_ind_E, temp_ind_nswt, muRT);
+            % Solve of the linear system A*x = b
+            x = A\b;
+            % Calculate correction factor
+            lambda = relax_factor(NP, N0(temp_ind, 1), x(1:temp_NS), x(end), temp_NG, SIZE);
+            % Apply correction
+            N0(temp_ind_nswt, 1) = log(N0(temp_ind_nswt, 1)) + lambda * x(1:temp_NG);
+            N0(temp_ind_swt, 1) = N0(temp_ind_swt, 1) + lambda * x(temp_NG+1:temp_NS);
+            NP_log = log(NP) + lambda * x(end);
+            % Apply antilog
+            [N0, NP] = apply_antilog(N0, NP_log, temp_ind_nswt);
+            % Update temp values in order to remove species with moles < tolerance
+            [temp_ind, temp_ind_swt, temp_ind_nswt, temp_NG, temp_NS] = update_temp(N0, N0(temp_ind, 1), temp_ind, temp_ind_swt, temp_ind_nswt, NP, SIZE);
+            % Update matrix A
+            [A1, temp_NS0] = update_matrix_A1(A0, A1, temp_NG, temp_NS, temp_NS0, temp_ind, temp_ind_E);
+            % Compute STOP criteria
+            STOP = compute_STOP(NP_0, NP, x(end), N0(temp_ind, 1), x(1:temp_NS), temp_NG);
+        end
+    end
 end
 
 % SUB-PASS FUNCTIONS

@@ -68,7 +68,16 @@ elseif strcmp(ProblemType,{'SV'}) && length(phi) > 1
     plot_figure(self.PD.vP_vR.value, mix2,'v_P/v_R','T',self.Misc.config,self.PD.CompleteOrIncomplete);  
     T = cell2vector(mix2, 'T');
     displaysweepresults(self, mix2, T);
-    
+elseif strcmp(ProblemType,{'SHOCK_POLAR'})
+    % Shock polars
+    plot_shock_polar(self, mix1, mix2)
+%     % Incident velocity [m/s] againts molar fractions [-] 
+%     self.Misc.config.labelx = 'Incident velocity $u_1$ [m/s]';
+%     self.Misc.config.labely = 'Molar fraction $X_i$';
+%     for i = length(mix2):-1:1
+%         beta = cell2vector(mix2{i}.polar, 'beta');
+%         displaysweepresults(self, mix2{i}.polar, beta);
+%     end
 elseif strcmp(ProblemType,{'SHOCK_I'}) && length(phi) > 1
     self.Misc.config.labelx = 'Incident velocity $u_1$ [m/s]';
     self.Misc.config.labely = 'Temperature $T$ [K]';

@@ -1,7 +1,8 @@
 function gui_add_nodes_validations(obj, code_validation_name)
     % Add nodes with the name of the validations routines
     try
-        filenames = dir(strcat('.\Validations\', code_validation_name, '\*.m'));
+        mfiledir = fileparts(fileparts(fileparts(mfilename('fullpath'))));
+        filenames = dir(fullfile(mfiledir, 'Validations', code_validation_name, '*.m'));
         for i = 1:length(filenames)
             uitreenode(obj.(code_validation_name), 'Text', filenames(i).name);
         end

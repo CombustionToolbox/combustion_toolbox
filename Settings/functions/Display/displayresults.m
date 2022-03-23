@@ -216,10 +216,10 @@ elseif nargin == 7
     fprintf('--------------------------------------------------------------------------------------\n');
     fprintf('Problem type: %s  | phi = %4.4f\n',ProblemType, equivalenceRatio(mix1));
     fprintf('--------------------------------------------------------------------------------------\n');
-    if contains(ProblemType, '_R')
-        fprintf('               |     STATE 1     |     STATE 2     |     STATE 3     |     STATE 4\n');
-    elseif contains(ProblemType, '_OBLIQUE')
+    if contains(ProblemType, '_OBLIQUE')
         fprintf('               |     STATE 1     |     STATE 2     |     STATE 3-W   |     STATE 3-S\n');
+    elseif contains(ProblemType, '_R')
+        fprintf('               |     STATE 1     |     STATE 2     |     STATE 3     |     STATE 4\n');
     else
         fprintf('               |  INLET CHAMBER  | OUTLET CHAMBER  |     THROAT      |     EXIT\n');
     end
@@ -301,10 +301,10 @@ elseif nargin == 7
     fprintf('MINORS[+%d] %s     %12.4e\n\n', Nminor, s_space_Nminor, Xminor);
     fprintf('TOTAL            %14.4e\n', sum(mix2.Xi));
     fprintf('--------------------------------------------------------------------------------------\n');
-    if contains(ProblemType, '_R')
-        fprintf('STATE 3                 Xi [-]\n');
-    elseif contains(ProblemType, '_OBLIQUE')
+    if contains(ProblemType, '_OBLIQUE')
         fprintf('STATE 3-WEAK SHOCK      Xi [-]\n');
+    elseif contains(ProblemType, '_R')
+        fprintf('STATE 3                 Xi [-]\n');
     else
         fprintf('THROAT                  Xi [-]\n');
     end
@@ -324,10 +324,10 @@ elseif nargin == 7
     fprintf('MINORS[+%d] %s     %12.4e\n\n', Nminor, s_space_Nminor, Xminor);
     fprintf('TOTAL            %14.4e\n',sum(mix3.Xi));
     fprintf('--------------------------------------------------------------------------------------\n');
-    if contains(ProblemType, '_R')
-        fprintf('STATE 4                 Xi [-]\n');
-    elseif contains(ProblemType, '_OBLIQUE')
+    if contains(ProblemType, '_OBLIQUE')
         fprintf('STATE 3-STRONG SHOCK    Xi [-]\n');
+    elseif contains(ProblemType, '_R')
+        fprintf('STATE 4                 Xi [-]\n');
     else
         fprintf('EXIT                    Xi [-]\n');
     end

@@ -12,6 +12,15 @@ function [str1, str2, str5_1, str5_2] = shock_oblique_reflected_theta(varargin)
     theta = str2.theta * pi/180; % [rad]
     beta_min = asin(1/M2);     % [rad]
     beta_max = pi/2;           % [rad]
+    % Obtain maximum deflection angle
+    [~, str5_polar] = shock_polar(self, str2, u2);
+    theta_max_reflected = str5_polar.theta_max * pi/180;
+    % Check if theta is in the range for a Regular Reflection (RR)
+    if theta > theta_max_reflected
+        error(['There is not Regular Reflection (RR) solution for the given conditions:\n' ...
+              '   * incident velocity [m/s] %.2f\n' ...
+              '   * wave angle [deg]        %.2f\n'], str1.u, str2.beta * 180/pi);
+    end
     % Solve first branch  (weak shock)
     beta_guess = 0.5 * (beta_min + beta_max); % [rad]
     str5_1 = solve_shock_oblique(str5);
@@ -26,7 +35,7 @@ function [str1, str2, str5_1, str5_2] = shock_oblique_reflected_theta(varargin)
             it = it + 1;
             
             u2n = u2 * sin(beta_guess); % [m/s]
-            [~, str2, str5] = shock_reflected(self, str1, u2n, str2, str5);
+            [~, str5] = shock_incident(self, str2, u2n);
             u5n = str5.v_shock;
             % Compute f0 and df0
             f0 = f0_beta(beta_guess, theta, u5n, u2);

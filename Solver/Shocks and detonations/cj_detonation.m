@@ -1,8 +1,8 @@
-function [str1, str2] = cj_detonation(varargin)
+function [mix1, mix2] = cj_detonation(varargin)
     % Solve Chapman-Jouguet detonation
 
     % Unpack input data
-    [self, str1, str2] = unpack(varargin);
+    [self, mix1, mix2] = unpack(varargin);
     % Abbreviations 
     C = self.C;
     TN = self.TN;
@@ -12,14 +12,14 @@ function [str1, str2] = cj_detonation(varargin)
     it = 0;
     itMax = TN.it_shocks;
     % Initial estimates of p2/p1 and T2/T1
-    [p2, T2, p2p1, T2T1, STOP] = get_guess(self, str1, str2);
+    [p2, T2, p2p1, T2T1, STOP] = get_guess(self, mix1, mix2);
     T_guess = T2;
     p_guess = p2;
     % Loop
     while STOP > TN.tol_shocks && it < itMax
         it = it + 1;
         % Construction of the Jacobian matrix and vector b
-        [J, b] = update_system(self, str1, p2, T2, R0);
+        [J, b] = update_system(self, mix1, p2, T2, R0);
         % Solve of the linear system A*x = b
         x = J\b;
         % Calculate correction factor
@@ -27,19 +27,19 @@ function [str1, str2] = cj_detonation(varargin)
         % Apply correction
         [log_p2p1, log_T2T1] = apply_correction(x, p2p1, T2T1, lambda);
         % Apply antilog
-        [p2, T2] = apply_antilog(str1, log_p2p1, log_T2T1); % [Pa] and [K]
+        [p2, T2] = apply_antilog(mix1, log_p2p1, log_T2T1); % [Pa] and [K]
         % Update ratios
-        p2p1 = p2 / (str1.p * 1e5);
-        T2T1 = T2 / str1.T;
+        p2p1 = p2 / (mix1.p * 1e5);
+        T2T1 = T2 / mix1.T;
         % Compute STOP criteria
         STOP = compute_STOP(x);
     end
     % Check convergence
     print_convergence(STOP, TN.tol_shocks);
     % Save state
-    [str1, str2] = save_state(self, str1, T2, p2, STOP);
-    str2.T_guess = T_guess;
-    str2.p_guess = p_guess;
+    [mix1, mix2] = save_state(self, mix1, T2, p2, STOP);
+    mix2.T_guess = T_guess;
+    mix2.p_guess = p_guess;
 end
 % SUB-PASS FUNCTIONS
 function [self, str1, str2] = unpack(x)

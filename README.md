@@ -44,7 +44,7 @@ Features
   - Chapman-Jouguet detonations and overdriven detonations
   - Reflected detonations
   - Oblique shocks/detonations
-  - Shock polar solutions incident and reflected states, considering dissociation, ionization, and recombinantion in multi-species mixtures
+  - Shock polar for incident and reflected states
   - Hugoniot curves
   - Ideal jump conditions for a given adiabatic index and pre-shock Mach number
 * `Rocket propellant performance assuming:`

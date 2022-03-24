@@ -33,7 +33,7 @@ self.PD.S_Inert    = {'N2', 'Ar', 'CO2'};
 self.PD.proportion_inerts_O2 = [78.084, 0.9365, 0.0319] ./ 20.9476;
 %% ADDITIONAL INPUTS (DEPENDS OF THE PROBLEM SELECTED)
 overdriven = 10;
-self = set_prop(self, 'u1', 3.472107491008314e+02 * overdriven, 'beta', 35);
+self = set_prop(self, 'u1', 3.472107491008314e+02 * overdriven, 'theta', 20);
 %% SOLVE PROBLEM
 self = SolveProblem(self, 'SHOCK_OBLIQUE_R');
 %% DISPLAY RESULTS (PLOTS)

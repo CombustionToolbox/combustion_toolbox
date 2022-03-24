@@ -22,7 +22,9 @@ end
 % SUB-PASS FUNCTIONS
 function ax = set_fixed_figure(fixed_number, config)
     % Generate a figure with a defined object identifier (fixed_number)
-    figure(fixed_number); ax = gca;
+    fig = figure(fixed_number);
+    ax = gca;
+    set(fig, 'position', [1921 -471 1080 1795]);
     set(ax, 'LineWidth', config.linewidth, 'FontSize', config.fontsize-2, 'BoxStyle', 'full');
     grid(ax, 'off'); box(ax, 'off'); hold(ax, 'on'); ax.Layer = 'Top'; axis(ax, 'tight');
 end
@@ -56,7 +58,7 @@ function ax = plot_shock_polar_wave(mix1, mix2, config)
     xlabel(ax, 'Deflection angle $[^\circ]$','FontSize', config.fontsize, 'Interpreter', 'latex');
     ylabel(ax, 'Wave angle $[^\circ]$','FontSize', config.fontsize, 'Interpreter', 'latex');
 %     xlim(ax, [0, mix2.theta_max]);
-    ylim(ax, [0, 90]);
+    ylim(ax, [0, 90.001]);
 end
 
 function ax = plot_shock_polar_velocities(mix1, mix2, config)

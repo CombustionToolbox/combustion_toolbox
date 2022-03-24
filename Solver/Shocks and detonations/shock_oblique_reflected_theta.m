@@ -19,7 +19,7 @@ function [str1, str2, str5_1, str5_2] = shock_oblique_reflected_theta(varargin)
     if theta > theta_max_reflected
         error(['There is not Regular Reflection (RR) solution for the given conditions:\n' ...
               '   * incident velocity [m/s] %.2f\n' ...
-              '   * wave angle [deg]        %.2f\n'], str1.u, str2.beta * 180/pi);
+              '   * wave angle [deg]        %.2f\n'], str1.u, str2.beta);
     end
     % Solve first branch  (weak shock)
     beta_guess = 0.5 * (beta_min + beta_max); % [rad]

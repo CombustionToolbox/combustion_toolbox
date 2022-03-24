@@ -4,8 +4,10 @@ function [fig1, fig2] = plot_validation_shock_polar_SDToolbox(results_CT, result
     %   * Wave angle [deg] with the deflection angle [deg]
     
     % Set figures
-    fig1 = figure(1); set(fig1, 'position', [1921 -471 1080 1795]);
-    fig2 = figure(2); set(fig2, 'position', [1921 -471 1080 1795]);
+    fig1 = figure(1);
+    fig2 = figure(2);
+    set(fig1, 'position', [1921 -471 1080 1795]);
+    set(fig2, 'position', [1921 -471 1080 1795]);
     % Shock polars from Combustion Toolbox
     [ax1, ax2] = plot_shock_polar(results_CT, results_CT.PS.strR, results_CT.PS.strP);
     % Shock polars from SDToolbox

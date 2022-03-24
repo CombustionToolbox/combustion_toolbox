@@ -3,22 +3,31 @@ function [mix1, mix2] = shock_polar(varargin)
 
     % Unpack input data
     [self, mix1, mix2] = unpack(varargin);
+    % Abbreviations
+    TN = self.TN;
     % Definitions
     a1 = soundspeed(mix1);
     u1 = mix1.u;
-    step = 5; % [m/s]
-    u1n = linspace(a1 + 1, u1, (u1 - a1) / step);
-    N = length(u1n);
-    beta = asin(u1n ./ u1);
+
     beta_min = asin(a1 / u1);
-    un = u1 .* cos(beta);
+    beta = linspace(beta_min, pi/2, TN.N_points_polar);
+    u1n = u1 * sin(beta);
+
+%     % Compute as SDToolbox
+%     step = 5; % [m/s]
+%     u1n = linspace(a1 + 1, u1, (u1 - a1) / step);
+%     beta = asin(u1n ./ u1);
+%     beta_min = asin(a1 / u1);
+
+    N = length(u1n);
+    ut = u1 .* cos(beta);
     % Loop
     for i = N:-1:1
         [~, mix2] = shock_incident(self, mix1, u1n(i), mix2);
         a2(i) = soundspeed(mix2);
         u2n(i) = mix2.v_shock;
         p2(i) = pressure(mix2);
-        theta(i) = beta(i) - atan(u2n(i) / un(i));
+        theta(i) = beta(i) - atan(u2n(i) / ut(i));
         u2(i) = u2n(i) * csc(beta(i) - theta(i));
         Xi(:, i) = mix2.Xi;
     end

@@ -1,10 +1,10 @@
 % -------------------------------------------------------------------------
-% EXAMPLE: SHOCK_OBLIQUE_R
+% EXAMPLE: SHOCK_OBLIQUE_BETA
 %
-% Compute pre-shock and post-shock state (incident and reflected) for a
-% oblique incident shock wave at standard conditions, a set of 20 species
-% considered, a initial shock front velocities u1 = a1 * 10 [m/s], and a
-% deflection angle theta = 20 [deg]
+% Compute pre-shock and post-shock state for a oblique incident shock wave
+% at standard conditions, a set of 20 species considered, a initial 
+% shock front velocities u1 = a1 * 10 [m/s], and a set of wave angles
+% beta = [20:5:85] [deg]
 %    
 % Air_ions == {'O2','N2','O','O3','N','NO','NO2','NO3','N2O','N2O3',...
 %              'N2O4','N3','eminus','Nminus','Nplus','NOplus','NO2minus',...
@@ -33,8 +33,8 @@ self.PD.S_Inert    = {'N2', 'Ar', 'CO2'};
 self.PD.proportion_inerts_O2 = [78.084, 0.9365, 0.0319] ./ 20.9476;
 %% ADDITIONAL INPUTS (DEPENDS OF THE PROBLEM SELECTED)
 overdriven = 10;
-self = set_prop(self, 'u1', 3.472107491008314e+02 * overdriven, 'theta', 20);
+self = set_prop(self, 'u1', 3.472107491008314e+02 * overdriven, 'beta', 20:5:85);
 %% SOLVE PROBLEM
-self = SolveProblem(self, 'SHOCK_OBLIQUE_R');
+self = SolveProblem(self, 'SHOCK_OBLIQUE');
 %% DISPLAY RESULTS (PLOTS)
 postResults(self);

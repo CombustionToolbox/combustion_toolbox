@@ -12,7 +12,9 @@
 %   * SHOCK_I ------------> Planar incident shock wave
 %   * SHOCK_R ------------> Planar reflected shock wave
 %   * SHOCK_OBLIQUE ------> Oblique incident shock wave
+%   * SHOCK_OBLIQUE_R ----> Oblique incident and reflected shock wave states
 %   * SHOCK_POLAR --------> Shock polar plots
+%   * SHOCK_POLAR_R ------> Shock polar plots for incident and reflected states
 %   * SHOCK_IDEAL_GAS ----> Planar incident shock wave for a fixed adibatic index
 %   * DET ----------------> Chapman-Jouguet Detonation
 %   * DET_R --------------> Reflected Chapman-Jouguet Detonation
@@ -35,8 +37,11 @@
 %   * Example_SHOCK_I
 %   * Example_SHOCK_I_IONIZATION
 %   * Example_SHOCK_R
-%   * Example_SHOCK_OBLIQUE
+%   * Example_SHOCK_OBLIQUE_BETA
+%   * Example_SHOCK_OBLIQUE_THETA
+%   * Example_SHOCK_OBLIQUE_R
 %   * Example_SHOCK_POLAR
+%   * Example_SHOCK_POLAR_R
 %   * Example_DET
 %   * Example_DET_R
 %   * Example_DET_OVERDRIVEN
@@ -50,7 +55,7 @@
 %          PhD Candidate - Group Fluid Mechanics
 %          Universidad Carlos III de Madrid
 %                  
-% Last update March 18 2022
+% Last update March 24 2022
 % -------------------------------------------------------------------------
 help Combustion_Toolbox.m
 

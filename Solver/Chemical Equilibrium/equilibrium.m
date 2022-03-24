@@ -184,7 +184,7 @@ end
 
 function [temp_ind, temp_ind_swt, temp_NS] = check_cryogenic(temp_ind, temp_ind_swt, temp_ind_cryogenic)
     temp_ind = temp_ind(~ismember(temp_ind, temp_ind_cryogenic));
-    temp_ind_swt = temp_ind(~ismember(temp_ind_swt, temp_ind_cryogenic));
+    temp_ind_swt = temp_ind_swt(~ismember(temp_ind_swt, temp_ind_cryogenic));
     temp_NS = length(temp_ind);
 end
 

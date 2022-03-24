@@ -10,6 +10,7 @@ function self = TunningProperties()
     self.root_T0   = 2000;      % Guess T[K] if it's of previous range - root finding method
     self.tol_oblique = 1e-3;    % Tolerance oblique shocks
     self.it_oblique = 30;       % Max number of iterations - oblique shocks
+    self.N_points_polar = 100;  % Number of points to compute shock polar
     self.tol_shocks = 5e-5;     % Tolerance of shocks routines
     self.it_shocks = 50;        % Max number of iterations - shocks and detonations
     self.volumeBoundRation = 5; % Initial guess ratio shocks

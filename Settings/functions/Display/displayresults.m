@@ -130,8 +130,8 @@ elseif nargin == 6
             fprintf('wave angle[deg]|                 |   %12.4f  |   %12.4f\n', mix2.beta, mix3.beta);
             fprintf('deflection[deg]|                 |   %12.4f  |   %12.4f\n', mix2.theta, mix3.theta);
         else
-            fprintf('max def.  [deg]|                 |   %12.4f  |   %12.4f\n', mix2.theta_max);
-            fprintf('sonic def.[deg]|                 |   %12.4f  |   %12.4f\n', mix2.theta_sonic);
+            fprintf('max def.  [deg]|                 |   %12.4f  |   %12.4f\n', mix2.theta_max, mix3.theta_max);
+            fprintf('sonic def.[deg]|                 |   %12.4f  |   %12.4f\n', mix2.theta_sonic, mix3.theta_sonic);
         end
     elseif strcmpi(ProblemType, 'ROCKET')
         fprintf('------------------------------------------------------------------------\n');

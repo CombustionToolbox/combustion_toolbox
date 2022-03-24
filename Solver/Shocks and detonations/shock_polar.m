@@ -13,7 +13,7 @@ function [mix1, mix2] = shock_polar(varargin)
     beta = linspace(beta_min, pi/2, TN.N_points_polar);
     u1n = u1 * sin(beta);
 
-%     % Compute as SDToolbox
+%     % Compute as SDToolbox for comparison
 %     step = 5; % [m/s]
 %     u1n = linspace(a1 + 1, u1, (u1 - a1) / step);
 %     beta = asin(u1n ./ u1);

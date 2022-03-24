@@ -27,7 +27,7 @@ function self = check_inputs(self)
                 self = set_prop(self, 'pP', self.PD.pR.value); % Guess
             case {'SHOCK_I', 'SHOCK_R'} % * SHOCK_I and SHOCK_R: CALCULATE PLANAR SHOCK WAVE
                 self = check_inputs_prop(self, 'u1');
-            case 'SHOCK_POLAR' % * SHOCK_OBLIQUE: CALCULATE OBLIQUE SHOCK WAVE
+            case {'SHOCK_POLAR', 'SHOCK_POLAR_R'} % * SHOCK_POLAR: CALCULATE OBLIQUE SHOCK POLARS
                 self = check_inputs_prop(self, 'u1');
             case 'SHOCK_OBLIQUE' % * SHOCK_OBLIQUE: CALCULATE OBLIQUE SHOCK WAVE
                 self = check_inputs_prop(self, 'u1');

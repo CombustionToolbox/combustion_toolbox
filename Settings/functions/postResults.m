@@ -78,6 +78,13 @@ elseif strcmp(ProblemType,{'SHOCK_POLAR'})
 %         beta = cell2vector(mix2{i}.polar, 'beta');
 %         displaysweepresults(self, mix2{i}.polar, beta);
 %     end
+elseif strcmp(ProblemType,{'SHOCK_POLAR_R'})
+    mix3 = mix2;
+    mix2 = self.PS.str2;
+    % Shock polars incident
+    plot_shock_polar(self, mix1, mix2);
+    % Shock polars reflected
+    plot_shock_polar(self, mix2, mix3, self.PS.str2_case, mix1);
 elseif strcmp(ProblemType,{'SHOCK_I'}) && length(phi) > 1
     self.Misc.config.labelx = 'Incident velocity $u_1$ [m/s]';
     self.Misc.config.labely = 'Temperature $T$ [K]';

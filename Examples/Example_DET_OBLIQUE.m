@@ -28,8 +28,8 @@ self.PD.S_Oxidizer = {'O2'};
 self.PD.S_Inert    = {'N2', 'Ar', 'CO2'};
 self.PD.proportion_inerts_O2 = [78.084, 0.9365, 0.0319] ./ 20.9476;
 %% ADDITIONAL INPUTS (DEPENDS OF THE PROBLEM SELECTED)
-overdriven = 1:0.1:10;
-self = set_prop(self, 'overdriven', overdriven);
+overdriven = 10;
+self = set_prop(self, 'overdriven', overdriven, 'theta', 40);
 % condition
 %% SOLVE PROBLEM
 self = SolveProblem(self, 'DET_OBLIQUE');

@@ -16,7 +16,7 @@
 %          PhD Candidate - Group Fluid Mechanics
 %          Universidad Carlos III de Madrid
 %                 
-% Last update March 17 2022
+% Last update March 24 2022
 % -------------------------------------------------------------------------
 
 %% INITIALIZE
@@ -29,8 +29,7 @@ self.PD.S_Inert    = {'N2', 'Ar', 'CO2'};
 self.PD.proportion_inerts_O2 = [78.084, 0.9365, 0.0319] ./ 20.9476;
 %% ADDITIONAL INPUTS (DEPENDS OF THE PROBLEM SELECTED)
 overdriven = 1:0.1:10;
-self = set_prop(self, 'overdriven', overdriven, 'phi', self.PD.phi.value(1) * ones(1, length(overdriven)));
-% condition
+self = set_prop(self, 'overdriven', overdriven);
 %% SOLVE PROBLEM
 self = SolveProblem(self, 'DET_OVERDRIVEN_R');
 %% DISPLAY RESULTS (PLOTS)

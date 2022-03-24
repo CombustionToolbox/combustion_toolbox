@@ -1,5 +1,5 @@
 % -------------------------------------------------------------------------
-% EXAMPLE: SHOCK_OBLIQUE
+% EXAMPLE: SHOCK_OBLIQUE_THETA
 %
 % Compute pre-shock and post-shock state for a oblique incident shock wave
 % at standard conditions, a set of 20 species considered, a initial 

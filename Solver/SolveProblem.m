@@ -79,7 +79,7 @@ function self = selectProblem(self, i)
                 catch
                     theta = self.PD.theta.value;
                 end
-                [self.PS.strR{i}, self.PS.str2{i}, self.PS.strP{i}] = shock_oblique_theta(self, self.PS.strR{i}, u1, theta);
+                    [self.PS.strR{i}, self.PS.str2{i}, self.PS.strP{i}] = shock_oblique_theta(self, self.PS.strR{i}, u1, theta);
             else
                 try
                     beta = self.PD.beta.value(i);
@@ -183,10 +183,20 @@ function self = selectProblem(self, i)
             catch
                 overdriven = self.PD.overdriven.value;
             end
-            if i==self.C.l_phi
-                [self.PS.strR{i}, self.PS.strP{i}] = det_oblique(self, self.PS.strR{i}, overdriven);
+            if ~isempty(self.PD.theta.value)
+                try
+                    theta = self.PD.theta.value(i);
+                catch
+                    theta = self.PD.theta.value;
+                end
+                    [self.PS.strR{i}, self.PS.str2{i}, self.PS.strP{i}] = det_oblique_theta(self, self.PS.strR{i}, overdriven, theta);
             else
-                [self.PS.strR{i}, self.PS.strP{i}] = det_oblique(self, self.PS.strR{i}, overdriven, self.PS.strP{i+1});
+                try
+                    beta = self.PD.beta.value(i);
+                catch
+                    beta = self.PD.beta.value;
+                end
+                [self.PS.strR{i}, self.PS.strP{i}] = det_oblique_beta(self, self.PS.strR{i}, overdriven, beta);
             end
         case 'ROCKET'
             if i==self.C.l_phi

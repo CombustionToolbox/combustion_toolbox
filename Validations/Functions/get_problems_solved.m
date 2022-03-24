@@ -1,6 +1,5 @@
 function value = get_problems_solved(varargin)
     % Get problems solved based on the length of the given variable
-    
     mix = varargin{1};
     variable = varargin{2};
     if nargin == 3

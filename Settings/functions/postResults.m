@@ -70,7 +70,7 @@ elseif strcmp(ProblemType,{'SV'}) && length(phi) > 1
     displaysweepresults(self, mix2, T);
 elseif strcmp(ProblemType,{'SHOCK_POLAR'})
     % Shock polars
-    plot_shock_polar(self, mix1, mix2)
+    plot_shock_polar(self, mix1, mix2);
 %     % Incident velocity [m/s] againts molar fractions [-] 
 %     self.Misc.config.labelx = 'Incident velocity $u_1$ [m/s]';
 %     self.Misc.config.labely = 'Molar fraction $X_i$';

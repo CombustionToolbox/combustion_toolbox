@@ -53,6 +53,7 @@ function [mix1, mix2] = shock_polar(varargin)
     % Range values for the shock polar
     mix2.polar.p = p2;    % [bar]
     mix2.polar.Mach = M2; % [-]
+    mix2.polar.u = u2;    % [m/s]
     mix2.polar.un = u2n;  % [m/s]
     mix2.polar.ux = u2x;  % [m/s]
     mix2.polar.uy = u2y;  % [m/s]

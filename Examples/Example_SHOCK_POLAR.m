@@ -33,8 +33,8 @@ self.PD.proportion_inerts_O2 = 79/21;
 % self.PD.S_Inert    = {'N2', 'Ar', 'CO2'};
 % self.PD.proportion_inerts_O2 = [78.084, 0.9365, 0.0319] ./ 20.9476;
 %% ADDITIONAL INPUTS (DEPENDS OF THE PROBLEM SELECTED)
-range1 = logspace(0, 1, 300); range1 = range1(range1 < 5);
-overdriven = [range1, linspace(5, 14, 30)]; overdriven = overdriven(overdriven > 1);
+% range1 = logspace(0, 1, 300); range1 = range1(range1 < 5);
+% overdriven = [range1, linspace(5, 14, 30)]; overdriven = overdriven(overdriven > 1);
 % overdriven = 2:2:14;
 overdriven = [2, 3, 5, 10];
 % overdriven = 2.85;

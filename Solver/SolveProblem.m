@@ -101,8 +101,9 @@ function self = selectProblem(self, i)
                     theta = self.PD.theta.value;
                 end
                 self.PD.ProblemType = 'SHOCK_OBLIQUE';
-                [self.PS.strR{i}, self.PS.str2{i}, self.PS.str2_2{i}] = shock_oblique_theta(self, self.PS.strR{i}, u1, theta);
-
+                [self.PS.strR{i}, self.PS.str2{i}, ~] = shock_oblique_theta(self, self.PS.strR{i}, u1, theta);
+                self.PD.ProblemType = 'SHOCK_OBLIQUE_R';
+                [self.PS.strR{i}, self.PS.str2{i}, self.PS.str3{i}, self.PS.str3_2{i}] = shock_oblique_reflected_theta(self, self.PS.strR{i}, self.PS.str2{i}.u, self.PS.str2{i}.theta, self.PS.str2{i});
             else
                 try
                     beta = self.PD.beta.value(i);
@@ -128,7 +129,8 @@ function self = selectProblem(self, i)
                 u1 = self.PD.u1.value;
             end
                 [self.PS.strR{i}, self.PS.str2{i}] = shock_polar(self, self.PS.strR{i}, u1);
-                [self.PS.strR{i}, self.PS.str2{i}, self.PS.strP{i}] = shock_polar_reflected(self, self.PS.strR{i}, u1, self.PS.str2{i});
+                [~, self.PS.str2_case{i}, ~] = shock_oblique_theta(self, self.PS.strR{i}, u1, self.PD.theta.value);
+                [~, self.PS.strP{i}] = shock_polar(self, self.PS.str2_case{i}, self.PS.str2_case{i}.u);
         case {'DET'}
             if i==self.C.l_phi
                 [self.PS.strR{i}, self.PS.strP{i}] = cj_detonation(self, self.PS.strR{i});

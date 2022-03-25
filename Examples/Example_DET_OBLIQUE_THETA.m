@@ -1,10 +1,10 @@
 % -------------------------------------------------------------------------
-% EXAMPLE: DET_OBLIQUE
+% EXAMPLE: DET_OBLIQUE_THETA
 %
 % Compute pre-shock and post-shock state for a oblique overdriven detonation
 % considering Chapman-Jouguet (CJ) theory for a stoichiometric CH4-air
-% mixture at standard conditions, a set of 24 species considered and a set
-% of overdrives contained in (1,10) [-].
+% mixture at standard conditions, a set of 24 species considered, an 
+% overdrive of 4 and a set of deflection angles [10:5:40] [deg].
 %   
 % Soot formation == {'CO2', 'CO', 'H2O', 'H2', 'O2', 'N2', 'He', 'Ar',...
 %                    'HCN','H','OH','O','CN','NH3','CH4','C2H4','CH3',...
@@ -16,7 +16,7 @@
 %          PhD Candidate - Group Fluid Mechanics
 %          Universidad Carlos III de Madrid
 %                 
-% Last update March 17 2022
+% Last update March 25 2022
 % -------------------------------------------------------------------------
 
 %% INITIALIZE
@@ -28,9 +28,8 @@ self.PD.S_Oxidizer = {'O2'};
 self.PD.S_Inert    = {'N2', 'Ar', 'CO2'};
 self.PD.proportion_inerts_O2 = [78.084, 0.9365, 0.0319] ./ 20.9476;
 %% ADDITIONAL INPUTS (DEPENDS OF THE PROBLEM SELECTED)
-overdriven = 10;
-self = set_prop(self, 'overdriven', overdriven, 'theta', 40);
-% condition
+overdriven = 4;
+self = set_prop(self, 'overdriven', overdriven, 'theta', 15);
 %% SOLVE PROBLEM
 self = SolveProblem(self, 'DET_OBLIQUE');
 %% DISPLAY RESULTS (PLOTS)

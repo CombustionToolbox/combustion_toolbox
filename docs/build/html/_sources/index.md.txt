@@ -7,7 +7,7 @@ The documentation is under development
 :relative-images:
 ```
  
-For validations, check out {doc}`validations`  
+For validations, check out {doc}`validations`
   
 ```{toctree}
 :caption: 'Contents:'

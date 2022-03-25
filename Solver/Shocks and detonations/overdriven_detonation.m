@@ -15,20 +15,20 @@ function [mix1, mix2] = overdriven_detonation(varargin)
 end
 
 % SUB-PASS FUNCTIONS
-function [self, str1, str2] = unpack(x)
+function [self, mix1, mix2] = unpack(x)
     % Unpack input data
     self = x{1};
-    str1 = x{2};
+    mix1 = x{2};
     overdriven = x{3};
-    str1.overdriven = overdriven;
+    mix1.overdriven = overdriven;
     if length(x) > 3
-        str2 = x{4};
+        mix2 = x{4};
     else
-        str2 = [];
+        mix2 = [];
     end
-    if isempty(str2)
-        str1.cj_speed = [];
+    if isempty(mix2)
+        mix1.cj_speed = [];
     else
-        str1.cj_speed = str2.cj_speed;
+        mix1.cj_speed = mix2.cj_speed;
     end
 end

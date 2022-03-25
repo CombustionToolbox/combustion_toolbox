@@ -71,7 +71,7 @@ elseif strcmp(ProblemType,{'SV'}) && length(phi) > 1
 elseif strcmp(ProblemType,{'SHOCK_POLAR'})
     % Shock polars
     plot_shock_polar(self, mix1, mix2);
-%     % Incident velocity [m/s] againts molar fractions [-] 
+%     % Molar fractions [-] againts incident velocity [m/s] 
 %     self.Misc.config.labelx = 'Incident velocity $u_1$ [m/s]';
 %     self.Misc.config.labely = 'Molar fraction $X_i$';
 %     for i = length(mix2):-1:1
@@ -81,10 +81,40 @@ elseif strcmp(ProblemType,{'SHOCK_POLAR'})
 elseif strcmp(ProblemType,{'SHOCK_POLAR_R'})
     mix3 = mix2;
     mix2 = self.PS.str2;
+    mix2_1 = self.PS.str2_1;
+    mix3_1 = self.PS.str3_1;
+    mix3_2 = self.PS.str3_2;
     % Shock polars incident
     plot_shock_polar(self, mix1, mix2);
     % Shock polars reflected
-    plot_shock_polar(self, mix2, mix3, self.PS.str2_case, mix1);
+    plot_shock_polar(self, mix2, mix3, mix2_1, mix1);
+    % molar fractions [-] againts wave angle [deg]
+    self.Misc.config.labelx = 'Wave angle $\beta$ [deg]';
+    self.Misc.config.labely = 'Molar fraction $X_i$';
+    for i = length(mix2):-1:1
+        titlename = 'Deflection angle $\theta';
+        self.Misc.config.tit = sprintf('%s = %.2f$ [deg]', titlename, mix2_1{i}.theta);
+        beta = cell2vector(mix3{i}.polar, 'beta');
+        ax = displaysweepresults(self, mix3{i}, beta);
+        set_title(ax, self.Misc.config);
+%         xlim(ax, [min(mix2{i}.polar.beta), 90]);
+    end
+    % Temperature [K] againts deflection angle [deg]
+    titlename = '\mathcal{M}_1';
+    legend_name = {'state 2', 'state 3 - weak', 'state 3 - strong'};
+    self.Misc.config.tit = sprintf('%s = %.2f', titlename, mix1{i}.u / mix1{i}.sound);
+    self.Misc.config.labelx = 'Deflection $\theta$ [deg]';
+    self.Misc.config.labely = 'Temperature $T$ [K]';
+    ax = plot_figure(mix2_1, mix2_1, 'theta', 'T',self.Misc.config, self.PD.CompleteOrIncomplete); 
+    plot_figure(mix3_1, mix3_1, 'theta', 'T',self.Misc.config, self.PD.CompleteOrIncomplete, ax); 
+    plot_figure(mix3_2, mix3_2, 'theta', 'T',self.Misc.config, self.PD.CompleteOrIncomplete, ax); 
+    set_legends(ax, legend_name, self.Misc.config)
+    % Pressure [bar] againts deflection angle [deg]
+    self.Misc.config.labely = 'Pressure $p$ [K]';
+    ax = plot_figure(mix2_1, mix2_1, 'theta', 'p',self.Misc.config, self.PD.CompleteOrIncomplete); 
+    plot_figure(mix3_1, mix3_1, 'theta', 'p',self.Misc.config, self.PD.CompleteOrIncomplete, ax); 
+    plot_figure(mix3_2, mix3_2, 'theta', 'p',self.Misc.config, self.PD.CompleteOrIncomplete, ax); 
+    set_legends(ax, legend_name, self.Misc.config)
 elseif strcmp(ProblemType,{'SHOCK_I'}) && length(phi) > 1
     self.Misc.config.labelx = 'Incident velocity $u_1$ [m/s]';
     self.Misc.config.labely = 'Temperature $T$ [K]';

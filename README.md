@@ -6,7 +6,7 @@
 [![File Exchange](https://www.mathworks.com/matlabcentral/images/matlab-file-exchange.svg)](https://es.mathworks.com/matlabcentral/fileexchange/101088-combustion-toolbox)
 [![CI](https://github.com/AlbertoCuadra/combustion_toolbox/actions/workflows/CI.yml/badge.svg)](https://github.com/AlbertoCuadra/combustion_toolbox/actions/workflows/CI.yml)
 [![CD](https://github.com/AlbertoCuadra/combustion_toolbox/actions/workflows/CD.yml/badge.svg)](https://github.com/AlbertoCuadra/combustion_toolbox/actions/workflows/CD.yml)
-![last modified](https://img.shields.io/github/last-commit/AlbertoCuadra/combustion_toolbox)
+[![last modified](https://img.shields.io/github/last-commit/AlbertoCuadra/combustion_toolbox)](https://github.com/AlbertoCuadra/combustion_toolbox/commits/master)
 [![license](https://img.shields.io/github/license/AlbertoCuadra/combustion_toolbox)](https://www.gnu.org/licenses/gpl-3.0.html)
 
 A MATLAB-GUI based open-source tool for solving gaseous combustion problems.
@@ -15,7 +15,7 @@ A MATLAB-GUI based open-source tool for solving gaseous combustion problems.
 :top: There is also a (less complete) [Python version](https://github.com/AlbertoCuadra/Combustion-PyToolbox)
 
 
-## Features
+# Features
 
 Combustion Toolbox is a a MATLAB-GUI based tool for solving gaseous combustion problems.
 Features
@@ -73,10 +73,11 @@ This project is also part of the PhD of [Alberto Cuadra-Lara](https://www.acuadr
 - [Wiki](https://github.com/AlbertoCuadra/combustion_toolbox/wiki) under construction :building_construction:
 
 ---
-## Start here!
+# Start here!
 The [tutorial](https://github.com/AlbertoCuadra/combustion_toolbox/wiki/Tutorial) will help you get started using Combustion Toolbox on your pc.
 
-## Gallery
+# Gallery
+
 We have several examples of what Combustion Toolbox can do. Here we show a preview of the GUI and some results obtained from Combustion Toolbox.
 
 <p align="left">
@@ -103,7 +104,7 @@ We have several examples of what Combustion Toolbox can do. Here we show a previ
 
 **Figure 4:** *Pressure-deflection shock polar (left) and wave angle-deflection shock polar (right) for an air mixture (78.084% N2, 20.9476% O2, 0.9365% Ar, 0.0319% CO2) at pre-shock temperature T1 = 300 K and pressure p1 = 1 atm, and a range of preshock Mach numbers M1 = [2, 14]; line: considering dissociation, ionization, and recombination in multi-species mixtures; dashed: considering a thermochemically frozen air mixture.*
 
-## Contributing
+# Contributing
 
 Please read [CONTRIBUTING.md](https://github.com/AlbertoCuadra/combustion_toolbox/blob/master/CONTRIBUTING.md) for details on our code of conduct, and the process for submitting pull requests to us.
 
@@ -111,11 +112,11 @@ Please send feedback or inquiries to [acuadra@ing.uc3m.es](mailto:acuadra@ing.uc
 
 Thank you for testing Combustion Toolbox!
 
-## Acknowledgements
+# Acknowledgements
 * Combustion Toolbox's color palette is obtained from the following repository: Stephen (2021). ColorBrewer: Attractive and Distinctive Colormaps (https://github.com/DrosteEffect/BrewerMap), GitHub. Retrieved December 3, 2021.
 * For validations, Combustion Toolbox uses CPU Info from the following repository: Ben Tordoff (2022). CPU Info (https://github.com/BJTor/CPUInfo/releases/tag/v1.3), GitHub. Retrieved March 22, 2022.
 
-## Developers
+# Developers
 
 * **[Alberto Cuadra-Lara](https://acuadralara.com/)** - *Core Developer and App designer*
 * **César Huete** - *Developer*
@@ -125,7 +126,7 @@ Grupo de Mecánica de Fluidos, Universidad Carlos III, Av. Universidad 30, 28911
 
 See also the list of [contributors](https://github.com/AlbertoCuadra/combustion_toolbox/blob/master/CONTRIBUTORS.md) who participated in this project.
 
-## Citing Combustion Toolbox
+# Citing Combustion Toolbox
 
 ```bibtex
 @misc{combustiontoolbox,

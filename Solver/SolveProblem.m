@@ -128,9 +128,30 @@ function self = selectProblem(self, i)
             catch
                 u1 = self.PD.u1.value;
             end
+            if ~isempty(self.PD.theta.value)
+                try
+                    theta = self.PD.theta.value(i);
+                catch
+                    theta = self.PD.theta.value;
+                end
                 [self.PS.strR{i}, self.PS.str2{i}] = shock_polar(self, self.PS.strR{i}, u1);
-                [~, self.PS.str2_case{i}, ~] = shock_oblique_theta(self, self.PS.strR{i}, u1, self.PD.theta.value);
-                [~, self.PS.strP{i}] = shock_polar(self, self.PS.str2_case{i}, self.PS.str2_case{i}.u);
+                [~, self.PS.str2_1{i}, ~] = shock_oblique_theta(self, self.PS.strR{i}, u1, theta);
+                [~, self.PS.strP{i}] = shock_polar(self, self.PS.str2_1{i}, self.PS.str2_1{i}.u);
+                [~, self.PS.str3_1{i}, self.PS.str3_2{i}] = shock_oblique_theta(self, self.PS.str2_1{i}, self.PS.str2_1{i}.u, theta);
+                % Assing values
+                self.PS.str2_1{i} = assign_shock_polar(self.PS.str2_1{i}, self.PS.str2{i});
+                self.PS.str3_1{i} = assign_shock_polar(self.PS.str3_1{i}, self.PS.strP{i});
+                self.PS.str3_2{i} = assign_shock_polar(self.PS.str3_2{i}, self.PS.strP{i});
+            else
+                try
+                    beta = self.PD.beta.value(i);
+                catch
+                    beta = self.PD.beta.value;
+                end
+                [self.PS.strR{i}, self.PS.str2{i}] = shock_polar(self, self.PS.strR{i}, u1);
+                [~, self.PS.str2_1{i}] = shock_oblique_beta(self, self.PS.strR{i}, u1, beta);
+                [~, self.PS.strP{i}] = shock_polar(self, self.PS.str2_1{i}, self.PS.str2_1{i}.u);
+            end
         case {'DET'}
             if i==self.C.l_phi
                 [self.PS.strR{i}, self.PS.strP{i}] = cj_detonation(self, self.PS.strR{i});
@@ -160,23 +181,6 @@ function self = selectProblem(self, i)
             else
                 [self.PS.strR{i}, self.PS.strP{i}] = overdriven_detonation(self, self.PS.strR{i}, overdriven, self.PS.strP{i+1});
             end
-        case 'DET_OVERDRIVEN_R'
-            try
-                overdriven = self.PD.overdriven.value(i);
-            catch
-                overdriven = self.PD.overdriven.value;
-            end
-            if i==self.C.l_phi
-                % Calculate post-shock state (2)
-                [self.PS.strR{i}, self.PS.str2{i}] = overdriven_detonation(self, self.PS.strR{i}, overdriven);
-                % Calculate post-shock state (5)
-                [self.PS.strR{i}, self.PS.str2{i}, self.PS.strP{i}] = shock_reflected(self, self.PS.strR{i}, overdriven, self.PS.str2{i});
-            else
-                % Calculate post-shock state (2)
-                [self.PS.strR{i}, self.PS.str2{i}] = overdriven_detonation(self, self.PS.strR{i}, overdriven, self.PS.str2{i+1});
-                % Calculate post-shock state (5)
-                [self.PS.strR{i}, self.PS.str2{i}, self.PS.strP{i}] = shock_reflected(self, self.PS.strR{i}, overdriven, self.PS.str2{i}, self.PS.strP{i+1});
-            end
         case {'DET_OBLIQUE'}
             try
                 overdriven = self.PD.overdriven.value(i);
@@ -197,6 +201,23 @@ function self = selectProblem(self, i)
                     beta = self.PD.beta.value;
                 end
                 [self.PS.strR{i}, self.PS.strP{i}] = det_oblique_beta(self, self.PS.strR{i}, overdriven, beta);
+            end
+        case 'DET_OVERDRIVEN_R'
+            try
+                overdriven = self.PD.overdriven.value(i);
+            catch
+                overdriven = self.PD.overdriven.value;
+            end
+            if i==self.C.l_phi
+                % Calculate post-shock state (2)
+                [self.PS.strR{i}, self.PS.str2{i}] = overdriven_detonation(self, self.PS.strR{i}, overdriven);
+                % Calculate post-shock state (5)
+                [self.PS.strR{i}, self.PS.str2{i}, self.PS.strP{i}] = shock_reflected(self, self.PS.strR{i}, overdriven, self.PS.str2{i});
+            else
+                % Calculate post-shock state (2)
+                [self.PS.strR{i}, self.PS.str2{i}] = overdriven_detonation(self, self.PS.strR{i}, overdriven, self.PS.str2{i+1});
+                % Calculate post-shock state (5)
+                [self.PS.strR{i}, self.PS.str2{i}, self.PS.strP{i}] = shock_reflected(self, self.PS.strR{i}, overdriven, self.PS.str2{i}, self.PS.strP{i+1});
             end
         case 'ROCKET'
             if i==self.C.l_phi
@@ -232,4 +253,11 @@ function self = check_complete_reaction(self, i)
         self.Misc.index_LS_original = find_ind(self.S.LS, LS);
         self = reorganize_index_phase_species(self, LS);
     end
+end
+
+function mix = assign_shock_polar(mix, mix_polar)
+    mix.theta_max = mix_polar.theta_max;
+    mix.beta_max =  mix_polar.beta_max;
+    mix.theta_sonic = mix_polar.theta_sonic;
+    mix.beta_sonic = mix_polar.beta_sonic;
 end

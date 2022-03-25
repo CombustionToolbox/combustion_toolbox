@@ -5,5 +5,5 @@ function set_title(ax, varargin)
     else
         config = varargin{1};
     end
-    title(ax, {strcat('$',config.tit,'$')}, 'Interpreter', 'latex', 'FontSize', config.fontsize+4);
+    title(ax, config.tit, 'Interpreter', 'latex', 'FontSize', config.fontsize+4);
 end

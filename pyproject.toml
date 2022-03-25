@@ -10,7 +10,7 @@ dynamic = ["version", "description"]
 
 [project.optional-dependencies]
 doc = [
-    "sphinx~=4.3.0",
+    "sphinx~=4.4.0",
     "furo",
     "myst-parser",
 ]

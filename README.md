@@ -1,5 +1,5 @@
 <p align="left">
-    <img alt="UC3M" style="border-width:0" src="https://github.com/AlbertoCuadra/combustion_toolbox/blob/master/GUI/Icons/logo.svg" width="1500"/></a>
+    <img alt="UC3M" style="border-width:0" src="./GUI/Icons/logo.svg" width="1500"/></a>
 </p>
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.5741229.svg)](https://doi.org/10.5281/zenodo.5741229)
@@ -41,19 +41,19 @@ The [tutorial](https://github.com/AlbertoCuadra/combustion_toolbox/wiki/Tutorial
 We have several examples of what Combustion Toolbox can do. Here we show some results obtained from Combustion Toolbox and a preview of the upcoming GUI.
 
 <p align="left">
-    <img src="https://github.com/AlbertoCuadra/combustion_toolbox/blob/master/Validations/Figures/Hugoniot_benchmarking.svg" width="400">
+    <img src="./Validations/Figures/Hugoniot_benchmarking.svg" width="400">
 </p>
     
 **Figure 1:** *Hugoniot curves for different molecular gases at pre-shock temperature T1 = 300 K and pressure p1 = 1 atm \[numerical results obtained with Combustion Toolbox (lines) and contrasted with NASA’s Chemical Equilibrium with Applications (CEA) code excluding ionization (symbols)\]*.
     
 <p align="left">
-    <img src="https://github.com/AlbertoCuadra/combustion_toolbox/blob/master/Validations/Tests/DET_CH4_AIR_NASA.svg" width="1200">
+    <img src="./Validations/Tests/DET_CH4_AIR_NASA.svg" width="1200">
 </p>
 
 **Figure 2:** *Example CJ detonation for lean to rich CH4-air mixtures at standard conditions: (a) variation of molar fraction, (b) variation of temperature. The computational time was of 12.70 seconds using a Intel(R) Core(TM) i7-8700 CPU @ 3.20GHz for a set of 24 species considered and a total of 451 case studies.*
 
 <p align="left">
-    <img src="https://github.com/AlbertoCuadra/combustion_toolbox/blob/master/GUI/Snapshots/snapshot_1.svg" width="500">
+    <img src="./GUI/Snapshots/snapshot_1.svg" width="500">
 </p>
 
 **Figure 3:** *Snapshot of the GUI*.
@@ -62,7 +62,7 @@ Figure 1 is postprocesed with [Veusz](https://github.com/veusz/veusz) and [Inksc
 
 ## Contributing
 
-Please read [CONTRIBUTING.md](https://github.com/AlbertoCuadra/combustion_toolbox/blob/master/CONTRIBUTING.md) for details on our code of conduct, and the process for submitting pull requests to us.
+Please read [CONTRIBUTING.md](./CONTRIBUTING.md) for details on our code of conduct, and the process for submitting pull requests to us.
 
 Please send feedback or inquiries to [acuadra@ing.uc3m.es](mailto:acuadra@ing.uc3m.es)
 
@@ -80,7 +80,7 @@ Stephen (2021). ColorBrewer: Attractive and Distinctive Colormaps (https://githu
 
 Grupo de Mecánica de Fluidos, Universidad Carlos III, Av. Universidad 30, 28911, Leganés, Spain
 
-See also the list of [contributors](https://github.com/AlbertoCuadra/combustion_toolbox/blob/master/CONTRIBUTORS.md) who participated in this project.
+See also the list of [contributors](./CONTRIBUTORS.md) who participated in this project.
 
 ## Citing Combustion Toolbox
 

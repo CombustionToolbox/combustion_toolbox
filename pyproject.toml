@@ -1,8 +1,5 @@
 [build-system]
-requires = [
-    "flit_core >=3.4,<4",
-    "wheel",
-]
+requires = ["flit_core >=3.4,<4"]
 build-backend = "flit_core.buildapi"
 
 [project]
@@ -12,14 +9,8 @@ authors = [{name = "Alberto Cuadra Lara", email = "acuadra@ing.uc3m.es"}]
 dynamic = ["version", "description"]
 
 [project.optional-dependencies]
-dev = [
-    "furo",
-    "hypothesis",
-    "myst-parser",
-    "sphinx",
-]
 doc = [
+    "sphinx~=4.3.0",
     "furo",
     "myst-parser",
-    "sphinx~=4.3.0",
 ]

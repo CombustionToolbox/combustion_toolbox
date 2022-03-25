@@ -17,6 +17,12 @@ ProblemType = varargin{end-2};
 mintol_display = varargin{end-1};
 ListSpecies = varargin{end};
 
+if contains(ProblemType, 'SHOCK')
+    ProblemType_short = 'SHOCK';
+elseif contains(ProblemType, 'DET')
+    ProblemType_short = 'DET';
+end
+
 if nargin == 5
     mix1 = varargin{1}; mix2 = varargin{2};
     
@@ -25,7 +31,7 @@ if nargin == 5
     fprintf('Problem type: %s  | phi = %4.4f\n',ProblemType, equivalenceRatio(mix1));
     fprintf('-----------------------------------------------------------\n');
     if contains(ProblemType, 'SHOCK') || contains(ProblemType, 'DET')
-        fprintf('               |    STATE 1      |       STATE 2\n');
+        fprintf('               |     STATE 1     |       STATE 2\n');
     else
         fprintf('               |    REACTANTS    |      PRODUCTS\n');
     end
@@ -166,7 +172,7 @@ elseif nargin == 6
     if contains(ProblemType, '_R')
         fprintf('STATE 2                 Xi [-]\n');
     elseif contains(ProblemType, '_OBLIQUE')
-        fprintf('STATE 2-WEAK SHOCK      Xi [-]\n');
+        fprintf('STATE 2-WEAK %s      Xi [-]\n', ProblemType_short);
     else
         fprintf('OUTLET CHAMBER          Xi [-]\n');
     end
@@ -189,7 +195,7 @@ elseif nargin == 6
     if contains(ProblemType, '_R')
         fprintf('STATE 3                 Xi [-]\n');
     elseif contains(ProblemType, '_OBLIQUE')
-        fprintf('STATE 2-STRONG SHOCK    Xi [-]\n');
+        fprintf('STATE 2-STRONG %s    Xi [-]\n', ProblemType_short);
     else
         fprintf('THROAT                  Xi [-]\n');
     end
@@ -216,7 +222,7 @@ elseif nargin == 7
     fprintf('--------------------------------------------------------------------------------------\n');
     fprintf('Problem type: %s  | phi = %4.4f\n',ProblemType, equivalenceRatio(mix1));
     fprintf('--------------------------------------------------------------------------------------\n');
-    if contains(ProblemType, '_OBLIQUE')
+    if contains(ProblemType, '_OBLIQUE') || contains(ProblemType, '_POLAR_R')
         fprintf('               |     STATE 1     |     STATE 2     |     STATE 3-W   |     STATE 3-S\n');
     elseif contains(ProblemType, '_R')
         fprintf('               |     STATE 1     |     STATE 2     |     STATE 3     |     STATE 4\n');
@@ -243,10 +249,9 @@ elseif nargin == 7
         fprintf('--------------------------------------------------------------------------------------\n');
         fprintf('PARAMETERS\n');
         fprintf('min wave  [deg]|                 |   %12.4f  |   %12.4f  |   %12.4f\n', mix2.beta_min, mix3.beta_min, mix4.beta_min);
-        if contains(ProblemType, '_OBLIQUE')
-            fprintf('wave angle[deg]|                 |   %12.4f  |   %12.4f  |   %12.4f\n', mix2.beta, mix3.beta, mix4.beta);
-            fprintf('deflection[deg]|                 |   %12.4f  |   %12.4f  |   %12.4f\n', mix2.theta, mix3.theta, mix4.theta);
-        else
+        fprintf('wave angle[deg]|                 |   %12.4f  |   %12.4f  |   %12.4f\n', mix2.beta, mix3.beta, mix4.beta);
+        fprintf('deflection[deg]|                 |   %12.4f  |   %12.4f  |   %12.4f\n', mix2.theta, mix3.theta, mix4.theta);
+        if ~contains(ProblemType, '_OBLIQUE')
             fprintf('max def.  [deg]|                 |   %12.4f  |   %12.4f  |   %12.4f\n', mix2.theta_max, mix3.theta_max, mix4.theta_max);
             fprintf('sonic def.[deg]|                 |   %12.4f  |   %12.4f  |   %12.4f\n', mix2.theta_sonic, mix3.theta_sonic, mix4.theta_sonic);
         end
@@ -301,8 +306,8 @@ elseif nargin == 7
     fprintf('MINORS[+%d] %s     %12.4e\n\n', Nminor, s_space_Nminor, Xminor);
     fprintf('TOTAL            %14.4e\n', sum(mix2.Xi));
     fprintf('--------------------------------------------------------------------------------------\n');
-    if contains(ProblemType, '_OBLIQUE')
-        fprintf('STATE 3-WEAK SHOCK      Xi [-]\n');
+    if contains(ProblemType, '_OBLIQUE') || contains(ProblemType, '_POLAR_R')
+        fprintf('STATE 3-WEAK %s      Xi [-]\n', ProblemType_short);
     elseif contains(ProblemType, '_R')
         fprintf('STATE 3                 Xi [-]\n');
     else
@@ -324,8 +329,8 @@ elseif nargin == 7
     fprintf('MINORS[+%d] %s     %12.4e\n\n', Nminor, s_space_Nminor, Xminor);
     fprintf('TOTAL            %14.4e\n',sum(mix3.Xi));
     fprintf('--------------------------------------------------------------------------------------\n');
-    if contains(ProblemType, '_OBLIQUE')
-        fprintf('STATE 3-STRONG SHOCK    Xi [-]\n');
+    if contains(ProblemType, '_OBLIQUE') || contains(ProblemType, '_POLAR_R')
+        fprintf('STATE 3-STRONG %s    Xi [-]\n', ProblemType_short);
     elseif contains(ProblemType, '_R')
         fprintf('STATE 4                 Xi [-]\n');
     else

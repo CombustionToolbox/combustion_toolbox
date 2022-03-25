@@ -25,18 +25,25 @@ function self = check_inputs(self)
             case 'SV' % * SV: Isentropic (i.e., fast adiabatic) compression/expansion to a specified v
                 self = check_inputs_prop(self, 'vP_vR');
                 self = set_prop(self, 'pP', self.PD.pR.value); % Guess
-            case {'SHOCK_I', 'SHOCK_R'} % * SHOCK_I and SHOCK_R: CALCULATE PLANAR SHOCK WAVE
+            case {'SHOCK_I', 'SHOCK_R'} % * SHOCK_I and SHOCK_R: Calculate planar shock wave
                 self = check_inputs_prop(self, 'u1');
-            case {'SHOCK_POLAR', 'SHOCK_POLAR_R'} % * SHOCK_POLAR: CALCULATE OBLIQUE SHOCK POLARS
+            case {'SHOCK_POLAR'} % * SHOCK_POLAR: Calculate oblique shock polars
                 self = check_inputs_prop(self, 'u1');
-            case 'SHOCK_OBLIQUE' % * SHOCK_OBLIQUE: CALCULATE OBLIQUE SHOCK WAVE
+            case {'SHOCK_OBLIQUE', 'SHOCK_POLAR_R'} % * SHOCK_OBLIQUE OR SHOCK_POLAR
                 self = check_inputs_prop(self, 'u1');
                 try
-                    self = check_inputs_prop(self, 'theta');
+                    self = check_inputs_prop(self, 'theta'); % Compute from deflection angle (1 solution)
                 catch
-                    self = check_inputs_prop(self, 'beta');
+                    self = check_inputs_prop(self, 'beta'); % Compute from wave angle (2 solutions: weak and stron shocks)
                 end
-            case {'DET_OVERDRIVEN', 'DET_OVERDRIVEN_R'} % * DET_OVERDRIVEN: CALCULATE OVERDRIVEN DETONATION
+            case {'DET_OBLIQUE'} % * DET_OBLIQUE: Compute oblique detonation
+                self = check_inputs_prop(self, 'overdriven');
+                try
+                    self = check_inputs_prop(self, 'theta'); % Compute from deflection angle (1 solution)
+                catch
+                    self = check_inputs_prop(self, 'beta'); % Compute from wave angle (2 solutions: weak and stron shocks)
+                end
+            case {'DET_OVERDRIVEN', 'DET_OVERDRIVEN_R'} % * DET_OVERDRIVEN: Calculate overdriven detonations
                 self = check_inputs_prop(self, 'overdriven');
         end
     end

@@ -17,7 +17,7 @@
 
 # -- Project information -----------------------------------------------------
 
-project = 'Combustion Toolbox'
+project = 'combustion_toolbox'
 copyright = '2022, Alberto Cuadra Lara'
 author = 'Alberto Cuadra Lara'
 

@@ -1,4 +1,4 @@
-git+https://https://github.com/sphinx-contrib/matlabdomain
+git+https://github.com/sphinx-contrib/matlabdomain
 furo
 
 alabaster==0.7.12

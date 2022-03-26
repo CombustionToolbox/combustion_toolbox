@@ -19,7 +19,7 @@ jsonpointer
 jsonref
 markdown-it-py
 markupsafe
-mdit-py-plugins
+mdit-py-plugins==0.2.7
 myst-parser
 packaging
 pygments

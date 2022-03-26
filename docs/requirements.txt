@@ -2,126 +2,48 @@ cairosvg
 sphinxcontrib-svg2pdfconverter
 sphinxcontrib-matlabdomain
 furo
-alabaster==0.7.12
-    # via sphinx
-attrs==21.2.0
-    # via markdown-it-py
-babel==2.9.1
-    # via
-    #   sphinx
-    #   sphinx-intl
-certifi==2021.5.30
-    # via requests
-chardet==4.0.0
-    # via requests
-click==8.0.1
-    # via sphinx-intl
-docutils==0.16
-    # via
-    #   myst-parser
-    #   sphinx
-    #   sphinx-rtd-theme
-    #   sphinxcontrib-opendataservices
-    #   sphinxcontrib-opendataservices-jsonschema
-gitdb==4.0.7
-    # via gitpython
-gitpython==3.1.18
-    # via transifex-client
-idna==2.10
-    # via requests
-imagesize==1.2.0
-    # via sphinx
-importlib-metadata==4.6.1
-    # via click
-jinja2==3.0.1
-    # via
-    #   myst-parser
-    #   sphinx
-jsonpointer==2.1
-    # via
-    #   sphinxcontrib-opendataservices
-    #   sphinxcontrib-opendataservices-jsonschema
-jsonref==0.2
-    # via sphinxcontrib-opendataservices-jsonschema
-markdown-it-py==1.1.0
-    # via
-    #   mdit-py-plugins
-    #   myst-parser
-markupsafe==2.0.1
-    # via jinja2
-mdit-py-plugins==0.2.8
-    # via myst-parser
-myst-parser==0.15.1
-    # via
-    #   -r requirements.in
-    #   sphinxcontrib-opendataservices
-    #   sphinxcontrib-opendataservices-jsonschema
-packaging==21.0
-    # via sphinx
-pygments==2.9.0
-    # via sphinx
-pyparsing==2.4.7
-    # via packaging
-python-slugify==4.0.1
-    # via transifex-client
-pytz==2021.1
-    # via babel
-pyyaml==5.4.1
-    # via myst-parser
-requests==2.25.1
-    # via
-    #   sphinx
-    #   transifex-client
-six==1.16.0
-    # via transifex-client
-smmap==4.0.0
-    # via gitdb
-snowballstemmer==2.1.0
-    # via sphinx
-sphinx==4.0.3
-    # via
-    #   -r requirements.in
-    #   myst-parser
-    #   sphinx-intl
-    #   sphinx-rtd-theme
-    #   sphinxcontrib-opendataservices
-sphinx-intl==2.0.1
-    # via -r requirements.in
-sphinx-rtd-theme==0.5.2
-    # via -r requirements.in
-sphinxcontrib-applehelp==1.0.2
-    # via sphinx
-sphinxcontrib-devhelp==1.0.2
-    # via sphinx
-sphinxcontrib-htmlhelp==2.0.0
-    # via sphinx
-sphinxcontrib-jsmath==1.0.1
-    # via sphinx
-sphinxcontrib-opendataservices==0.2.0
-    # via -r requirements.in
-sphinxcontrib-opendataservices-jsonschema==0.3.0
-    # via
-    #   -r requirements.in
-    #   sphinxcontrib-opendataservices
-sphinxcontrib-qthelp==1.0.3
-    # via sphinx
-sphinxcontrib-serializinghtml==1.1.5
-    # via sphinx
-text-unidecode==1.3
-    # via python-slugify
-transifex-client==0.14.3
-    # via -r requirements.in
-typing-extensions==3.10.0.0
-    # via
-    #   gitpython
-    #   importlib-metadata
-    #   markdown-it-py
-urllib3==1.26.6
-    # via
-    #   requests
-    #   transifex-client
-zipp==3.5.0
-    # via importlib-metadata
-
-# The following packages are considered to be unsafe in a requirements file:
-# setuptools
+alabaster
+attrs
+babel
+certifi
+chardet
+click
+docutils
+gitdb
+gitpython
+idna
+imagesize
+importlib-metadata
+jinja2
+jsonpointer
+jsonref
+markdown-it-py
+markupsafe
+mdit-py-plugins
+myst-parser
+packaging
+pygments
+pyparsing
+python-slugify
+pytz
+pyyaml
+requests
+six
+smmap
+snowballstemmer
+sphinx
+sphinx-intl
+sphinx-rtd-theme
+sphinxcontrib-applehelp
+sphinxcontrib-devhelp
+sphinxcontrib-htmlhelp
+sphinxcontrib-jsmath
+sphinxcontrib-opendataservices
+sphinxcontrib-opendataservices-jsonschema
+sphinxcontrib-qthelp
+sphinxcontrib-serializinghtml
+text-unidecode
+transifex-client
+typing-extensions
+urllib3
+zipp

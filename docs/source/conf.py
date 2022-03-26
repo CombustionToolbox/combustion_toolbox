@@ -17,7 +17,7 @@
 
 # -- Project information -----------------------------------------------------
 
-project = 'combustion_toolbox'
+project = 'Combustion Toolbox'
 copyright = '2022, Alberto Cuadra Lara'
 author = 'Alberto Cuadra Lara'
 
@@ -31,6 +31,7 @@ release = '0.9.0'
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = [
+    'sphinxcontrib.matlab',
     'myst_parser',
     'sphinx.ext.duration',
     'sphinx.ext.autosectionlabel',

@@ -51,7 +51,7 @@ source_suffix = {
 }
 
 # The master toctree document.
-master_doc = 'index.md'
+master_doc = 'index'
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -217,8 +217,8 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, 'test.tex', u'test Documentation',
-     u'test', 'manual'),
+    (master_doc, 'wiki.tex', u'Combustion Toolbox',
+     u'Documentation', 'manual'),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of

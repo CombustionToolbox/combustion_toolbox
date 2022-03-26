@@ -8,8 +8,8 @@ if "%SPHINXBUILD%" == "" (
 	set SPHINXBUILD=sphinx-build
 )
 set SOURCEDIR=.
-set BUILDDIR= build
-@REM set SPHINXPROJ=sphinxcontrib-matlabdomain
+set BUILDDIR=_build
+set SPHINXPROJ=sphinxcontrib-matlabdomain
 
 if "%1" == "" goto help
 

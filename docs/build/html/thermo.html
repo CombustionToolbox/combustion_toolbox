@@ -3,7 +3,7 @@
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
-<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" />
+<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="prev" title="Validations" href="validations.html" />
 
     <meta name="generator" content="sphinx-4.4.0, furo 2022.03.04"/>
         <title>Thermodynamics properties - Combustion Toolbox 0.9.0 documentation</title>
@@ -153,9 +153,10 @@
 </form>
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
   <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
-<ul>
+<ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="tutorial.html">Tutorial</a></li>
 <li class="toctree-l1"><a class="reference internal" href="validations.html">Validations</a></li>
+<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Thermodynamics properties</a></li>
 </ul>
 
 </div>
@@ -194,16 +195,16 @@
 <hr class="docutils"/>
 <section id="adiabaticindex-mix">
 <h2>adiabaticIndex(mix)<a class="headerlink" href="#adiabaticindex-mix" title="Permalink to this headline">#</a></h2>
-<p>Get the adiabatic index [-].</p>
+<p>Get the adiabatic index (-).</p>
 <ul class="simple">
 <li><p><strong>Input:</strong> (mix)</p>
 <ul>
 <li><p>instance of struct mixture.</p></li>
 </ul>
 </li>
-<li><p><strong>Output:</strong> [val]</p>
+<li><p><strong>Output:</strong> (val)</p>
 <ul>
-<li><p>adiabatic index of the mixture [-].</p></li>
+<li><p>adiabatic index of the mixture (-).</p></li>
 </ul>
 </li>
 </ul>
@@ -211,16 +212,16 @@
 <hr class="docutils"/>
 <section id="cp-mass-mix">
 <h2>cp_mass(mix)<a class="headerlink" href="#cp-mass-mix" title="Permalink to this headline">#</a></h2>
-<p>Get the mass-basis specific heat at constant pressure [kJ/kg-K].</p>
+<p>Get the mass-basis specific heat at constant pressure (kJ/kg-K).</p>
 <ul class="simple">
 <li><p><strong>Input:</strong> (mix)</p>
 <ul>
 <li><p>instance of struct mixture.</p></li>
 </ul>
 </li>
-<li><p><strong>Output:</strong> [val]</p>
+<li><p><strong>Output:</strong> (val)</p>
 <ul>
-<li><p>mass basis specific heat of the mixture at constant pressure [kJ/kg-K].</p></li>
+<li><p>mass basis specific heat of the mixture at constant pressure (kJ/kg-K).</p></li>
 </ul>
 </li>
 </ul>
@@ -228,16 +229,16 @@
 <hr class="docutils"/>
 <section id="cp-mole-mix">
 <h2>cp_mole(mix)<a class="headerlink" href="#cp-mole-mix" title="Permalink to this headline">#</a></h2>
-<p>Get the mole-basis specific heat at constant pressure [kJ/kmol-K].</p>
+<p>Get the mole-basis specific heat at constant pressure (kJ/kmol-K).</p>
 <ul class="simple">
 <li><p><strong>Input:</strong> (mix)</p>
 <ul>
 <li><p>instance of struct mixture.</p></li>
 </ul>
 </li>
-<li><p><strong>Output:</strong> [val]</p>
+<li><p><strong>Output:</strong> (val)</p>
 <ul>
-<li><p>mole basis specific heat of the mixture at constant pressure [kJ/kmol-K].</p></li>
+<li><p>mole basis specific heat of the mixture at constant pressure (kJ/kmol-K).</p></li>
 </ul>
 </li>
 </ul>
@@ -245,16 +246,16 @@
 <hr class="docutils"/>
 <section id="cv-mass-mix">
 <h2>cv_mass(mix)<a class="headerlink" href="#cv-mass-mix" title="Permalink to this headline">#</a></h2>
-<p>Get the mass-basis specific heat at constant volume [kJ/kg-K].</p>
+<p>Get the mass-basis specific heat at constant volume (kJ/kg-K).</p>
 <ul class="simple">
 <li><p><strong>Input:</strong> (mix)</p>
 <ul>
 <li><p>instance of struct mixture.</p></li>
 </ul>
 </li>
-<li><p><strong>Output:</strong> [val]</p>
+<li><p><strong>Output:</strong> (val)</p>
 <ul>
-<li><p>mass basis specific heat of the mixture at constant volume [kJ/kg-K].</p></li>
+<li><p>mass basis specific heat of the mixture at constant volume (kJ/kg-K).</p></li>
 </ul>
 </li>
 </ul>
@@ -262,16 +263,16 @@
 <hr class="docutils"/>
 <section id="cv-mole-mix">
 <h2>cv_mole(mix)<a class="headerlink" href="#cv-mole-mix" title="Permalink to this headline">#</a></h2>
-<p>Get the mole-basis specific heat at constant volume [kJ/kmol-K].</p>
+<p>Get the mole-basis specific heat at constant volume (kJ/kmol-K).</p>
 <ul class="simple">
 <li><p><strong>Input:</strong> (mix)</p>
 <ul>
 <li><p>instance of struct mixture.</p></li>
 </ul>
 </li>
-<li><p><strong>Output:</strong> [val]</p>
+<li><p><strong>Output:</strong> (val)</p>
 <ul>
-<li><p>mole basis specific heat of the mixture at constant volume [kJ/kmol-K].</p></li>
+<li><p>mole basis specific heat of the mixture at constant volume (kJ/kmol-K).</p></li>
 </ul>
 </li>
 </ul>
@@ -279,16 +280,16 @@
 <hr class="docutils"/>
 <section id="density-mix">
 <h2>density(mix)<a class="headerlink" href="#density-mix" title="Permalink to this headline">#</a></h2>
-<p>Get the density [kg/m3].</p>
+<p>Get the density (kg/m3).</p>
 <ul class="simple">
 <li><p><strong>Input:</strong> (mix)</p>
 <ul>
 <li><p>instance of struct mixture.</p></li>
 </ul>
 </li>
-<li><p><strong>Output:</strong> [val]</p>
+<li><p><strong>Output:</strong> (val)</p>
 <ul>
-<li><p>density of the mixture [kg/m3].</p></li>
+<li><p>density of the mixture (kg/m3).</p></li>
 </ul>
 </li>
 </ul>
@@ -296,16 +297,16 @@
 <hr class="docutils"/>
 <section id="enthalpy-mass-mix">
 <h2>enthalpy_mass(mix)<a class="headerlink" href="#enthalpy-mass-mix" title="Permalink to this headline">#</a></h2>
-<p>Get the mass specific enthalpy [kJ/kg].</p>
+<p>Get the mass specific enthalpy (kJ/kg).</p>
 <ul class="simple">
 <li><p><strong>Input:</strong> (mix)</p>
 <ul>
 <li><p>instance of struct mixture.</p></li>
 </ul>
 </li>
-<li><p><strong>Output:</strong> [val]</p>
+<li><p><strong>Output:</strong> (val)</p>
 <ul>
-<li><p>mass specific enthalpy of the mixture [kJ/kg].</p></li>
+<li><p>mass specific enthalpy of the mixture (kJ/kg).</p></li>
 </ul>
 </li>
 </ul>
@@ -313,16 +314,16 @@
 <hr class="docutils"/>
 <section id="enthalpy-mole-mix">
 <h2>enthalpy_mole(mix)<a class="headerlink" href="#enthalpy-mole-mix" title="Permalink to this headline">#</a></h2>
-<p>Get the mole specific enthalpy [kJ/kmol].</p>
+<p>Get the mole specific enthalpy (kJ/kmol).</p>
 <ul class="simple">
 <li><p><strong>Input:</strong> (mix)</p>
 <ul>
 <li><p>instance of struct mixture.</p></li>
 </ul>
 </li>
-<li><p><strong>Output:</strong> [val]</p>
+<li><p><strong>Output:</strong> (val)</p>
 <ul>
-<li><p>mole specific enthalpy of the mixture [kJ/kmol].</p></li>
+<li><p>mole specific enthalpy of the mixture (kJ/kmol).</p></li>
 </ul>
 </li>
 </ul>
@@ -330,16 +331,16 @@
 <hr class="docutils"/>
 <section id="entropy-mass-mix">
 <h2>entropy_mass(mix)<a class="headerlink" href="#entropy-mass-mix" title="Permalink to this headline">#</a></h2>
-<p>Get the mass specific entropy [kJ/kg-K].</p>
+<p>Get the mass specific entropy (kJ/kg-K).</p>
 <ul class="simple">
 <li><p><strong>Input:</strong> (mix)</p>
 <ul>
 <li><p>instance of struct mixture.</p></li>
 </ul>
 </li>
-<li><p><strong>Output:</strong> [val]</p>
+<li><p><strong>Output:</strong> (val)</p>
 <ul>
-<li><p>mass specific entropy of the mixture [kJ/kmol].</p></li>
+<li><p>mass specific entropy of the mixture (kJ/kmol).</p></li>
 </ul>
 </li>
 </ul>
@@ -347,16 +348,16 @@
 <hr class="docutils"/>
 <section id="entropy-mole-mix">
 <h2>entropy_mole(mix)<a class="headerlink" href="#entropy-mole-mix" title="Permalink to this headline">#</a></h2>
-<p>Get the mole specific entropy [kJ/kmol-K].</p>
+<p>Get the mole specific entropy (kJ/kmol-K).</p>
 <ul class="simple">
 <li><p><strong>Input:</strong> (mix)</p>
 <ul>
 <li><p>instance of struct mixture.</p></li>
 </ul>
 </li>
-<li><p><strong>Output:</strong> [val]</p>
+<li><p><strong>Output:</strong> (val)</p>
 <ul>
-<li><p>mole specific entropy of the mixture [kJ/kmol-K].</p></li>
+<li><p>mole specific entropy of the mixture (kJ/kmol-K).</p></li>
 </ul>
 </li>
 </ul>
@@ -364,16 +365,16 @@
 <hr class="docutils"/>
 <section id="equivalenceratio-mix">
 <h2>equivalenceRatio(mix)<a class="headerlink" href="#equivalenceratio-mix" title="Permalink to this headline">#</a></h2>
-<p>Get the equivalence ratio of the initial mixture [-].</p>
+<p>Get the equivalence ratio of the initial mixture (-).</p>
 <ul class="simple">
 <li><p><strong>Input:</strong> (mix)</p>
 <ul>
 <li><p>instance of struct mixture.</p></li>
 </ul>
 </li>
-<li><p><strong>Output:</strong> [val]</p>
+<li><p><strong>Output:</strong> (val)</p>
 <ul>
-<li><p>equivalence ratio of the initial mixture [-].</p></li>
+<li><p>equivalence ratio of the initial mixture (-).</p></li>
 </ul>
 </li>
 </ul>
@@ -381,16 +382,16 @@
 <hr class="docutils"/>
 <section id="intenergy-mass-mix">
 <h2>intEnergy_mass(mix)<a class="headerlink" href="#intenergy-mass-mix" title="Permalink to this headline">#</a></h2>
-<p>Get the mass specific internal energy [kJ/kg].</p>
+<p>Get the mass specific internal energy (kJ/kg).</p>
 <ul class="simple">
 <li><p><strong>Input:</strong> (mix)</p>
 <ul>
 <li><p>instance of struct mixture.</p></li>
 </ul>
 </li>
-<li><p><strong>Output:</strong> [val]</p>
+<li><p><strong>Output:</strong> (val)</p>
 <ul>
-<li><p>mass specific internal energy of the mixture [kJ/kg].</p></li>
+<li><p>mass specific internal energy of the mixture (kJ/kg).</p></li>
 </ul>
 </li>
 </ul>
@@ -398,16 +399,16 @@
 <hr class="docutils"/>
 <section id="intenergy-mole-mix">
 <h2>intEnergy_mole(mix)<a class="headerlink" href="#intenergy-mole-mix" title="Permalink to this headline">#</a></h2>
-<p>Get the mole specific internal energy [kJ/kmol].</p>
+<p>Get the mole specific internal energy (kJ/kmol).</p>
 <ul class="simple">
 <li><p><strong>Input:</strong> (mix)</p>
 <ul>
 <li><p>instance of struct mixture.</p></li>
 </ul>
 </li>
-<li><p><strong>Output:</strong> [val]</p>
+<li><p><strong>Output:</strong> (val)</p>
 <ul>
-<li><p>mole specific internal energy of the mixture [kJ/kmol].</p></li>
+<li><p>mole specific internal energy of the mixture (kJ/kmol).</p></li>
 </ul>
 </li>
 </ul>
@@ -415,16 +416,16 @@
 <hr class="docutils"/>
 <section id="massfractions-mix">
 <h2>massFractions(mix)<a class="headerlink" href="#massfractions-mix" title="Permalink to this headline">#</a></h2>
-<p>Get the mass fractions of all the species in the mixture [-].</p>
+<p>Get the mass fractions of all the species in the mixture (-).</p>
 <ul class="simple">
 <li><p><strong>Input:</strong> (mix)</p>
 <ul>
 <li><p>instance of struct mixture.</p></li>
 </ul>
 </li>
-<li><p><strong>Output:</strong> [val]</p>
+<li><p><strong>Output:</strong> (val)</p>
 <ul>
-<li><p>vector with the mass fractions of all the species in the mixture [kJ/kmol].</p></li>
+<li><p>vector with the mass fractions of all the species in the mixture (kJ/kmol).</p></li>
 </ul>
 </li>
 </ul>
@@ -432,16 +433,16 @@
 <hr class="docutils"/>
 <section id="meanmolecularweight-mix">
 <h2>meanMolecularWeight(mix)<a class="headerlink" href="#meanmolecularweight-mix" title="Permalink to this headline">#</a></h2>
-<p>Get the mean molecular weight [kg/kmol].</p>
+<p>Get the mean molecular weight (kg/kmol).</p>
 <ul class="simple">
 <li><p><strong>Input:</strong> (mix)</p>
 <ul>
 <li><p>instance of struct mixture.</p></li>
 </ul>
 </li>
-<li><p><strong>Output:</strong> [val]</p>
+<li><p><strong>Output:</strong> (val)</p>
 <ul>
-<li><p>mean molecular weight of the mixture [kg/kmol].</p></li>
+<li><p>mean molecular weight of the mixture (kg/kmol).</p></li>
 </ul>
 </li>
 </ul>
@@ -449,16 +450,16 @@
 <hr class="docutils"/>
 <section id="pressure-mix">
 <h2>pressure(mix)<a class="headerlink" href="#pressure-mix" title="Permalink to this headline">#</a></h2>
-<p>Get the pressure [bar].</p>
+<p>Get the pressure (bar).</p>
 <ul class="simple">
 <li><p><strong>Input:</strong> (mix)</p>
 <ul>
 <li><p>instance of struct mixture.</p></li>
 </ul>
 </li>
-<li><p><strong>Output:</strong> [val]</p>
+<li><p><strong>Output:</strong> (val)</p>
 <ul>
-<li><p>pressure of the mixture [bar].</p></li>
+<li><p>pressure of the mixture (bar).</p></li>
 </ul>
 </li>
 </ul>
@@ -466,16 +467,16 @@
 <hr class="docutils"/>
 <section id="temperature-mix">
 <h2>temperature(mix)<a class="headerlink" href="#temperature-mix" title="Permalink to this headline">#</a></h2>
-<p>Get the temperature [K].</p>
+<p>Get the temperature (K).</p>
 <ul class="simple">
 <li><p><strong>Input:</strong> (mix)</p>
 <ul>
 <li><p>instance of struct mixture.</p></li>
 </ul>
 </li>
-<li><p><strong>Output:</strong> [val]</p>
+<li><p><strong>Output:</strong> (val)</p>
 <ul>
-<li><p>temperature of the mixture [K].</p></li>
+<li><p>temperature of the mixture (K).</p></li>
 </ul>
 </li>
 </ul>
@@ -483,16 +484,16 @@
 <hr class="docutils"/>
 <section id="velocity-relative-mix">
 <h2>velocity_relative(mix)<a class="headerlink" href="#velocity-relative-mix" title="Permalink to this headline">#</a></h2>
-<p>Get the velocity of the gases relative to the shock front [m/s]. Only for shocks and detonations problems.</p>
+<p>Get the velocity of the gases relative to the shock front (m/s). Only for shocks and detonations problems.</p>
 <ul class="simple">
 <li><p><strong>Input:</strong> (mix)</p>
 <ul>
 <li><p>instance of struct mixture.</p></li>
 </ul>
 </li>
-<li><p><strong>Output:</strong> [val]</p>
+<li><p><strong>Output:</strong> (val)</p>
 <ul>
-<li><p>velocity of the gases relative to the shock front [m/s].</p></li>
+<li><p>velocity of the gases relative to the shock front (m/s).</p></li>
 </ul>
 </li>
 </ul>
@@ -506,7 +507,17 @@
         
         <div class="related-pages">
           
-          
+          <a class="prev-page" href="validations.html">
+              <svg><use href="#svg-arrow-right"></use></svg>
+              <div class="page-info">
+                <div class="context">
+                  <span>Previous</span>
+                </div>
+                
+                <div class="title">Validations</div>
+                
+              </div>
+            </a>
         </div>
         <div class="bottom-of-page">
           <div class="left-details">

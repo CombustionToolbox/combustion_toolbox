@@ -3,7 +3,7 @@
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
-<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Validations" href="validations.html" />
+<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Tutorial" href="tutorial.html" />
 
     <meta name="generator" content="sphinx-4.4.0, furo 2022.03.04"/>
         <title>Combustion Toolbox 0.9.0 documentation</title>
@@ -154,6 +154,8 @@
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
   <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul>
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="thermo.html">Thermodynamics properties</a></li>
 <li class="toctree-l1"><a class="reference internal" href="validations.html">Validations</a></li>
 </ul>
 
@@ -193,16 +195,14 @@
 </div>
 <p align="left">
 <img alt="UC3M" src="https://github.com/AlbertoCuadra/combustion_toolbox/blob/master/GUI/Icons/logo.svg" style="border-width:0" width="1500"/>
-</p>
-<p><a class="reference external" href="https://doi.org/10.5281/zenodo.6383180"><img alt="DOI" src="https://zenodo.org/badge/DOI/10.5281/zenodo.6383180.svg"/></a>
+</p><p><a class="reference external" href="https://doi.org/10.5281/zenodo.6383180"><img alt="DOI" src="https://zenodo.org/badge/DOI/10.5281/zenodo.6383180.svg"/></a>
 <a class="reference external" href="https://es.mathworks.com/matlabcentral/fileexchange/101088-combustion-toolbox"><img alt="File Exchange" src="https://www.mathworks.com/matlabcentral/images/matlab-file-exchange.svg"/></a>
 <a class="reference external" href="https://github.com/AlbertoCuadra/combustion_toolbox/actions/workflows/CI.yml"><img alt="CI" src="https://github.com/AlbertoCuadra/combustion_toolbox/actions/workflows/CI.yml/badge.svg"/></a>
 <a class="reference external" href="https://github.com/AlbertoCuadra/combustion_toolbox/actions/workflows/CD.yml"><img alt="CD" src="https://github.com/AlbertoCuadra/combustion_toolbox/actions/workflows/CD.yml/badge.svg"/></a>
 <a class="reference external" href="https://github.com/AlbertoCuadra/combustion_toolbox/commits/master"><img alt="last modified" src="https://img.shields.io/github/last-commit/AlbertoCuadra/combustion_toolbox"/></a>
 <a class="reference external" href="https://www.gnu.org/licenses/gpl-3.0.html"><img alt="license" src="https://img.shields.io/github/license/AlbertoCuadra/combustion_toolbox"/></a></p>
 <p>A MATLAB-GUI based open-source tool for solving gaseous combustion problems.</p>
-<!-- Website: https://combustiontoolbox.netlify.app/ -->
-<p>:top: There is also a (less complete) <a class="reference external" href="https://github.com/AlbertoCuadra/Combustion-PyToolbox">Python version</a></p>
+<!-- Website: https://combustiontoolbox.netlify.app/ --><p>:top: There is also a (less complete) <a class="reference external" href="https://github.com/AlbertoCuadra/Combustion-PyToolbox">Python version</a></p>
 <section id="features">
 <h1>Features<a class="headerlink" href="#features" title="Permalink to this headline">#</a></h1>
 <p>Combustion Toolbox is a a MATLAB-GUI based tool for solving gaseous combustion problems.
@@ -261,8 +261,7 @@ Features</p>
 ⚠️ **NOTE**
 - At the moment, the Python version does not have all the capabilities that the MATLAB version has. I will continue with the development of this version adding all the remaining capabilities. I will also add a GUI using Qt6 and Pyside6.
 ---
--->
-<p>This project is also part of the PhD of <a class="reference external" href="https://www.acuadralara.com/">Alberto Cuadra-Lara</a>.</p>
+--><p>This project is also part of the PhD of <a class="reference external" href="https://www.acuadralara.com/">Alberto Cuadra-Lara</a>.</p>
 <hr class="docutils"/>
 <p>⚠️ <strong>NOTE</strong></p>
 <ul class="simple">
@@ -280,20 +279,19 @@ Features</p>
 <p>We have several examples of what Combustion Toolbox can do. Here we show a preview of the GUI and some results obtained from Combustion Toolbox.</p>
 <p align="left">
 <img src="https://github.com/AlbertoCuadra/combustion_toolbox/blob/master/GUI/Snapshots/snapshot_1.svg" width="500"/>
-</p>
-<p><strong>Figure 1:</strong> <em>Snapshot of the GUI</em>.</p>
+</p><p><strong>Figure 1:</strong> <em>Snapshot of the GUI</em>.</p>
 <p align="left">
 <img src="https://github.com/AlbertoCuadra/combustion_toolbox/blob/master/Validations/Figures/Hugoniot_benchmarking.svg" width="400"/>
-</p>
-<p><strong>Figure 2:</strong> <em>Hugoniot curves for different molecular gases at pre-shock temperature T1 = 300 K and pressure p1 = 1 atm [numerical results obtained with Combustion Toolbox (lines) and contrasted with NASA’s Chemical Equilibrium with Applications (CEA) code excluding ionization (symbols)]</em>.</p>
+</p><p><strong>Figure 2:</strong> <em>Hugoniot curves for different molecular gases at pre-shock temperature T1 = 300 K and pressure p1 = 1 atm [numerical results obtained with Combustion Toolbox (lines) and contrasted with NASA’s Chemical Equilibrium with Applications (CEA) code excluding ionization (symbols)]</em>.</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>
+</pre></div>
+</div>
 <p align="left">
 <img src="https://github.com/AlbertoCuadra/combustion_toolbox/blob/master/Validations/Figures/run_validation_DET_CEA_3_molar.svg" width="1200"/>
-</p>
-<p><strong>Figure 3:</strong> <em>Example CJ detonation for lean to rich CH4-air mixtures at standard conditions: (a) variation of molar fraction, (b) variation of temperature. The computational time was of 9.25 seconds using a Intel(R) Core(TM) i7-8700 CPU @ 3.20GHz for a set of 24 species considered and a total of 351 case studies.</em></p>
+</p><p><strong>Figure 3:</strong> <em>Example CJ detonation for lean to rich CH4-air mixtures at standard conditions: (a) variation of molar fraction, (b) variation of temperature. The computational time was of 9.25 seconds using a Intel(R) Core(TM) i7-8700 CPU @ 3.20GHz for a set of 24 species considered and a total of 351 case studies.</em></p>
 <p align="left">
 <img src="https://github.com/AlbertoCuadra/combustion_toolbox/blob/master/Validations/Figures/polar_shock_full_and_frozen_both_air_complete.svg" width="1000"/>
-</p>
-<p><strong>Figure 4:</strong> <em>Pressure-deflection shock polar (left) and wave angle-deflection shock polar (right) for an air mixture (78.084% N2, 20.9476% O2, 0.9365% Ar, 0.0319% CO2) at pre-shock temperature T1 = 300 K and pressure p1 = 1 atm, and a range of preshock Mach numbers M1 = [2, 14]; line: considering dissociation, ionization, and recombination in multi-species mixtures; dashed: considering a thermochemically frozen air mixture.</em></p>
+</p><p><strong>Figure 4:</strong> <em>Pressure-deflection shock polar (left) and wave angle-deflection shock polar (right) for an air mixture (78.084% N2, 20.9476% O2, 0.9365% Ar, 0.0319% CO2) at pre-shock temperature T1 = 300 K and pressure p1 = 1 atm, and a range of preshock Mach numbers M1 = [2, 14]; line: considering dissociation, ionization, and recombination in multi-species mixtures; dashed: considering a thermochemically frozen air mixture.</em></p>
 </section>
 <section id="contributing">
 <h1>Contributing<a class="headerlink" href="#contributing" title="Permalink to this headline">#</a></h1>
@@ -333,6 +331,36 @@ Features</p>
 <div class="toctree-wrapper compound">
 <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul>
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html">Tutorial</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#getting-started">Getting Started</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#setting-the-state">Setting the state</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#chemical-equilibrium">Chemical Equilibrium</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#postprocessed-results-predefined-plots-for-several-cases">Postprocessed results (predefined plots for several cases)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#thermodynamic-properties">Thermodynamic Properties</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#congratulations">Congratulations!</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="thermo.html">Thermodynamics properties</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="thermo.html#adiabaticindex-mix">adiabaticIndex(mix)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="thermo.html#cp-mass-mix">cp_mass(mix)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="thermo.html#cp-mole-mix">cp_mole(mix)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="thermo.html#cv-mass-mix">cv_mass(mix)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="thermo.html#cv-mole-mix">cv_mole(mix)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="thermo.html#density-mix">density(mix)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="thermo.html#enthalpy-mass-mix">enthalpy_mass(mix)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="thermo.html#enthalpy-mole-mix">enthalpy_mole(mix)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="thermo.html#entropy-mass-mix">entropy_mass(mix)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="thermo.html#entropy-mole-mix">entropy_mole(mix)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="thermo.html#equivalenceratio-mix">equivalenceRatio(mix)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="thermo.html#intenergy-mass-mix">intEnergy_mass(mix)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="thermo.html#intenergy-mole-mix">intEnergy_mole(mix)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="thermo.html#massfractions-mix">massFractions(mix)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="thermo.html#meanmolecularweight-mix">meanMolecularWeight(mix)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="thermo.html#pressure-mix">pressure(mix)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="thermo.html#temperature-mix">temperature(mix)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="thermo.html#velocity-relative-mix">velocity_relative(mix)</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="validations.html">Validations</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="validations.html#validation-tp-1">Validation TP 1</a></li>
 <li class="toctree-l2"><a class="reference internal" href="validations.html#validation-tp-2">Validation TP 2</a></li>
@@ -360,12 +388,12 @@ Features</p>
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="validations.html">
+          <a class="next-page" href="tutorial.html">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">Validations</div>
+                <div class="title">Tutorial</div>
               </div>
               <svg><use href="#svg-arrow-right"></use></svg>
             </a>

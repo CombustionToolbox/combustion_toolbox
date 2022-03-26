@@ -41,7 +41,7 @@ extensions = [
     'sphinx.ext.autosectionlabel',
     'sphinxcontrib.cairosvgconverter',
     'sphinx.ext.napoleon',
-    'sphinxcontrib.matlab',
+    # 'sphinxcontrib.matlab',
 ]
 
 # The suffix(es) of source filenames.

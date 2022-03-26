@@ -13,7 +13,7 @@
 import os
 # import sys
 # sys.path.insert(0, os.path.abspath('.'))
-matlab_src_dir = os.path.dirname(os.path.abspath(__file__))
+matlab_src_dir = os.path.abspath('..') 
 primary_domain = 'mat'
 
 # -- Project information -----------------------------------------------------
@@ -32,14 +32,16 @@ release = '0.9.0'
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = [
-    'sphinx.ext.viewcode',
-    # 'sphinxcontrib.matlab',
     'myst_parser',
+    'sphinx.ext.autodoc',
+    'sphinx.ext.viewcode',
+    'sphinx.ext.autosummary',
+    'sphinx.ext.mathjax',
     'sphinx.ext.duration',
     'sphinx.ext.autosectionlabel',
-    'sphinx.ext.autodoc',
     'sphinxcontrib.cairosvgconverter',
     'sphinx.ext.napoleon',
+    'sphinxcontrib.matlab',
 ]
 
 # The suffix(es) of source filenames.

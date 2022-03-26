@@ -1,5 +1,5 @@
 git+https://github.com/syarra/sphinxcontrib-matlabdomain#egg=sphinxcontrib-matlabdomain
-sphinx_furo_theme
+furo
 git+https://github.com/syarra/Documenter.py@master#egg=documenter
 
 alabaster==0.7.12

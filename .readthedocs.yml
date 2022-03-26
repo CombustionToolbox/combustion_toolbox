@@ -20,7 +20,9 @@ formats:
   - pdf
   # - epub
 
-requirements_file: docs/requirements.txt
+python:
+   install:
+   - requirements: docs/requirements.txt
 # Optionally declare the Python requirements required to build your docs
 # python:
 #   install:

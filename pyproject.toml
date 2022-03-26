@@ -6,8 +6,3 @@ build-backend = "flit_core.buildapi"
 name = "combustion_toolbox"
 authors = [{name = "Alberto Cuadra Lara", email = "acuadra@ing.uc3m.es"}]
 dynamic = ["version", "description"]
-readme = "README.md"
-
-
-[project.license]
-file = "LICENSE.md"

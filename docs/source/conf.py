@@ -13,8 +13,8 @@
 import os
 # import sys
 # sys.path.insert(0, os.path.abspath('.'))
-matlab_src_dir = os.path.abspath('..') 
-primary_domain = 'mat'
+# matlab_src_dir = os.path.abspath('..') 
+# primary_domain = 'mat'
 
 # -- Project information -----------------------------------------------------
 
@@ -34,19 +34,13 @@ release = '0.9.0'
 extensions = [
     'myst_parser',
     'sphinx.ext.autodoc',
-    'sphinx.ext.viewcode',
-    'sphinx.ext.autosummary',
-    'sphinx.ext.mathjax',
-    'sphinx.ext.duration',
-    'sphinx.ext.autosectionlabel',
     'sphinxcontrib.cairosvgconverter',
-    'sphinx.ext.napoleon',
     # 'sphinxcontrib.matlab',
 ]
 
 # The suffix(es) of source filenames.
 # You can specify multiple suffix as a list of string:
-source_suffix = ['.rst', '.md']
+source_suffix = ['.md']
 
 # The master toctree document.
 master_doc = 'index'

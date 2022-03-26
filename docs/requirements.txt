@@ -1,4 +1,4 @@
-git+https://github.com/syarra/sphinxcontrib-matlabdomain#egg=sphinxcontrib-matlabdomain
+git+https://github.com/sphinx-contrib/matlabdomain
 furo
 
 alabaster==0.7.12

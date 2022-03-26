@@ -33,6 +33,7 @@ release = '0.9.0'
 # ones.
 extensions = [
     'sphinx.ext.viewcode',
+    # 'sphinxcontrib.matlab',
     'myst_parser',
     'sphinx.ext.duration',
     'sphinx.ext.autosectionlabel',
@@ -43,11 +44,7 @@ extensions = [
 
 # The suffix(es) of source filenames.
 # You can specify multiple suffix as a list of string:
-#
-# source_suffix = ['.rst', '.md']
-source_suffix = {
-    '.md': 'markdown',
-}
+source_suffix = ['.rst', '.md']
 
 # The master toctree document.
 master_doc = 'index'

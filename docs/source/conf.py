@@ -10,10 +10,11 @@
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
-# import os
+import os
 # import sys
 # sys.path.insert(0, os.path.abspath('.'))
-
+matlab_src_dir = os.path.dirname(os.path.abspath(__file__))
+primary_domain = 'mat'
 
 # -- Project information -----------------------------------------------------
 
@@ -37,6 +38,7 @@ extensions = [
     'sphinx.ext.autosectionlabel',
     'sphinx.ext.autodoc',
     'sphinxcontrib.cairosvgconverter',
+    'sphinx.ext.napoleon',
 ]
 
 # The suffix(es) of source filenames.

@@ -18,11 +18,13 @@ sphinx:
 # If using Sphinx, optionally build your docs in additional formats such as PDF
 formats:
   - pdf
+  # - epub
 
+requirements_file: docs/requirements.txt
 # Optionally declare the Python requirements required to build your docs
-python:
-  install:
-    - method: pip
-      path: .
+# python:
+#   install:
+#     - method: pip
+#       path: .
 #       extra_requirements:
 #         - doc

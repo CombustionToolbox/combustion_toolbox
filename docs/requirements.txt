@@ -1,3 +1,4 @@
+cairosvg
 sphinxcontrib-svg2pdfconverter
 sphinxcontrib-matlabdomain
 furo

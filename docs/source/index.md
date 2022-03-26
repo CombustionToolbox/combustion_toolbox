@@ -1,9 +1,9 @@
+ 
 ```{warning}
-The documentation is under development
+The documentation is under development 
 ```
-  
+
 ```{include} ../../README.md
-:relative-images:
 ```
  
 For validations, check out {doc}`validations`
@@ -12,5 +12,7 @@ For validations, check out {doc}`validations`
 :caption: 'Contents:'
 :maxdepth: 2
 
+tutorial
+thermo
 validations
 ``` 

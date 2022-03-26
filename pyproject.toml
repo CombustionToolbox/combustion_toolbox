@@ -13,4 +13,4 @@ email = "acuadra@ing.uc3m.es"
 
 
 [project.license]
-file = "LICENSE"
+file = "LICENSE.md"

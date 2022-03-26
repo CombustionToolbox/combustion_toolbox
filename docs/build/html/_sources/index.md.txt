@@ -11,4 +11,5 @@ The documentation is under development
 
 tutorial
 validations
+thermo
 ``` 

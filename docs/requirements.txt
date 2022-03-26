@@ -1,6 +1,6 @@
+sphinxcontrib-svg2pdfconverter
 sphinxcontrib-matlabdomain
 furo
-
 alabaster==0.7.12
     # via sphinx
 attrs==21.2.0

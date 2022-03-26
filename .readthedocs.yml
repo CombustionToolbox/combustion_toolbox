@@ -20,9 +20,9 @@ formats:
   - pdf
 
 # Optionally declare the Python requirements required to build your docs
-# python:
-#   install:
-#     - method: pip
-#       path: .
+python:
+  install:
+    - method: pip
+      path: .
 #       extra_requirements:
 #         - doc

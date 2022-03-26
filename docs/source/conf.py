@@ -51,7 +51,7 @@ source_suffix = {
 }
 
 # The master toctree document.
-master_doc = 'index'
+master_doc = 'index.md'
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']

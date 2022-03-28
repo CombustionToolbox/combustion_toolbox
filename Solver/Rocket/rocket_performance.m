@@ -1,5 +1,6 @@
 function [mix1, mix2, mix3] = rocket_performance(self, mix1, varargin)
-    % Routine that computes the propellant rocket performance. 
+    % Routine that computes the propellant rocket performance
+    %
     % Methods implemented:
     %   * Infinite-Area-Chamber (IAC) 
     %   * Finite-Area-Chamber (FAC) - NOT YET

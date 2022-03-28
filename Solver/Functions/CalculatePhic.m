@@ -2,15 +2,15 @@ function phi_c = CalculatePhic(Fuel, Ninerts, phi, TP, pP, DB)
     % Compute equivalence ratio in which soot appears considering complete combustion
     %
     % Args:
-    %     Fuel (struct):     Struct mix with all the properties of the Fuel mixture
-    %     Ninerts (float):   Number of moles of the inerts species
-    %     phi (float):       Equivalence ratio [-]
-    %     TP (float):        Temperature [K]
-    %     pP (float):        Pressure [bar]
-    %     DB (struct):       Database
+    %     Fuel (struct):   Struct mix with all the properties of the Fuel mixture
+    %     Ninerts (float): Number of moles of the inerts species
+    %     phi (float):     Equivalence ratio [-]
+    %     TP (float):      Temperature [K]
+    %     pP (float):      Pressure [bar]
+    %     DB (struct):     Database
     %
     % Returns:
-    %     phi_c (float):     Equivalence ratio in which soot appears [-]
+    %     phi_c (float):   Equivalence ratio in which soot appears [-]
 
     R0 = 8.3144598; % [J/(K mol)]. Universal gas constant
     tol = 1;

@@ -1,17 +1,16 @@
 function [N0, species] = complete_combustion(self, mix, phi)
     % Solve chemical equilibrium for CHNO mixtures assuming a complete combustion
     %
-    % USAGE:
+    % Extended description of function.
     %
-    %    self = SolveProblem(self, ProblemType)
+    % Args:
+    %     self (struct): Data of the mixture, conditions, and databases
+    %     mix (struct):  Properties of the initial mixture
+    %     phi (float):   Equivalence ratio [-]
     %
-    % INPUTS:
-    %     :param self:     Struct with all the data (initial mixture, conditions, and databases)
-    %     :param mix:      Struct with all the properties of the initial mixture
-    %     :param phi:      Equivalence ratio [-]
-    %
-    % OUTPUTS:
-    %     :param N0:       Equilibrium composition [moles] at defined Temperature
+    % Returns:
+    %     N0 (float):    Equilibrium composition [moles] at defined Temperature
+    %     species (str): Species considered in the complemte combustion model
 
     % Parameters ---------------------
     Fuel = self.PD.Fuel;

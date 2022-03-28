@@ -1,12 +1,21 @@
 function mix3 = compute_IAC_model(self, mix2, mix3)
-    % Compute thermochemical composition for Infinite-Area-Chamber (IAC)
-    % model
-
+    % Compute thermochemical composition for the Infinite-Area-Chamber (IAC) model
+    %
+    % This method is based on Gordon, S., & McBride, B. J. (1994). NASA reference publication,
+    % 1311.
+    %
+    % Args:
+    %     self (struct): Data of the mixture, conditions, and databases
+    %     mix2 (struct): Properties of the mixture at the outlet of the chamber
+    %     mix3 (struct): Properties of the mixture at the throat (previous calculation)
+    %
+    % Returns:
+    %     mix3 (struct): Properties of the mixture at the throat
+    
     % Compute pressure guess [bar] for Infinite-Area-Chamber (IAC) 
     pressure = guess_pressure_IAC_model(mix2);
     % Initialization
-    STOP = 1;
-    it = 0;
+    STOP = 1; it = 0;
     % Loop
     while STOP > self.TN.tol_rocket && it < self.TN.it_rocket
         it = it + 1;

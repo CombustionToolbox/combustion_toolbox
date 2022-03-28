@@ -4,12 +4,12 @@ function vector = cell2vector(value, varargin)
     % given fieldname.
     %
     % Args:
-    %     value (cell/struct): Data of the mixture, conditions, and databases
+    %     value (cell or struct): Data of the mixture, conditions, and databases
     % Optional Args:
-    %     field (str):         Fieldname of the given value (struct)
+    %     field (str): Fieldname of the given value (struct)
     %
     % Returns:
-    %     vector (any):        Vector with the values of the individual cell/fieldname (struct)
+    %     vector (float): Vector with the values of the individual cell/fieldname (struct)
     
     if nargin > 1
         field = varargin{1};

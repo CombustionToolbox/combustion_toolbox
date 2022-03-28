@@ -1,5 +1,13 @@
 function dxdy = compute_first_derivative(x, y)
-    % Compute first central derivate with non-uniform grid
+    % Compute first central derivate using a non-uniform grid
+    %
+    % Args:
+    %     x (float): Grid values
+    %     y (float): Values for the corresponding grid
+    %
+    % Returns:
+    %     dxdy (float): Value of the first derivate for the given grid and its corresponding values
+
     h = y(2:end) - y(1:end-1);
     hmax = max(h);
     mu = h / hmax;

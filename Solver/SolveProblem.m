@@ -1,4 +1,15 @@
 function self = SolveProblem(self, ProblemType)
+    %
+    % USAGE:
+    %
+    %    self = SolveProblem(self, ProblemType)
+    %
+    % INPUTS:
+    %     :self:           Struct with all the data (initial mixture, conditions, and databases)
+    %     :ProblemType:    String with the name of the problem to solve
+    %
+    % OUTPUTS:
+    %     :self:           Struct with all the data (initial mixture, conditions, databases, and results)
     try
         % Save Problem Type
         self.PD.ProblemType = ProblemType;

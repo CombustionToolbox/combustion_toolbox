@@ -69,11 +69,11 @@ This project is also part of the PhD of [Alberto Cuadra-Lara](https://www.acuadr
 ⚠️ **NOTE**
 
 - The first final version v1.0.0 is expected to be released in April 2022. Check out the  upcoming features of [Combustion Toolbox v1.0.0](https://github.com/AlbertoCuadra/combustion_toolbox/projects/2).
-- [Wiki](https://github.com/AlbertoCuadra/combustion_toolbox/wiki) under construction :building_construction:
+- [Wiki](https://combustion-toolbox-website.readthedocs.io/) under construction :building_construction:
 
 ---
 # Start here!
-The [tutorial](https://github.com/AlbertoCuadra/combustion_toolbox/wiki/Tutorial) will help you get started using Combustion Toolbox on your pc.
+The [tutorial](https://combustion-toolbox-website.readthedocs.io/en/latest/tutorial.html) will help you get started using Combustion Toolbox on your pc.
 
 # Gallery
 

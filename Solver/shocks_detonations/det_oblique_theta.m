@@ -1,8 +1,28 @@
-function [mix1, mix2_1, mix2_2] = det_oblique_theta(varargin)
-    % Solve oblique shock
+function [mix1, mix2_1, mix2_2] = det_oblique_theta(self, mix1, overdriven, theta, varargin)
+    % Compute pre-shock and post-shock states of an oblique detonation wave 
+    % given the deflection angle.
+    %
+    % Two solutions:
+    %   * Weak detonation
+    %   * Strong detonation
+    %
+    % Args:
+    %     self (struct):      Data of the mixture, conditions, and databases
+    %     mix1 (struct):      Properties of the mixture in the pre-shock state
+    %     overdriven (float): Overdriven factor [-]
+    %     theta (float):      Deflection angle [deg]
+    %
+    % Optional Args:
+    %     mix2_1 (struct): Properties of the mixture in the post-shock state - weak detonation (previous calculation)
+    %     mix2_2 (struct): Properties of the mixture in the post-shock state - strong detonation (previous calculation)
+    %
+    % Returns:
+    %     mix1 (struct):   Properties of the mixture in the pre-shock state
+    %     mix2_1 (struct): Properties of the mixture in the post-shock state - weak detonation
+    %     mix2_2 (struct): Properties of the mixture in the post-shock state - strong detonation
 
     % Unpack input data
-    [self, mix1, mix2_1, mix2_2] = unpack(varargin);
+    [self, mix1, mix2_1, mix2_2] = unpack(self, mix1, overdriven, theta, varargin);
     % Abbreviations
     TN = self.TN;
     % Compute CJ state
@@ -77,17 +97,13 @@ function [mix1, mix2_1, mix2_2] = det_oblique_theta(varargin)
 end
 
 % SUB-PASS FUNCTIONS
-function [self, mix1, mix2_1, mix2_2] = unpack(x)
+function [self, mix1, mix2_1, mix2_2] = unpack(self, mix1, overdriven, theta, x)
     % Unpack input data
-    self = x{1};
-    mix1 = x{2};
-    overdriven = x{3};
-    theta = x{4};
     mix1.overdriven = overdriven;
     mix1.theta = theta; % deflection angle  [deg]
-    if length(x) > 4
-        mix2_1 = x{5};
-        mix2_2 = x{6};
+    if length(x) > 1
+        mix2_1 = x{1};
+        mix2_2 = x{2};
     else
         mix2_1 = [];
         mix2_2 = [];

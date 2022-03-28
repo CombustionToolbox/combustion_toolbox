@@ -1,8 +1,20 @@
-function [mix1, mix2] = overdriven_detonation(varargin)
-    % Solve Overdriven detonation 
+function [mix1, mix2] = overdriven_detonation(self, mix1, overdriven, varargin)
+    % Compute pre-shock and post-shock states of an overdriven planar detonation
+    %
+    % Args:
+    %     self (struct):      Data of the mixture, conditions, and databases
+    %     mix1 (struct):      Properties of the mixture in the pre-shock state
+    %     overdriven (float): Overdriven factor [-]
+    %
+    % Optional Args:
+    %     mix2 (struct):      Properties of the mixture in the post-shock state (previous calculation)
+    %
+    % Returns:
+    %     mix1 (struct):      Properties of the mixture in the pre-shock state
+    %     mix2 (struct):      Properties of the mixture in the post-shock state
 
     % Unpack input data
-    [self, mix1, mix2] = unpack(varargin);
+    [self, mix1, mix2] = unpack(self, mix1, overdriven, varargin);
     % Compute CJ speed
     if isempty(mix1.cj_speed)
         [str1_cj, ~] = cj_detonation(self, mix1);
@@ -15,14 +27,11 @@ function [mix1, mix2] = overdriven_detonation(varargin)
 end
 
 % SUB-PASS FUNCTIONS
-function [self, mix1, mix2] = unpack(x)
+function [self, mix1, mix2] = unpack(self, mix1, overdriven, x)
     % Unpack input data
-    self = x{1};
-    mix1 = x{2};
-    overdriven = x{3};
     mix1.overdriven = overdriven;
-    if length(x) > 3
-        mix2 = x{4};
+    if length(x) > 0
+        mix2 = x{1};
     else
         mix2 = [];
     end

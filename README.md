@@ -72,7 +72,7 @@ This project is also part of the PhD of [Alberto Cuadra-Lara](https://www.acuadr
 
 ---
 # Start here!
-The [tutorial](https://github.com/AlbertoCuadra/combustion_toolbox/wiki/Tutorial) will help you get started using Combustion Toolbox on your pc.
+The [tutorial](https://combustion-toolbox-website.readthedocs.io/en/latest/tutorial.html) will help you get started using Combustion Toolbox on your pc.
 
 # Gallery
 

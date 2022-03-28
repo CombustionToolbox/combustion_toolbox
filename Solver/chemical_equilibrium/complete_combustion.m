@@ -1,8 +1,6 @@
 function [N0, species] = complete_combustion(self, mix, phi)
     % Solve chemical equilibrium for CHNO mixtures assuming a complete combustion
     %
-    % Extended description of function.
-    %
     % Args:
     %     self (struct): Data of the mixture, conditions, and databases
     %     mix (struct):  Properties of the initial mixture

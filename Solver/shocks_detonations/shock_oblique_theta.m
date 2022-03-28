@@ -1,8 +1,28 @@
-function [mix1, mix2_1, mix2_2] = shock_oblique_theta(varargin)
-    % Solve oblique shock
+function [mix1, mix2_1, mix2_2] = shock_oblique_theta(self, mix1, u1, theta, varargin)
+    % Compute pre-shock and post-shock states of an oblique shock wave 
+    % given the deflection angle.
+    %
+    % Two solutions:
+    %   * Weak shock
+    %   * Strong shock
+    %
+    % Args:
+    %     self (struct):   Data of the mixture, conditions, and databases
+    %     mix1 (struct):   Properties of the mixture in the pre-shock state
+    %     u1 (float):      Pre-shock velocity [m/s]
+    %     theta (float):   Deflection angle [deg]
+    %
+    % Optional Args:
+    %     mix2_1 (struct): Properties of the mixture in the post-shock state - weak shock (previous calculation)
+    %     mix2_2 (struct): Properties of the mixture in the post-shock state - strong shock (previous calculation)
+    %
+    % Returns:
+    %     mix1 (struct):   Properties of the mixture in the pre-shock state
+    %     mix2_1 (struct): Properties of the mixture in the post-shock state - weak shock
+    %     mix2_2 (struct): Properties of the mixture in the post-shock state - strong shock
 
     % Unpack input data
-    [self, mix1, mix2_1, mix2_2] = unpack(varargin);
+    [self, mix1, mix2_1, mix2_2] = unpack(self, mix1, u1, theta, varargin);
     % Abbreviations
     TN = self.TN;
     % Definitions
@@ -73,18 +93,14 @@ function [mix1, mix2_1, mix2_2] = shock_oblique_theta(varargin)
 end
 
 % SUB-PASS FUNCTIONS
-function [self, mix1, mix2_1, mix2_2] = unpack(x)
-    % Unpack input data
-    self  = x{1};
-    mix1  = x{2};
-    u1    = x{3};
-    theta = x{4};       
+function [self, mix1, mix2_1, mix2_2] = unpack(self, mix1, u1, theta, x)
+    % Unpack input data    
     mix1.u = u1;        % velocity preshock [m/s] - laboratory fixed
     mix1.v_shock = u1;  % velocity preshock [m/s] - shock fixed
     mix1.theta = theta; % deflection angle  [deg]
-    if length(x) > 4
-        mix2_1 = x{5};
-        mix2_2 = x{6};
+    if length(x) > 1
+        mix2_1 = x{1};
+        mix2_2 = x{2};
     else
         mix2_1 = [];
         mix2_2 = [];

@@ -1,8 +1,22 @@
-function [mix1, mix2] = shock_oblique_beta(varargin)
-    % Solve oblique shock for a given shock wave angle
+function [mix1, mix2] = shock_oblique_beta(self, mix1, u1, beta, varargin)
+    % Compute pre-shock and post-shock states of an oblique shock wave 
+    % given the wave angle (one solution) 
+    %
+    % Args:
+    %     self (struct): Data of the mixture, conditions, and databases
+    %     mix1 (struct): Properties of the mixture in the pre-shock state
+    %     u1 (float):    Pre-shock velocity [m/s]
+    %     beta (float):  Wave angle [deg] of the incident oblique shock
+    %
+    % Optional Args:
+    %     mix2 (struct): Properties of the mixture in the post-shock state (previous calculation)
+    %
+    % Returns:
+    %     mix1 (struct): Properties of the mixture in the pre-shock state
+    %     mix2 (struct): Properties of the mixture at the post-shock state
     
     % Unpack input data
-    [self, mix1, mix2] = unpack(varargin);
+    [self, mix1, mix2] = unpack(self, mix1, u1, beta, varargin);
     % Definitions
     a1 = soundspeed(mix1);     % [m/s]
     u1 = mix1.u;               % [m/s]
@@ -36,18 +50,14 @@ function [mix1, mix2] = shock_oblique_beta(varargin)
 end
 
 % SUB-PASS FUNCTIONS
-function [self, str1, str2] = unpack(x)
-    % Unpack input data
-    self  = x{1};
-    str1  = x{2};
-    u1    = x{3};
-    beta = x{4};       
-    str1.u = u1;        % velocity preshock [m/s] - laboratory fixed
-    str1.v_shock = u1;  % velocity preshock [m/s] - shock fixed
-    str1.beta = beta;   % wave angle  [deg]
-    if length(x) > 4
-        str2 = x{5};
+function [self, mix1, mix2] = unpack(self, mix1, u1, beta, x)
+    % Unpack input data    
+    mix1.u = u1;        % velocity preshock [m/s] - laboratory fixed
+    mix1.v_shock = u1;  % velocity preshock [m/s] - shock fixed
+    mix1.beta = beta;   % wave angle  [deg]
+    if length(x) > 0
+        mix2 = x{1};
     else
-        str2 = [];
+        mix2 = [];
     end
 end

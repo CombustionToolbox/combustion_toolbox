@@ -11,11 +11,10 @@ function self = set_prop(self, varargin)
     % Returns:
     %     self (struct): Data of the mixture, conditions, and databases
 
-    self = varargin{1};
     n = round(nargin/2 - 1);
     try
         for i=1:n
-            self = set_prop_common(self, varargin{2*i}, varargin{2*i + 1});
+            self = set_prop_common(self, varargin{2*i - 1}, varargin{2*i});
         end
     catch
         error('Error number inputs @set_prop');

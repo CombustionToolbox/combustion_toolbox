@@ -1,11 +1,28 @@
-function [mix1, mix2, mix3] = rocket_performance(varargin)
-    % Routine that computes the propellant rocket performance
+function [mix1, mix2, mix3] = rocket_performance(self, mix1, varargin)
+    % Routine that computes the propellant rocket performance. 
+    % Methods implemented:
+    %   * Infinite-Area-Chamber (IAC) 
+    %   * Finite-Area-Chamber (FAC) - NOT YET
+    %
+    % This method is based on Gordon, S., & McBride, B. J. (1994). NASA reference publication,
+    % 1311.
+    %
+    % Args:
+    %     self (struct): Data of the mixture, conditions, and databases
+    %     mix1 (struct): Properties of the initial mixture
+    %
+    % Optional Args:
+    %     mix2 (struct): Properties of the mixture at the outlet of the chamber (previous calculation)
+    %     mix3 (struct): Properties of the mixture at the throat (previous calculation)
+    %
+    % Returns:
+    %     mix1 (struct): Properties of the initial mixture
+    %     mix2 (struct): Properties of the mixture at the outlet of the chamber
+    %     mix3 (struct): Properties of the mixture at the throat
 
     % Assign values
-    self = varargin{1};
-    mix1 = get_struct(varargin, 2);
-    if nargin == 3, mix2 = get_struct(varargin, 3); else, mix2 = []; end
-    if nargin == 4, mix3 = get_struct(varargin, 4); else, mix3 = []; end
+    if nargin == 3, mix2 = get_struct(varargin{1}); else, mix2 = []; end
+    if nargin == 4, mix3 = get_struct(varargin{2}); else, mix3 = []; end
     % Compute chemical equilibria at the exit of the chamber (HP)
     mix2 = compute_chamber(self, mix1, mix2);
     % Compute chemical equilibria at throat (SP)
@@ -18,11 +35,11 @@ function [mix1, mix2, mix3] = rocket_performance(varargin)
 end
 
 % SUB-PASS FUNCTIONS
-function str = get_struct(var, i)
+function str = get_struct(var)
     try
-        str = var{i}{1,1};
+        str = var{1,1};
     catch
-        str = var{i};
+        str = var;
     end
 end
 

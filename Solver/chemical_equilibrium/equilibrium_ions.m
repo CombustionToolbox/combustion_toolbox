@@ -1,4 +1,4 @@
-function [N0, STOP, STOP_ions] = equilibrium_ions(self, pP, TP, strR)
+function [N0, STOP, STOP_ions] = equilibrium_ions(self, pP, TP, mix1)
     % Obtain equilibrium composition [moles] for the given temperature [K] and pressure [bar]
     % considering ionization of the species. The code stems from the minimization of the free
     % energy of the system by using Lagrange multipliers combined with a Newton-Raphson method,
@@ -29,7 +29,7 @@ function [N0, STOP, STOP_ions] = equilibrium_ions(self, pP, TP, strR)
     R0TP = C.R0 * TP; % [J/(mol)]
     % Initialization
     % NatomE = N_CC(:,1)' * A0;
-    NatomE = strR.NatomE;
+    NatomE = mix1.NatomE;
     NP_0 = 0.1;
     NP = NP_0;
     

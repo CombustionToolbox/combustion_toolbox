@@ -1,14 +1,29 @@
-function [mix1, mix2] = shock_incident(varargin)
-    % Solve planar incident shock wave
+function [mix1, mix2] = shock_incident(self, mix1, u1, varargin)
+    % Compute pre-shock and post-shock states of a planar incident shock wave
+    %
+    % This method is based on Gordon, S., & McBride, B. J. (1994). NASA reference publication,
+    % 1311.
+    %
+    % Args:
+    %     self (struct): Data of the mixture, conditions, and databases
+    %     mix1 (struct): Properties of the mixture in the pre-shock state
+    %     u1 (float):    Pre-shock velocity [m/s]
+    %
+    % Optional Args:
+    %     mix2 (struct): Properties of the mixture in the post-shock state (previous calculation)
+    %
+    % Returns:
+    %     mix1 (struct): Properties of the mixture in the pre-shock state
+    %     mix2 (struct): Properties of the mixture in the post-shock state
 
     % Unpack input data
-    [self, mix1, mix2] = unpack(varargin);
+    [self, mix1, mix2] = unpack(self, mix1, u1, varargin);
     % Abbreviations 
     C = self.C;
     TN = self.TN;
     % Constants
     R0 = C.R0; % Universal gas constant [J/(mol-K)]
-    % Miscelaneous
+    % Miscellaneous
     it = 0;
     itMax = TN.it_shocks;
     STOP = 1.;
@@ -39,59 +54,56 @@ function [mix1, mix2] = shock_incident(varargin)
     mix2 = save_state(self, mix1, T2, p2, STOP);
 end
 % SUB-PASS FUNCTIONS
-function [self, str1, str2] = unpack(x)
+function [self, mix1, mix2] = unpack(self, mix1, u1, x)
     % Unpack input data
-    self = x{1};
-    str1 = x{2};
-    u1   = x{3};
-    str1.u = u1;       % velocity preshock [m/s] - laboratory fixed
-    str1.v_shock = u1; % velocity preshock [m/s] - shock fixed
-    if length(x) > 3
-        str2 = x{4};
+    mix1.u = u1;       % velocity pre-shock [m/s] - laboratory fixed
+    mix1.v_shock = u1; % velocity pre-shock [m/s] - shock fixed
+    if length(x) > 0
+        mix2 = x{1};
     else
-        str2 = [];
+        mix2 = [];
     end
 end
 
-function [p2, T2, p2p1, T2T1] = get_guess(str1, str2, TN)
-    if isempty(str2)
-        V1 = 1/str1.rho; % [m3/kg]
+function [p2, T2, p2p1, T2T1] = get_guess(mix1, mix2, TN)
+    if isempty(mix2)
+        V1 = 1/mix1.rho; % [m3/kg]
         V = V1/TN.volumeBoundRation;
 
         % p2p1 = (2*gamma1 * M1^2 - gamma1 + 1) / (gamma1 + 1);
         % T2T1 = p2p1 * (2/M1^2 + gamma1 - 1) / (gamma1 + 1);
 
-        p2p1 = 1 + (str1.rho * str1.u^2  / str1.p * (1 - V/V1)) * 1e-5;
+        p2p1 = 1 + (mix1.rho * mix1.u^2  / mix1.p * (1 - V/V1)) * 1e-5;
         T2T1 = p2p1 * V / V1;
 
-        p2 = p2p1 * str1.p * 1e5; % [Pa]
-        T2 = T2T1 * str1.T;       % [K]
+        p2 = p2p1 * mix1.p * 1e5; % [Pa]
+        T2 = T2T1 * mix1.T;       % [K]
            
-%         p2p1 = p2/str1.p;
-%         T2T1 = T2/str1.T;
+%         p2p1 = p2/mix1.p;
+%         T2T1 = T2/mix1.T;
     else
-        p2 = str2.p * 1e5; % [Pa]
-        T2 = str2.T;       % [K]
+        p2 = mix2.p * 1e5; % [Pa]
+        T2 = mix2.T;       % [K]
 
-        p2p1 = p2 / (str1.p * 1e5);
-        T2T1 = T2 / str1.T;
+        p2p1 = p2 / (mix1.p * 1e5);
+        T2T1 = T2 / mix1.T;
     end
 end
 
-function [J, b] = update_system(self, str1, p2, T2, R0)
+function [J, b] = update_system(self, mix1, p2, T2, R0)
     % Update Jacobian matrix and vector b
-    r1 = str1.rho;
-    p1 = str1.p *1e5; % [Pa]
-    T1 = str1.T;
-    u1 = str1.u;
-    W1 = str1.W * 1e-3; % [kg/mol]
-    h1 = str1.h / str1.mi * 1e3; % [J/kg]
+    r1 = mix1.rho;
+    p1 = mix1.p *1e5; % [Pa]
+    T1 = mix1.T;
+    u1 = mix1.u;
+    W1 = mix1.W * 1e-3; % [kg/mol]
+    h1 = mix1.h / mix1.mi * 1e3; % [J/kg]
     % Calculate frozen state given T & p
-    [str2, r2, dVdT_p, dVdp_T] = state(self, str1, T2, p2);
+    [mix2, r2, dVdT_p, dVdp_T] = state(self, mix1, T2, p2);
     
-    W2 = str2.W * 1e-3;
-    h2 = str2.h / str2.mi * 1e3; % [J/kg]
-    cP2 = str2.cP / str2.mi; % [J/(K-kg)]
+    W2 = mix2.W * 1e-3;
+    h2 = mix2.h / mix2.mi * 1e3; % [J/kg]
+    cP2 = mix2.cP / mix2.mi; % [J/(K-kg)]
     
     alpha = (W1 * u1^2) / (R0 * T1);
     J1 = -r1/r2 * alpha * dVdp_T - p2 / p1;
@@ -106,14 +118,14 @@ function [J, b] = update_system(self, str1, p2, T2, R0)
     b = [b1; b2];
 end
 
-function [str2, r2, dVdT_p, dVdp_T]= state(self, str1, T, p)
+function [mix2, r2, dVdT_p, dVdp_T]= state(self, mix1, T, p)
     % Calculate frozen state given T & p
     self.PD.ProblemType = 'TP';
     p = p*1e-5; % [bar]
-    str2 = equilibrate_T(self, str1, p, T);
-    r2 = str2.rho;
-    dVdT_p = str2.dVdT_p;
-    dVdp_T = str2.dVdp_T;
+    mix2 = equilibrate_T(self, mix1, p, T);
+    r2 = mix2.rho;
+    dVdT_p = mix2.dVdT_p;
+    dVdp_T = mix2.dVdp_T;
 end
 
 function relax = relax_factor(x)
@@ -130,10 +142,10 @@ function [log_p2p1, log_T2T1] = apply_correction(x, p2p1, T2T1, lambda)
     log_T2T1 = log(T2T1) + lambda * x(2);
 end
 
-function [p2, T2] = apply_antilog(str1, log_p2p1, log_T2T1)
+function [p2, T2] = apply_antilog(mix1, log_p2p1, log_T2T1)
     % compute p2 and T2
-    p2 = exp(log_p2p1) * str1.p * 1e5; % [Pa]
-    T2 = exp(log_T2T1) * str1.T;
+    p2 = exp(log_p2p1) * mix1.p * 1e5; % [Pa]
+    T2 = exp(log_T2T1) * mix1.T;
 end
 
 function STOP = compute_STOP(x)
@@ -141,11 +153,11 @@ function STOP = compute_STOP(x)
     STOP = max(abs(x));
 end
 
-function str2 = save_state(self, str1, T2, p2, STOP)
-    str2 = state(self, str1, T2, p2);
-    str2.v_shock = str1.u * str1.rho / str2.rho;
-    str2.u = str1.u - str2.v_shock; % velocity postshock [m/s] - laboratory fixed
-    str2.error_problem = STOP;
+function mix2 = save_state(self, mix1, T2, p2, STOP)
+    mix2 = state(self, mix1, T2, p2);
+    mix2.v_shock = mix1.u * mix1.rho / mix2.rho;
+    mix2.u = mix1.u - mix2.v_shock; % velocity postshock [m/s] - laboratory fixed
+    mix2.error_problem = STOP;
 end
 
 function print_convergence(STOP, TOL, T)

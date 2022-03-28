@@ -1,11 +1,30 @@
-function [P, T, M1, R, Q, STOP] = compute_guess_det(self, str1, phi, overdriven)
+function [P, T, M1, R, Q, STOP] = compute_guess_det(self, mix1, phi, overdriven)
+    % Obtain guess of the jump conditions for a Chapman-Jouguet detonation.
+    % Only valid if the mixture have CHON. It computes the guess assuming
+    % first a complete combustion, next it recomputes assuming an incomplete
+    % combustion from the composition obtained in the previous step.
+    %
+    % Args:
+    %     self (struct):      Data of the mixture, conditions, and databases
+    %     mix1 (struct):      Properties of the mixture in the pre-shock state
+    %     phi (float):        Equivalence ratio [-]
+    %     overdriven (float): Overdriven ratio [-] respect to the sound velocity of the mixture 
+    %
+    % Returns:
+    %     P (float):          Pressure ratio [-]
+    %     T (float):          Temperature ratio [-]
+    %     M1 (float):         Pre-shock Mach number [-]
+    %     R (float):          Density ratio [-]
+    %     Q (float):          Dimensionless Heat release []
+    %     STOP (float):       Relative error [-] 
+
     % Paramenters
-    gamma1 = str1.gamma;
-    a1     = str1.sound;
+    gamma1 = mix1.gamma;
+    a1     = mix1.sound;
     DeltaQ = 0;
     itMax  = 5;
     % Compute moles considering COMPLETE combustion
-    [N_2_cc, LS] = complete_combustion(self, str1, phi);
+    [N_2_cc, LS] = complete_combustion(self, mix1, phi);
     [hfi_1, N_1, Yi_fuel, W_fuel] = compute_hfi_1_molar(self);
     [P, T, M1, M2, R, Q] = body_guess_cj(self, N_2_cc, LS, gamma1, DeltaQ, overdriven, a1, hfi_1, N_1, Yi_fuel, W_fuel);
     % Compute moles considering INCOMPLETE combustion
@@ -14,7 +33,7 @@ function [P, T, M1, R, Q, STOP] = compute_guess_det(self, str1, phi, overdriven)
     N_2(ind_a) = N_2_cc(ind_b);
     
     LS = self.S.LS;
-    W1 = str1.W;
+    W1 = mix1.W;
     lambda = 2 - sqrt(1 + M2^2);
     P = P/3; T = T/3; % complete reaction gives too high values
     it = 0; STOP = 1;
@@ -23,15 +42,15 @@ function [P, T, M1, R, Q, STOP] = compute_guess_det(self, str1, phi, overdriven)
         
         P_0 = P; T_0 = T; N_2_0 = N_2;
         
-        p2 = P_0 * str1.p;
-        T2 = T_0 * str1.T;
+        p2 = P_0 * mix1.p;
+        T2 = T_0 * mix1.T;
         
-        N_2 = equilibrium(self, p2, T2, str1); N_2 = N_2(:, 1)';
+        N_2 = equilibrium(self, p2, T2, mix1); N_2 = N_2(:, 1)';
         N_2 = N_2_0  + lambda .* (N_2 - N_2_0);
         
         W2 = compute_W(N_2, LS, self.DB);
 
-        gamma2 = compute_gamma(N_2, T * str1.T, LS, self.DB);
+        gamma2 = compute_gamma(N_2, T * mix1.T, LS, self.DB);
         gamma2 = gamma1 + lambda * (gamma2 - gamma1);
 
         [P, T, M1, ~, R, Q] = body_guess_cj(self, N_2, LS, gamma1, DeltaQ, overdriven, a1, hfi_1, N_1, Yi_fuel, W_fuel);

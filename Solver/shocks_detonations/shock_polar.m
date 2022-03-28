@@ -1,8 +1,20 @@
-function [mix1, mix2] = shock_polar(varargin)
-    % Solve oblique shock
+function [mix1, mix2] = shock_polar(self, mix1, u1, varargin)
+    % Compute shock polars of an oblique shock wave
+    %
+    % Args:
+    %     self (struct): Data of the mixture, conditions, and databases
+    %     mix1 (struct): Properties of the mixture in the pre-shock state
+    %     u1 (float):    Pre-shock velocity [m/s]
+    %
+    % Optional Args:
+    %     mix2 (struct): Properties of the mixture in the post-shock state (previous calculation)
+    %
+    % Returns:
+    %     mix1 (struct): Properties of the mixture in the pre-shock state
+    %     mix2 (struct): Properties of the mixture at the post-shock state with the shock polar results
 
     % Unpack input data
-    [self, mix1, mix2] = unpack(varargin);
+    [self, mix1, mix2] = unpack(self, mix1, u1, varargin);
     % Abbreviations
     TN = self.TN;
     % Definitions
@@ -63,16 +75,13 @@ function [mix1, mix2] = shock_polar(varargin)
 end
 
 % SUB-PASS FUNCTIONS
-function [self, str1, str2] = unpack(x)
-    % Unpack inpv data
-    self = x{1};
-    str1 = x{2};
-    u1   = x{3};
-    str1.u = u1;       % velocity preshock [m/s] - laboratory fixed
-    str1.v_shock = u1; % velocity preshock [m/s] - shock fixed
-    if length(x) > 3
-        str2 = x{4};
+function [self, mix1, mix2] = unpack(self, mix1, u1, x)
+    % Unpack input data
+    mix1.u = u1;       % velocity preshock [m/s] - laboratory fixed
+    mix1.v_shock = u1; % velocity preshock [m/s] - shock fixed
+    if length(x) > 0
+        mix2 = x{1};
     else
-        str2 = [];
+        mix2 = [];
     end
 end

@@ -1,5 +1,12 @@
 function self = Stoich_Matrix(self)
-    % Create stoichiometric matrix
+    % Initialize the stoichiometric matrix and properties matrix
+    %
+    % Args:
+    %     self (struct):  Data of the mixture, conditions, and databases
+    %
+    % Returns:
+    %     self (struct):  Data of the mixture, conditions, and databases
+
     self.C.A0.value = zeros(self.S.NS, self.E.NE);
     self.C.M0.value = zeros(self.S.NS, self.C.N_prop.value);
     for i=1:self.S.NS

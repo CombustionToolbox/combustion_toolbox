@@ -9,7 +9,7 @@ function vector = cell2vector(value, varargin)
     %     field (str): Fieldname of the given value (struct)
     %
     % Returns:
-    %     vector (float): Vector with the values of the individual cell/fieldname (struct)
+    %     vector (any): Vector with the values of the individual cell/fieldname (struct)
     
     if nargin > 1
         field = varargin{1};

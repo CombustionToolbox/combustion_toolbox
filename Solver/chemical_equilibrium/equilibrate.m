@@ -6,6 +6,9 @@ function mix2 = equilibrate(self, mix1, pP, varargin)
     %     mix1 (struct): Properties of the initial mixture
     %     pP (float):    Pressure [bar]
     %
+    % Optional Args:
+    %     mix2 (struct): Properties of the final mixture (previous calculation)
+    % 
     % Returns:
     %     mix2 (struct): Properties of the final mixture
 

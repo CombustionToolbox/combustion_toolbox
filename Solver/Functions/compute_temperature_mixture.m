@@ -2,13 +2,14 @@ function T = compute_temperature_mixture(self, species, moles, temperatures)
     % Compute equilibrium temperature [K] of a gaseous mixture compound of
     % n species with species at different temperatures.
     %
-    % Inputs:
-    %   - self: struct variable with all the data of the App (databases)
-    %   - species: cell array with the species of the mixture
-    %   - moles: vector or cell array with the number of moles of each species
-    %   - temperatures: vector or cell array with the temperatures of each species
-    % Output:
-    %   - T: scalar with the temperature of the mixture at equilibrium
+    % Args:
+    %     self (struct): Data of the mixture, conditions, and databases
+    %     species (str): Cell array with the species of the mixture
+    %     moles: Moles of the species in the mixture [mol]
+    %     temperatures: Vector or cell array with the temperatures of each species
+    %
+    % Returns:
+    %     T (float): Temperature of the mixture at equilibrium
     
     try
         % Convert moles and temperature into vectors if needed

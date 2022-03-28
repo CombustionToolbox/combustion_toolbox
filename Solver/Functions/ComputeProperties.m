@@ -1,6 +1,15 @@
 function mix =  ComputeProperties(self, SpeciesMatrix, p, T)
     % Compute properties from the given SpeciesMatrix at pressure p [bar] 
     % and temperature T [K]
+    %
+    % Args:
+    %     self (struct):         Data of the mixture, conditions, and databases
+    %     SpeciesMatrix (float): Matrix with the stoichiometric and properties values of the mixture
+    %     p (float):             pressure [bar]
+    %     T (float):             Temperature [K]
+    %
+    % Returns:
+    %     self (struct):         Data of the mixture, conditions, and databases
     
     R0 = self.C.R0; % [J/(K mol)]. Universal gas constant
     mix.NatomE = sum(SpeciesMatrix(:, 1) .* self.C.A0.value);

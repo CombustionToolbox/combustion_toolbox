@@ -1,5 +1,16 @@
-function self = set_prop(varargin)
+function self = set_prop(self, varargin)
     % Assign property values to the respective variables
+    %
+    % Args:
+    %     self (struct): Data of the mixture, conditions, and databases
+    %
+    % Optional Args:
+    %     field (str):   Fieldname
+    %     value (float): Value/s to assing in the field
+    %
+    % Returns:
+    %     self (struct): Data of the mixture, conditions, and databases
+
     self = varargin{1};
     n = round(nargin/2 - 1);
     try

@@ -1,17 +1,28 @@
-function strP = equilibrate_T(self, strR, pP, TP)
+function mix2 = equilibrate_T(self, mix1, pP, TP)
+    % Obtain equilibrium properties and composition for the given temperature [K] and pressure [bar]
+    %
+    % Args:
+    %     self (struct): Data of the mixture, conditions, and databases
+    %     mix1 (struct): Properties of the initial mixture
+    %     pP (float):    Pressure [bar]
+    %     TP (float):    Temperature [K]
+    %
+    % Returns:
+    %     mix2 (struct): Properties of the final mixture
+
     % Set List of Species to List of Products
     self_ListProducts = set_LS_original(self);
     % Compute number of moles 
-    [N_ListProducts, DeltaNP, DeltaNP_ions] = select_equilibrium(self_ListProducts, pP, TP, strR);
+    [N_ListProducts, DeltaNP, DeltaNP_ions] = select_equilibrium(self_ListProducts, pP, TP, mix1);
     % Reshape matrix of number of moles, N
     N = reshape_moles(self, self_ListProducts, N_ListProducts);
     % Compute thermodynamic derivates
-    [self.dNi_T, self.dN_T] = equilibrium_dT(self, N, TP, strR);
-    [self.dNi_p, self.dN_p] = equilibrium_dp(self, N, strR);
+    [self.dNi_T, self.dN_T] = equilibrium_dT(self, N, TP, mix1);
+    [self.dNi_p, self.dN_p] = equilibrium_dp(self, N, mix1);
     % Compute properties matrix
     P = SetSpecies(self, self.S.LS, N(:, 1), TP);
     % Compute properties of final mixture
-    strP = compute_properties(self, strR, P, pP, TP, DeltaNP, DeltaNP_ions);
+    mix2 = compute_properties(self, mix1, P, pP, TP, DeltaNP, DeltaNP_ions);
 end
 
 % SUB-PASS FUNCTIONS
@@ -25,37 +36,37 @@ function self = set_LS_original(self)
     self.C.N0.value = self.C.N0.value(self.Misc.index_LS_original, :);
 end
 
-function pP = compute_pressure(self, strR, TP, N)
+function pP = compute_pressure(self, mix1, TP, N)
     % Compute pressure of product mixture
     if strcmpi(self.PD.ProblemType, 'SV')
-        pP = strR.p * N/strR.N * TP/strR.T * self.PD.vP_vR.value;
+        pP = mix1.p * N/mix1.N * TP/mix1.T * self.PD.vP_vR.value;
     else
-        pP = (N * TP * self.C.R0 / strR.v) * 1e-5;
+        pP = (N * TP * self.C.R0 / mix1.v) * 1e-5;
     end
 end
 
-function [N, DeltaNP, DeltaNP_ions] = select_equilibrium(self, pP, TP, strR)
+function [N, DeltaNP, DeltaNP_ions] = select_equilibrium(self, pP, TP, mix1)
     if ~self.PD.ionization
         % Compute numer of moles without ionization
-        [N, DeltaNP] = equilibrium(self, pP, TP, strR);
+        [N, DeltaNP] = equilibrium(self, pP, TP, mix1);
         DeltaNP_ions = 0;
     else
         % Compute numer of moles with ionization
-        [N, DeltaNP, DeltaNP_ions] = equilibrium_ions(self, pP, TP, strR);
+        [N, DeltaNP, DeltaNP_ions] = equilibrium_ions(self, pP, TP, mix1);
     end
 end
 
-function strP = compute_properties(self, strR, P, pP, TP, DeltaNP, DeltaNP_ions)
+function mix2 = compute_properties(self, mix1, P, pP, TP, DeltaNP, DeltaNP_ions)
     % Compute properties of final mixture
     if strfind(self.PD.ProblemType, 'P') == 2
-        strP = ComputeProperties(self, P, pP, TP);
+        mix2 = ComputeProperties(self, P, pP, TP);
     else
         NP = sum(P(:, 1) .* (1 - P(:, 10)));
-        pP = compute_pressure(self, strR, TP, NP);
-        strP = ComputeProperties(self, P, pP, TP);
+        pP = compute_pressure(self, mix1, TP, NP);
+        mix2 = ComputeProperties(self, P, pP, TP);
     end    
-    strP.error_moles = DeltaNP;
-    strP.error_moles_ions = DeltaNP_ions;
+    mix2.error_moles = DeltaNP;
+    mix2.error_moles_ions = DeltaNP_ions;
 end
 
 function N = reshape_moles(self, self_modified, N_modified)

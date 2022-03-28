@@ -8,7 +8,7 @@ function value = soundspeed(mix)
     %     value (float): Speed of sound [m/s] in the mixture
 
     value = mix.sound;
-    if isnan(val)
+    if isnan(value)
         value = Inf;
     end
 end

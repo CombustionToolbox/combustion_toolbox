@@ -1,15 +1,13 @@
 function self = SolveProblem(self, ProblemType)
+    % Solve the given ProblemType with the conditions and mixture specified in self
     %
-    % USAGE:
+    % Args:
+    %     self (struct):     Data of the mixture, conditions, and databases
+    %     ProblemType (str): Tag of the problem to solve
     %
-    %    self = SolveProblem(self, ProblemType)
-    %
-    % INPUTS:
-    %     :self:           Struct with all the data (initial mixture, conditions, and databases)
-    %     :ProblemType:    String with the name of the problem to solve
-    %
-    % OUTPUTS:
-    %     :self:           Struct with all the data (initial mixture, conditions, databases, and results)
+    % Returns:
+    %     self (struct):     Data of the mixtures (initial and final), conditions, databases
+    
     try
         % Save Problem Type
         self.PD.ProblemType = ProblemType;

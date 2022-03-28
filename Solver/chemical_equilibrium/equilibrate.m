@@ -1,8 +1,17 @@
-function mix2 = equilibrate(varargin)
-    self = varargin{1};
-    mix1 = get_struct(varargin, 2);
-    pP = varargin{3};
-    if nargin == 4, mix2 = get_struct(varargin, 4); else, mix2 = []; end
+function mix2 = equilibrate(self, mix1, pP, varargin)
+    % Obtain properties at equilibrium for the set thermochemical transformation
+    %
+    % Args:
+    %     self (struct): Data of the mixture, conditions, and databases
+    %     mix1 (struct): Properties of the initial mixture
+    %     pP (float):    Pressure [bar]
+    %
+    % Returns:
+    %     mix2 (struct): Properties of the final mixture
+
+    mix1 = get_struct(mix1);
+
+    if nargin == 4, mix2 = get_struct(varargin{1}); else, mix2 = []; end
     % get attribute xx of the specified transformations
     attr_name = get_attr_name(self);
     % compute initial guess
@@ -18,11 +27,11 @@ function mix2 = equilibrate(varargin)
 end
 
 %%% SUB-PASS FUNCTIONS
-function str = get_struct(var, i)
+function str = get_struct(var)
     try
-        str = var{i}{1,1};
+        str = var{1,1};
     catch
-        str = var{i};
+        str = var;
     end
 end
 

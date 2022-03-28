@@ -1,5 +1,22 @@
 function [N0, STOP, STOP_ions] = equilibrium_ions(self, pP, TP, strR)
-    % Generalized Gibbs minimization method
+    % Obtain equilibrium composition [moles] for the given temperature [K] and pressure [bar]
+    % considering ionization of the species. The code stems from the minimization of the free
+    % energy of the system by using Lagrange multipliers combined with a Newton-Raphson method,
+    % upon condition that initial gas properties are defined by two functions of states. e.g.,
+    % temperature and pressure. 
+    %
+    % This method is based on Gordon, S., & McBride, B. J. (1994). NASA reference publication,
+    % 1311.
+    %
+    % Args:
+    %     self (struct): Data of the mixture, conditions, and databases
+    %     pP (float):    Pressure [bar]
+    %     TP (float):    Temperature [K]
+    %     mix1 (struct): Properties of the initial mixture
+    %
+    % Returns:
+    %     N0 (float):    Equilibrium composition [moles] for the given temperature [K] and pressure [bar]
+    %     STOP (float):  Relative error [-] 
     
     % Abbreviations ---------------------
     E = self.E;

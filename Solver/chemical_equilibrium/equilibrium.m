@@ -1,4 +1,22 @@
-function [N0, STOP] = equilibrium(self, pP, TP, strR)
+function [N0, STOP] = equilibrium(self, pP, TP, mix1)
+    % Obtain equilibrium composition [moles] for the given temperature [K] and pressure [bar].
+    % The code stems from the minimization of the free energy of the system by using Lagrange
+    % multipliers combined with a Newton-Raphson method, upon condition that initial gas
+    % properties are defined by two functions of states. e.g., temperature and pressure.
+    %
+    % This method is based on Gordon, S., & McBride, B. J. (1994). NASA reference publication,
+    % 1311.
+    %
+    % Args:
+    %     self (struct): Data of the mixture, conditions, and databases
+    %     pP (float):    Pressure [bar]
+    %     TP (float):    Temperature [K]
+    %     mix1 (struct): Properties of the initial mixture
+    %
+    % Returns:
+    %     N0 (float):    Equilibrium composition [moles] for the given temperature [K] and pressure [bar]
+    %     STOP (float):  Relative error [-] 
+
     % Generalized Gibbs minimization method
     
     % Abbreviations ---------------------
@@ -11,7 +29,7 @@ function [N0, STOP] = equilibrium(self, pP, TP, strR)
     A0 = C.A0.value;
     R0TP = C.R0 * TP; % [J/(mol)]
     % Initialization
-    NatomE = strR.NatomE;
+    NatomE = mix1.NatomE;
     NP_0 = 0.1;
     NP = NP_0;
     

@@ -11,7 +11,7 @@ function mix2 = equilibrate(self, mix1, pP, varargin)
 
     mix1 = get_struct(mix1);
 
-    if nargin == 4, mix2 = get_struct(varargin); else, mix2 = []; end
+    if nargin == 4, mix2 = get_struct(varargin{1}); else, mix2 = []; end
     % get attribute xx of the specified transformations
     attr_name = get_attr_name(self);
     % compute initial guess

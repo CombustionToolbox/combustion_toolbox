@@ -7,7 +7,7 @@ function self = SolveProblem(self, ProblemType)
     %
     % Returns:
     %     self (struct):     Data of the mixtures (initial and final), conditions, databases
-
+    
     try
         % Save Problem Type
         self.PD.ProblemType = ProblemType;

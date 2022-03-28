@@ -1,6 +1,15 @@
 function mix3 = compute_rocket_parameters(mix2, mix3)
-    % Compute Rocket performance parameters
-    
+    % Compute Rocket performance parameters at the throat
+    %
+    % This method is based on Gordon, S., & McBride, B. J. (1994). NASA reference publication,
+    % 1311.
+    %
+    % Args:
+    %     mix2 (struct): Properties of the mixture at the outlet of the chamber
+    %
+    % Returns:
+    %     mix3 (struct): Properties of the mixture at the throat
+
     mix3.area_per_mass_flow_rate = area_per_mass_flow_rate(mix3);
     mix3.cstar = characteristic_velocity(mix2, mix3);
     mix3.cf = velocity_relative(mix3) / mix3.cstar;

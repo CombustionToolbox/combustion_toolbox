@@ -1,5 +1,15 @@
-function [dNi_p, dN_p] = equilibrium_dp(self, N0, strR)
-    % Generalized Gibbs minimization method
+function [dNi_p, dN_p] = equilibrium_dp(self, moles, mix1)
+    % Obtain thermodynamic derivative of the moles of the species and of the moles of the mixture
+    % respect to pressure from a given composition [moles] at equilibrium
+    %
+    % Args:
+    %     self (struct): Data of the mixture, conditions, and databases
+    %     moles (float): Equilibrium composition [moles]
+    %     mix1 (struct): Properties of the initial mixture
+    %
+    % Returns:
+    %     dNi_p (float): Thermodynamic derivative of the moles of the species respect to pressure
+    %     dN_p (float): Thermodynamic derivative of the moles of the mixture respect to pressure
 
     % Abbreviations ---------------------
     S = self.S;
@@ -9,9 +19,9 @@ function [dNi_p, dN_p] = equilibrium_dp(self, N0, strR)
     A0 = C.A0.value;
     % Initialization
     % NatomE = N_CC(:,1)' * A0;
-    NatomE = strR.NatomE;
-    NP = sum(N0(:, 1));
-    dNi_p = zeros(length(N0), 1);
+    NatomE = mix1.NatomE;
+    NP = sum(moles(:, 1));
+    dNi_p = zeros(length(moles), 1);
     
     SIZE = -log(TN.tolN);
     % Find indeces of the species/elements that we have to remove from the stoichiometric matrix A0
@@ -20,15 +30,15 @@ function [dNi_p, dN_p] = equilibrium_dp(self, N0, strR)
     % List of indices with nonzero values
     [temp_ind_nswt, temp_ind_swt, temp_ind_cryogenic, temp_ind_E, temp_NE] = temp_values(S, NatomE, TN.tolN);
     % Update temp values
-    [temp_ind, temp_ind_swt, temp_ind_nswt, ~, ~] = update_temp(N0, N0(ind_A0_E0, 1), ind_A0_E0, temp_ind_swt, temp_ind_nswt, temp_ind_cryogenic, NP, SIZE);
-    [temp_ind, temp_ind_swt, temp_ind_nswt, temp_NG, temp_NS] = update_temp(N0, N0(temp_ind, 1), temp_ind, temp_ind_swt, temp_ind_nswt, temp_ind_cryogenic, NP, SIZE);
+    [temp_ind, temp_ind_swt, temp_ind_nswt, ~, ~] = update_temp(moles, moles(ind_A0_E0, 1), ind_A0_E0, temp_ind_swt, temp_ind_nswt, temp_ind_cryogenic, NP, SIZE);
+    [temp_ind, temp_ind_swt, temp_ind_nswt, temp_NG, temp_NS] = update_temp(moles, moles(temp_ind, 1), temp_ind, temp_ind_swt, temp_ind_nswt, temp_ind_cryogenic, NP, SIZE);
     temp_NS0 = temp_NS + 1;
     % Construction of part of matrix A (complete)
     [A1, ~] = update_matrix_A1(A0, [], temp_NG, temp_NS, temp_NS0, temp_ind, temp_ind_E);
     A22 = zeros(temp_NE + 1);
     A0_T = A0';
     % Construction of matrix A
-    A = update_matrix_A(A0_T, A1, A22, N0, NP, temp_ind_nswt, temp_ind_swt, temp_ind_E, temp_NG, temp_NS);
+    A = update_matrix_A(A0_T, A1, A22, moles, NP, temp_ind_nswt, temp_ind_swt, temp_ind_E, temp_NG, temp_NS);
     % Construction of vector b            
     b = update_vector_b(temp_NG, temp_NS, temp_ind_E);
     % Solve of the linear system A*x = b
@@ -64,12 +74,12 @@ function [temp_ind_nswt, temp_ind_swt, temp_ind_cryogenic, temp_ind_E, temp_NE] 
     temp_NE = length(temp_ind_E);
 end
 
-function [ls1, ls2] = remove_item(N0, n, ind, ls1, ls2, NP, SIZE)
+function [ls1, ls2] = remove_item(moles, n, ind, ls1, ls2, NP, SIZE)
     % Remove species from the computed indeces list of gaseous and condensed
     % species and append the indeces of species that we have to remove
     for i=1:length(n)
         if log(n(i)/NP) < -SIZE
-            if N0(ind(i), 2)
+            if moles(ind(i), 2)
                 ls1(ls1==ind(i)) = [];
             else
                 ls2(ls2==ind(i)) = [];
@@ -78,9 +88,9 @@ function [ls1, ls2] = remove_item(N0, n, ind, ls1, ls2, NP, SIZE)
     end
 end
 
-function [temp_ind, temp_ind_swt, temp_ind_nswt, temp_NG, temp_NS] = update_temp(N0, zip1, zip2, ls1, ls2, temp_ind_cryogenic, NP, SIZE)
+function [temp_ind, temp_ind_swt, temp_ind_nswt, temp_NG, temp_NS] = update_temp(moles, zip1, zip2, ls1, ls2, temp_ind_cryogenic, NP, SIZE)
     % Update temp items
-    [temp_ind_swt, temp_ind_nswt] = remove_item(N0, zip1, zip2, ls1, ls2, NP, SIZE);
+    [temp_ind_swt, temp_ind_nswt] = remove_item(moles, zip1, zip2, ls1, ls2, NP, SIZE);
     temp_ind = [temp_ind_nswt, temp_ind_swt];
     [temp_ind, temp_ind_swt] = check_cryogenic(temp_ind, temp_ind_swt, temp_ind_cryogenic);
     temp_NG = length(temp_ind_nswt);
@@ -103,18 +113,18 @@ function [temp_ind, temp_ind_swt] = check_cryogenic(temp_ind, temp_ind_swt, temp
     temp_ind_swt = temp_ind_swt(~ismember(temp_ind_swt, temp_ind_cryogenic));
 end
 
-function A2 = update_matrix_A2(A0_T, A22, N0, NP, temp_ind_nswt, temp_ind_swt, temp_ind_E, temp_NG, temp_NS)
+function A2 = update_matrix_A2(A0_T, A22, moles, NP, temp_ind_nswt, temp_ind_swt, temp_ind_E, temp_NG, temp_NS)
     % Update stoichiometric submatrix A2
-    A21_1 = [N0(temp_ind_nswt, 1)' .* A0_T(temp_ind_E, temp_ind_nswt); N0(temp_ind_nswt, 1)'];
+    A21_1 = [moles(temp_ind_nswt, 1)' .* A0_T(temp_ind_E, temp_ind_nswt); moles(temp_ind_nswt, 1)'];
     A21_2 = [A0_T(temp_ind_E, temp_ind_swt); zeros(1, temp_NS-temp_NG)];
     A21 = [A21_1, A21_2];
     A22(end, end) = -NP;
     A2 = [A21, A22];
 end
 
-function A = update_matrix_A(A0_T, A1, A22, N0, NP, temp_ind_nswt, temp_ind_swt, temp_ind_E, temp_NG, temp_NS)
+function A = update_matrix_A(A0_T, A1, A22, moles, NP, temp_ind_nswt, temp_ind_swt, temp_ind_E, temp_NG, temp_NS)
     % Update stoichiometric matrix A
-    A2 = update_matrix_A2(A0_T, A22, N0, NP, temp_ind_nswt, temp_ind_swt, temp_ind_E, temp_NG, temp_NS);
+    A2 = update_matrix_A2(A0_T, A22, moles, NP, temp_ind_nswt, temp_ind_swt, temp_ind_E, temp_NG, temp_NS);
     A = [A1; A2];
 end
 

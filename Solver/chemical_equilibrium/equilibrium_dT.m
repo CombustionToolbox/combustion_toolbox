@@ -3,13 +3,13 @@ function [dNi_T, dN_T] = equilibrium_dT(self, moles, TP, mix1)
     % respect to temperature from a given composition [moles] at equilibrium
     %
     % Args:
-    %     self (struct): Data of the mixture, conditions, and databases
-    %     moles (float): Equilibrium composition [moles]
-    %     mix1 (struct): Properties of the initial mixture
+    %     self (struct):   Data of the mixture, conditions, and databases
+    %     moles (float):   Equilibrium composition [moles]
+    %     mix1 (struct):   Properties of the initial mixture
     %
     % Returns:
-    %     dNi_T (float): Thermodynamic derivative of the moles of the species respect to temperature
-    %     dN_T (float): Thermodynamic derivative of the moles of the mixture respect to temperature
+    %     - dNi_T (float): Thermodynamic derivative of the moles of the species respect to temperature
+    %     - dN_T (float):  Thermodynamic derivative of the moles of the mixture respect to temperature
 
     % Abbreviations ---------------------
     S = self.S;

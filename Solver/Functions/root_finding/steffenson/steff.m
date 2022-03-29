@@ -2,14 +2,14 @@ function [x, STOP] = steff(self, mix1, pP, field, x0)
     % Find the temperature [K] (root) for the set chemical transformation at equilibrium using the Steffenson-Aitken method
     %
     % Args:
-    %     self (struct): Data of the mixture, conditions, and databases
-    %     mix1 (struct): Properties of the initial mixture
-    %     pP (float):    Pressure [bar]
-    %     field (str):   Fieldname in Problem Description (PD)
-    %     x0 (float):    Guess temperature [K]
+    %     self (struct):  Data of the mixture, conditions, and databases
+    %     mix1 (struct):  Properties of the initial mixture
+    %     pP (float):     Pressure [bar]
+    %     field (str):    Fieldname in Problem Description (PD)
+    %     x0 (float):     Guess temperature [K]
     % Returns:
-    %     x (float):     Temperature at equilibrium [K]
-    %     STOP (float):  Relative error [-] 
+    %     - x (float):    Temperature at equilibrium [K]
+    %     - STOP (float): Relative error [-] 
 
     if any(strcmpi(self.PD.ProblemType, {'TP', 'TV'}))
         x = get_transformation(self, 'TP');

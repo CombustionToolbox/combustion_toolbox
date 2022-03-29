@@ -9,14 +9,14 @@ function [N0, STOP, STOP_ions] = equilibrium_ions(self, pP, TP, mix1)
     % 1311.
     %
     % Args:
-    %     self (struct): Data of the mixture, conditions, and databases
-    %     pP (float):    Pressure [bar]
-    %     TP (float):    Temperature [K]
-    %     mix1 (struct): Properties of the initial mixture
+    %     self (struct):  Data of the mixture, conditions, and databases
+    %     pP (float):     Pressure [bar]
+    %     TP (float):     Temperature [K]
+    %     mix1 (struct):  Properties of the initial mixture
     %
     % Returns:
-    %     N0 (float):    Equilibrium composition [moles] for the given temperature [K] and pressure [bar]
-    %     STOP (float):  Relative error [-] 
+    %     - N0 (float):   Equilibrium composition [moles] for the given temperature [K] and pressure [bar]
+    %     - STOP (float): Relative error [-] 
     
     % Abbreviations ---------------------
     E = self.E;

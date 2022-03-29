@@ -8,8 +8,8 @@ function [x, STOP] = newton(self, mix1, pP, field, x0)
     %     field (str):   Fieldname in Problem Description (PD)
     %     x0 (float):    Guess temperature [K]
     % Returns:
-    %     x (float):     Temperature at equilibrium [K]
-    %     STOP (float):  Relative error [-] 
+    %     - x (float):     Temperature at equilibrium [K]
+    %     - STOP (float):  Relative error [-] 
 
     if any(strcmpi(self.PD.ProblemType, {'TP', 'TV'}))
         x = get_transformation(self, 'TP');

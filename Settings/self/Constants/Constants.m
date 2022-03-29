@@ -1,5 +1,12 @@
 function self = Constants()
+    % Initialize struct with constants data
+    % 
+    % Returns:
+    %     self (struct): struct with constants data
+
+    % Description
     self.description = "Constants and tolerances";
+    % Variables
     self.R0 = 8.31446261815324;  % [J/(K mol)]. Universal gas constant
     self.A0.description = "Stoichiometric Matrix: number of atoms of each element contained in each species";
     self.A0.value = [];

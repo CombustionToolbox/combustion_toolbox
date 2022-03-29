@@ -1,19 +1,28 @@
 function self = ProblemDescription()
+    % Initialize struct with problem description data
+    % 
+    % Returns:
+    %     self (struct): struct with problem description data
+
+    % Description
     self.description = "Problem description";
-    self.CompleteOrIncomplete = "incomplete";
-    self.ProblemType = 'TP'; % Initialization for GUI
-    self.R_Fuel = [];
-    self.R_Oxidizer = [];
-    self.R_Inert = [];
-    self.phi.description = "Equivalence ratio";
-    self.phi.value = 1.0;
-    self.phi.t = 1.0; % Theoretical value: phi = phi_t / phi.st
-    self.phi_t = [];
-    self.Fuel.x = []; % C atoms in the fuel mixture
-    self.Fuel.y = []; % H atoms in the fuel mixture
-    self.Fuel.z = []; % O atoms in the fuel mixture
-    self.Fuel.w = []; % N atoms in the fuel mixture
-    self.Fuel.eps = 0.;
+    % Variables
+    self.CompleteOrIncomplete = "incomplete";   % Default combustion assumption (deprecated)
+    self.ProblemType = 'TP';                    % Default problem type
+    %   * Properties matrices
+    self.R_Fuel = [];                           % Fuel property matrix
+    self.R_Oxidizer = [];                       % Oxidizer property matrix
+    self.R_Inert = [];                          % Inert property matrix
+    %   * Equivalence ratio (struct)
+    self.phi.description = "Equivalence ratio"; % Description
+    self.phi.value = 1.0;                       % Default value (stochiometric)
+    self.phi.t = [];                            % Theoretical value for number of moles diatomic oxygen: phi = phi.t / phi.st
+    %   * Fuel (struct)
+    self.Fuel.x = [];                           % C atoms in the fuel mixture
+    self.Fuel.y = [];                           % H atoms in the fuel mixture
+    self.Fuel.z = [];                           % O atoms in the fuel mixture
+    self.Fuel.w = [];                           % N atoms in the fuel mixture
+    %   * Properties
     self.TR.description = "Temperature of reactants";
     self.TR.value = []; % [K]
     self.pR.description = "Pressure of reactants";
@@ -22,7 +31,6 @@ function self = ProblemDescription()
     self.TP.value = []; % [K]
     self.pP.description = "Pressure of products";
     self.pP.value = []; % [bar]
-    self.proportion_inerts_O2 = [];
     self.vP_vR.description = "Volume relation Products/Reactants";
     self.vP_vR.value = []; % [-]
     self.u1.description = "Incident shock velocity";
@@ -30,17 +38,19 @@ function self = ProblemDescription()
     self.overdriven.description = "Overdriven shock velocity";
     self.overdriven.value = []; % [-]
     self.theta.description = "Deflection angle - oblique shocks";
-    self.theta.value = [];
+    self.theta.value = []; % [deg]
     self.beta.description = "Wave angle - oblique shocks";
-    self.beta.value = [];
-    self.S_Fuel = [];
-    self.N_Fuel = [];
-    self.T_Fuel = [];
-    self.S_Oxidizer = [];
-    self.N_Oxidizer = [];
-    self.T_Oxidizer = [];
-    self.S_Inert = [];
-    self.N_Inert = [];
-    self.T_Inert = [];
-    self.ionization = false;
+    self.beta.value = []; % [deg]
+    %   * Mixture conditions
+    self.S_Fuel = [];               % Cell with the list of fuel species in the mixture
+    self.N_Fuel = [];               % Vector with the number of moles of the fuel species in the mixture
+    self.T_Fuel = [];               % Vector with the temperature values of the fuel species in the mixture
+    self.S_Oxidizer = [];           % Cell with the list of oxidizer species in the mixture
+    self.N_Oxidizer = [];           % Vector with the number of moles of the oxidizer species in the mixture
+    self.T_Oxidizer = [];           % Vector with the temperature values of the oxidizer species in the mixture
+    self.S_Inert = [];              % Cell with the list of inert species in the mixture
+    self.N_Inert = [];              % Vector with the number of moles of the inert species in the mixture
+    self.T_Inert = [];              % Vector with the temperature values of the inert species in the mixture
+    self.proportion_inerts_O2 = []; % Proportion Inerts / O2 [-]
+    self.ionization = false; % Flag ionization
 end

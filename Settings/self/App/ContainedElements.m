@@ -1,4 +1,12 @@
 function self = ContainedElements(self)
+    % Obtain containted elements from the given set of species (reactants and products)
+    %
+    % Args:
+    %     self (struct): Data of the mixture, conditions, and databases    
+    % 
+    % Returns:
+    %     self (struct): Data of the mixture, conditions, and databases
+
     L_formula = [];
     for k = self.S.NS:-1:1
         L_E1 = []; L_E2 = []; 

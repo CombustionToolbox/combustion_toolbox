@@ -1,8 +1,14 @@
 function self = ProblemSolution()
+    % Initialize struct with problem solution data
+    % 
+    % Returns:
+    %     self (struct): struct with problem solution data
+
+    % Description
     self.description = "Problem solution";
-    self.strR_Fuel = []; % Computations of the reactant fuel
-    self.strR_Oxidizer = []; % Computations of the oxidizer reactant 
-    self.strR_Oxidizer_and_Inert = []; % Computations of the inert reactant
-    self.strR = []; % Computations of the reactants
-    self.strP = [];% Computations of the products
+    % Variables
+    self.strR_Fuel = [];               % Properties of the initial fuel mixture             (reactants)
+    self.strR_Oxidizer = [];           % Properties of the initial oxidizer + inert mixture (reactants)
+    self.strR = [];                    % Properties of the initial mixture                  (reactants)
+    self.strP = [];                    % Properties of the final mixture                    (products)
 end

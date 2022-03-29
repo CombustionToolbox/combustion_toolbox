@@ -7,7 +7,7 @@ function self = Define_F(self)
         self.PD.Fuel.y = self.PS.strR_Fuel.y;
         self.PD.Fuel.z = self.PS.strR_Fuel.z;
         self.PD.Fuel.w = self.PS.strR_Fuel.w;
-        self.PD.phi_t = self.PD.Fuel.x+self.PD.Fuel.y/4-self.PD.Fuel.z/2;
+        self.PD.phi_t = self.PD.Fuel.x + self.PD.Fuel.y/4 - self.PD.Fuel.z/2;
     else
         self.PD.R_Fuel = 0; self.PD.phi_t = 1;
         self.PD.Fuel.x = 0; self.PD.Fuel.y = 0;

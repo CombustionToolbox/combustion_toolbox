@@ -7,6 +7,8 @@ function [moles, species] = complete_combustion(self, mix, phi)
     %     phi (float):     Equivalence ratio [-]
     %
     % Returns:
+    %     Tuple containing
+    %
     %     - moles (float): Equilibrium composition [moles] at defined temperature
     %     - species (str): Species considered in the complemte combustion model
 

@@ -5,9 +5,9 @@ function self = ListSpecies(varargin)
     %     empty (none): return default list of species (soot formation)
     % 
     % Optional Args:
-    %     self (struct): Data of the mixture, conditions, and databases 
-    %     EquivalenceRatio (float): Equivalence ratio
-    %     EquivalenceRatio_soot (float): Equivalence ratio in which theoretically appears soot
+    %     - self (struct): Data of the mixture, conditions, and databases 
+    %     - EquivalenceRatio (float): Equivalence ratio
+    %     - EquivalenceRatio_soot (float): Equivalence ratio in which theoretically appears soot
     %
     % Returns:
     %     self (struct): Data of the mixture, conditions, and databases

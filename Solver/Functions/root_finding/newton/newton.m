@@ -7,7 +7,10 @@ function [x, STOP] = newton(self, mix1, pP, field, x0)
     %     pP (float):    Pressure [bar]
     %     field (str):   Fieldname in Problem Description (PD)
     %     x0 (float):    Guess temperature [K]
+    %
     % Returns:
+    %     Tuple containing
+    %
     %     - x (float):     Temperature at equilibrium [K]
     %     - STOP (float):  Relative error [-] 
 

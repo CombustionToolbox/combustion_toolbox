@@ -6,9 +6,11 @@ function [R, P, T] = shock_ideal_gas(gamma, M1)
     %     M1 (float):    Pre-shock Mach number [-]
     %
     % Returns:
-    %     R (float):     Density ratio [-]
-    %     P (float):     Pressure ratio [-]
-    %     T (float):     Temperature ratio [-]
+    %     Tuple containing
+    %
+    %     - R (float):     Density ratio [-]
+    %     - P (float):     Pressure ratio [-]
+    %     - T (float):     Temperature ratio [-]
 
     R = (gamma + 1) .* M1.^2 ./ ((gamma - 1) .* M1.^2 + 2);
     P = (2 * gamma * M1.^2 - (gamma - 1)) ./ (gamma + 1);

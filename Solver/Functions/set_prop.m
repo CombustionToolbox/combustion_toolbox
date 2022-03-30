@@ -5,8 +5,8 @@ function self = set_prop(self, varargin)
     %     self (struct): Data of the mixture, conditions, and databases
     %
     % Optional Args:
-    %     field (str):   Fieldname in Problem Description (PD)
-    %     value (float): Value/s to assing in the field in Problem Description (PD)
+    %     - field (str):   Fieldname in Problem Description (PD)
+    %     - value (float): Value/s to assing in the field in Problem Description (PD)
     %
     % Returns:
     %     self (struct): Data of the mixture, conditions, and databases

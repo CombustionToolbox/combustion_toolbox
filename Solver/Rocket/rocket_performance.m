@@ -13,13 +13,15 @@ function [mix1, mix2, mix3] = rocket_performance(self, mix1, varargin)
     %     mix1 (struct): Properties of the initial mixture
     %
     % Optional Args:
-    %     mix2 (struct): Properties of the mixture at the outlet of the chamber (previous calculation)
-    %     mix3 (struct): Properties of the mixture at the throat (previous calculation)
+    %     - mix2 (struct): Properties of the mixture at the outlet of the chamber (previous calculation)
+    %     - mix3 (struct): Properties of the mixture at the throat (previous calculation)
     %
     % Returns:
-    %     mix1 (struct): Properties of the initial mixture
-    %     mix2 (struct): Properties of the mixture at the outlet of the chamber
-    %     mix3 (struct): Properties of the mixture at the throat
+    %     Tuple containing
+    %
+    %     - mix1 (struct): Properties of the initial mixture
+    %     - mix2 (struct): Properties of the mixture at the outlet of the chamber
+    %     - mix3 (struct): Properties of the mixture at the throat
 
     % Assign values
     if nargin == 3, mix2 = get_struct(varargin{1}); else, mix2 = []; end

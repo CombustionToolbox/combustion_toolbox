@@ -11,12 +11,14 @@ function [P, T, M1, R, Q, STOP] = compute_guess_det(self, mix1, phi, overdriven)
     %     overdriven (float): Overdriven ratio [-] respect to the sound velocity of the mixture 
     %
     % Returns:
-    %     P (float):          Pressure ratio [-]
-    %     T (float):          Temperature ratio [-]
-    %     M1 (float):         Pre-shock Mach number [-]
-    %     R (float):          Density ratio [-]
-    %     Q (float):          Dimensionless Heat release []
-    %     STOP (float):       Relative error [-] 
+    %     Tuple containing
+    %
+    %     - P (float):          Pressure ratio [-]
+    %     - T (float):          Temperature ratio [-]
+    %     - M1 (float):         Pre-shock Mach number [-]
+    %     - R (float):          Density ratio [-]
+    %     - Q (float):          Dimensionless Heat release []
+    %     - STOP (float):       Relative error [-] 
 
     % Paramenters
     gamma1 = mix1.gamma;

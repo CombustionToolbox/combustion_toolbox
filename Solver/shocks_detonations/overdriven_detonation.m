@@ -10,8 +10,10 @@ function [mix1, mix2] = overdriven_detonation(self, mix1, overdriven, varargin)
     %     mix2 (struct):      Properties of the mixture in the post-shock state (previous calculation)
     %
     % Returns:
-    %     mix1 (struct):      Properties of the mixture in the pre-shock state
-    %     mix2 (struct):      Properties of the mixture in the post-shock state
+    %     Tuple containing
+    %
+    %     - mix1 (struct):      Properties of the mixture in the pre-shock state
+    %     - mix2 (struct):      Properties of the mixture in the post-shock state
 
     % Unpack input data
     [self, mix1, mix2] = unpack(self, mix1, overdriven, varargin);

@@ -6,6 +6,7 @@ function x0 = steff_guess(self, mix1, pP, field)
     %     mix1 (struct): Properties of the initial mixture
     %     pP (float):    Pressure [bar]
     %     field (str):   Fieldname in Problem Description (PD)
+    %
     % Returns:
     %     x0 (float):    Guess temperature [K]
 

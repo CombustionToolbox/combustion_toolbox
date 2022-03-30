@@ -6,6 +6,7 @@ function mix3 = compute_rocket_parameters(mix2, mix3)
     %
     % Args:
     %     mix2 (struct): Properties of the mixture at the outlet of the chamber
+    %     mix3 (struct): Properties of the mixture at the throat
     %
     % Returns:
     %     mix3 (struct): Properties of the mixture at the throat

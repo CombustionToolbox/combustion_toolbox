@@ -14,6 +14,8 @@ function [N0, STOP] = equilibrium(self, pP, TP, mix1)
     %     mix1 (struct):  Properties of the initial mixture
     %
     % Returns:
+    %     Tuple containing
+    %
     %     - N0 (float):   Equilibrium composition [moles] for the given temperature [K] and pressure [bar]
     %     - STOP (float): Relative error [-] 
 

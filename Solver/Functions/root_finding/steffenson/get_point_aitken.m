@@ -4,6 +4,7 @@ function point = get_point_aitken(x0, g_vector)
     % Args:
     %     x0 (float):        Guess temperature [K]
     %     g_vector (struct): Fixed points of the function [kJ] (HP, EV) or [kJ/K] (SP, SV)
+    %
     % Returns:
     %     point (float): Point of the function [K]
     

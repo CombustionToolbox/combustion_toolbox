@@ -13,13 +13,15 @@ function [mix1, mix2_1, mix2_2] = det_oblique_theta(self, mix1, overdriven, thet
     %     theta (float):      Deflection angle [deg]
     %
     % Optional Args:
-    %     mix2_1 (struct): Properties of the mixture in the post-shock state - weak detonation (previous calculation)
-    %     mix2_2 (struct): Properties of the mixture in the post-shock state - strong detonation (previous calculation)
+    %     - mix2_1 (struct): Properties of the mixture in the post-shock state - weak detonation (previous calculation)
+    %     - mix2_2 (struct): Properties of the mixture in the post-shock state - strong detonation (previous calculation)
     %
     % Returns:
-    %     mix1 (struct):   Properties of the mixture in the pre-shock state
-    %     mix2_1 (struct): Properties of the mixture in the post-shock state - weak detonation
-    %     mix2_2 (struct): Properties of the mixture in the post-shock state - strong detonation
+    %     Tuple containing
+    %
+    %     - mix1 (struct):   Properties of the mixture in the pre-shock state
+    %     - mix2_1 (struct): Properties of the mixture in the post-shock state - weak detonation
+    %     - mix2_2 (struct): Properties of the mixture in the post-shock state - strong detonation
 
     % Unpack input data
     [self, mix1, mix2_1, mix2_2] = unpack(self, mix1, overdriven, theta, varargin);

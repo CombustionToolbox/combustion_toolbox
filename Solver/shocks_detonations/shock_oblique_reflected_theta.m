@@ -18,10 +18,12 @@ function [mix1, mix2, mix5_1, mix5_2] = shock_oblique_reflected_theta(self, mix1
     %     mix5_2 (struct): Properties of the mixture in the post-shock state of the reflected shock - strong shock (previous calculation)
     %
     % Returns:
-    %     mix1 (struct):   Properties of the mixture in the pre-shock state of the incident shock 
-    %     mix2 (struct):   Properties of the mixture in the post-shock state of the incident shock 
-    %     mix5_1 (struct): Properties of the mixture in the post-shock state of the reflected shock - weak shock
-    %     mix5_2 (struct): Properties of the mixture in the post-shock state of the reflected shock - strong shock
+    %     Tuple containing
+    %
+    %     - mix1 (struct):   Properties of the mixture in the pre-shock state of the incident shock 
+    %     - mix2 (struct):   Properties of the mixture in the post-shock state of the incident shock 
+    %     - mix5_1 (struct): Properties of the mixture in the post-shock state of the reflected shock - weak shock
+    %     - mix5_2 (struct): Properties of the mixture in the post-shock state of the reflected shock - strong shock
     
     % Unpack input data
     [self, mix1, mix2, mix5] = unpack(self, mix1, u2, theta, mix2, varargin);

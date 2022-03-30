@@ -8,6 +8,8 @@ function [dNi_p, dN_p] = equilibrium_dp(self, moles, mix1)
     %     mix1 (struct):   Properties of the initial mixture
     %
     % Returns:
+    %     Tuple containing
+    %
     %     - dNi_p (float): Thermodynamic derivative of the moles of the species respect to pressure
     %     - dN_p (float):  Thermodynamic derivative of the moles of the mixture respect to pressure
 

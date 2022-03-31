@@ -12,7 +12,7 @@ function varargout = print_stoichiometric_matrix(self, varargin)
     %                 it returns the transpose of stoichiometric matrix
     
     % Definitions (print)
-    label_type = 'Stochiometric matrix:';
+    label_type = 'Stoichiometric matrix:';
     type = ' ';
     % Unpack
     if nargin > 1
@@ -33,6 +33,6 @@ function varargout = print_stoichiometric_matrix(self, varargin)
     end
     fprintf('\n%s\n\n', label_type)
     disp(T);
-    % Return stochiometric matrix
+    % Return stoichiometric matrix
     varargout = {T};
 end

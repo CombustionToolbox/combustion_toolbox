@@ -1,7 +1,7 @@
 function tInterval = compute_interval_NASA(species, T, DB, tRange, ctTInt)
     % Compute interval NASA polynomials
     %
-    %   Args:
+    % Args:
     %     species (str) : Chemical species
     %     T (float): Temperature [K]
     %     DB (struct) : Database with custom thermodynamic polynomials functions generated from NASAs 9 polynomials fits

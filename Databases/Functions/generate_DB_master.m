@@ -1,5 +1,14 @@
 function DB_master = generate_DB_master(varargin)
-    % Generate Database MASTER
+    % Generate Mater Database (DB_master) with the thermodynamic data of
+    % the chemical species
+    %
+    % Optional args:
+    %     * reducedDB (flag):  Flag indicating reduced database
+    %     * thermoFile (file): File with NASA's thermodynamic database
+    %
+    % Returns:
+    %     DB_master (struct):  Database with the thermodynamic data of the chemical species
+
     reducedDB = varargin{1,1};
     if nargin > 1
         thermoFile = varargin{1,2};

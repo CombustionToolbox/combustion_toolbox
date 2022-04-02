@@ -3,55 +3,69 @@ function mix =  ComputeProperties(self, SpeciesMatrix, p, T)
     % and temperature T [K]
     %
     % Args:
-    %     self (struct):         Data of the mixture, conditions, and databases
+    %     self (struct): Data of the mixture, conditions, and databases
     %     SpeciesMatrix (float): Matrix with the stoichiometric and properties values of the mixture
-    %     p (float):             pressure [bar]
-    %     T (float):             Temperature [K]
+    %     p (float): Pressure [bar]
+    %     T (float): Temperature [K]
     %
     % Returns:
-    %     self (struct):         Data of the mixture, conditions, and databases
+    %     mix (struct): Data of the mixture
     
-    R0 = self.C.R0; % [J/(K mol)]. Universal gas constant
-    mix.NatomE = sum(SpeciesMatrix(:, 1) .* self.C.A0.value);
-    
+    % Definitions
+    R0 = self.C.R0; % [J/(K mol)] Universal gas constant    
+    % Inputs
+    mix.p       = p; % [bar]
+    mix.T       = T; % [K]
+    % Unpack SpeciesMatrix
+    Ni          = SpeciesMatrix(:,1);       % [mol]
+    mix.N       = sum(SpeciesMatrix(:, 1)); % [mol] 
+    mix.hf      = sum(SpeciesMatrix(:,2));  % [kJ]
+    mix.DhT     = sum(SpeciesMatrix(:,3));  % [kJ]
+    mix.ef      = sum(SpeciesMatrix(:,4));  % [kJ]
+    mix.DeT     = sum(SpeciesMatrix(:,5));  % [kJ]
+    mix.cP      = sum(SpeciesMatrix(:,6));  % [J/K]     
+    mix.cV      = sum(SpeciesMatrix(:,7));  % [J/K]  
+    mix.S0      = sum(SpeciesMatrix(:,8));  % [kJ/K]
+    mix.pv      = sum(SpeciesMatrix(:,9));  % [bar m3]
+    mix.swtCond = SpeciesMatrix(:,10);      % [bool]
+    mix.mi      = sum(SpeciesMatrix(:,11)); % [kg]
+    % Compute mass fractions [-]
+    mix.Yi = SpeciesMatrix(:,11)./mix.mi; % [-]
+    % Compute molar fractions [-]
+    mix.Xi = Ni/mix.N;
+    % Get non zero species
+    FLAG_NONZERO = mix.Xi>0; 
+    % Compute mean molecular weight [g/mol]
+    mix.W       = 1/sum(mix.Yi./SpeciesMatrix(:,12), 'OmitNan');
+    % Compute vector atoms of each element
+    mix.NatomE = sum(Ni .* self.C.A0.value);
+    % Assign values for C, H, O, and N elements
     if isempty(self.E.ind_C), mix.x = 0; else, mix.x = mix.NatomE(self.E.ind_C); end
     if isempty(self.E.ind_H), mix.y = 0; else, mix.y = mix.NatomE(self.E.ind_H); end
     if isempty(self.E.ind_O), mix.z = 0; else, mix.z = mix.NatomE(self.E.ind_O); end
     if isempty(self.E.ind_N), mix.w = 0; else, mix.w = mix.NatomE(self.E.ind_N); end
+    % Compute volume [m3]
+    mix.v = mix.pv / mix.p;
+    % Compute density [kg/m3]
+    mix.rho = mix.mi / mix.v;
+    % Compute enthalpy [kJ]
+    mix.h = mix.hf + mix.DhT;
+    % Compute internal energy [kJ]
+    mix.e = mix.ef + mix.DeT; 
+    % Compute entropy of mixing [kJ/K]
+    mix.DS = compute_entropy_mixing(mix, Ni, R0, FLAG_NONZERO);
+    % Compute entropy [kJ/K]
+    mix.S  = (mix.S0 + mix.DS);
+    % Compute Gibbs energy [kJ]
+    mix.g = mix.h - mix.T * mix.S;
+    % Compute internal energy [kJ]
+    mix.e = mix.h - sum(Ni(FLAG_NONZERO) .* (1 - mix.swtCond(FLAG_NONZERO))) * R0 * T *1e-3; % [kJ]
+    % Compute Adibatic index [-]
+    mix.gamma = mix.cP/mix.cV;
+    % Compute sound velocity [m/s]
+    mix.sound = sqrt(mix.gamma * p * 1e5 / mix.rho);
     
-    mix.N       = sum(SpeciesMatrix(:, 1)); % [mol] 
-    mix.hf      = sum(SpeciesMatrix(:,2));  % [kJ]
-    mix.DhT     = sum(SpeciesMatrix(:,3));  % [kJ]
-    mix.h       = mix.hf + mix.DhT;         % [kJ]
-    mix.ef      = sum(SpeciesMatrix(:,4));  % [kJ]
-    mix.DeT     = sum(SpeciesMatrix(:,5));  % [kJ]
-    mix.e       = mix.ef + mix.DeT;         % [kJ]
-    mix.cP      = sum(SpeciesMatrix(:,6));  % [J/K]     
-    mix.cV      = sum(SpeciesMatrix(:,7));  % [J/K]   
-    mix.pv      = sum(SpeciesMatrix(:,9));  % [bar m3]
-    mix.p       = p;                        % [bar]
-    mix.v       = mix.pv / mix.p;           % [m3]
-    mix.swtCond = SpeciesMatrix(:,10);      % [bool]
-    mix.mi      = sum(SpeciesMatrix(:,11)); % [kg]
-    mix.rho     = mix.mi / mix.v;           % [kg/m3]
-    
-    mix.Yi      = SpeciesMatrix(:,11)./mix.mi; % [-]
-    mix.W       = 1/sum(mix.Yi./SpeciesMatrix(:,12),'OmitNan');
-    
-    Ni          = SpeciesMatrix(:,1); % [mol]
-    mix.Xi      = Ni/mix.N;           % [-]
-    ii          = mix.Xi>0;     
-    mix.S0      = sum(SpeciesMatrix(:,8)); % [kJ/K]
-    DSi         = Ni(ii).*log(mix.Xi(ii)*p).*(1-mix.swtCond(ii)); % only nonzero for noncondensed species
-    mix.DS      = -R0*sum(DSi) * 1e-3; % [kJ/K]
-    mix.S       = (mix.S0 + mix.DS); % [kJ/K]
-    mix.T       = T; % [K]
-    mix.g       = mix.h - mix.T * mix.S; % [kJ]
-    mix.e       = mix.h - sum(Ni(ii) .* (1 - mix.swtCond(ii))) * R0 * T *1e-3; % [kJ]
-    mix.gamma   = mix.cP/mix.cV; % [-]
-    mix.sound   = sqrt(mix.gamma * p * 1e5 / mix.rho); % [m/s]
-    
-    % Correction of: cP, cV, gamma and speed of sound as consequence of the
+    % Correction of: cP, cV, gamma, and speed of sound as consequence of the
     % chemical reaction
     if isfield(self, 'dNi_T')
         mix.dVdT_p =  1 + self.dN_T; % [-]
@@ -72,3 +86,11 @@ function mix =  ComputeProperties(self, SpeciesMatrix, p, T)
     end
 end
 
+% SUB-PASS FUNCTIONS
+function DS = compute_entropy_mixing(mix, Ni, R0, FLAG_NONZERO)
+    % Compute entropy of mixing [kJ/K].
+    % Note: only nonzero for noncondensed species
+
+    DSi = Ni(FLAG_NONZERO) .* log(mix.Xi(FLAG_NONZERO) * mix.p) .* (1 - mix.swtCond(FLAG_NONZERO));
+    DS  = -R0 * sum(DSi) * 1e-3;
+end

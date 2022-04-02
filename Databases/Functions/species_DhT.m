@@ -1,4 +1,4 @@
-function DhTi = species_DhT(Species,T,strThProp)
+function DhTi = species_DhT(species, T, DB)
 % global strThProp
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
@@ -6,4 +6,4 @@ function DhTi = species_DhT(Species,T,strThProp)
 % chemical species (Species) at the specified temperature (T)
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-DhTi = strThProp.(Species).DhTcurve(T)/1000;
+DhTi = DB.(species).DhTcurve(T)/1000;

@@ -9,7 +9,7 @@ function mix =  ComputeProperties(self, SpeciesMatrix, p, T)
     %     T (float): Temperature [K]
     %
     % Returns:
-    %     mix (struct): Data of the mixture
+    %     mix (struct): Properties of the mixture
     
     % Definitions
     R0 = self.C.R0; % [J/(K mol)] Universal gas constant    

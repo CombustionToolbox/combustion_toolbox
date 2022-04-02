@@ -25,7 +25,7 @@ function speciesLatex = species2latex(species)
         speciesLatex = strcat(speciesLatex, species(pos1:pos2), '$_', species(pos2 + 1), '$');
         pos1 = pos2 + 2;
     end
-    if pos1 < length(species)
+    if pos1 < length(species) + 1
         if isletter(species(pos1))
             aux = 0;
         else

@@ -1,11 +1,25 @@
 function self = ListSpecies(varargin)
     % Set list of species in the mixture (reactants and products)
     %
+    % Predefined list of species:
+    %     * SOOT FORMATION (default)
+    %     * COMPLETE
+    %     * HC/O2/N2 EXTENDED
+    %     * SOOT FORMATION EXTENDED
+    %     * NASA ALL
+    %     * AIR, DISSOCIATED AIR
+    %     * AIR IONS, AIR_IONS
+    %     * IDEAL_AIR, AIR_IDEAL
+    %     * HYDROGEN
+    %     * HYDROGEN_L, HYDROGEN (L)
+    %     * HC/O2/N2 PROPELLANTS
+    %
     % Args:
     %     empty (none): return default list of species (soot formation)
     % 
     % Optional Args:
     %     - self (struct): Data of the mixture, conditions, and databases 
+    %     - LS (cell): Name list species / list of species
     %     - EquivalenceRatio (float): Equivalence ratio
     %     - EquivalenceRatio_soot (float): Equivalence ratio in which theoretically appears soot
     %

@@ -1,8 +1,8 @@
-function s0i = species_s0(Species,T,strThProp)
+function s0i = species_s0(species, T, DB)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
 % Calculates the entropy (in kJ/(mol-K)) at the specified temperature 
 % T for the chemical species included in the following list:
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-s0i = strThProp.(Species).s0curve(T)/1000;
+s0i = DB.(species).s0curve(T)/1000;

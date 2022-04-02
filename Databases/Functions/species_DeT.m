@@ -1,4 +1,4 @@
-function DeTi = species_DeT(Species,T,strThProp)
+function DeTi = species_DeT(species, T, DB)
 % global strThProp
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
@@ -6,4 +6,4 @@ function DeTi = species_DeT(Species,T,strThProp)
 % chemical species (Species) at the specified temperature (T)
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-DeTi = strThProp.(Species).DeTcurve(T)/1000;
+DeTi = DB.(species).DeTcurve(T)/1000;

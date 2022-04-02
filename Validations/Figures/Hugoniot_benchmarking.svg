@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <svg
-   width="967.98468"
+   width="927.54968"
    height="883.86371"
    version="1.1"
    id="svg236343"
@@ -25,14 +25,14 @@
      inkscape:pagecheckerboard="0"
      showgrid="false"
      inkscape:zoom="0.51116885"
-     inkscape:cx="724.80942"
+     inkscape:cx="625.03809"
      inkscape:cy="548.74236"
      inkscape:window-width="1920"
      inkscape:window-height="1009"
      inkscape:window-x="-8"
      inkscape:window-y="312"
      inkscape:window-maximized="1"
-     inkscape:current-layer="g26098"
+     inkscape:current-layer="layer3"
      inkscape:snap-page="true"
      fit-margin-top="0"
      fit-margin-left="0"
@@ -2310,13 +2310,13 @@
      inkscape:groupmode="layer"
      id="layer3"
      inkscape:label="Layer 3"
-     transform="translate(82.164635,-1.9562991)">
+     transform="translate(47.969635,-1.9562991)">
     <rect
-       style="fill:#ffffff;stroke-width:1.152;stroke-miterlimit:10"
+       style="fill:#ffffff;stroke-width:1.12491;stroke-miterlimit:10"
        id="rect2284"
-       width="967.98468"
+       width="922.98975"
        height="883.86371"
-       x="-82.164635"
+       x="-47.969635"
        y="1.9562991" />
   </g>
   <g
@@ -2325,7 +2325,7 @@
      stroke="#000000"
      fill-rule="evenodd"
      id="g236341"
-     transform="translate(82.164635,-1.9562991)">
+     transform="translate(47.969635,-1.9562991)">
     <g
        transform="matrix(0.33333335,0,0,0.33333335,431.325,463.48535)"
        id="g26098">
@@ -5496,7 +5496,7 @@
           </g>
         </g>
         <g
-           transform="matrix(12,0,0,12,-1503.83,-254.502)"
+           transform="matrix(0,-12,12,0,-1425.2255,-56.094)"
            ns1:version="1.6.0"
            ns1:texconverter="pdflatex"
            ns1:pdfconverter="inkscape"

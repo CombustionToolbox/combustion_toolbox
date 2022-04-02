@@ -1,5 +1,13 @@
-function [Elements, NE] = set_elements()
-    Elements = {
+function [elements, NE] = set_elements()
+    % Set cell with elements name
+    % 
+    % Returns:
+    %     Tuple containing:
+    %     
+    %     * elements (cell): Elements
+    %     * NE (struct):     Number of elements
+
+    elements = {
     'H';   %  1 
     'D';   %  1 - Deuterium - Heavy hydrogen (^2H)
     'He';  %  2 
@@ -121,5 +129,5 @@ function [Elements, NE] = set_elements()
     'Og';  % 118
     'E'};   % 119 % Electron
     
-    NE = numel(Elements);
+    NE = numel(elements);
 end

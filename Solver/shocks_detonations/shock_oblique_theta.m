@@ -115,11 +115,11 @@ function value = f0_beta(beta, theta, u2n, u1)
 end
 
 function value = df0_beta(beta, u2n, u1)
-    % Derivative of the function to find the roots of beta
+    % First derivative of the function to find the roots of beta
     value = (u2n * u1 * sin(beta)) / (u2n^2 + u1^2 * cos(beta)^2) - 1;
 end
 
 function value = d2f0_beta(beta, u2n, u1)
-    % Derivative of the function to find the roots of beta
+    % Second derivative of the function to find the roots of beta
     value = 0.5 * (u1 * u2n * cos(beta) * (3*u1^2 + 2*u2n^2 - u1^2 * cos(2*beta))) / (u2n^2 + u1^2 * cos(beta)^2)^2;
 end

@@ -39,7 +39,7 @@ function mix =  ComputeProperties(self, SpeciesMatrix, p, T)
     mix.W       = 1/sum(mix.Yi./SpeciesMatrix(:,12), 'OmitNan');
     % Compute vector atoms of each element
     mix.NatomE = sum(Ni .* self.C.A0.value);
-    % Assign values for CHON
+    % Assign values for C, H, O, and N elements
     if isempty(self.E.ind_C), mix.x = 0; else, mix.x = mix.NatomE(self.E.ind_C); end
     if isempty(self.E.ind_H), mix.y = 0; else, mix.y = mix.NatomE(self.E.ind_H); end
     if isempty(self.E.ind_O), mix.z = 0; else, mix.z = mix.NatomE(self.E.ind_O); end

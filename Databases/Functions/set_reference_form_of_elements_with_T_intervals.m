@@ -1,3 +1,9 @@
+% Get list with reference form of elements and its temperature intervals
+%
+%   Return:
+%       list (cell): List with reference form of elements and its
+%       temperature intervals
+
 Reference_form_of_elements_with_T_intervals = {
 'Ar [200-20000]';
 'CL2 [200-6000]';
@@ -114,4 +120,3 @@ Reference_form_of_elements_with_T_intervals = {
 'Zr(a) [200-1135]';
 'Zr(b) [1135-2125]';
 'Zr(L) [2125-6000]'};
-

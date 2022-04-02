@@ -1,3 +1,8 @@
+% Get list with reference form of elements
+%
+%   Return:
+%       list (cell): List with reference form of elements
+
 Reference_form_of_elements = {
 'H2';       %  1 
 'He';       %  2 

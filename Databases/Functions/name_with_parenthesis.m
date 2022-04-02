@@ -1,32 +1,40 @@
-function name_with = name_with_parenthesis(name_wo)
+function species_with = name_with_parenthesis(species)
+    % Update the name of the given string with parenthesis. The character b
+    % if comes in pair represents parenthesis in the NASA's database
+    %
+    % Args: 
+    %     species (str): Chemical species in NASA's Database format
+    %
+    % Return:
+    %     species_with (str): Chemical species with parenthesis
 
-    name_i = name_wo;
-    j = find(name_i(:)=='b');
+    j = find(species(:)=='b');
     if length(j)==2
-        name_i(j(1)) = '(';
-        name_i(j(2)) = ')';
+        species(j(1)) = '(';
+        species(j(2)) = ')';
     end
     if (length(j)==3)
         if (j(3)-j(1)==2)||((j(2)-j(1)==1)&&(j(1)>2))
-           name_i(j(1)) = '(';
-           name_i(j(3)) = ')';
+           species(j(1)) = '(';
+           species(j(3)) = ')';
         elseif (j(2)-j(1)==2)&&(j(1)>2)       
-           name_i(j(1)) = '(';
-           name_i(j(2)) = ')';
+           species(j(1)) = '(';
+           species(j(2)) = ')';
         else
-           name_i(j(2)) = '(';
-           name_i(j(3)) = ')';
+           species(j(2)) = '(';
+           species(j(3)) = ')';
         end
     end
     if (length(j)==4)
         if j(4)-j(2)==2
-            name_i(j(2)) = '(';
-            name_i(j(4)) = ')';
+            species(j(2)) = '(';
+            species(j(4)) = ')';
         else
-            name_i(j(1)) = '(';
-            name_i(j(2)) = ')';
-            name_i(j(3)) = '(';
-            name_i(j(4)) = ')';
+            species(j(1)) = '(';
+            species(j(2)) = ')';
+            species(j(3)) = '(';
+            species(j(4)) = ')';
         end
     end
-    name_with = name_i;
+    species_with = species;
+end

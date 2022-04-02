@@ -1,9 +1,19 @@
-function cVi = species_cV(species, T, DB)
-% global strThProp
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%
-% Calculates the specific heat at constant volume (in J/(mol-K)) for the 
-% specified chemical species (Species) at the specified temperature (T)
-%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-cVi = DB.(species).cVcurve(T);
+function cV = species_cV(species, T, DB)
+    % Compute specific heat at constant volume [J/(mol-K)] of the species
+    % at the given temperature [K] using piecewise cubic Hermite 
+    % interpolating polynomials and linear extrapolation
+    %
+    % Args:
+    %     species (str): Chemical species
+    %     T (float): Temperature [K]
+    %     DB (struct): Database with custom thermodynamic polynomials functions generated from NASAs 9 polynomials fits
+    %
+    % Returns:
+    %     cV (float): Specific heat at constant volume [J/(mol-K)]
+    
+    try
+        cV = DB.(species).cVcurve(T);
+    catch
+        cV = 0; % cryogenic species
+    end
+end

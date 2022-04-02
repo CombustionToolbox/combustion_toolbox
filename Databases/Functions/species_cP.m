@@ -9,7 +9,7 @@ function cP = species_cP(species, T, DB)
     %     DB (struct): Database with custom thermodynamic polynomials functions generated from NASAs 9 polynomials fits
     %
     % Returns:
-    %     cV (float): Specific heat at constant volume [J/(mol-K)]
+    %     cP (float): Specific heat at constant pressure [J/(mol-K)]
     
     try
         cP = DB.(species).cPcurve(T);

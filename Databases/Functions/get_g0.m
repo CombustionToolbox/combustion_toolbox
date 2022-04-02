@@ -1,4 +1,15 @@
-function g0 = get_g0(app, species, T, DB)
+function g0 = get_g0(self, species, T, DB)
+    % Compute Compute Gibbs energy [kJ/mol] of the species at the given
+    % temperature [K] using NASA's 9 polynomials
+    %
+    % Args:
+    %     self (str): Data of the mixture, conditions, and databases
+    %     species (str): Chemical species
+    %     temperature (float): Range of temperatures to evaluate [K]
+    %     DB (struct): Database with custom thermodynamic polynomials functions generated from NASAs 9 polynomials fits
+    %
+    % Returns:
+    %     g0 (float): Gibbs energy [kJ/mol]
     if DB.(species).ctTInt > 0
         R0 = 8.3144598;
         a = DB.(species).a;
@@ -6,7 +17,7 @@ function g0 = get_g0(app, species, T, DB)
         ctTInt       = DB.(species).ctTInt;
         tRange       = DB.(species).tRange;
         tExponents   = DB.(species).tExponents;
-        Element_matrix = set_element_matrix(DB.(species).txFormula,app.E.Elements);
+        Element_matrix = set_element_matrix(DB.(species).txFormula,self.E.Elements);
         
         if (T < tRange{1}(1)) || (T > tRange{ctTInt}(2))
             cP = species_cP(species, T, DB);

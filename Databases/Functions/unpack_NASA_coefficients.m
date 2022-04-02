@@ -2,19 +2,19 @@ function [a, b, tRange, tExponents, ctTInt, txFormula, swtCondensed] = unpack_NA
     % Unpack NASA's polynomials coefficients from database
     %
     %   Args:
-    %     species (str) : Species
+    %     species (str) : Chemical species
     %     DB (struct) : Database with custom thermodynamic polynomials functions generated from NASAs 9 polynomials fits
     %
     % Returns:
     %     Tuple containing
     %
-    %     - a (cell):
-    %     - b (cell): 
-    %     - tRange (cell): 
-    %     - tExponents (cell): 
-    %     - ctTInt (cell): 
-    %     - txFormula (str): 
-    %     - swtCondensed (float): 
+    %     - a (cell): Temperature coefficients
+    %     - b (cell): Integration constants
+    %     - tRange (cell): Ranges of temperatures [K]
+    %     - tExponents (cell): Exponent coefficients
+    %     - ctTInt (float): Number of intervals of temperatures
+    %     - txFormula (str): Chemical formula
+    %     - swtCondensed (float): 0 or 1 indicating gas or condensed phase, respectively
 
 
     a = DB.(species).a;

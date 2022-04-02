@@ -10,7 +10,7 @@ function [txFormula, mm, cP0, cV0, hf0, h0, ef0, e0, s0, g0] = get_speciesProper
     %     echo (float): 0 or 1 indicating species not found
     %
     % Returns:
-    %     Tuple containing:
+    %     Tuple containing
     %      
     %     * txFormula (str): Chemical formula
     %     * mm (float): Molar weight [g/mol]

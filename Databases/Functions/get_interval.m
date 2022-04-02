@@ -8,7 +8,8 @@ function tInterval = get_interval(species, T, DB)
     %     DB (struct):   Database with custom thermodynamic polynomials functions generated from NASAs 9 polynomials fits
     %
     % Returns:
-    
+    %     tInterval (float): Index of the interval of temperatures
+
     for i = 1:DB.(species).ctTInt
         if (T >= DB.(species).tRange{i}(1)) && (T <= DB.(species).tRange{i}(2))
             break

@@ -10,10 +10,7 @@ function element_matrix = set_element_matrix(txFormula, elements)
     % Example: 
     %     For CO2
     %
-    %     element_matrix =
-    % 
-    %         7     9
-    %         1     2
+    %     element_matrix = [7, 9; 1, 2]
     %
     %     That is, the species contains 1 atom of element 7 (C) and
     %     2 atoms of element 9 (O)

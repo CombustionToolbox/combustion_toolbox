@@ -13,9 +13,7 @@ function Delta_n = compute_change_moles_gas_reaction(element_matrix, swtCondense
     %   swtCondensed (float):   0 or 1 indicating gas or condensed species
     %
     % Returns:
-    %   Delta_n (float): Change in moles of gases during the formation reaction
-    %                    of a mole of that species starting from the elements
-    %                    in their reference state
+    %   Delta_n (float): Change in moles of gases during the formation reaction of a mole of that species starting from the elements in their reference state
 
     Delta_n_per_mole = sum(element_matrix(1,:)==[1, 8, 9, 10, 18]')/2 ... 
                      + sum(element_matrix(1,:)==[3, 11, 19, 37, 55, 87]');

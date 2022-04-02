@@ -1,4 +1,4 @@
-function plot_thermo_validation(species, property, DB, varargin)
+function ax = plot_thermo_validation(species, property, DB, varargin)
     % Validation custom thermodynamic polynomials with NASA's 9 polynomials
     %
     % Args:
@@ -9,6 +9,9 @@ function plot_thermo_validation(species, property, DB, varargin)
     % Optional Args:
     %    nfrec(float):   Points frequency for NASA values
     %    range(float):   Temperature range [K]
+    %
+    % Returns:
+    %    ax (axes): Axes of the plotted figure
 
     % Definitions
     NS = length(species);
@@ -42,11 +45,11 @@ function plot_thermo_validation(species, property, DB, varargin)
         result_CT(:, i) = feval(fun_CT, range(:, i));
     end
     % Plot results
-    plot_results(species, NS, range, result_CT, result_NASA, x_labelname, y_labelname, nfrec);
+    ax = plot_results(species, NS, range, result_CT, result_NASA, x_labelname, y_labelname, nfrec);
 end
 
 % SUB-PASS FUNCTIONS
-function plot_results(species, NS, range, result_CT, result_NASA, x_labelname, y_labelname, nfrec)
+function ax = plot_results(species, NS, range, result_CT, result_NASA, x_labelname, y_labelname, nfrec)
     % Plot results
     
     [ax, config] = set_figure();
@@ -62,7 +65,7 @@ function plot_results(species, NS, range, result_CT, result_NASA, x_labelname, y
     LINE_STYLES = {'-', '--', ':', '-.'};
     SYMBOL_STYLES = {'d', 'o', 's', '<'};
     NUM_STYLES  = length(LINE_STYLES);
-    colorbw = brewermap(NUM_COLORS, config.colorpalette);
+    colorbw = brewermap(NUM_COLORS, 'Dark2');
     
     k = 1;
     z = 1;
@@ -110,7 +113,7 @@ function plot_results(species, NS, range, result_CT, result_NASA, x_labelname, y
     for i = NS:-1:1
         legendname{i} = species2latex(species{i});
     end
-    legend(h, legendname, 'FontSize', config.fontsize-6, 'Location', 'northeastoutside', 'interpreter', 'latex');
+    legend(h, legendname, 'FontSize', config.fontsize-2, 'Location', 'northeastoutside', 'interpreter', 'latex');
 
     xlabel(ax, x_labelname)
     ylabel(ax, y_labelname)

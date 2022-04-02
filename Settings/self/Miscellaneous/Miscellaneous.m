@@ -13,8 +13,8 @@ function self = Miscellaneous()
     %   * Plot
     self.config.linewidth = 1.8;              % Default linewidth for plots
     self.config.fontsize = 22;                % Default fontsize
-    self.config.colorpalette = 'Dark2';       % Default color palette (see brewermap function for more options)
-    self.config.colorpaletteLenght = 8;       % Default number of colors to use in the color palette
+    self.config.colorpalette = 'Spectral';    % Default color palette (see brewermap function for more options)
+    self.config.colorpaletteLenght = 12;      % Default number of colors to use in the color palette
     self.config.labelx = 'x';                 % Default xlabel
     self.config.labely = 'y';                 % Default ylabel
     %   * Flags

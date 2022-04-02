@@ -6,7 +6,7 @@ function DB = generate_DB(DB_master)
     %     DB_master (struct): Database with the thermodynamic data of the chemical species
     %
     % Returns:
-    %     DB: Database with custom thermodynamic polynomials functions generated from NASAs 9 polynomials fits
+    %     DB (struct): Database with custom thermodynamic polynomials functions generated from NASAs 9 polynomials fits
 
     if ~exist('DB', 'var')
         if exist('DB.mat', 'file')

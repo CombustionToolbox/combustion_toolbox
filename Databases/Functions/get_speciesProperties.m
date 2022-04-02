@@ -119,7 +119,7 @@ end
 
 ctTInt       = DB.(species).ctTInt;
 txFormula    = DB.(species).txFormula;
-swtCondensed = sign(DB.(species).swtCondensed);
+swtCondensed = DB.(species).swtCondensed;
 mm           = DB.(species).mm;
 Hf0          = DB.(species).Hf0;
 tRange       = DB.(species).tRange;

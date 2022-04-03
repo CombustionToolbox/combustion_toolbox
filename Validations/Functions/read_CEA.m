@@ -105,8 +105,8 @@ while ctLine<100000
         continue
     end
     if contains(tline,'(dLV/dLP)t') 
-        num = regexp(tline, '\d'); data.dVdp_T(i) = sscanf(tline(num(2)-2:num(end)),'%f'); tline = fgetl(fid);
-        num = regexp(tline, '\d'); data.dVdT_p(i) = sscanf(tline(num(2)-2:num(end)),'%f'); tline = fgetl(fid);
+        num = regexp(tline, '\d'); data.dVdp_T(i) = sscanf(tline(num(2)-3:num(end)),'%f'); tline = fgetl(fid);
+        num = regexp(tline, '\d'); data.dVdT_p(i) = sscanf(tline(num(2)-3:num(end)),'%f'); tline = fgetl(fid);
     end
 
     if contains(tline,'Cp, KJ/(KG)(K)') 

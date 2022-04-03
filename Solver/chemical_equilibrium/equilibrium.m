@@ -1,4 +1,4 @@
-function [N0, STOP] = equilibrium(self, pP, TP, mix1)
+function [N0, STOP] = equilibrium(self, pP, TP, mix1, guess_moles)
     % Obtain equilibrium composition [moles] for the given temperature [K] and pressure [bar].
     % The code stems from the minimization of the free energy of the system by using Lagrange
     % multipliers combined with a Newton-Raphson method, upon condition that initial gas
@@ -8,15 +8,16 @@ function [N0, STOP] = equilibrium(self, pP, TP, mix1)
     % 1311.
     %
     % Args:
-    %     self (struct):  Data of the mixture, conditions, and databases
-    %     pP (float):     Pressure [bar]
-    %     TP (float):     Temperature [K]
-    %     mix1 (struct):  Properties of the initial mixture
+    %     self (struct): Data of the mixture, conditions, and databases
+    %     pP (float): Pressure [bar]
+    %     TP (float): Temperature [K]
+    %     mix1 (struct): Properties of the initial mixture
+    %     guess_moles (float): mixture composition [mol] of a previous computation
     %
     % Returns:
     %     Tuple containing
     %
-    %     - N0 (float):   Equilibrium composition [moles] for the given temperature [K] and pressure [bar]
+    %     - N0 (float): Equilibrium composition [moles] for the given temperature [K] and pressure [bar]
     %     - STOP (float): Relative error [-] 
 
     % Generalized Gibbs minimization method
@@ -34,7 +35,6 @@ function [N0, STOP] = equilibrium(self, pP, TP, mix1)
     NatomE = mix1.NatomE;
     NP_0 = 0.1;
     NP = NP_0;
-    
     SIZE = -log(TN.tolN);
     
     % Find indeces of the species/elements that we have to remove from the stoichiometric matrix A0
@@ -52,7 +52,13 @@ function [N0, STOP] = equilibrium(self, pP, TP, mix1)
     temp_ind = [temp_ind_nswt, temp_ind_swt];
     temp_NS = length(temp_ind);
     % Initialize species vector N0
-    N0(temp_ind_nswt, 1) = NP_0/temp_NG;
+    if isempty(guess_moles)
+        N0(temp_ind_nswt, 1) = NP_0/temp_NG;
+    else
+        N0(temp_ind_nswt, 1) = guess_moles(temp_ind_nswt);
+        NP_0 = sum(guess_moles);
+        NP = NP_0;
+    end
     % Standard Gibbs free energy
     g0 = set_g0(S.LS, TP, self.DB);
     % Dimensionless Chemical potential

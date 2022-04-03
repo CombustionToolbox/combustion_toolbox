@@ -18,52 +18,63 @@ function [mix1, mix2] = cj_detonation(self, mix1, varargin)
     %     - mix2 (struct): Properties of the mixture in the post-shock state
 
     % Unpack input data
-    [self, mix1, mix2] = unpack(self, mix1, varargin);
+    [self, mix1, mix2, guess_moles] = unpack(self, mix1, varargin);
     % Abbreviations 
     C = self.C;
     TN = self.TN;
     % Constants
     R0 = C.R0; % Universal gas constant [J/(mol-K)]
-    % Miscellaneous
-    it = 0;
-    itMax = TN.it_shocks;
-    % Initial estimates of p2/p1 and T2/T1
-    [p2, T2, p2p1, T2T1, STOP] = get_guess(self, mix1, mix2);
-    T_guess = T2;
-    p_guess = p2;
-    % Loop
-    while STOP > TN.tol_shocks && it < itMax
-        it = it + 1;
-        % Construction of the Jacobian matrix and vector b
-        [J, b] = update_system(self, mix1, p2, T2, R0);
-        % Solve of the linear system A*x = b
-        x = J\b;
-        % Calculate correction factor
-        lambda = relax_factor(x);
-        % Apply correction
-        [log_p2p1, log_T2T1] = apply_correction(x, p2p1, T2T1, lambda);
-        % Apply antilog
-        [p2, T2] = apply_antilog(mix1, log_p2p1, log_T2T1); % [Pa] and [K]
-        % Update ratios
-        p2p1 = p2 / (mix1.p * 1e5);
-        T2T1 = T2 / mix1.T;
-        % Compute STOP criteria
-        STOP = compute_STOP(x);
-    end
+    % Definitions
+    FLAG_FAST = false;
+    % Solve Chapman-Jouguet detonation
+    [T2, p2, STOP, T_guess, p2_guess] = solve_cj_detonation(FLAG_FAST);
     % Check convergence
     print_convergence(STOP, TN.tol_shocks);
     % Save state
     [mix1, mix2] = save_state(self, mix1, T2, p2, STOP);
     mix2.T_guess = T_guess;
-    mix2.p_guess = p_guess;
+    mix2.p_guess = p2_guess;
+    
+    % NESTED-FUNCTIONS
+    function [T2, p2, STOP, T_guess, p2_guess] = solve_cj_detonation(FLAG_FAST)
+        % Miscellaneous
+        it = 0; itMax = TN.it_shocks;
+        % Initial estimates of p2/p1 and T2/T1
+        [p2, T2, p2p1, T2T1, STOP] = get_guess(self, mix1, mix2);
+        T_guess = T2; p2_guess = p2;
+        % Check FLAG
+        if ~FLAG_FAST, guess_moles = []; end
+        % Loop
+        while STOP > TN.tol_shocks && it < itMax
+            it = it + 1;
+            % Construction of the Jacobian matrix and vector b
+            [J, b, guess_moles] = update_system(self, mix1, p2, T2, R0, guess_moles, FLAG_FAST);
+            % Solve of the linear system A*x = b
+            x = J\b;
+            % Calculate correction factor
+            lambda = relax_factor(x);
+            % Apply correction
+            [log_p2p1, log_T2T1] = apply_correction(x, p2p1, T2T1, lambda);
+            % Apply antilog
+            [p2, T2] = apply_antilog(mix1, log_p2p1, log_T2T1); % [Pa] and [K]
+            % Update ratios
+            p2p1 = p2 / (mix1.p * 1e5);
+            T2T1 = T2 / mix1.T;
+            % Compute STOP criteria
+            STOP = compute_STOP(x);
+        end
+    end
 end
+
 % SUB-PASS FUNCTIONS
-function [self, mix1, mix2] = unpack(self, mix1, x)
+function [self, mix1, mix2, guess_moles] = unpack(self, mix1, x)
     % Unpack input data
-    if length(x) > 0
+    try
         mix2 = x{1};
-    else
+        guess_moles = mix2.Xi * mix2.N;
+    catch
         mix2 = [];
+        guess_moles = [];
     end
 end
 
@@ -92,13 +103,13 @@ function print_guess(T2T1, p2p1, T1, p1, Q)
     fprintf('\n\n END \n\n');
 end
 
-function [J, b] = update_system(self, mix1, p2, T2, R0)
+function [J, b, guess_moles] = update_system(self, mix1, p2, T2, R0, guess_moles, FLAG_FAST)
     % Update Jacobian matrix and vector b
     r1 = mix1.rho;
     p1 = mix1.p *1e5; % [Pa]
     h1 = mix1.h / mix1.mi * 1e3; % [J/kg]
     % Calculate frozen state given T & p
-    [mix2, r2, dVdT_p, dVdp_T] = state(self, mix1, T2, p2);
+    [mix2, r2, dVdT_p, dVdp_T] = state(self, mix1, T2, p2, guess_moles);
     
     W2 = mix2.W * 1e-3;
     h2 = mix2.h / mix2.mi * 1e3; % [J/kg]
@@ -116,13 +127,18 @@ function [J, b] = update_system(self, mix1, p2, T2, R0)
     
     J = [J1 J2; J3 J4];
     b = [b1; b2];
+
+    % Update guess moles
+    if FLAG_FAST
+        guess_moles = mix2.Xi * mix2.N;
+    end
 end
 
-function [mix2, r2, dVdT_p, dVdp_T]= state(self, mix1, T, p)
+function [mix2, r2, dVdT_p, dVdp_T]= state(self, mix1, T, p, guess_moles)
     % Calculate frozen state given T & p
     self.PD.ProblemType = 'TP';
     p = p*1e-5; % [bar]
-    mix2 = equilibrate_T(self, mix1, p, T);
+    mix2 = equilibrate_T(self, mix1, p, T, guess_moles);
     r2 = mix2.rho;
     dVdT_p = mix2.dVdT_p;
     dVdp_T = mix2.dVdp_T;
@@ -154,7 +170,7 @@ function STOP = compute_STOP(x)
 end
 
 function [mix1, mix2] = save_state(self, mix1, T2, p2, STOP)
-    mix2 = state(self, mix1, T2, p2);
+    mix2 = state(self, mix1, T2, p2, []);
     mix2.u = mix2.sound; % velocity postshock [m/s] - laboratory fixed
     mix2.error_problem = STOP;
     mix1.u = mix2.u * mix2.rho / mix1.rho;

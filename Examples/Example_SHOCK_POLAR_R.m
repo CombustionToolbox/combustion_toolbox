@@ -35,7 +35,7 @@ self.PD.proportion_inerts_O2 = [78.084, 0.9365, 0.0319] ./ 20.9476;
 % overdriven = 2:2:14;
 % overdriven = [2, 3, 5, 14];
 overdriven = 6.5;
-self = set_prop(self, 'u1', 3.472107491008314e+02 * overdriven, 'theta', [5:0.5:31.77]);
+self = set_prop(self, 'u1', 3.472107491008314e+02 * overdriven, 'theta', [5:5:31.77]);
 %% SOLVE PROBLEM
 self = SolveProblem(self, 'SHOCK_POLAR_R');
 %% DISPLAY RESULTS (PLOTS)

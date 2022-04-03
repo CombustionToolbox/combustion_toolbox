@@ -67,7 +67,6 @@ function mix =  ComputeProperties(self, SpeciesMatrix, p, T)
     if isfield(self, 'dNi_T')
         mix.dVdT_p =  1 + self.dN_T; % [-]
         mix.dVdp_T = -1 + self.dN_p; % [-]
-        mix.gamma_s = - mix.gamma / mix.dVdp_T; % [-]
         if ~any(isnan(self.dNi_T)) && ~any(isinf(self.dNi_T))
             delta = ~mix.swtCond;
             h0_j = (SpeciesMatrix(:, 2) + SpeciesMatrix(:, 3)) ./ Ni * 1e3; % [J/mol]
@@ -77,6 +76,8 @@ function mix =  ComputeProperties(self, SpeciesMatrix, p, T)
             mix.gamma = mix.cP/mix.cV; % [-]
             mix.gamma_s = - mix.gamma / mix.dVdp_T; % [-]
             mix.sound = sqrt(mix.gamma_s*p*1e5/mix.rho); % [m/s]
+        else
+            mix.gamma_s = - 1 / mix.dVdp_T; % [-]
         end
     else
         mix.gamma_s = mix.gamma;

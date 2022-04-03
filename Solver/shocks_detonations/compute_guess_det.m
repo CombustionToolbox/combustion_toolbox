@@ -47,7 +47,7 @@ function [P, T, M1, R, Q, STOP] = compute_guess_det(self, mix1, phi, overdriven)
         p2 = P_0 * mix1.p;
         T2 = T_0 * mix1.T;
         
-        N_2 = equilibrium(self, p2, T2, mix1); N_2 = N_2(:, 1)';
+        N_2 = equilibrium(self, p2, T2, mix1, []); N_2 = N_2(:, 1)';
         N_2 = N_2_0  + lambda .* (N_2 - N_2_0);
         
         W2 = compute_W(N_2, LS, self.DB);
@@ -113,9 +113,9 @@ function gamma = compute_gamma(N, T, LS, strThProp)
     gamma = sum(N .* cP) / sum(N .* cV);
 end
 
-function W = compute_W(N, LS, strThProp)
+function W = compute_W(N, LS, DB)
     for i = length(N):-1:1
-        W(i) = strThProp.(LS{i}).mm; % [g/mol]
+        W(i) = DB.(LS{i}).mm; % [g/mol]
     end
     N_total = sum(N);
     W = sum(N/N_total .* W);

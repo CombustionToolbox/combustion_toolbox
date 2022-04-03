@@ -1,19 +1,28 @@
-function mix2 = equilibrate_T(self, mix1, pP, TP)
+function mix2 = equilibrate_T(self, mix1, pP, TP, varargin)
     % Obtain equilibrium properties and composition for the given temperature [K] and pressure [bar]
     %
     % Args:
     %     self (struct): Data of the mixture, conditions, and databases
     %     mix1 (struct): Properties of the initial mixture
-    %     pP (float):    Pressure [bar]
-    %     TP (float):    Temperature [K]
+    %     pP (float): Pressure [bar]
+    %     TP (float): Temperature [K]
     %
+    % Optional Args:
+    %     guess_moles (float): mixture composition [mol] of a previous computation
+    %     
     % Returns:
     %     mix2 (struct): Properties of the final mixture
-
+    
+    % Definitions
+    FLAG_FAST = true;
+    % Unpack
+    guess_moles = unpack(varargin);
+    % Check flag
+    if ~FLAG_FAST, guess_moles = []; end
     % Set List of Species to List of Products
     self_ListProducts = set_LS_original(self);
     % Compute number of moles 
-    [N_ListProducts, DeltaNP, DeltaNP_ions] = select_equilibrium(self_ListProducts, pP, TP, mix1);
+    [N_ListProducts, DeltaNP, DeltaNP_ions] = select_equilibrium(self_ListProducts, pP, TP, mix1, guess_moles);
     % Reshape matrix of number of moles, N
     N = reshape_moles(self, self_ListProducts, N_ListProducts);
     % Compute thermodynamic derivates
@@ -26,6 +35,15 @@ function mix2 = equilibrate_T(self, mix1, pP, TP)
 end
 
 % SUB-PASS FUNCTIONS
+function guess_moles = unpack(value)
+    % Unpack inputs
+    if isempty(value)
+        guess_moles = [];
+    else
+        guess_moles = value{1};
+    end
+end
+
 function self = set_LS_original(self)
     % Set List of Species to List of Products
     self.S.ind_nswt = []; self.S.ind_swt = []; self.S.ind_cryogenic = [];
@@ -45,14 +63,14 @@ function pP = compute_pressure(self, mix1, TP, N)
     end
 end
 
-function [N, DeltaNP, DeltaNP_ions] = select_equilibrium(self, pP, TP, mix1)
+function [N, DeltaNP, DeltaNP_ions] = select_equilibrium(self, pP, TP, mix1, guess_moles)
     if ~self.PD.ionization
         % Compute numer of moles without ionization
-        [N, DeltaNP] = equilibrium(self, pP, TP, mix1);
+        [N, DeltaNP] = equilibrium(self, pP, TP, mix1, guess_moles);
         DeltaNP_ions = 0;
     else
         % Compute numer of moles with ionization
-        [N, DeltaNP, DeltaNP_ions] = equilibrium_ions(self, pP, TP, mix1);
+        [N, DeltaNP, DeltaNP_ions] = equilibrium_ions(self, pP, TP, mix1, guess_moles);
     end
 end
 

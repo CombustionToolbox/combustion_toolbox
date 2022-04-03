@@ -13,6 +13,10 @@ function ax = plot_thermo_validation(species, property, DB, varargin)
     % Returns:
     %    ax (axes): Axes of the plotted figure
 
+    % Check input species
+    if ischar(species)
+        species = {species};
+    end
     % Definitions
     NS = length(species);
     nfrec = 1;

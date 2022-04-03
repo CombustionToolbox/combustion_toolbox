@@ -28,7 +28,7 @@ function problems_solved = run_validation_HP_CEA_2
     % * Molar fractions
     fig1 = plot_molar_fractions_validation(results_CT, results_CEA, 'phi', 'Xi', DisplaySpecies);
     % * Properties mixture 2
-    fig2 = plot_properties_validation(results_CT, results_CEA, {'phi', 'phi', 'phi', 'phi', 'phi', 'phi', 'phi', 'phi'}, {'T', 'rho', 'h', 'e', 'g', 'cP', 'cV', 'gamma_s'}, 'mix2');
+    fig2 = plot_properties_validation(results_CT, results_CEA, {'phi', 'phi', 'phi', 'phi', 'phi', 'phi', 'phi', 'phi'}, {'T', 'rho', 'h', 'e', 'g', 'cP', 'S', 'gamma_s'}, 'mix2');
     % Save plots
     folderpath = strcat(pwd,'\Validations\Figures\');
     stack_trace = dbstack;

@@ -20,7 +20,6 @@ function [dNi_p, dN_p] = equilibrium_dp(self, moles, mix1)
     % -----------------------------------
     A0 = C.A0.value;
     % Initialization
-    % NatomE = N_CC(:,1)' * A0;
     NatomE = mix1.NatomE;
     NP = sum(moles(:, 1));
     dNi_p = zeros(length(moles), 1);

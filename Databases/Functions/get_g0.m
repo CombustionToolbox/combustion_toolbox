@@ -10,6 +10,7 @@ function g0 = get_g0(self, species, T, DB)
     %
     % Returns:
     %     g0 (float): Gibbs energy [kJ/mol]
+    
     if DB.(species).ctTInt > 0
         R0 = 8.3144598;
         a = DB.(species).a;

@@ -1,4 +1,4 @@
-function [N0, STOP, STOP_ions] = equilibrium_ions(self, pP, TP, mix1)
+function [N0, STOP, STOP_ions] = equilibrium_ions(self, pP, TP, mix1, guess_moles)
     % Obtain equilibrium composition [moles] for the given temperature [K] and pressure [bar]
     % considering ionization of the species. The code stems from the minimization of the free
     % energy of the system by using Lagrange multipliers combined with a Newton-Raphson method,
@@ -9,15 +9,16 @@ function [N0, STOP, STOP_ions] = equilibrium_ions(self, pP, TP, mix1)
     % 1311.
     %
     % Args:
-    %     self (struct):  Data of the mixture, conditions, and databases
-    %     pP (float):     Pressure [bar]
-    %     TP (float):     Temperature [K]
-    %     mix1 (struct):  Properties of the initial mixture
+    %     self (struct): Data of the mixture, conditions, and databases
+    %     pP (float): Pressure [bar]
+    %     TP (float): Temperature [K]
+    %     mix1 (struct): Properties of the initial mixture
+    %     guess_moles (float): mixture composition [mol] of a previous computation
     %
     % Returns:
     %     Tuple containing
     %
-    %     - N0 (float):   Equilibrium composition [moles] for the given temperature [K] and pressure [bar]
+    %     - N0 (float): Equilibrium composition [moles] for the given temperature [K] and pressure [bar]
     %     - STOP (float): Relative error [-] 
     
     % Abbreviations ---------------------
@@ -43,6 +44,10 @@ function [N0, STOP, STOP_ions] = equilibrium_ions(self, pP, TP, mix1)
     % Find indeces of the species/elements that we have to remove from the stoichiometric matrix A0
     % for the sum of elements whose value is <= tolN
     temp_ind_ions = contains(S.LS, 'minus') | contains(S.LS, 'plus'); %S.ind_ions;
+    if ~isempty(guess_moles)
+        pass_ions = guess_moles(temp_ind_ions) > TN.tolN;
+        temp_ind_ions = temp_ind_ions(pass_ions);
+    end
     aux = NatomE;
     if any(temp_ind_ions)
         NatomE(E.ind_E) = 1; % temporal fictitious value
@@ -52,10 +57,16 @@ function [N0, STOP, STOP_ions] = equilibrium_ions(self, pP, TP, mix1)
     % List of indices with nonzero values
     [temp_ind_nswt, temp_ind_swt, temp_ind_ions, temp_ind_E, temp_NE] = temp_values(E.ind_E, S, NatomE, TN.tolN);
     % Update temp values
-    [temp_ind, temp_ind_swt, temp_ind_nswt, temp_ind_ions, temp_NS, ~, ~, ~] = update_temp(N0, N0(ind_A0_E0, 1), ind_A0_E0, temp_ind_swt, temp_ind_nswt, temp_ind_E, E, temp_ind_ions, [], TN.tolN, SIZE, flag_ions_first);
+    [temp_ind, temp_ind_swt, temp_ind_nswt, temp_ind_ions, temp_NG, temp_NS, ~, ~, ~] = update_temp(N0, N0(ind_A0_E0, 1), ind_A0_E0, temp_ind_swt, temp_ind_nswt, temp_ind_E, E, temp_ind_ions, [], TN.tolN, SIZE, flag_ions_first);
     temp_NS0 = temp_NS + 1;
     % Initialize species vector N0
-    N0(temp_ind, 1) = 0.1/temp_NS;
+    if isempty(guess_moles)
+        N0(temp_ind_nswt, 1) = NP_0/temp_NG;
+    else
+        N0(temp_ind_nswt, 1) = guess_moles(temp_ind_nswt);
+        NP_0 = sum(guess_moles);
+        NP = NP_0;
+    end
     % Dimensionless Standard Gibbs free energy
     g0 = set_g0(S.LS, TP, self.DB);
     G0RT = g0/R0TP;
@@ -82,7 +93,7 @@ function [N0, STOP, STOP_ions] = equilibrium_ions(self, pP, TP, mix1)
         % Apply antilog
         [N0, NP] = apply_antilog(N0, NP_log, temp_ind);
         % Update temp values in order to remove species with moles < tolerance
-        [temp_ind, temp_ind_swt, temp_ind_nswt, temp_ind_ions, temp_NS, temp_ind_E, A22, flag_ions_first] = update_temp(N0, N0(temp_ind, 1), temp_ind, temp_ind_swt, temp_ind_nswt, temp_ind_E, E, temp_ind_ions, A22, NP, SIZE, flag_ions_first);
+        [temp_ind, temp_ind_swt, temp_ind_nswt, temp_ind_ions, ~, temp_NS, temp_ind_E, A22, flag_ions_first] = update_temp(N0, N0(temp_ind, 1), temp_ind, temp_ind_swt, temp_ind_nswt, temp_ind_E, E, temp_ind_ions, A22, NP, SIZE, flag_ions_first);
         % Update matrix A
         [A1, temp_NS0] = update_matrix_A1(A0, A1, temp_NS, temp_NS0, temp_ind, temp_ind_E);
         % Compute STOP criteria
@@ -150,10 +161,11 @@ function [temp_ind_swt, temp_ind_nswt, temp_ind_E, temp_ind_ions, A22, flag_ions
     end
 end
 
-function [temp_ind, temp_ind_swt, temp_ind_nswt, temp_ind_ions, temp_NS, temp_ind_E, A22, flag_ions_first] = update_temp(N0, zip1, zip2, temp_ind_swt, temp_ind_nswt, temp_ind_E, E, temp_ind_ions, A22, NP, SIZE, flag_ions_first)
+function [temp_ind, temp_ind_swt, temp_ind_nswt, temp_ind_ions, temp_NG, temp_NS, temp_ind_E, A22, flag_ions_first] = update_temp(N0, zip1, zip2, temp_ind_swt, temp_ind_nswt, temp_ind_E, E, temp_ind_ions, A22, NP, SIZE, flag_ions_first)
     % Update temp items
     [temp_ind_swt, temp_ind_nswt, temp_ind_E, temp_ind_ions, A22, flag_ions_first] = remove_item(N0, zip1, zip2, temp_ind_swt, temp_ind_nswt, temp_ind_E, E, temp_ind_ions, A22, NP, SIZE, flag_ions_first);
     temp_ind = [temp_ind_nswt, temp_ind_swt];
+    temp_NG = length(temp_ind_nswt);
     temp_NS = length(temp_ind);
 end
 

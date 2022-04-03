@@ -15,7 +15,7 @@ function M = SetSpecies(self, species, moles, T)
 
     for n = length(moles):-1:1
         mmi = self.DB.(species{n}).mm;                    % [g/mol]
-        mi  = moles(n) * mmi * 1e-3;                          % [kg]
+        mi  = moles(n) * mmi * 1e-3;                      % [kg]
         hfi = self.DB.(species{n}).hf/1000;               % [kJ]
         efi = self.DB.(species{n}).ef/1000;               % [kJ]
         swtCondensed = self.DB.(species{n}).swtCondensed; % [bool]

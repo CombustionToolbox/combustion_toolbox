@@ -1,10 +1,11 @@
-function [dNi_T, dN_T] = equilibrium_dT(self, moles, TP, mix1)
+function [dNi_T, dN_T] = equilibrium_dT(self, moles, T, mix1)
     % Obtain thermodynamic derivative of the moles of the species and of the moles of the mixture
     % respect to temperature from a given composition [moles] at equilibrium
     %
     % Args:
     %     self (struct):   Data of the mixture, conditions, and databases
     %     moles (float):   Equilibrium composition [moles]
+    %     T (float):       Temperature [K]
     %     mix1 (struct):   Properties of the initial mixture
     %
     % Returns:
@@ -19,13 +20,11 @@ function [dNi_T, dN_T] = equilibrium_dT(self, moles, TP, mix1)
     TN = self.TN;
     % -----------------------------------
     A0 = C.A0.value;
-    R0TP = C.R0 * TP; % [J/(mol)]
+    R0TP = C.R0 * T; % [J/mol]
     % Initialization
-    % NatomE = N_CC(:,1)' * A0;
     NatomE = mix1.NatomE;
     NP = sum(moles(:, 1));
     dNi_T = zeros(length(moles), 1);
-    
     SIZE = -log(TN.tolN);
     % Find indeces of the species/elements that we have to remove from the stoichiometric matrix A0
     % for the sum of elements whose value is <= tolN
@@ -36,8 +35,8 @@ function [dNi_T, dN_T] = equilibrium_dT(self, moles, TP, mix1)
     [temp_ind, temp_ind_swt, temp_ind_nswt, ~, ~] = update_temp(moles, moles(ind_A0_E0, 1), ind_A0_E0, temp_ind_swt, temp_ind_nswt, temp_ind_cryogenic, NP, SIZE);
     [temp_ind, temp_ind_swt, temp_ind_nswt, temp_NG, temp_NS] = update_temp(moles, moles(temp_ind, 1), temp_ind, temp_ind_swt, temp_ind_nswt, temp_ind_cryogenic, NP, SIZE);
     temp_NS0 = temp_NS + 1;
-    % Dimensionless Standard-state enthalpy
-    h0 = set_h0(S.LS, TP, self.DB);
+    % Dimensionless Standard-state enthalpy [J/mol]
+    h0 = set_h0(S.LS, T, self.DB);
     H0RT =  h0 / R0TP;
     % Construction of part of matrix A (complete)
     [A1, ~] = update_matrix_A1(A0, [], temp_NG, temp_NS, temp_NS0, temp_ind, temp_ind_E);
@@ -54,13 +53,6 @@ function [dNi_T, dN_T] = equilibrium_dT(self, moles, TP, mix1)
 end
 
 % SUB-PASS FUNCTIONS
-function h0 = set_h0(ls, TP, DB)
-    for i=length(ls):-1:1
-        species = ls{i};
-        h0(i, 1) = species_h0(species, TP, DB) * 1e3;
-    end
-end
-
 function ind_A = find_ind_Matrix(A, bool)
     ls = find(bool>0);
 %     ind_A = zeros(1, length(ls));

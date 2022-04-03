@@ -26,13 +26,6 @@ function [txFormula, mm, cP0, cV0, hf0, h0, ef0, e0, s0, g0] = get_speciesProper
     if nargin < 5, echo = 0; end
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     %
-    % Calculates the thermodynamic properties of any species included in the 
-    % NASA database
-    %
-    % Uses functions:
-    %
-    % - none
-    %
     % Sample application
     %
     % >> [txFormula, mm, Cp0, Cv0, Hf0, H0, Ef0, E0, S0] = get_speciesProperties(DB, 'CO', 1000, 'molar')
@@ -196,7 +189,7 @@ function [txFormula, mm, cP0, cV0, hf0, h0, ef0, e0, s0, g0] = get_speciesProper
         h0  = R0 * T * (sum(a{tInterval} .* T.^tExponents{tInterval} .* [-1 log(T) 1 1/2 1/3 1/4 1/5 0]) + b{tInterval}(1)/T);
         ef0 = hf0 - Delta_n * R0 * Tref;
         e0  = ef0 + (h0 - hf0) - (1 - swtCondensed) * R0 * (T - Tref);
-        s0  = R0 *     (sum(a{tInterval} .* T.^tExponents{tInterval} .* [-1/2 -1 log(T) 1   1/2 1/3 1/4 0]) + b{tInterval}(2));
+        s0  = R0 * (sum(a{tInterval} .* T.^tExponents{tInterval} .* [-1/2 -1 log(T) 1   1/2 1/3 1/4 0]) + b{tInterval}(2));
         
         % Compute the standar gibbs free energy of formation at the specified
         % temperature. This enforces us to consider explicitely the formation

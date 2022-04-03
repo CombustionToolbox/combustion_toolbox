@@ -29,6 +29,10 @@ function data = data_CEA(varargin)
             mix.gamma_s = data_nasa.gamma_s; % [-]
             mix.cV = data_nasa.cp ./ mix.gamma_s; % [kJ/kg-K]
             mix.DhT = data_nasa.cp .* (data_nasa.T-298.15); % [kJ/kg]
+            if isfield(data_nasa, 'dVdp_T')
+                mix.dVdp_T = data_nasa.dVdp_T; % [-]
+                mix.dVdT_p = data_nasa.dVdT_p; % [-]
+            end
             if isfield(data_nasa,'rho2rho1')
                 mix.u_preshock = data_nasa.u1; % [m/s]
                 mix.u_postshock = data_nasa.u1 ./ data_nasa.rho2rho1; % [m/s]

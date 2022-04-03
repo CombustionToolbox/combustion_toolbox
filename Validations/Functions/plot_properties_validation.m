@@ -126,7 +126,7 @@ function value = interpret_label(property)
             value = 'Internal energy $[kJ/kg]$';
         case 'g'
             value = 'Gibbs energy $[kJ/kg]$';
-        case 's'
+        case {'s', 's0'}
             value = 'Entropy $[kJ/kg-K]$';
         case 'cp'
             value = '$c_p [kJ/kg-K]$';

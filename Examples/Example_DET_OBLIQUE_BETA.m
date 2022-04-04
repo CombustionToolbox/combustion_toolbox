@@ -3,12 +3,12 @@
 %
 % Compute pre-shock and post-shock state for a oblique overdriven detonation
 % considering Chapman-Jouguet (CJ) theory for a stoichiometric CH4-air
-% mixture at standard conditions, a set of 24 species considered, an 
+% mixture at standard conditions, a set of 26 species considered, an 
 % overdrive of 4 and a set of wave angles [15:5:80] [deg].
 %   
-% Soot formation == {'CO2', 'CO', 'H2O', 'H2', 'O2', 'N2', 'He', 'Ar',...
-%                    'HCN','H','OH','O','CN','NH3','CH4','C2H4','CH3',...
-%                    'NO','HCO','NH2','NH','N','CH','Cbgrb'}
+% Soot formation == {'CO2','CO','H2O','H2','O2','N2','He','Ar','Cbgrb',...
+%                    'C2','C2H4','CH','CH','CH3','CH4','CN','H',...
+%                    'HCN','HCO','N','NH','NH2','NH3','NO','O','OH'}
 %   
 % See wiki or ListSpecies() for more predefined sets of species
 %

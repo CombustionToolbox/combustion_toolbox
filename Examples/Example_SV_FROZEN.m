@@ -4,9 +4,7 @@
 % a defined set of volume ratios (0.5, 2) for a lean CH4-air mixture at
 % 700 K and 10 bar, frozen chemistry, and a equivalence ratio phi 0.5 [-]
 %   
-% Frozen == {'CO2', 'CO', 'H2O', 'H2', 'O2', 'N2', 'He', 'Ar',...
-%            'HCN','H','OH','O','CN','NH3','CH4','C2H4','CH3',...
-%            'NO','HCO','NH2','NH','N','CH','Cbgrb'}
+% LS == {'CH4', 'O2', 'N2', 'Ar', 'CO2'}
 %   
 % See wiki or ListSpecies() for more predefined sets of species
 %

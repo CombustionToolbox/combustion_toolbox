@@ -202,22 +202,22 @@ function b = update_vector_b(A0, N0, NP, NatomE, ind_E, temp_ind_ions, temp_ind,
     b = [-G0RT(temp_ind); bi_0; NP_0];
 end
 
-function relax = relax_factor(NP, n, n_log_new, DeltaNP, SIZE)
+function lambda = relax_factor(NP, n, n_log_new, DeltaNP, SIZE)
     % Compute relaxation factor
     bool = log(n)/log(NP) <= -SIZE & n_log_new >= 0;
     lambda = ones(length(n), 1);
     lambda(bool) = abs(-log(n(bool)/NP) - 9.2103404 ./ (n_log_new(bool) - DeltaNP));
-    lambda(~bool) = min(2./max(5*abs(DeltaNP), abs(n_log_new(~bool))), exp(2));          
-    relax = min(1, min(lambda));  
+    lambda(~bool) = 2./max(5*abs(DeltaNP), abs(n_log_new(~bool)));          
+    lambda = min(1, min(lambda));
 end
 
-function [relax, DeltaN3] = ions_factor(N0, A0, ind_E, temp_ind_nswt, temp_ind_ions)
+function [lambda, DeltaN3] = ions_factor(N0, A0, ind_E, temp_ind_nswt, temp_ind_ions)
     if any(temp_ind_ions)
-        relax = -sum(A0(temp_ind_nswt, ind_E) .* N0(temp_ind_nswt, 1))/ ...
+        lambda = -sum(A0(temp_ind_nswt, ind_E) .* N0(temp_ind_nswt, 1))/ ...
                  sum(A0(temp_ind_nswt, ind_E).^2 .* N0(temp_ind_nswt, 1));
         DeltaN3 = abs(sum(N0(temp_ind_nswt, 1) .* A0(temp_ind_nswt, ind_E)));
     else
-        relax = [];
+        lambda = [];
         DeltaN3 = 0;
     end 
 end
@@ -227,10 +227,10 @@ function [N0, NP] = apply_antilog(N0, NP_log, temp_ind)
     NP = exp(NP_log);
 end
 
-function [DeltaN] = compute_STOP(NP_0, NP, DeltaNP, zip1, zip2)
+function STOP = compute_STOP(NP_0, NP, DeltaNP, zip1, zip2)
     DeltaN1 = max(max(zip1 .* abs(zip2) / NP));
     DeltaN2 = NP_0 * abs(DeltaNP) / NP;
-    DeltaN  = max(DeltaN1, DeltaN2);
+    STOP  = max(DeltaN1, DeltaN2);
 end
 
 function [N0, STOP] = check_convergence_ions(N0, A0, ind_E, temp_ind_nswt, temp_ind_ions, TOL, TOL_pi)

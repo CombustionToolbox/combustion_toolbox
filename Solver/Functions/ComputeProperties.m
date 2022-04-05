@@ -75,7 +75,7 @@ function mix =  ComputeProperties(self, SpeciesMatrix, p, T)
             mix.cV = mix.cP + (mix.pv/T * mix.dVdT_p^2) / mix.dVdp_T * 1e5; % [J/K]
             mix.gamma = mix.cP/mix.cV; % [-]
             mix.gamma_s = - mix.gamma / mix.dVdp_T; % [-]
-            mix.sound = sqrt(mix.gamma_s*p*1e5/mix.rho); % [m/s]
+            mix.sound = sqrt(mix.gamma_s * p*1e5 / mix.rho); % [m/s]
         else
             mix.gamma_s = - 1 / mix.dVdp_T; % [-]
         end

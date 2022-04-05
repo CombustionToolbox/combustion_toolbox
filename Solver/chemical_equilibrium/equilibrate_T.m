@@ -14,7 +14,7 @@ function mix2 = equilibrate_T(self, mix1, pP, TP, varargin)
     %     mix2 (struct): Properties of the final mixture
     
     % Definitions
-    FLAG_FAST = true;
+    FLAG_FAST = self.TN.FLAG_FAST;
     % Unpack
     guess_moles = unpack(varargin);
     % Check flag
@@ -67,6 +67,7 @@ function [N, DeltaNP, DeltaNP_ions] = select_equilibrium(self, pP, TP, mix1, gue
     if ~self.PD.ionization
         % Compute numer of moles without ionization
         [N, DeltaNP] = equilibrium(self, pP, TP, mix1, guess_moles);
+%         [N, DeltaNP] = equilibrium_reduced(self, pP, TP, mix1, guess_moles);
         DeltaNP_ions = 0;
     else
         % Compute numer of moles with ionization

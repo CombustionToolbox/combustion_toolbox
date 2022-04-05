@@ -28,7 +28,7 @@ function [mix1, mix2, mix5] = shock_reflected(self, mix1, u1, mix2, varargin)
     % Constants
     R0 = C.R0; % Universal gas constant [J/(mol-K)]
     % Definitions
-    FLAG_FAST = false;
+    FLAG_FAST = TN.FLAG_FAST;
     % Solve shock reflected
     [T5, p5, STOP] = solve_shock_reflected(FLAG_FAST);
     % If error, repeat without guess

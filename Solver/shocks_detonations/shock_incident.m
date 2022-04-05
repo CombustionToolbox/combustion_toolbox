@@ -26,7 +26,7 @@ function [mix1, mix2] = shock_incident(self, mix1, u1, varargin)
     % Constants
     R0 = C.R0; % Universal gas constant [J/(mol-K)]
     % Definitions
-    FLAG_FAST = false;
+    FLAG_FAST = TN.FLAG_FAST;
     % Solve shock incident
     [T2, p2, STOP] = solve_shock_incident(FLAG_FAST);
     % If error, repeat without guess

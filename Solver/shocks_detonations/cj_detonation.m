@@ -25,7 +25,7 @@ function [mix1, mix2] = cj_detonation(self, mix1, varargin)
     % Constants
     R0 = C.R0; % Universal gas constant [J/(mol-K)]
     % Definitions
-    FLAG_FAST = false;
+    FLAG_FAST = TN.FLAG_FAST;
     % Solve Chapman-Jouguet detonation
     [T2, p2, STOP, T_guess, p2_guess] = solve_cj_detonation(FLAG_FAST);
     % Check convergence

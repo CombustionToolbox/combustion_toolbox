@@ -7,8 +7,11 @@ function self = TunningProperties()
     % Description
     self.description = "Tunning properties";
     % Variables
+    %   * Flags
+    self.FLAG_FAST = false;     % Flag indicating use guess composition of the previous computation
     %   * Chemical equilibrium TP, TV
     self.tolN = 1e-15;          % Tolerance of the gibbs minimization method
+    self.tolE = 1e-6;           % Tolerance of the mass balance
     self.tol_pi_e = 1e-4;       % Tolerance of the Lagrangian multiplier for ions divided by RT
     %   * Chemical equilibrium HP, EV, SP, SV
     self.tol0 = 1e-3;           % Tolerance of the root finding algorithm

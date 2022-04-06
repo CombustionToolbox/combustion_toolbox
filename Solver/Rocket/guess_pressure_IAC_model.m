@@ -10,5 +10,5 @@ function pressure = guess_pressure_IAC_model(mix)
     % Returns:
     %     pressure (float): Pressure [bar]
 
-    pressure = mix.p * ((mix.gamma_s + 1) / 2) ^ -(mix.gamma_s / (mix.gamma_s - 1));
+    pressure = mix.p * ((mix.gamma_s + 1) / 2)^ -(mix.gamma_s / (mix.gamma_s - 1));
 end

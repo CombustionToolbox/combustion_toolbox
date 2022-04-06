@@ -4,7 +4,7 @@
     % Problem type: Planar incident shock wave
     % Temperature [K]   = 300
     % Pressure    [bar] = 1
-    % Incident velocity [m/s] = [~308, 15000]
+    % Incident velocity [m/s] = [~308, 13000]
     % Initial mixture: AIR (78.084% N2 + 20.9476% O2 + 0.9365% Ar + 0.0319% CO2)
     % List of species considered: ListSpecies('Air_ions')
     
@@ -13,7 +13,7 @@
     Oxidizer = 'O2';
     Inert    = {'N2', 'Ar', 'CO2'};
     proportion_inerts_O2 = [78.084, 0.9365, 0.0319] ./ 20.9476;
-    LS =  {'eminus','Ar','Arplus','C','Cplus','Cminus','CN','CNplus','CNminus','CNN','CO','COplus','CO2','CO2plus','C2','C2plus','C2minus','CCN','CNC','OCCN','C2N2','C2O','C3','N','Nplus','Nminus','NCO','NO','NOplus','NO2','NO2minus','NO3','NO3minus','N2','N2plus','N2minus','N2O','NCN','N2Oplus','N2O3','N3','O','Oplus','Ominus','O2','O2plus','O2minus','O3'};
+    LS =  'AIR_IONS';
 
     DisplaySpecies = {'eminus','Ar','Arplus','C','Cplus','Cminus','CN','CNplus','CNminus',...
                       'CNN','CO','COplus','CO2','CO2plus',...

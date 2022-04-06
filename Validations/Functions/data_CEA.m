@@ -34,8 +34,13 @@ function data = data_CEA(varargin)
                 mix.dVdT_p = data_nasa.dVdT_p; % [-]
             end
             if isfield(data_nasa,'rho2rho1')
-                mix.u_preshock = data_nasa.u1; % [m/s]
-                mix.u_postshock = data_nasa.u1 ./ data_nasa.rho2rho1; % [m/s]
+                try % reflected
+                    mix.u_postshock = data_nasa.u2 - data_nasa.v2; % [m/s]
+                    mix.u_preshock = data_nasa.u1; % [m/s]
+                catch % incident
+                    mix.u_preshock = data_nasa.u1; % [m/s]
+                    mix.u_postshock = data_nasa.u1 ./ data_nasa.rho2rho1; % [m/s]
+                end
             end
             % EQUIVALENCE RATIO
             mix.phi = data_nasa.phi;
@@ -76,6 +81,9 @@ function data = data_CEA(varargin)
             mix2.p = data_nasa.P2; % [bar]
             mix2.T = data_nasa.T2; % [K]
             mix2.rho = data_nasa.rho2; % [kg/m3]
+            if length(mix2.rho) ~= length(mix2.T)
+                mix2.rho = mix2.rho(mix2.rho~=1);
+            end
             mix2.h = data_nasa.H2; % [kJ/kg]
             mix2.e = data_nasa.U2; % [kJ/kg]
             mix2.S = data_nasa.S2; % [kJ/kg-K]
@@ -85,6 +93,10 @@ function data = data_CEA(varargin)
             mix2.cV = data_nasa.cp2 ./ mix2.gamma_s; % [kJ/kg-K]
             mix2.DhT = data_nasa.cp2 .* (data_nasa.T2 - 298.15); % [kJ/kg]
             mix2.u = data_nasa.u2; % [m/s]
+            if isfield(data_nasa, 'v_shock')
+                mix2.u = mix1.u;
+                mix2.v_shock = data_nasa.v_shock;
+            end
             mix2.dVdp_T = data_nasa.dVdp_T; % [-]
             mix2.dVdT_p = data_nasa.dVdT_p; % [-]
             % EQUIVALENCE RATIO

@@ -86,7 +86,7 @@ while ctLine<100000
 
         tline = fgetl(fid); tline = fgetl(fid); tline = fgetl(fid); tline = fgetl(fid); 
         num = regexp(tline, '\d'); data.rho2rho1(i, :) = sscanf(tline(num(3)-1:num(end)),'%f')'; tline = fgetl(fid);
-        if contains(tline, 'V2')
+        if contains(tline, 'U5+')
             num = regexp(tline, '\d'); data.u2(i, :) = sscanf(tline(num(3):num(end)),'%f'); tline = fgetl(fid);
             num = regexp(tline, '\d'); data.v_shock(i, :) = sscanf(tline(num(2):num(end)),'%f'); tline = fgetl(fid);
             data.v_shock(i, :) = data.v_shock(i, :) - data.u2(i, :);

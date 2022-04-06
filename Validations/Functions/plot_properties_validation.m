@@ -136,6 +136,8 @@ function value = interpret_label(property)
             value = 'Adiabatic index';
         case 'u'
             value = 'Incident velocity $[m/s]$';
+        case 'v_shock'
+            value = 'Shock velocity $[m/s]$';
         otherwise
             value = strcat('$', property, '$');
     end

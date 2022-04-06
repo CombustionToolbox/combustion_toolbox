@@ -87,5 +87,8 @@ function self = run_CT(varargin)
         self.PS.strP{i}.S = entropy_mass(self.PS.strP{i});
         self.PS.strP{i}.cP = cp_mass(self.PS.strP{i});
         self.PS.strP{i}.cV = self.PS.strP{i}.cP / self.PS.strP{i}.gamma_s;
+        if contains(ProblemType, '_R')
+            self.PS.strP{i}.u = self.PS.strR{i}.u;
+        end
     end
 end

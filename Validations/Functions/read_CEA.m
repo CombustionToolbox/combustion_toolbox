@@ -60,14 +60,17 @@ while ctLine<100000
         tline = fgetl(fid);
     end
     
-    if contains(tline,'SHOCKED GAS (2)--INCIDENT')
+    if contains(tline,'SHOCKED GAS')
         tline = fgetl(fid);
         tline = fgetl(fid);
         num = regexp(tline, '\d'); data.P2(i, :) = sscanf(tline(num(1):num(end)),'%f'); tline = fgetl(fid);
         num = regexp(tline, '\d'); data.T2(i, :) = sscanf(tline(num(1):num(end)),'%f'); tline = fgetl(fid);
-        tline = fgetl(fid);
 
-        data.rho2(i, :) = zeros(1, length(data.T2(i, :)));
+        num = regexp(tline, '\d');
+        num = sscanf(tline(num(1):num(end)),'%f');
+        num = num(num>0);
+        data.rho2(i, :) = num;
+        tline = fgetl(fid);
 
         num = regexp(tline, '\d'); data.H2(i, :) = sscanf(tline(num(1)-1:num(end)),'%f'); tline = fgetl(fid);
         num = regexp(tline, '\d'); data.U2(i, :) = sscanf(tline(num(1)-1:num(end)),'%f'); tline = fgetl(fid);
@@ -82,8 +85,14 @@ while ctLine<100000
         num = regexp(tline, '\d'); data.sound2(i, :) = sscanf(tline(num(1):num(end)),'%f'); tline = fgetl(fid);
 
         tline = fgetl(fid); tline = fgetl(fid); tline = fgetl(fid); tline = fgetl(fid); 
-        num = regexp(tline, '\d'); data.rho2(i, :) = data.rho1(i, :) .* sscanf(tline(num(3)-1:num(end)),'%f')'; tline = fgetl(fid);
-        num = regexp(tline, '\d'); data.u2(i, :) = sscanf(tline(num(2):num(end)),'%f'); tline = fgetl(fid);
+        num = regexp(tline, '\d'); data.rho2rho1(i, :) = sscanf(tline(num(3)-1:num(end)),'%f')'; tline = fgetl(fid);
+        if contains(tline, 'V2')
+            num = regexp(tline, '\d'); data.u2(i, :) = sscanf(tline(num(3):num(end)),'%f'); tline = fgetl(fid);
+            num = regexp(tline, '\d'); data.v_shock(i, :) = sscanf(tline(num(2):num(end)),'%f'); tline = fgetl(fid);
+            data.v_shock(i, :) = data.v_shock(i, :) - data.u2(i, :);
+        else
+            num = regexp(tline, '\d'); data.u2(i, :) = sscanf(tline(num(2):num(end)),'%f'); tline = fgetl(fid);
+        end
     end
 
     if contains(tline,'P, BAR') 

@@ -21,12 +21,12 @@ function mix3 = compute_IAC_model(self, mix2, mix3)
         it = it + 1;
         mix3 = compute_chemical_equilibria(self, mix2, pressure, mix3);
         mix3.u = compute_velocity(mix2, mix3);
-        mix3.v_shock = mix3.u;
         pressure = compute_pressure(mix3);
         STOP = compute_STOP(mix3);
     end
-    % Assign pressure
+    % Assign values
     mix3.p = pressure; % [bar]
+    mix3.v_shock = mix3.u; % [m/s]
 end
 
 function pressure = compute_pressure(mix3)

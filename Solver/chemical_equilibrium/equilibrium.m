@@ -30,7 +30,7 @@ function [N0, STOP] = equilibrium(self, pP, TP, mix1, guess_moles)
     
     N0 = C.N0.value;
     A0 = C.A0.value;
-    R0TP = C.R0 * TP; % [J/(mol)]
+    R0TP = C.R0 * TP; % [J/mol]
     % Initialization
     NatomE = mix1.NatomE;
     NatomE_tol = NatomE(NatomE > TN.tolE);
@@ -123,7 +123,15 @@ function [N0, STOP] = equilibrium(self, pP, TP, mix1, guess_moles)
             [A1, temp_NS0] = update_matrix_A1(A0, A1, temp_NG, temp_NS, temp_NS0, temp_ind, temp_ind_E);
             % Compute STOP criteria
             STOP = compute_STOP(NP_0, NP, x(end), N0(temp_ind, 1), x(1:temp_NS), temp_NG, A0(temp_ind, temp_ind_E), NatomE_tol, max_NatomE, TN.tolE);
+
+%             aux_lambda(it) = lambda;
+%             aux_STOP(it) = STOP;
         end
+%         figure(1); hold on; set(gca,'yscale','log')
+%         yyaxis left
+%         plot(1:1:it, aux_STOP, '-', 'Color', '#0072BD');
+%         yyaxis right
+%         plot(1:1:it, aux_lambda, '--r', 'Color', '#D95319');
     end
 end
 
@@ -240,11 +248,9 @@ end
 
 function lambda = relax_factor(NP, n, n_log_new, DeltaNP, temp_NG, SIZE)
     % Compute relaxation factor
-    bool = false(1, length(n));
-    bool(1:temp_NG) = log(n(1:temp_NG))/log(NP) <= -SIZE & n_log_new(1:temp_NG) >= 0;
-    lambda = ones(length(n), 1);
-    lambda(~bool) = 2./max(5*abs(DeltaNP), abs(n_log_new(~bool)));          
-    lambda(bool) = abs(-log(n(bool)/NP) - 9.2103404 ./ (n_log_new(bool) - DeltaNP));
+    bool = log(n/NP) <= -SIZE & n_log_new >= 0;
+    lambda = 2./max(5*abs(DeltaNP), abs(n_log_new));          
+    lambda(bool(1:temp_NG)) = abs(-log(n(bool(1:temp_NG))/NP) - 9.2103404 ./ (n_log_new(bool(1:temp_NG)) - DeltaNP));
     lambda = min(1, min(lambda));
 end
 
@@ -254,12 +260,12 @@ function [N0, NP] = apply_antilog(N0, NP_log, temp_ind_nswt)
 end
 
 function STOP = compute_STOP(NP_0, NP, DeltaNP, N0, DeltaN0, temp_NG, A0, NatomE_tol, max_NatomE, tolE)
-    DeltaN1 = max(max(N0 .* abs(DeltaN0) / NP));
+    DeltaN1 = N0 .* abs(DeltaN0) / NP;
     DeltaN1(temp_NG+1:end) = abs(DeltaN0(temp_NG+1:end)) / NP;
     DeltaN2 = NP_0 * abs(DeltaNP) / NP;
     Deltab = max(abs(NatomE_tol - sum(N0(:, 1) .* A0))) * max_NatomE;
     if Deltab < tolE
         Deltab = 0;
     end
-    STOP = max(max(DeltaN1, DeltaN2), Deltab);
+    STOP = max(max(max(DeltaN1), DeltaN2), Deltab);
 end

@@ -204,14 +204,14 @@ end
 
 function lambda = relax_factor(NP, n, n_log_new, DeltaNP, SIZE)
     % Compute relaxation factor
-    bool = log(n)/log(NP) <= -SIZE & n_log_new >= 0;
-    lambda = ones(length(n), 1);
+    bool = log(n/NP) <= -SIZE & n_log_new >= 0;
+    lambda = 2./max(5*abs(DeltaNP), abs(n_log_new));          
     lambda(bool) = abs(-log(n(bool)/NP) - 9.2103404 ./ (n_log_new(bool) - DeltaNP));
-    lambda(~bool) = 2./max(5*abs(DeltaNP), abs(n_log_new(~bool)));          
     lambda = min(1, min(lambda));
 end
 
 function [lambda, DeltaN3] = ions_factor(N0, A0, ind_E, temp_ind_nswt, temp_ind_ions)
+    % Compute relaxation factor ions
     if any(temp_ind_ions)
         lambda = -sum(A0(temp_ind_nswt, ind_E) .* N0(temp_ind_nswt, 1))/ ...
                  sum(A0(temp_ind_nswt, ind_E).^2 .* N0(temp_ind_nswt, 1));
@@ -223,17 +223,20 @@ function [lambda, DeltaN3] = ions_factor(N0, A0, ind_E, temp_ind_nswt, temp_ind_
 end
 
 function [N0, NP] = apply_antilog(N0, NP_log, temp_ind)
+    % Apply antilog 
     N0(temp_ind, 1) = exp(N0(temp_ind, 1));
     NP = exp(NP_log);
 end
 
-function STOP = compute_STOP(NP_0, NP, DeltaNP, zip1, zip2)
-    DeltaN1 = max(max(zip1 .* abs(zip2) / NP));
+function STOP = compute_STOP(NP_0, NP, DeltaNP, N0, DeltaN0)
+    % Compute error
+    DeltaN1 = N0 .* abs(DeltaN0) / NP;
     DeltaN2 = NP_0 * abs(DeltaNP) / NP;
-    STOP  = max(DeltaN1, DeltaN2);
+    STOP  = max(max(DeltaN1), DeltaN2);
 end
 
 function [N0, STOP] = check_convergence_ions(N0, A0, ind_E, temp_ind_nswt, temp_ind_ions, TOL, TOL_pi)
+    % Check convergence of ionized species
     STOP = 0;
     if any(temp_ind_ions)
         [lambda_ions, ~] = ions_factor(N0, A0, ind_E, temp_ind_nswt, temp_ind_ions);
@@ -244,6 +247,8 @@ function [N0, STOP] = check_convergence_ions(N0, A0, ind_E, temp_ind_nswt, temp_
 end
 
 function [N0, STOP] = recompute_ions(N0, A0, ind_E, temp_ind_nswt, temp_ind_ions, lambda_ions, TOL, TOL_pi)
+    % Reestimate composition of ionized species
+    
     % Parameters
     A0_ions = A0(temp_ind_ions, ind_E);
     STOP = 1;

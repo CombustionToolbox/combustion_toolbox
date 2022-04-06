@@ -87,7 +87,7 @@ end
 function [p2, T2, p2p1, T2T1] = get_guess(mix1, mix2, TN)
     if isempty(mix2)
         V1 = 1/mix1.rho; % [m3/kg]
-        V = V1/TN.volumeBoundRation;
+        V = V1/TN.volume_ratio;
 
         % p2p1 = (2*gamma1 * M1^2 - gamma1 + 1) / (gamma1 + 1);
         % T2T1 = p2p1 * (2/M1^2 + gamma1 - 1) / (gamma1 + 1);

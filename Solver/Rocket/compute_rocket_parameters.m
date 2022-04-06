@@ -1,4 +1,4 @@
-function mix3 = compute_rocket_parameters(mix2, mix3)
+function [mix3, varargout] = compute_rocket_parameters(mix2, mix3, varargin)
     % Compute Rocket performance parameters at the throat
     %
     % This method is based on Gordon, S., & McBride, B. J. (1994). NASA reference publication,
@@ -15,6 +15,12 @@ function mix3 = compute_rocket_parameters(mix2, mix3)
     mix3.cstar = characteristic_velocity(mix2, mix3);
     mix3.cf = velocity_relative(mix3) / mix3.cstar;
     [mix3.I_sp, mix3.I_vac] = specific_impulse(mix3);
+    for i = nargin-2:-1:1
+        varargin{i}.cstar = mix3.cstar;
+        varargin{i}.cf = velocity_relative(varargin{i}) / varargin{i}.cstar;
+        [varargin{i}.I_sp, varargin{i}.I_vac] = specific_impulse(varargin{i});
+        varargout{i} = varargin{i};
+    end
 end
 
 % SUB-PASS FUNCTIONS

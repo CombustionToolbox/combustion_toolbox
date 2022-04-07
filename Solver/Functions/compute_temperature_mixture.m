@@ -18,8 +18,8 @@ function T = compute_temperature_mixture(self, species, moles, temperatures)
         if length(unique(temperatures)) > 1
             % Obtain specific heat capacity at constant volume and thermal enthalpy
             % by evaluating each species at its initial temperature
-            cV_0 = get_property_list_species(@species_cV, species, temperatures, self.DB);
-            DhT_0 = get_property_list_species(@species_DhT, species, temperatures, self.DB);
+            cV_0 = get_property_list_species(@species_cV_NASA, species, temperatures, self.DB);
+            h0_0 = get_property_list_species(@species_h0_NASA, species, temperatures, self.DB);
             % Guess of the temperature of the mixture at equilibrium
             T = sum(moles .* temperatures .* cV_0) / sum(moles .* cV_0); 
             % Constants
@@ -27,24 +27,21 @@ function T = compute_temperature_mixture(self, species, moles, temperatures)
             % Solver: numerical 1D Newton-Raphson method
             while abs(ERR) > self.TN.tol0 && it < self.TN.itMax
                 it = it + 1;
-                % Obtain thermal enthalpy by evaluating each species at the guess
+                % Obtain enthalpy [kJ/mol] by evaluating each species at the guess
                 % equilibrium temperature
-                DhT = get_property_list_species(@species_DhT, species, T, self.DB);
+                h0 = get_property_list_species(@species_h0_NASA, species, T, self.DB);
                 % Evaluate function
-                FT = sum(moles .* DhT_0) - sum(moles .* DhT);
-                % Perturb evaluated function
-                DT = T*0.02;
-                T_per = T + DT;
-                DhT_per = get_property_list_species(@species_DhT, species, T_per, self.DB);
-                FTX = sum(moles .* DhT) - sum(moles.*DhT_per);
-                % Compute derivate (1D)
-                DFTDT = (FTX - FT) / DT;
-                % Solve equation to obtain the correction factor
-                DeltaT = -DFTDT \ FT;
+                f = sum(moles .* h0_0) - sum(moles .* h0);
+                f_rel = f / sum(moles .* h0);
+                % Compute first derivative [kJ/(mol-K)]
+                cP = get_property_list_species(@species_cP_NASA, species, T, self.DB) * 1e-3;
+                df = - sum(moles .* cP);
+                % Compute correction factor
+                DeltaT = - f / df;
                 % Apply correction
                 T = T + DeltaT;
                 % Compute error
-                ERR = abs(DeltaT);
+                ERR = max(abs(DeltaT), f_rel);
             end
         else
             % Same temperature

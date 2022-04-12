@@ -6,23 +6,23 @@ function self = ProblemDescription()
 
     % Description
     self.description = "Problem description";
-    % Variables
+    % Attributes:
     self.CompleteOrIncomplete = "incomplete";   % Default combustion assumption (deprecated)
     self.ProblemType = 'TP';                    % Default problem type
-    %   * Properties matrices
+    % * Properties matrices
     self.R_Fuel = [];                           % Fuel property matrix
     self.R_Oxidizer = [];                       % Oxidizer property matrix
     self.R_Inert = [];                          % Inert property matrix
-    %   * Equivalence ratio (struct)
+    % * Equivalence ratio (struct)
     self.phi.description = "Equivalence ratio"; % Description
     self.phi.value = 1.0;                       % Default value (stochiometric)
     self.phi.t = [];                            % Theoretical value for number of moles diatomic oxygen: phi = phi.t / phi.st
-    %   * Fuel (struct)
+    % * Fuel (struct)
     self.Fuel.x = [];                           % C atoms in the fuel mixture
     self.Fuel.y = [];                           % H atoms in the fuel mixture
     self.Fuel.z = [];                           % O atoms in the fuel mixture
     self.Fuel.w = [];                           % N atoms in the fuel mixture
-    %   * Properties
+    % * Properties
     self.TR.description = "Temperature of reactants";
     self.TR.value = []; % [K]
     self.pR.description = "Pressure of reactants";
@@ -41,7 +41,9 @@ function self = ProblemDescription()
     self.theta.value = []; % [deg]
     self.beta.description = "Wave angle - oblique shocks";
     self.beta.value = []; % [deg]
-    %   * Mixture conditions
+    self.Aratio.description = "Area ratio combustion chamber - rocket";
+    self.Aratio.value = []; % [-]
+    % * Mixture conditions
     self.S_Fuel = [];               % Cell with the list of fuel species in the mixture
     self.N_Fuel = [];               % Vector with the number of moles of the fuel species in the mixture
     self.T_Fuel = [];               % Vector with the temperature values of the fuel species in the mixture
@@ -52,5 +54,7 @@ function self = ProblemDescription()
     self.N_Inert = [];              % Vector with the number of moles of the inert species in the mixture
     self.T_Inert = [];              % Vector with the temperature values of the inert species in the mixture
     self.proportion_inerts_O2 = []; % Proportion Inerts / O2 [-]
-    self.ionization = false; % Flag ionization
+    % * Flags
+    self.FLAG_ION = false; % Flag ionized species in the system
+    self.FLAG_IAC = true;  % Flag use IAC model for rocket computations
 end

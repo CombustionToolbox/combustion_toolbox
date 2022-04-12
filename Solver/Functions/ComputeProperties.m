@@ -39,8 +39,6 @@ function mix =  ComputeProperties(self, SpeciesMatrix, p, T)
     mix.W = 1/sum(mix.Yi./SpeciesMatrix(:,12), 'OmitNan');
     % Compute vector atoms of each element
     mix.NatomE = sum(Ni .* self.C.A0.value);
-    % Assign values for C, H, O, and N elements
-    mix = assign_values_CHON(self, mix);
     % Compute volume [m3]
     mix.v = mix.pv / mix.p;
     % Compute density [kg/m3]
@@ -85,15 +83,6 @@ function mix =  ComputeProperties(self, SpeciesMatrix, p, T)
 end
 
 % SUB-PASS FUNCTIONS
-function mix = assign_values_CHON(self, mix)
-    % Assign values for C, H, O, and N elements
-    
-    if isempty(self.E.ind_C), mix.x = 0; else, mix.x = mix.NatomE(self.E.ind_C); end
-    if isempty(self.E.ind_H), mix.y = 0; else, mix.y = mix.NatomE(self.E.ind_H); end
-    if isempty(self.E.ind_O), mix.z = 0; else, mix.z = mix.NatomE(self.E.ind_O); end
-    if isempty(self.E.ind_N), mix.w = 0; else, mix.w = mix.NatomE(self.E.ind_N); end
-end
-
 function DS = compute_entropy_mixing(mix, Ni, R0, FLAG_NONZERO)
     % Compute entropy of mixing [kJ/K].
     % Note: only nonzero for noncondensed species

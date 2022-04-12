@@ -50,6 +50,7 @@ function [N0, STOP] = equilibrium_reduced(self, pP, TP, mix1, guess_moles)
     [temp_ind, temp_ind_swt, temp_ind_nswt, temp_NG, ~] = update_temp(N0, N0(ind_A0_E0, 1), ind_A0_E0, temp_ind_swt, temp_ind_nswt, NP, SIZE);
     [temp_ind, temp_ind_swt, temp_NS] = check_cryogenic(temp_ind, temp_ind_swt, temp_ind_cryogenic);
     
+    temp_ind_nswt_0 = temp_ind_nswt;
     temp_ind_swt_0 = temp_ind_swt;
     temp_ind_swt = [];
     temp_ind = [temp_ind_nswt, temp_ind_swt];
@@ -97,6 +98,8 @@ function [N0, STOP] = equilibrium_reduced(self, pP, TP, mix1, guess_moles)
             muRT(temp_ind_nswt) =  g0(temp_ind_nswt) / R0TP + log(N0(temp_ind_nswt, 1) / NP) + log(pP);
             % Construction of matrix A
             A = update_matrix_A(A0_T, N0, NP, temp_ind_nswt, temp_ind_swt, temp_ind_E, temp_NG, temp_NS, temp_NE);
+            % Check singularity
+%             A = check_singularity(A, it);
             % Construction of vector b      
             b = update_vector_b(A0, N0, NP, NatomE, temp_ind, temp_ind_nswt, temp_ind_swt, temp_ind_E, muRT);
             % Solve of the linear system A*x = b
@@ -117,8 +120,29 @@ function [N0, STOP] = equilibrium_reduced(self, pP, TP, mix1, guess_moles)
             [N0, NP] = apply_antilog(N0, NP_log, temp_ind_nswt);
             % Compute STOP criteria
             STOP = compute_STOP(NP_0, NP, Delta_NP, N0(temp_ind, 1), [Delta_ln_nj; Delta_nj], temp_NG, A0(temp_ind, temp_ind_E), NatomE_tol, max_NatomE, TN.tolE);
+            % Update guess
+            NP_0 = NP;
             % Update temp values in order to remove species with moles < tolerance
             [temp_ind, temp_ind_swt, temp_ind_nswt, temp_NG, temp_NS] = update_temp(N0, N0(temp_ind, 1), temp_ind, temp_ind_swt, temp_ind_nswt, NP, SIZE);
+            % Debug 
+%             aux_lambda(it) = lambda;
+%             aux_STOP(it) = STOP;
+        end
+%         debug_plot_error(it, aux_STOP, aux_lambda);
+    end
+
+    function A = check_singularity(A, it)
+        % Check if matrix is matrix is singular
+        if it > 10*temp_NS
+            if isnan(cond(A))
+                FLAG_OLD = ~ismember(temp_ind_nswt_0, temp_ind_nswt);
+                if any(FLAG_OLD)
+                    temp_ind_nswt = temp_ind_nswt_0;
+                    temp_ind = [temp_ind_nswt, temp_ind_swt];
+                    N0(temp_ind_nswt(FLAG_OLD)) = 1e-6;
+                    A = update_matrix_A(A0_T, N0, NP, temp_ind_nswt, temp_ind_swt, temp_ind_E, temp_NG, temp_NS, temp_NE);
+                end
+            end
         end
     end
 end
@@ -220,7 +244,7 @@ function STOP = compute_STOP(NP_0, NP, DeltaNP, N0, DeltaN0, temp_NG, A0, NatomE
     DeltaN1 = N0 .* abs(DeltaN0) / NP;
     DeltaN1(temp_NG+1:end) = abs(DeltaN0(temp_NG+1:end)) / NP;
     DeltaN2 = NP_0 * abs(DeltaNP) / NP;
-    Deltab = max(abs(NatomE_tol - sum(N0(:, 1) .* A0))) * max_NatomE;
+    Deltab = max(abs(NatomE_tol - sum(N0 .* A0, 1))) / max_NatomE;
     if Deltab < tolE
         Deltab = 0;
     end

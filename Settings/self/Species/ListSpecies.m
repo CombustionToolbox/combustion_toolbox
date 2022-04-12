@@ -175,6 +175,12 @@ function self = ListSpecies(varargin)
                         'NCO','NH','NH2','NH2OH','NH3','NO','NO2',...
                         'O','OCCN','OH','C3O2','C4N2','RP_1','H2bLb',...
                         'O2bLb'};
+        elseif strcmpi(LS, 'Si/HC/O2/N2 PROPELLANTS')
+            self.S.LS = {'CO2','CO','H2O','H2','O2','N2','He','Ar','Cbgrb',...
+                         'C2','C2H4','CH','CH','CH3','CH4','CN','H',...
+                         'H2O2','HCN','HCO','N','NH','NH2','NH3','NO','O','OH',...
+                         'O2bLb','Si','SiH','SiH2','SiH3','SiH4','SiO2','SiO',...
+                         'SibLb','SiO2bLb','Si2'};
         else
             self.S.LS = LS;
         end
@@ -191,7 +197,7 @@ function self = ListSpecies(varargin)
     self.S.LS_formula = get_formula(self.S.LS, self.DB);
     
     if any(get_index_ions(self.S.LS))
-        self.PD.ionization = true;
+        self.PD.FLAG_ION = true;
     end
 end
 

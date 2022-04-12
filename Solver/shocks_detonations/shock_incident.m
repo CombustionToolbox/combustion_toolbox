@@ -67,7 +67,11 @@ function [mix1, mix2] = shock_incident(self, mix1, u1, varargin)
             T2T1 = T2 / mix1.T;
             % Compute STOP criteria
             STOP = compute_STOP(x);
+            % Debug 
+%             aux_lambda(it) = lambda;
+%             aux_STOP(it) = STOP;
         end
+%         debug_plot_error(it, aux_STOP, aux_lambda);
     end
 end
 % SUB-PASS FUNCTIONS
@@ -86,20 +90,17 @@ end
 
 function [p2, T2, p2p1, T2T1] = get_guess(mix1, mix2, TN)
     if isempty(mix2)
-        V1 = 1/mix1.rho; % [m3/kg]
-        V = V1/TN.volume_ratio;
+        M1 = mix1.u / mix1.sound;
+        p2p1 = (2*mix1.gamma * M1^2 - mix1.gamma + 1) / (mix1.gamma + 1);
+        T2T1 = p2p1 * (2/M1^2 + mix1.gamma - 1) / (mix1.gamma + 1);
 
-        % p2p1 = (2*gamma1 * M1^2 - gamma1 + 1) / (gamma1 + 1);
-        % T2T1 = p2p1 * (2/M1^2 + gamma1 - 1) / (gamma1 + 1);
-
-        p2p1 = 1 + (mix1.rho * mix1.u^2  / mix1.p * (1 - V/V1)) * 1e-5;
-        T2T1 = p2p1 * V / V1;
+%         V1 = 1/mix1.rho; % [m3/kg]
+%         V = V1/TN.volume_ratio;
+%         p2p1 = 1 + (mix1.rho * mix1.u^2  / mix1.p * (1 - V/V1)) * 1e-5;
+%         T2T1 = p2p1 * V / V1;
 
         p2 = p2p1 * mix1.p * 1e5; % [Pa]
         T2 = T2T1 * mix1.T;       % [K]
-           
-%         p2p1 = p2/mix1.p;
-%         T2T1 = T2/mix1.T;
     else
         p2 = mix2.p * 1e5; % [Pa]
         T2 = mix2.T;       % [K]
@@ -154,8 +155,8 @@ end
 
 function relax = relax_factor(x)
     % Compute relaxation factor
-    factor = [0.40546511; 0.04879016];
-%     factor = [0.40546511; 0.40546511];
+%     factor = [0.40546511; 0.04879016];
+    factor = [0.40546511; 0.40546511];
     lambda = factor ./ abs(x);
     relax = min(1, min(lambda));  
 end

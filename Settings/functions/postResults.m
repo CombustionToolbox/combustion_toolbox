@@ -18,6 +18,9 @@ function postResults(self)
         self.Misc.FLAGS_PROP.TP = false;
     end
     
+    if isempty(mix2{end})
+        mix2 =self.PS.mix3;
+    end
     % PLOTS REACTANTS
     if self.Misc.FLAGS_PROP.TR && length(phi) > 1
         self.Misc.config.labelx = 'Temperature reactants $T$ [K]';
@@ -186,7 +189,7 @@ function postResults(self)
     if strcmp(ProblemType,{'ROCKET'}) && length(phi) > 1
         self.Misc.config.labelx = 'Equivalence Ratio $\phi$';
         self.Misc.config.labely = 'Characteristic velocity $c^*$ [m/s]';
-        ax = plot_figure(self.PS.strR, self.PS.strP, 'phi', 'cstar', self.Misc.config, self.PD.CompleteOrIncomplete);
+        ax = plot_figure(mix1, mix2, 'phi', 'cstar', self.Misc.config, self.PD.CompleteOrIncomplete);
     %     legend_name = sprintf('$p = %.2f$ [bar]', self.PS.strR.p); 
     %     for i = 2:length(self)
     %         legend_name{i} = sprintf('$p = %.2f$ [bar]', self{i}.PS.strR.p); 
@@ -203,14 +206,14 @@ function postResults(self)
         legend_name = {'$I_{sp}$', '$I_{vac}$'};
         self.Misc.config.labelx = 'Equivalence Ratio $\phi$';
         self.Misc.config.labely = 'Specific impulse $I$ [s]';
-        ax = plot_figure(self.PS.strR, self.PS.strP, 'phi', 'I_sp', self.Misc.config, self.PD.CompleteOrIncomplete);
-        ax = plot_figure(self.PS.strR, self.PS.strP, 'phi', 'I_vac', self.Misc.config, self.PD.CompleteOrIncomplete, ax);
+        ax = plot_figure(mix1, mix2, 'phi', 'I_sp', self.Misc.config, self.PD.CompleteOrIncomplete);
+        ax = plot_figure(mix1, mix2, 'phi', 'I_vac', self.Misc.config, self.PD.CompleteOrIncomplete, ax);
         set_legends(ax, legend_name, self.Misc.config)
 
         self.Misc.config.labelx = '$Mixture ratio O/F$';
         self.Misc.config.labely = 'Specific impulse $I$ [s]';
-        ax = plot_figure(self.PS.strR, self.PS.strP, 'FO', 'I_sp', self.Misc.config, self.PD.CompleteOrIncomplete);
-        ax = plot_figure(self.PS.strR, self.PS.strP, 'FO', 'I_vac', self.Misc.config, self.PD.CompleteOrIncomplete, ax);
+        ax = plot_figure(mix1, mix2, 'FO', 'I_sp', self.Misc.config, self.PD.CompleteOrIncomplete);
+        ax = plot_figure(mix1, mix2, 'FO', 'I_vac', self.Misc.config, self.PD.CompleteOrIncomplete, ax);
         set_legends(ax, legend_name, self.Misc.config)
     %     for i = 2:length(self)
     %         ax = plot_figure(self{i}.PS.strR, self{i}.PS.strP, 'phi', 'I_sp', self.Misc.config, self.PD.CompleteOrIncomplete, ax, legend_name);

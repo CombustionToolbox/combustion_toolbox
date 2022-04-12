@@ -1,5 +1,5 @@
-function mix4 = compute_exit_IAC(self, mix2, mix3, mix4, Aratio)
-    % Compute thermochemical composition for the Infinite-Area-Chamber (IAC) model
+function mix4 = compute_exit(self, mix2, mix3, mix4, Aratio)
+    % Compute thermochemical composition for a given Aratio
     %
     % This method is based on Gordon, S., & McBride, B. J. (1994). NASA reference publication,
     % 1311.
@@ -20,7 +20,7 @@ function mix4 = compute_exit_IAC(self, mix2, mix3, mix4, Aratio)
     % Definitions
     self.PD.ProblemType = 'SP';
     % Compute pressure guess [bar] for Infinite-Area-Chamber (IAC) 
-    logP = guess_pressure_exit_IAC(mix2, mix3, Aratio, false);
+    logP = guess_pressure_exit_IAC(mix2, mix3, Aratio, self.PD.FLAG_SUBSONIC);
     % Initialization
     STOP = 1; it = 0; logP0 = logP;
     % Loop
@@ -42,6 +42,7 @@ function mix4 = compute_exit_IAC(self, mix2, mix3, mix4, Aratio)
     % Assign values
     mix4.p = extract_pressure(logP, mix2.p); % [bar]
     mix4.v_shock = mix4.u; % [m/s]
+    mix4.Aratio = Aratio; % [-]
 end
 
 % SUB-PASS FUNCTIONS

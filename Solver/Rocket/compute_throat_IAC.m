@@ -29,6 +29,7 @@ function mix3 = compute_throat_IAC(self, mix2, mix3)
     % Assign values
     mix3.p = pressure; % [bar]
     mix3.v_shock = mix3.u; % [m/s]
+    mix3.Aratio = 1; % [-]
 end
 
 function pressure = compute_pressure(mix3)

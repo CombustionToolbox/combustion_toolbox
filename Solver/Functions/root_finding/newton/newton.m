@@ -1,4 +1,4 @@
-function [x, STOP] = newton(self, mix1, pP, field, x0)
+function [x, STOP] = newton(self, mix1, pP, field, x0, guess_moles)
     % Find the temperature [K] (root) for the set chemical transformation at equilibrium using the Newton-Raphson method
     %
     % Args:
@@ -24,7 +24,7 @@ function [x, STOP] = newton(self, mix1, pP, field, x0)
 
     while STOP > self.TN.tol0 && it < self.TN.itMax
         it = it + 1;
-        [f0, fprime0, frel] = get_ratio_newton(self, mix1, pP, field, x0);
+        [f0, fprime0, frel] = get_ratio_newton(self, mix1, pP, field, x0, guess_moles);
         x = abs(x0 - f0 / fprime0);
         
         STOP = max(abs((x - x0) / x), frel);
@@ -34,15 +34,15 @@ function [x, STOP] = newton(self, mix1, pP, field, x0)
         fprintf('\n***********************************************************\n')
         fprintf('Newton method not converged\nCalling Steffensen-Aitken root finding algorithm\n')
         x0 = steff_guess(self, mix1, pP, field);
-        [x, STOP] = steff(self, mix1, pP, field, x0);
+        [x, STOP] = steff(self, mix1, pP, field, x0, []);
     else
         print_error_root(it, self.TN.itMax, x, STOP);
     end
 end
 
 %%% SUB-PASS FUNCTIONS
-function [f, fprime, frel] = get_ratio_newton(self, mix1, pP, field, x)
-    mix2 = equilibrate_T(self, mix1, pP, x);
+function [f, fprime, frel] = get_ratio_newton(self, mix1, pP, field, x, guess_moles)
+    mix2 = equilibrate_T(self, mix1, pP, x, guess_moles);
     f = mix2.(field) - mix1.(field);
     fprime = get_partial_derivative(self, mix2);
     frel = abs(f / mix2.(field));

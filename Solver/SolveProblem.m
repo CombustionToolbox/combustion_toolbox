@@ -58,11 +58,11 @@ function self = selectProblem(self, i)
                 u1 = self.PD.u1.value;
             end
             if strcmp(self.PD.ProblemType,'SHOCK_I')
-                if i==self.C.l_phi
+                 if i==self.C.l_phi
                     [self.PS.strR{i}, self.PS.strP{i}] = shock_incident(self, self.PS.strR{i}, u1);
-                else
-                    [self.PS.strR{i}, self.PS.strP{i}] = shock_incident(self, self.PS.strR{i}, u1, self.PS.strP{i+1});
-                end
+                 else
+                     [self.PS.strR{i}, self.PS.strP{i}] = shock_incident(self, self.PS.strR{i}, u1, self.PS.strP{i+1});
+                 end
             else
                 if i==self.C.l_phi
                     % Calculate post-shock state (2)
@@ -229,10 +229,15 @@ function self = selectProblem(self, i)
                 [self.PS.strR{i}, self.PS.str2{i}, self.PS.strP{i}] = shock_reflected(self, self.PS.strR{i}, overdriven, self.PS.str2{i}, self.PS.strP{i+1});
             end
         case 'ROCKET'
+            try
+                Aratio = self.PD.Aratio.value(i);
+            catch
+                Aratio = self.PD.Aratio.value;
+            end
             if i==self.C.l_phi
-                [self.PS.strR{i}, self.PS.str2{i}, self.PS.strP{i}] = rocket_performance(self, self.PS.strR{i});
+                [self.PS.strR{i}, self.PS.str2{i}, self.PS.strP{i}] = rocket_performance(self, self.PS.strR{i}, Aratio);
             else
-                [self.PS.strR{i}, self.PS.str2{i}, self.PS.strP{i}] = rocket_performance(self, self.PS.strR{i}, self.PS.str2{i+1}, self.PS.strP{i+1});
+                [self.PS.strR{i}, self.PS.str2{i}, self.PS.strP{i}] = rocket_performance(self, self.PS.strR{i}, Aratio, self.PS.str2{i+1}, self.PS.strP{i+1});
             end
         otherwise
             if length(self.PD.pP.value) > 1

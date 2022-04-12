@@ -38,9 +38,11 @@ function [mix1, mix2_1, mix2_2] = shock_oblique_theta(self, mix1, u1, theta, var
     m = 4;
     % Solve first branch  (weak shock)
     beta_guess = 0.5 * (beta_min + beta_max); % [rad]
+%     beta_guess = compute_guess_beta(M1, mix1.gamma, theta, true);
     mix2_1 = solve_shock_oblique(mix2_1);
     % Solve second branch (strong shock)
     beta_guess = beta_max * 0.97; % [rad]
+%     beta_guess = compute_guess_beta(M1, mix1.gamma, theta, false);
     mix2_2 = solve_shock_oblique(mix2_2);
     % NESTED FUNCTIONS
     function mix2 = solve_shock_oblique(mix2) 
@@ -64,21 +66,25 @@ function [mix1, mix2_1, mix2_2] = shock_oblique_theta(self, mix1, u1, theta, var
             beta = beta_guess - (f0 * df0) / (df0^2 - m^-1 * f0 * d2f0);
             % Check value
             if beta < beta_min || beta > beta_max
-%                 beta = beta_guess - lambda * f0 / df0;
-                beta = beta_guess - lambda * (f0 * df0) / (df0^2 - 0.5 * f0 * d2f0);
+                beta = beta_guess - lambda * f0 / df0;
+%                 beta = beta_guess - lambda * (f0 * df0) / (df0^2 - 0.5 * f0 * d2f0);
             end
             % Compute error
             STOP = max(abs(beta - beta_guess) / abs(beta), abs(f0));
             % Update guess
             beta_guess = beta;
+            % Debug
+%             aux_lambda(it) = beta_guess * 180/pi;
+%             aux_STOP(it) = STOP;
         end
-        
+%         debug_plot_error(it, aux_STOP, aux_lambda);
+
         u2 = u2n * csc(beta - theta);
         M2 = u2 / soundspeed(mix2);
     
-        if beta < beta_min || beta > pi/2 || theta < 0 || M2 >= M1
-            error('There is not solution for the given deflection angle %.2g', mix1.theta);
-        end
+%         if beta < beta_min || beta > pi/2 || theta < 0 || M2 >= M1
+%             error('There is not solution for the given deflection angle %.2g', mix1.theta);
+%         end
         if STOP > TN.tol_oblique
             print_error_root(it, itMax, mix2.T, STOP);
         end
@@ -122,4 +128,12 @@ end
 function value = d2f0_beta(beta, u2n, u1)
     % Second derivative of the function to find the roots of beta
     value = 0.5 * (u1 * u2n * cos(beta) * (3*u1^2 + 2*u2n^2 - u1^2 * cos(2*beta))) / (u2n^2 + u1^2 * cos(beta)^2)^2;
+end
+
+function beta = compute_guess_beta(M1, gamma, theta, FLAG_WEAK)
+    % Compute guess of wave angle [rad]
+    % 
+    l = sqrt((M1^2 -1)^2 - 3*(1 + (gamma - 1)/2 * M1^2) * (1 + (gamma + 1)/2 * M1^2) * tan(theta)^2);
+    m = ((M1^2 - 1)^3 - 9 * (1 + (gamma - 1)/2 * M1^2) * (1 + (gamma - 1)/2 * M1^2 + (gamma + 1)/4 * M1^4) * tan(theta)^2) / l^3;
+    beta = atan(((M1^2 - 1) + 2*l * cos((4 * pi * FLAG_WEAK + acos(m)) / 3)) / (3 * (1 + (gamma - 1)/2 * M1^2) * tan(theta)));
 end

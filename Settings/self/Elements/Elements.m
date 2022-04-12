@@ -15,4 +15,6 @@ function self = Elements()
     self.ind_O = []; % Index element Oxygen
     self.ind_N = []; % Index element Nytrogen
     self.ind_E = []; % Index element Electron
+    self.ind_S = []; % Index element Sulfur
+    self.ind_Si = []; % Index element Silicon
 end

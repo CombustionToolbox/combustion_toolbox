@@ -58,11 +58,11 @@ function self = selectProblem(self, i)
                 u1 = self.PD.u1.value;
             end
             if strcmp(self.PD.ProblemType,'SHOCK_I')
-                 if i==self.C.l_phi
+                if i==self.C.l_phi
                     [self.PS.strR{i}, self.PS.strP{i}] = shock_incident(self, self.PS.strR{i}, u1);
-                 else
-                     [self.PS.strR{i}, self.PS.strP{i}] = shock_incident(self, self.PS.strR{i}, u1, self.PS.strP{i+1});
-                 end
+                else
+                    [self.PS.strR{i}, self.PS.strP{i}] = shock_incident(self, self.PS.strR{i}, u1, self.PS.strP{i+1});
+                end
             else
                 if i==self.C.l_phi
                     % Calculate post-shock state (2)

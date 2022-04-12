@@ -1,4 +1,4 @@
-function [gpoint, gpoint_relative] = get_gpoint(self, mix1, pP, field, x0)
+function [gpoint, gpoint_relative] = get_gpoint(self, mix1, pP, field, x0, guess_moles)
     % Get fixed point of a function based on the chemical transformation
     %
     % Args:
@@ -14,7 +14,7 @@ function [gpoint, gpoint_relative] = get_gpoint(self, mix1, pP, field, x0)
     %     - gpoint (float): Fixed point of the function [kJ] (HP, EV) or [kJ/K] (SP, SV)
     %     - gpoint_relative (float): Fixed relative point of the function [kJ] (HP, EV) or [kJ/K] (SP, SV)
 
-    mix2 = equilibrate_T(self, mix1, pP, x0);
+    mix2 = equilibrate_T(self, mix1, pP, x0, guess_moles);
     gpoint = (mix2.(field) - mix1.(field));
     gpoint_relative = gpoint / (mix2.(field));
     if strcmpi(field, 's')

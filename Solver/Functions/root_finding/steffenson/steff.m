@@ -1,4 +1,4 @@
-function [x, STOP] = steff(self, mix1, pP, field, x0)
+function [x, STOP] = steff(self, mix1, pP, field, x0, guess_moles)
     % Find the temperature [K] (root) for the set chemical transformation at equilibrium using the Steffenson-Aitken method
     %
     % Args:
@@ -24,9 +24,9 @@ function [x, STOP] = steff(self, mix1, pP, field, x0)
     
     while STOP > self.TN.tol0 && it < self.TN.itMax
         it = it + 1;
-        [g, g_rel]= get_gpoint(self, mix1, pP, field, x0);
+        [g, g_rel]= get_gpoint(self, mix1, pP, field, x0, guess_moles);
         fx = abs(g - x0);
-        g_aux  = get_gpoint(self, mix1, pP, field, fx);
+        g_aux  = get_gpoint(self, mix1, pP, field, fx, guess_moles);
         fx2 = abs(g_aux - fx);
         if abs(fx2 - 2*fx + x0) > self.TN.tol0
             x = get_point_aitken(x0, [fx, fx2]);

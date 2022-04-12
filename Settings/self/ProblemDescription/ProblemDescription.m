@@ -41,8 +41,10 @@ function self = ProblemDescription()
     self.theta.value = []; % [deg]
     self.beta.description = "Wave angle - oblique shocks";
     self.beta.value = []; % [deg]
-    self.Aratio.description = "Area ratio combustion chamber - rocket";
+    self.Aratio.description = "Area ratio exit/throat - rocket";
     self.Aratio.value = []; % [-]
+    self.Aratio_c.description = "Area ratio combustion chamber/thoat - rocket";
+    self.Aratio_c.value = []; % [-]
     % * Mixture conditions
     self.S_Fuel = [];               % Cell with the list of fuel species in the mixture
     self.N_Fuel = [];               % Vector with the number of moles of the fuel species in the mixture
@@ -55,6 +57,7 @@ function self = ProblemDescription()
     self.T_Inert = [];              % Vector with the temperature values of the inert species in the mixture
     self.proportion_inerts_O2 = []; % Proportion Inerts / O2 [-]
     % * Flags
-    self.FLAG_ION = false; % Flag ionized species in the system
-    self.FLAG_IAC = true;  % Flag use IAC model for rocket computations
+    self.FLAG_ION = false;      % Flag ionized species in the system
+    self.FLAG_IAC = true;       % Flag use IAC model for rocket computations
+    self.FLAG_SUBSONIC = false; % Flag subsonic Area ratio
 end

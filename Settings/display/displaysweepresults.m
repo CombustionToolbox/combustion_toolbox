@@ -21,7 +21,7 @@ species = self.S.LS;
 mintol = self.C.mintol_display;
 
 % Function
-if length(xvar)>1
+if length(xvar) > 1
     ax = set_figure(config);
     [yvar, all_ind, indlabel] = get_parameters(mix, species, display_species, mintol);
     plot_line(self, ax, xvar, yvar, all_ind, indlabel, species)

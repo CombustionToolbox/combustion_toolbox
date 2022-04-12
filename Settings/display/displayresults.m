@@ -139,7 +139,7 @@ elseif nargin == 6
             fprintf('max def.  [deg]|                 |   %12.4f  |   %12.4f\n', mix2.theta_max, mix3.theta_max);
             fprintf('sonic def.[deg]|                 |   %12.4f  |   %12.4f\n', mix2.theta_sonic, mix3.theta_sonic);
         end
-    elseif strcmpi(ProblemType, 'ROCKET')
+    elseif contains(ProblemType, 'ROCKET')
         fprintf('------------------------------------------------------------------------\n');
         fprintf('PERFORMANCE PARAMETERS\n');    
         fprintf('CSTAR [m/s]    |                 |                 |   %12.4f  \n', mix3.cstar);
@@ -227,7 +227,7 @@ elseif nargin == 7
     elseif contains(ProblemType, '_R')
         fprintf('               |     STATE 1     |     STATE 2     |     STATE 3     |     STATE 4\n');
     else
-        fprintf('               |  INLET CHAMBER  | OUTLET CHAMBER  |     THROAT      |     EXIT\n');
+        fprintf('               |  INLET CHAMBER  |     INJECTOR    | OUTLET CHAMBER  |     THROAT \n');
     end
     
     fprintf('T [K]          |   %12.4f  |   %12.4f  |   %12.4f  |   %12.4f\n', temperature(mix1), temperature(mix2), temperature(mix3), temperature(mix4));
@@ -255,13 +255,14 @@ elseif nargin == 7
             fprintf('max def.  [deg]|                 |   %12.4f  |   %12.4f  |   %12.4f\n', mix2.theta_max, mix3.theta_max, mix4.theta_max);
             fprintf('sonic def.[deg]|                 |   %12.4f  |   %12.4f  |   %12.4f\n', mix2.theta_sonic, mix3.theta_sonic, mix4.theta_sonic);
         end
-    elseif strcmpi(ProblemType, 'ROCKET')
+    elseif contains(ProblemType, 'ROCKET')
         fprintf('--------------------------------------------------------------------------------------\n');
-        fprintf('PERFORMANCE PARAMETERS\n');    
-        fprintf('CSTAR [m/s]    |                 |                 |   %12.4f  |   %12.4f  |\n', mix3.cstar, mix4.cstar);
-        fprintf('CF [-]         |                 |                 |   %12.4f  |   %12.4f  |\n', mix3.cf, mix4.cf);
-        fprintf('Ivac [s]       |                 |                 |   %12.4f  |   %12.4f  |\n', mix3.I_vac, mix4.I_vac);
-        fprintf('Isp  [s]       |                 |                 |   %12.4f  |   %12.4f  |\n', mix3.I_sp, mix4.I_sp);
+        fprintf('PERFORMANCE PARAMETERS\n');
+        fprintf('A/At [-]       |                 |                 |   %12.4f  |   %12.4f  \n', mix3.Aratio, mix4.Aratio);
+        fprintf('CSTAR [m/s]    |                 |                 |   %12.4f  |   %12.4f  \n', mix3.cstar, mix4.cstar);
+        fprintf('CF [-]         |                 |                 |   %12.4f  |   %12.4f  \n', mix3.cf, mix4.cf);
+        fprintf('Ivac [s]       |                 |                 |   %12.4f  |   %12.4f  \n', mix3.I_vac, mix4.I_vac);
+        fprintf('Isp  [s]       |                 |                 |   %12.4f  |   %12.4f  \n', mix3.I_sp, mix4.I_sp);
     end
     fprintf('--------------------------------------------------------------------------------------\n');
 
@@ -288,7 +289,7 @@ elseif nargin == 7
     if contains(ProblemType, '_R')
         fprintf('STATE 2                 Xi [-]\n');
     else
-        fprintf('OUTLET CHAMBER          Xi [-]\n');
+        fprintf('INJECTOR                Xi [-]\n');
     end
     %%%% SORT SPECIES COMPOSITION %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     [mix2.Xi(:), ind_sort] = sort(mix2.Xi(:),'descend');
@@ -311,7 +312,7 @@ elseif nargin == 7
     elseif contains(ProblemType, '_R')
         fprintf('STATE 3                 Xi [-]\n');
     else
-        fprintf('THROAT                  Xi [-]\n');
+        fprintf('OUTLET CHAMBER          Xi [-]\n');
     end
     %%%% SORT SPECIES COMPOSITION %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     [mix3.Xi(:), ind_sort] = sort(mix3.Xi(:), 'descend');
@@ -334,7 +335,8 @@ elseif nargin == 7
     elseif contains(ProblemType, '_R')
         fprintf('STATE 4                 Xi [-]\n');
     else
-        fprintf('EXIT                    Xi [-]\n');
+        fprintf('THROAT                  Xi [-]\n');
+%         fprintf('EXIT                    Xi [-]\n');
     end
     %%%% SORT SPECIES COMPOSITION %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     [mix4.Xi(:), ind_sort] = sort(mix4.Xi(:),'descend');

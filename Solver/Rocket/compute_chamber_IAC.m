@@ -7,11 +7,11 @@ function mix2 = compute_chamber_IAC(self, mix1, mix2)
     %
     % Args:
     %     self (struct): Data of the mixture, conditions, and databases
-    %     mix2 (struct): Properties of the mixture at the outlet of the chamber
-    %     mix3 (struct): Properties of the mixture at the throat (previous calculation)
+    %     mix1 (struct): Properties of the initial mixture
+    %     mix2 (struct): Properties of the mixture at the outlet of the chamber (previous calculation)
     %
     % Returns:
-    %     mix3 (struct): Properties of the mixture at the throat
+    %     mix2 (struct): Properties of the mixture at the outlet of the chamber
     
     % Definitions
     self.PD.ProblemType = 'HP';

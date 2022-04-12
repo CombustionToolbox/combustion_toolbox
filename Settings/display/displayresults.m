@@ -144,8 +144,8 @@ elseif nargin == 6
         fprintf('PERFORMANCE PARAMETERS\n');    
         fprintf('CSTAR [m/s]    |                 |                 |   %12.4f  \n', mix3.cstar);
         fprintf('CF [-]         |                 |                 |   %12.4f  \n', mix3.cf);
-        fprintf('Ivac [m/s]     |                 |                 |   %12.4f  \n', mix3.I_vac);
-        fprintf('Isp  [m/s]     |                 |                 |   %12.4f  \n', mix3.I_sp);
+        fprintf('Ivac [s]       |                 |                 |   %12.4f  \n', mix3.I_vac);
+        fprintf('Isp  [s]       |                 |                 |   %12.4f  \n', mix3.I_sp);
     end
     fprintf('------------------------------------------------------------------------\n');
 
@@ -260,8 +260,8 @@ elseif nargin == 7
         fprintf('PERFORMANCE PARAMETERS\n');    
         fprintf('CSTAR [m/s]    |                 |                 |   %12.4f  |   %12.4f  |\n', mix3.cstar, mix4.cstar);
         fprintf('CF [-]         |                 |                 |   %12.4f  |   %12.4f  |\n', mix3.cf, mix4.cf);
-        fprintf('Ivac [m/s]     |                 |                 |   %12.4f  |   %12.4f  |\n', mix3.I_vac, mix4.I_vac);
-        fprintf('Isp  [m/s]     |                 |                 |   %12.4f  |   %12.4f  |\n', mix3.I_sp, mix4.I_sp);
+        fprintf('Ivac [s]       |                 |                 |   %12.4f  |   %12.4f  |\n', mix3.I_vac, mix4.I_vac);
+        fprintf('Isp  [s]       |                 |                 |   %12.4f  |   %12.4f  |\n', mix3.I_sp, mix4.I_sp);
     end
     fprintf('--------------------------------------------------------------------------------------\n');
 

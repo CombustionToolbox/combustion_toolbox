@@ -21,6 +21,8 @@ function mix2 = equilibrate_T(self, mix1, pP, TP, varargin)
     if ~FLAG_FAST, guess_moles = []; end
     % Set List of Species to List of Products
     self_ListProducts = set_LS_original(self);
+    % Check existance condensed species for the given temperature
+
     % Compute number of moles 
     [N_ListProducts, DeltaNP, DeltaNP_ions] = select_equilibrium(self_ListProducts, pP, TP, mix1, guess_moles);
     % Reshape matrix of number of moles, N
@@ -64,7 +66,7 @@ function pP = compute_pressure(self, mix1, TP, N)
 end
 
 function [N, DeltaNP, DeltaNP_ions] = select_equilibrium(self, pP, TP, mix1, guess_moles)
-    if ~self.PD.ionization
+    if ~self.PD.FLAG_ION
         % Compute numer of moles without ionization
         [N, DeltaNP] = equilibrium(self, pP, TP, mix1, guess_moles);
 %         [N, DeltaNP] = equilibrium_reduced(self, pP, TP, mix1, guess_moles);

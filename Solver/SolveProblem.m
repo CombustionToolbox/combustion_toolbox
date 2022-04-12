@@ -235,9 +235,9 @@ function self = selectProblem(self, i)
                 Aratio = self.PD.Aratio.value;
             end
             if i==self.C.l_phi
-                [self.PS.strR{i}, self.PS.str2{i}, self.PS.strP{i}] = rocket_performance(self, self.PS.strR{i}, Aratio);
+                [self.PS.strR{i}, self.PS.str2{i}, self.PS.mix2_c{i}, self.PS.mix3{i}, self.PS.strP{i}] = rocket_performance(self, self.PS.strR{i}, Aratio);
             else
-                [self.PS.strR{i}, self.PS.str2{i}, self.PS.strP{i}] = rocket_performance(self, self.PS.strR{i}, Aratio, self.PS.str2{i+1}, self.PS.strP{i+1});
+                [self.PS.strR{i}, self.PS.str2{i}, self.PS.mix2_c{i}, self.PS.mix3{i}, self.PS.strP{i}] = rocket_performance(self, self.PS.strR{i}, Aratio, self.PS.str2{i+1}, self.PS.mix2_c{i+1}, self.PS.mix3{i+1}, self.PS.strP{i+1});
             end
         otherwise
             if length(self.PD.pP.value) > 1

@@ -9,12 +9,14 @@ function x0 = steff_guess(self, mix1, pP, field)
     %
     % Returns:
     %     x0 (float):    Guess temperature [K]
-
+    
+    guess_moles = [];
+    
     x_l = self.TN.root_T0_l;
     x_r = self.TN.root_T0_r;
             
-    g_l = get_gpoint(self, mix1, pP, field, x_l);
-    g_r = get_gpoint(self, mix1, pP, field, x_r);
+    g_l = get_gpoint(self, mix1, pP, field, x_l, guess_moles);
+    g_r = get_gpoint(self, mix1, pP, field, x_r, guess_moles);
     
     if g_l * g_r > 0 && abs(g_l) < abs(g_r)
         x0 = x_l - 50;

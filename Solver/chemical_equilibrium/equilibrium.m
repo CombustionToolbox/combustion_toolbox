@@ -27,7 +27,7 @@ function [N0, STOP] = equilibrium(self, pP, TP, mix1, guess_moles)
     C = self.C;
     TN = self.TN;
     % -----------------------------------
-    
+    % Definitions
     N0 = C.N0.value;
     A0 = C.A0.value;
     R0TP = C.R0 * TP; % [J/mol]
@@ -49,6 +49,7 @@ function [N0, STOP] = equilibrium(self, pP, TP, mix1, guess_moles)
     [temp_ind, temp_ind_swt, temp_NS] = check_cryogenic(temp_ind, temp_ind_swt, temp_ind_cryogenic);
     temp_NS0 = temp_NS + 1;
     
+    temp_ind_nswt_0 = temp_ind_nswt;
     temp_ind_swt_0 = temp_ind_swt;
     temp_ind_swt = [];
     temp_ind = [temp_ind_nswt, temp_ind_swt];
@@ -73,7 +74,6 @@ function [N0, STOP] = equilibrium(self, pP, TP, mix1, guess_moles)
     x = equilibrium_loop;
     % Check condensed species
     [temp_ind, temp_ind_swt, FLAG] = check_condensed_species(A0, x, temp_ind_nswt, temp_ind_swt_0, temp_ind_E, temp_NS, muRT);
-    
     if FLAG
         if any(isnan(x))
             NP = NP_0;
@@ -97,7 +97,7 @@ function [N0, STOP] = equilibrium(self, pP, TP, mix1, guess_moles)
     % NESTED FUNCTION
     function x = equilibrium_loop
         it = 0;
-        itMax = 50 + round(S.NS/2);
+        itMax = 50 + round(S.NS/2) + abs(log10(TN.tolN));
         STOP = 1.;
         while STOP > TN.tolN && it < itMax
             it = it + 1;
@@ -105,6 +105,8 @@ function [N0, STOP] = equilibrium(self, pP, TP, mix1, guess_moles)
             muRT(temp_ind_nswt) =  g0(temp_ind_nswt) / R0TP + log(N0(temp_ind_nswt, 1) / NP) + log(pP);
             % Construction of matrix A
             A = update_matrix_A(A0_T, A1, A22, N0, NP, temp_ind, temp_ind_nswt, temp_ind_swt, temp_ind_E, temp_NG);
+            % Check singularity
+%             A = check_singularity(A, it);
             % Construction of vector b            
             b = update_vector_b(A0, N0, NP, NatomE, temp_ind, temp_ind_E, temp_ind_nswt, muRT);
             % Solve of the linear system A*x = b
@@ -123,19 +125,38 @@ function [N0, STOP] = equilibrium(self, pP, TP, mix1, guess_moles)
             [A1, temp_NS0] = update_matrix_A1(A0, A1, temp_NG, temp_NS, temp_NS0, temp_ind, temp_ind_E);
             % Compute STOP criteria
             STOP = compute_STOP(NP_0, NP, x(end), N0(temp_ind, 1), x(1:temp_NS), temp_NG, A0(temp_ind, temp_ind_E), NatomE_tol, max_NatomE, TN.tolE);
-
+            % Update guess
+            NP_0 = NP;
+            % Debug
 %             aux_lambda(it) = lambda;
 %             aux_STOP(it) = STOP;
         end
-%         figure(1); hold on; set(gca,'yscale','log')
-%         yyaxis left
-%         plot(1:1:it, aux_STOP, '-', 'Color', '#0072BD');
-%         yyaxis right
-%         plot(1:1:it, aux_lambda, '--r', 'Color', '#D95319');
+%         debug_plot_error(it, aux_STOP, aux_lambda);
+    end
+
+    function A = check_singularity(A, it)
+        % Check if matrix is matrix is singular
+        if it > 10*temp_NS
+            if cond(A) > exp(0.5 * log(TN.tolN))
+                FLAG_OLD = ~ismember(temp_ind_nswt_0, temp_ind_nswt);
+                if any(FLAG_OLD)
+                    temp_ind_nswt = temp_ind_nswt_0;
+                    temp_ind = [temp_ind_nswt, temp_ind_swt];
+                    temp_NG = length(temp_ind_nswt);
+                    temp_NS = length(temp_ind);
+                    N0(temp_ind_nswt(FLAG_OLD)) = TN.tolN * 1e-1;
+                    [A1, temp_NS0] = update_matrix_A1(A0, A1, temp_NG, temp_NS, temp_NS0, temp_ind, temp_ind_E);
+                    A = update_matrix_A(A0_T, A1, A22, N0, NP, temp_ind, temp_ind_nswt, temp_ind_swt, temp_ind_E, temp_NG);
+                    N0(temp_ind_nswt(FLAG_OLD)) = 0;
+                end
+            end
+        end
     end
 end
 
 % SUB-PASS FUNCTIONS
+
+
 function [temp_ind, temp_ind_swt, FLAG] = check_condensed_species(A0, x, temp_ind_nswt, temp_ind_swt_0, temp_ind_E, temp_NS, muRT)
     % Check condensed species
     aux = [];
@@ -263,8 +284,8 @@ function STOP = compute_STOP(NP_0, NP, DeltaNP, N0, DeltaN0, temp_NG, A0, NatomE
     DeltaN1 = N0 .* abs(DeltaN0) / NP;
     DeltaN1(temp_NG+1:end) = abs(DeltaN0(temp_NG+1:end)) / NP;
     DeltaN2 = NP_0 * abs(DeltaNP) / NP;
-    Deltab = max(abs(NatomE_tol - sum(N0(:, 1) .* A0))) * max_NatomE;
-    if Deltab < tolE
+    Deltab = max(abs(NatomE_tol - sum(N0 .* A0, 1)));
+    if Deltab < max_NatomE * tolE
         Deltab = 0;
     end
     STOP = max(max(max(DeltaN1), DeltaN2), Deltab);

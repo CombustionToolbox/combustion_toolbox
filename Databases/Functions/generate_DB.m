@@ -39,7 +39,7 @@ function DB = get_DB(DB_master)
             
             if ctTInt > 0
                 
-                [txFormula, mm, Cp0, Cv0, Hf0, H0, Ef0, E0, S0, DfG0] = get_speciesProperties(DB_master, LS{i}, 298.15, 'molar', 0);
+                [txFormula, mm, ~, ~, Hf0, ~, Ef0, ~, ~, ~] = get_speciesProperties(DB_master, LS{i}, 298.15, 'molar', 0);
                 
                 DB.(species).name = species;
                 DB.(species).FullName = LS{i};
@@ -87,7 +87,7 @@ function DB = get_DB(DB_master)
                 
                 Tref = tRange(1);
                 
-                [txFormula, mm, Cp0, Cv0, Hf0, H0, Ef0, E0, S0, DfG0] = get_speciesProperties(DB_master, LS{i}, Tref, 'molar', 0);
+                [txFormula, mm, Cp0, Cv0, Hf0, H0, Ef0, ~, S0, DfG0] = get_speciesProperties(DB_master, LS{i}, Tref, 'molar', 0);
                 
                 DB.(species).name = species;
                 DB.(species).FullName = LS{i};

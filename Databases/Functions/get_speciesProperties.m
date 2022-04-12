@@ -172,10 +172,10 @@ function [txFormula, mm, cP0, cV0, hf0, h0, ef0, e0, s0, g0] = get_speciesProper
             cP0  = [];
             cV0  = [];
             h0   = [];
-            ef0  = [];
+            ef0  = hf0 - Delta_n * R0 * Tref;
             e0   = [];
             s0   = [];
-            g0 = [];
+            g0   = [];
             return
         end
     
@@ -189,7 +189,7 @@ function [txFormula, mm, cP0, cV0, hf0, h0, ef0, e0, s0, g0] = get_speciesProper
         h0  = R0 * T * (sum(a{tInterval} .* T.^tExponents{tInterval} .* [-1 log(T) 1 1/2 1/3 1/4 1/5 0]) + b{tInterval}(1)/T);
         ef0 = hf0 - Delta_n * R0 * Tref;
         e0  = ef0 + (h0 - hf0) - (1 - swtCondensed) * R0 * (T - Tref);
-        s0  = R0 * (sum(a{tInterval} .* T.^tExponents{tInterval} .* [-1/2 -1 log(T) 1   1/2 1/3 1/4 0]) + b{tInterval}(2));
+        s0  = R0 * (sum(a{tInterval} .* T.^tExponents{tInterval} .* [-1/2 -1 log(T) 1 1/2 1/3 1/4 0]) + b{tInterval}(2));
         
         % Compute the standar gibbs free energy of formation at the specified
         % temperature. This enforces us to consider explicitely the formation

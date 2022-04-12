@@ -30,9 +30,11 @@ function self = ContainedElements(self)
     end
     self.E.elements = unique(L_formula);
     self.E.NE = numel(self.E.elements);
-    self.E.ind_C = find(strcmp(self.E.elements,'C'));
-    self.E.ind_H = find(strcmp(self.E.elements,'H'));
-    self.E.ind_O = find(strcmp(self.E.elements,'O'));
-    self.E.ind_N = find(strcmp(self.E.elements,'N'));
-    self.E.ind_E = find(strcmp(self.E.elements,'E'));
+    self.E.ind_C = find(ismember(self.E.elements,'C'));
+    self.E.ind_H = find(ismember(self.E.elements,'H'));
+    self.E.ind_O = find(ismember(self.E.elements,'O'));
+    self.E.ind_N = find(ismember(self.E.elements,'N'));
+    self.E.ind_E = find(ismember(self.E.elements,'E'));
+    self.E.ind_S = find(ismember(self.E.elements,'S'));
+    self.E.ind_Si = find(ismember(self.E.elements,'SI'));
 end

@@ -1,4 +1,4 @@
-function [mix1, mix2, mix3] = rocket_performance(self, mix1, varargin)
+function [mix1, mix2, mix3] = rocket_performance(self, mix1, Aratio, varargin)
     % Routine that computes the propellant rocket performance
     %
     % Methods implemented:
@@ -25,19 +25,17 @@ function [mix1, mix2, mix3] = rocket_performance(self, mix1, varargin)
     %     - mix4 (struct): Properties of the mixture at the given exit points
 
     % Assign values
-    if nargin > 2, mix2 = get_struct(varargin{1}); else, mix2 = []; end
-    if nargin > 3, mix3 = get_struct(varargin{2}); else, mix3 = []; end
-    % Compute chemical equilibria at the exit of the chamber (HP)
-    mix2 = compute_chamber(self, mix1, mix2);
-    % Compute chemical equilibria at throat (SP)
-    mix3 = compute_throat(self, mix2, mix3);
-    % Compute chemical equilibria at different area ratios (SP)
-    mix4 = compute_exit(self, mix2, mix3, [], 1.5);
+    if nargin > 3, mix2 = get_struct(varargin{1}); else, mix2 = []; end
+    if nargin > 4, mix3 = get_struct(varargin{2}); else, mix3 = []; end
+    if nargin > 5, mix4 = get_struct(varargin{3}); else, mix4 = []; end
+    % Compute chemical equilibria at different points of the rocket
+    % depending of the model selected
+    [mix2_1, mix2, mix3, mix4] = solve_model(self, mix1, mix2, mix3, mix4, Aratio);
     % Velocity at the inlet and outlet of the chamber
     mix1.u = 0; mix1.v_shock = 0;
     mix2.u = 0; mix2.v_shock = 0;
     % Compute rocket parameters
-    [mix3, mix4] = compute_rocket_parameters(mix2, mix3, mix4);
+    [mix3, mix4] = compute_rocket_parameters(mix2, mix3, self.C.gravity, mix4);
 end
 
 % SUB-PASS FUNCTIONS
@@ -49,25 +47,18 @@ function str = get_struct(var)
     end
 end
 
-function mix2 = compute_chamber(self, mix1, mix2)
-    % Compute chemical equilibria at the exit of the chamber (HP)
-    self.PD.ProblemType = 'HP';
-    mix2 = compute_chemical_equilibria(self, mix1, mix1.p, mix2);
-end
+function [mix2_1, mix2, mix3, mix4] = solve_model(self, mix1, mix2, mix3, mix4, Aratio)
+    % Compute chemical equilibria at different points of the rocket
+    % depending of the model selected
 
-function mix3 = compute_throat(self, mix2, mix3)
-    % Compute chemical equilibria at the throat (SP)
-    self.PD.ProblemType = 'SP';
-    mix3 = compute_IAC_model(self, mix2, mix3);
-end
-
-function mix4 = compute_exit(self, mix2, mix3, mix4, Aratio)
-    % Compute chemical equilibria at the throat (SP)
-    self.PD.ProblemType = 'SP';
-    mix4 = compute_exit_IAC(self, mix2, mix3, mix4, Aratio);
-end
-
-function value = characteristic_velocity(mix2, mix3)
-    % Compute characteristic velocity Cstar [-]
-    value = pressure(mix2) * area_per_mass_flow_rate(mix3) * 1e5;
+    if self.PD.FLAG_IAC
+        mix2_1 = [];
+        mix2 = compute_chamber_IAC(self, mix1, mix2);
+        mix3 = compute_throat_IAC(self, mix2, mix3);
+        mix4 = compute_exit_IAC(self, mix2, mix3, mix4, Aratio);
+    else
+        [mix2_1, mix2] = compute_chamber_FAC(self, mix1, mix2);
+        mix3 = compute_throat_FAC(self, mix2, mix3);
+        mix4 = compute_exit_FAC(self, mix2, mix3, mix4, Aratio);
+    end
 end

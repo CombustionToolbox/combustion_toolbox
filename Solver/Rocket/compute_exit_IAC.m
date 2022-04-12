@@ -12,6 +12,13 @@ function mix4 = compute_exit_IAC(self, mix2, mix3, mix4, Aratio)
     % Returns:
     %     mix3 (struct): Properties of the mixture at the throat
     
+    % Check Aratio
+    if isempty(Aratio)
+        mix4 = [];
+        return
+    end
+    % Definitions
+    self.PD.ProblemType = 'SP';
     % Compute pressure guess [bar] for Infinite-Area-Chamber (IAC) 
     logP = guess_pressure_exit_IAC(mix2, mix3, Aratio, false);
     % Initialization

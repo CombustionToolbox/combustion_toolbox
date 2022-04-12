@@ -199,10 +199,19 @@ function postResults(self)
     %     for i = 2:length(self)
     %         ax = plot_figure(self{i}.PS.strR, self{i}.PS.strP, 'phi', 'T', self.Misc.config, self.PD.CompleteOrIncomplete, ax, legend_name);
     %     end
-    
+        
+        legend_name = {'$I_{sp}$', '$I_{vac}$'};
         self.Misc.config.labelx = 'Equivalence Ratio $\phi$';
-        self.Misc.config.labely = 'Specific impulse $I_{sp}$ [m/s]';
+        self.Misc.config.labely = 'Specific impulse $I$ [s]';
         ax = plot_figure(self.PS.strR, self.PS.strP, 'phi', 'I_sp', self.Misc.config, self.PD.CompleteOrIncomplete);
+        ax = plot_figure(self.PS.strR, self.PS.strP, 'phi', 'I_vac', self.Misc.config, self.PD.CompleteOrIncomplete, ax);
+        set_legends(ax, legend_name, self.Misc.config)
+
+        self.Misc.config.labelx = '$Mixture ratio O/F$';
+        self.Misc.config.labely = 'Specific impulse $I$ [s]';
+        ax = plot_figure(self.PS.strR, self.PS.strP, 'FO', 'I_sp', self.Misc.config, self.PD.CompleteOrIncomplete);
+        ax = plot_figure(self.PS.strR, self.PS.strP, 'FO', 'I_vac', self.Misc.config, self.PD.CompleteOrIncomplete, ax);
+        set_legends(ax, legend_name, self.Misc.config)
     %     for i = 2:length(self)
     %         ax = plot_figure(self{i}.PS.strR, self{i}.PS.strP, 'phi', 'I_sp', self.Misc.config, self.PD.CompleteOrIncomplete, ax, legend_name);
     %     end

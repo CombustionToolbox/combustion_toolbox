@@ -21,7 +21,7 @@ function index = find_ind(LS, species)
             i = 0;
             while i < NS
                 i = i + 1;
-                if strcmp(species{j}, LS{i})
+                if strcmpi(species{j}, LS{i})
                     index = [index, i];
                     break
                 end 

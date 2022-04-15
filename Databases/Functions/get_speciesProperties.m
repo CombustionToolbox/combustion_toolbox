@@ -59,15 +59,29 @@ function [txFormula, mm, cP0, cV0, hf0, h0, ef0, e0, s0, g0] = get_speciesProper
     % Substitute opening and closing parenthesis and other reserved characters 
     % by 'b' in order to format the species name as in the thermo.inp
     % electronic database 
+
+    FLAG_MILLENIUM = false;
+    if contains(species, '_M')
+        species = strrep(species, '_M', '');
+        FLAG_MILLENIUM = true;
+    end
+    
     name = species;
-    name = replace(name, '+', 'plus');
-    name = replace(name, '-', 'minus');
+    if name(end)=='+'
+        name=[name(1:end-1) 'plus'];
+    elseif name(end)=='-'
+        name=[name(1:end-1) 'minus'];
+    end
+
     ind=regexp(name,'[()]');
     name(ind)='b';
     ind=regexp(name,'\W');
     name(ind)='_';
     if regexp(name(1),'[0-9]')
         name=['num_' name];
+    end
+    if FLAG_MILLENIUM
+        name = strcat(name, '_M');
     end
     species = name;
     

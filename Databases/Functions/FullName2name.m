@@ -11,11 +11,8 @@ function name = FullName2name(species)
     if isempty(name)
         return
     end
-    if name(end)=='+'
-        name=[name(1:end-1) 'plus'];
-    elseif name(end)=='-'
-        name=[name(1:end-1) 'minus'];
-    end
+    name = replace(name, '+', 'plus');
+    name = replace(name, '-', 'minus');
     ind=regexp(name,'[()]');
     name(ind)='b';
     ind=regexp(name,'[.,+-]');

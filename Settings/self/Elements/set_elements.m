@@ -127,7 +127,9 @@ function [elements, NE] = set_elements()
     'Lv';  % 116
     'Ts';  % 117
     'Og';  % 118
-    'E'};   % 119 % Electron
+    'E';   % 119 - Electron
+    'T'    % 1   - Tritium - Heavy hydrogen (^3H)
+    };
     
     NE = numel(elements);
 end

@@ -22,7 +22,7 @@ function problems_solved = run_validation_TP_TEA_3
     Xi_abundances = abundances2moles(Fuel, 'abundances_WASP43b_10xsolar.txt')';
     N_Fuel = Xi_abundances;
     Oxidizer = {}; Inert = {};
-    LS = {'C2H2_acetylene', 'C2H4', 'C', 'CH4', 'CO2', 'CO', 'H2', 'H2O', 'H2S', 'H', 'HCN', 'He', 'SH', 'N2', 'N', 'NH3', 'O', 'S'};
+    LS = {'C2H2_acetylene', 'C2H4', 'C', 'CH4', 'CO2', 'CO', 'H2', 'H2O', 'H2S', 'H', 'HCN', 'He', 'HS_M', 'N2', 'N', 'NH3', 'O', 'S'};
     
     T = Temp;
     p = Pressure;

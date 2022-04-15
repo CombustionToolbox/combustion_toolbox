@@ -47,10 +47,10 @@ function [txFormula, mm, cP0, cV0, hf0, h0, ef0, e0, s0, g0] = get_speciesProper
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     
     % Change lowercase 'l' to uppercase 'L'
-    species(strfind(species,'Al')+1)='L';
-    species(strfind(species,'Cl')+1)='L';
-    species(strfind(species,'Tl')+1)='L';
-    species(strfind(species,'Fl')+1)='L';
+    species = replace(species, 'Al', 'AL');
+    species = replace(species, 'Cl', 'CL');
+    species = replace(species, 'Tl', 'TL');
+    species = replace(species, 'Fl', 'FL');
     
     % Store species name with parenthesis (i.e., the name appearing in NASA's
     % document tables)
@@ -60,11 +60,8 @@ function [txFormula, mm, cP0, cV0, hf0, h0, ef0, e0, s0, g0] = get_speciesProper
     % by 'b' in order to format the species name as in the thermo.inp
     % electronic database 
     name = species;
-    if name(end)=='+'
-        name=[name(1:end-1) 'plus'];
-    elseif name(end)=='-'
-        name=[name(1:end-1) 'minus'];
-    end
+    name = replace(name, '+', 'plus');
+    name = replace(name, '-', 'minus');
     ind=regexp(name,'[()]');
     name(ind)='b';
     ind=regexp(name,'\W');
@@ -72,7 +69,6 @@ function [txFormula, mm, cP0, cV0, hf0, h0, ef0, e0, s0, g0] = get_speciesProper
     if regexp(name(1),'[0-9]')
         name=['num_' name];
     end
-    
     species = name;
     
     % If the given species does not exist in strDB, abort the program

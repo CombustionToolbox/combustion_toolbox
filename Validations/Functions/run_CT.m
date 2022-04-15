@@ -8,12 +8,13 @@ function self = run_CT(varargin)
     Temp_mix2 = 2500;
     Pressure = 1;
     EquivalenceRatio = 0.5:0.01:4;
-    S_Fuel = {'CH4'};
-    S_Oxidizer = {'O2'};
-    S_Inert    = {'N2'};
+    S_Fuel = {'CH4'}; N_Fuel = [];
+    S_Oxidizer = {'O2'}; N_Oxidizer = [];
+    S_Inert    = {'N2'}; N_Inert = [];
     proportion_inerts_O2 = 79/21;
     ProblemType = 'HP';
     tolN = 1e-18;
+    FLAG_PHI = true;
     % GET INPUTS
     for i=1:2:nargin
         switch lower(varargin{i})
@@ -25,7 +26,7 @@ function self = run_CT(varargin)
                 Temp_mix1 = varargin{i+1};
             case {'temperature', 'temp', 'tp'}
                 Temp_mix2 = varargin{i+1};
-            case {'pressure', 'pr'}
+            case {'pressure', 'pr', 'pp'}
                 Pressure = varargin{i+1};
             case {'equivalenceratio', 'phi'}
                 EquivalenceRatio = varargin{i+1};
@@ -46,6 +47,15 @@ function self = run_CT(varargin)
                 if ~iscell(S_Inert) && ~isempty(S_Inert)
                     S_Inert = {S_Inert};
                 end
+            case {'n_fuel'}
+                N_Fuel = varargin{i+1};
+                FLAG_PHI = false;
+            case {'n_oxidizer'}
+                N_Oxidizer = varargin{i+1};
+                FLAG_PHI = false;
+            case {'n_inert'}
+                N_Inert = varargin{i+1};
+                FLAG_PHI = false;
             case 'proportion_inerts_o2'
                 proportion_inerts_O2 = varargin{i+1};
             case 'toln'
@@ -59,13 +69,16 @@ function self = run_CT(varargin)
     % TUNNING PROPERTIES
     self.TN.tolN = tolN;
     % INITIAL CONDITIONS
-    self = set_prop(self, 'TR', Temp_mix1, 'pR', 1 * Pressure, 'phi', EquivalenceRatio);
-    self.PD.S_Fuel     = S_Fuel;
-    self.PD.S_Oxidizer = S_Oxidizer;
-    self.PD.S_Inert    = S_Inert;
+    self = set_prop(self, 'TR', Temp_mix1, 'pR', 1);
+    if FLAG_PHI
+        self = set_prop(self, 'phi', EquivalenceRatio);
+    end
+    self.PD.S_Fuel = S_Fuel; self.PD.N_Fuel = N_Fuel;
+    self.PD.S_Oxidizer = S_Oxidizer; self.PD.N_Oxidizer = N_Oxidizer;
+    self.PD.S_Inert = S_Inert; self.PD.N_Inert = N_Inert;
     self.PD.proportion_inerts_O2 = proportion_inerts_O2;
     % ADDITIONAL INPUTS (DEPENDS OF THE PROBLEM SELECTED)
-    self = set_prop(self, 'TP', Temp_mix2, 'pP', Pressure);
+    self = set_prop(self, 'pP', Pressure, 'TP', Temp_mix2);
     if exist('Velocity', 'var')
         self = set_prop(self, 'u1', Velocity, 'phi', 1 * ones(1, length(Velocity)));
     end

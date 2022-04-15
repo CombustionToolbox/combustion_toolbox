@@ -50,8 +50,8 @@ function DB = get_DB(DB_master)
                 DB.(species).swtCondensed = swtCondensed;
                 
                 NT   = 200;
-                Tmin = max(tRange{1}(1), 200);
-                Tmax = min(tRange{ctTInt}(2), 20000);
+                Tmin = tRange{1}(1);
+                Tmax = tRange{ctTInt}(2);
                 T_vector = linspace(Tmin, Tmax, NT);
                 
                 for j = NT:-1:1

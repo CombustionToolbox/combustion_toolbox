@@ -3,6 +3,19 @@ function f = plot_molar_fractions_validation(results1, results2, varname_x, varn
     nfrec = 1;
     mintol_display = 1e-16;
     config = results1.Misc.config;
+    
+    % Unpack
+    for i=1:2:nargin-5
+        switch lower(varargin{i})
+            case {'nfrec'}
+                nfrec = varargin{i+1};
+            case {'mintol_display', 'toln'}
+                mintol_display = varargin{i+1};
+            case {'config'}
+                config = varargin{i+1};
+        end
+    end
+
 
     dataname_x = get_dataname(varname_x);
     dataname_y = get_dataname(varname_y);

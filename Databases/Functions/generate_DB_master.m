@@ -48,13 +48,15 @@ function DB_master = generate_DB_master(varargin)
     fprintf(msg)
     ctLine=0;
     ctRefElm=0;
-    while ctLine<2500
-        
+    while ctLine<1e4
         tline = fgetl(fid);
         if ~ischar(tline)
             break
         end
-        if tline(1)=='!'
+        if isempty(regexp(tline, '\S', 'once'))
+            continue
+        end
+        if tline(1) == '!'
             continue
         end
         if contains(tline,'thermo')
@@ -65,7 +67,6 @@ function DB_master = generate_DB_master(varargin)
             continue
         end
         ctLine=ctLine+1;
-    
         str.FullName =  sscanf(tline(1:16),'%s');
         str.name = FullName2name(str.FullName);
         str.comments = tline(19:end);
@@ -104,7 +105,6 @@ function DB_master = generate_DB_master(varargin)
             str.a{ctInterval}=[a1 a2 a3 a4 a5 a6 a7 a8];
             str.b{ctInterval}=[b1 b2];
         end
-        
         DB_master.(str.name)=str;
         clear str
     end

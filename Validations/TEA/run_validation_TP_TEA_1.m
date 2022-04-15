@@ -14,7 +14,7 @@ function problems_solved = run_validation_TP_TEA_1
     % Last update April 15 2022
     
     % Inputs
-    load Validation_TP_TEA Pressure Temp n_H n_He n_C n_N n_O results_TEA
+    load Validation_TP_TEA_1 Pressure Temp n_H n_He n_C n_N n_O results_TEA
     Fuel = {'H', 'He', 'C', 'N', 'O'}; N_Fuel = [n_H, n_He, n_C, n_N, n_O];
     Oxidizer = {}; Inert = {};
     LS = {'C', 'CH4', 'CO2', 'CO', 'H2', 'H', 'H2O', 'He', 'N2', 'N', 'NH3', 'O'};

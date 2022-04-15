@@ -3,20 +3,31 @@ function f = plot_molar_fractions_validation(results1, results2, varname_x, varn
     nfrec = 1;
     mintol_display = 1e-16;
     config = results1.Misc.config;
-    
+    xscale = 'linear';
+    yscale = 'log';
+    xdir = 'normal';
+    ydir = 'normal';
     % Unpack
     for i=1:2:nargin-5
         switch lower(varargin{i})
             case {'nfrec'}
                 nfrec = varargin{i+1};
-            case {'mintol_display', 'toln'}
+            case {'mintol', 'mintol_display', 'toln'}
                 mintol_display = varargin{i+1};
             case {'config'}
                 config = varargin{i+1};
+            case {'xscale'}
+                xscale = varargin{i+1};
+            case {'yscale'}
+                yscale = varargin{i+1};
+            case {'xdir'}
+                xdir = varargin{i+1};
+            case {'ydir'}
+                ydir = varargin{i+1};
         end
     end
-
-
+    
+    FLAG_Y_AXIS = strcmpi(varname_y, 'Xi');
     dataname_x = get_dataname(varname_x);
     dataname_y = get_dataname(varname_y);
     results1.(varname_x) = cell2vector(select_data(results1, dataname_x), varname_x);
@@ -29,12 +40,19 @@ function f = plot_molar_fractions_validation(results1, results2, varname_x, varn
     axes = gca;
     set(axes,'LineWidth',config.linewidth,'FontSize',config.fontsize-2,'BoxStyle','full')
     grid(axes, 'off'); box(axes, 'off'); hold(axes, 'on'); axes.Layer = 'Top';
-    xlabel(axes, 'Equivalence ratio, $\phi$','FontSize',config.fontsize,'interpreter','latex');
-    ylabel(axes, 'Molar fraction, $X_i$','FontSize',config.fontsize,'interpreter','latex');
-%     set(axes,'xscale','log')
-    set(axes,'yscale','log')
-    xlim(axes, [min(results1.(varname_x)), max(results1.(varname_x))])
-    ylim(axes, [mintol_display, 1])
+    set(axes, 'xscale', xscale, 'yscale', yscale)
+    set(axes, 'XDir', xdir, 'YDir', ydir)
+    if FLAG_Y_AXIS
+        xlim(axes, [min(results1.(varname_x)), max(results1.(varname_x))])
+        ylim(axes, [mintol_display, 1])
+        xlabel(axes, 'Equivalence ratio, $\phi$','FontSize',config.fontsize,'interpreter','latex');
+        ylabel(axes, 'Molar fraction, $X_i$','FontSize',config.fontsize,'interpreter','latex');
+    else
+        xlim(axes, [mintol_display, 1])
+        ylim(axes, [min(results1.(varname_y)), max(results1.(varname_y))])
+        xlabel(axes, 'Molar fraction, $X_i$','FontSize',config.fontsize,'interpreter','latex');
+        ylabel(axes, 'Pressure [bar]','FontSize',config.fontsize,'interpreter','latex');
+    end
 
     NE = length(species);
     maxLdisplay = config.colorpaletteLenght;
@@ -52,7 +70,11 @@ function f = plot_molar_fractions_validation(results1, results2, varname_x, varn
     k = 1;
     z = 1;
     for i=1:length(species)
-        plot(axes, results1.(varname_x), results1.(varname_y)(index_species_CT(i), :), 'LineWidth', config.linewidth, 'color', colorbw(k,:), 'LineStyle', LINE_STYLES{z});
+        if FLAG_Y_AXIS
+            plot(axes, results1.(varname_x), results1.(varname_y)(index_species_CT(i), :), 'LineWidth', config.linewidth, 'color', colorbw(k,:), 'LineStyle', LINE_STYLES{z});
+        else
+            plot(axes, results1.(varname_x)(index_species_CT(i), :), results1.(varname_y), 'LineWidth', config.linewidth, 'color', colorbw(k,:), 'LineStyle', LINE_STYLES{z});
+        end
         k = k + 1;
         if k == maxLdisplay
             k = 1;
@@ -66,7 +88,11 @@ function f = plot_molar_fractions_validation(results1, results2, varname_x, varn
     k = 1;
     z = 1;
     for i=1:length(species)
-        plot(axes, results2.(varname_x)(1:nfrec:end), results2.(varname_y)(i, 1:nfrec:end), SYMBOL_STYLES{z}, 'LineWidth', config.linewidth, 'color', colorbw(k,:), 'MarkerFaceColor', 'white');
+        if FLAG_Y_AXIS
+            plot(axes, results2.(varname_x)(1:nfrec:end), results2.(varname_y)(i, 1:nfrec:end), SYMBOL_STYLES{z}, 'LineWidth', config.linewidth, 'color', colorbw(k,:), 'MarkerFaceColor', 'white');
+        else     
+            plot(axes, results2.(varname_x)(i, 1:nfrec:end), results2.(varname_y)(1:nfrec:end), SYMBOL_STYLES{z}, 'LineWidth', config.linewidth, 'color', colorbw(k,:), 'MarkerFaceColor', 'white');
+        end
         k = k + 1;
         if k == maxLdisplay
             k = 1;

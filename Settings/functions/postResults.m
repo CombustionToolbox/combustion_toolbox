@@ -187,34 +187,46 @@ function postResults(self)
     end
     
     if strcmp(ProblemType,{'ROCKET'}) && length(phi) > 1
-        self.Misc.config.labelx = 'Equivalence Ratio $\phi$';
-        self.Misc.config.labely = 'Characteristic velocity $c^*$ [m/s]';
-        ax = plot_figure(mix1, mix2, 'phi', 'cstar', self.Misc.config, self.PD.CompleteOrIncomplete);
-    %     legend_name = sprintf('$p = %.2f$ [bar]', self.PS.strR.p); 
-    %     for i = 2:length(self)
-    %         legend_name{i} = sprintf('$p = %.2f$ [bar]', self{i}.PS.strR.p); 
-    %         ax = plot_figure(self{i}.PS.strR, self{i}.PS.strP, 'phi', 'cstar', self.Misc.config, self.PD.CompleteOrIncomplete, ax, legend_name);
-    %     end
-    
-    %     self.Misc.config.labelx = 'Equivalence Ratio $\phi$';
-    %     self.Misc.config.labely = 'Temperature $T$ [K]';
-    %     ax = plot_figure(self.PS.strR, self.PS.strP, 'phi', 'T', self.Misc.config, self.PD.CompleteOrIncomplete);
-    %     for i = 2:length(self)
-    %         ax = plot_figure(self{i}.PS.strR, self{i}.PS.strP, 'phi', 'T', self.Misc.config, self.PD.CompleteOrIncomplete, ax, legend_name);
-    %     end
+        if FLAG_PLOT_PHI
+            self.Misc.config.labelx = 'Equivalence Ratio $\phi$';
+            self.Misc.config.labely = 'Characteristic velocity $c^*$ [m/s]';
+            ax = plot_figure(mix1, mix2, 'phi', 'cstar', self.Misc.config, self.PD.CompleteOrIncomplete);
+        %     legend_name = sprintf('$p = %.2f$ [bar]', self.PS.strR.p); 
+        %     for i = 2:length(self)
+        %         legend_name{i} = sprintf('$p = %.2f$ [bar]', self{i}.PS.strR.p); 
+        %         ax = plot_figure(self{i}.PS.strR, self{i}.PS.strP, 'phi', 'cstar', self.Misc.config, self.PD.CompleteOrIncomplete, ax, legend_name);
+        %     end
         
-        legend_name = {'$I_{sp}$', '$I_{vac}$'};
-        self.Misc.config.labelx = 'Equivalence Ratio $\phi$';
-        self.Misc.config.labely = 'Specific impulse $I$ [s]';
-        ax = plot_figure(mix1, mix2, 'phi', 'I_sp', self.Misc.config, self.PD.CompleteOrIncomplete);
-        ax = plot_figure(mix1, mix2, 'phi', 'I_vac', self.Misc.config, self.PD.CompleteOrIncomplete, ax);
-        set_legends(ax, legend_name, self.Misc.config)
-
-        self.Misc.config.labelx = '$Mixture ratio O/F$';
-        self.Misc.config.labely = 'Specific impulse $I$ [s]';
-        ax = plot_figure(mix1, mix2, 'FO', 'I_sp', self.Misc.config, self.PD.CompleteOrIncomplete);
-        ax = plot_figure(mix1, mix2, 'FO', 'I_vac', self.Misc.config, self.PD.CompleteOrIncomplete, ax);
-        set_legends(ax, legend_name, self.Misc.config)
+        %     self.Misc.config.labelx = 'Equivalence Ratio $\phi$';
+        %     self.Misc.config.labely = 'Temperature $T$ [K]';
+        %     ax = plot_figure(self.PS.strR, self.PS.strP, 'phi', 'T', self.Misc.config, self.PD.CompleteOrIncomplete);
+        %     for i = 2:length(self)
+        %         ax = plot_figure(self{i}.PS.strR, self{i}.PS.strP, 'phi', 'T', self.Misc.config, self.PD.CompleteOrIncomplete, ax, legend_name);
+        %     end
+        
+            legend_name = {'$I_{sp}$', '$I_{vac}$'};
+            self.Misc.config.labelx = 'Equivalence Ratio $\phi$';
+            self.Misc.config.labely = 'Specific impulse $I$ [s]';
+            ax = plot_figure(mix1, mix2, 'phi', 'I_sp', self.Misc.config, self.PD.CompleteOrIncomplete);
+            ax = plot_figure(mix1, mix2, 'phi', 'I_vac', self.Misc.config, self.PD.CompleteOrIncomplete, ax);
+            set_legends(ax, legend_name, self.Misc.config)
+    
+            self.Misc.config.labelx = 'Mixture ratio $O/F$';
+            self.Misc.config.labely = 'Specific impulse $I$ [s]';
+            ax = plot_figure(mix1, mix2, 'OF', 'I_sp', self.Misc.config, self.PD.CompleteOrIncomplete);
+            ax = plot_figure(mix1, mix2, 'OF', 'I_vac', self.Misc.config, self.PD.CompleteOrIncomplete, ax);
+            set_legends(ax, legend_name, self.Misc.config)
+        end
+        if isfield(self.Misc.FLAGS_PROP, 'Aratio')
+            if self.Misc.FLAGS_PROP.Aratio
+                legend_name = {'$I_{sp}$', '$I_{vac}$'};
+                self.Misc.config.labelx = 'Area ratio $A_e/A_t$';
+                self.Misc.config.labely = 'Specific impulse $I$ [s]';
+                ax = plot_figure(mix2, mix2, 'Aratio', 'I_sp', self.Misc.config, self.PD.CompleteOrIncomplete);
+                ax = plot_figure(mix2, mix2, 'Aratio', 'I_vac', self.Misc.config, self.PD.CompleteOrIncomplete, ax);
+                set_legends(ax, legend_name, self.Misc.config)
+            end
+        end
     %     for i = 2:length(self)
     %         ax = plot_figure(self{i}.PS.strR, self{i}.PS.strP, 'phi', 'I_sp', self.Misc.config, self.PD.CompleteOrIncomplete, ax, legend_name);
     %     end

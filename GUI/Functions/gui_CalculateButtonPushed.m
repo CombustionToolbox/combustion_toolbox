@@ -75,9 +75,17 @@ end
 function results = save_results(obj, app)
     % Save results
     N = length(app.PS.strR);
+    
+    if strcmpi(app.PD.ProblemType, 'ROCKET')
+        label_mix1 = 'strR';
+        label_mix2 = 'mix3';
+    else
+        label_mix1 = 'strR';
+        label_mix2 = 'strP';
+    end
     for i = N:-1:1
-        results(i).mix1 = app.PS.strR{i};
-        results(i).mix2 = app.PS.strP{i};
+        results(i).mix1 = app.PS.(label_mix1){i};
+        results(i).mix2 = app.PS.(label_mix2){i};
         results(i).ProblemType = app.PD.ProblemType;
         if ischar(obj.Reactants.Value)
             results(i).Reactants = '1';
@@ -119,6 +127,28 @@ function app = get_input_constrains(obj, app)
             % No additional constrains
         case {'DET_OVERDRIVEN', 'DET_OVERDRIVEN_R'} % * DET_OVERDRIVEN: CALCULATE OVERDRIVEN DETONATION
             app = set_prop(app, 'overdriven', obj.PR3.Value);
+        case {'ROCKET'} % * ROCKET: ROCKET PROPELLANT PERFORMANCE
+            % Get model
+            app.PD.FLAG_IAC = obj.FLAG_IAC.Value;
+            if ~obj.FLAG_IAC.Value
+                if ~isempty(obj.PP1.Value)
+                    app = set_prop(app, 'Aratio_c', obj.PP1.Value);
+                elseif ~isempty(obj.PP2.Value)
+                    app = set_prop(app, 'mass_flux', obj.PP2.Value);
+                else
+                    % Set lamp to Error color
+                    obj.Lamp.Color = obj.color_lamp_error;
+                    % Print error
+                    message = {'The FAC model needs an additional value! The contraction factor A_chamber/A_throat or the mass flux.'};
+                    uialert(obj.UIFigure, message, 'Warning', 'Icon', 'warning');
+                end
+            end
+            if ~isempty(obj.PR3.Value)
+                app = set_prop(app, 'Aratio_subsonic', obj.PR3.Value);
+            end
+            if ~isempty(obj.PP3.Value)
+                app = set_prop(app, 'Aratio_supersonic', obj.PP3.Value);
+            end
     end
     if contains(obj.Products.Value, 'complete', 'IgnoreCase', true)
         app.S.FLAG_COMPLETE = true;

@@ -49,7 +49,7 @@ function self = check_inputs(self)
                 if ~self.PD.FLAG_IAC
                     self = check_inputs_prop(self, 'Aratio_c');
                 end
-                if ~isempty(self.PD.Aratio)
+                if ~isempty(self.PD.Aratio.value)
                     self = check_inputs_prop(self, 'Aratio');
                 end
         end

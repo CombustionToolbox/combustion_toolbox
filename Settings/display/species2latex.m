@@ -34,4 +34,7 @@ function speciesLatex = species2latex(species)
     speciesLatex = strrep(speciesLatex, 'bLb', '$_{(L)}$');
     % Check concatenate $$
     speciesLatex = strrep(speciesLatex, '$$', '');
+    % Check suffix
+    index = regexp(speciesLatex, '_[a-zA-Z]');
+    speciesLatex(index) = '';
 end

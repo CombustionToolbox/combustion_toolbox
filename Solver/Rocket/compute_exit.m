@@ -35,7 +35,7 @@ function mix4 = compute_exit(self, mix2, mix3, mix4, Aratio)
         % Compute new estimate
         logP = compute_log_pressure_ratio(mix3, mix4, logP, Aratio);
         % Compute error
-        STOP = logP - logP0;
+        STOP = abs(logP - logP0);
         % Update guess
         logP0 = logP;
     end

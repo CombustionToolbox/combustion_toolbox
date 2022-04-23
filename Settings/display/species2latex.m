@@ -13,7 +13,7 @@ function speciesLatex = species2latex(species)
         pos1 = 1;
         for i=1:N
             pos2 = index(i) - 1;
-            speciesLatex = strcat(speciesLatex, species(pos1:pos2), '$_', species(pos2 + 1), '$');
+            speciesLatex = strcat(speciesLatex, species(pos1:pos2), '$_{', species(pos2 + 1), '}$');
             pos1 = pos2 + 2;
         end
         if pos1 < length(species) + 1
@@ -37,4 +37,6 @@ function speciesLatex = species2latex(species)
     % Check suffix
     index = regexp(speciesLatex, '_[a-zA-Z]');
     speciesLatex(index) = '';
+    % Check long numbers
+    speciesLatex = strrep(speciesLatex, '}_{', '');
 end

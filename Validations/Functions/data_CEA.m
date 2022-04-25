@@ -18,20 +18,20 @@ function data = data_CEA(varargin)
         data_nasa = read_CEA(filename{j});
         try
             % PROPERTIES
-            mix.p = data_nasa.P; % [bar]
-            mix.T = data_nasa.T; % [K]
-            mix.rho = data_nasa.rho; % [kg/m3]
-            mix.h = data_nasa.H; % [kJ/kg]
-            mix.e = data_nasa.U; % [kJ/kg]
-            mix.S = data_nasa.S; % [kJ/kg-K]
-            mix.g = data_nasa.G; % [kJ/kg]
-            mix.cP = data_nasa.cp; % [kJ/kg-K]
-            mix.gamma_s = data_nasa.gamma_s; % [-]
-            mix.cV = data_nasa.cp ./ mix.gamma_s; % [kJ/kg-K]
-            mix.DhT = data_nasa.cp .* (data_nasa.T-298.15); % [kJ/kg]
+            mix.p = data_nasa.P(:, end)'; % [bar]
+            mix.T = data_nasa.T(:, end)'; % [K]
+            mix.rho = data_nasa.rho(:, end)'; % [kg/m3]
+            mix.h = data_nasa.H(:, end)'; % [kJ/kg]
+            mix.e = data_nasa.U(:, end)'; % [kJ/kg]
+            mix.S = data_nasa.S(:, end)'; % [kJ/kg-K]
+            mix.g = data_nasa.G(:, end)'; % [kJ/kg]
+            mix.cP = data_nasa.cp(:, end)'; % [kJ/kg-K]
+            mix.gamma_s = data_nasa.gamma_s(:, end)'; % [-]
+            mix.cV = data_nasa.cp(:, end)' ./ mix.gamma_s; % [kJ/kg-K]
+            mix.DhT = data_nasa.cp(:, end)' .* (data_nasa.T(:, end)' - 298.15); % [kJ/kg]
             if isfield(data_nasa, 'dVdp_T')
-                mix.dVdp_T = data_nasa.dVdp_T; % [-]
-                mix.dVdT_p = data_nasa.dVdT_p; % [-]
+                mix.dVdp_T = data_nasa.dVdp_T(:, end)'; % [-]
+                mix.dVdT_p = data_nasa.dVdT_p(:, end)'; % [-]
             end
             if isfield(data_nasa,'rho2rho1')
                 try % reflected
@@ -53,7 +53,7 @@ function data = data_CEA(varargin)
                     for t = 1:NS
                         for k = length(data_nasa.X(i).mole):-1:1
                             if strcmpi(data_nasa.X(i).mole{k, 1}, species{t})
-                                mix.Xi(t, i) = data_nasa.X(i).mole{k, 2};
+                                mix.Xi(t, i) = data_nasa.X(i).mole{k, 2}(end);
                             end
                         end
                     end

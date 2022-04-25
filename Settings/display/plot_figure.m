@@ -1,29 +1,32 @@
 function ax = plot_figure(varargin)
+
+    % Default
+    config.linewidth = 1.8;
+    config.fontsize  = 18;
+    config.title = 'Figure';
+    config.labelx = '$x$';
+    config.labely = '$y$';
+
     if nargin == 4
-        if isstruct(varargin{1})
-            x = struct2vector(varargin{1},varargin{3});
+        if iscell(varargin{1})
+            x = cell2vector(varargin{1},varargin{3});
         else
             x = varargin{1};
         end
-        if isstruct(varargin{2})
-            y = struct2vector(varargin{2},varargin{4});
+        if iscell(varargin{2})
+            y = cell2vector(varargin{2},varargin{4});
         else
             y = varargin{2};
         end
-        config.linewidth = 1.8;
-        config.fontsize  = 18;
-        config.tit = {'Figure'};
-        config.labelx = '$x$';
-        config.labely = '$y$';
     end
     if nargin == 5
-        if isstruct(varargin{1})
-            x = struct2vector(varargin{1},varargin{3});
+        if iscell(varargin{1})
+            x = cell2vector(varargin{1},varargin{3});
         else
             x = varargin{1};
         end
-        if isstruct(varargin{2})
-            y = struct2vector(varargin{2},varargin{4});
+        if iscell(varargin{2})
+            y = cell2vector(varargin{2},varargin{4});
         else
             y = varargin{2};
         end
@@ -54,7 +57,7 @@ function ax = plot_figure(varargin)
         legend_name = legend_name{1,1};
     end
     %%% CHECK TIT FOR LATEX
-    config.tit = strrep(config.tit,'%','\%');
+    config.title = strrep(config.title,'%','\%');
     %%%
     % Plot configuration
     plot(ax, x, y, 'LineWidth', config.linewidth);
@@ -74,7 +77,7 @@ function ax = set_figure(config, x, y)
     hold(ax, 'on'); axis(ax, 'tight');
     xlabel(ax, config.labelx,'FontSize',config.fontsize,'interpreter','latex');
     ylabel(ax, config.labely,'FontSize',config.fontsize,'interpreter','latex');
-    title({strcat('$',config.tit,'$')},'Interpreter','latex','FontSize',config.fontsize+4);
+    title({strcat('$',config.title,'$')},'Interpreter','latex','FontSize',config.fontsize+4);
 % 	xlim(ax, [min(x),1.02*max(x)])
 %     ylim(ax, [min(y),1.02*max(y)])
 end

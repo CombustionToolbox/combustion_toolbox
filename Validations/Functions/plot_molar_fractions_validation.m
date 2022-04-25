@@ -45,7 +45,11 @@ function f = plot_molar_fractions_validation(results1, results2, varname_x, varn
     if FLAG_Y_AXIS
         xlim(axes, [min(results1.(varname_x)), max(results1.(varname_x))])
         ylim(axes, [mintol_display, 1])
-        xlabel(axes, 'Equivalence ratio, $\phi$','FontSize',config.fontsize,'interpreter','latex');
+        if strcmpi(varname_x, 'phi')
+            xlabel(axes, 'Equivalence ratio, $\phi$','FontSize',config.fontsize,'interpreter','latex');
+        elseif strcmpi(varname_x, 'OF')
+            xlabel(axes, 'Mixture ratio, $O/F$','FontSize',config.fontsize,'interpreter','latex');
+        end
         ylabel(axes, 'Molar fraction, $X_i$','FontSize',config.fontsize,'interpreter','latex');
     else
         xlim(axes, [mintol_display, 1])
@@ -128,6 +132,8 @@ end
 function dataname = get_dataname(var)
     if strcmpi(var, 'phi')
         dataname = 'PD.phi.value';
+    elseif strcmpi(var, 'OF')
+        dataname = 'PS.strR';
     else
         dataname = 'PS.strP';
     end

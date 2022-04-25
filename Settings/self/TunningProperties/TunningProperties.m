@@ -31,6 +31,7 @@ function self = TunningProperties()
     % * Flags
     self.FLAG_FAST = false;     % Flag indicating use guess composition of the previous computation
     % * Chemical equilibrium TP, TV
+    self.itMax_gibbs = 50;      % Max number of iterations - gibbs minimization method
     self.tolN = 1e-15;          % Tolerance of the gibbs minimization method
     self.tolE = 1e-6;           % Tolerance of the mass balance
     self.tol_pi_e = 1e-4;       % Tolerance of the dimensionless Lagrangian multiplier - ions

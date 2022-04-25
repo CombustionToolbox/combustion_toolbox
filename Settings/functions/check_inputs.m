@@ -45,6 +45,13 @@ function self = check_inputs(self)
                 end
             case {'DET_OVERDRIVEN', 'DET_OVERDRIVEN_R'} % * DET_OVERDRIVEN: Calculate overdriven detonations
                 self = check_inputs_prop(self, 'overdriven');
+            case {'ROCKET'} % * ROCKET: Rocket propellant performance
+                if ~self.PD.FLAG_IAC
+                    self = check_inputs_prop(self, 'Aratio_c');
+                end
+                if ~isempty(self.PD.Aratio.value)
+                    self = check_inputs_prop(self, 'Aratio');
+                end
         end
     end
     self.Misc.FLAG_CHECK_INPUTS = true;

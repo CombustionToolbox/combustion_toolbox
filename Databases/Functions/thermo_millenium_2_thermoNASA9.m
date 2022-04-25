@@ -33,6 +33,18 @@ function thermo_millenium_2_thermoNASA9(filename)
             N = 18 - ind_space(1) - 1 - N_SUFFIX;
             white_spaces = blanks(N);
             species = strcat(tline(1:ind_space(1)-1), SUFFIX);
+            if contains(tline, 'excited', 'IgnoreCase')
+                species = replace(species, SUFFIX, strcat('bexb', SUFFIX));
+            end
+            if contains(tline, 'singlet', 'IgnoreCase')
+                species = replace(species, SUFFIX, strcat('bsingletb', SUFFIX));
+            elseif contains(tline, 'doublet', 'IgnoreCase')
+                species = replace(species, SUFFIX, strcat('bdoubletb', SUFFIX));
+            elseif contains(tline, 'triplet', 'IgnoreCase')
+                species = replace(species, SUFFIX, strcat('btripletb', SUFFIX));
+            elseif contains(tline, 'quartet', 'IgnoreCase')
+                species = replace(species, SUFFIX, strcat('bquartetb', SUFFIX));
+            end
             species = replace(species, '*', ' ');
             species = replace(species, '=', '_');
             species = replace(species, 'Al', 'AL');

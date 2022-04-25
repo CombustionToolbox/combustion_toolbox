@@ -9,8 +9,12 @@ function gui_ProblemTypeValueChanged(obj)
         case 'TP' % * TP: Equilibrium composition at defined T and p
             % Update input items
             obj.PP1.Visible = 'on'; obj.PP2.Visible = 'on';
+            obj.text_P1.Visible = 'on';
+            % Visible flags
+            obj.FLAG_IAC.Visible = 'off';
             % Update Additional constraints panel
             obj.AdditionalconstraintsPanel.Visible = 'off';
+            obj.AdditionalconstraintsPanel.Title = 'Additional constraints';
             % Set default input values
             obj.PR1.Value = '300'; 
             obj.PR2.Value = '1';
@@ -25,10 +29,15 @@ function gui_ProblemTypeValueChanged(obj)
             obj.PP1.Visible = 'off'; obj.PP2.Visible = 'on';
             obj.PR3.Visible = 'off'; obj.PR4.Visible = 'off';
             obj.PP3.Visible = 'off'; obj.PP4.Visible = 'off'; 
+            obj.text_P1.Visible = 'on';
+            % Visible flags
+            obj.FLAG_IAC.Visible = 'off';
             % Update Additional constraints panel
             obj.AdditionalconstraintsPanel.Visible = 'on';
+            obj.AdditionalconstraintsPanel.Title = 'Additional constraints';
             obj.text_RP3.Text = 'Constant Enthalpy: hP = hR';
             obj.text_RP.Visible = 'on'; obj.text_R2.Visible = 'off'; obj.text_P2.Visible = 'off';
+            obj.text_R2.Text = 'Reactants'; obj.text_P2.Text = 'Products';
             obj.text_RP4.Visible = 'off';
             % Set default input values
             obj.PR1.Value = '300';
@@ -43,9 +52,14 @@ function gui_ProblemTypeValueChanged(obj)
             obj.PP1.Visible = 'off'; obj.PP2.Visible = 'on';
             obj.PR3.Visible = 'off'; obj.PR4.Visible = 'off';
             obj.PP3.Visible = 'off'; obj.PP4.Visible = 'off';
+            obj.text_P1.Visible = 'on';
+            % Visible flags
+            obj.FLAG_IAC.Visible = 'off';
             % Update Additional constraints panel
             obj.AdditionalconstraintsPanel.Visible = 'on';
+            obj.AdditionalconstraintsPanel.Title = 'Additional constraints';
             obj.text_RP.Visible = 'on'; obj.text_R2.Visible = 'off'; obj.text_P2.Visible = 'off';
+            obj.text_R2.Text = 'Reactants'; obj.text_P2.Text = 'Products';
             obj.text_RP3.Text = 'Constant Entropy: SP = SR';
             obj.text_RP4.Visible = 'off'; 
             % Set default input values
@@ -61,9 +75,14 @@ function gui_ProblemTypeValueChanged(obj)
             obj.PP1.Visible = 'on'; obj.PP2.Visible = 'off'; 
             obj.PR3.Visible = 'off'; obj.PR4.Visible = 'off';
             obj.PP3.Visible = 'off'; obj.PP4.Visible = 'off'; 
+            obj.text_P1.Visible = 'on';
+            % Visible flags
+            obj.FLAG_IAC.Visible = 'off';
             % Update Additional constraints panel
             obj.AdditionalconstraintsPanel.Visible = 'on';
+            obj.AdditionalconstraintsPanel.Title = 'Additional constraints';
             obj.text_RP.Visible = 'on'; obj.text_R2.Visible = 'off'; obj.text_P2.Visible = 'off';
+            obj.text_R2.Text = 'Reactants'; obj.text_P2.Text = 'Products';
             obj.text_RP3.Text = 'Constant Volume: vP = vR';
             obj.text_RP4.Visible = 'off'; 
             % Set default input values
@@ -80,9 +99,14 @@ function gui_ProblemTypeValueChanged(obj)
             obj.PP1.Visible = 'off'; obj.PP2.Visible = 'off'; 
             obj.PR3.Visible = 'off'; obj.PR4.Visible = 'off';
             obj.PP3.Visible = 'off'; obj.PP4.Visible = 'off'; 
+            obj.text_P1.Visible = 'on';
+            % Visible flags
+            obj.FLAG_IAC.Visible = 'off';
             % Update Additional constraints panel
             obj.AdditionalconstraintsPanel.Visible = 'on';
+            obj.AdditionalconstraintsPanel.Title = 'Additional constraints';
             obj.text_RP.Visible = 'on'; obj.text_R2.Visible = 'off'; obj.text_P2.Visible = 'off';
+            obj.text_R2.Text = 'Reactants'; obj.text_P2.Text = 'Products';
             obj.text_RP3.Text = 'Constant Internal energy: eP = eR';
             obj.text_RP4.Visible = 'on'; obj.text_RP4.Text = 'Constant Volume: vP = vR';
             % Set default input values
@@ -98,9 +122,14 @@ function gui_ProblemTypeValueChanged(obj)
             obj.PP1.Visible = 'off'; obj.PP2.Visible = 'off'; 
             obj.PR3.Visible = 'off'; obj.PR4.Visible = 'off';
             obj.PP3.Visible = 'off'; obj.PP4.Visible = 'on'; 
+            obj.text_P1.Visible = 'on';
+            % Visible flags
+            obj.FLAG_IAC.Visible = 'off';
             % Update Additional constraints panel
             obj.AdditionalconstraintsPanel.Visible = 'on';
+            obj.AdditionalconstraintsPanel.Title = 'Additional constraints';
             obj.text_RP.Visible = 'on'; obj.text_R2.Visible = 'off'; obj.text_P2.Visible = 'off';
+            obj.text_R2.Text = 'Reactants'; obj.text_P2.Text = 'Products';
             obj.text_RP3.Text = 'Constant Entropy: SP = SR';
             obj.text_RP4.Visible = 'on'; obj.text_RP4.Text = 'Volume Products/Reactants';
             % Set default input values
@@ -117,9 +146,14 @@ function gui_ProblemTypeValueChanged(obj)
             obj.PP1.Visible = 'off'; obj.PP2.Visible = 'off';
             obj.PR3.Visible = 'on'; obj.PR4.Visible = 'on';
             obj.PP3.Visible = 'off'; obj.PP4.Visible = 'off'; 
+            obj.text_P1.Visible = 'on';
+            % Visible flags
+            obj.FLAG_IAC.Visible = 'off';
             % Update Additional constraints panel
             obj.AdditionalconstraintsPanel.Visible = 'on';
+            obj.AdditionalconstraintsPanel.Title = 'Additional constraints';
             obj.text_RP.Visible ='off'; obj.text_R2.Visible = 'on'; obj.text_P2.Visible = 'off';
+            obj.text_R2.Text = 'Reactants'; obj.text_P2.Text = 'Products';
             obj.text_RP3.Text = 'Shock velocity [m/s]'; 
             obj.text_RP4.Visible = 'on'; obj.text_RP4.Text = 'Mach number [-]'; 
             % Set default input values
@@ -136,9 +170,14 @@ function gui_ProblemTypeValueChanged(obj)
             obj.PP1.Visible = 'off'; obj.PP2.Visible = 'off';
             obj.PR3.Visible = 'on'; obj.PR4.Visible = 'on';
             obj.PP3.Visible = 'off'; obj.PP4.Visible = 'off'; 
+            obj.text_P1.Visible = 'on';
+            % Visible flags
+            obj.FLAG_IAC.Visible = 'off';
             % Update Additional constraints panel
             obj.AdditionalconstraintsPanel.Visible = 'on';
+            obj.AdditionalconstraintsPanel.Title = 'Additional constraints';
             obj.text_RP.Visible ='off'; obj.text_R2.Visible = 'on'; obj.text_P2.Visible = 'off';
+            obj.text_R2.Text = 'Reactants'; obj.text_P2.Text = 'Products';
             obj.text_RP3.Text = 'Shock velocity [m/s]'; 
             obj.text_RP4.Visible = 'on'; obj.text_RP4.Text = 'Mach number [-]';
             % Set default input values
@@ -155,8 +194,12 @@ function gui_ProblemTypeValueChanged(obj)
             obj.PP1.Visible = 'off'; obj.PP2.Visible = 'off';
             obj.PR3.Visible = 'off'; obj.PR4.Visible = 'off';
             obj.PP3.Visible = 'off'; obj.PP4.Visible = 'off'; 
+            obj.text_P1.Visible = 'on';
+            % Visible flags
+            obj.FLAG_IAC.Visible = 'off';
             % Update Additional constraints panel
             obj.AdditionalconstraintsPanel.Visible = 'off';
+            obj.AdditionalconstraintsPanel.Title = 'Additional constraints';
             % Set default input values
             obj.PR1.Value = '300';
             obj.PR2.Value = '1';
@@ -168,16 +211,45 @@ function gui_ProblemTypeValueChanged(obj)
             % Update input items
             obj.PP1.Visible = 'off'; obj.PP2.Visible = 'off';
             obj.PR3.Visible = 'on'; obj.PR4.Visible = 'off';
-            obj.PP3.Visible = 'off'; obj.PP4.Visible = 'off'; 
+            obj.PP3.Visible = 'off'; obj.PP4.Visible = 'off';
+            obj.text_P1.Visible = 'on';
+            % Visible flags
+            obj.FLAG_IAC.Visible = 'off';
             % Update Additional constraints panel
             obj.AdditionalconstraintsPanel.Visible = 'on';
+            obj.AdditionalconstraintsPanel.Title = 'Additional constraints';
             obj.text_RP.Visible ='off'; obj.text_R2.Visible = 'on'; obj.text_P2.Visible = 'off';
+            obj.text_R2.Text = 'Reactants'; obj.text_P2.Text = 'Products';
             obj.text_RP3.Text = 'Overdriven parameter [-]'; 
             obj.text_RP4.Visible = 'off'; 
             % Set default input values
             obj.PR1.Value = '300';
             obj.PR2.Value = '1';
             obj.PR3.Value = '2';
+            % Set visible item volume ratio
+            obj.text_vP_vR.Visible = 'off'; 
+            % Set invisible shocks/detonation items
+            gui_visible_shocks(obj, true);
+        case {'ROCKET'} % * ROCKET: ROCKET PROPELLANT PERFORMANCE
+            % Update input items
+            obj.PP1.Visible = 'off'; obj.PP2.Visible = 'off';
+            obj.PR3.Visible = 'on'; obj.PR4.Visible = 'off';
+            obj.PP3.Visible = 'on'; obj.PP4.Visible = 'off'; 
+            obj.text_P1.Visible = 'off';
+            % Visible flags
+            obj.FLAG_IAC.Visible = 'on';
+            % Update Additional constraints panel
+            obj.AdditionalconstraintsPanel.Visible = 'on';
+            obj.AdditionalconstraintsPanel.Title = 'Optional parameters';
+            obj.text_RP3.Text = 'Area ratios A/A_throat';
+            obj.text_RP.Visible = 'off'; obj.text_R2.Visible = 'on'; obj.text_P2.Visible = 'on';
+            obj.text_R2.Text = 'Subsonic'; obj.text_P2.Text = 'Supersonic';
+            obj.text_RP4.Visible = 'off';
+            % Set default input values
+            obj.PR1.Value = '300';
+            obj.PR2.Value = '1';
+            obj.PR3.Value = '';
+            obj.PP3.Value = '';
             % Set visible item volume ratio
             obj.text_vP_vR.Visible = 'off'; 
             % Set invisible shocks/detonation items

@@ -96,6 +96,9 @@ function app = gui_set_reactants(obj, event, app)
             gui_ProductsValueChanged(obj);
             % Update Listbox (extended settings)
             obj.listbox_LS.Items = obj.listbox_Products.Items;
+        case '17' % RP1 + LOX
+            app.PD.S_Fuel = {'RP_1'};
+            app.PD.S_Oxidizer = {'O2bLb'};
         otherwise % SET NEW SPECIES
             try
                 species = gui_seeker_exact_value(obj, event, app.S.LS_DB);

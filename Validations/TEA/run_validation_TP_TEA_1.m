@@ -28,6 +28,7 @@ function problems_solved = run_validation_TP_TEA_1
     results_CT = run_CT('ProblemType', 'TP', 'Temperature', T, 'Pressure', p, ...
         'Species', LS, 'S_Fuel', Fuel, 'N_Fuel', N_Fuel, 'S_Oxidizer', Oxidizer,...
         'S_Inert', Inert, 'tolN', tolN);
+    problems_solved = length(results_CT.PD.range);
     % Display validation (plot)
     % * Molar fractions
     fig1 = plot_molar_fractions_validation(results_CT, results_TEA, 'T', 'Xi', DisplaySpecies, 'tolN', tolN, 'nfrec', 3);

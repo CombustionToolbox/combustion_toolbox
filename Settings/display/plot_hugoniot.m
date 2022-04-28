@@ -16,7 +16,7 @@ else
     ax = set_figure(config);
 end
 %%% CHECK TITLE COMPATIBILITY LATEX
-config.tit = strrep(config.tit,'%','\%');
+config.title = strrep(config.title,'%','\%');
 %%%
 x1 = cell2vector(mix1, 'rho');
 x2 = cell2vector(mix2, 'rho');
@@ -38,7 +38,7 @@ function ax = set_figure(config)
     grid(ax, 'on'); box(ax, 'on'); hold(ax, 'on'); axis(ax, 'tight');
     xlabel(ax, config.labelx,'FontSize',config.fontsize,'interpreter','latex');
     ylabel(ax, config.labely,'FontSize',config.fontsize,'interpreter','latex');
-    title({strcat('$',config.tit,'$')},'Interpreter','latex','FontSize',config.fontsize+4);
+    title({strcat('$',config.title,'$')},'Interpreter','latex','FontSize',config.fontsize+4);
     set(ax,'yscale','log')
     xlim(ax, [0, 1])
     ylim(ax, [1, 10000])

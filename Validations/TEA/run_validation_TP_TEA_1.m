@@ -21,7 +21,7 @@ function problems_solved = run_validation_TP_TEA_1
     T = linspace(Temp(1), Temp(end), 300);
     p = logspace(-5, 2, 300);
     % Tunning paramenters
-    tolN = 1e-30;
+    tolN = 1e-32;
     % Custom Plots 
     DisplaySpecies = LS;
     % Combustion Toolbox

@@ -37,7 +37,7 @@ function [N0, STOP, STOP_ions] = equilibrium_ions(self, pP, TP, mix1, guess_mole
     NP = NP_0;
     
     it = 0;
-    itMax = 50 + round(S.NS/2);
+    itMax = TN.itMax_gibbs;
     SIZE = -log(TN.tolN);
     STOP = 1.;
     flag_ions_first = true;
@@ -92,12 +92,12 @@ function [N0, STOP, STOP_ions] = equilibrium_ions(self, pP, TP, mix1, guess_mole
         NP_log = log(NP) + lambda * x(end);
         % Apply antilog
         [N0, NP] = apply_antilog(N0, NP_log, temp_ind);
+        % Compute STOP criteria
+        STOP = compute_STOP(NP_0, NP, x(end), N0(temp_ind, 1), x(1:temp_NS));
         % Update temp values in order to remove species with moles < tolerance
         [temp_ind, temp_ind_swt, temp_ind_nswt, temp_ind_ions, ~, temp_NS, temp_ind_E, A22, flag_ions_first] = update_temp(N0, N0(temp_ind, 1), temp_ind, temp_ind_swt, temp_ind_nswt, temp_ind_E, E, temp_ind_ions, A22, NP, SIZE, flag_ions_first);
         % Update matrix A
         [A1, temp_NS0] = update_matrix_A1(A0, A1, temp_NS, temp_NS0, temp_ind, temp_ind_E);
-        % Compute STOP criteria
-        STOP = compute_STOP(NP_0, NP, x(end), N0(temp_ind, 1), x(1:temp_NS));
     end
     % Check convergence of charge balance (ionized species)
     [N0, STOP_ions] = check_convergence_ions(N0, A0, E.ind_E, temp_ind_nswt, temp_ind_ions, TN.tolN, TN.tol_pi_e);
@@ -204,9 +204,9 @@ end
 
 function lambda = relax_factor(NP, n, n_log_new, DeltaNP, SIZE)
     % Compute relaxation factor
-    bool = log(n/NP) <= -SIZE & n_log_new >= 0;
+    FLAG_MINOR = n/NP <= 1e-8 & n_log_new >= 0;
     lambda = 2./max(5*abs(DeltaNP), abs(n_log_new));          
-    lambda(bool) = abs(-log(n(bool)/NP) - 9.2103404 ./ (n_log_new(bool) - DeltaNP));
+    lambda(FLAG_MINOR) = abs((-log(n(FLAG_MINOR)/NP) - 9.2103404) ./ (n_log_new(FLAG_MINOR) - DeltaNP));
     lambda = min(1, min(lambda));
 end
 

@@ -96,7 +96,7 @@ function [N0, STOP] = equilibrium_reduced(self, pP, TP, mix1, guess_moles)
             b = update_vector_b(A0, N0, NP, NatomE, temp_ind, temp_ind_nswt, temp_ind_swt, muRT);
             % Solve of the linear system A*x = b
             x = A\b;
-            % Check inf or nan values
+            % Check nan or inf values
             x(isinf(x) | isnan(x)) = 0;
             % Extract solution
             pi_i = x(1:temp_NE);
@@ -105,22 +105,20 @@ function [N0, STOP] = equilibrium_reduced(self, pP, TP, mix1, guess_moles)
             % Compute correction moles of gases
             Delta_ln_nj = update_Delta_ln_nj(A0, pi_i, Delta_ln_NP, muRT, temp_ind_nswt);
             % Calculate correction factor
-            lambda = relax_factor(NP, N0(temp_ind, 1), [Delta_ln_nj; Delta_nj], Delta_ln_NP, temp_NG, SIZE);
+            lambda = relax_factor(NP, N0(temp_ind, 1), [Delta_ln_nj; Delta_nj], Delta_ln_NP, temp_NG);
             % Apply correction
             N0(temp_ind_nswt, 1) = exp(log(N0(temp_ind_nswt, 1)) + lambda * Delta_ln_nj);
             N0(temp_ind_swt, 1) = N0(temp_ind_swt, 1) + lambda * Delta_nj;
             NP = exp(log(NP) + lambda * Delta_ln_NP);
             % Compute STOP criteria
-            STOP = compute_STOP(NP_0, NP, Delta_ln_NP, N0(temp_ind, 1), [Delta_ln_nj; Delta_nj], temp_NG, A0(temp_ind, :), NatomE_tol, max_NatomE, TN.tolE);
-            % Update guess
-            NP_0 = NP;
+            STOP = compute_STOP(NP, Delta_ln_NP, N0(temp_ind, 1), [Delta_ln_nj; Delta_nj], temp_NG, A0(temp_ind, :), NatomE, max_NatomE, TN.tolE);
             % Update temp values in order to remove species with moles < tolerance
             [temp_ind, temp_ind_swt, temp_ind_nswt, temp_NG, temp_NS, N0] = update_temp(N0, N0(temp_ind, 1), temp_ind, temp_ind_swt, temp_ind_nswt, NP, SIZE);
             % Debug 
-%             aux_lambda(it) = lambda;
-%             aux_STOP(it) = STOP;
+            aux_lambda(it) = lambda;
+            aux_STOP(it) = STOP;
         end
-%         debug_plot_error(it, aux_STOP, aux_lambda);
+        debug_plot_error(it, aux_STOP, aux_lambda);
     end
 
     function A = check_singularity(A, it)
@@ -233,23 +231,22 @@ function [temp_ind, temp_ind_swt] = check_cryogenic(temp_ind, temp_ind_swt, temp
     temp_ind = temp_ind(~ismember(temp_ind, temp_ind_cryogenic));
     temp_ind_swt = temp_ind_swt(~ismember(temp_ind_swt, temp_ind_cryogenic));
 end
-
-function lambda = relax_factor(NP, n, eta, Delta_ln_NP, temp_NG, SIZE)
+function lambda = relax_factor(NP, ni, eta, Delta_ln_NP, temp_NG)
     % Compute relaxation factor
-    FLAG_MINOR = n(1:temp_NG)/NP <= 1e-8 & eta(1:temp_NG) >= 0;
-    lambda = 2./max(5*abs(Delta_ln_NP), abs(eta));          
-    lambda(FLAG_MINOR) = abs((-log(n(FLAG_MINOR)/NP) - 9.2103404) ./ (eta(FLAG_MINOR) - Delta_ln_NP));
-    lambda = min(1, min(lambda));
+    FLAG = eta(1:temp_NG) > 0;
+    FLAG_MINOR = ni(1:temp_NG) / NP <= 1e-8 & FLAG;
+    lambda1 = 2./max(5*abs(Delta_ln_NP), abs(eta(FLAG)));
+    lambda2 = min(abs((-log(ni(FLAG_MINOR)/NP) - 9.2103404) ./ (eta(FLAG_MINOR) - Delta_ln_NP)));
+    lambda = min([1; lambda1; lambda2]);
 end
 
-function STOP = compute_STOP(NP_0, NP, DeltaNP, N0, DeltaN0, temp_NG, A0, NatomE_tol, max_NatomE, tolE)
-    DeltaN1 = N0 .* abs(DeltaN0) / NP;
-    DeltaN1(temp_NG+1:end) = abs(DeltaN0(temp_NG+1:end)) / NP;
-    DeltaN2 = NP_0 * abs(DeltaNP) / NP;
-    Deltab = max(abs(NatomE_tol - sum(N0 .* A0, 1))) / max_NatomE;
-    if Deltab < tolE
-        Deltab = 0;
-    end
+function STOP = compute_STOP(NP, DeltaNP, N0, DeltaN0, temp_NG, A0, NatomE, max_NatomE, tolE)
+    NPi = sum(N0);
+    DeltaN1 = N0 .* abs(DeltaN0) / NPi;
+    DeltaN1(temp_NG+1:end) = abs(DeltaN0(temp_NG+1:end)) / NPi;
+    DeltaN2 = NP * abs(DeltaNP) / NPi;
+    Deltab = abs(NatomE - sum(N0 .* A0, 1)');
+    Deltab = max(Deltab(NatomE > tolE));
     STOP = max(max(max(DeltaN1), DeltaN2), Deltab);
 end
 

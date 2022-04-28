@@ -38,6 +38,7 @@ function [N0, STOP, STOP_ions] = equilibrium_ions(self, pP, TP, mix1, guess_mole
     
     it = 0;
     itMax = TN.itMax_gibbs;
+
     SIZE = -log(TN.tolN);
     STOP = 1.;
     flag_ions_first = true;
@@ -100,7 +101,7 @@ function [N0, STOP, STOP_ions] = equilibrium_ions(self, pP, TP, mix1, guess_mole
         [A1, temp_NS0] = update_matrix_A1(A0, A1, temp_NS, temp_NS0, temp_ind, temp_ind_E);
     end
     % Check convergence of charge balance (ionized species)
-    [N0, STOP_ions] = check_convergence_ions(N0, A0, E.ind_E, temp_ind_nswt, temp_ind_ions, TN.tolN, TN.tol_pi_e);
+    [N0, STOP_ions] = check_convergence_ions(N0, A0, E.ind_E, temp_ind_nswt, temp_ind_ions, TN.tolN, TN.tol_pi_e, TN.itMax_ions);
 end
 % NESTED FUNCTIONS
 function g0 = set_g0(ls, TP, DB)
@@ -235,26 +236,25 @@ function STOP = compute_STOP(NP_0, NP, DeltaNP, N0, DeltaN0)
     STOP  = max(max(DeltaN1), DeltaN2);
 end
 
-function [N0, STOP] = check_convergence_ions(N0, A0, ind_E, temp_ind_nswt, temp_ind_ions, TOL, TOL_pi)
+function [N0, STOP] = check_convergence_ions(N0, A0, ind_E, temp_ind_nswt, temp_ind_ions, TOL, TOL_pi, itMax)
     % Check convergence of ionized species
     STOP = 0;
     if any(temp_ind_ions)
         [lambda_ions, ~] = ions_factor(N0, A0, ind_E, temp_ind_nswt, temp_ind_ions);
         if abs(lambda_ions) > TOL_pi
-            [N0, STOP] = recompute_ions(N0, A0, ind_E, temp_ind_nswt, temp_ind_ions, lambda_ions, TOL, TOL_pi);
+            [N0, STOP] = recompute_ions(N0, A0, ind_E, temp_ind_nswt, temp_ind_ions, lambda_ions, TOL, TOL_pi, itMax);
         end
     end
 end
 
-function [N0, STOP] = recompute_ions(N0, A0, ind_E, temp_ind_nswt, temp_ind_ions, lambda_ions, TOL, TOL_pi)
+function [N0, STOP] = recompute_ions(N0, A0, ind_E, temp_ind_nswt, temp_ind_ions, lambda_ions, TOL, TOL_pi, itMax)
     % Reestimate composition of ionized species
     
     % Parameters
     A0_ions = A0(temp_ind_ions, ind_E);
     STOP = 1;
-    itmax = 30;
     it = 0;
-    while STOP > TOL_pi && it < itmax
+    while STOP > TOL_pi && it < itMax
         it = it + 1;
         % Apply correction
         N0_ions =  log(N0(temp_ind_ions, 1)) + A0_ions * lambda_ions;

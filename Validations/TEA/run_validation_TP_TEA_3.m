@@ -27,7 +27,7 @@ function problems_solved = run_validation_TP_TEA_3
     T = Temp;
     p = Pressure;
     % Tunning paramenters
-    tolN = 1e-30;
+    tolN = 1e-32;
     % Custom Plots 
     DisplaySpecies = LS;
     mintol = 1e-21;

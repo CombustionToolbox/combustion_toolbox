@@ -101,8 +101,8 @@ function [N0, STOP] = equilibrium(self, pP, TP, mix1, guess_moles)
             it = it + 1;
             % Chemical potential
             muRT(temp_ind_nswt) =  muRT_0(temp_ind_nswt) + log(N0(temp_ind_nswt, 1) / NP) + log(pP);
-            % Gibbs free energy [cal/g]
-            Gibbs(it) = dot(N0(:, 1), muRT * R0TP) / dot(N0(:, 1), W) / 4186.8;
+            % Gibbs free energy [cal/g] (debug)
+%             Gibbs(it) = dot(N0(:, 1), muRT * R0TP) / dot(N0(:, 1), W) / 4186.8;
 %             fprintf('Gibbs: %f\n', Gibbs(it));
             % Construction of matrix A
             A = update_matrix_A(A0_T, A1, A22, N0, NP, temp_ind, temp_ind_nswt, temp_ind_swt, temp_ind_E, temp_NG);
@@ -112,8 +112,10 @@ function [N0, STOP] = equilibrium(self, pP, TP, mix1, guess_moles)
             b = update_vector_b(A0, N0, NP, NatomE, temp_ind, temp_ind_nswt, temp_ind_E, muRT);
             % Solve of the linear system A*x = b
             x = A\b;
+            % Omit nan or inf values
+            x(isnan(x) | isinf(x)) = 0;
             % Calculate correction factor
-            lambda = relax_factor(NP, N0(temp_ind, 1), x(1:temp_NS), x(end), temp_NG, SIZE);
+            lambda = relax_factor(NP, N0(temp_ind, 1), x(1:temp_NS), x(end), temp_NG);
 %             lambda = lambda_0(i);
             % Apply correction
             N0(temp_ind_nswt, 1) = exp(log(N0(temp_ind_nswt, 1)) + lambda * x(1:temp_NG));
@@ -129,7 +131,7 @@ function [N0, STOP] = equilibrium(self, pP, TP, mix1, guess_moles)
 %             aux_lambda(it) = min(lambda);
 %             aux_STOP(it) = STOP;
         end
-%         debug_plot_error(it, aux_STOP, Gibbs);
+%         debug_plot_error(it, aux_STOP, aux_lambda);
     end
 
     function A = check_singularity(A, it)
@@ -280,12 +282,13 @@ function b = update_vector_b(A0, N0, NP, NatomE, temp_ind, temp_ind_nswt, temp_i
     b = [-muRT(temp_ind); NatomE - bi; NP_0];
 end
 
-function lambda = relax_factor(NP, ni, ni_log, DeltaNP, temp_NG, SIZE)
+function lambda = relax_factor(NP, ni, eta, Delta_ln_NP, temp_NG)
     % Compute relaxation factor
-    FLAG_MINOR = ni(1:temp_NG) / NP <= 1e-8 & abs(ni_log(1:temp_NG)) > 0;
-    lambda = 2./max(5*abs(DeltaNP), abs(ni_log));
-    lambda(FLAG_MINOR) = abs((-log(ni(FLAG_MINOR)/NP) - 9.2103404) ./ (ni_log(FLAG_MINOR) - DeltaNP));
-    lambda = min(1, min(lambda));
+    FLAG = eta(1:temp_NG) > 0;
+    FLAG_MINOR = ni(1:temp_NG) / NP <= 1e-8 & FLAG;
+    lambda1 = 2./max(5*abs(Delta_ln_NP), abs(eta(FLAG)));
+    lambda2 = min(abs((-log(ni(FLAG_MINOR)/NP) - 9.2103404) ./ (eta(FLAG_MINOR) - Delta_ln_NP)));
+    lambda = min([1; lambda1; lambda2]);
 end
 
 function [N0, NP] = apply_antilog(N0, NP_log, temp_ind_nswt)
@@ -299,9 +302,6 @@ function [STOP, DeltaN1, DeltaN2, Deltab] = compute_STOP(NP, DeltaNP, N0, DeltaN
     DeltaN1(temp_NG+1:end) = abs(DeltaN0(temp_NG+1:end)) / NPi;
     DeltaN2 = NP * abs(DeltaNP) / NPi;
     Deltab = abs(NatomE - sum(N0 .* A0, 1)');
-    Deltab = max(Deltab(NatomE > tolE));
-%     if max(Deltab) < max_NatomE * tolE
-%         Deltab = 0;
-%     end
+    Deltab = max(Deltab(NatomE > max_NatomE * tolE));
     STOP = max(max(max(DeltaN1), DeltaN2), Deltab);
 end

@@ -20,12 +20,24 @@ function mix2 = equilibrate(self, mix1, pP, varargin)
     [guess, guess_moles] = get_guess(self, mix1, pP, attr_name, mix2);
     % root finding: find the value x that satisfies f(x) = mix2.xx(x) - mix1.xx = 0
     [T, STOP] = root_finding(self, mix1, pP, attr_name, guess, guess_moles);
+    % 
+    try
+        self.eta_c = self.Tcurve(mix1.OF) / T;
+        T = self.eta_c * T;
+        FLAG = true;
+    catch
+        FLAG = false;
+    end
     % compute properties
     mix2 = equilibrate_T(self, mix1, pP, T, guess_moles);
     % check convergence in case the problemType is TP (defined Temperature and Pressure)
     print_convergence(mix2.error_moles, self.TN.tolN, mix2.error_moles_ions, self.TN.tol_pi_e, self.PD.ProblemType)
     % save error - root finding
     mix2.error_problem = STOP;
+    
+    if FLAG
+        mix2.eta_c = self.eta_c;
+    end
 end
 
 %%% SUB-PASS FUNCTIONS

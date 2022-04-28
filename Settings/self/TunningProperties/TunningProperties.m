@@ -33,7 +33,7 @@ function self = TunningProperties()
     % * Chemical equilibrium TP, TV
     self.itMax_gibbs = 70;      % Max number of iterations - gibbs minimization method
     self.itMax_ions = 30;       % Max number of iterations - charge balance (ions)
-    self.tolN = 1e-15;          % Tolerance of the gibbs minimization method
+    self.tolN = 1e-14;          % Tolerance of the gibbs minimization method
     self.tolE = 1e-6;           % Tolerance of the mass balance
     self.tol_pi_e = 1e-4;       % Tolerance of the dimensionless Lagrangian multiplier - ions
     % * Chemical equilibrium HP, EV, SP, SV

@@ -37,7 +37,7 @@ function [N0, STOP, STOP_ions] = equilibrium_ions(self, pP, TP, mix1, guess_mole
     NP = NP_0;
     
     it = 0;
-    itMax = TN.itMax_gibbs;
+    itMax = 50 + round(S.NS/2);
     SIZE = -log(TN.tolN);
     STOP = 1.;
     flag_ions_first = true;

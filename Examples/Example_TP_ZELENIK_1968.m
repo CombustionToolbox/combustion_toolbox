@@ -29,7 +29,7 @@ self.PD.S_Oxidizer = {'O2'};
 %% ADDITIONAL INPUTS (DEPENDS OF THE PROBLEM SELECTED)
 self = set_prop(self, 'pP', self.PD.pR.value, 'TP', 300); 
 %% TUNNUNG PARAMETERS
-self.TN.tolN = 1e-12;
+self.TN.tolN = 1e-14;
 %% SOLVE PROBLEM
 self = SolveProblem(self, 'TP');
 %% DISPLAY RESULTS (PLOTS)

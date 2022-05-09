@@ -1,4 +1,4 @@
-function [x, STOP] = steff(self, mix1, pP, field, x0, guess_moles)
+function [x, STOP, guess_moles] = steff(self, mix1, pP, field, x0, guess_moles)
     % Find the temperature [K] (root) for the set chemical transformation at equilibrium using the Steffenson-Aitken method
     %
     % Args:
@@ -7,12 +7,14 @@ function [x, STOP] = steff(self, mix1, pP, field, x0, guess_moles)
     %     pP (float):     Pressure [bar]
     %     field (str):    Fieldname in Problem Description (PD)
     %     x0 (float):     Guess temperature [K]
+    %     guess_moles (float): Guess moles final mixture
     %
     % Returns:
     %     Tuple containing
     %
     %     - x (float):    Temperature at equilibrium [K]
     %     - STOP (float): Relative error [-] 
+    %     - guess_moles (float): Guess moles final mixture
 
     if any(strcmpi(self.PD.ProblemType, {'TP', 'TV'}))
         x = get_transformation(self, 'TP');

@@ -26,10 +26,6 @@ function mix2 = equilibrate(self, mix1, pP, varargin)
     print_convergence(mix2.error_moles, self.TN.tolN, mix2.error_moles_ions, self.TN.tol_pi_e, self.PD.ProblemType)
     % save error - root finding
     mix2.error_problem = STOP;
-    
-    if FLAG
-        mix2.eta_c = self.eta_c;
-    end
 end
 
 %%% SUB-PASS FUNCTIONS

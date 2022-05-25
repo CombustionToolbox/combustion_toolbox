@@ -60,10 +60,11 @@ function [mix1, mix2_1, mix2_2] = shock_oblique_theta(self, mix1, u1, theta, var
             df0 = df0_beta(beta_guess, u2n, u1);
             
             % Apply correction
-%             beta = beta_guess - f0 / df0;
-
-            d2f0 = d2f0_beta(beta_guess, u2n, u1);
-            beta = beta_guess - (f0 * df0) / (df0^2 - m^-1 * f0 * d2f0);
+            beta = beta_guess - f0 / df0;
+            df0_2 = df0_beta(beta, u2n, u1);
+            beta = beta_guess - 2*f0 / (df0 + df0_2);
+%             d2f0 = d2f0_beta(beta_guess, u2n, u1);
+%             beta = beta_guess - (f0 * df0) / (df0^2 - m^-1 * f0 * d2f0);
             % Check value
             if beta < beta_min || beta > beta_max
                 beta = beta_guess - lambda * f0 / df0;

@@ -28,10 +28,19 @@ function [x, STOP, guess_moles] = newton(self, mix1, pP, field, x0, guess_moles)
         it = it + 1;
         [f0, fprime0, frel, guess_moles] = get_ratio_newton(self, mix1, pP, field, x0, guess_moles);
         x = abs(x0 - f0 / fprime0);
-        
+        % Re-estimation of first derivative
+%         [~, fprime0_2] = get_ratio_newton(self, mix1, pP, field, x, guess_moles);
+        % Pseudo re-estimation of first derivative
+        fprime0_2 = fprime0 * x0/x;
+        x = abs(x0 - 2*f0 / (fprime0 + fprime0_2));
+
         STOP = max(abs((x - x0) / x), frel);
         x0 = x;
+        % Debug       
+%         aux_x(it) = x;
+%         aux_STOP(it) = STOP;
     end
+%     debug_plot_error(it, aux_STOP, aux_x);
     if STOP > self.TN.tol0
         fprintf('\n***********************************************************\n')
         fprintf('Newton method not converged\nCalling Steffensen-Aitken root finding algorithm\n')

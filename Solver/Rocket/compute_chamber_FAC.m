@@ -51,7 +51,11 @@ function [mix2_inj, mix2_c, mix3] = compute_chamber_FAC(self, mix1, varargin)
         % Update guess
         pressure_inf = pressure_inf * pressure_inj / pressure_inj_a; % [bar]
         mix2_inf.p = pressure_inf;
+        % Debug
+%         aux_lambda(it) = pressure_inj / pressure_inj_a;
+%         aux_STOP(it) = STOP;
     end
+%     debug_plot_error(it, aux_STOP, aux_lambda);
     % Assign values
     mix2_c.Aratio = Aratio_chamber; % [-]
 end

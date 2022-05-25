@@ -10,9 +10,17 @@
 [![last modified](https://img.shields.io/github/last-commit/AlbertoCuadra/combustion_toolbox)](https://github.com/AlbertoCuadra/combustion_toolbox/commits/master)
 [![license](https://img.shields.io/github/license/AlbertoCuadra/combustion_toolbox)](https://www.gnu.org/licenses/gpl-3.0.html)
 
-A MATLAB-GUI based open-source tool for solving gaseous combustion problems.
 
-:top: There is also a (less complete) [Python version](https://github.com/AlbertoCuadra/Combustion-PyToolbox)
+
+<p align="center">
+  <b>A MATLAB-GUI based open-source tool for solving gaseous combustion problems.</b>
+</p>
+
+---
+:information_source: **NOTE**
+- Combustion Toolbox Website is live! Here is the link https://combustion-toolbox-website.readthedocs.io/en/latest/
+- There is a very early version in [Python](https://github.com/AlbertoCuadra/Combustion-PyToolbox)
+---
 
 # Features
 
@@ -55,23 +63,8 @@ Features
 * Export results as a .mat format
 * `Display predefined plots` (e.g., molar fraction vs equilence ratio)
 
-
-<!--
----
-⚠️ **NOTE**
-- At the moment, the Python version does not have all the capabilities that the MATLAB version has. I will continue with the development of this version adding all the remaining capabilities. I will also add a GUI using Qt6 and Pyside6.
----
--->
-
 This project is also part of the PhD of [Alberto Cuadra-Lara](https://www.acuadralara.com/).
 
----
-⚠️ **NOTE**
-
-- The first final version v1.0.0 is expected to be released in April 2022. Check out the  upcoming features of [Combustion Toolbox v1.0.0](https://github.com/AlbertoCuadra/combustion_toolbox/projects/2).
-- [Documentation](https://combustion-toolbox-website.readthedocs.io/) under development :building_construction:
-
----
 # Start here!
 The [tutorial](https://combustion-toolbox-website.readthedocs.io/en/latest/tutorial.html) will help you get started using Combustion Toolbox on your pc.
 

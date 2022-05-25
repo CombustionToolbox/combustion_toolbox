@@ -38,7 +38,10 @@ function mix4 = compute_exit(self, mix2, mix3, mix4, Aratio)
         STOP = abs(logP - logP0);
         % Update guess
         logP0 = logP;
+        % Debug
+%         aux_STOP(it) = STOP;
     end
+%     debug_plot_error(it, aux_STOP, 1);
     % Assign values
     mix4.p = extract_pressure(logP, mix2.p); % [bar]
     mix4.v_shock = mix4.u; % [m/s]

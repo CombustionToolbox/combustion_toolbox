@@ -19,15 +19,7 @@ function mix2 = equilibrate(self, mix1, pP, varargin)
     % compute initial guess
     [guess, guess_moles] = get_guess(self, mix1, pP, attr_name, mix2);
     % root finding: find the value x that satisfies f(x) = mix2.xx(x) - mix1.xx = 0
-    [T, STOP] = root_finding(self, mix1, pP, attr_name, guess, guess_moles);
-    % 
-    try
-        self.eta_c = self.Tcurve(mix1.OF) / T;
-        T = self.eta_c * T;
-        FLAG = true;
-    catch
-        FLAG = false;
-    end
+    [T, STOP, guess_moles] = root_finding(self, mix1, pP, attr_name, guess, guess_moles);
     % compute properties
     mix2 = equilibrate_T(self, mix1, pP, T, guess_moles);
     % check convergence in case the problemType is TP (defined Temperature and Pressure)
@@ -82,8 +74,8 @@ function [guess, guess_moles] = get_guess(self, mix1, pP, attr_name, mix2)
     end
 end
 
-function [x, ERR] = root_finding(self, mix1, pP, attr_name, x0, guess_moles)
-    [x, ERR] = self.TN.root_method(self, mix1, pP, attr_name, x0, guess_moles);
+function [x, STOP, guess_moles] = root_finding(self, mix1, pP, attr_name, x0, guess_moles)
+    [x, STOP, guess_moles] = self.TN.root_method(self, mix1, pP, attr_name, x0, guess_moles);
 end
 
 function print_convergence(STOP, TOL, STOP_ions, TOL_ions, ProblemType)

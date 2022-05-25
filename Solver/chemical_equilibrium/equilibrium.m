@@ -46,6 +46,16 @@ function [N0, STOP] = equilibrium(self, pP, TP, mix1, guess_moles)
     [temp_ind, temp_ind_swt, temp_ind_nswt, temp_NG] = update_temp(N0, N0(ind_A0_E0, 1), ind_A0_E0, temp_ind_swt, temp_ind_nswt, NP, SIZE);
     % Initialize species vector N0    
     [N0, NP] = initialize_moles(N0, NP, temp_ind_nswt, temp_NG, guess_moles);
+    
+    % Entropy [J/(mol-K)]   
+%     Qj = exp(-C.R0 * set_s0(S.LS(temp_ind_nswt), TP, self.DB) * 1e-3);
+    % Entropy of mixing
+%     Qj = exp(R0TP * N0(temp_ind_nswt, 1) .* log(N0(temp_ind_nswt, 1) / NP * pP));
+    % Thermal enthalpy
+%     Qj = exp(-set_DhT(S.LS(temp_ind_nswt), TP, self.DB) / R0TP);
+    % Compute distribution
+%     N0(temp_ind_nswt, 1) = Qj ./ sum(Qj);
+%     NP = sum(N0(:, 1));
     % Update temp values
     temp_NS0 = temp_NS + 1;
     
@@ -64,7 +74,6 @@ function [N0, STOP] = equilibrium(self, pP, TP, mix1, guess_moles)
     for i = S.NS:-1:1
         W(i) = self.DB.(S.LS{i}).mm * 1e-3;
     end
-    lambda_0 = [0.01118, 0.05523, 0.36412, 0.54797, 1, 1, 1, 1, 1, 1, 0.58217, 0.00022, 0.00162, 0.01204, 0.09254, 0.97068, 1, 1, 1, 1, 1, 1, 1, 1, 1];
     % Construction of part of matrix A
     [A1, temp_NS0] = update_matrix_A1(A0, [], temp_NG, temp_NS, temp_NS0, temp_ind, temp_ind_E);
     A22 = zeros(temp_NE + 1);
@@ -116,7 +125,6 @@ function [N0, STOP] = equilibrium(self, pP, TP, mix1, guess_moles)
             x(isnan(x) | isinf(x)) = 0;
             % Calculate correction factor
             lambda = relax_factor(NP, N0(temp_ind, 1), x(1:temp_NS), x(end), temp_NG);
-%             lambda = lambda_0(i);
             % Apply correction
             N0(temp_ind_nswt, 1) = exp(log(N0(temp_ind_nswt, 1)) + lambda * x(1:temp_NG));
             N0(temp_ind_swt, 1) = N0(temp_ind_swt, 1) + lambda * x(temp_NG+1:temp_NS);

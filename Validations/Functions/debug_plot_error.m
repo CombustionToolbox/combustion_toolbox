@@ -6,5 +6,5 @@ function debug_plot_error(it, STOP, lambda)
     yyaxis left
     plot(1:1:it, STOP, '-', 'Color', '#0072BD');
     yyaxis right
-    plot(1:1:it, lambda, '--r', 'Color', '#D95319');
+    plot(1:1:it, lambda, '-', 'Color', '#D95319');
 end

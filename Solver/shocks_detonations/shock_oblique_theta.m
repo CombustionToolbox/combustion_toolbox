@@ -133,7 +133,6 @@ end
 
 function beta = compute_guess_beta(M1, gamma, theta, FLAG_WEAK)
     % Compute guess of wave angle [rad]
-    % 
     l = sqrt((M1^2 -1)^2 - 3*(1 + (gamma - 1)/2 * M1^2) * (1 + (gamma + 1)/2 * M1^2) * tan(theta)^2);
     m = ((M1^2 - 1)^3 - 9 * (1 + (gamma - 1)/2 * M1^2) * (1 + (gamma - 1)/2 * M1^2 + (gamma + 1)/4 * M1^4) * tan(theta)^2) / l^3;
     beta = atan(((M1^2 - 1) + 2*l * cos((4 * pi * FLAG_WEAK + acos(m)) / 3)) / (3 * (1 + (gamma - 1)/2 * M1^2) * tan(theta)));

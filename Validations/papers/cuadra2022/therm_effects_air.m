@@ -304,7 +304,7 @@ function [R, P, T, M1, M2, Gammas, alpha] = get_parameters(self)
     alpha = alpha(1:end-1);
 
 
-    ind = find_ind(self.S.LS, {'O2', 'N2', 'O', 'N','NO','eminus','Nplus'});
+    ind = find_ind(self.S.LS, {'O2','N2','O','N','NO','eminus','Nplus','Oplus'});
     Xi = cell2vector(self.PS.strP, 'Xi');
 
     Xi = Xi(:, 1:end-1);
@@ -315,6 +315,7 @@ function [R, P, T, M1, M2, Gammas, alpha] = get_parameters(self)
     XNO = Xi(ind(5), :);
     Xeminus = Xi(ind(6), :);
     XNplus = Xi(ind(7), :);
+    XOplus = Xi(ind(8), :);
 
     dXO2dM1 = compute_first_derivative(XO2, M1);
     dXN2dM1 = compute_first_derivative(XN2, M1);
@@ -323,6 +324,7 @@ function [R, P, T, M1, M2, Gammas, alpha] = get_parameters(self)
     dXNOdM1 = compute_first_derivative(XNO, M1);
     dXeminusdM1 = compute_first_derivative(Xeminus, M1);
     dXNplusdM1 = compute_first_derivative(XNplus, M1);
+    dXOplusdM1 = compute_first_derivative(XOplus, M1);
 
     M1_new = M1(1:end-1);
     
@@ -334,7 +336,16 @@ function [R, P, T, M1, M2, Gammas, alpha] = get_parameters(self)
     dXNOdM1 = interp1(M1_new, dXNOdM1, xx);
     dXeminusdM1 = interp1(M1_new, dXeminusdM1, xx);
     dXNplusdM1 = interp1(M1_new, dXNplusdM1, xx);
+    dXOplusdM1 = interp1(M1_new, dXOplusdM1, xx);
 
+%     M1dXO2dM1 = [M1_new; dXO2dM1]';
+%     M1dXN2dM1 = [M1_new; dXN2dM1]';
+%     M1dXOdM1 = [M1_new; dXOdM1]';
+%     M1dXNdM1 = [M1_new; dXNdM1]';
+%     M1dXNOdM1 = [M1_new; dXNOdM1]';
+%     M1dXeminusdM1 = [M1_new; dXeminusdM1]';
+%     M1dXNplusdM1 = [M1_new; dXNplusdM1]';
+%     M1dXOplusdM1 = [M1_new; dXOplusdM1]';
 
     M1_new = xx;
 end
@@ -358,16 +369,16 @@ function self = compute_shock(varargin)
     % Additional inputs
 %     initial_velocity_sound = 3.529546069689621e+02; % N2
 %     initial_velocity_sound = 329.4216; % O2
-    initial_velocity_sound = 347.1035; % Air
+    initial_velocity_sound = 350; % Air
 
-%     u1 = linspace(initial_velocity_sound, 500, 200);
+%     u1 = linspace(initial_velocity_sound, 9681.1, 966);
 %     u1 = [u1, linspace(500.1, 3000, 1000)];
 %     u1 = [u1, linspace(3000.1, 5000, 500)];
 %     u1 = [u1, linspace(5000.1, 12000, 8000)];
 %     u1 = [u1, linspace(12000.1, 15000, 500)];
-    u1 = linspace(initial_velocity_sound,  20000, 1500);
-%     u1 = logspace(2, 5, 2e3);
-%     u1 = u1(u1 < 15000); u1 = u1(u1 >= initial_velocity_sound);
+%     u1 = linspace(initial_velocity_sound,  20000, 1500);
+    u1 = logspace(2, 5, 1e4);
+    u1 = u1(u1 < 20000.1); u1 = u1(u1 >= initial_velocity_sound);
 
     self = set_prop(self, 'u1', u1, 'phi', self.PD.phi.value(1) * ones(1, length(u1)));
     % Solve problem

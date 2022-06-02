@@ -22,16 +22,13 @@ function mix2 = equilibrate_T(self, mix1, pP, TP, varargin)
     % Set List of Species to List of Products
     self_ListProducts = set_LS_original(self);
     % Compute number of moles 
-    [N_ListProducts, DeltaNP, DeltaNP_ions] = select_equilibrium(self_ListProducts, pP, TP, mix1, guess_moles);
+    [N_ListProducts, self.dNi_T, self.dN_T, self.dNi_p, self.dN_p, STOP, STOP_ions] = select_equilibrium(self_ListProducts, pP, TP, mix1, guess_moles);
     % Reshape matrix of number of moles, N
     N = reshape_moles(self, self_ListProducts, N_ListProducts);
-    % Compute thermodynamic derivates
-    [self.dNi_T, self.dN_T] = equilibrium_dT(self, N, TP, mix1);
-    [self.dNi_p, self.dN_p] = equilibrium_dp(self, N, mix1);
     % Compute properties matrix
     P = SetSpecies(self, self.S.LS, N(:, 1), TP);
     % Compute properties of final mixture
-    mix2 = compute_properties(self, mix1, P, pP, TP, DeltaNP, DeltaNP_ions);
+    mix2 = compute_properties(self, mix1, P, pP, TP, STOP, STOP_ions);
 end
 
 % SUB-PASS FUNCTIONS
@@ -63,15 +60,15 @@ function pP = compute_pressure(self, mix1, TP, N)
     end
 end
 
-function [N, DeltaNP, DeltaNP_ions] = select_equilibrium(self, pP, TP, mix1, guess_moles)
+function [N, dNi_T, dN_T, dNi_p, dN_p, STOP, STOP_ions] = select_equilibrium(self, pP, TP, mix1, guess_moles)
     if ~self.PD.FLAG_ION
         % Compute numer of moles without ionization
-        [N, DeltaNP] = equilibrium(self, pP, TP, mix1, guess_moles);
-%         [N, DeltaNP] = equilibrium_reduced(self, pP, TP, mix1, guess_moles);
-        DeltaNP_ions = 0;
+        [N, dNi_T, dN_T, dNi_p, dN_p, STOP] = equilibrium(self, pP, TP, mix1, guess_moles);
+%         [N, STOP] = equilibrium_reduced(self, pP, TP, mix1, guess_moles);
+        STOP_ions = 0;
     else
         % Compute numer of moles with ionization
-        [N, DeltaNP, DeltaNP_ions] = equilibrium_ions(self, pP, TP, mix1, guess_moles);
+        [N, dNi_T, dN_T, dNi_p, dN_p, STOP, STOP_ions] = equilibrium_ions(self, pP, TP, mix1, guess_moles);
     end
 end
 

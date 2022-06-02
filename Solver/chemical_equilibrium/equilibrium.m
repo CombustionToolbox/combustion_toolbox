@@ -1,4 +1,4 @@
-function [N0, STOP] = equilibrium(self, pP, TP, mix1, guess_moles)
+function [N0, dNi_T, dN_T, dNi_p, dN_p, STOP] = equilibrium(self, pP, TP, mix1, guess_moles)
     % Obtain equilibrium composition [moles] for the given temperature [K] and pressure [bar].
     % The code stems from the minimization of the free energy of the system by using Lagrange
     % multipliers combined with a Newton-Raphson method, upon condition that initial gas
@@ -140,6 +140,10 @@ function [N0, STOP] = equilibrium(self, pP, TP, mix1, guess_moles)
 %             aux_STOP(it) = STOP;
         end
 %         debug_plot_error(it, aux_STOP, aux_lambda);
+        
+        % Compute thermodynamic derivates
+        [dNi_T, dN_T] = equilibrium_dT(self, N0, TP, A0, temp_NG, temp_NS, temp_NE, temp_ind, temp_ind_nswt, temp_ind_swt, temp_ind_E);
+        [dNi_p, dN_p] = equilibrium_dp(self, N0, A0, temp_NG, temp_NS, temp_NE, temp_ind, temp_ind_nswt, temp_ind_swt, temp_ind_E);
     end
 
     function A = check_singularity(A, it)
@@ -297,11 +301,6 @@ function lambda = relax_factor(NP, ni, eta, Delta_ln_NP, temp_NG)
     lambda1 = 2./max(5*abs(Delta_ln_NP), abs(eta(FLAG)));
     lambda2 = min(abs((-log(ni(FLAG_MINOR)/NP) - 9.2103404) ./ (eta(FLAG_MINOR) - Delta_ln_NP)));
     lambda = min([1; lambda1; lambda2]);
-end
-
-function [N0, NP] = apply_antilog(N0, NP_log, temp_ind_nswt)
-    N0(temp_ind_nswt, 1) = exp(N0(temp_ind_nswt, 1));
-    NP = exp(NP_log);
 end
 
 function [STOP, DeltaN1, DeltaN2, Deltab] = compute_STOP(NP, DeltaNP, N0, DeltaN0, temp_NG, A0, NatomE, max_NatomE, tolE)

@@ -1,4 +1,4 @@
-function [N0, STOP, STOP_ions] = equilibrium_ions(self, pP, TP, mix1, guess_moles)
+function [N0, dNi_T, dN_T, dNi_p, dN_p, STOP, STOP_ions] = equilibrium_ions(self, pP, TP, mix1, guess_moles)
     % Obtain equilibrium composition [moles] for the given temperature [K] and pressure [bar]
     % considering ionization of the species. The code stems from the minimization of the free
     % energy of the system by using Lagrange multipliers combined with a Newton-Raphson method,
@@ -44,6 +44,7 @@ function [N0, STOP, STOP_ions] = equilibrium_ions(self, pP, TP, mix1, guess_mole
     flag_ions_first = true;
     % Find indeces of the species/elements that we have to remove from the stoichiometric matrix A0
     % for the sum of elements whose value is <= tolN
+    
     temp_ind_ions = contains(S.LS, 'minus') | contains(S.LS, 'plus'); %S.ind_ions;
     if ~isempty(guess_moles)
         pass_ions = guess_moles(temp_ind_ions) > TN.tolN;
@@ -53,7 +54,7 @@ function [N0, STOP, STOP_ions] = equilibrium_ions(self, pP, TP, mix1, guess_mole
     if any(temp_ind_ions)
         NatomE(E.ind_E) = 1; % temporal fictitious value
     end
-    ind_A0_E0 = remove_elements(NatomE, A0, TN.tolN);
+    [A0, ind_A0_E0] = remove_elements(NatomE, A0, TN.tolN);
     NatomE = aux;
     % List of indices with nonzero values
     [temp_ind_nswt, temp_ind_swt, temp_ind_ions, temp_ind_E, temp_NE] = temp_values(E.ind_E, S, NatomE, TN.tolN);
@@ -79,7 +80,7 @@ function [N0, STOP, STOP_ions] = equilibrium_ions(self, pP, TP, mix1, guess_mole
     while STOP > TN.tolN && it < itMax
         it = it + 1;
         % Gibbs free energy
-        G0RT(temp_ind_nswt) =  g0(temp_ind_nswt) / R0TP + log(N0(temp_ind_nswt, 1) / NP) + log(pP);
+        G0RT(temp_ind_nswt) = g0(temp_ind_nswt) / R0TP + log(N0(temp_ind_nswt, 1) / NP) + log(pP);
         % Construction of matrix A
         A = update_matrix_A(A0_T, A1, A22, N0, NP, temp_ind, temp_ind_E);
         % Construction of vector b
@@ -96,12 +97,19 @@ function [N0, STOP, STOP_ions] = equilibrium_ions(self, pP, TP, mix1, guess_mole
         % Compute STOP criteria
         STOP = compute_STOP(NP_0, NP, x(end), N0(temp_ind, 1), x(1:temp_NS));
         % Update temp values in order to remove species with moles < tolerance
-        [temp_ind, temp_ind_swt, temp_ind_nswt, temp_ind_ions, ~, temp_NS, temp_ind_E, A22, flag_ions_first] = update_temp(N0, N0(temp_ind, 1), temp_ind, temp_ind_swt, temp_ind_nswt, temp_ind_E, E, temp_ind_ions, A22, NP, SIZE, flag_ions_first);
+        [temp_ind, temp_ind_swt, temp_ind_nswt, temp_ind_ions, temp_NG, temp_NS, temp_ind_E, A22, flag_ions_first] = update_temp(N0, N0(temp_ind, 1), temp_ind, temp_ind_swt, temp_ind_nswt, temp_ind_E, E, temp_ind_ions, A22, NP, SIZE, flag_ions_first);
         % Update matrix A
         [A1, temp_NS0] = update_matrix_A1(A0, A1, temp_NS, temp_NS0, temp_ind, temp_ind_E);
     end
     % Check convergence of charge balance (ionized species)
     [N0, STOP_ions] = check_convergence_ions(N0, A0, E.ind_E, temp_ind_nswt, temp_ind_ions, TN.tolN, TN.tol_pi_e, TN.itMax_ions);
+    % Compute thermodynamic derivates
+    if ~any(N0(temp_ind_ions) > TN.tolN)
+        temp_ind_E(temp_ind_E == E.ind_E) = [];
+        temp_NE = temp_NE - 1;
+    end
+    [dNi_T, dN_T] = equilibrium_dT(self, N0, TP, A0, temp_NG, temp_NS, temp_NE, temp_ind, temp_ind_nswt, temp_ind_swt, temp_ind_E);
+    [dNi_p, dN_p] = equilibrium_dp(self, N0, A0, temp_NG, temp_NS, temp_NE, temp_ind, temp_ind_nswt, temp_ind_swt, temp_ind_E);
 end
 % NESTED FUNCTIONS
 function g0 = set_g0(ls, TP, DB)
@@ -122,10 +130,11 @@ function ind_A = find_ind_Matrix(A, bool)
     end
 end
 
-function ind_A0_E0 = remove_elements(NatomE, A0, tol)
+function [A0, ind_A0_E0] = remove_elements(NatomE, A0, tol)
     % Find zero sum elements
     bool_E0 = NatomE <= tol;
     ind_A0_E0 = find_ind_Matrix(A0, bool_E0);
+    A0 = A0(:, NatomE > tol);
 end
 
 function [temp_ind_nswt, temp_ind_swt, temp_ind_ions, temp_ind_E, temp_NE] = temp_values(ind_E, S, NatomE, tol)

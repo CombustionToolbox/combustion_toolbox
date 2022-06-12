@@ -22,9 +22,10 @@ function mix2 = equilibrate_T(self, mix1, pP, TP, varargin)
     % Set List of Species to List of Products
     self_ListProducts = set_LS_original(self);
     % Compute number of moles 
-    [N_ListProducts, self.dNi_T, self.dN_T, self.dNi_p, self.dN_p, STOP, STOP_ions] = select_equilibrium(self_ListProducts, pP, TP, mix1, guess_moles);
+    [N, self.dNi_T, self.dN_T, self.dNi_p, self.dN_p, STOP, STOP_ions] = select_equilibrium(self_ListProducts, pP, TP, mix1, guess_moles);
     % Reshape matrix of number of moles, N
-    N = reshape_moles(self, self_ListProducts, N_ListProducts);
+    self.dNi_T = reshape_vectors(self, self_ListProducts, self.dNi_T);
+    self.dNi_p = reshape_vectors(self, self_ListProducts, self.dNi_p);
     % Compute properties matrix
     P = SetSpecies(self, self.S.LS, N(:, 1), TP);
     % Compute properties of final mixture
@@ -85,9 +86,9 @@ function mix2 = compute_properties(self, mix1, P, pP, TP, DeltaNP, DeltaNP_ions)
     mix2.error_moles_ions = DeltaNP_ions;
 end
 
-function N = reshape_moles(self, self_modified, N_modified)
-    % Reshape matrix of number of moles, N
+function vector = reshape_vectors(self, self_modified, vector_modified)
+    % Reshape vector containing all the species
     index = find_ind(self.S.LS, self_modified.S.LS);
-    N = self.C.N0.value;
-    N(index, 1) = N_modified(:, 1);
+    vector = self.C.N0.value(:, 1);
+    vector(index, 1) = vector_modified(:, 1);
 end

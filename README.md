@@ -2,7 +2,7 @@
     <img alt="UC3M" style="border-width:0" src="https://github.com/AlbertoCuadra/combustion_toolbox/blob/master/GUI/Icons/logo.svg" width="1500"/></a>
 </p>
 
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.6606407.svg)](https://doi.org/10.5281/zenodo.6606407)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.6635715.svg)](https://doi.org/10.5281/zenodo.6635715)
 [![File Exchange](https://www.mathworks.com/matlabcentral/images/matlab-file-exchange.svg)](https://es.mathworks.com/matlabcentral/fileexchange/101088-combustion-toolbox)
 [![CI](https://github.com/AlbertoCuadra/combustion_toolbox/actions/workflows/CI.yml/badge.svg)](https://github.com/AlbertoCuadra/combustion_toolbox/actions/workflows/CI.yml)
 [![CD](https://github.com/AlbertoCuadra/combustion_toolbox/actions/workflows/CD.yml/badge.svg)](https://github.com/AlbertoCuadra/combustion_toolbox/actions/workflows/CD.yml)

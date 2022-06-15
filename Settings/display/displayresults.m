@@ -226,6 +226,8 @@ elseif nargin == 7
         fprintf('               |     STATE 1     |     STATE 2     |     STATE 3-W   |     STATE 3-S\n');
     elseif contains(ProblemType, '_R')
         fprintf('               |     STATE 1     |     STATE 2     |     STATE 3     |     STATE 4\n');
+    elseif mix3.Aratio == 1
+        fprintf('               |  INLET CHAMBER  | OUTLET CHAMBER  |     THROAT      |     EXIT\n');
     else
         fprintf('               |  INLET CHAMBER  |     INJECTOR    | OUTLET CHAMBER  |     THROAT \n');
     end
@@ -288,6 +290,8 @@ elseif nargin == 7
     fprintf('--------------------------------------------------------------------------------------\n');
     if contains(ProblemType, '_R')
         fprintf('STATE 2                 Xi [-]\n');
+    elseif mix3.Aratio == 1
+        fprintf('OUTLET CHAMBER          Xi [-]\n');
     else
         fprintf('INJECTOR                Xi [-]\n');
     end
@@ -311,6 +315,8 @@ elseif nargin == 7
         fprintf('STATE 3-WEAK %s      Xi [-]\n', ProblemType_short);
     elseif contains(ProblemType, '_R')
         fprintf('STATE 3                 Xi [-]\n');
+    elseif mix3.Aratio == 1
+        fprintf('THROAT                  Xi [-]\n');
     else
         fprintf('OUTLET CHAMBER          Xi [-]\n');
     end
@@ -334,6 +340,8 @@ elseif nargin == 7
         fprintf('STATE 3-STRONG %s    Xi [-]\n', ProblemType_short);
     elseif contains(ProblemType, '_R')
         fprintf('STATE 4                 Xi [-]\n');
+    elseif mix3.Aratio == 1
+        fprintf('EXIT                    Xi [-]\n');
     else
         fprintf('THROAT                  Xi [-]\n');
 %         fprintf('EXIT                    Xi [-]\n');

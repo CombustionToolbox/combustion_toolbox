@@ -12,9 +12,10 @@ function problems_solved = run_validation_SHOCK_POLAR_SDToolbox_1
     Oxidizer = 'O2';
     Inert    = 'N2';
     proportion_inerts_O2 = 79/21;
-    LS =  {'O2', 'N2'};
-    u1 = 3.472107491008314e+02 * [2, 3, 5, 10];
-    filename = 'shock_polar_SDToolbox';
+%     LS = {'O2', 'N2'};
+    LS = 'AIR_IONS';
+    u1 = 3.472107491008314e+02 * [2, 3, 5, 14];
+    filename = 'shock_polar_equilwithions_SDToolbox';
     % Tunning parameters
     tolN = 1e-14;
     % Combustion Toolbox

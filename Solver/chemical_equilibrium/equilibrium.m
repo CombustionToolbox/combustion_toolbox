@@ -37,6 +37,7 @@ function [N0, dNi_T, dN_T, dNi_p, dN_p, STOP] = equilibrium(self, pP, TP, mix1, 
     max_NatomE = max(NatomE);
     NP = 0.1;
     SIZE = -log(TN.tolN);
+    
     % Find indeces of the species/elements that we have to remove from the stoichiometric matrix A0
     % for the sum of elements whose value is <= tolN
     [A0, ind_A0_E0, NatomE] = remove_elements(NatomE, A0, TN.tolN);
@@ -44,18 +45,7 @@ function [N0, dNi_T, dN_T, dNi_p, dN_p, STOP] = equilibrium(self, pP, TP, mix1, 
     [temp_ind, temp_ind_nswt, temp_ind_swt, temp_ind_E, temp_NE, temp_NG, temp_NS] = temp_values(S, NatomE, TN.tolN);
     % Update temp values
     [temp_ind, temp_ind_swt, temp_ind_nswt, temp_NG] = update_temp(N0, N0(ind_A0_E0, 1), ind_A0_E0, temp_ind_swt, temp_ind_nswt, NP, SIZE);
-    % Initialize species vector N0    
-    [N0, NP] = initialize_moles(N0, NP, temp_ind_nswt, temp_NG, guess_moles);
-    
-    % Entropy [J/(mol-K)]   
-%     Qj = exp(-C.R0 * set_s0(S.LS(temp_ind_nswt), TP, self.DB) * 1e-3);
-    % Entropy of mixing
-%     Qj = exp(R0TP * N0(temp_ind_nswt, 1) .* log(N0(temp_ind_nswt, 1) / NP * pP));
-    % Thermal enthalpy
-%     Qj = exp(-set_DhT(S.LS(temp_ind_nswt), TP, self.DB) / R0TP);
-    % Compute distribution
-%     N0(temp_ind_nswt, 1) = Qj ./ sum(Qj);
-%     NP = sum(N0(:, 1));
+
     % Update temp values
     temp_NS0 = temp_NS + 1;
     
@@ -64,7 +54,20 @@ function [N0, dNi_T, dN_T, dNi_p, dN_p, STOP] = equilibrium(self, pP, TP, mix1, 
     temp_ind_swt = [];
     temp_ind = [temp_ind_nswt, temp_ind_swt];
     temp_NS = length(temp_ind);
-    
+
+    % Initialize species vector N0    
+%     % Entropy [J/(mol-K)]   
+%     Qj = exp(-C.R0 * set_s0(S.LS(temp_ind_nswt), TP, self.DB) * 1e-3);
+%     % Entropy of mixing
+%     Qj = exp(R0TP * N0(temp_ind_nswt, 1) .* log(N0(temp_ind_nswt, 1) / NP * pP));
+%     % Thermal enthalpy
+%     Qj = exp(-set_DhT(S.LS(temp_ind_nswt), TP, self.DB) / R0TP);
+%     % Compute distribution
+%     N0(temp_ind_nswt, 1) = Qj ./ sum(Qj);
+%     NP = sum(N0(:, 1));
+
+    [N0, NP] = initialize_moles(N0, NP, temp_ind, temp_NG, guess_moles);
+
     % Standard Gibbs free energy [J/mol]
     g0 = set_g0(S.LS, TP, self.DB);
     % Dimensionless Chemical potential
@@ -100,6 +103,11 @@ function [N0, dNi_T, dN_T, dNi_p, dN_p, STOP] = equilibrium(self, pP, TP, mix1, 
         TN.itMax_gibbs = TN.itMax_gibbs / 2;
         equilibrium_loop;
     end
+
+    % Compute thermodynamic derivates
+    [dNi_T, dN_T] = equilibrium_dT(self, N0, TP, A0, temp_NG, temp_NS, temp_NE, temp_ind, temp_ind_nswt, temp_ind_swt, temp_ind_E);
+    [dNi_p, dN_p] = equilibrium_dp(self, N0, A0, temp_NG, temp_NS, temp_NE, temp_ind, temp_ind_nswt, temp_ind_swt, temp_ind_E);
+
     % NESTED FUNCTION
     function x = equilibrium_loop
         it = 0;
@@ -140,10 +148,6 @@ function [N0, dNi_T, dN_T, dNi_p, dN_p, STOP] = equilibrium(self, pP, TP, mix1, 
 %             aux_STOP(it) = STOP;
         end
 %         debug_plot_error(it, aux_STOP, aux_lambda);
-        
-        % Compute thermodynamic derivates
-        [dNi_T, dN_T] = equilibrium_dT(self, N0, TP, A0, temp_NG, temp_NS, temp_NE, temp_ind, temp_ind_nswt, temp_ind_swt, temp_ind_E);
-        [dNi_p, dN_p] = equilibrium_dp(self, N0, A0, temp_NG, temp_NS, temp_NE, temp_ind, temp_ind_nswt, temp_ind_swt, temp_ind_E);
     end
 
     function A = check_singularity(A, it)

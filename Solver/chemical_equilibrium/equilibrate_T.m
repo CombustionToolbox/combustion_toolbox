@@ -65,7 +65,7 @@ function [N, dNi_T, dN_T, dNi_p, dN_p, STOP, STOP_ions] = select_equilibrium(sel
     if ~self.PD.FLAG_ION
         % Compute numer of moles without ionization
         [N, dNi_T, dN_T, dNi_p, dN_p, STOP] = equilibrium(self, pP, TP, mix1, guess_moles);
-%         [N, STOP] = equilibrium_reduced(self, pP, TP, mix1, guess_moles);
+%         [N, dNi_T, dN_T, dNi_p, dN_p, STOP] = equilibrium_reduced(self, pP, TP, mix1, guess_moles);
         STOP_ions = 0;
     else
         % Compute numer of moles with ionization

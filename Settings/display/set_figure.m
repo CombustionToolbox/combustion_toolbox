@@ -19,12 +19,13 @@ function [ax, config, fig] = set_figure(varargin)
         if nargin > 1
             config = varargin{2};
         end
-        if ~isempty(ax.XLabel)
-            config.labelx = ax.XLabel;
+        if isempty(ax.XLabel)
+            config.labelx = ax.XLabel.String;
         end
-        if ~isempty(ax.YLabel)
-            config.labely = ax.YLabel;
+        if isempty(ax.YLabel)
+            config.labely = ax.YLabel.String;
         end
+        fig = gcf;
     else
         fig = figure;
         set(fig,'units','normalized','innerposition',[0.1 0.1 0.9 0.8],...

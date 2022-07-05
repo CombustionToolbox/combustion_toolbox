@@ -243,7 +243,7 @@ function [A0, ind_A0_E0, NatomE] = remove_elements(NatomE, A0, species, ind_E, g
     A0 = A0(:, NatomE > tol);
     % Set number of atoms
     if any(temp_ind_ions)
-        NatomE = aux;
+        NatomE = aux([aux(1:ind_E-1) > tol; true; aux(ind_E+1:end) > tol]);
     else
         NatomE = aux(aux > tol);
     end

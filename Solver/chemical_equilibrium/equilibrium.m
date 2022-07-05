@@ -238,11 +238,15 @@ function [A0, ind_A0_E0, NatomE] = remove_elements(NatomE, A0, species, ind_E, g
         NatomE(ind_E) = 1; % temporal fictitious value
     end
     % No-ions
-
     bool_E0 = NatomE' <= tol;
     ind_A0_E0 = find_ind_Matrix(A0, bool_E0);
     A0 = A0(:, NatomE > tol);
-    NatomE = aux;
+    % Set number of atoms
+    if any(temp_ind_ions)
+        NatomE = aux;
+    else
+        NatomE = aux(aux > tol);
+    end
 end
 
 function [temp_ind, temp_ind_nswt, temp_ind_swt, temp_ind_ions, temp_ind_E, temp_NE, temp_NG, temp_NS] = temp_values(ind_E, S, NatomE, tol)

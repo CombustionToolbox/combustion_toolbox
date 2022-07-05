@@ -97,17 +97,17 @@ function [N0, dNi_T, dN_T, dNi_p, dN_p, STOP, STOP_ions] = equilibrium_ions(self
         % Compute STOP criteria
         STOP = compute_STOP(NP_0, NP, x(end), N0(temp_ind, 1), x(1:temp_NS));
         % Update temp values in order to remove species with moles < tolerance
-        [temp_ind, temp_ind_swt, temp_ind_nswt, temp_ind_ions, temp_NG, temp_NS, temp_ind_E, A22, flag_ions_first] = update_temp(N0, N0(temp_ind, 1), temp_ind, temp_ind_swt, temp_ind_nswt, temp_ind_E, E, temp_ind_ions, A22, NP, SIZE, flag_ions_first);
+        [temp_ind, temp_ind_swt, temp_ind_nswt, temp_ind_ions, temp_NG, temp_NS, temp_ind_E, A22, flag_ions_first] = update_temp(N0, N0(temp_ind, 1), temp_ind, temp_ind_swt, temp_ind_nswt, temp_ind_E, E.ind_E, temp_ind_ions, A22, NP, SIZE, flag_ions_first);
         % Update matrix A
         [A1, temp_NS0] = update_matrix_A1(A0, A1, temp_NS, temp_NS0, temp_ind, temp_ind_E);
     end
     % Check convergence of charge balance (ionized species)
     [N0, STOP_ions] = check_convergence_ions(N0, A0, E.ind_E, temp_ind_nswt, temp_ind_ions, TN.tolN, TN.tol_pi_e, TN.itMax_ions);
-    % Compute thermodynamic derivates
-    if ~any(N0(temp_ind_ions) > TN.tolN)
+    if ~any(N0(temp_ind_ions) > TN.tolN) && ~isempty(N0(temp_ind_ions))
         temp_ind_E(temp_ind_E == E.ind_E) = [];
         temp_NE = temp_NE - 1;
     end
+    % Compute thermodynamic derivates
     [dNi_T, dN_T] = equilibrium_dT(self, N0, TP, A0, temp_NG, temp_NS, temp_NE, temp_ind, temp_ind_nswt, temp_ind_swt, temp_ind_E);
     [dNi_p, dN_p] = equilibrium_dp(self, N0, A0, temp_NG, temp_NS, temp_NE, temp_ind, temp_ind_nswt, temp_ind_swt, temp_ind_E);
 end
@@ -150,7 +150,7 @@ function [temp_ind_nswt, temp_ind_swt, temp_ind_ions, temp_ind_E, temp_NE] = tem
     temp_NE       = length(temp_ind_E);
 end
 
-function [temp_ind_swt, temp_ind_nswt, temp_ind_E, temp_ind_ions, A22, flag_ions_first] = remove_item(N0, n, ind, temp_ind_swt, temp_ind_nswt, temp_ind_E, E, temp_ind_ions, A22, NP, SIZE, flag_ions_first)
+function [temp_ind_swt, temp_ind_nswt, temp_ind_E, temp_ind_ions, A22, flag_ions_first] = remove_item(N0, n, ind, temp_ind_swt, temp_ind_nswt, temp_ind_E, ind_E, temp_ind_ions, A22, NP, SIZE, flag_ions_first)
     % Remove species from the computed indeces list of gaseous and condensed
     % species and append the indeces of species that we have to remove
     for i=1:length(n)
@@ -162,7 +162,7 @@ function [temp_ind_swt, temp_ind_nswt, temp_ind_E, temp_ind_ions, A22, flag_ions
                 temp_ind_ions(temp_ind_ions==ind(i)) = [];
                 if isempty(temp_ind_ions) && flag_ions_first
                     % remove element E from matrix
-                    temp_ind_E(E.ind_E) = [];
+                    temp_ind_E(ind_E) = [];
                     A22 = zeros(length(temp_ind_E) + 1);
                     flag_ions_first = false;
                 end
@@ -171,9 +171,9 @@ function [temp_ind_swt, temp_ind_nswt, temp_ind_E, temp_ind_ions, A22, flag_ions
     end
 end
 
-function [temp_ind, temp_ind_swt, temp_ind_nswt, temp_ind_ions, temp_NG, temp_NS, temp_ind_E, A22, flag_ions_first] = update_temp(N0, zip1, zip2, temp_ind_swt, temp_ind_nswt, temp_ind_E, E, temp_ind_ions, A22, NP, SIZE, flag_ions_first)
+function [temp_ind, temp_ind_swt, temp_ind_nswt, temp_ind_ions, temp_NG, temp_NS, temp_ind_E, A22, flag_ions_first] = update_temp(N0, zip1, zip2, temp_ind_swt, temp_ind_nswt, temp_ind_E, ind_E, temp_ind_ions, A22, NP, SIZE, flag_ions_first)
     % Update temp items
-    [temp_ind_swt, temp_ind_nswt, temp_ind_E, temp_ind_ions, A22, flag_ions_first] = remove_item(N0, zip1, zip2, temp_ind_swt, temp_ind_nswt, temp_ind_E, E, temp_ind_ions, A22, NP, SIZE, flag_ions_first);
+    [temp_ind_swt, temp_ind_nswt, temp_ind_E, temp_ind_ions, A22, flag_ions_first] = remove_item(N0, zip1, zip2, temp_ind_swt, temp_ind_nswt, temp_ind_E, ind_E, temp_ind_ions, A22, NP, SIZE, flag_ions_first);
     temp_ind = [temp_ind_nswt, temp_ind_swt];
     temp_NG = length(temp_ind_nswt);
     temp_NS = length(temp_ind);

@@ -62,15 +62,16 @@ function pP = compute_pressure(self, mix1, TP, N)
 end
 
 function [N, dNi_T, dN_T, dNi_p, dN_p, STOP, STOP_ions] = select_equilibrium(self, pP, TP, mix1, guess_moles)
-    if ~self.PD.FLAG_ION
+%     if ~self.PD.FLAG_ION
         % Compute numer of moles without ionization
-        [N, dNi_T, dN_T, dNi_p, dN_p, STOP] = equilibrium(self, pP, TP, mix1, guess_moles);
+%         [N, dNi_T, dN_T, dNi_p, dN_p, STOP, STOP_ions] = equilibrium(self, pP, TP, mix1, guess_moles);
 %         [N, dNi_T, dN_T, dNi_p, dN_p, STOP] = equilibrium_reduced(self, pP, TP, mix1, guess_moles);
-        STOP_ions = 0;
-    else
+%         STOP_ions = 0;
+%     else
         % Compute numer of moles with ionization
-        [N, dNi_T, dN_T, dNi_p, dN_p, STOP, STOP_ions] = equilibrium_ions(self, pP, TP, mix1, guess_moles);
-    end
+        [N, dNi_T, dN_T, dNi_p, dN_p, STOP, STOP_ions] = equilibrium(self, pP, TP, mix1, guess_moles);
+%         [N, dNi_T, dN_T, dNi_p, dN_p, STOP, STOP_ions] = equilibrium_ions(self, pP, TP, mix1, guess_moles);
+%     end
 end
 
 function mix2 = compute_properties(self, mix1, P, pP, TP, DeltaNP, DeltaNP_ions)

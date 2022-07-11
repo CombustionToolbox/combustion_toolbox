@@ -1,15 +1,15 @@
-function [N0, dNi_T, dN_T, dNi_p, dN_p, STOP, STOP_ions] = equilibrium(self, pP, TP, mix1, guess_moles)
-    % Obtain equilibrium composition [moles] for the given temperature [K] and pressure [bar].
+function [N0, dNi_T, dN_T, dNi_p, dN_p, STOP, STOP_ions] = equilibrium_helmholtz(self, vP, TP, mix1, guess_moles)
+    % Obtain equilibrium composition [moles] for the given temperature [K] and volume [m3].
     % The code stems from the minimization of the free energy of the system by using Lagrange
     % multipliers combined with a Newton-Raphson method, upon condition that initial gas
-    % properties are defined by temperature and pressure.
+    % properties are defined by temperature and volume.
     %
     % This method is based on Gordon, S., & McBride, B. J. (1994). NASA reference publication,
     % 1311.
     %
     % Args:
     %     self (struct): Data of the mixture, conditions, and databases
-    %     pP (float): Pressure [bar]
+    %     vP (float): Volume [m3]
     %     TP (float): Temperature [K]
     %     mix1 (struct): Properties of the initial mixture
     %     guess_moles (float): mixture composition [mol] of a previous computation
@@ -20,7 +20,7 @@ function [N0, dNi_T, dN_T, dNi_p, dN_p, STOP, STOP_ions] = equilibrium(self, pP,
     %     - N0 (float): Equilibrium composition [moles] for the given temperature [K] and pressure [bar]
     %     - STOP (float): Relative error [-] 
 
-    % Generalized Gibbs minimization method
+    % Generalized Helmholtz minimization method
     
     % Abbreviations ---------------------
     E = self.E;
@@ -72,6 +72,11 @@ function [N0, dNi_T, dN_T, dNi_p, dN_p, STOP, STOP_ions] = equilibrium(self, pP,
 
     % Standard Gibbs free energy [J/mol]
     g0 = set_g0(S.LS, TP, self.DB);
+    % Standard internal energy [J/mol]
+    e0RT = set_e0(S.LS, TP, self.DB)/R0TP;
+    % Specific internal energy of the reactants [J/mol]
+    moles_R = moles(mix1);
+    e0RT_R = sum(moles_R(moles_R > 0) .* set_e0(mix1.LS, TP, self.DB)) / R0TP; 
     % Dimensionless Chemical potential
     muRT_0 = g0/R0TP;
     muRT = muRT_0;
@@ -81,7 +86,7 @@ function [N0, dNi_T, dN_T, dNi_p, dN_p, STOP, STOP_ions] = equilibrium(self, pP,
     end
     % Construction of part of matrix A
     [A1, temp_NS0] = update_matrix_A1(A0, [], temp_NG, temp_NS, temp_NS0, temp_ind, temp_ind_E);
-    A22 = zeros(temp_NE + 1);
+    A22 = zeros(temp_NE);
     A0_T = A0';
     % Solve system
     x = equilibrium_loop;
@@ -119,28 +124,29 @@ function [N0, dNi_T, dN_T, dNi_p, dN_p, STOP, STOP_ions] = equilibrium(self, pP,
         while STOP > TN.tolN && it < itMax
             it = it + 1;
             % Chemical potential
-            muRT(temp_ind_nswt) =  muRT_0(temp_ind_nswt) + log(N0(temp_ind_nswt, 1) / NP) + log(pP);
-            % Gibbs free energy [cal/g] (debug)
-%             Gibbs(it) = dot(N0(:, 1), muRT * R0TP) / dot(N0(:, 1), W) / 4186.8;
-%             fprintf('Gibbs: %f\n', Gibbs(it));
+            muRT(temp_ind_nswt) =  muRT_0(temp_ind_nswt) + log(N0(temp_ind_nswt, 1) * R0TP / vP * 1e-5);
+            % Compute total number of moles
+            NP = sum(N0(temp_ind_nswt, 1));
+            % Helmholtz free energy [cal/g] (debug)
+%             Helmholtz(it) = dot(N0(:, 1), muRT * R0TP) / dot(N0(:, 1), W) / 4186.8;
+%             fprintf('Helmholtz: %f\n', Helmholtz(it));
             % Construction of matrix A
-            A = update_matrix_A(A0_T, A1, A22, N0, NP, temp_ind, temp_ind_nswt, temp_ind_swt, temp_ind_E, temp_NG);
+            A = update_matrix_A(A0_T, A1, A22, N0, temp_ind_nswt, temp_ind_swt, temp_ind_E);
             % Check singularity
 %             A = check_singularity(A, it);
             % Construction of vector b            
-            b = update_vector_b(A0, N0, NP, NatomE, E.ind_E, temp_ind_ions, temp_ind, temp_ind_nswt, temp_ind_E, muRT);
+            b = update_vector_b(A0, N0, NatomE, E.ind_E, temp_ind_ions, temp_ind, temp_ind_E, muRT);
             % Solve of the linear system A*x = b
             x = A\b;
             % Omit nan or inf values
             x(isnan(x) | isinf(x)) = 0;
             % Calculate correction factor
-            lambda = relax_factor(NP, N0(temp_ind, 1), x(1:temp_NS), x(end), temp_NG);
+            lambda = relax_factor(NP, N0(temp_ind, 1), x(1:temp_NS), 0, temp_NG);
             % Apply correction
             N0(temp_ind_nswt, 1) = exp(log(N0(temp_ind_nswt, 1)) + lambda * x(1:temp_NG));
             N0(temp_ind_swt, 1) = N0(temp_ind_swt, 1) + lambda * x(temp_NG+1:temp_NS);
-            NP = exp(log(NP) + lambda * x(end));
             % Compute STOP criteria
-            STOP = compute_STOP(NP, x(end), N0(temp_ind, 1), x(1:temp_NS), temp_NG, A0(temp_ind, temp_ind_E), NatomE, max_NatomE, TN.tolE);
+            STOP = compute_STOP(N0(temp_ind, 1), x(1:temp_NS), temp_NG, A0(temp_ind, temp_ind_E), NatomE, max_NatomE, TN.tolE);
             % Update temp values in order to remove species with moles < tolerance
             [temp_ind, temp_ind_swt, temp_ind_nswt, temp_ind_ions, temp_NG, temp_NS, temp_ind_E, A22, flag_ions_first, N0] = update_temp(N0, N0(temp_ind, 1), temp_ind, temp_ind_swt, temp_ind_nswt, temp_ind_E, E.ind_E, temp_ind_ions, A22, NP, SIZE, flag_ions_first);
             % Update matrix A
@@ -171,7 +177,7 @@ function [N0, dNi_T, dN_T, dNi_p, dN_p, STOP, STOP_ions] = equilibrium(self, pP,
                     temp_NS = length(temp_ind);
                     N0(temp_ind_nswt(FLAG_OLD)) = TN.tolN * 1e-1;
                     [A1, temp_NS0] = update_matrix_A1(A0, A1, temp_NG, temp_NS, temp_NS0, temp_ind, temp_ind_E);
-                    A = update_matrix_A(A0_T, A1, A22, N0, NP, temp_ind, temp_ind_nswt, temp_ind_swt, temp_ind_E, temp_NG);
+                    A = update_matrix_A(A0_T, A1, A22, N0, temp_ind_nswt, temp_ind_swt, temp_ind_E);
                     N0(temp_ind_nswt(FLAG_OLD)) = 0;
                 end
             end
@@ -197,7 +203,7 @@ function [temp_ind, temp_ind_swt, FLAG] = check_condensed_species(A0, x, temp_in
         aux = true;
     else
         for i=length(temp_ind_swt_0):-1:1
-            dG_dn = muRT(temp_ind_swt_0(i)) - dot(x(end-temp_NE:end-1), A0(temp_ind_swt_0(i), temp_ind_E));
+            dG_dn = muRT(temp_ind_swt_0(i)) - dot(x(end-temp_NE+1:end), A0(temp_ind_swt_0(i), temp_ind_E));
             if dG_dn < 0
                 aux = [aux, i];
             end
@@ -281,7 +287,7 @@ function [temp_ind_swt, temp_ind_nswt, temp_ind_E, temp_ind_ions, A22, flag_ions
                 if isempty(temp_ind_ions) && flag_ions_first
                     % remove element E from matrix
                     temp_ind_E(ind_E) = [];
-                    A22 = zeros(length(temp_ind_E) + 1);
+                    A22 = zeros(length(temp_ind_E));
                     flag_ions_first = false;
                 end
             end
@@ -303,7 +309,7 @@ function [A1, temp_NS0] = update_matrix_A1(A0, A1, temp_NG, temp_NS, temp_NS0, t
     if temp_NS < temp_NS0
         A11 = eye(temp_NS);
         A11(temp_NG+1:end, temp_NG+1:end) = 0;
-        A12 = -[A0(temp_ind, temp_ind_E), [ones(temp_NG, 1); zeros(temp_NS-temp_NG, 1)]];
+        A12 = -A0(temp_ind, temp_ind_E);
         A1 = [A11, A12];
         temp_NS0 = temp_NS;
     end
@@ -314,29 +320,25 @@ function [temp_ind, temp_ind_swt] = check_cryogenic(temp_ind, temp_ind_swt, temp
     temp_ind_swt = temp_ind_swt(~ismember(temp_ind_swt, temp_ind_cryogenic));
 end
 
-function A2 = update_matrix_A2(A0_T, A22, N0, NP, temp_ind, temp_ind_nswt, temp_ind_swt, temp_ind_E, temp_NG)
+function A2 = update_matrix_A2(A0_T, A22, N0, temp_ind_nswt, temp_ind_swt, temp_ind_E)
     % Update stoichiometric submatrix A2
-    A20 = N0(temp_ind, 1)';
-    A20(temp_NG+1:end) = 0;
-    A21 = [[N0(temp_ind_nswt, 1)' .* A0_T(temp_ind_E, temp_ind_nswt), A0_T(temp_ind_E, temp_ind_swt)]; A20];
-    A22(end, end) = -NP;
+    A21 = [N0(temp_ind_nswt, 1)' .* A0_T(temp_ind_E, temp_ind_nswt), A0_T(temp_ind_E, temp_ind_swt)];
     A2 = [A21, A22];
 end
 
-function A = update_matrix_A(A0_T, A1, A22, N0, NP, temp_ind, temp_ind_nswt, temp_ind_swt, temp_ind_E, temp_NG)
+function A = update_matrix_A(A0_T, A1, A22, N0, temp_ind_nswt, temp_ind_swt, temp_ind_E)
     % Update stoichiometric matrix A
-    A2 = update_matrix_A2(A0_T, A22, N0, NP, temp_ind, temp_ind_nswt, temp_ind_swt, temp_ind_E, temp_NG);
+    A2 = update_matrix_A2(A0_T, A22, N0, temp_ind_nswt, temp_ind_swt, temp_ind_E);
     A = [A1; A2];
 end
 
-function b = update_vector_b(A0, N0, NP, NatomE, ind_E, temp_ind_ions, temp_ind, temp_ind_nswt, temp_ind_E, muRT)
+function b = update_vector_b(A0, N0, NatomE, ind_E, temp_ind_ions, temp_ind, temp_ind_E, muRT)
     % Update coefficient vector b
     bi = (sum(N0(temp_ind, 1) .* A0(temp_ind, temp_ind_E)))';
     if any(temp_ind_ions)
         bi(temp_ind_E == ind_E) = 0;
     end
-    NP_0 = NP - sum(N0(temp_ind_nswt, 1));
-    b = [-muRT(temp_ind); NatomE - bi; NP_0];
+    b = [-muRT(temp_ind); NatomE - bi];
 end
 
 function lambda = relax_factor(NP, ni, eta, Delta_ln_NP, temp_NG)
@@ -348,14 +350,13 @@ function lambda = relax_factor(NP, ni, eta, Delta_ln_NP, temp_NG)
     lambda = min([1; lambda1; lambda2]);
 end
 
-function [STOP, DeltaN1, DeltaN2, Deltab] = compute_STOP(NP, DeltaNP, N0, DeltaN0, temp_NG, A0, NatomE, max_NatomE, tolE)
+function [STOP, DeltaN1, Deltab] = compute_STOP(N0, DeltaN0, temp_NG, A0, NatomE, max_NatomE, tolE)
     NPi = sum(N0);
     DeltaN1 = N0 .* abs(DeltaN0) / NPi;
     DeltaN1(temp_NG+1:end) = abs(DeltaN0(temp_NG+1:end)) / NPi;
-    DeltaN2 = NP * abs(DeltaNP) / NPi;
     Deltab = abs(NatomE - sum(N0 .* A0, 1)');
     Deltab = max(Deltab(NatomE > max_NatomE * tolE));
-    STOP = max(max(max(DeltaN1), DeltaN2), Deltab);
+    STOP = max(max(DeltaN1), Deltab);
 end
 
 function [N0, STOP] = check_convergence_ions(N0, A0, ind_E, temp_ind_nswt, temp_ind_ions, TOL, TOL_pi, itMax)

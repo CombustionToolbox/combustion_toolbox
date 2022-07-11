@@ -1,0 +1,120 @@
+*******************************************************************************
+
+         NASA-GLENN CHEMICAL EQUILIBRIUM PROGRAM CEA2, FEBRUARY 5, 2004
+                   BY  BONNIE MCBRIDE AND SANFORD GORDON
+      REFS: NASA RP-1311, PART I, 1994 AND NASA RP-1311, PART II, 1996
+
+ *******************************************************************************
+
+
+
+  
+ ### CEA analysis performed on Mon 11-Jul-2022 13:22:24
+  
+ # Problem Type: "Combustion at Assigned Volume"
+  
+ prob case=test___________5469 uv
+  
+ # Density (1 value):
+ rho,kg/m**3= 1.1456
+  
+ # Equivalence based on Fuel/Oxid. wt ratio (Eq 9.19*) (1 value):
+ phi= 0.6
+  
+ # You selected the following fuels and oxidizers:
+ reac
+ fuel CH4              mole=100.0000  t,k= 300.000
+ oxid Air              mole=100.0000  t,k= 300.000
+  
+ # You selected these options for output:
+ # short version of output
+ output short
+ # Proportions of any products will be expressed as Mole Fractions.
+ # Heat will be expressed as siunits
+ output siunits
+ # Trace variable:
+ output trace=1e-16
+  
+ # Input prepared by this script:/var/www/sites/cearun.grc.nasa.gov/cgi-bin/CEARU
+ N/prepareInputFile.cgi
+  
+ ### IMPORTANT:  The following line is the end of your CEA input file!
+ end
+
+
+
+
+         THERMODYNAMIC EQUILIBRIUM COMBUSTION PROPERTIES AT ASSIGNED
+
+                                     VOLUME
+
+ CASE = test___________
+
+             REACTANT                       MOLES         ENERGY      TEMP
+                                                         KJ/KG-MOL      K
+ FUEL        CH4                        100.0000000    -77028.260    300.000
+ OXIDANT     Air                        100.0000000     -2566.042    300.000
+
+ O/F=   28.73087  %FUEL=  3.363507  R,EQ.RATIO= 0.600608  PHI,EQ.RATIO= 0.600000
+
+ THERMODYNAMIC PROPERTIES
+
+ P, BAR            6.8281
+ T, K             2020.66
+ RHO, KG/CU M    1.1456 0
+ H, KJ/KG          348.91
+ U, KJ/KG         -247.11
+ G, KJ/KG        -17566.2
+ S, KJ/(KG)(K)     8.8660
+
+ M, (1/n)          28.188
+ (dLV/dLP)t      -1.00016
+ (dLV/dLT)p        1.0053
+ Cp, KJ/(KG)(K)    1.4914
+ GAMMAs            1.2496
+ SON VEL,M/SEC      863.0
+
+ MOLE FRACTIONS
+
+ *Ar             8.8072-3
+ *CO             1.2869-4
+ *CO2            5.9271-2
+ COOH            5.655-10
+ *H              5.3045-6
+ HCN             5.045-15
+ HCO             1.567-12
+ HNC             2.644-16
+ HNCO            3.101-12
+ HNO             3.1837-8
+ HNO2            3.5349-7
+ HNO3            1.555-10
+ HO2             2.6146-6
+ *H2             5.4783-5
+ HCHO,formaldehy 1.988-14
+ HCOOH           4.080-11
+ H2O             1.1748-1
+ H2O2            1.6975-7
+ *N              3.965-10
+ NCO             1.406-13
+ *NH             4.137-11
+ NH2             1.599-11
+ NH3             4.635-11
+ NH2OH           5.009-14
+ *NO             4.7028-3
+ NO2             1.2441-5
+ NO3             2.899-11
+ *N2             7.3197-1
+ N2O             6.9169-7
+ N2H2            9.232-16
+ N2O3            7.847-13
+ N3              4.141-15
+ N3H             6.495-16
+ *O              8.2624-5
+ *OH             1.3307-3
+ *O2             7.6152-2
+ O3              3.5587-9
+
+  * THERMODYNAMIC PROPERTIES FITTED TO 20000.K
+
+
+

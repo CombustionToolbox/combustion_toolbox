@@ -66,12 +66,18 @@ function [N, dNi_T, dN_T, dNi_p, dN_p, STOP, STOP_ions] = select_equilibrium(sel
         % Compute numer of moles without ionization
 %         [N, dNi_T, dN_T, dNi_p, dN_p, STOP, STOP_ions] = equilibrium(self, pP, TP, mix1, guess_moles);
 %         [N, dNi_T, dN_T, dNi_p, dN_p, STOP] = equilibrium_reduced(self, pP, TP, mix1, guess_moles);
-%         STOP_ions = 0;
+%         STOP_ions = 0;  
 %     else
         % Compute numer of moles with ionization
-        [N, dNi_T, dN_T, dNi_p, dN_p, STOP, STOP_ions] = equilibrium(self, pP, TP, mix1, guess_moles);
+%         [N, dNi_T, dN_T, dNi_p, dN_p, STOP, STOP_ions] = equilibrium(self, pP, TP, mix1, guess_moles);
 %         [N, dNi_T, dN_T, dNi_p, dN_p, STOP, STOP_ions] = equilibrium_ions(self, pP, TP, mix1, guess_moles);
 %     end
+    
+    if strfind(self.PD.ProblemType, 'P') == 2
+        [N, dNi_T, dN_T, dNi_p, dN_p, STOP, STOP_ions] = equilibrium(self, pP, TP, mix1, guess_moles);
+    else
+        [N, dNi_T, dN_T, dNi_p, dN_p, STOP, STOP_ions] = equilibrium_helmholtz(self, mix1.v, TP, mix1, guess_moles);
+    end
 end
 
 function mix2 = compute_properties(self, mix1, P, pP, TP, DeltaNP, DeltaNP_ions)

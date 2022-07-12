@@ -369,7 +369,7 @@ function self = compute_shock(varargin)
     % Additional inputs
 %     initial_velocity_sound = 3.529546069689621e+02; % N2
 %     initial_velocity_sound = 329.4216; % O2
-    initial_velocity_sound = 350; % Air
+    initial_velocity_sound = 347.25; % Air
 
 %     u1 = linspace(initial_velocity_sound, 9681.1, 966);
 %     u1 = [u1, linspace(500.1, 3000, 1000)];

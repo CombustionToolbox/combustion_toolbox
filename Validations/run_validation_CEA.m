@@ -13,6 +13,10 @@ function run_validation_CEA
     run_validation_HP_CEA_2;
     run_validation_HP_CEA_3;
     run_validation_HP_CEA_4;
+    % TV:
+    run_validation_TV_CEA_1;
+    % EV:
+    run_validation_EV_CEA_1;
     % DET: 
     run_validation_DET_CEA_1;
     run_validation_DET_CEA_2;

@@ -29,7 +29,7 @@ function mix2 = equilibrate(self, mix1, pP, varargin)
 end
 
 %%% SUB-PASS FUNCTIONS
-function [mix2, guess_moles] = unpack(value)
+function mix2 = unpack(value)
     if ~isempty(value)
         mix2 = get_struct(value{1});
     else

@@ -7,11 +7,13 @@ function gui_ProblemTypeValueChanged(obj)
     % 2. Update GUI items depending of the problem selected    
     switch obj.ProblemType.Value
         case 'TP' % * TP: Equilibrium composition at defined T and p
+            % Visible flags
+            obj.FLAG_IAC.Visible = 'off';
+            obj.FLAG_IAC.Value = true;
+            gui_FLAG_IACValueChanged(obj);
             % Update input items
             obj.PP1.Visible = 'on'; obj.PP2.Visible = 'on';
             obj.text_P1.Visible = 'on';
-            % Visible flags
-            obj.FLAG_IAC.Visible = 'off';
             % Update Additional constraints panel
             obj.AdditionalconstraintsPanel.Visible = 'off';
             obj.AdditionalconstraintsPanel.Title = 'Additional constraints';
@@ -25,6 +27,10 @@ function gui_ProblemTypeValueChanged(obj)
             % Set invisible shocks/detonation items
             gui_visible_shocks(obj, false);
         case 'HP' % * HP: Adiabatic T and composition at constant p
+            % Visible flags
+            obj.FLAG_IAC.Visible = 'off';
+            obj.FLAG_IAC.Value = true;
+            gui_FLAG_IACValueChanged(obj);
             % Update input items
             obj.PP1.Visible = 'off'; obj.PP2.Visible = 'on';
             obj.PR3.Visible = 'off'; obj.PR4.Visible = 'off';
@@ -48,6 +54,10 @@ function gui_ProblemTypeValueChanged(obj)
             % Set invisible shocks/detonation items
             gui_visible_shocks(obj, false);
         case 'SP' % * SP: Isentropic (i.e., adiabatic) compression/expansion to a specified p
+            % Visible flags
+            obj.FLAG_IAC.Visible = 'off';
+            obj.FLAG_IAC.Value = true;
+            gui_FLAG_IACValueChanged(obj);
             % Update input items
             obj.PP1.Visible = 'off'; obj.PP2.Visible = 'on';
             obj.PR3.Visible = 'off'; obj.PR4.Visible = 'off';
@@ -71,6 +81,10 @@ function gui_ProblemTypeValueChanged(obj)
             % Set invisible shocks/detonation items
             gui_visible_shocks(obj, false);
         case 'TV' % * TV: Equilibrium composition at defined T and constant v
+            % Visible flags
+            obj.FLAG_IAC.Visible = 'off';
+            obj.FLAG_IAC.Value = true;
+            gui_FLAG_IACValueChanged(obj);
             % Update input items
             obj.PP1.Visible = 'on'; obj.PP2.Visible = 'off'; 
             obj.PR3.Visible = 'off'; obj.PR4.Visible = 'off';
@@ -95,6 +109,10 @@ function gui_ProblemTypeValueChanged(obj)
             % Set invisible shocks/detonation items
             gui_visible_shocks(obj, false);
         case 'EV' % * EV: Equilibrium composition at Adiabatic T and constant v
+            % Visible flags
+            obj.FLAG_IAC.Visible = 'off';
+            obj.FLAG_IAC.Value = true;
+            gui_FLAG_IACValueChanged(obj);
             % Update input items
             obj.PP1.Visible = 'off'; obj.PP2.Visible = 'off'; 
             obj.PR3.Visible = 'off'; obj.PR4.Visible = 'off';
@@ -118,6 +136,10 @@ function gui_ProblemTypeValueChanged(obj)
             % Set invisible shocks/detonation items
             gui_visible_shocks(obj, false);
         case 'SV' % * SV: Isentropic (i.e., fast adiabatic) compression/expansion to a specified v
+            % Visible flags
+            obj.FLAG_IAC.Visible = 'off';
+            obj.FLAG_IAC.Value = true;
+            gui_FLAG_IACValueChanged(obj);
             % Update input items
             obj.PP1.Visible = 'off'; obj.PP2.Visible = 'off'; 
             obj.PR3.Visible = 'off'; obj.PR4.Visible = 'off';
@@ -142,6 +164,10 @@ function gui_ProblemTypeValueChanged(obj)
             % Set invisible shocks/detonation items
             gui_visible_shocks(obj, false);
         case 'SHOCK_I' % * SHOCK_I: CALCULATE PLANAR INCIDENT SHOCK WAVE
+            % Visible flags
+            obj.FLAG_IAC.Visible = 'off';
+            obj.FLAG_IAC.Value = true;
+            gui_FLAG_IACValueChanged(obj);
             % Update input items
             obj.PP1.Visible = 'off'; obj.PP2.Visible = 'off';
             obj.PR3.Visible = 'on'; obj.PR4.Visible = 'on';
@@ -166,6 +192,10 @@ function gui_ProblemTypeValueChanged(obj)
             % Set invisible shocks/detonation items
             gui_visible_shocks(obj, true);
         case 'SHOCK_R' % * SHOCK_R: CALCULATE PLANAR POST-REFLECTED SHOCK STATE
+            % Visible flags
+            obj.FLAG_IAC.Visible = 'off';
+            obj.FLAG_IAC.Value = true;
+            gui_FLAG_IACValueChanged(obj);
             % Update input items
             obj.PP1.Visible = 'off'; obj.PP2.Visible = 'off';
             obj.PR3.Visible = 'on'; obj.PR4.Visible = 'on';
@@ -190,6 +220,10 @@ function gui_ProblemTypeValueChanged(obj)
             % Set invisible shocks/detonation items
             gui_visible_shocks(obj, true);
         case {'DET', 'DET_R'} % * DET: CALCULATE CHAPMAN-JOUGUET STATE
+            % Visible flags
+            obj.FLAG_IAC.Visible = 'off';
+            obj.FLAG_IAC.Value = true;
+            gui_FLAG_IACValueChanged(obj);
             % Update input items
             obj.PP1.Visible = 'off'; obj.PP2.Visible = 'off';
             obj.PR3.Visible = 'off'; obj.PR4.Visible = 'off';
@@ -208,6 +242,10 @@ function gui_ProblemTypeValueChanged(obj)
             % Set invisible shocks/detonation items
             gui_visible_shocks(obj, true);
         case {'DET_OVERDRIVEN', 'DET_OVERDRIVEN_R'} % * DET_OVERDRIVEN: CALCULATE OVERDRIVE DETONATION
+            % Visible flags
+            obj.FLAG_IAC.Visible = 'off';
+            obj.FLAG_IAC.Value = true;
+            gui_FLAG_IACValueChanged(obj);
             % Update input items
             obj.PP1.Visible = 'off'; obj.PP2.Visible = 'off';
             obj.PR3.Visible = 'on'; obj.PR4.Visible = 'off';
@@ -231,13 +269,15 @@ function gui_ProblemTypeValueChanged(obj)
             % Set invisible shocks/detonation items
             gui_visible_shocks(obj, true);
         case {'ROCKET'} % * ROCKET: ROCKET PROPELLANT PERFORMANCE
+            % Visible flags
+            obj.FLAG_IAC.Visible = 'on';
+            obj.FLAG_IAC.Value = true;
+            gui_FLAG_IACValueChanged(obj);
             % Update input items
             obj.PP1.Visible = 'off'; obj.PP2.Visible = 'off';
             obj.PR3.Visible = 'on'; obj.PR4.Visible = 'off';
             obj.PP3.Visible = 'on'; obj.PP4.Visible = 'off'; 
             obj.text_P1.Visible = 'off';
-            % Visible flags
-            obj.FLAG_IAC.Visible = 'on';
             % Update Additional constraints panel
             obj.AdditionalconstraintsPanel.Visible = 'on';
             obj.AdditionalconstraintsPanel.Title = 'Optional parameters';

@@ -46,15 +46,13 @@ function mix =  ComputeProperties(self, SpeciesMatrix, p, T)
     % Compute enthalpy [kJ]
     mix.h = mix.hf + mix.DhT;
     % Compute internal energy [kJ]
-    mix.e = mix.ef + mix.DeT; 
+    mix.e = mix.h - molesGas(mix) * R0 * T * 1e-3;
     % Compute entropy of mixing [kJ/K]
     mix.DS = compute_entropy_mixing(mix, Ni, R0, FLAG_NONZERO);
     % Compute entropy [kJ/K]
     mix.S = mix.S0 + mix.DS;
     % Compute Gibbs energy [kJ]
     mix.g = mix.h - mix.T * mix.S;
-    % Compute internal energy [kJ]
-    mix.e = mix.h - sum(Ni(FLAG_NONZERO) .* (1 - mix.swtCond(FLAG_NONZERO))) * R0 * T *1e-3; % [kJ]
     % Compute Adibatic index [-]
     mix.gamma = mix.cP/mix.cV;
     % Compute sound velocity [m/s]
@@ -71,7 +69,7 @@ function mix =  ComputeProperties(self, SpeciesMatrix, p, T)
             mix.cP_r = sum(h0_j/T .* (1 +  delta .* (Ni - 1)) .* self.dNi_T, 'omitnan'); % [J/K]
             mix.cP_f = mix.cP;
             mix.cP = mix.cP_f + mix.cP_r; % [J/K]
-            mix.cV = mix.cP + (mix.pv/T * mix.dVdT_p^2) / mix.dVdp_T * 1e5; % [J/K]
+            mix.cV = mix.cP + (molesGas(mix) * R0 * mix.dVdT_p^2) / mix.dVdp_T; % [J/K]
             mix.gamma = mix.cP/mix.cV; % [-]
             mix.gamma_s = - mix.gamma / mix.dVdp_T; % [-]
             mix.sound = sqrt(mix.gamma_s * p*1e5 / mix.rho); % [m/s]

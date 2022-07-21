@@ -80,7 +80,7 @@ function [N, dNi_T, dN_T, dNi_p, dN_p, STOP, STOP_ions] = select_equilibrium(sel
     end
 end
 
-function mix2 = compute_properties(self, mix1, P, pP, TP, DeltaNP, DeltaNP_ions)
+function mix2 = compute_properties(self, mix1, P, pP, TP, STOP, STOP_ions)
     % Compute properties of final mixture
     if strfind(self.PD.ProblemType, 'P') == 2
         mix2 = ComputeProperties(self, P, pP, TP);
@@ -89,8 +89,8 @@ function mix2 = compute_properties(self, mix1, P, pP, TP, DeltaNP, DeltaNP_ions)
         pP = compute_pressure(self, mix1, TP, NP);
         mix2 = ComputeProperties(self, P, pP, TP);
     end    
-    mix2.error_moles = DeltaNP;
-    mix2.error_moles_ions = DeltaNP_ions;
+    mix2.error_moles = STOP;
+    mix2.error_moles_ions = STOP_ions;
 end
 
 function vector = reshape_vectors(self, self_modified, vector_modified)

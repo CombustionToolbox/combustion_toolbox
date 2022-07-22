@@ -16,7 +16,7 @@
 %          PhD Candidate - Group Fluid Mechanics
 %          Universidad Carlos III de Madrid
 %                  
-% Last update Feb 16 2022
+% Last update July 22 2022
 % -------------------------------------------------------------------------
 
 %% INITIALIZE
@@ -24,9 +24,8 @@ self = App('Soot formation');
 %% INITIAL CONDITIONS
 self = set_prop(self, 'TR', 298, 'pR', 1 * 1.01325, 'phi', 0.7:0.01:1.5);
 self.PD.S_Fuel     = {'CH4'};
-self.PD.S_Oxidizer = {'O2'};
-self.PD.S_Inert    = {'N2'};
-self.PD.proportion_inerts_O2 = 79/21;
+self.PD.S_Oxidizer = {'N2', 'O2'};
+self.PD.N_Oxidizer = [0.79, 0.21];
 %% ADDITIONAL INPUTS (DEPENDS OF THE PROBLEM SELECTED)
 self = set_prop(self, 'pP', self.PD.pR.value); 
 %% SOLVE PROBLEM

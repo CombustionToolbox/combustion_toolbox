@@ -160,17 +160,24 @@ function titlename = create_title(self)
             titlename = strcat(titlename, ' + ');
         end
         titlename = strcat(titlename, strcat('$\frac{', sprintf('%.3g', self.PD.phi_t), '}{\phi}$'));
-        if ~isempty(self.PD.S_Oxidizer) && ~isempty(self.PD.S_Inert)
+        if ~isempty(self.PD.S_Oxidizer)
             titlename = strcat(titlename, '(');
         end
         if ~isempty(self.PD.S_Oxidizer)
-            titlename = strcat(titlename, cat_moles_species(1, self.PD.S_Oxidizer));
+            ind = find_ind(self.PD.S_Oxidizer, 'O2');
+            if ind
+                self.PD.N_Oxidizer = self.PD.N_Oxidizer / self.PD.N_Oxidizer(ind);
+            end
+            titlename = strcat(titlename, cat_moles_species(self.PD.N_Oxidizer, self.PD.S_Oxidizer));
         end
-        if ~isempty(self.PD.S_Inert)
-            titlename = strcat(titlename, ' + ', cat_moles_species(self.PD.proportion_inerts_O2, self.PD.S_Inert));
+        if ~isempty(self.PD.S_Inert) && ~isempty(self.PD.ratio_inerts_O2)
+            titlename = strcat(titlename, ' + ', cat_moles_species(self.PD.N_Inert, self.PD.S_Inert));
         end
-        if ~isempty(self.PD.S_Oxidizer) && ~isempty(self.PD.S_Inert)
+        if ~isempty(self.PD.S_Oxidizer)
             titlename = strcat(titlename, ')');
+        end
+        if ~isempty(self.PD.S_Inert) && isempty(self.PD.ratio_inerts_O2)
+            titlename = strcat(titlename, ' + ', cat_moles_species(self.PD.N_Inert, self.PD.S_Inert));
         end
     end
 end

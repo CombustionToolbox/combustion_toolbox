@@ -1,5 +1,5 @@
 function vector = cell2vector(value, varargin)
-    % Convert values of a individual cell into a vector. If the value 
+    % Convert values of an individual cell into a vector. If the value 
     % correspond with a struct it can return as a vector the values of a 
     % given fieldname.
     %

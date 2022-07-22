@@ -46,16 +46,17 @@ function self = ProblemDescription()
     self.Aratio_c.description = "Area ratio combustion chamber/thoat - rocket";
     self.Aratio_c.value = []; % [-]
     % * Mixture conditions
-    self.S_Fuel = [];               % Cell with the list of fuel species in the mixture
-    self.N_Fuel = [];               % Vector with the number of moles of the fuel species in the mixture
-    self.T_Fuel = [];               % Vector with the temperature values of the fuel species in the mixture
-    self.S_Oxidizer = [];           % Cell with the list of oxidizer species in the mixture
-    self.N_Oxidizer = [];           % Vector with the number of moles of the oxidizer species in the mixture
-    self.T_Oxidizer = [];           % Vector with the temperature values of the oxidizer species in the mixture
-    self.S_Inert = [];              % Cell with the list of inert species in the mixture
-    self.N_Inert = [];              % Vector with the number of moles of the inert species in the mixture
-    self.T_Inert = [];              % Vector with the temperature values of the inert species in the mixture
-    self.proportion_inerts_O2 = []; % Proportion Inerts / O2 [-]
+    self.S_Fuel = [];            % Cell with the list of fuel species in the mixture
+    self.N_Fuel = [];            % Vector with the number of moles of the fuel species in the mixture
+    self.T_Fuel = [];            % Vector with the temperature values of the fuel species in the mixture
+    self.S_Oxidizer = [];        % Cell with the list of oxidizer species in the mixture
+    self.N_Oxidizer = [];        % Vector with the number of moles of the oxidizer species in the mixture
+    self.T_Oxidizer = [];        % Vector with the temperature values of the oxidizer species in the mixture
+    self.S_Inert = [];           % Cell with the list of inert species in the mixture
+    self.N_Inert = [];           % Vector with the number of moles of the inert species in the mixture
+    self.T_Inert = [];           % Vector with the temperature values of the inert species in the mixture
+    self.ratio_oxidizers_O2 = 1; % Ratio oxidizers / O2 [% moles]
+    self.ratio_inerts_O2 = [];   % Ratio oxidizers / Inerts [% moles]
     % * Flags
     self.FLAG_ION = false;      % Flag ionized species in the system
     self.FLAG_IAC = true;       % Flag use IAC model for rocket computations

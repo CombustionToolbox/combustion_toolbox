@@ -9,15 +9,20 @@ function problems_solved = run_validation_DET_CEA_3
     % List of species considered: ListSpecies('Soot Formation Extended')
     
     % Inputs
-    filename = {'CH4_air1_detonations.out', 'CH4_air1_detonations2.out', 'CH4_air1_detonations3.out'};
+    Fuel = 'CH4';
+    prefixDataName = Fuel;
+    filename = {strcat(prefixDataName, '_air1_detonations.out'), strcat(prefixDataName, '_air1_detonations2.out'), strcat(prefixDataName, '_air1_detonations3.out')};
     LS =  'Soot Formation Extended';
     DisplaySpecies = {'CO2', 'CO', 'H2O', 'H2', 'O2', 'N2', 'He', 'Ar',...
                       'HCN','H','OH','O','CN','NH3','CH4','C2H4','CH3',...
                       'NO','HCO','NH2','NH','N','CH','Cbgrb'};
     tolN = 1e-18;
     % Combustion Toolbox
-    results_CT = run_CT('ProblemType', 'DET', 'Species', LS,...
-        'S_Fuel', 'CH4', 'EquivalenceRatio', 0.5:0.01:4, 'tolN', tolN);
+    results_CT = run_CT('ProblemType', 'DET',...
+                        'Species', LS,...
+                        'S_Fuel', 'CH4',...
+                        'EquivalenceRatio', 0.5:0.01:4,...
+                        'tolN', tolN);
     problems_solved = length(results_CT.PD.range);
     % Load results CEA 
     results_CEA = data_CEA(filename, DisplaySpecies);

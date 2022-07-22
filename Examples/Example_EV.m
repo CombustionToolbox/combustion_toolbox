@@ -16,7 +16,7 @@
 %          PhD Candidate - Group Fluid Mechanics
 %          Universidad Carlos III de Madrid
 %                 
-% Last update Oct 22 2021
+% Last update July 22 2022
 % -------------------------------------------------------------------------
 
 %% INITIALIZE
@@ -24,9 +24,8 @@ self = App('Soot formation');
 %% INITIAL CONDITIONS
 self = set_prop(self, 'TR', 300, 'pR', 1 * 1.01325, 'phi', 0.5:0.01:5);
 self.PD.S_Fuel     = {'CH4'};
-self.PD.S_Oxidizer = {'O2'};
-self.PD.S_Inert    = {'N2', 'Ar', 'CO2'};
-self.PD.proportion_inerts_O2 = [78.084, 0.9365, 0.0319] ./ 20.9476;
+self.PD.S_Oxidizer = {'N2', 'O2', 'Ar', 'CO2'};
+self.PD.ratio_oxidizers_O2 = [78.084, 20.9476, 0.9365, 0.0319] ./ 20.9476;
 %% ADDITIONAL INPUTS (DEPENDS OF THE PROBLEM SELECTED)
 % No additional data required. The internal energy and volume are constants.
 %% SOLVE PROBLEM

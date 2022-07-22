@@ -11,6 +11,7 @@ function self = Check_FOI(self, FOI_species)
                 self.Misc.FLAG_ADDED_SPECIES = true;
             end
         end
+        
         if self.Misc.FLAG_ADDED_SPECIES
             self.S.ind_nswt = []; self.S.ind_swt = []; self.S.ind_cryogenic = [];
             self = ContainedElements(self);
@@ -21,6 +22,15 @@ function self = Check_FOI(self, FOI_species)
         else
             self.Misc.index_LS_original = 1:1:self.S.NS;
         end
+        
+        % Set index of no frozen (react) and frozen species
+        self = set_react_index(self, self.PD.S_Inert);
+        
+        % Check if O2 is as oxidizer, if not try for O2 in liquid state
+        if isempty(find_ind(self.PD.S_Oxidizer, 'O2'))
+            self.S.ind_O2 = find_ind(self.S.LS, 'O2bLb');
+        end
+
         self.Misc.FLAG_FIRST = false;
     end
 end

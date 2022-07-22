@@ -2,7 +2,8 @@
 % EXAMPLE: SHOCK_POLAR_REFLECTED
 %
 % Compute shock polar plots at standard conditions, a set of 39 species
-% considered, and a set of initial shock front velocities u1/a1 = [2:2:14]
+% considered, an initial shock front Mach numbers = 6, and a deflection 
+% angle theta = 25;
 %    
 % Air_ions == {'O2','N2','O','O3','N','NO','NO2','NO3','N2O','N2O3',...
 %              'N2O4','N3','eminus','Nminus','Nplus','NOplus','NO2minus',...
@@ -17,25 +18,18 @@
 %          PhD Candidate - Group Fluid Mechanics
 %          Universidad Carlos III de Madrid
 %                  
-% Last update March 21 2021
+% Last update July 22 2022
 % -------------------------------------------------------------------------
 
 %% INITIALIZE
-self = App('Air_ions');   
-% self = App({'O2', 'N2', 'Ar', 'CO2'}); % Frozen
-% self = App({'O2'}); % Frozen
+self = App('Air_ions');
 %% INITIAL CONDITIONS
 self = set_prop(self, 'TR', 300, 'pR', 1 * 1.01325);
-self.PD.S_Oxidizer = {'O2'};
-self.PD.S_Inert    = {'N2', 'Ar', 'CO2'};
-self.PD.proportion_inerts_O2 = [78.084, 0.9365, 0.0319] ./ 20.9476;
+self.PD.S_Oxidizer = {'N2', 'O2', 'Ar', 'CO2'};
+self.PD.N_Oxidizer = [78.084, 20.9476, 0.9365, 0.0319] ./ 20.9476;
 %% ADDITIONAL INPUTS (DEPENDS OF THE PROBLEM SELECTED)
-% range1 = logspace(0, 1, 300); range1 = range1(range1 < 5);
-% overdriven = [range1, linspace(5, 14, 30)]; overdriven = overdriven(overdriven > 1);
-% overdriven = 2:2:14;
-% overdriven = [2, 3, 5, 14];
-overdriven = 6.5;
-self = set_prop(self, 'u1', 3.472107491008314e+02 * overdriven, 'theta', [5:5:31.77]);
+Mach_number = 6;
+self = set_prop(self, 'u1', 301.8203 * Mach_number, 'theta', 25);
 %% SOLVE PROBLEM
 self = SolveProblem(self, 'SHOCK_POLAR_R');
 %% DISPLAY RESULTS (PLOTS)

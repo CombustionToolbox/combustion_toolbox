@@ -33,8 +33,7 @@ function [N0, dNi_T, dN_T, dNi_p, dN_p, STOP, STOP_ions] = equilibrium_helmholtz
     A0 = C.A0.value;
     R0TP = C.R0 * TP; % [J/mol]
     % Initialization
-    NatomE = mix1.NatomE';
-%     A0 = A0(:, NatomE > TN.tolN);
+    NatomE = mix1.NatomE_react';
     max_NatomE = max(NatomE);
     NP = 0.1;
     SIZE = -log(TN.tolN);
@@ -58,18 +57,7 @@ function [N0, dNi_T, dN_T, dNi_p, dN_p, STOP, STOP_ions] = equilibrium_helmholtz
     temp_NS = length(temp_ind);
 
     % Initialize species vector N0    
-%     % Entropy [J/(mol-K)]   
-%     Qj = exp(-C.R0 * set_s0(S.LS(temp_ind_nswt), TP, self.DB) * 1e-3);
-%     % Entropy of mixing
-%     Qj = exp(R0TP * N0(temp_ind_nswt, 1) .* log(N0(temp_ind_nswt, 1) / NP * pP));
-%     % Thermal enthalpy
-%     Qj = exp(-set_DhT(S.LS(temp_ind_nswt), TP, self.DB) / R0TP);
-%     % Compute distribution
-%     N0(temp_ind_nswt, 1) = Qj ./ sum(Qj);
-%     NP = sum(N0(:, 1));
-
     [N0, NP] = initialize_moles(N0, NP, temp_ind, temp_NG, guess_moles);
-
     % Standard Gibbs free energy [J/mol]
     g0 = set_g0(S.LS, TP, self.DB);
     % Dimensionless Chemical potential

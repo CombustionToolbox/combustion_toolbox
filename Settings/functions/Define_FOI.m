@@ -12,11 +12,11 @@ function self = Define_FOI(self, i)
     self = Define_F(self);
     % Define moles Oxidizer
     if ~self.Misc.FLAG_N_Oxidizer && ~isempty(self.PD.S_Oxidizer)
-        self.PD.N_Oxidizer = self.PD.phi_t/self.PD.phi.value(i);
+        self.PD.N_Oxidizer = self.PD.phi_t/self.PD.phi.value(i) .* self.PD.ratio_oxidizers_O2;
     end
     % Define moles Diluent/Inert
     if ~self.Misc.FLAG_N_Inert && ~isempty(self.PD.S_Inert)
-        self.PD.N_Inert = self.PD.phi_t/self.PD.phi.value(i) .* self.PD.proportion_inerts_O2;
+        self.PD.N_Inert = self.PD.phi_t/self.PD.phi.value(i) .* self.PD.ratio_inerts_O2;
     end
     % Set inputs
     moles = [self.PD.N_Fuel, self.PD.N_Oxidizer, self.PD.N_Inert];
@@ -35,7 +35,9 @@ function self = Define_FOI(self, i)
     self.PS.strR{i}.phi = self.PD.phi.value(i);
     self.PS.strR{i}.LS  = merged_cells({self.PD.S_Fuel, self.PD.S_Oxidizer, self.PD.S_Inert});
     [~, ind_LS, ~] = intersect(self.S.LS, self.PS.strR{i}.LS);
+    [~, ind_LS_Inert, ~] = intersect(self.S.LS, self.PD.S_Inert);
     self.PS.strR{i}.ind_LS = ind_LS;
+    self.PS.strR{i}.ind_LS_Inert = ind_LS_Inert;
     self.PS.strR{i}.phi_c = Compute_phi_c(self.PD.Fuel);
     % Compute percentage Fuel, Oxidizer/Fuel ratio and equivalence ratio
     self = compute_ratios_fuel_oxidizer(self, R, i);
@@ -53,11 +55,10 @@ function self = compute_ratios_fuel_oxidizer(self, R, i)
     % Compute percentage Fuel, Oxidizer/Fuel ratio and equivalence ratio
     if ~isempty(self.PD.S_Fuel) && ~isempty(self.PD.S_Oxidizer)
         self.PS.strR{i}.percentage_Fuel = sum(self.PD.R_Fuel(:, 11)) / sum(R(:, 11)) * 100;
-        self.PS.strR{i}.FO_moles = sum(self.PD.R_Fuel(:, 1)) / sum(self.PD.R_Oxidizer(:, 1));
-        self.PS.strR{i}.FO_moles_st = sum(self.PD.R_Fuel(:, 1)) / (self.PS.strR_Fuel.x + self.PS.strR_Fuel.x2 + self.PS.strR_Fuel.x3 + self.PS.strR_Fuel.y/4 - self.PS.strR_Fuel.z/2);
         self.PS.strR{i}.OF = sum(self.PD.R_Oxidizer(:, 11)) / sum(self.PD.R_Fuel(:, 11));
         self.PS.strR{i}.FO = self.PS.strR{i}.percentage_Fuel / 100;
-
+        self.PS.strR{i}.FO_moles = sum(self.PD.R_Fuel(:, 1)) / sum(self.PD.R_Oxidizer(self.S.ind_O2, 1));
+        self.PS.strR{i}.FO_moles_st = sum(self.PD.R_Fuel(:, 1)) / (self.PS.strR_Fuel.x + self.PS.strR_Fuel.x2 + self.PS.strR_Fuel.x3 + self.PS.strR_Fuel.y/4 - self.PS.strR_Fuel.z/2);
         self.PS.strR{i}.phi = self.PS.strR{i}.FO_moles / self.PS.strR{i}.FO_moles_st;
     elseif ~isempty(self.PD.S_Fuel)
         self.PS.strR{i}.percentage_Fuel = 100;

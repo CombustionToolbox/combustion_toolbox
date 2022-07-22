@@ -8,10 +8,8 @@ function problems_solved = run_validation_SHOCK_POLAR_SDToolbox_1
     % List of species considered: Frozen
     
     % Inputs
-    Fuel = [];
-    Oxidizer = 'O2';
-    Inert    = 'N2';
-    proportion_inerts_O2 = 79/21;
+    Oxidizer = {'N2', 'O2'};
+    moles = [79, 21]/21;
 %     LS = {'O2', 'N2'};
     LS = 'AIR_IONS';
     u1 = 3.472107491008314e+02 * [2, 3, 5, 14];
@@ -19,9 +17,11 @@ function problems_solved = run_validation_SHOCK_POLAR_SDToolbox_1
     % Tunning parameters
     tolN = 1e-14;
     % Combustion Toolbox
-    results_CT = run_CT('ProblemType', 'SHOCK_POLAR', 'Species', LS, 'S_Fuel', Fuel,...
-                        'S_Oxidizer', Oxidizer, 'S_Inert', Inert,...
-                        'proportion_inerts_O2', proportion_inerts_O2, 'u1', u1,...
+    results_CT = run_CT('ProblemType', 'SHOCK_POLAR',...
+                        'Species', LS,...
+                        'S_Oxidizer', Oxidizer,...
+                        'N_Oxidizer', moles,...
+                        'u1', u1,...
                         'tolN', tolN);
     problems_solved = get_problems_solved(results_CT.PS.strP, 'polar', 'theta');
     % Load results SDToolbox 

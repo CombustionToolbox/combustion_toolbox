@@ -14,16 +14,15 @@
 %          PhD Candidate - Group Fluid Mechanics
 %          Universidad Carlos III de Madrid
 %                 
-% Last update March 17 2022
+% Last update July 22 2022
 % -------------------------------------------------------------------------
 
 %% INITIALIZE
 self = App('Air');
 %% INITIAL CONDITIONS
 self = set_prop(self, 'TR', 300, 'pR', 1 * 1.01325);
-self.PD.S_Oxidizer = {'O2'};
-self.PD.S_Inert    = {'N2', 'Ar', 'CO2'};
-self.PD.proportion_inerts_O2 = [78.084, 0.9365, 0.0319] ./ 20.9476;
+self.PD.S_Oxidizer = {'N2', 'O2', 'Ar', 'CO2'};
+self.PD.N_Oxidizer = [78.084, 20.9476, 0.9365, 0.0319] ./ 20.9476;
 %% ADDITIONAL INPUTS (DEPENDS OF THE PROBLEM SELECTED)
 u1 = logspace(2, 5, 500); u1 = u1(u1<20000); u1 = u1(u1>=360);
 self = set_prop(self, 'u1', u1);

@@ -9,10 +9,11 @@ function self = run_CT(varargin)
     Pressure_mix1 = 1;
     Pressure_mix2 = 1;
     EquivalenceRatio = 0.5:0.01:4;
-    S_Fuel = {'CH4'}; N_Fuel = [];
-    S_Oxidizer = {'O2'}; N_Oxidizer = [];
-    S_Inert    = {'N2'}; N_Inert = [];
-    proportion_inerts_O2 = 79/21;
+    S_Fuel = []; N_Fuel = [];
+    S_Oxidizer = {'N2', 'O2'}; N_Oxidizer = [];
+    S_Inert = []; N_Inert = [];
+    ratio_oxidizers_O2 = [79, 21]/21;
+    ratio_inerts_O2 = [];
     ProblemType = 'HP';
     tolN = 1e-18;
     FLAG_PHI = true;
@@ -53,17 +54,19 @@ function self = run_CT(varargin)
                 if ~iscell(S_Inert) && ~isempty(S_Inert)
                     S_Inert = {S_Inert};
                 end
-            case {'n_fuel'}
+            case 'n_fuel'
                 N_Fuel = varargin{i+1};
                 FLAG_PHI = false;
-            case {'n_oxidizer'}
+            case 'n_oxidizer'
                 N_Oxidizer = varargin{i+1};
                 FLAG_PHI = false;
-            case {'n_inert'}
+            case 'n_inert'
                 N_Inert = varargin{i+1};
                 FLAG_PHI = false;
-            case 'proportion_inerts_o2'
-                proportion_inerts_O2 = varargin{i+1};
+            case 'ratio_oxidizers_o2'
+                ratio_oxidizers_O2 = varargin{i+1};
+            case 'ratio_inerts_o2'
+                ratio_inerts_O2 = varargin{i+1};
             case 'toln'
                 tolN = varargin{i+1};
             case 'flag_iac'
@@ -95,7 +98,8 @@ function self = run_CT(varargin)
     self.PD.S_Fuel = S_Fuel; self.PD.N_Fuel = N_Fuel;
     self.PD.S_Oxidizer = S_Oxidizer; self.PD.N_Oxidizer = N_Oxidizer;
     self.PD.S_Inert = S_Inert; self.PD.N_Inert = N_Inert;
-    self.PD.proportion_inerts_O2 = proportion_inerts_O2;
+    self.PD.ratio_oxidizers_O2 = ratio_oxidizers_O2;
+    self.PD.ratio_inerts_O2 = ratio_inerts_O2;
     % ADDITIONAL INPUTS (DEPENDS OF THE PROBLEM SELECTED)
     self = set_prop(self, 'pP', Pressure_mix2, 'TP', Temp_mix2);
     if exist('Velocity', 'var')

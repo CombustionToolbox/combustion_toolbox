@@ -26,6 +26,9 @@ function mix2 = equilibrate_T(self, mix1, pP, TP, varargin)
     % Reshape matrix of number of moles, N
     self.dNi_T = reshape_vectors(self, self_ListProducts, self.dNi_T);
     self.dNi_p = reshape_vectors(self, self_ListProducts, self.dNi_p);
+    % Add moles of frozen species to the moles vector N
+    N_mix1 = moles(mix1);
+    N(self.S.ind_frozen) = N_mix1(self.S.ind_frozen);
     % Compute properties matrix
     P = SetSpecies(self, self.S.LS, N(:, 1), TP);
     % Compute properties of final mixture

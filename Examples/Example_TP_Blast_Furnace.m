@@ -20,15 +20,15 @@
 %          PhD Candidate - Group Fluid Mechanics
 %          Universidad Carlos III de Madrid
 %                  
-% Last update Jul 04 2022
+% Last update July 22 2022
 % -------------------------------------------------------------------------
 
 %% INITIALIZE
 self = App({'O2', 'N2', 'H2O', 'CH4', 'CO', 'CO2', 'H2', 'CHO_M', 'CH2O_M', 'OH', 'Febab', 'CaObcrb'});
 %% INITIAL CONDITIONS
 self = set_prop(self, 'TR', 1050, 'pR', 1 * 1.01325);
-self.PD.S_Fuel     = {'O2', 'N2', 'H2O', 'CH4', 'Fe3O4bcrb', 'Febab', 'Cbgrb', 'CaCO3bcrb', 'CaObcrb'};
-self.PD.N_Fuel     = [20.46, 187.1, 1.775, 2.2554, 13.1, 3.527, 85.59, 0.1499, 0.6063];
+self.PD.S_Fuel = {'O2', 'N2', 'H2O', 'CH4', 'Fe3O4bcrb', 'Febab', 'Cbgrb', 'CaCO3bcrb', 'CaObcrb'};
+self.PD.N_Fuel = [20.46, 187.1, 1.775, 2.2554, 13.1, 3.527, 85.59, 0.1499, 0.6063];
 %% ADDITIONAL INPUTS (DEPENDS OF THE PROBLEM SELECTED)
 self = set_prop(self, 'pP', self.PD.pR.value, 'TP', 1050); 
 self.TN.tolN = 1e-30;

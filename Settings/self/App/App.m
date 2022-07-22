@@ -24,7 +24,7 @@ function self = App(varargin)
         self.PS = ProblemSolution();
         self.TN = TunningProperties();
         self = constructor(self, LS, FLAG_FAST);
-        if ~nargin || ~isa(varargin{1,1}, 'combustion_toolbox_app') || ~isa(varargin{1,1}, 'combustion_toolbox_app_old') || ~isa(varargin{1,1}, 'combustion_toolbox_app_original') || (~strcmpi(varargin{1,1}, 'fast') && nargin < 4) 
+        if ~nargin || ~isa(varargin{1,1}, 'combustion_toolbox_app') || (~strcmpi(varargin{1,1}, 'fast') && nargin < 4) 
             self = Initialize(self);
         end
     catch ME
@@ -51,7 +51,7 @@ function [self, LS, FLAG_FAST] = initialize(varargin)
             end
             return
         end
-        if isa(varargin{1,1}, 'combustion_toolbox_app') || isa(varargin{1,1}, 'combustion_toolbox_app_old') || isa(varargin{1,1}, 'combustion_toolbox_app_original')
+        if isa(varargin{1,1}, 'combustion_toolbox_app')
             self = varargin{1,1};
             if nargin == 2
                 LS = varargin{1,2};
@@ -81,7 +81,7 @@ function self = constructor(self, LS, FLAG_FAST)
 end
 
 function self = check_GUI(self)
-    if isa(self, 'combustion_toolbox_app') || isa(self, 'combustion_toolbox_app_old') || isa(self, 'combustion_toolbox_app_original')
+    if isa(self, 'combustion_toolbox_app')
         self.Misc.FLAG_GUI = true;
     end
 end

@@ -294,6 +294,11 @@ function gui_ProblemTypeValueChanged(obj)
             obj.text_vP_vR.Visible = 'off'; 
             % Set invisible shocks/detonation items
             gui_visible_shocks(obj, true);
+
+            % 
+            message = {'Calculation of rocket propellant performance using the GUI is still under development.';...
+                       ''; 'Sorry for the inconvenience.'; ''; 'Best,'; 'Alberto'};
+            uialert(obj.UIFigure, message, 'Warning', 'Icon', 'warning');
     end
 end
 

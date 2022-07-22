@@ -13,8 +13,6 @@ function self = SolveProblem(self, ProblemType)
         self.PD.ProblemType = ProblemType;
         % Check inputs and set length of the loop
         self = check_inputs(self);
-        %  Set index of no frozen (react) and frozen species
-        self = set_react_index(self, self.PD.S_Inert);
         % Get Flags and length of the loop
         self = get_FLAG_N(self);
         for i = self.C.l_phi:-1:1
@@ -276,24 +274,4 @@ function mix = assign_shock_polar(mix, mix_polar)
     mix.beta_max =  mix_polar.beta_max;
     mix.theta_sonic = mix_polar.theta_sonic;
     mix.beta_sonic = mix_polar.beta_sonic;
-end
-
-function self = set_react_index(self, species)
-    % Set index of no frozen (react) and frozen species
-    %
-    % Args:
-    %     self (struct): Data of the mixture, conditions, and databases
-    %     species (str): Frozen species
-    %
-    % Returns:
-    %     self (struct): Data of the mixture, conditions, and databases
-
-    if ~isempty(species)
-        index = find_ind(self.S.LS, species);
-        self.S.ind_react = [1:index-1, index+1:self.S.NS];
-        self.S.ind_frozen = index;
-    else
-        self.S.ind_react = 1:self.S.NS;
-        self.S.ind_frozen = [];
-    end
 end

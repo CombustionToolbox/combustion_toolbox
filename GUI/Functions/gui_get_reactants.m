@@ -21,8 +21,8 @@ function app = gui_get_reactants(varargin)
     app = gui_set_species_moles_temperatures(obj, app, species, moles, temperatures, 'S_Fuel', 'N_Fuel', 'T_Fuel', 'ind_Fuel');
     app = gui_set_species_moles_temperatures(obj, app, species, moles, temperatures, 'S_Oxidizer', 'N_Oxidizer', 'T_Oxidizer', 'ind_Oxidizer');
     app = gui_set_species_moles_temperatures(obj, app, species, moles, temperatures, 'S_Inert', 'N_Inert', 'T_Inert', 'ind_Inert');
-    % Compute proportion inerts/O2
-    app = compute_proportion_inerts_O2(app);
+    % Compute ratio oxidizers/O2
+    app = compute_ratio_oxidizers_O2(app);
 end
 
 % SUB-PASS FUNCTIONS
@@ -73,7 +73,7 @@ function moles = gui_get_moles(obj, event, app, FLAG_COMPUTE_FROM_PHI)
         % Set equivalence ratio
         app.PD.phi.value = gui_get_prop(app, 'phi', obj.edit_phi.Value, 'direction', 'first');
         % Get proportion of inert_O2
-        obj.PD.proportion_inerts_O2 = gui_proportion_inerts_O2(obj);
+        obj.PD.ratio_oxidizers_O2 = gui_ratio_oxidizers_O2(obj);
         % compute moles from equivalence ratio
         moles = gui_compute_moles_from_equivalence_ratio(obj, app);
     else
@@ -108,20 +108,25 @@ function moles = gui_compute_moles_from_equivalence_ratio(obj, app)
         moles = obj.UITable_R.Data(:, 2);
         temperatures = obj.UITable_R.Data(:, 5);
         app = gui_set_species_moles_temperatures(obj, app, species, moles, temperatures, 'S_Fuel', 'N_Fuel', 'T_Fuel', 'ind_Fuel');
+        app = gui_set_species_moles_temperatures(obj, app, species, moles, temperatures, 'S_Oxidizer', 'N_Oxidizer', 'T_Oxidizer', 'ind_Oxidizer');
         app = gui_compute_propReactants(obj, app);
     end
     if any(obj.ind_Oxidizer)
-        moles(obj.ind_Oxidizer) = {app.PD.phi_t/app.PD.phi.value(1)};
+        moles = assign_vector2cell(moles, app.PD.phi_t/app.PD.phi.value(1) .* obj.PD.ratio_oxidizers_O2, obj.ind_Oxidizer);
     end
     if any(obj.ind_Inert)
-        moles(obj.ind_Inert) = {app.PD.phi_t/app.PD.phi.value(1) .* obj.PD.proportion_inerts_O2};
+        moles = assign_vector2cell(moles, obj.UITable_R.Data(obj.ind_Inert, 2), obj.ind_Inert);
     end
 end
 
-function proportion_inerts_O2 = gui_proportion_inerts_O2(obj)
+function ratio_oxidizers_O2 = gui_ratio_oxidizers_O2(obj)
     % Get proportion of inert_O2
     temp_app = [];
     FLAG_IDEAL_AIR = obj.IdealAirCheckBox.Value;
-    temp_app = set_air(temp_app, FLAG_IDEAL_AIR);
-    proportion_inerts_O2 = temp_app.PD.proportion_inerts_O2;
+    if ~isempty(find_ind(obj.UITable_R.Data(:, 1), 'O2'))
+        temp_app = set_air(temp_app, FLAG_IDEAL_AIR);
+        ratio_oxidizers_O2 = temp_app.PD.ratio_oxidizers_O2;
+    else
+        ratio_oxidizers_O2 = 1;
+    end
 end

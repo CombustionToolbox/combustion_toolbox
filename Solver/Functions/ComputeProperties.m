@@ -39,6 +39,8 @@ function mix =  ComputeProperties(self, SpeciesMatrix, p, T)
     mix.W = 1/sum(mix.Yi./SpeciesMatrix(:,12), 'OmitNan');
     % Compute vector atoms of each element
     mix.NatomE = sum(Ni .* self.C.A0.value);
+    % Compute vector atoms of each element without frozen species
+    mix.NatomE_react = sum(SpeciesMatrix(self.S.ind_react,1) .* self.C.A0.value(self.S.ind_react, :));
     % Compute volume [m3]
     mix.v = mix.pv / mix.p;
     % Compute density [kg/m3]

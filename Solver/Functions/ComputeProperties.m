@@ -56,7 +56,7 @@ function mix =  ComputeProperties(self, SpeciesMatrix, p, T)
     % Compute Gibbs energy [kJ]
     mix.g = mix.h - mix.T * mix.S;
     % Compute specific heat at constant volume [J/K]
-    mix.cV = mix.cP - R0;
+    mix.cV = mix.cP - R0 * mix.N;
     % Compute Adibatic index [-]
     mix.gamma = mix.cP/mix.cV;
     % Compute sound velocity [m/s]

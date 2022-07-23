@@ -11,6 +11,7 @@ function [mix1, mix2_inj, mix2_c, mix3, mix4] = rocket_performance(self, mix1, A
     % Args:
     %     self (struct): Data of the mixture, conditions, and databases
     %     mix1 (struct): Properties of the initial mixture
+    %     Aratio (struct): Ratio area_exit / area_throat
     %
     % Optional Args:
     %     - mix2 (struct): Properties of the mixture at the outlet of the chamber (previous calculation)

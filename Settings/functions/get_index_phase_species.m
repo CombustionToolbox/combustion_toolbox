@@ -1,5 +1,13 @@
 function self = get_index_phase_species(self, LS)
     % Get index of gaseous, condensed and cryogenic species
+    %
+    % Args:
+    %     self (struct): Data of the mixture, conditions, and databases
+    %     LS (cell): Name list species / list of species   
+    %
+    % Returns:
+    %     self (struct):   Data of the mixture, conditions, and databases
+    
     for ind=1:length(LS)
         Species = LS{ind};
         if ~self.DB.(Species).phase

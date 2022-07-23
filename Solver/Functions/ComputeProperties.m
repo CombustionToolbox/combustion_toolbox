@@ -20,23 +20,21 @@ function mix =  ComputeProperties(self, SpeciesMatrix, p, T)
     Ni          = SpeciesMatrix(:,1);       % [mol]
     mix.N       = sum(SpeciesMatrix(:,1));  % [mol] 
     mix.hf      = sum(SpeciesMatrix(:,2));  % [kJ]
-    mix.DhT     = sum(SpeciesMatrix(:,3));  % [kJ]
+    mix.h       = sum(SpeciesMatrix(:,3));  % [kJ]
     mix.ef      = sum(SpeciesMatrix(:,4));  % [kJ]
-    mix.DeT     = sum(SpeciesMatrix(:,5));  % [kJ]
-    mix.cP      = sum(SpeciesMatrix(:,6));  % [J/K]     
-    mix.cV      = sum(SpeciesMatrix(:,7));  % [J/K]  
-    mix.S0      = sum(SpeciesMatrix(:,8));  % [kJ/K]
-    mix.pv      = sum(SpeciesMatrix(:,9));  % [bar m3]
-    mix.swtCond = SpeciesMatrix(:,10);      % [bool]
-    mix.mi      = sum(SpeciesMatrix(:,11)); % [kg]
+    mix.cP      = sum(SpeciesMatrix(:,5));  % [J/K]
+    mix.S0      = sum(SpeciesMatrix(:,6));  % [kJ/K]
+    mix.pv      = sum(SpeciesMatrix(:,7));  % [bar m3]
+    mix.swtCond = SpeciesMatrix(:,8);       % [bool]
+    mix.mi      = sum(SpeciesMatrix(:,9));  % [kg]
     % Compute mass fractions [-]
-    mix.Yi = SpeciesMatrix(:,11)./mix.mi; % [-]
+    mix.Yi = SpeciesMatrix(:,9)./mix.mi;
+    % Compute mean molecular weight [g/mol]
+    mix.W = 1/sum(mix.Yi./SpeciesMatrix(:,10), 'OmitNan');
     % Compute molar fractions [-]
     mix.Xi = Ni/mix.N;
     % Get non zero species
-    FLAG_NONZERO = mix.Xi > 0; 
-    % Compute mean molecular weight [g/mol]
-    mix.W = 1/sum(mix.Yi./SpeciesMatrix(:,12), 'OmitNan');
+    FLAG_NONZERO = mix.Xi > 0;
     % Compute vector atoms of each element
     mix.NatomE = sum(Ni .* self.C.A0.value);
     % Compute vector atoms of each element without frozen species
@@ -45,16 +43,20 @@ function mix =  ComputeProperties(self, SpeciesMatrix, p, T)
     mix.v = mix.pv / mix.p;
     % Compute density [kg/m3]
     mix.rho = mix.mi / mix.v;
-    % Compute enthalpy [kJ]
-    mix.h = mix.hf + mix.DhT;
     % Compute internal energy [kJ]
     mix.e = mix.h - molesGas(mix) * R0 * T * 1e-3;
+    % Compute thermal internal energy [kJ]
+    mix.DeT = mix.e - mix.ef;
+    % Compute thermal enthalpy [kJ]
+    mix.DhT = mix.h - mix.hf;
     % Compute entropy of mixing [kJ/K]
     mix.DS = compute_entropy_mixing(mix, Ni, R0, FLAG_NONZERO);
     % Compute entropy [kJ/K]
     mix.S = mix.S0 + mix.DS;
     % Compute Gibbs energy [kJ]
     mix.g = mix.h - mix.T * mix.S;
+    % Compute specific heat at constant volume [J/K]
+    mix.cV = mix.cP - R0;
     % Compute Adibatic index [-]
     mix.gamma = mix.cP/mix.cV;
     % Compute sound velocity [m/s]
@@ -67,7 +69,7 @@ function mix =  ComputeProperties(self, SpeciesMatrix, p, T)
         mix.dVdp_T = -1 + self.dN_p; % [-]
         if ~any(isnan(self.dNi_T)) && ~any(isinf(self.dNi_T))
             delta = ~mix.swtCond;
-            h0_j = (SpeciesMatrix(:, 2) + SpeciesMatrix(:, 3)) ./ Ni * 1e3; % [J/mol]
+            h0_j = (SpeciesMatrix(:, 3)) ./ Ni * 1e3; % [J/mol]
             mix.cP_r = sum(h0_j/T .* (1 +  delta .* (Ni - 1)) .* self.dNi_T, 'omitnan'); % [J/K]
             mix.cP_f = mix.cP;
             mix.cP = mix.cP_f + mix.cP_r; % [J/K]

@@ -12,7 +12,7 @@ function cV = species_cV(species, T, DB)
     %     cV (float): Specific heat at constant volume [J/(mol-K)]
     
     try
-        cV = DB.(species).cVcurve(T);
+        cV = DB.(species).cPcurve(T) - 8.31446261815324;
     catch
         cV = 0; % cryogenic species
     end

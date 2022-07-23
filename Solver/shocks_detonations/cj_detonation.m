@@ -116,8 +116,8 @@ function [J, b, guess_moles] = update_system(self, mix1, p2, T2, R0, guess_moles
     cP2 = mix2.cP / mix2.mi; % [J/(K-kg)]
     gamma2_s = mix2.gamma_s;
     
-    J1 =  p1/p2 + r2/r1 * gamma2_s * dVdp_T;
-    J2 =          r2/r1 * gamma2_s * dVdT_p;
+    J1 = p1/p2 + r2/r1 * gamma2_s * dVdp_T;
+    J2 =         r2/r1 * gamma2_s * dVdT_p;
     b1 = p1/p2 - 1 + gamma2_s * (r2/r1 - 1);
     
     J3 =  gamma2_s * T2 / (2*W2) * ((r2/r1)^2 - 1 - dVdp_T * (1 + (r2/r1)^2)) ...

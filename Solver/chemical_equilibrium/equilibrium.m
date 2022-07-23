@@ -74,10 +74,10 @@ function [N0, dNi_T, dN_T, dNi_p, dN_p, STOP, STOP_ions] = equilibrium(self, pP,
     % Dimensionless Chemical potential
     muRT_0 = g0/R0TP;
     muRT = muRT_0;
-    % Get Molar mass [kg/mol]
-    for i = S.NS:-1:1
-        W(i) = self.DB.(S.LS{i}).mm * 1e-3;
-    end
+%     % Get Molar mass [kg/mol]
+%     for i = S.NS:-1:1
+%         W(i) = self.DB.(S.LS{i}).mm * 1e-3;
+%     end
     % Construction of part of matrix A
     [A1, temp_NS0] = update_matrix_A1(A0, [], temp_NG, temp_NS, temp_NS0, temp_ind, temp_ind_E);
     A22 = zeros(temp_NE + 1);
@@ -381,7 +381,7 @@ function [N0, STOP] = recompute_ions(N0, A0, ind_E, temp_ind_nswt, temp_ind_ions
     while STOP > TOL_pi && it < itMax
         it = it + 1;
         % Apply correction
-        N0_ions =  log(N0(temp_ind_ions, 1)) + A0_ions * lambda_ions;
+        N0_ions = log(N0(temp_ind_ions, 1)) + A0_ions * lambda_ions;
         % Apply antilog
         N0_ions = exp(N0_ions);
         % Assign values to original vector

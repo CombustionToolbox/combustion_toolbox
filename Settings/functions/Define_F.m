@@ -1,5 +1,12 @@
 function self = Define_F(self)
     % Set Fuel of the mixture
+    %
+    % Args:
+    %     self (struct): Data of the mixture, conditions, and databases
+    %
+    % Returns:
+    %     self (struct): Data of the mixture, conditions, and databases
+    
     if ~isempty(self.PD.S_Fuel)
         self.PD.R_Fuel = SetSpecies(self, self.PD.S_Fuel, self.PD.N_Fuel, self.PD.TR.value);
         self.PS.strR_Fuel = ComputeProperties(self, self.PD.R_Fuel, self.PD.pR.value, self.PD.TR.value);

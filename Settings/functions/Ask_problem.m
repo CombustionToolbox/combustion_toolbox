@@ -1,4 +1,12 @@
 function PT = Ask_problem(self)
+    % Create a list selection dialog box
+    %
+    % Args:
+    %     self (struct): Data of the mixture, conditions, and databases
+    %
+    % Returns:
+    %     PT (string): String with the problem selected
+    
     if self.Misc.FLAG_FOI && ~self.Misc.FLAG_GUI
         try
         fn = {'TP','HP','SP','TV','EV','SV','SHOCK_I','SHOCK_R','DET','DET_OVERDRIVEN'};

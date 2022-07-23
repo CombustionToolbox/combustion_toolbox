@@ -7,6 +7,7 @@ function [mix3, varargout] = compute_rocket_parameters(mix2, mix3, gravity, vara
     % Args:
     %     mix2 (struct): Properties of the mixture at the outlet of the chamber
     %     mix3 (struct): Properties of the mixture at the throat
+    %     gravity (float): Gravitational acceleration [m/s2]
     %
     % Returns:
     %     mix3 (struct): Properties of the mixture at the throat

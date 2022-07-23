@@ -13,6 +13,7 @@ function self = ListSpecies(varargin)
     %     * HYDROGEN
     %     * HYDROGEN_L, HYDROGEN (L)
     %     * HC/O2/N2 PROPELLANTS
+    %     * Si/HC/O2/N2 PROPELLANTS
     %
     % Args:
     %     empty (none): return default list of species (soot formation)

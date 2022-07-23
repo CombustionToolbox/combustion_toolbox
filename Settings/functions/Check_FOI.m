@@ -1,5 +1,13 @@
 function self = Check_FOI(self, FOI_species)
     % Check that fuel species are contained in the list of products (only for initial computations)
+    %
+    % Args:
+    %     self (struct): Data of the mixture, conditions, and databases
+    %     FOI_species (bool): Species in the initial mixture (Fuel, Oxidizer, Inert)
+    %
+    % Returns:
+    %     self (struct): Data of the mixture, conditions, and databases
+
     if self.Misc.FLAG_FOI
         self.Misc.FLAG_FOI = false;
         self.Misc.LS_original = self.S.LS;

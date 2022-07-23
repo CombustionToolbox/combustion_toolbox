@@ -1,4 +1,9 @@
 function postResults(self)
+    % Postprocess all the results with predefined plots
+    %
+    % Args:
+    %     self (struct): Data of the mixture, conditions, and databases
+    
     % Abbreviations ---------------------
     mix1 = self.PS.strR;
     mix2 = self.PS.strP;

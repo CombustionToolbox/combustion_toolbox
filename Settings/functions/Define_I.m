@@ -1,5 +1,12 @@
 function self = Define_I(self)
     % Set Inert of the mixture
+    %
+    % Args:
+    %     self (struct): Data of the mixture, conditions, and databases
+    %
+    % Returns:
+    %     self (struct): Data of the mixture, conditions, and databases
+    
     if ~isempty(self.PD.S_Inert)
         self.PD.R_Inert = SetSpecies(self, self.PD.S_Inert, self.PD.N_Inert, self.PD.TR.value);
     else

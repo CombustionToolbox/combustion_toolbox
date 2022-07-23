@@ -1,6 +1,13 @@
 function self = Define_FOI(self, i)
     % Set up mixture: fuel, oxidizer and diluent/inert species
-    
+    %
+    % Args:
+    %     self (struct): Data of the mixture, conditions, and databases
+    %     i (float): Position of the evaluated problem
+    %
+    % Returns:
+    %     self (struct): Data of the mixture, conditions, and databases
+
     species = [self.PD.S_Fuel, self.PD.S_Oxidizer, self.PD.S_Inert];
     % Check reactant species are contained in the list of products (initial computations)
     self = Check_FOI(self, species);

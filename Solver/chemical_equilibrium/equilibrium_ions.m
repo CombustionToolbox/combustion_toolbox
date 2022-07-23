@@ -18,8 +18,13 @@ function [N0, dNi_T, dN_T, dNi_p, dN_p, STOP, STOP_ions] = equilibrium_ions(self
     % Returns:
     %     Tuple containing
     %
-    %     - N0 (float): Equilibrium composition [moles] for the given temperature [K] and pressure [bar]
-    %     - STOP (float): Relative error [-] 
+    %     * N0 (float): Equilibrium composition [moles] for the given temperature [K] and pressure [bar]
+    %     * dNi_T (float): Thermodynamic derivative of the moles of the species respect to temperature
+    %     * dN_T (float): Thermodynamic derivative of the moles of the mixture respect to temperature
+    %     * dNi_p (float): Thermodynamic derivative of the moles of the species respect to pressure
+    %     * dN_p (float): Thermodynamic derivative of the moles of the mixture respect to pressure
+    %     * STOP (float): Relative error in moles of species [-] 
+    %     * STOP_ions (float): Relative error in moles of ionized species [-] 
     
     % Abbreviations ---------------------
     E = self.E;

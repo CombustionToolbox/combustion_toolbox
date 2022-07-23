@@ -7,7 +7,9 @@ function mix4 = compute_exit(self, mix2, mix3, mix4, Aratio)
     % Args:
     %     self (struct): Data of the mixture, conditions, and databases
     %     mix2 (struct): Properties of the mixture at the outlet of the chamber
-    %     mix3 (struct): Properties of the mixture at the throat (previous calculation)
+    %     mix3 (struct): Properties of the mixture at the throat
+    %     mix4 (struct): Properties of the mixture at the exit (previous calculation)
+    %     Aratio (struct): Ratio area_exit / area_throat
     %
     % Returns:
     %     mix3 (struct): Properties of the mixture at the throat

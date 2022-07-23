@@ -7,8 +7,11 @@ function [mix2_inj, mix2_c, mix3] = compute_chamber_FAC(self, mix1, varargin)
     % Args:
     %     self (struct): Data of the mixture, conditions, and databases
     %     mix1 (struct): Properties of the initial mixture
-    %     mix2_inj (struct): Properties of the mixture at the injector of the chamber (previous calculation)
-    %     mix2_c (struct): Properties of the mixture at the outlet of the chamber (previous calculation)
+    %
+    % Optional Args:
+    %     * mix2_inj (struct): Properties of the mixture at the injector of the chamber (previous calculation)
+    %     * mix2_c (struct): Properties of the mixture at the outlet of the chamber (previous calculation)
+    %     * mix3 (struct): Properties of the mixture at the throat (previous calculation)
     %
     % Returns:
     %     mix2_inj (struct): Properties of the mixture at the injector of the chamber

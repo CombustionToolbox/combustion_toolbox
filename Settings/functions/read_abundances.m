@@ -8,8 +8,8 @@ function [abundances, elements] = read_abundances(filename)
     % Returns:
     %    Tuple containing:
     %
-    %    abundances (float): Vector with the solar abundances
-    %    elements (cell): List with the given elements
+    %    * abundances (float): Vector with the solar abundances
+    %    * elements (cell): List with the given elements
     
     % Open file
     fileID = fopen(filename, 'r');

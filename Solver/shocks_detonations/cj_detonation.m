@@ -12,10 +12,10 @@ function [mix1, mix2] = cj_detonation(self, mix1, varargin)
     %     mix2 (struct): Properties of the mixture in the post-shock state (previous calculation)
     %
     % Returns:
-    %     Tuple containing
+    %     Tuple containing:
     %
-    %     - mix1 (struct): Properties of the mixture in the pre-shock state
-    %     - mix2 (struct): Properties of the mixture in the post-shock state
+    %     * mix1 (struct): Properties of the mixture in the pre-shock state
+    %     * mix2 (struct): Properties of the mixture in the post-shock state
 
     % Unpack input data
     [self, mix1, mix2, guess_moles] = unpack(self, mix1, varargin);

@@ -3,10 +3,11 @@ function Xi = abundances2moles(elements, filename)
     % fractions in the mixture [-]
     % 
     % Args:
-    %
+    %    elements (cell): List with the given elements
+    %    filename (file): Filename with the data
     %
     % Returns:
-    %
+    %   Xi (float): Molar fractions relative to H of the remaining elements in the mixture
 
     % Read abundances from filename
     [log_abundances, elements_file] = read_abundances(filename);

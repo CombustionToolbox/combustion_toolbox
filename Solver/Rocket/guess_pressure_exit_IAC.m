@@ -4,15 +4,13 @@ function log_Pe = guess_pressure_exit_IAC(mix2, mix3, Aratio, FLAG_SUBSONIC)
     % interest is in the subsonic area ratios or the supersonic area ratios
     %
     % Args:
-    %      mix2 (struct):
-    %      mix3 (struct):
-    %      Aratio (float):
-    %      FLAG_SUBSONIC (bool):
+    %      mix2 (struct): Properties of the mixture at the outlet of the chamber
+    %      mix3 (struct): Properties of the mixture at the throat
+    %      Aratio (struct): Ratio area_exit / area_throat
+    %      FLAG_SUBSONIC (bool): Flag indicating if the Aratio refer to the subsonic region or the supersonic region
     %
     % Returns:
     %      log_P (float): Log pressure ratio [-]
-
-    
 
     % Definitions
     log_Pt = log(mix2.p / mix3.p);

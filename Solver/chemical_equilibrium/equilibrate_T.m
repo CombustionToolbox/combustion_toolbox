@@ -88,7 +88,7 @@ function mix2 = compute_properties(self, mix1, P, pP, TP, STOP, STOP_ions)
     if strfind(self.PD.ProblemType, 'P') == 2
         mix2 = ComputeProperties(self, P, pP, TP);
     else
-        NP = sum(P(:, 1) .* (1 - P(:, 10)));
+        NP = sum(P(:, self.C.M0.ind_ni) .* (1 - P(:, self.C.M0.ind_phase)));
         pP = compute_pressure(self, mix1, TP, NP);
         mix2 = ComputeProperties(self, P, pP, TP);
     end    

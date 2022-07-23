@@ -91,9 +91,9 @@ function [hfi_1, N_1, Yi_fuel, W_fuel] = compute_hfi_1_molar(self)
     N_1  = [self.PD.N_Fuel, self.PD.N_Oxidizer, self.PD.N_Inert];
     hfi_1 = compute_hfi_molar(N_1, LS_1, self.DB);
     R = self.PD.R_Fuel + self.PD.R_Oxidizer + self.PD.R_Inert;
-    mi = sum(R(:,11)) * 1e-3;
-    Yi = R(:,11) ./ mi * 1e-3;
-    Yi_fuel = sum(Yi(self.PD.R_Fuel(:, 1) > 0));
+    mi = sum(R(:, self.C.M0.ind_mi)) * 1e-3;
+    Yi = R(:, self.C.M0.ind_mi) ./ mi * 1e-3;
+    Yi_fuel = sum(Yi(self.PD.R_Fuel(:, self.C.M0.ind_ni) > 0));
     W_fuel  = self.PS.strR_Fuel.W * 1e-3; % [kg/mol]
 end
 
@@ -105,10 +105,10 @@ function hfi = compute_hfi_molar(N, LS, strThProp)
     hfi(isinf(hfi)) = 0;
 end
 
-function gamma = compute_gamma(N, T, LS, strThProp)
+function gamma = compute_gamma(N, T, LS, DB)
     for i = length(N):-1:1
-        cP(i) = species_cP(LS{i}, T, strThProp); % [J/kg-K]
-        cV(i) = species_cV(LS{i}, T, strThProp); % [J/kg-K]
+        cP(i) = species_cP(LS{i}, T, DB); % [J/kg-K]
+        cV(i) = species_cV(LS{i}, T, DB); % [J/kg-K]
     end
     gamma = sum(N .* cP) / sum(N .* cV);
 end

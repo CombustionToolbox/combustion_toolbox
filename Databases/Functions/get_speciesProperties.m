@@ -1,4 +1,4 @@
-function [txFormula, mm, cP0, cV0, hf0, h0, ef0, e0, s0, g0] = get_speciesProperties(DB, species, T, MassOrMolar, echo)
+function [txFormula, mm, cP0, hf0, h0, ef0, s0, g0] = get_speciesProperties(DB, species, T, MassOrMolar, echo)
     % Calculates the thermodynamic properties of any species included in the 
     % NASA database
     %
@@ -13,13 +13,11 @@ function [txFormula, mm, cP0, cV0, hf0, h0, ef0, e0, s0, g0] = get_speciesProper
     %     Tuple containing
     %      
     %     * txFormula (str): Chemical formula
-    %     * mm (float): Molar weight [g/mol]
+    %     * mm (float):  Molar weight [g/mol]
     %     * cP0 (float): Specific heat at constant pressure [J/(mol-k)]
-    %     * cV0 (float): Specific heat at constant volume   [J/(mol-k)]
     %     * hf0 (float): Enthalpy of formation [J/mol]
     %     * h0 (float):  Enthalpy [J/mol]
     %     * ef0 (float): Internal energy of formation [J/mol]
-    %     * e0 (float):  Enthalpy [J/mol]
     %     * s0 (float):  Entropy [J/(mol-k)]
     %     * Dg0 (float): Gibbs energy [J/mol]
 
@@ -28,7 +26,7 @@ function [txFormula, mm, cP0, cV0, hf0, h0, ef0, e0, s0, g0] = get_speciesProper
     %
     % Sample application
     %
-    % >> [txFormula, mm, Cp0, Cv0, Hf0, H0, Ef0, E0, S0] = get_speciesProperties(DB, 'CO', 1000, 'molar')
+    % >> [txFormula, mm, cP0, hf0, h0, ef0, s0, g0] = get_speciesProperties(DB, 'CO', 1000, 'molar')
     % -------------------------------
     % Possible phases of this species
     % - CO
@@ -37,13 +35,11 @@ function [txFormula, mm, cP0, cV0, hf0, h0, ef0, e0, s0, g0] = get_speciesProper
     % txFormula =
     %     'C   1.00O   1.00    0.00    0.00    0.00'
     % mm  = 28.0101
-    % Cp0 = 33.1788
-    % Cv0 = 24.8643
-    % Hf0 = -1.1054e+05
-    % H0  = -8.8848e+04
-    % Ef0 = -1.1177e+05
-    % E0  = -9.7162e+04
-    % S0  = 234.5409
+    % cP0 = 33.1788
+    % hf0 = -1.1054e+05
+    % h0  = -8.8848e+04
+    % ef0 = -1.1177e+05
+    % s0  = 234.5409
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     
     % Change lowercase 'l' to uppercase 'L'
@@ -96,11 +92,9 @@ function [txFormula, mm, cP0, cV0, hf0, h0, ef0, e0, s0, g0] = get_speciesProper
         txFormula = [];
         mm   = [];
         cP0  = [];
-        cV0  = [];
         hf0  = [];
         h0   = [];
         ef0  = [];
-        e0   = [];
         s0   = [];
         g0  = [];
         return
@@ -144,7 +138,7 @@ function [txFormula, mm, cP0, cV0, hf0, h0, ef0, e0, s0, g0] = get_speciesProper
     
     ctTInt       = DB.(species).ctTInt;
     txFormula    = DB.(species).txFormula;
-    swtCondensed = DB.(species).swtCondensed;
+    phase        = DB.(species).phase;
     mm           = DB.(species).mm;
     hf0          = DB.(species).Hf0;
     tRange       = DB.(species).tRange;
@@ -165,7 +159,7 @@ function [txFormula, mm, cP0, cV0, hf0, h0, ef0, e0, s0, g0] = get_speciesProper
     % which do not form any compound.
     Delta_n_per_mole = sum(Element_matrix(1,:)==[1, 8, 9, 10, 18]')/2 ... 
                      + sum(Element_matrix(1,:)==[3, 11, 19, 37, 55, 87]');
-    Delta_n = 1 - swtCondensed - dot(Delta_n_per_mole,Element_matrix(2,:));
+    Delta_n = 1 - phase - dot(Delta_n_per_mole,Element_matrix(2,:));
     
     R0 = 8.3144598; % [J/(K-mol)]. Universal gas constant
     % Check if there is at least one temperature interval and, in that case,
@@ -180,10 +174,8 @@ function [txFormula, mm, cP0, cV0, hf0, h0, ef0, e0, s0, g0] = get_speciesProper
         if (T < tRange{1}(1)) || (T > tRange{ctTInt}(2)) && (echo==1)
             disp(['T - out of range [',num2str(tRange{1}(1)),' - ',num2str(tRange{ctTInt}(2)),' K] for ',name_with_parenthesis(species)])
             cP0  = [];
-            cV0  = [];
             h0   = [];
             ef0  = hf0 - Delta_n * R0 * Tref;
-            e0   = [];
             s0   = [];
             g0   = [];
             return
@@ -195,10 +187,8 @@ function [txFormula, mm, cP0, cV0, hf0, h0, ef0, e0, s0, g0] = get_speciesProper
         % the polynomial coefficients in the selected temperature interval. All
         % magnitudes are computed in a per mole basis  
         cP0 = R0 * sum(a{tInterval} .* T.^tExponents{tInterval});
-        cV0 = cP0 - R0;
         h0  = R0 * T * (sum(a{tInterval} .* T.^tExponents{tInterval} .* [-1 log(T) 1 1/2 1/3 1/4 1/5 0]) + b{tInterval}(1)/T);
         ef0 = hf0 - Delta_n * R0 * Tref;
-        e0  = ef0 + (h0 - hf0) - (1 - swtCondensed) * R0 * (T - Tref);
         s0  = R0 * (sum(a{tInterval} .* T.^tExponents{tInterval} .* [-1/2 -1 log(T) 1 1/2 1/3 1/4 0]) + b{tInterval}(2));
         
         % Compute the standar gibbs free energy of formation at the specified
@@ -226,12 +216,11 @@ function [txFormula, mm, cP0, cV0, hf0, h0, ef0, e0, s0, g0] = get_speciesProper
     
         if strcmpi(MassOrMolar,'mass')
             cP0 = molar2mass(cP0, mm);
-            cV0 = molar2mass(cV0, mm);
             hf0 = molar2mass(hf0, mm);
             ef0 = molar2mass(ef0, mm);
             h0  = molar2mass(h0, mm);
             s0  = molar2mass(s0, mm);
-            if swtCondensed == 0
+            if phase == 0
                 g0 = molar2mass(g0, mm);
             else
                 g0 = [];
@@ -247,10 +236,8 @@ function [txFormula, mm, cP0, cV0, hf0, h0, ef0, e0, s0, g0] = get_speciesProper
         if T ~= tRange(1)
             disp(['T - out of range for ',name_with_parenthesis(species),' [',num2str(tRange(1)),' K]'])
             cP0  = [];
-            cV0  = [];
             h0   = [];
             ef0  = hf0 - Delta_n * R0 * tRange(1);
-            e0   = [];
             s0   = [];
             g0  = [];
             
@@ -265,10 +252,8 @@ function [txFormula, mm, cP0, cV0, hf0, h0, ef0, e0, s0, g0] = get_speciesProper
         Tref = tRange(1);
             
         cP0  = 0;
-        cV0  = 0;
         h0   = hf0;
         ef0  = hf0 - Delta_n * R0 * Tref;
-        e0   = ef0;
         s0   = 0;
         g0  = hf0;
         

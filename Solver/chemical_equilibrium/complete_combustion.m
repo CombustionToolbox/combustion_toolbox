@@ -84,8 +84,8 @@ function moles = compute_moles_rich_appr(x, y, z)
     moles = [NCO2_0, NCO_0, NH2O_0, NH2_0, NO2_0];
 end
 
-function moles = compute_moles_rich(x, y, z, T, R0, strThProp)
-    DG0 = (species_g0('CO', T, strThProp) + species_g0('H2O', T, strThProp) - species_g0('CO2', T, strThProp)) * 1000;
+function moles = compute_moles_rich(x, y, z, T, R0, DB)
+    DG0 = (species_g0('CO', T, DB) + species_g0('H2O', T, DB) - species_g0('CO2', T, DB)) * 1000;
     k4  = exp(-DG0 / (R0*T));
 
     NCO_0  = round((1/4)*(6*k4*x+k4*y-2*k4*z-4*x+2*z-sqrt(24*k4*x*z+16*x^2-16*x*z-16*k4*x^2+4*k4^2*x*y-8*k4^2*x*z-4*k4^2*y*z+4*k4*y*z+4*k4^2*x^2+k4^2*y^2+4*k4^2*z^2-8*k4*z^2+4*z^2))/(k4-1),14);
@@ -96,10 +96,10 @@ function moles = compute_moles_rich(x, y, z, T, R0, strThProp)
     moles = [NCO2_0, NCO_0, NH2O_0, NH2_0, NO2_0];
 end
 
-function moles = compute_moles_rich_soot(y, z, T, R0, strThProp)
-    DG0 = (species_g0('CO2', T, strThProp) - 2*species_g0('CO', T, strThProp)) * 1000;
+function moles = compute_moles_rich_soot(y, z, T, R0, DB)
+    DG0 = (species_g0('CO2', T, DB) - 2*species_g0('CO', T, DB)) * 1000;
     k7  = exp(-DG0 / (R0*T));
-    DG0 = (species_g0('CO', T, strThProp) + species_g0('H2O', T, strThProp) - species_g0('CO2', T, strThProp)) * 1000;
+    DG0 = (species_g0('CO', T, DB) + species_g0('H2O', T, DB) - species_g0('CO2', T, DB)) * 1000;
     k4  = exp(-DG0 / (R0*T));
 
     zeta =1;

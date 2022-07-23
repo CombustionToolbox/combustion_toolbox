@@ -126,7 +126,7 @@ function self = check_input_temperatures(self, name)
         species = self.PD.(Sname);
         N = length(species);
         for i = N:-1:1
-            if self.DB.(species{i}).swtCondensed
+            if self.DB.(species{i}).phase
                 if self.PD.TR.value >= min(self.DB.(species{i}).T) && self.PD.TR.value <= max(self.DB.(species{i}).T)
                     T(i) = self.PD.TR.value;
                 else

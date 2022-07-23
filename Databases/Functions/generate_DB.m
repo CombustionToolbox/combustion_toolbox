@@ -35,19 +35,19 @@ function DB = get_DB(DB_master)
             
             ctTInt = DB_master.(species).ctTInt;
             tRange = DB_master.(species).tRange;
-            swtCondensed = sign(DB_master.(species).swtCondensed);
+            phase = sign(DB_master.(species).phase);
             
             if ctTInt > 0
                 
-                [txFormula, mm, ~, ~, Hf0, ~, Ef0, ~, ~, ~] = get_speciesProperties(DB_master, LS{i}, 298.15, 'molar', 0);
-                
+                [txFormula, mm, ~, Hf0, ~, Ef0, ~, ~] = get_speciesProperties(DB_master, LS{i}, 298.15, 'molar', 0);
+
                 DB.(species).name = species;
                 DB.(species).FullName = LS{i};
                 DB.(species).txFormula = txFormula;
                 DB.(species).mm = mm;
                 DB.(species).hf = Hf0;
                 DB.(species).ef = Ef0;
-                DB.(species).swtCondensed = swtCondensed;
+                DB.(species).phase = phase;
                 
                 NT   = 200;
                 Tmin = tRange{1}(1);
@@ -55,13 +55,10 @@ function DB = get_DB(DB_master)
                 T_vector = linspace(Tmin, Tmax, NT);
                 
                 for j = NT:-1:1
-                    [~, ~, Cp0, Cv0, Hf0, H0, Ef0, E0, S0, ~] = get_speciesProperties(DB_master, LS{i}, T_vector(j), 'molar', 0);
-                    DhT_vector(j) = H0 - Hf0;
-                    DeT_vector(j) = E0 - Ef0;
+                    [~, ~, Cp0, ~, H0, ~, S0, ~] = get_speciesProperties(DB_master, LS{i}, T_vector(j), 'molar', 0);
                     h0_vector(j)  = H0;
                     s0_vector(j)  = S0;
                     cp_vector(j)  = Cp0;
-                    cv_vector(j)  = Cv0;
                     g0_vector(j)  = H0 - T_vector(j) * S0;
                 end
                 
@@ -69,9 +66,6 @@ function DB = get_DB(DB_master)
     
                 % INTERPOLATION CURVES
                 DB.(species).cPcurve  = griddedInterpolant(T_vector, cp_vector, 'pchip', 'linear');
-                DB.(species).cVcurve  = griddedInterpolant(T_vector, cv_vector, 'pchip', 'linear');
-                DB.(species).DhTcurve = griddedInterpolant(T_vector, DhT_vector, 'pchip', 'linear');
-                DB.(species).DeTcurve = griddedInterpolant(T_vector, DeT_vector, 'pchip', 'linear');
                 DB.(species).h0curve  = griddedInterpolant(T_vector, h0_vector, 'pchip', 'linear');
                 DB.(species).s0curve  = griddedInterpolant(T_vector, s0_vector, 'pchip', 'linear');
                 DB.(species).g0curve  = griddedInterpolant(T_vector, g0_vector, 'pchip', 'linear');
@@ -87,7 +81,7 @@ function DB = get_DB(DB_master)
                 
                 Tref = tRange(1);
                 
-                [txFormula, mm, Cp0, Cv0, Hf0, H0, Ef0, ~, S0, DfG0] = get_speciesProperties(DB_master, LS{i}, Tref, 'molar', 0);
+                [txFormula, mm, Cp0, Hf0, H0, Ef0, S0, DfG0] = get_speciesProperties(DB_master, LS{i}, Tref, 'molar', 0);
                 
                 DB.(species).name = species;
                 DB.(species).FullName = LS{i};
@@ -95,14 +89,11 @@ function DB = get_DB(DB_master)
                 DB.(species).mm  = mm;
                 DB.(species).hf  = Hf0;
                 DB.(species).ef  = Ef0;
-                DB.(species).swtCondensed = swtCondensed;
+                DB.(species).phase = phase;
                 DB.(species).T   = Tref;
-                DB.(species).DhT = 0;
-                DB.(species).DeT = 0;
                 DB.(species).h0  = H0;
                 DB.(species).s0  = S0;
                 DB.(species).cp  = Cp0;
-                DB.(species).cv  = Cv0;
                 DB.(species).g0  = DfG0;
                 DB.(species).ctTInt = 0;
             end

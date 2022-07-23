@@ -74,7 +74,7 @@ function DB_master = generate_DB_master(varargin)
         str.ctTInt = str2double(tline(1:2));
         str.txRefCode = tline(4:9);
         str.txFormula = tline(11:50);
-        str.swtCondensed = str2double(tline(51:52));
+        str.phase = str2double(tline(51:52));
         str.mm = str2double(tline(53:65));
         str.Hf0 = str2double(tline(66:80));
         

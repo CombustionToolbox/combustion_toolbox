@@ -1,5 +1,12 @@
 function self = check_inputs(self)
     % Check that all the inputs are specified
+    %
+    % Args:
+    %     self (struct): Data of the mixture, conditions, and databases
+    %
+    % Returns:
+    %     self (struct): Data of the mixture, conditions, and databases
+
     if ~self.Misc.FLAG_CHECK_INPUTS
         self.C.l_phi = length(self.PD.phi.value);
         if isempty(self.PD.TR.value)

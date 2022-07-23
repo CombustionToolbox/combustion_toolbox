@@ -3,15 +3,22 @@ function [dNi_p, dN_p] = equilibrium_dp(self, moles, A0, temp_NG, temp_NS, temp_
     % respect to pressure from a given composition [moles] at equilibrium
     %
     % Args:
-    %     self (struct):   Data of the mixture, conditions, and databases
-    %     moles (float):   Equilibrium composition [moles]
-    %     mix1 (struct):   Properties of the initial mixture
+    %     self (struct): Data of the mixture, conditions, and databases
+    %     moles (float): Equilibrium composition [moles]
+    %     A0 (float): Stoichiometric matrix
+    %     temp_NG (float): Temporal total number of gaseous species
+    %     temp_NS (float): Temporal total number of species
+    %     temp_NE (float): Temporal total number of elements
+    %     temp_ind (float): Temporal index of species in the final mixture
+    %     temp_ind_nswt (float): Temporal index of gaseous species in the final mixture
+    %     temp_ind_swt (float): Temporal index of condensed species in the final mixture
+    %     temp_ind_E (float): Temporal index of elements in the final mixture
     %
     % Returns:
-    %     Tuple containing
+    %     Tuple containing:
     %
-    %     - dNi_p (float): Thermodynamic derivative of the moles of the species respect to pressure
-    %     - dN_p (float):  Thermodynamic derivative of the moles of the mixture respect to pressure
+    %     * dNi_p (float): Thermodynamic derivative of the moles of the species respect to pressure
+    %     * dN_p (float):  Thermodynamic derivative of the moles of the mixture respect to pressure
 
     % Initialization
     NP = sum(moles(:, 1));

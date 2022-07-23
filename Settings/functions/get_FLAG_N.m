@@ -2,6 +2,13 @@ function self = get_FLAG_N(self)
     % Flag if the number of moles of fuel, oxidant and inert species
     % is specified. If not, consider 1 mole for the fuel and calculate
     % the remaining moles from the equivalence relation.
+    %
+    % Args:
+    %     self (struct): Data of the mixture, conditions, and databases
+    %
+    % Returns:
+    %     self (struct): Data of the mixture, conditions, and databases
+    
     self = get_FLAG(self, 'FLAG_N_Fuel', 'N_Fuel');
     self = get_FLAG(self, 'FLAG_N_Oxidizer', 'N_Oxidizer');
     self = get_FLAG(self, 'FLAG_N_Inert', 'N_Inert');

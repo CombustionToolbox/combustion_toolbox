@@ -115,7 +115,7 @@ function moles = gui_compute_moles_from_equivalence_ratio(obj, app)
         moles = assign_vector2cell(moles, app.PD.phi_t/app.PD.phi.value(1) .* obj.PD.ratio_oxidizers_O2, obj.ind_Oxidizer);
     end
     if any(obj.ind_Inert)
-        moles = assign_vector2cell(moles, obj.UITable_R.Data(obj.ind_Inert, 2), obj.ind_Inert);
+        moles(obj.ind_Inert) = obj.UITable_R.Data(obj.ind_Inert, 2);
     end
 end
 

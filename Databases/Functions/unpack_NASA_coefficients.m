@@ -1,4 +1,4 @@
-function [a, b, tRange, tExponents, ctTInt, txFormula, swtCondensed] = unpack_NASA_coefficients(species, DB)
+function [a, b, tRange, tExponents, ctTInt, txFormula, phase] = unpack_NASA_coefficients(species, DB)
     % Unpack NASA's polynomials coefficients from database
     %
     % Args:
@@ -8,20 +8,19 @@ function [a, b, tRange, tExponents, ctTInt, txFormula, swtCondensed] = unpack_NA
     % Returns:
     %     Tuple containing
     %
-    %     - a (cell): Temperature coefficients
-    %     - b (cell): Integration constants
-    %     - tRange (cell): Ranges of temperatures [K]
-    %     - tExponents (cell): Exponent coefficients
-    %     - ctTInt (float): Number of intervals of temperatures
-    %     - txFormula (str): Chemical formula
-    %     - swtCondensed (float): 0 or 1 indicating gas or condensed phase, respectively
-
-
+    %     * a (cell): Temperature coefficients
+    %     * b (cell): Integration constants
+    %     * tRange (cell): Ranges of temperatures [K]
+    %     * tExponents (cell): Exponent coefficients
+    %     * ctTInt (float): Number of intervals of temperatures
+    %     * txFormula (str): Chemical formula
+    %     * phase (float): 0 or 1 indicating gas or condensed phase, respectively
+    
     a = DB.(species).a;
     b = DB.(species).b;
     tRange = DB.(species).tRange;
     tExponents = DB.(species).tExponents;
     ctTInt = DB.(species).ctTInt;
     txFormula = DB.(species).txFormula;
-    swtCondensed = DB.(species).swtCondensed;
+    phase = DB.(species).phase;
 end

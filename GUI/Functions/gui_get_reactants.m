@@ -50,7 +50,7 @@ function app = gui_set_species_moles_temperatures(obj, app, species, moles, temp
     
     % Set moles
     try
-        app.PD.(moles_name) = cell2vector(moles(obj.(ind_name)));
+        app.PD.(moles_name) = cell2vector(moles(obj.(ind_name))');
     catch 
         app.PD.(moles_name) = [];
     end
@@ -58,7 +58,7 @@ function app = gui_set_species_moles_temperatures(obj, app, species, moles, temp
     % Set temperatures
     try
         if ~app.Misc.FLAGS_PROP.TR
-            app.PD.(temperatures_name) = cell2vector(temperatures(obj.(ind_name)));
+            app.PD.(temperatures_name) = cell2vector(temperatures(obj.(ind_name))');
         else
             app.PD.(temperatures_name) = [];
         end

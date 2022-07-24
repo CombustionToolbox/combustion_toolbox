@@ -1,4 +1,4 @@
-function self = TunningProperties()
+function self = TuningProperties()
     % Initialize struct with tunning properties attributes
     % 
     % Attributes:
@@ -28,7 +28,7 @@ function self = TunningProperties()
 
 
     % Description
-    self.description = "Tunning properties";
+    self.description = "Tuning properties";
     % Attributes
     % * Flags
     self.FLAG_FAST = false;     % Flag indicating use guess composition of the previous computation

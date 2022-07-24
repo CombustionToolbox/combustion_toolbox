@@ -22,7 +22,7 @@ function self = App(varargin)
         self.Misc = Miscellaneous();
         self.PD = ProblemDescription();
         self.PS = ProblemSolution();
-        self.TN = TunningProperties();
+        self.TN = TuningProperties();
         self = constructor(self, LS, FLAG_FAST);
         if ~nargin || ~isa(varargin{1,1}, 'combustion_toolbox_app') || (~strcmpi(varargin{1,1}, 'fast') && nargin < 4) 
             self = Initialize(self);

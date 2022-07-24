@@ -90,12 +90,12 @@ function [txFormula, mm, cP0, hf0, h0, ef0, s0, g0] = get_speciesProperties(DB, 
             disp('-------------------------------')
         end
         txFormula = [];
-        mm   = [];
-        cP0  = [];
-        hf0  = [];
-        h0   = [];
-        ef0  = [];
-        s0   = [];
+        mm  = [];
+        cP0 = [];
+        hf0 = [];
+        h0  = [];
+        ef0 = [];
+        s0  = [];
         g0  = [];
         return
     end
@@ -136,13 +136,13 @@ function [txFormula, mm, cP0, hf0, h0, ef0, s0, g0] = get_speciesProperties(DB, 
     % If it does exist, read the corresponding field and store it in the
     % following variables
     
-    ctTInt       = DB.(species).ctTInt;
-    txFormula    = DB.(species).txFormula;
-    phase        = DB.(species).phase;
-    mm           = DB.(species).mm;
-    hf0          = DB.(species).Hf0;
-    tRange       = DB.(species).tRange;
-    tExponents   = DB.(species).tExponents;
+    ctTInt     = DB.(species).ctTInt;
+    txFormula  = DB.(species).txFormula;
+    phase      = DB.(species).phase;
+    mm         = DB.(species).mm;
+    hf0        = DB.(species).Hf0;
+    tRange     = DB.(species).tRange;
+    tExponents = DB.(species).tExponents;
     
     % set Elements and Reference_form_of_elements_with_T_intervals lists
     [Elements, ~] = set_elements(); % sets Elements list
@@ -173,11 +173,11 @@ function [txFormula, mm, cP0, hf0, h0, ef0, s0, g0] = get_speciesProperties(DB, 
     
         if (T < tRange{1}(1)) || (T > tRange{ctTInt}(2)) && (echo==1)
             disp(['T - out of range [',num2str(tRange{1}(1)),' - ',num2str(tRange{ctTInt}(2)),' K] for ',name_with_parenthesis(species)])
-            cP0  = [];
-            h0   = [];
-            ef0  = hf0 - Delta_n * R0 * Tref;
-            s0   = [];
-            g0   = [];
+            cP0 = [];
+            h0  = [];
+            ef0 = hf0 - Delta_n * R0 * Tref;
+            s0  = [];
+            g0  = [];
             return
         end
     
@@ -235,10 +235,10 @@ function [txFormula, mm, cP0, hf0, h0, ef0, s0, g0] = get_speciesProperties(DB, 
     else
         if T ~= tRange(1)
             disp(['T - out of range for ',name_with_parenthesis(species),' [',num2str(tRange(1)),' K]'])
-            cP0  = [];
-            h0   = [];
-            ef0  = hf0 - Delta_n * R0 * tRange(1);
-            s0   = [];
+            cP0 = [];
+            h0  = [];
+            ef0 = hf0 - Delta_n * R0 * tRange(1);
+            s0  = [];
             g0  = [];
             
             if strcmpi(MassOrMolar,'mass')
@@ -251,10 +251,10 @@ function [txFormula, mm, cP0, hf0, h0, ef0, s0, g0] = get_speciesProperties(DB, 
         
         Tref = tRange(1);
             
-        cP0  = 0;
-        h0   = hf0;
-        ef0  = hf0 - Delta_n * R0 * Tref;
-        s0   = 0;
+        cP0 = 0;
+        h0  = hf0;
+        ef0 = hf0 - Delta_n * R0 * Tref;
+        s0  = 0;
         g0  = hf0;
         
         if strcmpi(MassOrMolar,'mass')

@@ -29,7 +29,7 @@ function M = SetSpecies(self, species, moles, T)
                 pVi = 0; % For condensed species [bar m3]
             end
         else
-            h0i = 0; % [kJ/mol]
+            h0i = hfi; % [kJ/mol]
             cPi = 0; % [J/mol-K]
             s0i = 0; % [kJ/mol-K]
             pVi = 0; % [bar m3]

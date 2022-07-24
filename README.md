@@ -53,7 +53,7 @@
   - Ideal jump conditions for a given adiabatic index and pre-shock Mach number
 * `Rocket propellant performance assuming:`
   - Infinite-Area-Chamber model (IAC)
-  - Finite-Area-Chamber model (FAC) - under development -
+  - Finite-Area-Chamber model (FAC)
 * All the routines and computations are encapsulated in a more comprehensive and `user-friendly GUI`
 * The code `is in it’s transition to Python`
 * Export results in a spreadsheet

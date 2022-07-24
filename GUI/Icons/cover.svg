@@ -28,15 +28,15 @@
      fit-margin-right="0"
      fit-margin-bottom="0"
      inkscape:snap-page="true"
-     inkscape:zoom="0.73406285"
-     inkscape:cx="-220.00841"
-     inkscape:cy="120.56188"
+     inkscape:zoom="2.9362514"
+     inkscape:cx="104.04422"
+     inkscape:cy="73.392898"
      inkscape:window-width="1920"
      inkscape:window-height="1009"
      inkscape:window-x="-8"
      inkscape:window-y="317"
      inkscape:window-maximized="1"
-     inkscape:current-layer="g86630" />
+     inkscape:current-layer="g1075" />
   <defs
      id="defs2">
     <clipPath
@@ -126,7 +126,7 @@
                    id="tspan26290"
                    style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52778px;font-family:Rasa;-inkscape-font-specification:Rasa;stroke-width:0.34471"
                    x="93.719971"
-                   y="113.32527">v0.9.7</tspan></text>
+                   y="113.32527">v0.9.9</tspan></text>
             </g>
             <text
                xml:space="preserve"

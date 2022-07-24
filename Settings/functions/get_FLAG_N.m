@@ -16,7 +16,7 @@ end
 
 % SUB-PASS FUNCTIONS
 function self = get_FLAG(self, FLAG_name, cond_name)
-    if isempty(self.PD.(cond_name)) || self.Misc.FLAG_GUI
+    if isempty(self.PD.(cond_name)) || (self.Misc.FLAG_GUI && strcmpi('N_Inert', self.PD.(cond_name))) 
         self.Misc.(FLAG_name) = false;
     else
         self.Misc.(FLAG_name) = true;

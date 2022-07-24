@@ -23,9 +23,6 @@
 ---
 
 # Features
-
-Combustion Toolbox is a a MATLAB-GUI based tool for solving gaseous combustion problems.
-Features
   - The code stems from the minimization of the free energy of the system by using Lagrange multipliers combined with a Newton-Raphson method, upon condition that initial gas properties are defined by two functions of states (e.g., temperature and pressure)
   - When temperature is not externally imposed, the code retrieves a routine also based on Newton-Raphson method to find the equilibrium temperature
   - Solve processes that involve strong changes in the dynamic pressure, such as detonations and shock waves in the steady state

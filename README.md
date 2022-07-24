@@ -13,7 +13,7 @@
 
 
 <p align="center">
-  <b>A MATLAB-GUI based open-source tool for solving gaseous combustion problems.</b>
+  <b>A MATLAB-GUI based open-source tool for solving gaseous combustion problems</b>
 </p>
 
 ---
@@ -123,7 +123,7 @@ See also the list of [contributors](https://github.com/AlbertoCuadra/combustion_
 ```bibtex
 @misc{combustiontoolbox,
     author = "Cuadra, A and Huete, C and Vera, M",
-    title = "Combustion Toolbox: A MATLAB-GUI based open-source tool for solving combustion problems",
+    title = "Combustion Toolbox: A MATLAB-GUI based open-source tool for solving gaseous combustion problems",
     year = 2022,
     note = "Version 0.9.9",
     doi = {https://doi.org/10.5281/zenodo.6894897}

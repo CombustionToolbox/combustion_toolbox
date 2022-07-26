@@ -27,7 +27,7 @@
   - When temperature is not externally imposed, the code retrieves a routine also based on Newton-Raphson method to find the equilibrium temperature
   - Solve processes that involve strong changes in the dynamic pressure, such as detonations and shock waves in the steady state
   - Find the equilibrium conditions of the different phenomena undergoing behind the shock: molecular vibrational excitation up to dissociation, and electronic excitation up to ionization, thereby providing the `properties of the gas in plasma state` within the temperature range given by the NASA’s 9-coefficient polynomial fits.
-  - Calculate the chemical equilibrium composition and select which species can react or remain chemically frozen (inert).   
+  - Calculate the chemical equilibrium composition of a mixture by selecting which species can react or remain chemically frozen (inert).
   - The corresponding thermodynamic properties of the species are modelled with `NASA’s 9-coefficient polynomial fits`, which ranges `up to 20000 K`, and the ideal gas equation of state
   - Results are in `excellent agreement with NASA’s Chemical Equilibrium with Applications (CEA) program`, CANTERA and Caltech’s Shock and Detonation Toolbox
   - All the routines and computations are encapsulated in a more comprehensive and user-friendly GUI

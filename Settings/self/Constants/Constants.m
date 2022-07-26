@@ -31,4 +31,5 @@ function self = Constants()
     self.firstrow = true;
     self.mintol_display = 1e-14;
     self.l_phi = []; % length phi vector
+    self.composition_units = 'molar fraction'; % Possible values: mol, molar fraction or mass fraction
 end

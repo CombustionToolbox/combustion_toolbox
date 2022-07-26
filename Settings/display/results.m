@@ -3,21 +3,21 @@ function results(self, i)
     
     if self.Misc.FLAG_RESULTS
         if ~isfield(self.PS, 'str2')
-            displayresults(self.PS.strR{i}, self.PS.strP{i}, self.PD.ProblemType, self.C.mintol_display, self.S.LS);
+            print_mixture(self, self.PS.strR{i}, self.PS.strP{i});
         elseif isfield(self.PS, 'mix2_c') && isempty(self.PS.strP{i}) && self.PD.FLAG_IAC
-            displayresults(self.PS.strR{i}, self.PS.mix2_c{i}, self.PS.mix3{i}, self.PD.ProblemType, self.C.mintol_display, self.S.LS);
+            print_mixture(self, self.PS.strR{i}, self.PS.mix2_c{i}, self.PS.mix3{i});
         elseif isfield(self.PS, 'mix2_c') && ~isempty(self.PS.strP{i}) && self.PD.FLAG_IAC
-            displayresults(self.PS.strR{i}, self.PS.mix2_c{i}, self.PS.mix3{i}, self.PS.strP{i}, self.PD.ProblemType, self.C.mintol_display, self.S.LS);
+            print_mixture(self, self.PS.strR{i}, self.PS.mix2_c{i}, self.PS.mix3{i}, self.PS.strP{i});
         elseif isfield(self.PS, 'mix2_c') && ~isempty(self.PS.strP{i}) && ~self.PD.FLAG_IAC
-            displayresults(self.PS.strR{i}, self.PS.str2{i}, self.PS.mix2_c{i}, self.PS.mix3{i}, self.PS.strP{i}, self.PD.ProblemType, self.C.mintol_display, self.S.LS);
+            print_mixture(self, self.PS.strR{i}, self.PS.str2{i}, self.PS.mix2_c{i}, self.PS.mix3{i}, self.PS.strP{i});
         elseif isfield(self.PS, 'mix2_c') && isempty(self.PS.strP{i}) && ~self.PD.FLAG_IAC
-            displayresults(self.PS.strR{i}, self.PS.str2{i}, self.PS.mix2_c{i}, self.PS.mix3{i}, self.PD.ProblemType, self.C.mintol_display, self.S.LS);
+            print_mixture(self, self.PS.strR{i}, self.PS.str2{i}, self.PS.mix2_c{i}, self.PS.mix3{i});
         elseif ~isfield(self.PS, 'str3_2')
-            displayresults(self.PS.strR{i}, self.PS.str2{i}, self.PS.strP{i}, self.PD.ProblemType, self.C.mintol_display, self.S.LS);
+            print_mixture(self, self.PS.strR{i}, self.PS.str2{i}, self.PS.strP{i});
         elseif ~isfield(self.PS, 'str3')
-            displayresults(self.PS.strR{i}, self.PS.str2_1{i}, self.PS.str3_1{i}, self.PS.str3_2{i}, self.PD.ProblemType, self.C.mintol_display, self.S.LS);
+            print_mixture(self, self.PS.strR{i}, self.PS.str2_1{i}, self.PS.str3_1{i}, self.PS.str3_2{i});
         else
-            displayresults(self.PS.strR{i}, self.PS.str2{i}, self.PS.str3{i}, self.PS.str3_2{i}, self.PD.ProblemType, self.C.mintol_display, self.S.LS);
+            print_mixture(self, self.PS.strR{i}, self.PS.str2{i}, self.PS.str3{i}, self.PS.str3_2{i});
         end
     end
 end

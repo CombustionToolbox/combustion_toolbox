@@ -27,7 +27,7 @@ self.PD.S_Fuel     = {'CH4'};
 self.PD.S_Oxidizer = {'N2', 'O2', 'Ar', 'CO2'};
 self.PD.ratio_oxidizers_O2 = [78.084, 20.9476, 0.9365, 0.0319] ./ 20.9476;
 %% ADDITIONAL INPUTS (DEPENDS OF THE PROBLEM SELECTED)
-overdriven = 1:0.1:10;
+overdriven = 1:0.1:5;
 self = set_prop(self, 'overdriven', overdriven);
 %% SOLVE PROBLEM
 self = SolveProblem(self, 'DET_OVERDRIVEN_R');

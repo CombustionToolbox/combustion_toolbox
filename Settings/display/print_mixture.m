@@ -82,7 +82,7 @@ function print_properties(ProblemType, varargin)
         fprintf(['min wave  [deg]|                 |', string_value_2], get_properties('beta_min', Nmixtures - 1, mix(2:end)));
         fprintf(['wave angle[deg]|                 |', string_value_2], get_properties('beta', Nmixtures - 1, mix(2:end)));
         fprintf(['deflection[deg]|                 |', string_value_2], get_properties('theta', Nmixtures - 1, mix(2:end)));
-        if contains(ProblemType, '_OBLIQUE')
+        if contains(ProblemType, '_POLAR')
             fprintf(['max def.  [deg]|                 |', string_value_2], get_properties('theta_max', Nmixtures - 1, mix(2:end)));
             fprintf(['sonic def.[deg]|                 |', string_value_2], get_properties('theta_sonic', Nmixtures - 1, mix(2:end)));
         end
@@ -143,7 +143,7 @@ function header_composition = print_header(ProblemType, Nmixtures, mix)
             fprintf('               |     STATE 1     |     STATE 2\n');
         elseif Nmixtures == 3
             header_composition = {'STATE 1               ', 'STATE 2-W             ', 'STATE 2-S             '};
-            fprintf('               |     STATE 1     |     STATE 2-W   |     STATE 2-S');
+            fprintf('               |     STATE 1     |     STATE 2-W   |     STATE 2-S\n');
         elseif Nmixtures == 4
             header_composition = {'STATE 1               ', 'STATE 2               ', 'STATE 3-W             ', 'STATE 3-S             '};
             fprintf('               |     STATE 1     |     STATE 2     |     STATE 3-W   |     STATE 3-S\n');

@@ -57,8 +57,13 @@ function self = ProblemDescription()
     self.T_Inert = [];           % Vector with the temperature values of the inert species in the mixture
     self.ratio_oxidizers_O2 = 1; % Ratio oxidizers / O2 [% moles]
     self.ratio_inerts_O2 = [];   % Ratio oxidizers / Inerts [% moles]
+    % * Equation of States
+    self.EOS.pressure = @eos_ideal; % Equation of State to compute pressure [Pa]
+    self.EOS.volume = @eos_ideal_v; % Equation of State to compute volume [m3]
+    self.EOS.chemical_potential_imp = @mu_imp_ideal; % Compute non ideal contribution of the chemical potential (depends of the Equation of State) [J/mol]
     % * Flags
-    self.FLAG_ION = false;      % Flag ionized species in the system
-    self.FLAG_IAC = true;       % Flag use IAC model for rocket computations
-    self.FLAG_SUBSONIC = false; % Flag subsonic Area ratio
+    self.FLAG_ION = false;       % Flag ionized species in the system
+    self.FLAG_IAC = true;        % Flag use IAC model for rocket computations
+    self.FLAG_SUBSONIC = false;  % Flag subsonic Area ratio
+    self.FLAG_EOS = false;       % Flag to use non-ideal Equation of States (EoS)
 end

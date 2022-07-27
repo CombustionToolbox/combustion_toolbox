@@ -29,7 +29,7 @@
   - Find the equilibrium conditions of the different phenomena undergoing behind the shock: molecular vibrational excitation up to dissociation, and electronic excitation up to ionization, thereby providing the `properties of the gas in plasma state` within the temperature range given by the NASA’s 9-coefficient polynomial fits.
   - Calculate the chemical equilibrium composition of a mixture by selecting which species can react or remain chemically frozen (inert).
   - The corresponding thermodynamic properties of the species are modelled with `NASA’s 9-coefficient polynomial fits`, which ranges `up to 20000 K`, and the ideal gas equation of state
-  - Results are in `excellent agreement with NASA’s Chemical Equilibrium with Applications (CEA) program`, CANTERA and Caltech’s Shock and Detonation Toolbox
+  - Results are in `excellent agreement with NASA’s Chemical Equilibrium with Applications (CEA) program`, CANTERA, Caltech’s Shock and Detonation Toolbox, and TEA
   - All the routines and computations are encapsulated in a more comprehensive and user-friendly GUI
   - The code is in it’s transition to Python
   - Display predefined plots (e.g., molar fraction vs equilence ratio)

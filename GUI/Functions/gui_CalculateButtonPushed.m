@@ -72,6 +72,7 @@ function obj = get_listSpecies_gui(obj)
         obj.LS = ListSpecies([], 'Soot Formation');
     end
 end
+
 function results = save_results(obj, app)
     % Save results
     N = length(app.PS.strR);
@@ -88,9 +89,9 @@ function results = save_results(obj, app)
         results(i).mix2 = app.PS.(label_mix2){i};
         results(i).ProblemType = app.PD.ProblemType;
         if ischar(obj.Reactants.Value)
-            results(i).Reactants = '1';
+            results(i).Reactants = 'Custom';
         else
-            results(i).Reactants = obj.Reactants.Items{sscanf(obj.Reactants.Value, '%d')};
+            results(i).Reactants = obj.Reactants.Items{obj.Reactants.Value};
         end
         results(i).Products = obj.Products.Value;
         if isempty(results(i).Products)

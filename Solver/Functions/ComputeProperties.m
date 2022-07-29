@@ -87,9 +87,9 @@ end
 
 % SUB-PASS FUNCTIONS
 function DS = compute_entropy_mixing(mix, Ni, R0, FLAG_NONZERO)
-    % Compute entropy of mixing [kJ/K].
-    % Note: only nonzero for noncondensed species
+    % Compute entropy of mixing [kJ/K]. 
+    % Note: only nonzero for gaseous species
 
-    DSi = Ni(FLAG_NONZERO) .* log(mix.Xi(FLAG_NONZERO) * mix.p) .* (1 - mix.phase(FLAG_NONZERO));
+    DSi = Ni(FLAG_NONZERO) .* log(Ni(FLAG_NONZERO) / molesGas(mix) * mix.p) .* (1 - mix.phase(FLAG_NONZERO));
     DS  = -R0 * sum(DSi) * 1e-3;
 end

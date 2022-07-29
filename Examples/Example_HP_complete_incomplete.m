@@ -2,7 +2,7 @@
 % EXAMPLE: HP COMPLETE VS INCOMPLETE
 %
 % Compute adiabatic temperature and equilibrium composition at constant
-% pressure (e.g., 1.01325 bar) for lean to rich CH4-air mixtures at
+% pressure (e.g., 1.01325 bar) for lean to rich natural gas-air mixtures at
 % standard conditions, a set of equivalence ratios phi contained in
 % (0.5, 3) [-], and two different sets of species "Complete" or "Incomplete"
 % 

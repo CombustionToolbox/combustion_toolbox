@@ -6,7 +6,7 @@ function gui_ReactantsValueChanged(obj, event)
         % Initialize app (fast: transfer DB)
         app = App('fast', obj.DB_master, obj.DB);
         % If the empty item was selected clear UITable and return
-        if strcmp(obj.Reactants.Value, '1') % No species selected
+        if obj.Reactants.Value == 1 % No species selected
             gui_empty_UITables(obj);
             return
         elseif isempty(obj.Reactants.Value)
@@ -45,50 +45,50 @@ function app = gui_set_reactants(obj, event, app)
     end
     % Set species in the mixture
     switch obj.Reactants.Value
-        case '2' % Air
+        case 2 % Air
             app = set_air(app, FLAG_IDEAL_AIR);
-        case '3' % Methane + Air
+        case 3 % Methane + Air
             app = set_air(app, FLAG_IDEAL_AIR);
             app.PD.S_Fuel = {'CH4'};
-        case '4' % Ethane + Air
+        case 4 % Ethane + Air
             app = set_air(app, FLAG_IDEAL_AIR);
             app.PD.S_Fuel = {'C2H6'};
-        case '5' % Propane + Air
+        case 5 % Propane + Air
             app = set_air(app, FLAG_IDEAL_AIR);
             app.PD.S_Fuel = {'C3H8'};
-        case '6' % Acetylene + Air
+        case 6 % Acetylene + Air
             app = set_air(app, FLAG_IDEAL_AIR);
             app.PD.S_Fuel = {'C2H2_acetylene'};
-        case '7' % Ethylene + Air
+        case 7 % Ethylene + Air
             app = set_air(app, FLAG_IDEAL_AIR);
             app.PD.S_Fuel = {'C2H4'};
-        case '8' % Bencene + Air
+        case 8 % Bencene + Air
             app = set_air(app, FLAG_IDEAL_AIR);
             app.PD.S_Fuel = {'C6H6'};
-        case '9' % Iso-octane + Air
+        case 9 % Iso-octane + Air
             app = set_air(app, FLAG_IDEAL_AIR);
             app.PD.S_Fuel = {'C8H18_isooctane'};
-        case '10' % Hydrogen + Air
+        case 10 % Hydrogen + Air
             app = set_air(app, FLAG_IDEAL_AIR);
             app.PD.S_Fuel = {'H2'};
-        case '11' % Carbon monoxide + Air
+        case 11 % Carbon monoxide + Air
             app = set_air(app, FLAG_IDEAL_AIR);
             app.PD.S_Fuel = {'CO'};
-        case '12' % Methanol + Air
+        case 12 % Methanol + Air
             app = set_air(app, FLAG_IDEAL_AIR);
             app.PD.S_Fuel = {'CH3OH'};
-        case '13' % Ethanol + Air
+        case 13 % Ethanol + Air
             app = set_air(app, FLAG_IDEAL_AIR);
             app.PD.S_Fuel = {'C2H5OH'};
-        case '14' % Natural Gas + Air
+        case 14 % Natural Gas + Air
             app = set_air(app, FLAG_IDEAL_AIR);
             app.PD.S_Fuel = {'CH4','C2H6','C3H8'};
             app.PD.N_Fuel = [0.85, 0.1, 0.05];
-        case '15' % Syngas + Air
+        case 15 % Syngas + Air
             app = set_air(app, FLAG_IDEAL_AIR);
             app.PD.S_Fuel = {'CO','H2'};  
             app.PD.N_Fuel = [0.5, 0.5];
-        case '16' % LH2 + LOX
+        case 16 % LH2 + LOX
             app.PD.S_Fuel = {'H2bLb'};
             app.PD.S_Oxidizer = {'O2bLb'};
             obj.Products.Value = 'Hydrogen (L)';
@@ -96,7 +96,7 @@ function app = gui_set_reactants(obj, event, app)
             gui_ProductsValueChanged(obj);
             % Update Listbox (extended settings)
             obj.listbox_LS.Items = obj.listbox_Products.Items;
-        case '17' % RP1 + LOX
+        case 17 % RP1 + LOX
             app.PD.S_Fuel = {'RP_1'};
             app.PD.S_Oxidizer = {'O2bLb'};
         otherwise % SET NEW SPECIES

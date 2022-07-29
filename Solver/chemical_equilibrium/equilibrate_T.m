@@ -24,6 +24,7 @@ function mix2 = equilibrate_T(self, mix1, pP, TP, varargin)
     % Compute number of moles 
     [N, self.dNi_T, self.dN_T, self.dNi_p, self.dN_p, STOP, STOP_ions] = select_equilibrium(self_ListProducts, pP, TP, mix1, guess_moles);
     % Reshape matrix of number of moles, N
+    N = reshape_vectors(self, self_ListProducts, N);
     self.dNi_T = reshape_vectors(self, self_ListProducts, self.dNi_T);
     self.dNi_p = reshape_vectors(self, self_ListProducts, self.dNi_p);
     % Add moles of frozen species to the moles vector N

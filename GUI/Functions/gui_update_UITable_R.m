@@ -13,5 +13,8 @@ function gui_update_UITable_R(obj, app)
     else
         temperatures = create_cell_ntimes(app.PD.TR.value, Nspecies);
     end
+    % Check if is a condensed species with a fixed temperature
+    [obj, temperatures] = gui_check_temperature_reactants(obj, app.DB, species, temperatures, Nspecies);
+    % Update table
     obj.UITable_R.Data = [species; vector2cell(moles); vector2cell(molar_fraction); typeSpecies; temperatures]';
 end

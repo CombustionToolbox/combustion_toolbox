@@ -45,6 +45,8 @@ function self = ListSpecies(varargin)
         end
     end
     
+    self.S.FLAG_COMPLETE = false;
+     
     if exist('LS', 'var')
         if contains(LS, 'COMPLETE', 'IgnoreCase', true) 
             self.S.FLAG_COMPLETE = true;

@@ -15,16 +15,20 @@ function self = App(varargin)
     %     self (struct): Data of the mixture (initialization - empty), conditions, and databases 
 
     try
-        [self, LS, FLAG_FAST] = initialize(varargin);
-        self.E = Elements();
-        self.S = Species();
-        self.C = Constants();
-        self.Misc = Miscellaneous();
-        self.PD = ProblemDescription();
-        self.PS = ProblemSolution();
-        self.TN = TuningProperties();
+        [self, LS, FLAG_FAST, FLAG_COPY] = initialize(varargin);
+        if ~FLAG_COPY
+            self.E = Elements();
+            self.S = Species();
+            self.C = Constants();
+            self.Misc = Miscellaneous();
+            self.PD = ProblemDescription();
+            self.PS = ProblemSolution();
+            self.TN = TuningProperties();
+        else
+            self = reset_copy(self);
+        end
         self = constructor(self, LS, FLAG_FAST);
-        if ~nargin || ~isa(varargin{1,1}, 'combustion_toolbox_app') || (~strcmpi(varargin{1,1}, 'fast') && nargin < 4) 
+        if ~nargin || ~isa(varargin{1,1}, 'combustion_toolbox_app') || (~strcmpi(varargin{1,1}, 'fast') && nargin < 4) || (~strcmpi(varargin{1,1}, 'copy') && nargin < 3) 
             self = Initialize(self);
         end
     catch ME
@@ -35,12 +39,14 @@ function self = App(varargin)
     end
 end
 
-function [self, LS, FLAG_FAST] = initialize(varargin)
+% SUB-PASS FUNCTIONS
+function [self, LS, FLAG_FAST, FLAG_COPY] = initialize(varargin)
     varargin = varargin{1,1};
     nargin = length(varargin); % If varargin is empty, by default nargin will return 1, not 0.
     self = struct();
     LS = [];
     FLAG_FAST = false;
+    FLAG_COPY = false;
     if nargin
         if strcmpi(varargin{1,1}, 'fast')
             FLAG_FAST = true;
@@ -48,6 +54,14 @@ function [self, LS, FLAG_FAST] = initialize(varargin)
             self.DB = varargin{1,3};
             if nargin == 4
                 LS = varargin{1,4};
+            end
+            return
+        elseif strcmpi(varargin{1,1}, 'copy')
+            FLAG_FAST = true;
+            FLAG_COPY = true;
+            self = varargin{1,2};
+            if nargin == 3
+                LS = varargin{1,3};
             end
             return
         end
@@ -83,5 +97,21 @@ end
 function self = check_GUI(self)
     if isa(self, 'combustion_toolbox_app')
         self.Misc.FLAG_GUI = true;
+    end
+end
+
+function self = reset_copy(self)
+    % In case we want to solve the same base problem from a given self
+    % variable, we have to reset several values
+    
+    % Reset check reactants (FOI): Fuel, Oxidizer, Inert
+    self.Misc.FLAG_FOI = true;
+    % Reset moles of oxidizer and inerts in case they are computed from the
+    % equivalence ratio
+    if ~isempty(self.PD.phi.value)
+        self.PD.N_Oxidizer = [];
+        if ~isempty(self.PD.ratio_inerts_O2)
+            self.PD.N_Inert = [];
+        end
     end
 end

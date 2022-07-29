@@ -27,7 +27,7 @@ function [dNi_T, dN_T] = equilibrium_dT(self, moles, T, A0, temp_NG, temp_NS, te
     % -----------------------------------
     R0TP = C.R0 * T; % [J/mol]
     % Initialization
-    NP = sum(moles(:, 1));
+    NP = sum(moles(temp_ind_nswt, 1));
     dNi_T = zeros(length(moles), 1);
     % Dimensionless Standard-state enthalpy [J/mol]
     h0 = set_h0(S.LS, T, self.DB);

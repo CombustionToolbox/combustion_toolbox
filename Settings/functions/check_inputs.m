@@ -60,6 +60,10 @@ function self = check_inputs(self)
                     self = check_inputs_prop(self, 'Aratio');
                 end
         end
+        % Check if a stoichiometric equivalence ratio is considered
+        if any(self.PD.phi.value == 1)
+            self.PD.phi.value(self.PD.phi.value == 1) = 1 + self.TN.tolN * 10;
+        end
     end
     self.Misc.FLAG_CHECK_INPUTS = true;
 end

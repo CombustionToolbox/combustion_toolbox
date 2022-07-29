@@ -69,7 +69,7 @@ function mix =  ComputeProperties(self, SpeciesMatrix, p, T)
         mix.dVdp_T = -1 + self.dN_p; % [-]
         if ~any(isnan(self.dNi_T)) && ~any(isinf(self.dNi_T))
             delta = ~mix.phase;
-            h0_j = (SpeciesMatrix(:, 3)) ./ Ni * 1e3; % [J/mol]
+            h0_j = (SpeciesMatrix(:, self.C.M0.ind_hi)) ./ Ni * 1e3; % [J/mol]
             mix.cP_r = sum(h0_j/T .* (1 +  delta .* (Ni - 1)) .* self.dNi_T, 'omitnan'); % [J/K]
             mix.cP_f = mix.cP;
             mix.cP = mix.cP_f + mix.cP_r; % [J/K]

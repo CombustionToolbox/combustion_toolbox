@@ -1,6 +1,6 @@
-function chemical_potential_imp = mu_imp_ideal(self, moles, temperature, volume)
-    % Compute non ideal contribution of the chemical potential assuming 
-    % ideal Equation of States [J/mol]
+function chemical_potential_ex = mu_ex_ideal(self, moles, temperature, volume)
+    % Compute non ideal contribution (excess) of the chemical potential
+    % assuming ideal Equation of State [J/mol]
     %
     % Args:
     %     self (struct): Data of the mixture, conditions, and databases
@@ -11,5 +11,5 @@ function chemical_potential_imp = mu_imp_ideal(self, moles, temperature, volume)
     % Returns:
     %     pressure (float): pressure of the mixture [Pa]
 
-    chemical_potential_imp = 0;
+    chemical_potential_ex = 0;
 end

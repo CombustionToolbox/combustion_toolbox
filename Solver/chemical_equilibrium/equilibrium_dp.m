@@ -21,7 +21,7 @@ function [dNi_p, dN_p] = equilibrium_dp(self, moles, A0, temp_NG, temp_NS, temp_
     %     * dN_p (float):  Thermodynamic derivative of the moles of the mixture respect to pressure
 
     % Initialization
-    NP = sum(moles(:, 1));
+    NP = sum(moles(temp_ind_nswt, 1));
     dNi_p = zeros(length(moles), 1);
     % Construction of part of matrix A (complete)
     A1 = update_matrix_A1(A0, temp_NG, temp_NS, temp_ind, temp_ind_E);

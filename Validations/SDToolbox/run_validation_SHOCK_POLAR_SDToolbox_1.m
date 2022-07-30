@@ -10,7 +10,6 @@ function problems_solved = run_validation_SHOCK_POLAR_SDToolbox_1
     % Inputs
     Oxidizer = {'N2', 'O2'};
     moles = [79, 21]/21;
-%     LS = {'O2', 'N2'};
     LS = 'AIR_IONS';
     u1 = 3.472107491008314e+02 * [2, 3, 5, 14];
     filename = 'shock_polar_equilwithions_SDToolbox';

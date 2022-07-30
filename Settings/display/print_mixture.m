@@ -170,19 +170,36 @@ function header_composition = print_header(ProblemType, Nmixtures, mix)
                                   'THROAT                '};
             fprintf('               |  INLET CHAMBER  | OUTLET CHAMBER  |      THROAT \n');
         elseif Nmixtures > 3
+            if Nmixtures > 4
+                header_exit_prop_last = '|      EXIT\n';
+            else
+                header_exit_prop_last = [];
+            end
             if mix{3}.Aratio == 1
+                header_exit = repmat({'EXIT                  '}, 1, Nmixtures - 3);
                 header_composition = {'INLET CHAMBER         ',...
                                       'OUTLET CHAMBER        ',...
                                       'THROAT                ',...
-                                      repmat('EXIT                    ', 1, Nmixtures - 3)};
-                fprintf('               |  INLET CHAMBER  | OUTLET CHAMBER  |     THROAT      |     EXIT\n');
+                                      header_exit{1:end}};
+                if Nmixtures > 4
+                    header_exit_prop = [repmat({'|      EXIT       |'}, 1, Nmixtures - 5), header_exit_prop_last];
+                    fprintf(['               |  INLET CHAMBER  | OUTLET CHAMBER  |     THROAT      ', header_exit_prop{1:end}]);
+                else
+                    fprintf('               |  INLET CHAMBER  | OUTLET CHAMBER  |     THROAT      |      EXIT\n');
+                end
             else
+                header_exit = repmat({'EXIT                  '}, 1, Nmixtures - 4);
                 header_composition = {'INLET CHAMBER         ',...
                                       'INJECTOR              ',...
                                       'OUTLET CHAMBER        ',...
                                       'THROAT                ',...
-                                      repmat('EXIT                    ', 1, Nmixtures - 3)};
-                fprintf('               |  INLET CHAMBER  |     INJECTOR    | OUTLET CHAMBER  |     THROAT \n');
+                                      header_exit{1:end}};
+                if Nmixtures > 4
+                    header_exit_prop = [repmat({'|      EXIT       |'}, 1, Nmixtures - 5), header_exit_prop_last];
+                    fprintf(['               |  INLET CHAMBER  |     INJECTOR    | OUTLET CHAMBER  |     THROAT      ', header_exit_prop{1:end}]);
+                else
+                    fprintf('               |  INLET CHAMBER  |     INJECTOR    | OUTLET CHAMBER  |     THROAT \n');
+                end
             end
         end
     elseif Nmixtures == 2

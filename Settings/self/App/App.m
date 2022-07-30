@@ -2,14 +2,14 @@ function self = App(varargin)
     % Generate self variable with all the data required to initialize the computations
     %
     % Args:
-    %     empty (none):       Generate default self variable assuming as products LS = Soot formation     
+    %     empty (none): Generate default self variable assuming as products LS = Soot formation     
     %
     % Optional Args:
-    %     - LS (cell):          List of species
-    %     - obj (class):        Class combustion_toolbox_app (GUI)
-    %     - type (str):         If value is fast initialize from the given Databases
+    %     - LS (cell): List of species
+    %     - obj (class): Class combustion_toolbox_app (GUI)
+    %     - type (str): If value is fast initialize from the given Databases
     %     - DB_master (struct): Master database
-    %     - DB (struct) :       Database with custom thermodynamic polynomials functions generated from NASAs 9 polynomials fits
+    %     - DB (struct): Database with custom thermodynamic polynomials functions generated from NASAs 9 polynomials fits
     % 
     % Returns:
     %     self (struct): Data of the mixture (initialization - empty), conditions, and databases 

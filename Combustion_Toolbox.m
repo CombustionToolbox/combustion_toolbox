@@ -1,5 +1,5 @@
 % -------------------------------------------------------------------------
-% COMBUSTION TOOLBOX @v0.9.91
+% COMBUSTION TOOLBOX @v0.9.92
 % A MATLAB-GUI based open-source tool for solving gaseous combustion problems
 %
 % Type of problems:
@@ -23,10 +23,15 @@
 %   * DET_OVERDRIVEN_R ---> Overdriven reflected Detonation    
 %   * ROCKET -------------> Propellant rocket performance   
 %
-% SEE THE EXAMPLES OR WIKI TO KNOW HOW TO START USING COMBUSTION TOOLBOX 
+% SEE THE EXAMPLES OR WIKI TO KNOW HOW TO START USING COMBUSTION TOOLBOX
+%
+% WEBSITE: https://combustion-toolbox-website.readthedocs.io/
+%
 % LIST OF TUTORIAL SCRIPTS:
 %   * Example_TP
 %   * Example_HP
+%   * Example_HP_COMPLETE_INCOMPLETE
+%   * Example_HP_PRESSURE
 %   * Example_HP_PROPELLANTS
 %   * Example_HP_MIXTEMP
 %   * Example_SP
@@ -46,17 +51,20 @@
 %   * Example_DET_R
 %   * Example_DET_OVERDRIVEN
 %   * Example_DET_OVERDRIVEN_R
+%   * Example_DET_OBLIQUE_BETA
+%   * Example_DET_OBLIQUE_THETA
 %   * Example_ROCKET_IAC
 %   * Example_ROCKET_FAC
+%   * Example_live_ZELDOVICH_MECHANISM
 %
-% Please to send feedback or inquiries run uifeedback
+% Please to send feedback or inquiries "run uifeedback"
 % Thank you for testing Combustion Toolbox!
 %
 % @author: Alberto Cuadra Lara
 %          PhD Candidate - Group Fluid Mechanics
 %          Universidad Carlos III de Madrid
 %                  
-% Last update July 29 2022
+% Last update July 30 2022
 % -------------------------------------------------------------------------
 help Combustion_Toolbox.m
 

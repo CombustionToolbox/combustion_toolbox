@@ -40,17 +40,18 @@
     % * Molar fractions
 %     fig1 = plot_molar_fractions_validation(results_CT, results_CEA.mix2, 'T', 'Xi', DisplaySpecies);
     % * Properties mixture 1
-%     fig2 = plot_properties_validation(results_CT, results_CEA.mix1, {'u', 'u', 'u', 'u', 'u', 'u', 'u', 'u'}, {'T', 'p', 'rho', 'h', 'e', 'g', 'cP', 'gamma_s'}, 'mix1');
+    fig2 = plot_properties_validation(results_CT, results_CEA.mix1, {'u', 'u', 'u', 'u', 'u', 'u', 'u', 'u'}, {'T', 'p', 'rho', 'h', 'e', 'g', 'S', 'gamma_s'}, 'mix1');
     % * Properties mixture 2 - 1
-    fig3 = plot_properties_validation(results_CT, results_CEA.mix2, {'u', 'u', 'u', 'u', 'u', 'u', 'u', 'u'}, {'T', 'p', 'rho', 'h', 'e', 'g', 'cP', 'gamma_s'}, 'mix2');
+    fig3 = plot_properties_validation(results_CT, results_CEA.mix2, {'u', 'u', 'u', 'u', 'u', 'u', 'u', 'u'}, {'T', 'p', 'rho', 'h', 'e', 'g', 'S', 'gamma_s'}, 'mix2');
     % * Properties mixture 2 - 2
-    fig4 = plot_properties_validation(results_CT, results_CEA.mix2, {'u', 'u', 'u'}, {'cV', 'dVdT_p', 'dVdp_T'}, 'mix2');
+    fig4 = plot_properties_validation(results_CT, results_CEA.mix2, {'u', 'u', 'u', 'u', 'u', 'u'}, {'cP', 'cV', 'dVdT_p', 'dVdp_T', 'sound', 'W'}, 'mix2');
+
     % Save plots
     folderpath = strcat(pwd,'\Validations\Figures\');
     stack_trace = dbstack;
     filename = stack_trace.name;
 %     saveas(fig1, strcat(folderpath, filename, '_molar'), 'svg');
-%     saveas(fig2, strcat(folderpath, filename, '_properties_1'), 'svg');
+    saveas(fig2, strcat(folderpath, filename, '_properties_1'), 'svg');
     saveas(fig3, strcat(folderpath, filename, '_properties_2'), 'svg');
     saveas(fig4, strcat(folderpath, filename, '_properties_3'), 'svg');
 end

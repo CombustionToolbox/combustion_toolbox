@@ -179,7 +179,7 @@ function [N0, NP] = initialize_moles(N0, NP, temp_ind_nswt, temp_NG, guess_moles
         N0(temp_ind_nswt, 1) = NP/temp_NG;
     else
         N0(temp_ind_nswt, 1) = guess_moles(temp_ind_nswt);
-        NP = sum(guess_moles);
+        NP = sum(guess_moles(temp_ind_nswt));
     end
 end
 
@@ -191,9 +191,13 @@ function [temp_ind, temp_ind_swt, FLAG] = check_condensed_species(A0, x, temp_in
         aux = true;
     else
         for i=length(temp_ind_swt_0):-1:1
-            dG_dn = muRT(temp_ind_swt_0(i)) - dot(x(end-temp_NE+1:end), A0(temp_ind_swt_0(i), temp_ind_E));
-            if dG_dn < 0
-                aux = [aux, i];
+            % Only check if there were atoms of the species in the initial
+            % mixture
+            if sum(A0(temp_ind_swt_0(i), temp_ind_E))
+                dG_dn = muRT(temp_ind_swt_0(i)) - dot(x(end-temp_NE+1:end), A0(temp_ind_swt_0(i), temp_ind_E));
+                if dG_dn < 0
+                    aux = [aux, i];
+                end
             end
         end
     end

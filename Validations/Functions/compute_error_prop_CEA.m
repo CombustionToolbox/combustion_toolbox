@@ -1,4 +1,4 @@
-function error_prop = compute_error_prop_CEA(results1, results2, varsname_x, value, varsname_y, type)
+function [error_prop, index_max] = compute_error_prop_CEA(results1, results2, varsname_x, value, varsname_y, type)
     % Compute max error of CT against CEA
     for i = length(varsname_x):-1:1
         varname_x = varsname_x{i};
@@ -20,7 +20,7 @@ function error_prop = compute_error_prop_CEA(results1, results2, varsname_x, val
 
         error_prop(i) = abs((value_CT - value_CEA) ./ value_CT);
     end
-    error_prop = max(error_prop);
+    [error_prop, index_max] = max(error_prop);
 end
 
 % SUB-PASS FUNCTIONS

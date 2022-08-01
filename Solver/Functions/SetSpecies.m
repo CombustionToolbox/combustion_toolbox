@@ -14,8 +14,8 @@ function M = SetSpecies(self, species, moles, T)
     R0 = self.C.R0;
 
     for i = length(moles):-1:1
-        mmi = self.DB.(species{i}).mm;      % [g/mol]
-        mi  = moles(i) * mmi * 1e-3;        % [kg]
+        W = self.DB.(species{i}).mm; % [g/mol]
+        mi  = moles(i) * W * 1e-3;   % [kg]
         hfi = self.DB.(species{i}).hf/1000; % [kJ/mol]
         efi = self.DB.(species{i}).ef/1000; % [kJ/mol]
         phase = self.DB.(species{i}).phase; % [bool]
@@ -35,6 +35,6 @@ function M = SetSpecies(self, species, moles, T)
             pVi = 0; % [bar m3]
         end   
         ind = find_ind(self.S.LS, species(i));
-        M(ind, :) = [moles(i), moles(i) * [hfi, h0i, efi, cPi, s0i], pVi, phase, mi, mmi];
+        M(ind, :) = [moles(i), moles(i) * [hfi, h0i, efi, cPi, s0i], pVi, phase, mi, W];
     end
 end

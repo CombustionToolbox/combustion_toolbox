@@ -194,7 +194,7 @@ function [temp_ind, temp_ind_swt, FLAG] = check_condensed_species(A0, x, temp_in
             % Only check if there were atoms of the species in the initial
             % mixture
             if sum(A0(temp_ind_swt_0(i), temp_ind_E))
-                dG_dn = muRT(temp_ind_swt_0(i)) - dot(x(end-temp_NE:end-1), A0(temp_ind_swt_0(i), temp_ind_E));
+                dG_dn = muRT(temp_ind_swt_0(i)) - dot(x(end-temp_NE+1:end), A0(temp_ind_swt_0(i), temp_ind_E));
                 if dG_dn < 0
                     aux = [aux, i];
                 end

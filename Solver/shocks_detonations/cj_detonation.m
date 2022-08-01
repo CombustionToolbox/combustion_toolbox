@@ -160,7 +160,7 @@ end
 
 function [p2, T2] = apply_antilog(mix1, log_p2p1, log_T2T1)
     % compute p2 and T2
-    p2 = exp(log_p2p1) * mix1.p * 1e5; % [Pa]
+    p2 = exp(log_p2p1) * convert_bar_to_Pa(mix1.p); % [Pa]
     T2 = exp(log_T2T1) * mix1.T;
 end
 

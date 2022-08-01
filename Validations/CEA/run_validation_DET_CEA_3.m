@@ -1,7 +1,7 @@
 function problems_solved = run_validation_DET_CEA_3
     % Run test validation_DET_CEA_3:
     % Contrasted with: NASA's Chemical Equilibrium with Applications software
-    % Problem type: Chapman-Jouget Detonation
+    % Problem type: Chapman-Jouguet Detonation
     % Temperature [K]   = 300;
     % Pressure    [bar] = 1;
     % Equivalence ratio [-] = 0.5:0.01:4
@@ -27,10 +27,17 @@ function problems_solved = run_validation_DET_CEA_3
     % Load results CEA 
     results_CEA = data_CEA(filename, DisplaySpecies);
     % Display validation (plot)
+    % * Molar fractions
     fig1 = plot_molar_fractions_validation(results_CT, results_CEA, 'phi', 'Xi', DisplaySpecies);
+    % * Properties mixture 2 - 1
+    fig2 = plot_properties_validation(results_CT, results_CEA, {'phi', 'phi', 'phi', 'phi', 'phi', 'phi', 'phi', 'phi'}, {'T', 'p', 'rho', 'h', 'e', 'g', 'S', 'gamma_s'}, 'mix2');
+    % * Properties mixture 2 - 2
+    fig3 = plot_properties_validation(results_CT, results_CEA, {'phi', 'phi', 'phi', 'phi', 'phi', 'phi', 'phi', 'phi'}, {'cP', 'cV', 'gamma_s', 'dVdT_p', 'dVdp_T', 'sound', 'W', 'u_preshock'}, 'mix2');
     % Save plots
     folderpath = strcat(pwd,'\Validations\Figures\');
     stack_trace = dbstack;
     filename = stack_trace.name;
     saveas(fig1, strcat(folderpath, filename, '_molar'), 'svg');
+    saveas(fig2, strcat(folderpath, filename, '_properties_1'), 'svg');
+    saveas(fig3, strcat(folderpath, filename, '_properties_2'), 'svg');
 end

@@ -68,23 +68,23 @@ function dataselected = select_data(self, dataname)
 end
 
 function titlename = create_title(self)
-    titlename = strcat(self.PD.ProblemType, ': ', cat_moles_species(self.PD.N_Fuel, self.PD.S_Fuel));
+    titlename = [self.PD.ProblemType, ': ', cat_moles_species(self.PD.N_Fuel, self.PD.S_Fuel)];
     if ~isempty(self.PD.S_Oxidizer) || ~isempty(self.PD.S_Inert)
         if ~isempty(self.PD.S_Fuel)
-            titlename = strcat(titlename, ' + ');
+            titlename = [titlename, ' + '];
         end
-        titlename = strcat(titlename, strcat('$\frac{', sprintf('%.3g', self.PD.phi_t), '}{\phi}$'));
+        titlename = [titlename, '$\frac{', sprintf('%.3g', self.PD.phi_t), '}{\phi}$'];
         if ~isempty(self.PD.S_Oxidizer) && ~isempty(self.PD.S_Inert)
-            titlename = strcat(titlename, '(');
+            titlename = [titlename, '('];
         end
         if ~isempty(self.PD.S_Oxidizer)
-            titlename = strcat(titlename, cat_moles_species(1, self.PD.S_Oxidizer));
+            titlename = [titlename, cat_moles_species(1, self.PD.S_Oxidizer)];
         end
         if ~isempty(self.PD.S_Inert)
-            titlename = strcat(titlename, ' + ', cat_moles_species(self.PD.proportion_inerts_O2, self.PD.S_Inert));
+            titlename = [titlename, ' + ', cat_moles_species(self.PD.proportion_inerts_O2, self.PD.S_Inert)];
         end
         if ~isempty(self.PD.S_Oxidizer) && ~isempty(self.PD.S_Inert)
-            titlename = strcat(titlename, ')');
+            titlename = [titlename, ')'];
         end
     end
 end
@@ -95,7 +95,7 @@ function cat_text = cat_moles_species(moles, species)
     if N
         cat_text = cat_mol_species(moles(1), species{1});
         for i=2:N
-            cat_text = strcat(cat_text, ' + ', cat_mol_species(moles(i), species{i}));
+            cat_text = [cat_text, ' + ', cat_mol_species(moles(i), species{i})];
         end
     end
 end
@@ -106,7 +106,7 @@ function cat_text = cat_mol_species(mol, species)
     else
         value = sprintf('%.3g', mol);
     end
-    cat_text = strcat(value, species2latex(species));
+    cat_text = [value, species2latex(species)];
 end
 
 function value = interpret_label(property)
@@ -115,30 +115,32 @@ function value = interpret_label(property)
         case 'phi'
             value = 'Equivalance ratio';
         case 'rho'
-            value = 'Density $[kg/m^3]$';
+            value = 'Density [kg/m$^3$]';
         case 't'
-            value = 'Temperature $[K]$';
+            value = 'Temperature [K]';
         case 'p'
-            value = 'Pressure $[bar]$';
+            value = 'Pressure [bar]';
         case 'h'
-            value = 'Enthalpy $[kJ/kg]$';
+            value = 'Enthalpy [kJ/kg]';
         case 'e'
-            value = 'Internal energy $[kJ/kg]$';
+            value = 'Internal energy [kJ/kg]';
         case 'g'
-            value = 'Gibbs energy $[kJ/kg]$';
+            value = 'Gibbs energy [kJ/kg]';
         case {'s', 's0'}
-            value = 'Entropy $[kJ/kg-K]$';
+            value = 'Entropy [kJ/kg-K]';
+        case 'w'
+            value = 'Molecular weight [g/mol]';
         case 'cp'
-            value = '$c_p [kJ/kg-K]$';
+            value = '$c_p$ [kJ/kg-K]';
         case 'cv'
-            value = '$c_v [kJ/kg-K]$';
+            value = '$c_v$ [kJ/kg-K]';
         case 'gamma_s'
             value = 'Adiabatic index';
         case 'u'
-            value = 'Incident velocity $[m/s]$';
+            value = 'Incident velocity [m/s]';
         case 'v_shock'
-            value = 'Shock velocity $[m/s]$';
+            value = 'Shock velocity [m/s]';
         otherwise
-            value = strcat('$', property, '$');
+            value = ['$', property, '$'];
     end
 end

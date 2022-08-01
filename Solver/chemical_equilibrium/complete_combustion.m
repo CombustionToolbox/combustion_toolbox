@@ -16,53 +16,60 @@ function [moles, species] = complete_combustion(self, mix, phi)
     Fuel = self.PD.Fuel;
     phi_c = Compute_phi_c(Fuel);
     % -----------------------------------
-    species = {'CO2', 'CO', 'H2O', 'H2', 'O2'};
+    species = {'CO2', 'CO', 'H2O', 'H2', 'O2', 'N2', 'Cbgrb'};
     
     if isempty(self.E.ind_C), x = 0; phi_c = inf; else, x = mix.NatomE(self.E.ind_C); end
     if isempty(self.E.ind_H), y = 0; else, y = mix.NatomE(self.E.ind_H); end
     if isempty(self.E.ind_O), z = 0; else, z = mix.NatomE(self.E.ind_O); end
+    if isempty(self.E.ind_N), w = 0; else, w = mix.NatomE(self.E.ind_N); end
     
     if phi <= 1
         % case of lean or stoichiometric mixtures
-        moles = compute_moles_lean(x, y, z);    
+        moles = compute_moles_lean(x, y, z, w);    
     else
         % case of rich mixtures
         if (x == 0) && (y ~= 0)
             % if there are only hydrogens (H)
-            moles = compute_moles_rich_hydrogen(y, z);
+            moles = compute_moles_rich_hydrogen(y, z, w);
         elseif (x ~= 0) && (y == 0) && phi < phi_c
             % if there are only carbons (C)
-            moles = compute_moles_rich_carbon(x, z);
+            moles = compute_moles_rich_carbon(x, z, w);
         elseif phi < phi_c
             % general case of rich mixtures with hydrogens (H) and carbons (C)
     %         moles = compute_moles_rich_appr(x, y, z);
             T  = 1500;
-            moles = compute_moles_rich(x, y, z, T, self.C.R0, self.DB);
+            moles = compute_moles_rich(x, y, z, w, T, self.C.R0, self.DB);
         elseif phi >= phi_c
             % general case of rich mixtures with hydrogens (H), carbons (C) and soot
             T  = 1000;
-            moles = compute_moles_rich_soot(y, z, T, self.C.R0, self.DB);
+            moles = compute_moles_rich_soot(x, y, z, w, T, self.C.R0, self.DB);
         end
     end
+
+    moles(moles < 0) = 0;
 end
 
 % NESTED FUNCTIONS
-function moles = compute_moles_lean(x, y ,z)
+function moles = compute_moles_lean(x, y ,z, w)
     NCO2_0 = x;
     NCO_0  = 0;
     NH2O_0 = y/2;
     NH2_0  = 0;
     NO2_0  = -x - y/4 + z/2;
-    moles = [NCO2_0, NCO_0, NH2O_0, NH2_0, NO2_0];
+    NN2_0  = w/2;
+    NCgr_0 = 0;
+    moles  = [NCO2_0, NCO_0, NH2O_0, NH2_0, NO2_0, NN2_0, NCgr_0];
 end
 
-function moles = compute_moles_rich_hydrogen(y, z)
+function moles = compute_moles_rich_hydrogen(y, z, w)
     NCO2_0 = 0;
     NCO_0  = 0;
     NH2O_0 = z;
     NH2_0  = y/2 - z;
     NO2_0  = 0;
-    moles = [NCO2_0, NCO_0, NH2O_0, NH2_0, NO2_0];
+    NN2_0  = w/2;
+    NCgr_0 = 0;
+    moles  = [NCO2_0, NCO_0, NH2O_0, NH2_0, NO2_0, NN2_0, NCgr_0];
 end
 
 function moles = compute_moles_rich_carbon(x, z)
@@ -71,20 +78,22 @@ function moles = compute_moles_rich_carbon(x, z)
     NH2O_0 = 0;
     NH2_0  = 0;
     NO2_0  = 0;
-    moles = [NCO2_0, NCO_0, NH2O_0, NH2_0, NO2_0];
+    moles  = [NCO2_0, NCO_0, NH2O_0, NH2_0, NO2_0];
 end
 
-function moles = compute_moles_rich_appr(x, y, z)
+function moles = compute_moles_rich_appr(x, y, z, w)
     z = z/2;
     NCO2_0 = -x + z;
     NCO_0  = 2*x - z;
     NH2O_0 = z;
     NH2_0  = y/2 - z;
     NO2_0  = 0;
-    moles = [NCO2_0, NCO_0, NH2O_0, NH2_0, NO2_0];
+    NN2_0  = w/2;
+    NCgr_0 = 0;
+    moles  = [NCO2_0, NCO_0, NH2O_0, NH2_0, NO2_0, NN2_0, NCgr_0];
 end
 
-function moles = compute_moles_rich(x, y, z, T, R0, DB)
+function moles = compute_moles_rich(x, y, z, w, T, R0, DB)
     DG0 = (species_g0('CO', T, DB) + species_g0('H2O', T, DB) - species_g0('CO2', T, DB)) * 1000;
     k4  = exp(-DG0 / (R0*T));
 
@@ -93,10 +102,12 @@ function moles = compute_moles_rich(x, y, z, T, R0, DB)
     NH2O_0 = -2*x + z + NCO_0;
     NH2_0  =  2*x + y/2 - z - NCO_0;
     NO2_0  = 0;
-    moles = [NCO2_0, NCO_0, NH2O_0, NH2_0, NO2_0];
+    NN2_0  = w/2;
+    NCgr_0 = 0;
+    moles  = [NCO2_0, NCO_0, NH2O_0, NH2_0, NO2_0, NN2_0, NCgr_0];
 end
 
-function moles = compute_moles_rich_soot(y, z, T, R0, DB)
+function moles = compute_moles_rich_soot(x, y, z, w, T, R0, DB)
     DG0 = (species_g0('CO2', T, DB) - 2*species_g0('CO', T, DB)) * 1000;
     k7  = exp(-DG0 / (R0*T));
     DG0 = (species_g0('CO', T, DB) + species_g0('H2O', T, DB) - species_g0('CO2', T, DB)) * 1000;
@@ -113,10 +124,10 @@ function moles = compute_moles_rich_soot(y, z, T, R0, DB)
     NCO_0 = real(-(a1/(3*a2))-(2^(1/3)*(-a1^2-3*a0*a2))/(3*a2*(-2*a1^3-9*a0*a1*a2+27*a2^2*a3+sqrt(-4*(a1^2+3*a0*a2)^3+(2*a1^3+9*a0*a1*a2-27*a2^2*a3)^2))^(1/3))+(-2*a1^3-9*a0*a1*a2+27*a2^2*a3+sqrt(-4*(a1^2+3*a0*a2)^3+(2*a1^3+9*a0*a1*a2-27*a2^2*a3)^2))^(1/3)/(3*2^(1/3)*a2));
 
     NCO2_0 = mu * NCO_0^2;
-%     NCgr_0 = x - NCO2_0 - NCO_0; % Not required for our computations
+    NCgr_0 = x - NCO2_0 - NCO_0;
     NH2O_0 = z - 2*NCO2_0 - NCO_0;
     NH2_0  = y/2 - NH2O_0;
     NO2_0  = 0;
-    
-    moles = [NCO2_0, NCO_0, NH2O_0, NH2_0, NO2_0];
+    NN2_0  = w/2;
+    moles  = [NCO2_0, NCO_0, NH2O_0, NH2_0, NO2_0, NN2_0, NCgr_0];
 end

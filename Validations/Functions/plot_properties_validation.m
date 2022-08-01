@@ -26,10 +26,15 @@ function mainfigure = plot_properties_validation(results1, results2, varsname_x,
         ylabel(axes, interpret_label(varname_y), 'FontSize', config.fontsize, 'interpreter', 'latex');
         xlim(axes, [min(results1.(varname_x)), max(results1.(varname_x))])
     
-        NUM_COLORS = 3;
+        NUM_COLORS = 1;
         LINE_STYLES = {'-', '--', ':', '-.'};
         SYMBOL_STYLES = {'d', 'o', 's', '<'};
-        colorbw = brewermap(NUM_COLORS, config.colorpalette);
+
+        if NUM_COLORS > 1
+            colorbw = brewermap(NUM_COLORS, config.colorpalette);
+        else
+            colorbw = config.colorlines(3, :);
+        end
         
         k = 1;
         z = 1;
@@ -136,10 +141,20 @@ function value = interpret_label(property)
             value = '$c_v$ [kJ/kg-K]';
         case 'gamma_s'
             value = 'Adiabatic index';
+        case {'sound', 'a'}
+            value = 'Sound velocity [m/s]';
         case 'u'
-            value = 'Incident velocity [m/s]';
+             value = 'Incident velocity [m/s]';
         case 'v_shock'
             value = 'Shock velocity [m/s]';
+        case 'u_preshock'
+            value = 'Preshock velocity [m/s]';
+        case 'u_postshock'
+            value = 'Postshock velocity [m/s]';
+        case 'dvdp_t'
+            value = '$(\rm{d} v/ \rm{d} p)_T$';
+        case 'dvdt_p'
+            value = '$(\rm{d} v/ \rm{d} T)_p$';
         otherwise
             value = ['$', property, '$'];
     end

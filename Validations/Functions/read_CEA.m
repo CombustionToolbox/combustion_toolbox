@@ -112,6 +112,11 @@ function data = read_CEA(filename)
             num = regexp(tline, '\d'); data.S(i, :) = sscanf(tline(num(1):num(end)),'%f'); tline = fgetl(fid);
             continue
         end
+        
+        if contains(tline,'M, (1/n)') 
+            num = regexp(tline, '\d'); data.W(i, :) = sscanf(tline(num(2):num(end)),'%f'); tline = fgetl(fid);
+        end
+
         if contains(tline,'(dLV/dLP)t') 
             num = regexp(tline, '\d'); data.dVdp_T(i, :) = sscanf(tline(num(2)-3:num(end)),'%f'); tline = fgetl(fid);
             num = regexp(tline, '\d'); data.dVdT_p(i, :) = sscanf(tline(num(2)-3:num(end)),'%f'); tline = fgetl(fid);

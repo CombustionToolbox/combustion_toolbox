@@ -121,15 +121,18 @@ function data = read_CEA(filename)
             num = regexp(tline, '\d'); data.dVdp_T(i, :) = sscanf(tline(num(2)-3:num(end)),'%f'); tline = fgetl(fid);
             num = regexp(tline, '\d'); data.dVdT_p(i, :) = sscanf(tline(num(2)-3:num(end)),'%f'); tline = fgetl(fid);
         end
-    
+        
         if contains(tline,'Cp, KJ/(KG)(K)') 
             num = regexp(tline, '\d'); data.cp(i, :) = sscanf(tline(num(1):num(end)),'%f'); tline = fgetl(fid);
             if contains(tline,'GAMMAs') 
                 num = regexp(tline, '\d'); data.gamma_s(i, :) = sscanf(tline(num(1):num(end)),'%f'); tline = fgetl(fid);
             end
-            continue
         end
         
+        if contains(tline,'SON VEL,M/SEC') 
+            num = regexp(tline, '\d'); data.sound(i, :) = sscanf(tline(num(1):num(end)),'%f'); tline = fgetl(fid);
+        end
+
         if contains(tline,'RHO/RHO1') 
             num = regexp(tline, '\d'); data.rho2rho1(i) = sscanf(tline(num(3):num(end)),'%f'); tline = fgetl(fid);
             tline = fgetl(fid);

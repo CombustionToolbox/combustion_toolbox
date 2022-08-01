@@ -36,7 +36,11 @@
     % * Molar fractions
 %     max_rel_error_moles = compute_error_moles_CEA(results_CT, results_CEA, 'u', value, 'Xi', DisplaySpecies);
     % * Properties mixture 1
-    max_rel_error_prop_mix1 = compute_error_prop_CEA(results_CT, results_CEA, {'u', 'u', 'u', 'u', 'u', 'u', 'u', 'u', 'u'}, value, {'T', 'rho', 'h', 'e', 'g', 'S', 'cP', 'cV', 'gamma_s'}, 'mix1');
+    properties_y = {'T', 'p', 'h', 'e', 'g', 'S', 'cP', 'cV', 'gamma_s', 'sound', 'W'};
+    properties_x = {'u', 'u', 'u', 'u', 'u', 'u', 'u', 'u', 'u', 'u', 'u'};
+    max_rel_error_prop_mix1 = compute_error_prop_CEA(results_CT, results_CEA, properties_x, value, properties_y, 'mix1');
     % * Properties mixture 2
-    max_rel_error_prop_mix2 = compute_error_prop_CEA(results_CT, results_CEA, {'u', 'u', 'u', 'u', 'u', 'u', 'u', 'u', 'u', 'u', 'u', 'u'}, value, {'T', 'p', 'rho', 'h', 'e', 'g', 'S', 'gamma_s', 'cP', 'cV', 'dVdT_p', 'dVdp_T'}, 'mix2');
+    properties_y = {'T', 'p', 'h', 'e', 'g', 'S', 'cP', 'cV', 'gamma_s', 'dVdT_p', 'dVdp_T', 'sound', 'W'};
+    properties_x = {'u', 'u', 'u', 'u', 'u', 'u', 'u', 'u', 'u', 'u', 'u', 'u', 'u'};
+    max_rel_error_prop_mix2 = compute_error_prop_CEA(results_CT, results_CEA, properties_x, value, properties_y, 'mix2');
 end

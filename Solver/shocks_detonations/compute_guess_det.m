@@ -37,7 +37,11 @@ function [P, T, M1, R, Q, STOP] = compute_guess_det(self, mix1, phi, overdriven)
     LS = self.S.LS;
     W1 = mix1.W;
     lambda = 2 - sqrt(1 + M2^2);
-    P = P/3; T = T/3; % complete reaction gives too high values
+    
+%     % Debug
+%     fprintf('T_guess,0 = %.4g\n', T)
+%     fprintf('\nP_guess,0 = %.4g\n', P)
+
     it = 0; STOP = 1;
     while STOP > self.TN.tol_shocks && it < itMax
         it = it + 1;
@@ -64,6 +68,9 @@ function [P, T, M1, R, Q, STOP] = compute_guess_det(self, mix1, phi, overdriven)
 
         STOP = norm([P - P_0, T - T_0]);
     end
+%     % Debug
+%     fprintf('T_guess,%d = %.4g\n', it, T)
+%     fprintf('\nP_guess,%d = %.4g\n', it, P)
 end
 
 % SUB-PASS FUNCTIONS

@@ -63,7 +63,7 @@ function [mix1, mix2] = shock_incident(self, mix1, u1, varargin)
             % Apply antilog
             [p2, T2] = apply_antilog(mix1, log_p2p1, log_T2T1); % [Pa] and [K]
             % Update ratios
-            p2p1 = p2 / (mix1.p * 1e5);
+            p2p1 = p2 / (convert_bar_to_Pa(mix1.p));
             T2T1 = T2 / mix1.T;
             % Compute STOP criteria
             STOP = compute_STOP(x);
@@ -99,13 +99,13 @@ function [p2, T2, p2p1, T2T1] = get_guess(mix1, mix2, TN)
 %         p2p1 = 1 + (mix1.rho * mix1.u^2  / mix1.p * (1 - V/V1)) * 1e-5;
 %         T2T1 = p2p1 * V / V1;
 
-        p2 = p2p1 * mix1.p * 1e5; % [Pa]
+        p2 = p2p1 * convert_bar_to_Pa(mix1.p); % [Pa]
         T2 = T2T1 * mix1.T;       % [K]
     else
-        p2 = mix2.p * 1e5; % [Pa]
+        p2 = convert_bar_to_Pa(mix2.p); % [Pa]
         T2 = mix2.T;       % [K]
 
-        p2p1 = p2 / (mix1.p * 1e5);
+        p2p1 = p2 / convert_bar_to_Pa(mix1.p);
         T2T1 = T2 / mix1.T;
     end
 end
@@ -113,7 +113,7 @@ end
 function [J, b, guess_moles] = update_system(self, mix1, p2, T2, R0, guess_moles, FLAG_FAST)
     % Update Jacobian matrix and vector b
     r1 = mix1.rho;
-    p1 = mix1.p *1e5; % [Pa]
+    p1 = convert_bar_to_Pa(mix1.p); % [Pa]
     T1 = mix1.T;
     u1 = mix1.u;
     W1 = mix1.W * 1e-3; % [kg/mol]
@@ -146,7 +146,7 @@ end
 function [mix2, r2, dVdT_p, dVdp_T]= state(self, mix1, T, p, guess_moles)
     % Calculate frozen state given T & p
     self.PD.ProblemType = 'TP';
-    p = p*1e-5; % [bar]
+    p = convert_Pa_to_bar(p); % [bar]
     mix2 = equilibrate_T(self, mix1, p, T, guess_moles);
     r2 = mix2.rho;
     dVdT_p = mix2.dVdT_p;
@@ -169,7 +169,7 @@ end
 
 function [p2, T2] = apply_antilog(mix1, log_p2p1, log_T2T1)
     % compute p2 and T2
-    p2 = exp(log_p2p1) * mix1.p * 1e5; % [Pa]
+    p2 = exp(log_p2p1) * convert_bar_to_Pa(mix1.p); % [Pa]
     T2 = exp(log_T2T1) * mix1.T;
 end
 

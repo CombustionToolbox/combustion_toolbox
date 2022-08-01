@@ -65,7 +65,7 @@ function [mix1, mix2, mix5] = shock_reflected(self, mix1, u1, mix2, varargin)
             % Apply antilog
             [p5, T5] = apply_antilog(mix2, log_p5p2, log_T5T2); % [Pa] and [K]
             % Update ratios
-            p5p2 = p5 / (mix2.p * 1e5);
+            p5p2 = p5 / (convert_bar_to_Pa(mix2.p));
             T5T2 = T5 / mix2.T;
             % Compute STOP criteria
             STOP = compute_STOP(x);
@@ -90,13 +90,13 @@ function [p5, T5, p5p2, T5T2] = get_guess(mix2, mix5)
         aux  = roots([1, -(mix2.gamma_s + 1) / (mix2.gamma_s - 1), -2]); % roots of (7.45 - report CEA)
         p5p2 = aux(aux > 0); % positive root
 
-        p5 = p5p2 * mix2.p * 1e5; % [Pa]
+        p5 = p5p2 * convert_bar_to_Pa(mix2.p); % [Pa]
         T5 = T5T2 * mix2.T;       % [K]
     else
-        p5 = mix5.p * 1e5; % [Pa]
+        p5 = convert_bar_to_Pa(mix5.p); % [Pa]
         T5 = mix5.T;       % [K]
 
-        p5p2 = p5 / (mix2.p * 1e5);
+        p5p2 = p5 / (convert_bar_to_Pa(mix2.p));
         T5T2 = T5 / mix2.T;
     end
 end
@@ -104,7 +104,7 @@ end
 function [J, b, guess_moles] = update_system(self, mix2, p5, T5, R0, guess_moles, FLAG_FAST)
     % Update Jacobian matrix and vector b
     r2 = mix2.rho;
-    p2 = mix2.p *1e5; % [Pa]
+    p2 = convert_bar_to_Pa(mix2.p); % [Pa]
     T2 = mix2.T;
     u2 = mix2.u;
     W2 = mix2.W * 1e-3; % [kg/mol]
@@ -137,7 +137,7 @@ end
 function [mix5, r5, dVdT_p, dVdp_T]= state(self, mix2, T, p, guess_moles)
     % Calculate frozen state given T & p
     self.PD.ProblemType = 'TP';
-    p = p*1e-5; % [bar]
+    p = convert_Pa_to_bar(p); % [bar]
     mix5 = equilibrate_T(self, mix2, p, T, guess_moles);
     r5 = mix5.rho;
     dVdT_p = mix5.dVdT_p;
@@ -160,7 +160,7 @@ end
 
 function [p5, T5] = apply_antilog(mix2, log_p5p2, log_T5T2)
     % compute p2 and T2
-    p5 = exp(log_p5p2) * mix2.p * 1e5; % [Pa]
+    p5 = exp(log_p5p2) * convert_bar_to_Pa(mix2.p); % [Pa]
     T5 = exp(log_T5T2) * mix2.T;
 end
 
@@ -171,7 +171,7 @@ end
 
 function mix5 = save_state(self, mix2, T5, p5, STOP, guess_moles)
     mix5 = state(self, mix2, T5, p5, guess_moles);
-    mix5.u = (mix5.p - mix2.p)*1e5 / (mix2.u * mix2.rho) - mix2.u;
+    mix5.u = convert_bar_to_Pa(mix5.p - mix2.p) / (mix2.u * mix2.rho) - mix2.u;
     mix5.error_problem = STOP;
     mix5.v_shock = mix2.u * mix2.rho / mix5.rho;
 end

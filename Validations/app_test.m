@@ -17,20 +17,20 @@ classdef app_test < matlab.unittest.TestCase
     end
 
     methods (Test)
-         function test_HP_CEA_1(testCase, equivalence_ratio)
-             [act_max_rel_error_moles, act_max_rel_error_prop] = run_test_HP_CEA_1(equivalence_ratio);
-             verifyLessThanOrEqual(testCase, act_max_rel_error_moles, testCase.max_rel_error);
-             verifyLessThanOrEqual(testCase, act_max_rel_error_prop, testCase.max_rel_error);
-         end
+        function test_HP_CEA_1(testCase, equivalence_ratio)
+            [act_max_rel_error_moles, act_max_rel_error_prop] = run_test_HP_CEA_1(equivalence_ratio);
+            verifyLessThanOrEqual(testCase, act_max_rel_error_moles, testCase.max_rel_error);
+            verifyLessThanOrEqual(testCase, act_max_rel_error_prop, testCase.max_rel_error);
+        end
         function test_HP_CEA_2(testCase, equivalence_ratio)
             [act_max_rel_error_moles, act_max_rel_error_prop] = run_test_HP_CEA_2(equivalence_ratio);
             verifyLessThanOrEqual(testCase, act_max_rel_error_moles, testCase.max_rel_error);
             verifyLessThanOrEqual(testCase, act_max_rel_error_prop, testCase.max_rel_error);
         end
         function test_EV_CEA_1(testCase, equivalence_ratio)
-             [act_max_rel_error_moles, act_max_rel_error_prop] = run_test_EV_CEA_1(equivalence_ratio);
-             verifyLessThanOrEqual(testCase, act_max_rel_error_moles, testCase.max_rel_error);
-             verifyLessThanOrEqual(testCase, act_max_rel_error_prop, testCase.max_rel_error);
+            [act_max_rel_error_moles, act_max_rel_error_prop] = run_test_EV_CEA_1(equivalence_ratio);
+            verifyLessThanOrEqual(testCase, act_max_rel_error_moles, testCase.max_rel_error);
+            verifyLessThanOrEqual(testCase, act_max_rel_error_prop, testCase.max_rel_error);
         end
         function test_SHOCK_IONIZATION_CEA_1(testCase, velocity_preshock)
             [act_max_rel_error_prop_mix1, act_max_rel_error_prop_mix2] = run_test_SHOCK_IONIZATION_CEA_1(velocity_preshock);
@@ -42,5 +42,15 @@ classdef app_test < matlab.unittest.TestCase
             verifyLessThanOrEqual(testCase, act_max_rel_error_prop_mix1, testCase.max_rel_error);
             verifyLessThanOrEqual(testCase, act_max_rel_error_prop_mix2, testCase.max_rel_error);
         end
+        function test_DET_CEA_1(testCase, equivalence_ratio)
+            [act_max_rel_error_moles, act_max_rel_error_prop] = run_test_DET_CEA_1(equivalence_ratio);
+            verifyLessThanOrEqual(testCase, act_max_rel_error_moles, testCase.max_rel_error);
+            verifyLessThanOrEqual(testCase, act_max_rel_error_prop, testCase.max_rel_error);
+        end
+%         function test_DET_CEA_2(testCase, equivalence_ratio)
+%             [act_max_rel_error_moles, act_max_rel_error_prop] = run_test_DET_CEA_2(equivalence_ratio);
+%             verifyLessThanOrEqual(testCase, act_max_rel_error_moles, testCase.max_rel_error);
+%             verifyLessThanOrEqual(testCase, act_max_rel_error_prop, testCase.max_rel_error);
+%         end
     end
 end

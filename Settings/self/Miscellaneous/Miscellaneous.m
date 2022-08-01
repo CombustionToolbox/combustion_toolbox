@@ -7,17 +7,29 @@ function self = Miscellaneous()
     % Description
     self.description = 'Miscellaneous'; 
     % Variables
-    %   * Timer
+    % * Timer
     self.timer_0 = [];
     self.timer_loop = [];
-    %   * Plot
+    % * Plot
     self.config.linewidth = 1.8;              % Default linewidth for plots
     self.config.fontsize = 22;                % Default fontsize
     self.config.colorpalette = 'Spectral';    % Default color palette (see brewermap function for more options)
     self.config.colorpaletteLenght = 12;      % Default number of colors to use in the color palette
     self.config.labelx = 'x';                 % Default xlabel
     self.config.labely = 'y';                 % Default ylabel
-    %   * Flags
+    self.config.colorlines = [135, 205, 222;...
+                               95, 188, 211;...
+                               44, 137, 160;...
+                               22,  68,  80]/255;
+    self.config.colorline = [0.3725, 0.7373, 0.8275];
+    self.config.colorline2 = [0.50, 0.50, 0.50];
+    self.config.colorsymbol = [0.50, 0.50, 0.50];
+    self.config.red = [0.64,0.08,0.18];
+    self.config.orange = [212, 85, 0]/255;
+    self.config.brown = [200, 190, 183]/255;
+    self.config.brown2 = [72, 55, 55]/255;
+
+    % * Flags
     self.FLAG_FIRST = true;                   % Flag indicating first calculation
     self.FLAG_FOI = true;                     % Flag indicating that the computations of the reactant mixture ....
     self.FLAG_ADDED_SPECIES = false;          % Flag indicating that there are added reactants species, because were not considered as products -> to recompute stochiometric matrix
@@ -31,11 +43,11 @@ function self = Miscellaneous()
     self.FLAG_PROP = [];                      % Struct with flags indicanting if there are several values of the respective property (fieldname)
     self.FLAGS_PROP.TR = false;               % Flag several values of Temperature Reactant (TR)
     self.FLAG_LENGTH_LOOP = false;            % Flag for several computations
-    %   * Export data
+    % * Export data
     self.export_results.value = false;        % Bool variable to export results
     self.export_results.format = '.xls';      % Default fileformat to export results
     self.export_results.filename = 'results'; % Default filename to export results
-    %   * Others
+    % * Others
     self.index_LS_original = [];              % Indexes original list of products
     self.display_species = {};                % Species to plot on the molar/mass fraction plots
     self.i = [];                              % Index of the current computations

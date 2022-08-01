@@ -126,5 +126,11 @@ function self = run_CT(varargin)
         if contains(ProblemType, '_R')
             self.PS.strP{i}.u = self.PS.strR{i}.u;
         end
+        if contains(ProblemType, 'SHOCK') || contains(ProblemType, 'DET')
+            self.PS.strR{i}.u_preshock = self.PS.strR{i}.u;
+            self.PS.strR{i}.u_postshock = self.PS.strP{i}.v_shock;
+            self.PS.strP{i}.u_preshock = self.PS.strR{i}.u;
+            self.PS.strP{i}.u_postshock = self.PS.strP{i}.v_shock;
+        end
     end
 end

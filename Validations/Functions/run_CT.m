@@ -126,6 +126,21 @@ function self = run_CT(varargin)
         if contains(ProblemType, '_R')
             self.PS.strP{i}.u = self.PS.strR{i}.u;
         end
+        if contains(ProblemType, 'ROCKET')
+            self.PS.mix2_c{i}.h = enthalpy_mass(self.PS.mix2_c{i});
+            self.PS.mix2_c{i}.e = intEnergy_mass(self.PS.mix2_c{i});
+            self.PS.mix2_c{i}.g = gibbs_mass(self.PS.mix2_c{i});
+            self.PS.mix2_c{i}.S = entropy_mass(self.PS.mix2_c{i});
+            self.PS.mix2_c{i}.cP = cp_mass(self.PS.mix2_c{i});
+            self.PS.mix2_c{i}.cV = self.PS.mix2_c{i}.cP / self.PS.mix2_c{i}.gamma_s;
+
+            self.PS.mix3{i}.h = enthalpy_mass(self.PS.mix3{i});
+            self.PS.mix3{i}.e = intEnergy_mass(self.PS.mix3{i});
+            self.PS.mix3{i}.g = gibbs_mass(self.PS.mix3{i});
+            self.PS.mix3{i}.S = entropy_mass(self.PS.mix3{i});
+            self.PS.mix3{i}.cP = cp_mass(self.PS.mix3{i});
+            self.PS.mix3{i}.cV = self.PS.mix3{i}.cP / self.PS.mix3{i}.gamma_s;
+        end
         if contains(ProblemType, 'SHOCK') || contains(ProblemType, 'DET')
             self.PS.strR{i}.u_preshock = self.PS.strR{i}.u;
             self.PS.strR{i}.u_postshock = self.PS.strP{i}.v_shock;

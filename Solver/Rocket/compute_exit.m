@@ -1,4 +1,4 @@
-function mix4 = compute_exit(self, mix2, mix3, mix4, Aratio)
+function mix4 = compute_exit(self, mix2, mix3, mix4, Aratio, varargin)
     % Compute thermochemical composition for a given Aratio
     %
     % This method is based on Gordon, S., & McBride, B. J. (1994). NASA reference publication,
@@ -19,6 +19,12 @@ function mix4 = compute_exit(self, mix2, mix3, mix4, Aratio)
         mix4 = [];
         return
     end
+    % Check extra inputs
+    if nargin > 5
+        mix2_in = varargin{1};
+    else
+        mix2_in = mix2;
+    end
     % Definitions
     self.PD.ProblemType = 'SP';
     % Compute pressure guess [bar] for Infinite-Area-Chamber (IAC) 
@@ -33,7 +39,7 @@ function mix4 = compute_exit(self, mix2, mix3, mix4, Aratio)
         % Solve chemical equilibrium (SP)
         mix4 = compute_chemical_equilibria(self, mix2, pressure, mix4);
         % Compute velocity at the exit point
-        mix4.u = compute_velocity(mix2, mix4);
+        mix4.u = compute_velocity(mix2_in, mix4);
         % Compute new estimate
         logP = compute_log_pressure_ratio(mix3, mix4, logP, Aratio);
         % Compute error

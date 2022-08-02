@@ -11,7 +11,6 @@ function data = read_CEA(filename)
     ctLine=0;
     i=0;
     FLAG_ROW = false;
-    FLAG_ROCKET = false;
     
     while ctLine<100000
         tline = fgetl(fid);
@@ -21,15 +20,41 @@ function data = read_CEA(filename)
             continue;
         end
     
-        if contains(tline, 'ROCKET')
-            FLAG_ROCKET = true;
-        end
-    
         if contains(tline,'PHI,EQ.RATIO=')
             k = strfind(tline,'PHI,EQ.RATIO=');
             data.phi(i) = sscanf(tline(k+13:end),'%f');
         end
         
+        if contains(tline, 'THROAT')
+            tline = fgetl(fid);
+            num = regexp(tline, '\d'); data.P(i, :) = sscanf(tline(num(1):num(end)),'%f'); tline = fgetl(fid);
+            num = regexp(tline, '\d'); data.P(i, :) = sscanf(tline(num(1):num(end)),'%f'); tline = fgetl(fid);
+            num = regexp(tline, '\d'); data.T(i, :) = sscanf(tline(num(1):num(end)),'%f'); tline = fgetl(fid);
+            
+            tline = strrep(tline, '-', 'e-');
+            num = regexp(tline, '\d');
+            num = sscanf(tline(num(1):num(end)),'%f');
+            num = num(num>0);
+            data.rho(i, :) = num;
+            tline = fgetl(fid);
+
+            num = regexp(tline, '\d'); data.H(i, :) = sscanf(tline(num(1)-1:num(end)),'%f'); tline = fgetl(fid);
+            num = regexp(tline, '\d'); data.U(i, :) = sscanf(tline(num(1)-1:num(end)),'%f'); tline = fgetl(fid);
+            num = regexp(tline, '\d'); data.G(i, :) = sscanf(tline(num(1)-1:num(end)),'%f'); tline = fgetl(fid);
+            num = regexp(tline, '\d'); data.S(i, :) = sscanf(tline(num(1):num(end)),'%f'); tline = fgetl(fid);
+        end
+        
+        if contains(tline, 'PERFORMANCE PARAMETERS')
+            fgetl(fid);
+            tline = fgetl(fid);
+
+            num = regexp(tline, '\d'); data.Aratio(i, :) = sscanf(tline(num(1):num(end)),'%f'); tline = fgetl(fid);
+            num = regexp(tline, '\d'); data.cstar(i, :) = sscanf(tline(num(1):num(end)),'%f'); tline = fgetl(fid);
+            num = regexp(tline, '\d'); data.cf(i, :) = sscanf(tline(num(1):num(end)),'%f'); tline = fgetl(fid);
+            num = regexp(tline, '\d'); data.I_vac(i, :) = sscanf(tline(num(1):num(end)),'%f'); tline = fgetl(fid);
+            num = regexp(tline, '\d'); data.I_sp(i, :) = sscanf(tline(num(1):num(end)),'%f'); tline = fgetl(fid);
+        end
+
         if contains(tline,'INITIAL GAS')
             tline = fgetl(fid);
             num = regexp(tline, '\d'); data.M1(i, :) = sscanf(tline(num(2):num(end)),'%f'); tline = fgetl(fid);
@@ -51,17 +76,17 @@ function data = read_CEA(filename)
             num = regexp(tline, '\d'); data.H1(i, :) = sscanf(tline(num(1)-1:num(end)),'%f'); tline = fgetl(fid);
             num = regexp(tline, '\d'); data.U1(i, :) = sscanf(tline(num(1)-1:num(end)),'%f'); tline = fgetl(fid);
             num = regexp(tline, '\d'); data.G1(i, :) = sscanf(tline(num(1)-1:num(end)),'%f'); tline = fgetl(fid);
-            num = regexp(tline, '\d'); data.S1(i, :) = sscanf(tline(num(1):num(end)),'%f'); tline = fgetl(fid);
+            num = regexp(tline, '\d'); data.S1(i, :) = sscanf(tline(num(1):num(end)),'%f'); fgetl(fid);
             tline = fgetl(fid);
             num = regexp(tline, '\d'); data.W1(i, :) = sscanf(tline(num(2):num(end)),'%f'); tline = fgetl(fid);
             num = regexp(tline, '\d'); data.cp1(i, :) = sscanf(tline(num(1):num(end)),'%f'); tline = fgetl(fid);
             num = regexp(tline, '\d'); data.gamma_s1(i, :) = sscanf(tline(num(1):num(end)),'%f'); tline = fgetl(fid);
-            num = regexp(tline, '\d'); data.sound1(i, :) = sscanf(tline(num(1):num(end)),'%f'); tline = fgetl(fid);
+            num = regexp(tline, '\d'); data.sound1(i, :) = sscanf(tline(num(1):num(end)),'%f'); fgetl(fid);
             tline = fgetl(fid);
         end
         
         if contains(tline,'SHOCKED GAS')
-            tline = fgetl(fid);
+            fgetl(fid);
             tline = fgetl(fid);
             num = regexp(tline, '\d'); data.P2(i, :) = sscanf(tline(num(1):num(end)),'%f'); tline = fgetl(fid);
             num = regexp(tline, '\d'); data.T2(i, :) = sscanf(tline(num(1):num(end)),'%f'); tline = fgetl(fid);
@@ -75,16 +100,16 @@ function data = read_CEA(filename)
             num = regexp(tline, '\d'); data.H2(i, :) = sscanf(tline(num(1)-1:num(end)),'%f'); tline = fgetl(fid);
             num = regexp(tline, '\d'); data.U2(i, :) = sscanf(tline(num(1)-1:num(end)),'%f'); tline = fgetl(fid);
             num = regexp(tline, '\d'); data.G2(i, :) = sscanf(tline(num(1)-1:num(end)),'%f'); tline = fgetl(fid);
-            num = regexp(tline, '\d'); data.S2(i, :) = sscanf(tline(num(1):num(end)),'%f'); tline = fgetl(fid);
+            num = regexp(tline, '\d'); data.S2(i, :) = sscanf(tline(num(1):num(end)),'%f'); fgetl(fid);
             tline = fgetl(fid);
             num = regexp(tline, '\d'); data.W2(i, :) = sscanf(tline(num(2):num(end)),'%f'); tline = fgetl(fid);
             num = regexp(tline, '\d'); data.dVdp_T(i, :) = sscanf(tline(num(2)-3:num(end)),'%f'); tline = fgetl(fid);
             num = regexp(tline, '\d'); data.dVdT_p(i, :) = sscanf(tline(num(2)-3:num(end)),'%f'); tline = fgetl(fid);
             num = regexp(tline, '\d'); data.cp2(i, :) = sscanf(tline(num(1):num(end)),'%f'); tline = fgetl(fid);
             num = regexp(tline, '\d'); data.gamma_s2(i, :) = sscanf(tline(num(1):num(end)),'%f'); tline = fgetl(fid);
-            num = regexp(tline, '\d'); data.sound2(i, :) = sscanf(tline(num(1):num(end)),'%f'); tline = fgetl(fid);
+            num = regexp(tline, '\d'); data.sound2(i, :) = sscanf(tline(num(1):num(end)),'%f'); fgetl(fid);
     
-            tline = fgetl(fid); tline = fgetl(fid); tline = fgetl(fid); tline = fgetl(fid); 
+            fgetl(fid); fgetl(fid); fgetl(fid); tline = fgetl(fid); 
             num = regexp(tline, '\d'); data.rho2rho1(i, :) = sscanf(tline(num(3)-1:num(end)),'%f')'; tline = fgetl(fid);
             if contains(tline, 'U5+')
                 num = regexp(tline, '\d'); data.u2(i, :) = sscanf(tline(num(3):num(end)),'%f'); tline = fgetl(fid);
@@ -109,7 +134,7 @@ function data = read_CEA(filename)
             num = regexp(tline, '\d'); data.H(i, :) = sscanf(tline(num(1)-1:num(end)),'%f'); tline = fgetl(fid);
             num = regexp(tline, '\d'); data.U(i, :) = sscanf(tline(num(1)-1:num(end)),'%f'); tline = fgetl(fid);
             num = regexp(tline, '\d'); data.G(i, :) = sscanf(tline(num(1)-1:num(end)),'%f'); tline = fgetl(fid);
-            num = regexp(tline, '\d'); data.S(i, :) = sscanf(tline(num(1):num(end)),'%f'); tline = fgetl(fid);
+            num = regexp(tline, '\d'); data.S(i, :) = sscanf(tline(num(1):num(end)),'%f'); fgetl(fid);
             continue
         end
         
@@ -132,16 +157,21 @@ function data = read_CEA(filename)
         if contains(tline,'SON VEL,M/SEC') 
             num = regexp(tline, '\d'); data.sound(i, :) = sscanf(tline(num(1):num(end)),'%f'); tline = fgetl(fid);
         end
+        
+        if contains(tline,'MACH NUMBER') 
+            num = regexp(tline, '\d'); data.Mach(i, :) = sscanf(tline(num(1):num(end)),'%f'); tline = fgetl(fid);
+            data.u(i, :) = data.Mach(i, :) .* data.sound(i, :);
+        end
 
         if contains(tline,'RHO/RHO1') 
-            num = regexp(tline, '\d'); data.rho2rho1(i) = sscanf(tline(num(3):num(end)),'%f'); tline = fgetl(fid);
+            num = regexp(tline, '\d'); data.rho2rho1(i) = sscanf(tline(num(3):num(end)),'%f'); fgetl(fid);
             tline = fgetl(fid);
-            num = regexp(tline, '\d'); data.u1(i) = sscanf(tline(num(1):num(end)),'%f'); tline = fgetl(fid);
+            num = regexp(tline, '\d'); data.u1(i) = sscanf(tline(num(1):num(end)),'%f'); fgetl(fid);
             continue
         end
     
         if contains(tline,'MOLE FRACTIONS') && FLAG_ROW
-            tline = fgetl(fid); tline = fgetl(fid);
+            fgetl(fid); tline = fgetl(fid);
             j=1;
             while ~contains(tline,'THERMODYNAMIC PROPERTIES FITTED TO 20000.K')
                 if isempty(tline), break, end
@@ -168,7 +198,7 @@ function data = read_CEA(filename)
         end
     
         if contains(tline,'MOLE FRACTIONS')
-            tline = fgetl(fid); tline = fgetl(fid);
+            fgetl(fid); tline = fgetl(fid);
             j=1;
             while ~contains(tline,'THERMODYNAMIC PROPERTIES FITTED TO 20000.K')
                 if isempty(tline), break, end

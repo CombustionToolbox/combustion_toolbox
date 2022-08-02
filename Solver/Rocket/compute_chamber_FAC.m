@@ -35,7 +35,7 @@ function [mix2_inj, mix2_c, mix3] = compute_chamber_FAC(self, mix1, varargin)
     % Initialization
     STOP = 1; it = 0;
     mix2_inf = [];
-    pressure_inj = pressure_inj * 1e5; % [Pa]
+    pressure_inj = convert_bar_to_Pa(pressure_inj); % [Pa]
     % Loop
     while STOP > TN.tol_rocket && it < TN.it_rocket
         it = it + 1;
@@ -44,7 +44,7 @@ function [mix2_inj, mix2_c, mix3] = compute_chamber_FAC(self, mix1, varargin)
         % Obtain mixture compostions
         [mix2_inf, mix3, mix2_c] = compute_IAC_model(self, mix1, mix2_inf, mix3, mix2_c, Aratio_chamber);
         % Get results
-        pressure_c = pressure(mix2_c) * 1e5; % [Pa]
+        pressure_c = convert_bar_to_Pa(pressure(mix2_c)); % [Pa]
         density_c = density(mix2_c); % [kg/m3]
         velocity_c = velocity_relative(mix2_c); % [m/s]
         % Compute pressuse_inj_a

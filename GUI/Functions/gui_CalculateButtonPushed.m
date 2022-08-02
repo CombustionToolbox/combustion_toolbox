@@ -20,9 +20,11 @@ function obj = gui_CalculateButtonPushed(obj, event)
         % Solve selected problem
         app = SolveProblem(app, app.PD.ProblemType);
         % Save results
-        results = save_results(obj, app);
+        [results, obj.temp_results] = save_results(obj, app);
         % Update GUI with the last results of the set
-        obj = gui_update_results(obj, results);
+        gui_update_results(obj, results);
+        % Update GUI custom figures tab
+        gui_update_custom_figures(obj);
         % Update GUI terminal
         gui_update_terminal(obj, app, 'finish')
         % Display results (plots)
@@ -54,7 +56,7 @@ function app = get_tunning_values(obj, app)
     app.TN.root_T0 = obj.RFMT0EditField.Value;
 end
 
-function obj = gui_update_results(obj, results)
+function gui_update_results(obj, results)
     % Update:
     %  1. GUI with the last results computed
     %  2. GUI-UITree with all the results
@@ -73,7 +75,7 @@ function obj = get_listSpecies_gui(obj)
     end
 end
 
-function results = save_results(obj, app)
+function [results, temp_results] = save_results(obj, app)
     % Save results
     N = length(app.PS.strR);
     
@@ -101,6 +103,8 @@ function results = save_results(obj, app)
         results(i).LS_products = obj.LS;
         results(i).UITable_R_Data = obj.UITable_R.Data;
     end
+    % Save temporally this parametric study
+    temp_results = app.PS;
 end
 
 function app = get_input_constrains(obj, app)
@@ -153,5 +157,39 @@ function app = get_input_constrains(obj, app)
     end
     if contains(obj.Products.Value, 'complete', 'IgnoreCase', true)
         app.S.FLAG_COMPLETE = true;
+    end
+end
+
+function gui_update_custom_figures(obj)
+    % Update GUI custom figures tab
+    try
+        % Remove previous nodes from UITree
+        delete(obj.Mixtures.Children);
+        delete(obj.Variable_x.Children);
+        delete(obj.Variable_y.Children);
+        % Add new nodes
+        results = obj.temp_results;
+        fields = fieldnames(results);
+        FLAG_fields = contains(fields, 'str') | contains(fields, 'mix');
+        fields = fields(FLAG_fields);
+        % Mixtures
+        add_node(obj, 'Mixtures', fields);
+        % Variables x
+        fields = fieldnames(obj.temp_results.strP{1});
+        add_node(obj, 'Variable_x', fields);
+        % Variables y
+        add_node(obj, 'Variable_y', fields);
+    catch ME
+        % Print error
+        fprintf('Error in function %s() at line %d.\n\nError Message:\n%s', ...
+        ME.stack(1).name, ME.stack(1).line, ME.message);
+    end
+end
+
+
+function add_node(obj, field_master, field_names)
+    % Add node to the UItree
+    for i = 1:length(field_names)
+        uitreenode(obj.(field_master), 'Text', field_names{i});
     end
 end

@@ -33,6 +33,6 @@ function [mix2_inj, mix2_c, mix3, mix4] = solve_model_rocket(self, mix1, mix2_in
         mix4 = compute_exit(self, mix2_c, mix3, mix4, Aratio);
     else
         [mix2_inj, mix2_c, mix3] = compute_chamber_FAC(self, mix1, mix2_inj, mix2_c, mix3);
-        mix4 = compute_exit(self, mix2_c, mix3, mix4, Aratio);
+        mix4 = compute_exit(self, mix2_c, mix3, mix4, Aratio, mix2_inj);
     end
 end

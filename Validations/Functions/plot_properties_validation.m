@@ -55,6 +55,10 @@ function dataname = get_dataname(var, type)
         dataname = 'PS.strR';
     elseif strcmpi(type, 'mix2')
         dataname = 'PS.strP';
+    elseif strcmpi(type, 'mix2_c')
+        dataname = 'PS.mix2_c';
+    elseif strcmpi(type, 'mix3')
+        dataname = 'PS.mix3';
     end
 end
 

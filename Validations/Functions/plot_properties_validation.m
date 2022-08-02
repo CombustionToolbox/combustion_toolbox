@@ -155,6 +155,14 @@ function value = interpret_label(property)
             value = '$(\rm{d} v/ \rm{d} p)_T$';
         case 'dvdt_p'
             value = '$(\rm{d} v/ \rm{d} T)_p$';
+        case 'cstar'
+            value = 'Characteristic velocity [m/s]';
+        case 'cf'
+            value = 'Coeffficient of thrust';
+        case 'i_sp'
+            value = 'Specific impulse ambient [s]';
+        case 'i_vac'
+            value = 'Specific impulse vacuum [s]';
         otherwise
             value = ['$', property, '$'];
     end

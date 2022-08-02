@@ -1,5 +1,4 @@
-function data = data_CEA(varargin)
-    filename  = varargin{1};
+function data = data_CEA(filename, varargin)
     if ischar(filename)
         Nfiles = 1;
         filename = {filename};
@@ -46,11 +45,19 @@ function data = data_CEA(varargin)
                     mix.u = mix.u_preshock; % [m/s]
                 end
             end
+            if isfield(data_nasa, 'Aratio')
+                mix.Aratio = data_nasa.Aratio(:, end)'; % [-]
+                mix.cstar = data_nasa.cstar(:, end)'; % [m/s]
+                mix.cf = data_nasa.cf(:, end)'; % [-]
+                mix.I_vac = data_nasa.I_vac(:, end)' / 9.80665; % [s]
+                mix.I_sp = data_nasa.I_sp(:, end)' / 9.80665; % [s]
+                mix.u = data_nasa.u(:, end)'; % [m/s]
+            end
             % EQUIVALENCE RATIO
-            mix.phi = data_nasa.phi;
+            mix.phi = data_nasa.phi; % [-]
             % MOLAR FRACTION SPECIES
             if nargin > 1
-                species = varargin{2};
+                species = varargin{1};
                 NS = length(species);
                 mix.Xi = zeros(NS, length(data_nasa.X));
                 for i = 1:length(data_nasa.X)
@@ -81,7 +88,7 @@ function data = data_CEA(varargin)
             mix1.u = data_nasa.u1; % [m/s]
             mix1.W = data_nasa.W1; % [g/mol]
             % EQUIVALENCE RATIO
-            mix1.phi = data_nasa.phi;
+            mix1.phi = data_nasa.phi; % [-]
 
             % PROPERTIES MIX 2
             mix2.p = data_nasa.P2; % [bar]
@@ -108,10 +115,10 @@ function data = data_CEA(varargin)
             mix2.dVdp_T = data_nasa.dVdp_T; % [-]
             mix2.dVdT_p = data_nasa.dVdT_p; % [-]
             % EQUIVALENCE RATIO
-            mix2.phi = data_nasa.phi;
+            mix2.phi = data_nasa.phi; % [-]
             % MOLAR FRACTION SPECIES MIX 2
             if nargin > 1
-                species = varargin{2};
+                species = varargin{1};
                 NS = length(species);
                 mix2.Xi = zeros(NS, length(data_nasa.X));
                 for t = 1:NS

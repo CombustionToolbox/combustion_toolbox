@@ -15,8 +15,7 @@ function problems_solved = run_validation_ROCKET_CEA_17
     prefixDataName = 'H2';
     filename = {[prefixDataName, '_LOX_ROCKET1.out'], [prefixDataName, '_LOX_ROCKET2.out']};
     LS =  'HYDROGEN_L';
-    DisplaySpecies = {'H2O','H2','O2','H','OH','O','O3','HO2',...
-                      'H2O2','H2bLb','O2bLb'};
+    DisplaySpecies = {'H2O','H2','O2','H','OH','O','O3','HO2','H2O2'};
     tolN = 1e-18;
 
     % Load results CEA 

@@ -88,6 +88,7 @@ function data = data_CEA(filename, varargin)
             mix1.cV = data_nasa.cp1 ./ mix1.gamma_s; % [kJ/kg-K]
             mix1.DhT = data_nasa.cp1 .* (data_nasa.T1 - 298.15); % [kJ/kg]
             mix1.u = data_nasa.u1; % [m/s]
+            mix1.u_preshock = mix1.u; % [m/s]
             mix1.W = data_nasa.W1; % [g/mol]
             % EQUIVALENCE RATIO
             mix1.phi = data_nasa.phi; % [-]
@@ -109,10 +110,12 @@ function data = data_CEA(filename, varargin)
             mix2.cV = data_nasa.cp2 ./ mix2.gamma_s; % [kJ/kg-K]
             mix2.DhT = data_nasa.cp2 .* (data_nasa.T2 - 298.15); % [kJ/kg]
             mix2.u = data_nasa.u2; % [m/s]
+            mix2.u_preshock = mix1.u; % [m/s]
             mix2.W = data_nasa.W2; % [g/mol]
             if isfield(data_nasa, 'v_shock')
-                mix2.u = mix1.u;
-                mix2.v_shock = data_nasa.v_shock;
+                mix2.v_shock = data_nasa.v_shock; % [m/s]
+                mix2.u_postshock = mix2.v_shock; % [m/s]
+                mix1.u_postshock = mix2.v_shock; % [m/s]
             end
             mix2.dVdp_T = data_nasa.dVdp_T; % [-]
             mix2.dVdT_p = data_nasa.dVdT_p; % [-]

@@ -53,7 +53,7 @@ function postResults(self)
         displaysweepresults(self, mix2, phi);
         if ~any(strcmp(ProblemType,{'TP','TV'}))
             self.Misc.config.labely = 'Temperature $T$ [K]';
-            plot_figure(phi, mix2,'phi','T',self.Misc.config,self.PD.CompleteOrIncomplete);
+            plot_figure('phi', phi, 'T', mix2, 'config', self.Misc.config);
         end
     end
     
@@ -71,12 +71,12 @@ function postResults(self)
     elseif strcmp(ProblemType,{'SP'}) && length(phi) > 1
         self.Misc.config.labelx = 'Pressure $p$ [bar]';
         self.Misc.config.labely = 'Temperature $T$ [K]';
-        plot_figure(self.PD.pP.value, mix2,'p','T',self.Misc.config,self.PD.CompleteOrIncomplete);
+        plot_figure('p', self.PD.pP.value, 'T', mix2, 'config', self.Misc.config);
     
     elseif strcmp(ProblemType,{'SV'}) && length(phi) > 1
         self.Misc.config.labelx = 'Volume ratio $v_P/v_R$';
         self.Misc.config.labely = 'Temperature $T$ [K]';
-        plot_figure(self.PD.vP_vR.value, mix2,'v_P/v_R','T',self.Misc.config,self.PD.CompleteOrIncomplete);  
+        plot_figure('v_P/v_R', self.PD.vP_vR.value,'T', mix2, 'config', self.Misc.config);  
         T = cell2vector(mix2, 'T');
         displaysweepresults(self, mix2, T);
     elseif strcmp(ProblemType,{'SHOCK_POLAR'})
@@ -112,24 +112,18 @@ function postResults(self)
         end
         % Temperature [K] againts deflection angle [deg]
         titlename = '\mathcal{M}_1';
-        legend_name = {'state 2', 'state 3 - weak', 'state 3 - strong'};
         self.Misc.config.title = sprintf('%s = %.2f', titlename, mix1{i}.u / mix1{i}.sound);
-        self.Misc.config.labelx = 'Deflection $\theta$ [deg]';
-        self.Misc.config.labely = 'Temperature $T$ [K]';
-        ax = plot_figure(mix2_1, mix2_1, 'theta', 'T',self.Misc.config, self.PD.CompleteOrIncomplete); 
-        plot_figure(mix3_1, mix3_1, 'theta', 'T',self.Misc.config, self.PD.CompleteOrIncomplete, ax); 
-        plot_figure(mix3_2, mix3_2, 'theta', 'T',self.Misc.config, self.PD.CompleteOrIncomplete, ax); 
-        set_legends(ax, legend_name, self.Misc.config)
-        % Pressure [bar] againts deflection angle [deg]
-        self.Misc.config.labely = 'Pressure $p$ [K]';
-        ax = plot_figure(mix2_1, mix2_1, 'theta', 'p',self.Misc.config, self.PD.CompleteOrIncomplete); 
-        plot_figure(mix3_1, mix3_1, 'theta', 'p',self.Misc.config, self.PD.CompleteOrIncomplete, ax); 
-        plot_figure(mix3_2, mix3_2, 'theta', 'p',self.Misc.config, self.PD.CompleteOrIncomplete, ax); 
-        set_legends(ax, legend_name, self.Misc.config)
+        ax = plot_figure('theta', mix2_1, 'T', mix2_1, 'config', self.Misc.config); 
+        plot_figure('theta', mix3_1, 'T', mix3_1, 'config', self.Misc.config, 'axes', ax);
+        plot_figure('theta', mix3_2, 'T', mix3_2, 'config', self.Misc.config, 'axes', ax);
+
+        ax = plot_figure('theta', mix2_1, 'p', mix2_1, 'config', self.Misc.config); 
+        plot_figure('theta', mix3_1, 'p', mix3_1, 'config', self.Misc.config, 'axes', ax); 
+        plot_figure('theta', mix3_2, 'p', mix3_2, 'config', self.Misc.config, 'axes', ax);
     elseif strcmp(ProblemType,{'SHOCK_I'}) && length(phi) > 1
         self.Misc.config.labelx = 'Incident velocity $u_1$ [m/s]';
         self.Misc.config.labely = 'Temperature $T$ [K]';
-        plot_figure(self.PD.u1.value, mix2,'u','T',self.Misc.config,self.PD.CompleteOrIncomplete);
+        plot_figure('u', self.PD.u1.value, 'T', mix2, 'config', self.Misc.config);
         plot_hugoniot(self, mix1, mix2);
         self.Misc.config.labelx = 'Temperature $T$ [K]';
         self.Misc.config.labely = 'Molar fraction $X_i$';
@@ -155,10 +149,10 @@ function postResults(self)
             self.Misc.config.labelx = 'Incident velocity $u_1$ [m/s]';
             u = cell2vector(mix1, 'u');
         end
-        ax = plot_figure(u, mix2,'u','T',self.Misc.config,self.PD.CompleteOrIncomplete); 
+        ax = plot_figure('u', u, 'T', mix2, 'config', self.Misc.config); 
         self.Misc.config.title = 'Reflected';
-        legend_name = {'Incident', 'Reflected'};
-        plot_figure(u,self.PS.strP,'u','T',self.Misc.config,self.PD.CompleteOrIncomplete, ax, legend_name); 
+        self.Misc.config.legend_name = {'Incident', 'Reflected'};
+        plot_figure('u', u, 'T', self.PS.strP, 'config', self.Misc.config, 'axes', ax); 
         % Plot Molar fractions incident state with incident velocity
         self.Misc.config.title = 'Incident';
         self.Misc.config.labely = 'Molar fraction $X_i$';
@@ -172,13 +166,11 @@ function postResults(self)
         if strcmp(ProblemType,{'SHOCK_R'})
             ax = plot_hugoniot(self, mix1, mix2);
             ax = plot_hugoniot(self, mix2, mix3, ax);
-            set_legends(ax, legend_name, self.Misc.config)
+            set_legends(ax, self.Misc.config.legend_name, self.Misc.config)
         end
     
     elseif strcmp(ProblemType,{'DET_OVERDRIVEN'}) && length(phi) > 1
-        self.Misc.config.labelx = 'Overdriven ratio $u_1/u_{cj}$';
-        self.Misc.config.labely = 'Temperature $T$ [K]';
-        plot_figure(mix1, mix2, 'overdriven', 'T', self.Misc.config, self.PD.CompleteOrIncomplete);
+        plot_figure('overdriven', mix1, 'T', mix2, 'config', self.Misc.config);
         % Plot Molar fractions
         self.Misc.config.labelx = 'Overdriven ratio $u_1/u_{cj}$ [m/s]';
         self.Misc.config.labely = 'Molar fraction $X_i$';
@@ -189,51 +181,42 @@ function postResults(self)
     end
     
     if strcmp(ProblemType,{'DET'}) && length(phi) > 1
-        self.Misc.config.labelx = 'Incident velocity $u_1$ [m/s]';
-        self.Misc.config.labely = 'Temperature $T$ [K]';
-        plot_figure(mix1, mix2, 'u', 'T', self.Misc.config, self.PD.CompleteOrIncomplete);
+        plot_figure('u', mix1, 'T', mix2, 'config', self.Misc.config);
     end
     
     if strcmp(ProblemType,{'ROCKET'}) && length(phi) > 1
         if FLAG_PLOT_PHI
-            self.Misc.config.labelx = 'Equivalence Ratio $\phi$';
-            self.Misc.config.labely = 'Characteristic velocity $c^*$ [m/s]';
-            ax = plot_figure(mix1, mix2, 'phi', 'cstar', self.Misc.config, self.PD.CompleteOrIncomplete);
+            ax = plot_figure('phi', mix1, 'cstar', mix2, 'phi', 'config', self.Misc.config);
         %     legend_name = sprintf('$p = %.2f$ [bar]', self.PS.strR.p); 
         %     for i = 2:length(self)
         %         legend_name{i} = sprintf('$p = %.2f$ [bar]', self{i}.PS.strR.p); 
-        %         ax = plot_figure(self{i}.PS.strR, self{i}.PS.strP, 'phi', 'cstar', self.Misc.config, self.PD.CompleteOrIncomplete, ax, legend_name);
+        %         ax = plot_figure(self{i}.PS.strR, self{i}.PS.strP, 'phi', 'cstar', self.Misc.config, ax, legend_name);
         %     end
         
         %     self.Misc.config.labelx = 'Equivalence Ratio $\phi$';
         %     self.Misc.config.labely = 'Temperature $T$ [K]';
-        %     ax = plot_figure(self.PS.strR, self.PS.strP, 'phi', 'T', self.Misc.config, self.PD.CompleteOrIncomplete);
+        %     ax = plot_figure(self.PS.strR, self.PS.strP, 'phi', 'T', self.Misc.config);
         %     for i = 2:length(self)
-        %         ax = plot_figure(self{i}.PS.strR, self{i}.PS.strP, 'phi', 'T', self.Misc.config, self.PD.CompleteOrIncomplete, ax, legend_name);
+        %         ax = plot_figure(self{i}.PS.strR, self{i}.PS.strP, 'phi', 'T', self.Misc.config, ax, legend_name);
         %     end
         
-            legend_name = {'$I_{sp}$', '$I_{vac}$'};
+            self.Misc.legend_name = {'$I_{sp}$', '$I_{vac}$'};
             self.Misc.config.labelx = 'Equivalence Ratio $\phi$';
             self.Misc.config.labely = 'Specific impulse $I$ [s]';
-            ax = plot_figure(mix1, mix2, 'phi', 'I_sp', self.Misc.config, self.PD.CompleteOrIncomplete);
-            ax = plot_figure(mix1, mix2, 'phi', 'I_vac', self.Misc.config, self.PD.CompleteOrIncomplete, ax);
-            set_legends(ax, legend_name, self.Misc.config)
+            ax = plot_figure('phi', mix1, 'I_sp', mix2, 'config', self.Misc.config);
+            plot_figure('phi', mix1, 'I_vac', mix2, 'config', self.Misc.config, 'axes', ax);
     
-            self.Misc.config.labelx = 'Mixture ratio $O/F$';
-            self.Misc.config.labely = 'Specific impulse $I$ [s]';
-            ax = plot_figure(mix1, mix2, 'OF', 'I_sp', self.Misc.config, self.PD.CompleteOrIncomplete);
-            ax = plot_figure(mix1, mix2, 'OF', 'I_vac', self.Misc.config, self.PD.CompleteOrIncomplete, ax);
-            set_legends(ax, legend_name, self.Misc.config)
+            ax = plot_figure('OF', mix1, 'I_sp', mix2, 'config', self.Misc.config);
+            plot_figure('OF', mix1, 'I_vac', mix2, 'config', self.Misc.config, 'axes', ax);
         end
 
         if isfield(self.Misc.FLAGS_PROP, 'Aratio')
             if self.Misc.FLAGS_PROP.Aratio
-                legend_name = {'$I_{sp}$', '$I_{vac}$'};
+                self.Misc.config.legend_name = {'$I_{sp}$', '$I_{vac}$'};
                 self.Misc.config.labelx = 'Area ratio $A_e/A_t$';
                 self.Misc.config.labely = 'Specific impulse $I$ [s]';
-                ax = plot_figure(mix2, mix2, 'Aratio', 'I_sp', self.Misc.config, self.PD.CompleteOrIncomplete);
-                ax = plot_figure(mix2, mix2, 'Aratio', 'I_vac', self.Misc.config, self.PD.CompleteOrIncomplete, ax);
-                set_legends(ax, legend_name, self.Misc.config)
+                ax = plot_figure(mix2, mix2, 'Aratio', 'I_sp', self.Misc.config);
+                plot_figure(mix2, mix2, 'Aratio', 'I_vac', self.Misc.config, ax);
             end
         end
 
@@ -241,18 +224,17 @@ function postResults(self)
             if self.Misc.FLAGS_PROP.pR
                 self.Misc.config.labelx = 'Pressure $p$ [bar]';
                 self.Misc.config.labely = 'Characteristic velocity $c^*$ [m/s]';
-                ax = plot_figure(mix1, mix2, 'p', 'cstar', self.Misc.config, self.PD.CompleteOrIncomplete);
+                plot_figure('p', mix1, 'cstar', mix2, 'config', self.Misc.config);
 
-                legend_name = {'$I_{sp}$', '$I_{vac}$'};
+                self.Misc.config.legend_name = {'$I_{sp}$', '$I_{vac}$'};
                 self.Misc.config.labelx = 'Pressure $p$ [bar]';
                 self.Misc.config.labely = 'Specific impulse $I$ [s]';
-                ax = plot_figure(mix1, mix2, 'p', 'I_sp', self.Misc.config, self.PD.CompleteOrIncomplete);
-                ax = plot_figure(mix1, mix2, 'p', 'I_vac', self.Misc.config, self.PD.CompleteOrIncomplete, ax);
-                set_legends(ax, legend_name, self.Misc.config)
+                ax = plot_figure('p', mix1, 'I_sp', mix2, 'config', self.Misc.config);
+                plot_figure('p', mix1, 'I_vac', mix2, 'config', self.Misc.config, 'axes', ax);
             end
         end
     %     for i = 2:length(self)
-    %         ax = plot_figure(self{i}.PS.strR, self{i}.PS.strP, 'phi', 'I_sp', self.Misc.config, self.PD.CompleteOrIncomplete, ax, legend_name);
+    %         ax = plot_figure(self{i}.PS.strR, self{i}.PS.strP, 'phi', 'I_sp', self.Misc.config, ax, legend_name);
     %     end
     end
     % EXPORT RESULTS

@@ -25,4 +25,7 @@ function run_validation_CEA
     % SHOCKS: 
     run_validation_SHOCK_IONIZATION_CEA_1;
     run_validation_SHOCK_R_IONIZATION_CEA_1;
+    % ROCKET:
+    run_validation_ROCKET_CEA_17;
+    run_validation_ROCKET_CEA_18;
 end

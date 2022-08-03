@@ -1,5 +1,5 @@
 function mainfigure = plot_properties_validation(results1, results2, varsname_x, varsname_y, type, varargin)
-    % Plot properties varname_y vs varname_x from CT (results1) against CEA (results2)
+    % Plot properties varname_y vs varname_x from CT (results1) against results obtained from other code (results2)
 
     % Default values
     nfrec = 1;
@@ -22,8 +22,8 @@ function mainfigure = plot_properties_validation(results1, results2, varsname_x,
         axes = gca;
         set(axes, 'LineWidth', config.linewidth, 'FontSize', config.fontsize-2, 'BoxStyle', 'full')
         grid(axes, 'off'); box(axes, 'off'); hold(axes, 'on'); axes.Layer = 'Top';
-        xlabel(axes, interpret_label(varname_x), 'FontSize', config.fontsize, 'interpreter', 'latex');
-        ylabel(axes, interpret_label(varname_y), 'FontSize', config.fontsize, 'interpreter', 'latex');
+        xlabel(axes, interpreter_label(varname_x), 'FontSize', config.fontsize, 'interpreter', 'latex');
+        ylabel(axes, interpreter_label(varname_y), 'FontSize', config.fontsize, 'interpreter', 'latex');
         xlim(axes, [min(results1.(varname_x)), max(results1.(varname_x))])
     
         NUM_COLORS = 1;

@@ -19,23 +19,19 @@ function vector = cell2vector(value, varargin)
     end
     
     try
-        if ~iscell(value)
+        if ~iscell(value) && ~isstruct(value)
             vector = value;
             return
         end
 
-        Nstruct = length(value);
+        N = length(value);
         if nargin == 1
             % Return the values of a cell as a vector
-            vector = cell2mat(value);
-
-%             for i=Nstruct:-1:1
-%                 vector(:, i) = value{i};
-%             end
+            vector = cell2vector(value);
         else
             % Return the field of a struct from the cell as a vector
             try
-                for i=Nstruct:-1:1
+                for i = N:-1:1
                     vector(:, i) = value{i}.(field);
                 end
             catch
@@ -43,6 +39,6 @@ function vector = cell2vector(value, varargin)
             end
         end
     catch
-        vector = value;
+        vector = value{1};
     end
 end

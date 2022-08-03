@@ -17,7 +17,7 @@ function [ax, config, fig] = set_figure(varargin)
     % Unpack input
     if nargin > 0
         for i=1:nargin
-            if isa(varargin{i}, 'Axes')
+            if isobject(varargin{i})
                 ax = varargin{i};
             else
                 config = varargin{i};

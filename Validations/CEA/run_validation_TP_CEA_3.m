@@ -11,7 +11,7 @@ function problems_solved = run_validation_TP_CEA_3
     % Inputs
     Fuel = 'CH3OH';
     prefixDataName = Fuel;
-    filename = {strcat(prefixDataName, '_air1_TP.out'), strcat(prefixDataName, '_air1_TP2.out')};
+    filename = {strcat(prefixDataName, '_air1_TP.out'), strcat(prefixDataName, '_air1_TP2.out'), strcat(prefixDataName, '_air1_TP3.out')};
     LS =  'Soot Formation Extended';
     DisplaySpecies = {'CO2', 'CO', 'H2O', 'H2', 'O2', 'N2',...
                       'HCN','H','OH','O','CN','NH3','CH4','C2H4','CH3',...

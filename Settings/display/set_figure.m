@@ -13,20 +13,26 @@ function [ax, config, fig] = set_figure(varargin)
     % Default values
     Misc = Miscellaneous();
     config = Misc.config;
+    ax = [];
     % Unpack input
     if nargin > 0
-        ax = varargin{1};
-        if nargin > 1
-            config = varargin{2};
+        for i=1:nargin
+            if isa(varargin{i}, 'Axes')
+                ax = varargin{i};
+            else
+                config = varargin{i};
+            end
         end
-        if isempty(ax.XLabel)
-            config.labelx = ax.XLabel.String;
+        if ~isempty(ax)
+            if isempty(ax.XLabel)
+                config.labelx = ax.XLabel.String;
+            end
+            if isempty(ax.YLabel)
+                config.labely = ax.YLabel.String;
+            end
         end
-        if isempty(ax.YLabel)
-            config.labely = ax.YLabel.String;
-        end
-        fig = gcf;
-    else
+    end
+    if isempty(ax)
         fig = figure;
         set(fig,'units','normalized','innerposition',[0.1 0.1 0.9 0.8],...
             'outerposition',[0.1 0.1 0.9 0.8])
@@ -34,7 +40,10 @@ function [ax, config, fig] = set_figure(varargin)
     end
     
     set(ax,'LineWidth', config.linewidth, 'FontSize', config.fontsize-2, 'BoxStyle', 'full')
-    hold(ax, 'on'); axis(ax, 'tight');
+    axis(ax, config.axis);
+    box(ax, config.box);
+    grid(ax, config.grid);
+    hold(ax, config.hold);
     xlabel(ax, config.labelx, 'FontSize', config.fontsize, 'interpreter', 'latex');
     ylabel(ax, config.labely, 'FontSize', config.fontsize, 'interpreter', 'latex');
 %     title({strcat('$',config.tit,'$')},'Interpreter','latex','FontSize',config.fontsize+4)

@@ -27,7 +27,7 @@ function vector = cell2vector(value, varargin)
         N = length(value);
         if nargin == 1
             % Return the values of a cell as a vector
-            vector = cell2vector(value);
+            vector = cell2mat(value);
         else
             % Return the field of a struct from the cell as a vector
             try

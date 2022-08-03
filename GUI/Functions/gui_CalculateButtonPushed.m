@@ -28,7 +28,10 @@ function obj = gui_CalculateButtonPushed(obj, event)
         % Update GUI terminal
         gui_update_terminal(obj, app, 'finish')
         % Display results (plots)
-        postResults(app);
+        switch lower(obj.Report_type.Value)
+            case {'auto'}
+                postResults(app);
+        end
         % Set lamp to Done color
         obj.Lamp.Color = obj.color_lamp_done;
     catch ME
@@ -175,7 +178,11 @@ function gui_update_custom_figures(obj)
         % Mixtures
         add_node(obj, 'Mixtures', fields);
         % Variables x
-        fields = fieldnames(obj.temp_results.strP{1});
+        try
+            fields = fieldnames(obj.temp_results.strP{1});
+        catch
+            fields = fieldnames(obj.temp_results.mix3{1});
+        end
         add_node(obj, 'Variable_x', fields);
         % Variables y
         add_node(obj, 'Variable_y', fields);

@@ -19,7 +19,7 @@
 ---
 :information_source: **NOTE**
 - Combustion Toolbox Website is live! Here is the link https://combustion-toolbox-website.readthedocs.io
-- There is a very early version in [Python](https://github.com/AlbertoCuadra/Combustion-PyToolbox)
+- There is a very early version in [Python](https://github.com/AlbertoCuadra/combustion_pytoolbox)
 ---
 
 # Main features

@@ -1,5 +1,5 @@
 function problems_solved = run_validation_ROCKET_CEA_18
-    % Run test validation_ROCKET_CEA_1:
+    % Run test validation_ROCKET_CEA_18:
     % Contrasted with: NASA's Chemical Equilibrium with Applications software
     % Problem type: Equilibrium composition at exit of the rocket nozzle
     % Pressure chamber [bar] = 101.325;

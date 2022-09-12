@@ -7,28 +7,21 @@ function index = find_ind(LS, species)
     %
     % Returns:
     %     index (float):  List with the index of the species based on the given list (LS)
+    
+    % Check inputs
+    check_iscell(LS);
+    check_iscell(species);
+    % Find index
+    [bool_index, loc] = ismember(LS, species);
+    [~, index_sort] = sort(loc(bool_index));
+    index = find(bool_index);
+    index = index(index_sort);
+end
 
-    if length(species) > 1
-        NS = length(LS);
-        if ischar(species)
-            Nspecies = 1;
-            species = {species};
-        else
-            Nspecies = length(species);
-        end
-        index = [];
-        for j=1:Nspecies
-            i = 0;
-            while i < NS
-                i = i + 1;
-                if strcmpi(species{j}, LS{i})
-                    index = [index, i];
-                    break
-                end 
-            end
-        end
-    else
-        index = ismember(LS, species);
-        index = find(index);
+% SUB-PASS FUNCTIONS
+function variable = check_iscell(variable)
+    % Convert to cell if the given variable is not a cell
+    if ~iscell(variable)
+        variable = {variable};
     end
 end

@@ -1,4 +1,4 @@
-function self = SolveProblem(self, ProblemType)
+function self = solve_problem(self, ProblemType)
     % Solve the given ProblemType with the conditions and mixture specified in self
     %
     % Args:
@@ -19,11 +19,11 @@ function self = SolveProblem(self, ProblemType)
             % SET PROBLEM CONDITIONS PER CASE
             self = set_problem_conditions(self, i);
             % COMPUTE PROPERTIES INITIAL MIXTURE
-            self = Define_FOI(self, i);
+            self = define_FOI(self, i);
             % CHECK IF LIST OF PRODUCTS CORRESPONDS WITH COMPLETE REACTION
             self = check_complete_reaction(self, i);
             % SOLVE SELECTED PROBLEM
-            self = selectProblem(self, i);
+            self = select_problem(self, i);
             % DISPLAY RESULTS COMMAND WINDOW
             results(self, i);
         end
@@ -48,7 +48,7 @@ function self = set_problem_conditions(self, i)
     end
 end
 
-function self = selectProblem(self, i)
+function self = select_problem(self, i)
     % Solve selected problem
     switch upper(self.PD.ProblemType)
         case {'SHOCK_I', 'SHOCK_R'}

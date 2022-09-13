@@ -30,6 +30,6 @@ self.PD.N_Oxidizer = [78.084, 20.9476, 0.9365, 0.0319] ./ 20.9476;
 Mach_number = [2, 3, 5, 14];
 self = set_prop(self, 'u1', 3.472107491008314e+02 * Mach_number);
 %% SOLVE PROBLEM
-self = SolveProblem(self, 'SHOCK_POLAR');
+self = solve_problem(self, 'SHOCK_POLAR');
 %% DISPLAY RESULTS (PLOTS)
-postResults(self);
+post_results(self);

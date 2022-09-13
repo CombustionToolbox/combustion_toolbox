@@ -1,4 +1,4 @@
-function postResults(self)
+function post_results(self)
     % Postprocess all the results with predefined plots
     %
     % Args:

@@ -53,6 +53,6 @@ self.PD.N_Oxidizer = [78.084, 20.9476, 0.9365, 0.0319] ./ 20.9476;
 u1 = logspace(2, 5, 500); u1 = u1(u1<20000); u1 = u1(u1>=347.25);
 self = set_prop(self, 'u1', u1);
 %% SOLVE PROBLEM
-self = SolveProblem(self, 'SHOCK_I');
+self = solve_problem(self, 'SHOCK_I');
 %% DISPLAY RESULTS (PLOTS)
-postResults(self);
+post_results(self);

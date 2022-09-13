@@ -27,9 +27,9 @@ self.PD.N_Oxidizer = [0.79, 0.21];
 %% ADDITIONAL INPUTS (DEPENDS OF THE PROBLEM SELECTED)
 self = set_prop(self, 'pP', 1 * 1.01325, 'TP', 2000); 
 %% SOLVE PROBLEM
-self = SolveProblem(self, 'TP');
+self = solve_problem(self, 'TP');
 %% DISPLAY RESULTS (PLOTS)
-postResults(self);
+post_results(self);
 %% PRINT MOLES
 species = self.S.LS';
 i = 1;

@@ -29,6 +29,6 @@ self.PD.ratio_oxidizers_O2 = [78.084, 20.9476, 0.9365, 0.0319] ./ 20.9476;
 %% ADDITIONAL INPUTS (DEPENDS OF THE PROBLEM SELECTED)
 % No additional data required. The internal energy and volume are constants.
 %% SOLVE PROBLEM
-self = SolveProblem(self, 'EV');
+self = solve_problem(self, 'EV');
 %% DISPLAY RESULTS (PLOTS)
-postResults(self);
+post_results(self);

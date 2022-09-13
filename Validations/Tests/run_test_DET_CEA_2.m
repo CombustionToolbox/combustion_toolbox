@@ -14,7 +14,7 @@ function [max_rel_error_moles, max_rel_error_prop] = run_test_DET_CEA_2(value)
     filename = {strcat(prefixDataName, '_O2_detonations.out'), strcat(prefixDataName, '_O2_detonations2.out'), strcat(prefixDataName, '_O2_detonations3.out')};
 
     LS =  'Soot Formation Extended';
-    DisplaySpecies = {'CO2', 'CO', 'H2O', 'H2', 'O2', 'N2', 'He', 'Ar',...
+    display_species = {'CO2', 'CO', 'H2O', 'H2', 'O2', 'N2', 'He', 'Ar',...
                       'HCN','H','OH','O','CN','NH3','CH4','C2H4','CH3',...
                       'NO','HCO','NH2','NH','N','CH','Cbgrb'};
     tolN = 1e-18;
@@ -28,10 +28,10 @@ function [max_rel_error_moles, max_rel_error_prop] = run_test_DET_CEA_2(value)
                         'EquivalenceRatio', value,...
                         'tolN', tolN);
     % Load results CEA 
-    results_CEA = data_CEA(filename, DisplaySpecies);
+    results_CEA = data_CEA(filename, display_species);
     % Compute error
     % * Molar fractions
-    max_rel_error_moles = compute_error_moles_CEA(results_CT, results_CEA, 'phi', value, 'Xi', DisplaySpecies);
+    max_rel_error_moles = compute_error_moles_CEA(results_CT, results_CEA, 'phi', value, 'Xi', display_species);
     % * Properties mixture 2
     properties_y = {'T', 'p', 'rho', 'h', 'e', 'g', 'S', 'gamma_s', 'cP', 'cV', 'gamma_s', 'dVdT_p', 'dVdp_T', 'sound', 'W', 'u_preshock'};
     properties_x = {'phi', 'phi', 'phi', 'phi', 'phi', 'phi', 'phi', 'phi', 'phi', 'phi', 'phi', 'phi', 'phi', 'phi', 'phi', 'phi'};

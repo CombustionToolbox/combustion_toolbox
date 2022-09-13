@@ -29,9 +29,9 @@ for i = length(pressure):-1:1
     self.PD.S_Fuel     = {'H2bLb'};
     self.PD.S_Oxidizer = {'O2bLb'};
     %% SOLVE PROBLEM
-    self = SolveProblem(self, 'ROCKET');
+    self = solve_problem(self, 'ROCKET');
     self_all{i} = self;
 end
 %% DISPLAY RESULTS (PLOTS)
-postResults(self_all);
+post_results(self_all);
 % profile viewer

@@ -7,7 +7,7 @@ function problems_solved = run_validation_ROCKET_CEA_20
     % Area ratio A_c/A_t = 2;
     % Area ratio A_e/A_t = 3;
     % Equivalence ratio [-] = 0.5:0.01:4
-    % Initial mixture: LH2 + LOX === H2bLb + O2bLb
+    % Initial mixture: RP1 + LOX === RP1 + O2bLb
     % List of species considered: ListSpecies('HYDROGEN_L')
 
     % Inputs
@@ -17,14 +17,14 @@ function problems_solved = run_validation_ROCKET_CEA_20
     prefixDataName = 'RP1';
     filename = {[prefixDataName, '_LOX_A20_ROCKET1.out'], [prefixDataName, '_LOX_A20_ROCKET2.out']};
     LS =  'HC/O2/N2 PROPELLANTS';
-    DisplaySpecies = {'CO2','CO','H2O','H2','O2','C2H2_acetylene',...
+    display_species = {'CO2','CO','H2O','H2','O2','C2H2_acetylene',...
           'C2H4','C2H6','CH2CO_ketene','CH3','CH3CHO_ethanal','CH3OH',...
           'CH4','COOH','H','H2O2','HCHO_formaldehy','HCO','HCOOH','HO2',...
           'O','OH','Cbgrb'};
     tolN = 1e-18;
 
     % Load results CEA 
-    results_CEA = data_CEA(filename, DisplaySpecies);
+    results_CEA = data_CEA(filename, display_species);
     % Combustion Toolbox
     results_CT = run_CT('ProblemType', 'ROCKET',...
                         'TR', 298.15,...
@@ -43,7 +43,7 @@ function problems_solved = run_validation_ROCKET_CEA_20
     % Display validation (plot)
     results_CT.Misc.config.axis = 'tight';
     % * Molar fractions
-    fig1 = plot_molar_fractions_validation(results_CT, results_CEA, 'phi', 'Xi', DisplaySpecies);
+    fig1 = plot_molar_fractions_validation(results_CT, results_CEA, 'phi', 'Xi', display_species);
     % * Properties mixture Exit - 1
     fig2 = plot_properties_validation(results_CT, results_CEA, {'phi', 'phi', 'phi', 'phi', 'phi', 'phi', 'phi', 'phi', 'phi'}, {'T', 'p', 'h', 'cP', 'cV', 'gamma_s', 'u', 'I_sp', 'I_vac'}, 'mix2');
     % Save plots

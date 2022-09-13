@@ -1,4 +1,4 @@
-function M = SetSpecies(self, species, moles, T)
+function properties_matrix = set_species(self, species, moles, T)
     % Fill the properties matrix with the data of the mixture
     %
     % Args:
@@ -8,9 +8,9 @@ function M = SetSpecies(self, species, moles, T)
     %     T (float):      Temperature [K]
     %
     % Returns:
-    %     M (float):      properties matrix
+    %     properties_matrix (float): properties matrix
 
-    M = self.C.M0.value;
+    properties_matrix = self.C.M0.value;
     R0 = self.C.R0;
 
     for i = length(moles):-1:1
@@ -35,6 +35,6 @@ function M = SetSpecies(self, species, moles, T)
             pVi = 0; % [bar m3]
         end   
         ind = find_ind(self.S.LS, species(i));
-        M(ind, :) = [moles(i), moles(i) * [hfi, h0i, efi, cPi, s0i], pVi, phase, mi, W];
+        properties_matrix(ind, :) = [moles(i), moles(i) * [hfi, h0i, efi, cPi, s0i], pVi, phase, mi, W];
     end
 end

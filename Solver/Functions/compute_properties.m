@@ -1,10 +1,10 @@
-function mix =  ComputeProperties(self, SpeciesMatrix, p, T)
-    % Compute properties from the given SpeciesMatrix at pressure p [bar] 
+function mix =  compute_properties(self, properties_matrix, p, T)
+    % Compute properties from the given properties matrix at pressure p [bar] 
     % and temperature T [K]
     %
     % Args:
     %     self (struct): Data of the mixture, conditions, and databases
-    %     SpeciesMatrix (float): Matrix with the properties of the mixture
+    %     properties_matrix (float): Matrix with the properties of the mixture
     %     p (float): Pressure [bar]
     %     T (float): Temperature [K]
     %
@@ -17,28 +17,28 @@ function mix =  ComputeProperties(self, SpeciesMatrix, p, T)
     mix.p = p; % [bar]
     mix.T = T; % [K]
     % Unpack SpeciesMatrix
-    Ni        = SpeciesMatrix(:,1);                       % [mol]
-    mix.N     = sum(SpeciesMatrix(:, self.C.M0.ind_ni));  % [mol] 
-    mix.hf    = sum(SpeciesMatrix(:, self.C.M0.ind_hfi)); % [kJ]
-    mix.h     = sum(SpeciesMatrix(:, self.C.M0.ind_hi));  % [kJ]
-    mix.ef    = sum(SpeciesMatrix(:, self.C.M0.ind_efi)); % [kJ]
-    mix.cP    = sum(SpeciesMatrix(:, self.C.M0.ind_cPi)); % [J/K]
-    mix.S0    = sum(SpeciesMatrix(:, self.C.M0.ind_si));  % [kJ/K]
-    mix.pv    = sum(SpeciesMatrix(:, self.C.M0.ind_pVi)); % [bar m3]
-    mix.phase = SpeciesMatrix(:, self.C.M0.ind_phase);    % [bool]
-    mix.mi    = sum(SpeciesMatrix(:, self.C.M0.ind_mi));  % [kg]
+    Ni        = properties_matrix(:,1);                       % [mol]
+    mix.N     = sum(properties_matrix(:, self.C.M0.ind_ni));  % [mol] 
+    mix.hf    = sum(properties_matrix(:, self.C.M0.ind_hfi)); % [kJ]
+    mix.h     = sum(properties_matrix(:, self.C.M0.ind_hi));  % [kJ]
+    mix.ef    = sum(properties_matrix(:, self.C.M0.ind_efi)); % [kJ]
+    mix.cP    = sum(properties_matrix(:, self.C.M0.ind_cPi)); % [J/K]
+    mix.S0    = sum(properties_matrix(:, self.C.M0.ind_si));  % [kJ/K]
+    mix.pv    = sum(properties_matrix(:, self.C.M0.ind_pVi)); % [bar m3]
+    mix.phase = properties_matrix(:, self.C.M0.ind_phase);    % [bool]
+    mix.mi    = sum(properties_matrix(:, self.C.M0.ind_mi));  % [kg]
     % Compute mass fractions [-]
-    mix.Yi = SpeciesMatrix(:, self.C.M0.ind_mi) ./ mix.mi;
+    mix.Yi = properties_matrix(:, self.C.M0.ind_mi) ./ mix.mi;
     % Compute molar fractions [-]
     mix.Xi = Ni / mix.N;
     % Compute mean molecular weight [g/mol]
-    mix.W = sum(Ni .* SpeciesMatrix(:, self.C.M0.ind_W)) / molesGas(mix);
+    mix.W = sum(Ni .* properties_matrix(:, self.C.M0.ind_W)) / molesGas(mix);
     % Get non zero species
     FLAG_NONZERO = mix.Xi > 0;
     % Compute vector atoms of each element
     mix.NatomE = sum(Ni .* self.C.A0.value);
     % Compute vector atoms of each element without frozen species
-    mix.NatomE_react = sum(SpeciesMatrix(self.S.ind_react, self.C.M0.ind_ni) .* self.C.A0.value(self.S.ind_react, :));
+    mix.NatomE_react = sum(properties_matrix(self.S.ind_react, self.C.M0.ind_ni) .* self.C.A0.value(self.S.ind_react, :));
     % Compute volume [m3]
     mix.v = mix.pv / mix.p;
     % Compute density [kg/m3]
@@ -69,7 +69,7 @@ function mix =  ComputeProperties(self, SpeciesMatrix, p, T)
         mix.dVdp_T = -1 + self.dN_p; % [-]
         if ~any(isnan(self.dNi_T)) && ~any(isinf(self.dNi_T))
             delta = ~mix.phase;
-            h0_j = (SpeciesMatrix(:, self.C.M0.ind_hi)) ./ Ni * 1e3; % [J/mol]
+            h0_j = (properties_matrix(:, self.C.M0.ind_hi)) ./ Ni * 1e3; % [J/mol]
             mix.cP_r = sum(h0_j / T .* (1 +  delta .* (Ni - 1)) .* self.dNi_T, 'omitnan'); % [J/K]
             mix.cP_f = mix.cP;
             mix.cP = mix.cP_f + mix.cP_r; % [J/K]

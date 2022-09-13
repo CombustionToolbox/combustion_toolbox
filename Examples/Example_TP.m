@@ -29,6 +29,6 @@ self.PD.ratio_oxidizers_O2 = [78.084, 20.9476, 0.9365, 0.0319] ./ 20.9476;
 %% ADDITIONAL INPUTS (DEPENDS OF THE PROBLEM SELECTED)
 self = set_prop(self, 'pP', self.PD.pR.value, 'TP', 3000); 
 %% SOLVE PROBLEM
-self = SolveProblem(self, 'TP');
+self = solve_problem(self, 'TP');
 %% DISPLAY RESULTS (PLOTS)
-postResults(self);
+post_results(self);

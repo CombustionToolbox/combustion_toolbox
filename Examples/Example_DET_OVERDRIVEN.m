@@ -31,6 +31,6 @@ overdriven = 1:0.1:10;
 self = set_prop(self, 'overdriven', overdriven);
 % condition
 %% SOLVE PROBLEM
-self = SolveProblem(self, 'DET_OVERDRIVEN');
+self = solve_problem(self, 'DET_OVERDRIVEN');
 %% DISPLAY RESULTS (PLOTS)
-postResults(self);
+post_results(self);

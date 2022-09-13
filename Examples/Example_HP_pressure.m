@@ -44,7 +44,7 @@ self = set_prop(self, 'TR', 300, 'pR', 1, 'phi', 0.5:0.005:3.5);
 % Set constant pressure for products
 self = set_prop(self, 'pP', self.PD.pR.value);
 % Solve Problem
-self = SolveProblem(self, 'HP');
+self = solve_problem(self, 'HP');
 % Save results
 results_complete = self;
 %% INCOMPLETE COMBUSTION
@@ -55,7 +55,7 @@ for i = length(pressure_vector):-1:1
     % Set pressure
     self = set_prop(self, 'pP', pressure_vector(i), 'pP', pressure_vector(i));
     % Solve Problem
-    self = SolveProblem(self, 'HP');
+    self = solve_problem(self, 'HP');
     % Save results
     results_incomplete{i} = self;
 end
@@ -70,11 +70,11 @@ self.Misc.config.labelx = 'Equivalence ratio $\phi$';
 self.Misc.config.labely = 'Temperature $T$ [K]';
 legend_name = {'Complete'};
 
-ax = plot_figure(phi, mix2_complete, 'phi', 'T', self.Misc.config, self.PD.CompleteOrIncomplete);
+ax = plot_figure('phi', phi, 'T', mix2_complete, 'config', self.Misc.config);
 
 for i = 1:length(pressure_vector)
     mix2_incomplete = results_incomplete{i}.PS.strP; 
-    ax = plot_figure(phi, mix2_incomplete, 'phi', 'T', self.Misc.config, self.PD.CompleteOrIncomplete, ax);
+    ax = plot_figure('phi', phi, 'T', mix2_incomplete, 'config', self.Misc.config, 'ax', ax);
     legend_name(i+1) = {sprintf('$p_{%d} = %.4g$ bar', i, pressure(mix2_incomplete{1}))};
 end
 

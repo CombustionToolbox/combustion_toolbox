@@ -1,4 +1,4 @@
-function [P, T, M1, R, Q, STOP] = compute_guess_det(self, mix1, phi, overdriven)
+function [P, T, M1, R, Q, STOP] = det_compute_guess(self, mix1, phi, overdriven)
     % Obtain guess of the jump conditions for a Chapman-Jouguet detonation.
     % Only valid if the mixture have CHON. It computes the guess assuming
     % first a complete combustion, next it recomputes assuming an incomplete
@@ -51,7 +51,7 @@ function [P, T, M1, R, Q, STOP] = compute_guess_det(self, mix1, phi, overdriven)
         p2 = P_0 * mix1.p;
         T2 = T_0 * mix1.T;
         
-        N_2 = equilibrium(self, p2, T2, mix1, []); N_2 = N_2(:, 1)';
+        N_2 = equilibrium_gibbs(self, p2, T2, mix1, []); N_2 = N_2(:, 1)';
         N_2 = N_2_0  + lambda .* (N_2 - N_2_0);
         
         W2 = compute_W(N_2, LS, self.DB);

@@ -1,4 +1,4 @@
-function self = SolveProblem(self, ProblemType)
+function self = solve_problem(self, ProblemType)
     % Solve the given ProblemType with the conditions and mixture specified in self
     %
     % Args:
@@ -19,11 +19,11 @@ function self = SolveProblem(self, ProblemType)
             % SET PROBLEM CONDITIONS PER CASE
             self = set_problem_conditions(self, i);
             % COMPUTE PROPERTIES INITIAL MIXTURE
-            self = Define_FOI(self, i);
+            self = define_FOI(self, i);
             % CHECK IF LIST OF PRODUCTS CORRESPONDS WITH COMPLETE REACTION
             self = check_complete_reaction(self, i);
             % SOLVE SELECTED PROBLEM
-            self = selectProblem(self, i);
+            self = select_problem(self, i);
             % DISPLAY RESULTS COMMAND WINDOW
             results(self, i);
         end
@@ -48,7 +48,7 @@ function self = set_problem_conditions(self, i)
     end
 end
 
-function self = selectProblem(self, i)
+function self = select_problem(self, i)
     % Solve selected problem
     switch upper(self.PD.ProblemType)
         case {'SHOCK_I', 'SHOCK_R'}
@@ -163,19 +163,19 @@ function self = selectProblem(self, i)
             end
         case {'DET'}
             if i==self.C.l_phi
-                [self.PS.strR{i}, self.PS.strP{i}] = cj_detonation(self, self.PS.strR{i});
+                [self.PS.strR{i}, self.PS.strP{i}] = det_cj(self, self.PS.strR{i});
             else
-                [self.PS.strR{i}, self.PS.strP{i}] = cj_detonation(self, self.PS.strR{i}, self.PS.strP{i+1});
+                [self.PS.strR{i}, self.PS.strP{i}] = det_cj(self, self.PS.strR{i}, self.PS.strP{i+1});
             end
         case {'DET_R'}
             if i==self.C.l_phi
                 % Calculate post-shock state (2)
-                [self.PS.strR{i}, self.PS.str2{i}] = cj_detonation(self, self.PS.strR{i});
+                [self.PS.strR{i}, self.PS.str2{i}] = det_cj(self, self.PS.strR{i});
                 % Calculate post-shock state (5)
                 [self.PS.strR{i}, self.PS.str2{i}, self.PS.strP{i}] = shock_reflected(self, self.PS.strR{i}, self.PS.strR{i}.u, self.PS.str2{i});
             else
                 % Calculate post-shock state (2)
-                [self.PS.strR{i}, self.PS.str2{i}] = cj_detonation(self, self.PS.strR{i}, self.PS.str2{i+1});
+                [self.PS.strR{i}, self.PS.str2{i}] = det_cj(self, self.PS.strR{i}, self.PS.str2{i+1});
                 % Calculate post-shock state (5)
                 [self.PS.strR{i}, self.PS.str2{i}, self.PS.strP{i}] = shock_reflected(self, self.PS.strR{i}, self.PS.strR{i}.u, self.PS.str2{i}, self.PS.strP{i+1});
             end
@@ -186,9 +186,9 @@ function self = selectProblem(self, i)
                 overdriven = self.PD.overdriven.value;
             end
             if i==self.C.l_phi
-                [self.PS.strR{i}, self.PS.strP{i}] = overdriven_detonation(self, self.PS.strR{i}, overdriven);
+                [self.PS.strR{i}, self.PS.strP{i}] = det_overdriven(self, self.PS.strR{i}, overdriven);
             else
-                [self.PS.strR{i}, self.PS.strP{i}] = overdriven_detonation(self, self.PS.strR{i}, overdriven, self.PS.strP{i+1});
+                [self.PS.strR{i}, self.PS.strP{i}] = det_overdriven(self, self.PS.strR{i}, overdriven, self.PS.strP{i+1});
             end
         case {'DET_OBLIQUE'}
             try
@@ -219,12 +219,12 @@ function self = selectProblem(self, i)
             end
             if i==self.C.l_phi
                 % Calculate post-shock state (2)
-                [self.PS.strR{i}, self.PS.str2{i}] = overdriven_detonation(self, self.PS.strR{i}, overdriven);
+                [self.PS.strR{i}, self.PS.str2{i}] = det_overdriven(self, self.PS.strR{i}, overdriven);
                 % Calculate post-shock state (5)
                 [self.PS.strR{i}, self.PS.str2{i}, self.PS.strP{i}] = shock_reflected(self, self.PS.strR{i}, overdriven, self.PS.str2{i});
             else
                 % Calculate post-shock state (2)
-                [self.PS.strR{i}, self.PS.str2{i}] = overdriven_detonation(self, self.PS.strR{i}, overdriven, self.PS.str2{i+1});
+                [self.PS.strR{i}, self.PS.str2{i}] = det_overdriven(self, self.PS.strR{i}, overdriven, self.PS.str2{i+1});
                 % Calculate post-shock state (5)
                 [self.PS.strR{i}, self.PS.str2{i}, self.PS.strP{i}] = shock_reflected(self, self.PS.strR{i}, overdriven, self.PS.str2{i}, self.PS.strP{i+1});
             end

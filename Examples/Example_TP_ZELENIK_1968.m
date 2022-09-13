@@ -31,6 +31,6 @@ self = set_prop(self, 'pP', self.PD.pR.value, 'TP', 300);
 %% TUNNUNG PARAMETERS
 self.TN.tolN = 1e-14;
 %% SOLVE PROBLEM
-self = SolveProblem(self, 'TP');
+self = solve_problem(self, 'TP');
 %% DISPLAY RESULTS (PLOTS)
-postResults(self);
+post_results(self);

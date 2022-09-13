@@ -1,4 +1,4 @@
-function self = Stoich_Matrix(self)
+function self = stoich_prop_matrix(self)
     % Initialize the stoichiometric matrix and properties matrix
     %
     % Args:

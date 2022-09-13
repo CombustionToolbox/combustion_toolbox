@@ -15,11 +15,11 @@ function problems_solved = run_validation_ROCKET_CEA_17
     prefixDataName = 'H2';
     filename = {[prefixDataName, '_LOX_ROCKET1.out'], [prefixDataName, '_LOX_ROCKET2.out']};
     LS =  'HYDROGEN_L';
-    DisplaySpecies = {'H2O','H2','O2','H','OH','O','O3','HO2','H2O2'};
+    display_species = {'H2O','H2','O2','H','OH','O','O3','HO2','H2O2'};
     tolN = 1e-18;
 
     % Load results CEA 
-    results_CEA = data_CEA(filename, DisplaySpecies);
+    results_CEA = data_CEA(filename, display_species);
     % Combustion Toolbox
     results_CT = run_CT('ProblemType', 'ROCKET',...
                         'TR', 90,...
@@ -36,7 +36,7 @@ function problems_solved = run_validation_ROCKET_CEA_17
     
     % Display validation (plot)
     % * Molar fractions
-    fig1 = plot_molar_fractions_validation(results_CT, results_CEA, 'phi', 'Xi', DisplaySpecies);
+    fig1 = plot_molar_fractions_validation(results_CT, results_CEA, 'phi', 'Xi', display_species);
     % * Properties mixture Exit - 1
     fig2 = plot_properties_validation(results_CT, results_CEA, {'phi', 'phi', 'phi', 'phi', 'phi', 'phi', 'phi', 'phi'}, {'T', 'p', 'rho', 'h', 'e', 'g', 'S', 'gamma_s'}, 'mix2');
     % * Properties mixture Exit - 2

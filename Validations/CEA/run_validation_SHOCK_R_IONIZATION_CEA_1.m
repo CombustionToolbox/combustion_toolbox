@@ -13,7 +13,7 @@
     moles = [78.084, 20.9476, 0.9365, 0.0319] ./ 20.9476;
     LS = 'AIR_IONS';
 
-    DisplaySpecies = {'eminus','Ar','Arplus','C','Cplus','Cminus','CN','CNplus','CNminus',...
+    display_species = {'eminus','Ar','Arplus','C','Cplus','Cminus','CN','CNplus','CNminus',...
                       'CNN','CO','COplus','CO2','CO2plus','C2','C2plus','C2minus',...
                       'CCN','CNC','OCCN','C2N2','C2O','C3','C3O2',...
                       'N','Nplus','Nminus','NCO','NO','NOplus','NO2','NO2minus',...
@@ -35,10 +35,10 @@
                         'tolN', tolN);
     problems_solved = length(results_CT.PD.range);
     % Load results CEA 
-    results_CEA = data_CEA(filename, DisplaySpecies, find_ind(ListSpecies([], LS), DisplaySpecies));
+    results_CEA = data_CEA(filename, display_species, find_ind(list_species(LS), display_species));
     % Display validations (plot)
     % * Molar fractions
-%     fig1 = plot_molar_fractions_validation(results_CT, results_CEA.mix2, 'T', 'Xi', DisplaySpecies);
+%     fig1 = plot_molar_fractions_validation(results_CT, results_CEA.mix2, 'T', 'Xi', display_species);
     % * Properties mixture 1
     fig2 = plot_properties_validation(results_CT, results_CEA.mix1, {'u_preshock', 'u_preshock', 'u_preshock', 'u_preshock', 'u_preshock', 'u_preshock', 'u_preshock', 'u_preshock'}, {'T', 'p', 'rho', 'h', 'e', 'g', 'S', 'gamma_s'}, 'mix1');
     % * Properties mixture 2 - 1

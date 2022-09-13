@@ -1,4 +1,4 @@
-function phi_c0 = Compute_phi_c(Fuel)
+function phi_c0 = compute_phi_c(Fuel)
     % Compute guess of equivalence ratio in which soot appears considering complete combustion
     %
     % Args:

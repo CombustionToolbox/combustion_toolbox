@@ -25,6 +25,6 @@ self.PD.N_Fuel     = [0.75, 0.25];
 %% ADDITIONAL INPUTS (DEPENDS OF THE PROBLEM SELECTED)
 self = set_prop(self, 'pP', self.PD.pR.value, 'TP', 1500); 
 %% SOLVE PROBLEM
-self = SolveProblem(self, 'TP');
+self = solve_problem(self, 'TP');
 %% DISPLAY RESULTS (PLOTS)
-postResults(self);
+post_results(self);

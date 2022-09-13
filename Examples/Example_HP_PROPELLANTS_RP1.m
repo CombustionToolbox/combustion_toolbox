@@ -118,10 +118,10 @@ self.Tcurve = griddedInterpolant([0.35, 0.5], [850, 1200], 'pchip', 'linear');
 self.gammacurve = griddedInterpolant(OF_gamma_real, gamma_real, 'pchip', 'linear');
 % self.eta_c = 0.9;
 %% SOLVE PROBLEM
-self = SolveProblem(self, 'HP');
+self = solve_problem(self, 'HP');
 %% DISPLAY RESULTS (PLOTS)
 self.C.mintol_display = 1e-6;
-postResults(self);
+post_results(self);
 
 nfrec = 3;
 OF_CT = cell2vector(self.PS.strR, 'OF');

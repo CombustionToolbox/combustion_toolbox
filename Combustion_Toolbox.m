@@ -25,7 +25,8 @@
 %
 % SEE THE EXAMPLES OR WIKI TO KNOW HOW TO START USING COMBUSTION TOOLBOX
 %
-% WEBSITE: https://combustion-toolbox-website.readthedocs.io/
+% WEBSITE: https://combustion-toolbox-website.readthedocs.io/ 
+%          or "run website_CT"
 %
 % LIST OF TUTORIAL SCRIPTS:
 %   * Example_TP

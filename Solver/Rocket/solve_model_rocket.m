@@ -4,7 +4,7 @@ function [mix2_inj, mix2_c, mix3, mix4] = solve_model_rocket(self, mix1, mix2_in
     %
     % Methods implemented:
     %   * Infinite-Area-Chamber (IAC) 
-    %   * Finite-Area-Chamber (FAC) - NOT YET
+    %   * Finite-Area-Chamber (FAC)
     %
     % This method is based on Gordon, S., & McBride, B. J. (1994). NASA reference publication,
     % 1311.

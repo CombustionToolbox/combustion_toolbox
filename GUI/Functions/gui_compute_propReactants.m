@@ -12,5 +12,5 @@ function app = gui_compute_propReactants(obj, app)
     % Compute properties for the first temperature value (in case PR1 is a vector)
     app.PD.TR.value = app.PD.TR.value(1);
     % Compute stoichiometric matrix and properties of the mixture
-    app = Define_FOI(app, 1);
+    app = define_FOI(app, 1);
 end

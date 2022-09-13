@@ -5,5 +5,6 @@ function set_legends(ax, legend_name, varargin)
     else
         config = varargin{1};
     end
+    legend_name = strrep(legend_name, '_', '\_');
     legend(ax, legend_name,'FontSize', config.fontsize-2, 'Location', 'best', 'interpreter', 'latex');
 end

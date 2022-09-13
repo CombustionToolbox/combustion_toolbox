@@ -2,6 +2,7 @@ function ax = plot_figure(x_field, x_var, y_field, y_var, varargin)
     % Plot figure
 
     % Default settings
+    FLAG_COLOR_NEW = false;
     Misc = Miscellaneous();
     config = Misc.config;
     config.labelx = interpreter_label(x_field, config.label_type); % Set x label
@@ -15,18 +16,21 @@ function ax = plot_figure(x_field, x_var, y_field, y_var, varargin)
         switch lower(varargin{i})
             case 'config'
                 config = varargin{i+1};
-                if isempty(config.labelx)
-                    config.labelx = interpreter_label(x_field, config.label_type);
-                end
-                if isempty(config.labely)
-                    config.labely = interpreter_label(y_field, config.label_type);
-                end
+                config.labelx = interpreter_label(x_field, config.label_type);
+                config.labely = interpreter_label(y_field, config.label_type);
             case {'leg', 'legend'}
                 config.legend_name = varargin{i+1};
             case {'ax', 'axes', 'figure'}
                 ax = varargin{i+1};
+            case 'linestyle'
+                config.linestyle = varargin{i+1};
             case 'linewidth'
                 config.linewidth = varargin{i+1};
+            case 'color'
+                config.colorline = varargin{i+1};
+                if ~isfloat(config.colorline)
+                    FLAG_COLOR_NEW = true;
+                end
             case 'fontsize'
                 config.fontsize = varargin{i+1};
             case 'title'
@@ -37,7 +41,6 @@ function ax = plot_figure(x_field, x_var, y_field, y_var, varargin)
                 config.labelx = varargin{i+1};
             case {'label_type'}
                 config.label_type = varargin{i+1};
-
         end
     end
     % Create figure (if necessary)
@@ -45,7 +48,11 @@ function ax = plot_figure(x_field, x_var, y_field, y_var, varargin)
         ax = set_figure(config);
     end
     % Plot
-    plot(ax, x, y, 'LineWidth', config.linewidth);
+    if FLAG_COLOR_NEW
+        plot(ax, x, y, config.linestyle, 'LineWidth', config.linewidth);
+    else
+        plot(ax, x, y, config.linestyle, 'LineWidth', config.linewidth, 'Color', config.colorline);
+    end
     % Legend
     if ~isempty(config.legend_name)
         legend(ax, config.legend_name, 'FontSize', config.fontsize-2, 'Location', 'northeastoutside', 'interpreter', 'latex');

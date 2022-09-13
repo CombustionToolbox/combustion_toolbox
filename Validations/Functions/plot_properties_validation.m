@@ -6,7 +6,7 @@ function mainfigure = plot_properties_validation(results1, results2, varsname_x,
     config = results1.Misc.config;
     % Create main figure
     mainfigure = figure;
-    set(mainfigure, 'position', [1921 -471 1080 1795]);
+    set(mainfigure, 'position', config.position);
     tiledlayout(mainfigure, 'flow');
     % Loop
     for i = 1:length(varsname_x)

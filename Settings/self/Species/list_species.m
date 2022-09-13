@@ -1,4 +1,4 @@
-function self = ListSpecies(varargin)
+function self = list_species(varargin)
     % Set list of species in the mixture (reactants and products)
     %
     % Predefined list of species:

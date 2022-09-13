@@ -34,6 +34,6 @@ self.PD.N_Oxidizer = [78.084, 20.9476, 0.9365, 0.0319] ./ 20.9476;
 overdriven = 10;
 self = set_prop(self, 'u1', 3.472107491008314e+02 * overdriven, 'beta', 20:5:85);
 %% SOLVE PROBLEM
-self = SolveProblem(self, 'SHOCK_OBLIQUE');
+self = solve_problem(self, 'SHOCK_OBLIQUE');
 %% DISPLAY RESULTS (PLOTS)
-postResults(self);
+post_results(self);

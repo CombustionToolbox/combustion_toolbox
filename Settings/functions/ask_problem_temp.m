@@ -1,4 +1,4 @@
-function PT = Ask_problem(self)
+function PT = ask_problem(self)
     % Create a list selection dialog box
     %
     % Args:

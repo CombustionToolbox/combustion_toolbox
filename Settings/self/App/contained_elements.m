@@ -1,4 +1,4 @@
-function self = ContainedElements(self)
+function self = contained_elements(self)
     % Obtain containted elements from the given set of species (reactants and products)
     %
     % Args:

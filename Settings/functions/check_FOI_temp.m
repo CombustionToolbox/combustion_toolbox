@@ -1,4 +1,4 @@
-function self = Check_FOI(self, FOI_species)
+function self = check_FOI(self, FOI_species)
     % Check that fuel species are contained in the list of products (only for initial computations)
     %
     % Args:
@@ -22,8 +22,8 @@ function self = Check_FOI(self, FOI_species)
         
         if self.Misc.FLAG_ADDED_SPECIES
             self.S.ind_nswt = []; self.S.ind_swt = []; self.S.ind_cryogenic = [];
-            self = ContainedElements(self);
-            self = Initialize(self);
+            self = contained_elements(self);
+            self = initialize(self);
             self.Misc.index_LS_original = find_ind(self.S.LS, self.Misc.LS_original);
             % Set indexes phase species to original List Species (for computations)
             self = reorganize_index_phase_species(self, self.Misc.LS_original);
@@ -37,6 +37,11 @@ function self = Check_FOI(self, FOI_species)
         % Check if O2 is as oxidizer, if not try for O2 in liquid state
         if isempty(find_ind(self.PD.S_Oxidizer, 'O2'))
             self.S.ind_O2 = find_ind(self.S.LS, 'O2bLb');
+        end
+        
+        % Check if oxidizer/inert inputs comes from weight percentage
+        if ~isempty(self.PD.wt_ratio_oxidizers) || ~isempty(self.PD.wt_ratio_inerts)
+            self.Misc.FLAG_WEIGHT = true;
         end
 
         self.Misc.FLAG_FIRST = false;

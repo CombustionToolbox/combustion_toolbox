@@ -14,7 +14,7 @@ function [moles, species] = complete_combustion(self, mix, phi)
 
     % Parameters ---------------------
     Fuel = self.PD.Fuel;
-    phi_c = Compute_phi_c(Fuel);
+    phi_c = compute_phi_c(Fuel);
     % -----------------------------------
     species = {'CO2', 'CO', 'H2O', 'H2', 'O2', 'N2', 'Cbgrb'};
     

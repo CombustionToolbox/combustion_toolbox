@@ -40,7 +40,8 @@ function [ax, config, fig] = set_figure(varargin)
     end
     
     set(ax,'LineWidth', config.linewidth, 'FontSize', config.fontsize-2, 'BoxStyle', 'full')
-    axis(ax, config.axis);
+    xlim(ax, config.axis_x);
+    ylim(ax, config.axis_y);
     box(ax, config.box);
     grid(ax, config.grid);
     hold(ax, config.hold);

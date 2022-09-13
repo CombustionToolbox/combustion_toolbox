@@ -15,14 +15,14 @@ function problems_solved = run_validation_ROCKET_CEA_15
     prefixDataName = 'RP1';
     filename = {strcat(prefixDataName, '_LOX_A15_ROCKET1.out'), strcat(prefixDataName, '_LOX_A15_ROCKET2.out')};
     LS =  'HC/O2/N2 PROPELLANTS';
-    DisplaySpecies = {'CO2','CO','H2O','H2','O2','C2H2_acetylene',...
+    display_species = {'CO2','CO','H2O','H2','O2','C2H2_acetylene',...
           'C2H4','C2H6','CH2CO_ketene','CH3','CH3CHO_ethanal','CH3OH',...
           'CH4','COOH','H','H2O2','HCHO_formaldehy','HCO','HCOOH','HO2',...
           'O','OH','Cbgrb'};
     tolN = 1e-18;
 
     % Load results CEA 
-    results_CEA = data_CEA(filename, DisplaySpecies);
+    results_CEA = data_CEA(filename, display_species);
     % Combustion Toolbox
     results_CT = run_CT('ProblemType', 'ROCKET',...
                         'TR', 298.15,...
@@ -43,7 +43,7 @@ function problems_solved = run_validation_ROCKET_CEA_15
     results_CT.Misc.config.title = strcat('Area ratio $A_{\rm exit}/A_{\rm throat} = ', sprintf('%.2f', Aratio), '$');
     % * Molar fractions
 %         results_CEA.OF = OF(:, i);
-    fig1 = plot_molar_fractions_validation(results_CT, results_CEA, 'phi', 'Xi', DisplaySpecies, 'config', results_CT.Misc.config);
+    fig1 = plot_molar_fractions_validation(results_CT, results_CEA, 'phi', 'Xi', display_species, 'config', results_CT.Misc.config);
     set_title(gca, results_CT.Misc.config);
     % Save plots
     folderpath = strcat(pwd,'\Validations\Figures\');

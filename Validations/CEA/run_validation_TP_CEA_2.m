@@ -13,7 +13,7 @@ function problems_solved = run_validation_TP_CEA_2
     prefixDataName = Fuel;
     filename = {strcat(prefixDataName, '_O2_TP.out'), strcat(prefixDataName, '_O2_TP2.out'), strcat(prefixDataName, '_O2_TP3.out')};
     LS = 'Soot Formation Extended';
-    DisplaySpecies = {'CO2', 'CO', 'H2O', 'H2', 'O2', 'H','OH','O',...
+    display_species = {'CO2', 'CO', 'H2O', 'H2', 'O2', 'H','OH','O',...
                       'CH4','C2H4','CH3','HCO','CH','Cbgrb'};
     tolN = 1e-18;
     % Combustion Toolbox
@@ -27,10 +27,10 @@ function problems_solved = run_validation_TP_CEA_2
                         'tolN', tolN);
     problems_solved = length(results_CT.PD.range);
     % Load results CEA 
-    results_CEA = data_CEA(filename, DisplaySpecies);
+    results_CEA = data_CEA(filename, display_species);
     % Display validation (plot)
     % * Molar fractions
-    fig1 = plot_molar_fractions_validation(results_CT, results_CEA, 'phi', 'Xi', DisplaySpecies);
+    fig1 = plot_molar_fractions_validation(results_CT, results_CEA, 'phi', 'Xi', display_species);
     % * Properties mixture 2
     fig2 = plot_properties_validation(results_CT, results_CEA, {'phi', 'phi', 'phi', 'phi', 'phi', 'phi', 'phi', 'phi'}, {'rho', 'h', 'e', 'g', 'S', 'cP', 'cV', 'gamma_s'}, 'mix2');
     % Save plots

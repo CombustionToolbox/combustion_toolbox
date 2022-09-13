@@ -38,14 +38,14 @@ self = set_prop(self, 'TR', 300, 'pR', 1.01325, 'phi', 0.5:0.02:3);
 % Set constant pressure for products
 self = set_prop(self, 'pP', self.PD.pR.value);
 % Solve Problem
-self = SolveProblem(self, 'HP');
+self = solve_problem(self, 'HP');
 % Save results
 results_complete = self;
 %% INCOMPLETE COMBUSTION
 % Set product species at equilibrium
 self = App('copy', self, 'Soot formation');
 % Solve Problem
-self = SolveProblem(self, 'HP');
+self = solve_problem(self, 'HP');
 % Save results
 results_incomplete = self;
 %% COMPARE RESULTS
@@ -60,6 +60,6 @@ self.Misc.config.labelx = 'Equivalence ratio $\phi$';
 self.Misc.config.labely = 'Temperature $T$ [K]';
 legend_name = {'Complete', 'Incomplete'};
 
-ax = plot_figure(phi, mix2_complete, 'phi', 'T', self.Misc.config, self.PD.CompleteOrIncomplete);
-ax = plot_figure(phi, mix2_incomplete, 'phi', 'T', self.Misc.config, self.PD.CompleteOrIncomplete, ax, legend_name);
+ax = plot_figure('phi', phi, 'T', mix2_complete, 'config', self.Misc.config);
+ax = plot_figure('phi', phi, 'T', mix2_incomplete, 'config', self.Misc.config, 'ax', ax, 'legend', legend_name);
 ax.Legend.Location = 'northeast';

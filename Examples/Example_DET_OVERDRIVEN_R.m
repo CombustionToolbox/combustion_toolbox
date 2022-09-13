@@ -30,6 +30,6 @@ self.PD.ratio_oxidizers_O2 = [78.084, 20.9476, 0.9365, 0.0319] ./ 20.9476;
 overdriven = 1:0.1:5;
 self = set_prop(self, 'overdriven', overdriven);
 %% SOLVE PROBLEM
-self = SolveProblem(self, 'DET_OVERDRIVEN_R');
+self = solve_problem(self, 'DET_OVERDRIVEN_R');
 %% DISPLAY RESULTS (PLOTS)
-postResults(self);
+post_results(self);

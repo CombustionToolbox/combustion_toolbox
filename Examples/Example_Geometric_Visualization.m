@@ -25,9 +25,9 @@ self.PD.N_Fuel = 1;
 %% ADDITIONAL INPUTS (DEPENDS OF THE PROBLEM SELECTED)
 self = set_prop(self, 'pP', self.PD.pR.value, 'TP', 3500); 
 %% SOLVE PROBLEM
-self = SolveProblem(self, 'TP');
+self = solve_problem(self, 'TP');
 %% DISPLAY RESULTS (PLOTS)
-postResults(self);
+post_results(self);
 %% GEOMETRICAL VISUALIZATION
 N_CT = self.PS.strP{1}.N;
 moles_CT = N_CT * self.PS.strP{1}.Xi;

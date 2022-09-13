@@ -1,4 +1,4 @@
-function [mix1, mix2] = cj_detonation(self, mix1, varargin)
+function [mix1, mix2] = det_cj(self, mix1, varargin)
     % Compute pre-shock and post-shock states of a Chapman-Jouguet detonation
     %
     % This method is based on Gordon, S., & McBride, B. J. (1994). NASA reference publication,
@@ -80,7 +80,7 @@ end
 
 function [p2, T2, p2p1, T2T1, STOP] = get_guess(self, mix1, mix2)
     if isempty(mix2)
-        [p2p1, T2T1, ~, ~, Q, STOP] = compute_guess_det(self, mix1, mix1.phi, 1);
+        [p2p1, T2T1, ~, ~, Q, STOP] = det_compute_guess(self, mix1, mix1.phi, 1);
 %             print_guess(T2T1, p2p1, mix1.T, mix1.p, Q)
 
         p2 = p2p1 * convert_bar_to_Pa(mix1.p); % [Pa]

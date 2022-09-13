@@ -39,7 +39,7 @@ for i = length(Aratio):-1:1
     %% ADDITIONAL INPUTS (DEPENDS OF THE PROBLEM SELECTED)
     self = set_prop(self, 'Aratio_c', 2, 'Aratio', Aratio(i));
     self = set_prop(self, 'TR', 298.15, 'pR', 22, 'phi', phi);
-    self = SolveProblem(self, 'ROCKET');
+    self = solve_problem(self, 'ROCKET');
     Z(:, i) = cell2vector(self.PS.strP, 'I_sp');
     OF(:, i) = cell2vector(self.PS.strR, 'OF');
     %% DISPLAY RESULTS (PLOTS)

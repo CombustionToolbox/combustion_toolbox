@@ -11,6 +11,7 @@ function self = Miscellaneous()
     self.timer_0 = [];
     self.timer_loop = [];
     % * Plot
+    self.config.position = [1921, -536, 1080, 1795]; % Default figure position
     self.config.linewidth = 1.8;              % Set linewidth for plots
     self.config.fontsize = 20;                % Set fontsize
     self.config.colorpalette = 'Spectral';    % Set Color palette (see brewermap function for more options)
@@ -41,6 +42,7 @@ function self = Miscellaneous()
     self.FLAG_N_Fuel = true;                  % Flag indicating that the number of moles of the fuel species are defined
     self.FLAG_N_Oxidizer = true;              % Flag indicating that the number of moles of the oxidant species are defined
     self.FLAG_N_Inert = true;                 % Flag indicating that the number of moles of the inert species are defined
+    self.FLAG_WEIGHT = false;                 % Flag indicating that the number of moles of the oxidizer/inert speces are defined from its weight percentage
     self.FLAG_RESULTS = true;                 % Flag to show results in the command window
     self.FLAG_CHECK_INPUTS = false;           % Flag indicating that the algorithm has checked the input variables
     self.FLAG_GUI = false;                    % Flag indicating that the user is using the GUI

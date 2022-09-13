@@ -33,9 +33,9 @@ self.PD.N_Fuel = [20.46, 187.1, 1.775, 2.2554, 13.1, 3.527, 85.59, 0.1499, 0.606
 self = set_prop(self, 'pP', self.PD.pR.value, 'TP', 1050); 
 self.TN.tolN = 1e-30;
 %% SOLVE PROBLEM
-self = SolveProblem(self, 'TP');
+self = solve_problem(self, 'TP');
 %% DISPLAY RESULTS (PLOTS)
-postResults(self);
+post_results(self);
 %% GET RESULTS
 moles_CT = moles(self.PS.strP{1});
 moles_RAND = [1.793e-19; 1.871e2; 2.377e-1; 1.97e-3; 8.143e1; 6.865; 6.641; 9.46e-7; 1.264e-7; 8.411e-11; 4.283e1; 7.562e-1; 0; 0; 0];

@@ -1,11 +1,11 @@
-function problems_solved = run_validation_ROCKET_CEA_18
-    % Run test validation_ROCKET_CEA_18:
+function problems_solved = run_validation_ROCKET_CEA_22
+    % Run test validation_ROCKET_CEA_19:
     % Contrasted with: NASA's Chemical Equilibrium with Applications software
     % Problem type: Equilibrium composition at exit of the rocket nozzle
     % Pressure chamber [bar] = 101.325;
     % Model: Finite Area Chamber (FAC)
     % Area ratio A_c/A_t = 2;
-    % Area ratio A_e/A_t = 3;
+    % Area ratio A_e/A_t = 8;
     % Equivalence ratio [-] = 0.5:0.01:4
     % Initial mixture: LH2 + LOX === H2bLb + O2bLb
     % List of species considered: ListSpecies('HYDROGEN_L')
@@ -13,9 +13,9 @@ function problems_solved = run_validation_ROCKET_CEA_18
     % Inputs
     Fuel = 'H2bLb';
     Aratio_c = 2;
-    Aratio = 3;
+    Aratio = 8;
     prefixDataName = 'H2';
-    filename = {[prefixDataName, '_LOX_ROCKET_FAC1.out'], [prefixDataName, '_LOX_ROCKET_FAC2.out']};
+    filename = {[prefixDataName, '_LOX_A2_ROCKET_FAC1.out'], [prefixDataName, '_LOX_A2_ROCKET_FAC2.out']};
     LS =  'HYDROGEN_L';
     display_species = {'H2O','H2','O2','H','OH','O','O3','HO2','H2O2'};
     tolN = 1e-18;
@@ -38,20 +38,15 @@ function problems_solved = run_validation_ROCKET_CEA_18
     problems_solved = length(results_CT.PD.range);
     
     % Display validation (plot)
+    results_CT.Misc.config.axis = 'tight';
     % * Molar fractions
     fig1 = plot_molar_fractions_validation(results_CT, results_CEA, 'phi', 'Xi', display_species);
     % * Properties mixture Exit - 1
-    fig2 = plot_properties_validation(results_CT, results_CEA, {'phi', 'phi', 'phi', 'phi', 'phi', 'phi', 'phi', 'phi'}, {'T', 'p', 'rho', 'h', 'e', 'g', 'S', 'gamma_s'}, 'mix2');
-    % * Properties mixture Exit - 2
-    fig3 = plot_properties_validation(results_CT, results_CEA, {'phi', 'phi', 'phi', 'phi', 'phi', 'phi', 'phi', 'phi'}, {'cP', 'cV', 'gamma_s', 'dVdT_p', 'dVdp_T', 'sound', 'W', 'u'}, 'mix2');
-    % * Properties mixture Exit - 3
-    fig4 = plot_properties_validation(results_CT, results_CEA, {'phi', 'phi', 'phi', 'phi'}, {'cstar', 'cf', 'I_sp', 'I_vac'}, 'mix2');
+    fig2 = plot_properties_validation(results_CT, results_CEA, {'phi', 'phi', 'phi', 'phi', 'phi', 'phi', 'phi', 'phi', 'phi'}, {'T', 'p', 'h', 'cP', 'cV', 'gamma_s', 'u', 'I_sp', 'I_vac'}, 'mix2');
     % Save plots
     folderpath = strcat(pwd,'\Validations\Figures\');
     stack_trace = dbstack;
     filename = stack_trace.name;
     saveas(fig1, strcat(folderpath, filename, '_molar'), 'svg');
     saveas(fig2, strcat(folderpath, filename, '_properties_1'), 'svg');
-    saveas(fig3, strcat(folderpath, filename, '_properties_2'), 'svg');
-    saveas(fig4, strcat(folderpath, filename, '_properties_3'), 'svg');
 end

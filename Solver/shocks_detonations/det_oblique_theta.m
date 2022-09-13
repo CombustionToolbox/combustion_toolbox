@@ -28,7 +28,7 @@ function [mix1, mix2_1, mix2_2] = det_oblique_theta(self, mix1, overdriven, thet
     % Abbreviations
     TN = self.TN;
     % Compute CJ state
-    [mix1, ~] = cj_detonation(self, mix1);
+    [mix1, ~] = det_cj(self, mix1);
     mix1.cj_speed = mix1.u;
     % Definitions
     a1 = soundspeed(mix1);        % [m/s]
@@ -55,7 +55,7 @@ function [mix1, mix2_1, mix2_2] = det_oblique_theta(self, mix1, overdriven, thet
             % Compute incident normal velocity
             overdriven_n = overdriven * sin(beta_guess); % [-]
             % Obtain post-shock state
-            [~, mix2] = overdriven_detonation(self, mix1, overdriven_n, mix2);
+            [~, mix2] = det_overdriven(self, mix1, overdriven_n, mix2);
             u2n = mix2.v_shock;
             % Compute f0 , df0, and d2f0
             f0 = f0_beta(beta_guess, theta, u2n, u1);

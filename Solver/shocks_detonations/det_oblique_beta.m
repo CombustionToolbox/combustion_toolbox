@@ -20,7 +20,7 @@ function [mix1, mix2] = det_oblique_beta(self, mix1, overdriven, beta, varargin)
     % Unpack input data
     [self, mix1, mix2] = unpack(self, mix1, overdriven, beta, varargin);
     % Compute CJ state
-    [mix1, ~] = cj_detonation(self, mix1);
+    [mix1, ~] = det_cj(self, mix1);
     mix1.cj_speed = mix1.u;
     % Definitions
     a1 = soundspeed(mix1);     % [m/s]
@@ -39,7 +39,7 @@ function [mix1, mix2] = det_oblique_beta(self, mix1, overdriven, beta, varargin)
     
     % Obtain deflection angle, pre-shock state and post-shock states for
     % an oblique detonation
-    [~, mix2] = overdriven_detonation(self, mix1, overdriven_n, mix2);
+    [~, mix2] = det_overdriven(self, mix1, overdriven_n, mix2);
     
     u2n = mix2.v_shock;
     theta = beta - atan(u2n / (u1 .* cos(beta)));

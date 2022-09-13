@@ -11,14 +11,14 @@ function obj = gui_CalculateButtonPushed(obj, event)
         % Set FLAG GUI
         app.Misc.FLAG_GUI = true;
         % Get tolerances and tunning values
-        app = get_tunning_values(obj, app);
+        app = get_tuning_values(obj, app);
         % Get initial conditions
         app = get_input_constrains(obj, app);
         app = gui_get_reactants(obj, event, app);
         % Update GUI terminal
         gui_update_terminal(obj, app, 'start');
         % Solve selected problem
-        app = SolveProblem(app, app.PD.ProblemType);
+        app = solve_problem(app, app.PD.ProblemType);
         % Save results
         [results, obj.temp_results] = save_results(obj, app);
         % Update GUI with the last results of the set
@@ -30,7 +30,7 @@ function obj = gui_CalculateButtonPushed(obj, event)
         % Display results (plots)
         switch lower(obj.Report_type.Value)
             case {'auto'}
-                postResults(app);
+                post_results(app);
         end
         % Set lamp to Done color
         obj.Lamp.Color = obj.color_lamp_done;
@@ -45,8 +45,8 @@ function obj = gui_CalculateButtonPushed(obj, event)
 end
 
 % SUB-PASS FUNCTIONS
-function app = get_tunning_values(obj, app)
-    % Get tolerances and tunning values from GUI and set into app
+function app = get_tuning_values(obj, app)
+    % Get tolerances and tuning values from GUI and set into app
     app.TN.tolN = obj.TraceoptionEditField.Value;
     app.TN.tol0 = obj.RootFindingMethodEditField.Value;
     app.TN.tol_shocks = obj.ShocksandDetonationsEditField.Value;
@@ -74,7 +74,7 @@ function obj = get_listSpecies_gui(obj)
     obj.LS = obj.listbox_Products.Items;
     if isempty(obj.LS)
         % Get default value
-        obj.LS = ListSpecies([], 'Soot Formation');
+        obj.LS = list_species('Soot Formation');
     end
 end
 

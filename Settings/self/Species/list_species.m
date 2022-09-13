@@ -27,24 +27,12 @@ function self = list_species(varargin)
     % Returns:
     %     self (struct): Data of the mixture, conditions, and databases
     
-    % Default values
-    LS = 'SOOT FORMATION'; % Default list of species
     % Unpack inputs
-    if nargin < 2
-        FLAG = true; % Return variable "LS"
-        self = struct();
-        if nargin
-            [self, LS] = unpack_LS(self, varargin{1});
-        end
-    else
-        FLAG = false; % Return variable "self"
-        self = varargin{1};
-        [self, LS] = unpack_LS(self, varargin{2});
-    end
-    
+    [self, LS, FLAG] = unpack(varargin{:});
+    % Set ListSpecies (LS)
     if ~isempty(LS)
         switch upper(LS)
-            case 'COMPLETE'
+            case {'COMPLETE', 'COMPLETE REACTION'}
                 self.S.FLAG_COMPLETE = true;
                 if nargin > 2
                     EquivalenceRatio = varargin{1,3};
@@ -227,5 +215,27 @@ function [self, LS] = unpack_LS(self, variable)
         self.S.LS = variable;
     else
         LS = variable;
+    end
+end
+
+function [self, LS, FLAG] = unpack(varargin)
+    % Default values
+    self = struct();
+    LS = 'SOOT FORMATION'; % Default list of species
+    % Unpack
+    if nargin < 2
+        FLAG = true; % Return variable "LS"
+        if ~iscell(varargin{1})
+            FLAG = false; % Return variable "self"
+            self = varargin{1};
+            return
+        end
+        if nargin
+            [self, LS] = unpack_LS(self, varargin{1});
+        end
+    else
+        FLAG = false; % Return variable "self"
+        self = varargin{1};
+        [self, LS] = unpack_LS(self, varargin{2});
     end
 end

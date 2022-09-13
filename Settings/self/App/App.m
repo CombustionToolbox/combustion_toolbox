@@ -15,7 +15,7 @@ function self = App(varargin)
     %     self (struct): Data of the mixture (initialization - empty), conditions, and databases 
 
     try
-        [self, LS, FLAG_FAST, FLAG_COPY] = unpack_inputs(varargin);
+        [self, LS, FLAG_FAST, FLAG_COPY] = unpack(varargin);
         if ~FLAG_COPY
             self.E = Elements();
             self.S = Species();
@@ -40,7 +40,7 @@ function self = App(varargin)
 end
 
 % SUB-PASS FUNCTIONS
-function [self, LS, FLAG_FAST, FLAG_COPY] = unpack_inputs(varargin)
+function [self, LS, FLAG_FAST, FLAG_COPY] = unpack(varargin)
     varargin = varargin{1,1};
     nargin = length(varargin); % If varargin is empty, by default nargin will return 1, not 0.
     self = struct();

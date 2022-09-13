@@ -225,7 +225,7 @@ function [self, LS, FLAG] = unpack(varargin)
     % Unpack
     if nargin < 2
         FLAG = true; % Return variable "LS"
-        if ~iscell(varargin{1})
+        if ~iscell(varargin{1}) && ~ischar(varargin{1})
             FLAG = false; % Return variable "self"
             self = varargin{1};
             return

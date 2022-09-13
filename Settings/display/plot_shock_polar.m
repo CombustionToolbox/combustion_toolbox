@@ -34,9 +34,9 @@ function ax = set_fixed_figure(fixed_number, config)
     % Generate a figure with a defined object identifier (fixed_number)
     fig = figure(fixed_number);
     ax = gca;
-    set(fig, 'position', [1921 -471 1080 1795]);
+    set(fig, 'position', config.position);
     set(ax, 'LineWidth', config.linewidth, 'FontSize', config.fontsize-2, 'BoxStyle', 'full');
-    grid(ax, 'off'); box(ax, 'off'); hold(ax, 'on'); ax.Layer = 'Top'; axis(ax, 'tight');
+    grid(ax, 'off'); box(ax, 'off'); hold(ax, 'on'); ax.Layer = 'Top'; axis(ax, 'auto');
 end
 
 function ax = plot_shock_polar_pressure(mix1, mix2, config, mix2_case, mix0)

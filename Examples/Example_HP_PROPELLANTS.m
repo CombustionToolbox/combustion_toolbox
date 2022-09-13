@@ -27,6 +27,6 @@ self.PD.S_Oxidizer = {'O2bLb'};
 %% ADDITIONAL INPUTS (DEPENDS OF THE PROBLEM SELECTED)
 self = set_prop(self, 'pP', self.PD.pR.value); 
 %% SOLVE PROBLEM
-self = SolveProblem(self, 'HP');
+self = solve_problem(self, 'HP');
 %% DISPLAY RESULTS (PLOTS)
-postResults(self);
+post_results(self);

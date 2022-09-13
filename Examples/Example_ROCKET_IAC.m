@@ -28,6 +28,6 @@ self.PD.FLAG_IAC = true;
 %% ADDITIONAL INPUTS (DEPENDS OF THE PROBLEM SELECTED)
 self = set_prop(self, 'Aratio', 3);
 %% SOLVE PROBLEM
-self = SolveProblem(self, 'ROCKET');
+self = solve_problem(self, 'ROCKET');
 %% DISPLAY RESULTS (PLOTS)
-postResults(self);
+post_results(self);

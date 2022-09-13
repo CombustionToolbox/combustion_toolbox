@@ -1,4 +1,4 @@
-function [mix1, mix2] = overdriven_detonation(self, mix1, overdriven, varargin)
+function [mix1, mix2] = det_overdriven(self, mix1, overdriven, varargin)
     % Compute pre-shock and post-shock states of an overdriven planar detonation
     %
     % Args:
@@ -19,7 +19,7 @@ function [mix1, mix2] = overdriven_detonation(self, mix1, overdriven, varargin)
     [self, mix1, mix2] = unpack(self, mix1, overdriven, varargin);
     % Compute CJ speed
     if isempty(mix1.cj_speed)
-        [str1_cj, ~] = cj_detonation(self, mix1);
+        [str1_cj, ~] = det_cj(self, mix1);
         mix1.cj_speed = str1_cj.u;
     end
     % Solve overdriven detonation

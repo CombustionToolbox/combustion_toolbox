@@ -31,6 +31,6 @@ self.PD.N_Oxidizer = [78.084, 20.9476, 0.9365, 0.0319] ./ 20.9476;
 Mach_number = 6;
 self = set_prop(self, 'u1', 301.8203 * Mach_number, 'theta', 25);
 %% SOLVE PROBLEM
-self = SolveProblem(self, 'SHOCK_POLAR_R');
+self = solve_problem(self, 'SHOCK_POLAR_R');
 %% DISPLAY RESULTS (PLOTS)
-postResults(self);
+post_results(self);

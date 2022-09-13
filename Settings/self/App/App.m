@@ -15,7 +15,7 @@ function self = App(varargin)
     %     self (struct): Data of the mixture (initialization - empty), conditions, and databases 
 
     try
-        [self, LS, FLAG_FAST, FLAG_COPY] = initialize(varargin);
+        [self, LS, FLAG_FAST, FLAG_COPY] = unpack_inputs(varargin);
         if ~FLAG_COPY
             self.E = Elements();
             self.S = Species();
@@ -29,7 +29,7 @@ function self = App(varargin)
         end
         self = constructor(self, LS, FLAG_FAST);
         if ~nargin || ~isa(varargin{1,1}, 'combustion_toolbox_app') || (~strcmpi(varargin{1,1}, 'fast') && nargin < 4) || (~strcmpi(varargin{1,1}, 'copy') && nargin < 3) 
-            self = Initialize(self);
+            self = initialize(self);
         end
     catch ME
       errorMessage = sprintf('Error in function %s() at line %d.\n\nError Message:\n%s', ...
@@ -40,7 +40,7 @@ function self = App(varargin)
 end
 
 % SUB-PASS FUNCTIONS
-function [self, LS, FLAG_FAST, FLAG_COPY] = initialize(varargin)
+function [self, LS, FLAG_FAST, FLAG_COPY] = unpack_inputs(varargin)
     varargin = varargin{1,1};
     nargin = length(varargin); % If varargin is empty, by default nargin will return 1, not 0.
     self = struct();
@@ -62,6 +62,7 @@ function [self, LS, FLAG_FAST, FLAG_COPY] = initialize(varargin)
             self = varargin{1,2};
             if nargin == 3
                 LS = varargin{1,3};
+                self.S.FLAG_COMPLETE = false;
             end
             return
         end
@@ -77,6 +78,8 @@ function [self, LS, FLAG_FAST, FLAG_COPY] = initialize(varargin)
 end
 
 function self = constructor(self, LS, FLAG_FAST)
+    % Timer
+    self.Misc.timer_0 = tic;
     % FLAG_GUI
     self = check_GUI(self);
     % Set Database
@@ -84,14 +87,12 @@ function self = constructor(self, LS, FLAG_FAST)
     self = set_DB(self, FLAG_REDUCED_DB, FLAG_FAST);
     % Set ListSpecies
     if ~isempty(LS)
-        self = ListSpecies(self, LS);
+        self = list_species(self, LS);
     else
-        self = ListSpecies(self);
+        self = list_species(self);
     end
     % Set Contained elements
-    self = ContainedElements(self);
-    % Timer
-    self.Misc.timer_0 = tic;
+    self = contained_elements(self);
 end
 
 function self = check_GUI(self)

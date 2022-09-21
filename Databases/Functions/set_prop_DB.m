@@ -12,6 +12,10 @@ function value = set_prop_DB(LS, property, DB)
     
     for i=length(LS):-1:1
         species = LS{i};
-        value(1, i) = DB.(species).(property);
+        try
+            value(1, i) = DB.(species).(property);
+        catch
+            value(1, i) = 0;
+        end
     end
 end

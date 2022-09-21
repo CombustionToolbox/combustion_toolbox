@@ -85,6 +85,8 @@ function self = constructor(self, LS, FLAG_FAST)
     % Set Database
     FLAG_REDUCED_DB = false;
     self = set_DB(self, FLAG_REDUCED_DB, FLAG_FAST);
+    % Assign additional inputs (critical temperature, critical pressure, acentric factor)
+    self.DB = assign_DB_PR_eos(self.DB);
     % Set ListSpecies
     if ~isempty(LS)
         self = list_species(self, LS);

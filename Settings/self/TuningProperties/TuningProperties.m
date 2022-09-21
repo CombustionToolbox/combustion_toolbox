@@ -16,10 +16,11 @@ function self = TuningProperties()
     %     root_T0 (float):        Guess T[K] if it's of previous range - root finding method        (default: 3000)
     %     tol_shocks (float):     Tolerance of shocks routines                                      (default: 5e-05)
     %     it_shocks (float):      Max number of iterations - shocks and detonations                 (default: 50)
-    %     volume_ratio (float):   Initial guess volume ratio shocks                                 (default: 5)
+    %     Mach_thermo (float):    Preshock Mach number above which T2_guess will be computed considering h2 = h1 + u1^2 / 2 (default: 2)
     %     tol_oblique (float):    Tolerance oblique shocks                                          (default: 1e-03)
     %     it_oblique (float):     Max number of iterations - oblique shocks                         (default: 20)
     %     N_points_polar (float): Number of points to compute shock polar                           (default: 100)
+    %     it_guess_det (float);   Max number of iterations - guess detonation                       (default: 5)
     %     tol_rocket (float):     Tolerance rocket performance                                      (default: 1e-04)
     %     it_rocket (float):      Max number of iterations - rocket performance                     (default: 10)
     %
@@ -48,11 +49,15 @@ function self = TuningProperties()
     % * Shocks and detonations 
     self.tol_shocks = 5e-5;     % Tolerance of shocks routines
     self.it_shocks = 50;        % Max number of iterations - shocks and detonations
-    self.volume_ratio = 5;      % Initial guess ratio shocks
+    self.Mach_thermo = 2;       % Preshock Mach number above which T2_guess will be computed considering h2 = h1 + u1^2 / 2
     self.tol_oblique = 1e-3;    % Tolerance oblique shocks
     self.it_oblique = 20;       % Max number of iterations - oblique shocks
     self.N_points_polar = 100;  % Number of points to compute shock polar
+    self.it_guess_det = 5;      % Max number of iterations - guess detonation
     % * Rocket propellant performance
     self.tol_rocket = 1e-4;     % Tolerance rocket performance
     self.it_rocket = 10;        % Max number of iterations - rocket performance
+    % * Equation of State (EoS)
+    self.tol_eos = 1e-4;        % Tolerance equation of state (EoS)
+    self.it_eos = 30;           % Max number of iterations - equation of state (EoS)
 end

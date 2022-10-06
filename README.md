@@ -68,8 +68,8 @@ This project is also part of the PhD of [Alberto Cuadra-Lara](https://www.acuadr
 We have several examples of what Combustion Toolbox can do. Here we show a preview of the GUI and some results obtained from Combustion Toolbox.
 
 <p align="left">
-    <img src="https://github.com/AlbertoCuadra/combustion_toolbox/blob/master/GUI/Snapshots/example_HP_GUI.gif" width="312">
-    <img src="https://github.com/AlbertoCuadra/combustion_toolbox/blob/master/GUI/Snapshots/example_HP.gif" width="350">
+    <img src="https://github.com/AlbertoCuadra/combustion_toolbox/blob/master/GUI/Snapshots/example_HP_GUI.gif" width="342">
+    <img src="https://github.com/AlbertoCuadra/combustion_toolbox/blob/master/GUI/Snapshots/example_HP.gif" width="370">
 </p>
 
 **Figure 1:** *Calculation of the adiabatic temperature and equilibrium composition at constant pressure (e.g., 1.01325 bar) for lean to rich CH4-air mixtures at standard conditions, a set of 26 species considered and a set of equivalence ratios phi contained in (0.5, 4) using the GUI (left) and the desktop enviroment (right)*.

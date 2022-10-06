@@ -2,7 +2,6 @@
 ---
 cff-version: 1.2.0
 message: "If you use this software, please cite it using these metadata."
-repository-code: https://github.com/AlbertoCuadra/combustion_toolbox
 type: misc
 license: "GPL-3.0"
 title: "Combustion Toolbox: A MATLAB-GUI based open-source tool for solving gaseous combustion problems"
@@ -12,6 +11,8 @@ date-released: 2022-09-03
 url: "https://combustion-toolbox-website.readthedocs.io"
 abstract:
     "
+    [Website](https://combustion-toolbox-website.readthedocs.io)
+    
     ## Main features
       - The code stems from the minimization of the free energy of the system by using Lagrange multipliers combined with a Newton-Raphson method, upon condition that initial gas properties are defined by two functions of states (e.g., temperature and pressure)
       - When temperature is not externally imposed, the code retrieves a routine also based on Newton-Raphson method to find the equilibrium temperature

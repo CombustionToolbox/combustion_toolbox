@@ -2,7 +2,7 @@
     <img alt="UC3M" style="border-width:0" src="https://github.com/AlbertoCuadra/combustion_toolbox/blob/master/GUI/Icons/logo.svg" width="1500"/></a>
 </p>
 
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.6396748.svg)](https://doi.org/10.5281/zenodo.6396748)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.5554911.svg)](https://doi.org/10.5281/zenodo.5554911)
 [![File Exchange](https://www.mathworks.com/matlabcentral/images/matlab-file-exchange.svg)](https://es.mathworks.com/matlabcentral/fileexchange/101088-combustion-toolbox)
 [![CI](https://github.com/AlbertoCuadra/combustion_toolbox/actions/workflows/CI.yml/badge.svg)](https://github.com/AlbertoCuadra/combustion_toolbox/actions/workflows/CI.yml)
 [![CD](https://github.com/AlbertoCuadra/combustion_toolbox/actions/workflows/CD.yml/badge.svg)](https://github.com/AlbertoCuadra/combustion_toolbox/actions/workflows/CD.yml)
@@ -11,27 +11,24 @@
 [![license](https://img.shields.io/github/license/AlbertoCuadra/combustion_toolbox)](https://www.gnu.org/licenses/gpl-3.0.html)
 
 
-
 <p align="center">
-  <b>A MATLAB-GUI based open-source tool for solving gaseous combustion problems.</b>
+  <b>A MATLAB-GUI based open-source tool for solving gaseous combustion problems</b>
 </p>
 
 ---
 :information_source: **NOTE**
-- Combustion Toolbox Website is live! Here is the link https://combustion-toolbox-website.readthedocs.io/en/latest/
-- There is a very early version in [Python](https://github.com/AlbertoCuadra/Combustion-PyToolbox)
+- Combustion Toolbox Website is live! Here is the link https://combustion-toolbox-website.readthedocs.io
+- There is a very early version in [Python](https://github.com/AlbertoCuadra/combustion_pytoolbox)
 ---
 
-# Features
-
-Combustion Toolbox is a a MATLAB-GUI based tool for solving gaseous combustion problems.
-Features
+# Main features
   - The code stems from the minimization of the free energy of the system by using Lagrange multipliers combined with a Newton-Raphson method, upon condition that initial gas properties are defined by two functions of states (e.g., temperature and pressure)
   - When temperature is not externally imposed, the code retrieves a routine also based on Newton-Raphson method to find the equilibrium temperature
   - Solve processes that involve strong changes in the dynamic pressure, such as detonations and shock waves in the steady state
   - Find the equilibrium conditions of the different phenomena undergoing behind the shock: molecular vibrational excitation up to dissociation, and electronic excitation up to ionization, thereby providing the `properties of the gas in plasma state` within the temperature range given by the NASA’s 9-coefficient polynomial fits.
+  - Calculate the chemical equilibrium composition of a mixture by selecting which species can react or remain chemically frozen (inert).
   - The corresponding thermodynamic properties of the species are modelled with `NASA’s 9-coefficient polynomial fits`, which ranges `up to 20000 K`, and the ideal gas equation of state
-  - Results are in `excellent agreement with NASA’s Chemical Equilibrium with Applications (CEA) program`, CANTERA and Caltech’s Shock and Detonation Toolbox
+  - Results are in `excellent agreement with NASA’s Chemical Equilibrium with Applications (CEA) program`, CANTERA and Caltech’s Shock and Detonation Toolbox, and TEA
 * `Chemical equilibrium problems`
   - TP: Equilibrium composition at defined temperature and pressure
   - HP: Adiabatic temperature and composition at constant pressure
@@ -122,7 +119,7 @@ See also the list of [contributors](https://github.com/AlbertoCuadra/combustion_
 ```bibtex
 @misc{combustiontoolbox,
     author = "Cuadra, A and Huete, C and Vera, M",
-    title = "Combustion Toolbox: A MATLAB-GUI based open-source tool for solving combustion problems",
+    title = "Combustion Toolbox: A MATLAB-GUI based open-source tool for solving gaseous combustion problems",
     year = 2022,
     note = "Version 0.9.93",
     doi = {https://doi.org/10.5281/zenodo.5554911}

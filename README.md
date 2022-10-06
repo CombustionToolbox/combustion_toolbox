@@ -21,6 +21,13 @@
 - There is a very early version in [Python](https://github.com/AlbertoCuadra/combustion_pytoolbox)
 ---
 
+
+<p align="left">
+    <img src="https://github.com/AlbertoCuadra/combustion_toolbox/blob/master/GUI/Snapshots/example_HP_GUI.gif" width="342">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp
+    <img src="https://github.com/AlbertoCuadra/combustion_toolbox/blob/master/GUI/Snapshots/example_HP.gif" width="370">
+</p>
+
+
 # Main features
   - The code stems from the minimization of the free energy of the system by using Lagrange multipliers combined with a Newton-Raphson method, upon condition that initial gas properties are defined by two functions of states (e.g., temperature and pressure)
   - When temperature is not externally imposed, the code retrieves a routine also based on Newton-Raphson method to find the equilibrium temperature
@@ -68,11 +75,10 @@ This project is also part of the PhD of [Alberto Cuadra-Lara](https://www.acuadr
 We have several examples of what Combustion Toolbox can do. Here we show a preview of the GUI and some results obtained from Combustion Toolbox.
 
 <p align="left">
-    <img src="https://github.com/AlbertoCuadra/combustion_toolbox/blob/master/GUI/Snapshots/example_HP_GUI.gif" width="342">
-    <img src="https://github.com/AlbertoCuadra/combustion_toolbox/blob/master/GUI/Snapshots/example_HP.gif" width="370">
+    <img src="https://github.com/AlbertoCuadra/combustion_toolbox/blob/master/GUI/Snapshots/snapshot_1.svg" width="500">
 </p>
 
-**Figure 1:** *Calculation of the adiabatic temperature and equilibrium composition at constant pressure (e.g., 1.01325 bar) for lean to rich CH4-air mixtures at standard conditions, a set of 26 species considered and a set of equivalence ratios phi contained in (0.5, 4) using the GUI (left) and the desktop enviroment (right)*.
+**Figure 1:** *Current state of the GUI*.
 
 <p align="left">
     <img src="https://github.com/AlbertoCuadra/combustion_toolbox/blob/master/Validations/Figures/Hugoniot_benchmarking.svg" width="400">

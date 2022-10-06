@@ -11,7 +11,6 @@
 [![license](https://img.shields.io/github/license/AlbertoCuadra/combustion_toolbox)](https://www.gnu.org/licenses/gpl-3.0.html)
 
 
-
 <p align="center">
   <b>A MATLAB-GUI based open-source tool for solving gaseous combustion problems</b>
 </p>
@@ -29,12 +28,7 @@
   - Find the equilibrium conditions of the different phenomena undergoing behind the shock: molecular vibrational excitation up to dissociation, and electronic excitation up to ionization, thereby providing the `properties of the gas in plasma state` within the temperature range given by the NASA’s 9-coefficient polynomial fits.
   - Calculate the chemical equilibrium composition of a mixture by selecting which species can react or remain chemically frozen (inert).
   - The corresponding thermodynamic properties of the species are modelled with `NASA’s 9-coefficient polynomial fits`, which ranges `up to 20000 K`, and the ideal gas equation of state
-  - Results are in `excellent agreement with NASA’s Chemical Equilibrium with Applications (CEA) program`, CANTERA, Caltech’s Shock and Detonation Toolbox, and TEA
-  - All the routines and computations are encapsulated in a more comprehensive and user-friendly GUI
-  - The code is in it’s transition to Python
-  - Display predefined plots (e.g., molar fraction vs equilence ratio)
-  - Export results in a spreadsheet (requires Excel)
-  - Export results as a .mat format
+  - Results are in `excellent agreement with NASA’s Chemical Equilibrium with Applications (CEA) program`, CANTERA and Caltech’s Shock and Detonation Toolbox, and TEA
 * `Chemical equilibrium problems`
   - TP: Equilibrium composition at defined temperature and pressure
   - HP: Adiabatic temperature and composition at constant pressure
@@ -49,7 +43,7 @@
   - Chapman-Jouguet detonations and overdriven detonations
   - Reflected detonations
   - Oblique shocks/detonations
-  - Shock polar for incident and reflected states
+  - Shock/detonation polar curves for incident and reflected states
   - Hugoniot curves
   - Ideal jump conditions for a given adiabatic index and pre-shock Mach number
 * `Rocket propellant performance assuming:`
@@ -64,17 +58,21 @@
 This project is also part of the PhD of [Alberto Cuadra-Lara](https://www.acuadralara.com/).
 
 # Start here!
-The [tutorial](https://combustion-toolbox-website.readthedocs.io/en/latest/tutorial.html) will help you get started using Combustion Toolbox on your pc.
+
+* The [tutorial](https://combustion-toolbox-website.readthedocs.io/en/latest/tutorial.html) will help you get started using Combustion Toolbox on your pc.
+* See [examples]() of Combustion Toolbox applications.
+* Check the [documentation]() of almost every functions.
 
 # Gallery
 
 We have several examples of what Combustion Toolbox can do. Here we show a preview of the GUI and some results obtained from Combustion Toolbox.
 
 <p align="left">
-    <img src="https://github.com/AlbertoCuadra/combustion_toolbox/blob/master/GUI/Snapshots/snapshot_1.svg" width="500">
+    <img src="https://github.com/AlbertoCuadra/combustion_toolbox/blob/master/GUI/Snapshots/example_HP_GUI.gif" width="500">
+    <img src="https://github.com/AlbertoCuadra/combustion_toolbox/blob/master/GUI/Snapshots/example_HP.gif" width="500">
 </p>
 
-**Figure 1:** *Snapshot of the GUI*.
+**Figure 1:** *Calculation of the adiabatic temperature and equilibrium composition at constant pressure (e.g., 1.01325 bar) for lean to rich CH4-air mixtures at standard conditions, a set of 26 species considered and a set of equivalence ratios phi contained in (0.5, 4) using the GUI (left) and the desktop enviroment (right)*.
 
 <p align="left">
     <img src="https://github.com/AlbertoCuadra/combustion_toolbox/blob/master/Validations/Figures/Hugoniot_benchmarking.svg" width="400">

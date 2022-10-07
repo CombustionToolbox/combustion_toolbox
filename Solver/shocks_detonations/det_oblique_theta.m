@@ -30,11 +30,12 @@ function [mix1, mix2_1, mix2_2] = det_oblique_theta(self, mix1, overdriven, thet
     % Compute CJ state
     [mix1, ~] = det_cj(self, mix1);
     mix1.cj_speed = mix1.u;
+    % Set initial velocity for the given overdriven factor
+    mix1.u = mix1.u * overdriven; % [m/s]
     % Definitions
     a1 = soundspeed(mix1);        % [m/s]
     u1 = mix1.u;                  % [m/s]
     M1 = u1 / a1;                 % [-]
-    overdriven = mix1.overdriven; % [-]
     theta = mix1.theta * pi/180;  % [rad]
     beta_min = asin(1/M1);        % [rad]
     beta_max = pi/2;              % [rad]
@@ -77,6 +78,7 @@ function [mix1, mix2_1, mix2_2] = det_oblique_theta(self, mix1, overdriven, thet
             beta_guess = beta;
         end
         
+        a2 = mix2.sound * csc(beta - theta);
         u2 = u2n * csc(beta - theta);
         M2 = u2 / soundspeed(mix2);
     
@@ -92,6 +94,7 @@ function [mix1, mix2_1, mix2_2] = det_oblique_theta(self, mix1, overdriven, thet
         mix2.theta = theta * 180/pi; % [deg]
         mix2.beta_min = beta_min * 180/pi; % [deg]
         mix2.beta_max = beta_max * 180/pi; % [deg]
+        mix2.sound = a2; % [m/s] 
         mix2.u = u2; % [m/s]
         mix2.un = u2n; % [m/s]
         mix2.v_shock = u2; % [m/s]

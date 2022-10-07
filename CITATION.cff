@@ -9,6 +9,7 @@ version: 0.9.93
 doi: 10.5281/zenodo.5554911
 date-released: 2022-09-03
 url: "https://combustion-toolbox-website.readthedocs.io"
+how-published: "https://combustion-toolbox-website.readthedocs.io"
 abstract:
     "
     [Website](https://combustion-toolbox-website.readthedocs.io)

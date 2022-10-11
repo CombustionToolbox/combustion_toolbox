@@ -80,8 +80,12 @@ end
 
 function [p2, T2, p2p1, T2T1, STOP] = get_guess(self, mix1, mix2)
     if isempty(mix2)
-        [p2p1, T2T1, ~, ~, Q, STOP] = det_compute_guess(self, mix1, mix1.phi, 1);
+        try
+            [p2p1, T2T1, ~, ~, Q, STOP] = det_compute_guess(self, mix1, mix1.phi, 1);
 %             print_guess(T2T1, p2p1, mix1.T, mix1.p, Q)
+        catch
+            [p2p1, T2T1, STOP] = det_compute_guess_CEA(self, mix1);
+        end
 
         p2 = p2p1 * convert_bar_to_Pa(mix1.p); % [Pa]
         T2 = T2T1 * mix1.T;       % [K]
@@ -111,10 +115,10 @@ function [J, b, guess_moles] = update_system(self, mix1, p2, T2, R0, guess_moles
     % Calculate frozen state given T & p
     [mix2, r2, dVdT_p, dVdp_T] = state(self, mix1, T2, p2, guess_moles);
     
-    W2 = mix2.W * 1e-3;
+    W2 = mix2.W * 1e-3; % [kg/mol]
     h2 = mix2.h / mix2.mi * 1e3; % [J/kg]
     cP2 = mix2.cP / mix2.mi; % [J/(K-kg)]
-    gamma2_s = mix2.gamma_s;
+    gamma2_s = mix2.gamma_s; % [-]
     
     J1 = p1/p2 + r2/r1 * gamma2_s * dVdp_T;
     J2 =         r2/r1 * gamma2_s * dVdT_p;

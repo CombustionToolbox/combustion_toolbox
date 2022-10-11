@@ -20,11 +20,11 @@ function [P, T, M1, R, Q, STOP] = det_compute_guess(self, mix1, phi, overdriven)
     %     - Q (float):          Dimensionless Heat release []
     %     - STOP (float):       Relative error [-] 
 
-    % Paramenters
+    % Parameters
     gamma1 = mix1.gamma;
     a1     = mix1.sound;
     DeltaQ = 0;
-    itMax  = 5;
+    itMax  = self.TN.it_guess_det;
     % Compute moles considering COMPLETE combustion
     [N_2_cc, LS] = complete_combustion(self, mix1, phi);
     [hfi_1, N_1, Yi_fuel, W_fuel] = compute_hfi_1_molar(self);

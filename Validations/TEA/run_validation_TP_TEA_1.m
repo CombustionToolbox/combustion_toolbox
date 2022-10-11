@@ -14,8 +14,12 @@ function problems_solved = run_validation_TP_TEA_1
     % Last update April 15 2022
     
     % Inputs
-    load Validation_TP_TEA_1 Pressure Temp n_H n_He n_C n_N n_O results_TEA
-    Fuel = {'H', 'He', 'C', 'N', 'O'}; N_Fuel = [n_H, n_He, n_C, n_N, n_O];
+    load Validation_TP_TEA_1 Pressure Temp results_TEA
+
+    metallicity = 1;
+    Fuel = {'H', 'He', 'C', 'N', 'O'};
+    N_Fuel = abundances2moles(Fuel, 'abundances.txt', metallicity);
+
     LS = {'C', 'CH4', 'CO2', 'CO', 'H2', 'H', 'H2O', 'He', 'N2', 'N', 'NH3', 'O'};
     T = linspace(Temp(1), Temp(end), 300);
     p = logspace(-5, 2, 300);

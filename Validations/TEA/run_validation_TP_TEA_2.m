@@ -18,9 +18,10 @@ function problems_solved = run_validation_TP_TEA_2
     
     % Inputs
     load Validation_TP_TEA_2 Pressure Temp results_TEA
+
+    metallicity = 1;
     Fuel = {'H', 'He', 'C', 'N', 'O', 'S'};
-    Xi_abundances = abundances2moles(Fuel, 'abundances_WASP43b_1xsolar.txt')';
-    N_Fuel = Xi_abundances;
+    N_Fuel = abundances2moles(Fuel, 'abundances.txt', metallicity);
     Oxidizer = {};
     LS = {'C2H2_acetylene', 'C2H4', 'C', 'CH4', 'CO2', 'CO', 'H2', 'H2O', 'H2S', 'H', 'HCN', 'He', 'HS_M', 'N2', 'N', 'NH3', 'O', 'S'};
     

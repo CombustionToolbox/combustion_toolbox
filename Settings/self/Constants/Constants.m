@@ -7,7 +7,7 @@ function self = Constants()
     % Description
     self.description = "Constants and tolerances";
     % Variables
-    [self.vernum, self.verdate] = get_combustion_toolbox_version();
+    [self.release, self.date] = get_combustion_toolbox_version();
     self.R0 = 8.31446261815324; % [J/(K mol)]. Universal gas constant
     self.gravity = 9.80665;     % [m/s2]. Standard gravity
     self.A0.description = "Stoichiometric Matrix: number of atoms of each element contained in each species";

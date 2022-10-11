@@ -13,10 +13,11 @@ function position = get_monitor_positions(varargin)
         % Get position for the given monitor
         try
             monitor_id = varargin{1};
+            position = position_monitors(monitor_id, :);
         catch
             monitor_id = 1;
+            position = position_monitors(monitor_id, :);
         end
-        position = position_monitors(monitor_id, :);
     else
         % Find main monitor
         ind_main = find(position_monitors == 1, 1);

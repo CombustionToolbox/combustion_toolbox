@@ -8,7 +8,7 @@ function [abundances, elements] = read_abundances(filename)
     % Returns:
     %    Tuple containing:
     %
-    %    * abundances (float): Vector with the solar abundances
+    %    * abundances (float): Vector with the logarithmic base 10 solar abundances
     %    * elements (cell): List with the given elements
     
     % Open file

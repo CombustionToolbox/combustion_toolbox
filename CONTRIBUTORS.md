@@ -1,5 +1,6 @@
 # CONTRIBUTORS
-| Contributors            | 
-| ----------------------- | 
-| Samuel Delbarre         |
+| Contributors                   | 
+| ------------------------------ | 
+| Samuel Delbarre                |
+| Carlos Aguilar Borasteros      |
 

@@ -33,9 +33,10 @@ function DB_master = generate_DB_master(varargin)
     else
         fprintf('NASA database already loaded\n')
     end
-    end
+end
 
-    function DB_master = get_DB_master(thermoFile)
+% SUB-PASS FUNCTIONS
+function DB_master = get_DB_master(thermoFile)
     fid=fopen(thermoFile); % loads full database
     clc
     switch thermoFile
@@ -46,9 +47,8 @@ function DB_master = generate_DB_master(varargin)
     end
 
     fprintf(msg)
-    ctLine=0;
-    ctRefElm=0;
-    while ctLine<1e4
+    line = 0;
+    while line < 1e4
         tline = fgetl(fid);
         if ~ischar(tline)
             break
@@ -66,47 +66,48 @@ function DB_master = generate_DB_master(varargin)
         if contains(tline,'END')
             continue
         end
-        ctLine=ctLine+1;
-        str.FullName =  sscanf(tline(1:16),'%s');
-        str.name = FullName2name(str.FullName);
-        str.comments = tline(19:end);
+        line=line+1;
+        temp.FullName =  sscanf(tline(1:16),'%s');
+        temp.name = FullName2name(temp.FullName);
+        temp.comments = tline(19:end);
         tline = fgetl(fid);
-        str.ctTInt = str2double(tline(1:2));
-        str.txRefCode = tline(4:9);
-        str.txFormula = tline(11:50);
-        str.phase = str2double(tline(51:52));
-        str.mm = str2double(tline(53:65));
-        str.Hf0 = str2double(tline(66:80));
+        temp.ctTInt = str2double(tline(1:2));
+        temp.txRefCode = tline(4:9);
+        temp.txFormula = tline(11:50);
+        temp.phase = str2double(tline(51:52));
+        temp.mm = str2double(tline(53:65));
+        temp.Hf0 = str2double(tline(66:80));
         
-        if str.ctTInt ==0
+        if temp.ctTInt == 0
             tline = fgetl(fid);
-            str.tRange = str2num(tline(1:22));
-            str.tExponents = str2num(tline(24:63));
-            str.Hf298Del0 = str2double(tline(66:end));
+            temp.tRange = str2num(tline(1:22)); %#ok<ST2NM> 
+            temp.tExponents = str2num(tline(24:63)); %#ok<ST2NM> 
+            temp.Hf298Del0 = str2double(tline(66:end));
         end
-        for ctInterval=1:str.ctTInt
+        for ctInterval=1:temp.ctTInt
             tline = fgetl(fid);
-            str.tRange{ctInterval} = str2num(tline(1:22));
-            str.tExponents{ctInterval} = str2num(tline(24:63));
-            str.Hf298Del0{ctInterval} = str2double(tline(66:end));
+            temp.tRange{ctInterval} = str2num(tline(1:22)); %#ok<ST2NM> 
+            temp.tExponents{ctInterval} = str2num(tline(24:63)); %#ok<ST2NM>
+            temp.Hf298Del0{ctInterval} = str2double(tline(66:end));
             
             tline = fgetl(fid);
-            a1 = str2num(tline(1:16));
-            a2 = str2num(tline((1:16)+16));
-            a3 = str2num(tline((1:16)+32));
-            a4 = str2num(tline((1:16)+48));
-            a5 = str2num(tline((1:16)+64));
+            a1 = str2num(tline(1:16)); %#ok<ST2NM> 
+            a2 = str2num(tline((1:16)+16)); %#ok<ST2NM> 
+            a3 = str2num(tline((1:16)+32)); %#ok<ST2NM> 
+            a4 = str2num(tline((1:16)+48)); %#ok<ST2NM> 
+            a5 = str2num(tline((1:16)+64)); %#ok<ST2NM> 
+
             tline = fgetl(fid);
-            a6 = str2num(tline(1:16));
-            a7 = str2num(tline((1:16)+16));
+            a6 = str2num(tline(1:16)); %#ok<ST2NM> 
+            a7 = str2num(tline((1:16)+16)); %#ok<ST2NM> 
             a8 = 0; %str2num(tline((1:16)+32));
-            b1 = str2num(tline((1:16)+48));
-            b2 = str2num(tline((1:16)+64));
-            str.a{ctInterval}=[a1 a2 a3 a4 a5 a6 a7 a8];
-            str.b{ctInterval}=[b1 b2];
+            b1 = str2num(tline((1:16)+48)); %#ok<ST2NM> 
+            b2 = str2num(tline((1:16)+64)); %#ok<ST2NM> 
+            temp.a{ctInterval} = [a1 a2 a3 a4 a5 a6 a7 a8];
+            temp.b{ctInterval} = [b1 b2];
         end
-        DB_master.(str.name)=str;
-        clear str
+        DB_master.(temp.name)=temp;
+        clear temp
     end
 
     fclose(fid);

@@ -26,11 +26,6 @@ function ax = plot_figure(x_field, x_var, y_field, y_var, varargin)
                 config.linestyle = varargin{i+1};
             case 'linewidth'
                 config.linewidth = varargin{i+1};
-            case 'color'
-                config.colorline = varargin{i+1};
-                if ~isfloat(config.colorline)
-                    FLAG_COLOR_NEW = true;
-                end
             case 'fontsize'
                 config.fontsize = varargin{i+1};
             case 'title'
@@ -41,6 +36,19 @@ function ax = plot_figure(x_field, x_var, y_field, y_var, varargin)
                 config.labelx = varargin{i+1};
             case {'label_type'}
                 config.label_type = varargin{i+1};
+            case {'xscale'}
+                config.xscale = varargin{i+1};
+            case {'yscale'}
+                config.yscale = varargin{i+1};
+            case {'xdir'}
+                config.xdir = varargin{i+1};
+            case {'ydir'}
+                config.ydir = varargin{i+1};
+            case 'color'
+                config.colorline = varargin{i+1};
+                if ~isfloat(config.colorline)
+                    FLAG_COLOR_NEW = true;
+                end
         end
     end
     % Create figure (if necessary)

@@ -21,6 +21,13 @@
 - There is a very early version in [Python](https://github.com/AlbertoCuadra/combustion_pytoolbox)
 ---
 
+
+<p align="left">
+    <img src="https://github.com/AlbertoCuadra/combustion_toolbox/blob/master/GUI/Snapshots/example_HP_GUI.gif" width="342">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp
+    <img src="https://github.com/AlbertoCuadra/combustion_toolbox/blob/master/GUI/Snapshots/example_HP.gif" width="370">
+</p>
+
+
 # Main features
   - The code stems from the minimization of the free energy of the system by using Lagrange multipliers combined with a Newton-Raphson method, upon condition that initial gas properties are defined by two functions of states (e.g., temperature and pressure)
   - When temperature is not externally imposed, the code retrieves a routine also based on Newton-Raphson method to find the equilibrium temperature
@@ -40,7 +47,7 @@
   - Pre-shock and post shock states
   - Equilibrium or frozen composition
   - Incident or reflected shocks
-  - Chapman-Jouguet detonations and overdriven detonations
+  - Chapman-Jouguet detonations, overdriven detonations, and underdriven detonations
   - Reflected detonations
   - Oblique shocks/detonations
   - Shock/detonation polar curves for incident and reflected states
@@ -60,19 +67,18 @@ This project is also part of the PhD of [Alberto Cuadra-Lara](https://www.acuadr
 # Start here!
 
 * The [tutorial](https://combustion-toolbox-website.readthedocs.io/en/latest/tutorial.html) will help you get started using Combustion Toolbox on your pc.
-* See [examples]() of Combustion Toolbox applications.
-* Check the [documentation]() of almost every functions.
+* See [examples](https://combustion-toolbox-website.readthedocs.io/en/latest/examples.html) of Combustion Toolbox applications.
+* Check the [documentation](https://combustion-toolbox-website.readthedocs.io/en/latest/documentation/index.html) of almost every functions.
 
 # Gallery
 
 We have several examples of what Combustion Toolbox can do. Here we show a preview of the GUI and some results obtained from Combustion Toolbox.
 
 <p align="left">
-    <img src="https://github.com/AlbertoCuadra/combustion_toolbox/blob/master/GUI/Snapshots/example_HP_GUI.gif" width="500">
-    <img src="https://github.com/AlbertoCuadra/combustion_toolbox/blob/master/GUI/Snapshots/example_HP.gif" width="500">
+    <img src="https://github.com/AlbertoCuadra/combustion_toolbox/blob/master/GUI/Snapshots/snapshot_1.svg" width="500">
 </p>
 
-**Figure 1:** *Calculation of the adiabatic temperature and equilibrium composition at constant pressure (e.g., 1.01325 bar) for lean to rich CH4-air mixtures at standard conditions, a set of 26 species considered and a set of equivalence ratios phi contained in (0.5, 4) using the GUI (left) and the desktop enviroment (right)*.
+**Figure 1:** *Current state of the GUI*.
 
 <p align="left">
     <img src="https://github.com/AlbertoCuadra/combustion_toolbox/blob/master/Validations/Figures/Hugoniot_benchmarking.svg" width="400">
@@ -103,6 +109,8 @@ Thank you for testing Combustion Toolbox!
 # Acknowledgements
 * Combustion Toolbox's color palette is obtained from the following repository: Stephen (2021). ColorBrewer: Attractive and Distinctive Colormaps (https://github.com/DrosteEffect/BrewerMap), GitHub. Retrieved December 3, 2021.
 * For validations, Combustion Toolbox uses CPU Info from the following repository: Ben Tordoff (2022). CPU Info (https://github.com/BJTor/CPUInfo/releases/tag/v1.3), GitHub. Retrieved March 22, 2022.
+* Combustion Toolbox's splash screen is based on a routine from the following repository: Ben Tordoff (2022). SplashScreen (https://www.mathworks.com/matlabcentral/fileexchange/30508-splashscreen), MATLAB Central File Exchange. Retrieved October 15, 2022.
+* Combustion Toolbox's periodic table layout is based in the following repository: Bruno Salcedo (2018). latex-periodic-table (https://github.com/brunosalcedo/latex-periodic-table), Github. Retrieved October 15, 2022.
 
 # Developers
 

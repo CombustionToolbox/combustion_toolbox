@@ -40,9 +40,10 @@ function DB = get_DB(DB_master)
             if ctTInt > 0
                 
                 [txFormula, mm, ~, Hf0, ~, Ef0, ~, ~] = get_speciesProperties(DB_master, LS{i}, 298.15, 'molar', 0);
-
+                
+                DB.(species).FullName = DB_master.(species).FullName;
                 DB.(species).name = species;
-                DB.(species).FullName = LS{i};
+                DB.(species).comments = DB_master.(species).comments;
                 DB.(species).txFormula = txFormula;
                 DB.(species).mm = mm;
                 DB.(species).hf = Hf0;
@@ -83,8 +84,9 @@ function DB = get_DB(DB_master)
                 
                 [txFormula, mm, Cp0, Hf0, H0, Ef0, S0, DfG0] = get_speciesProperties(DB_master, LS{i}, Tref, 'molar', 0);
                 
+                DB.(species).FullName = DB_master.(species).FullName;
                 DB.(species).name = species;
-                DB.(species).FullName = LS{i};
+                DB.(species).comments = DB_master.(species).comments;
                 DB.(species).txFormula = txFormula;
                 DB.(species).mm  = mm;
                 DB.(species).hf  = Hf0;

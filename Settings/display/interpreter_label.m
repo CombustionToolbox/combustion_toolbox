@@ -31,14 +31,18 @@ function value = interpreter_label(property, varargin)
     end
 
     % Get labels
-    [property_name, property_latex, property_unit] = property_names(property);
+    [property_name, property_latex, property_unit] = property_names(property, type);
 
     % Convert property definition to its name
     switch lower(type)
         case 'short'
-            property_name = '';
+            if ~isempty(property_latex)
+                property_name = '';
+            end
         case 'medium'
-            property_latex = '';
+            if ~isempty(property_name)
+                property_latex = '';
+            end
         case 'long'
             % nothing
     end
@@ -46,7 +50,7 @@ function value = interpreter_label(property, varargin)
 end
 
 % SUB-PASS FUNCTIONS
-function [property_name, property_latex, property_unit] = property_names(property)
+function [property_name, property_latex, property_unit] = property_names(property, type)
     switch lower(property)
         case 'phi'
             property_name = 'Equivalance ratio';
@@ -212,13 +216,13 @@ function [property_name, property_latex, property_unit] = property_names(propert
             property_name = 'Relative error problem';
             property_latex = '\epsilon_{\rm problem}';
             property_unit = '';
-        case 'dvdtp'
+        case {'dvdtp','dvdt_p'}
             property_name = '';
-            property_latex = '(\rm{d}V\rm{d}T)_p';
+            property_latex = '(\rm{d}V/\rm{d}T)_p';
             property_unit = '';
-        case 'dvdpt'
+        case {'dvdpt', 'dvdp_t'}
             property_name = '';
-            property_latex = '(\rm{d}V\rm{d}p)_T';
+            property_latex = '(\rm{d}V/\rm{d}p)_T';
             property_unit = '';
         case 'theta'
             property_name = 'Deflection angle';
@@ -230,6 +234,14 @@ function [property_name, property_latex, property_unit] = property_names(propert
             property_unit = '[deg]';
         case 'overdriven'
             property_name = 'Overdriven ratio';
+            property_latex = 'u_1/u_{\rm cj}';
+            property_unit = '';
+        case 'underdriven'
+            property_name = 'Underdriven ratio';
+            property_latex = 'u_1/u_{\rm cj}';
+            property_unit = '';
+        case 'drive_factor'
+            property_name = 'Drive factor';
             property_latex = 'u_1/u_{\rm cj}';
             property_unit = '';
         case 'of'
@@ -245,9 +257,20 @@ function [property_name, property_latex, property_unit] = property_names(propert
             property_latex = 'pv';
             property_unit = '[bar-m$^3$]';
         otherwise
-            property_name = '';
-            property_latex = property;
             property_unit = '';
+            switch type
+                case 'short'
+                    property_name = '';
+                    property_latex = property;
+                case {'medium', 'long'}
+                    property_name = property;
+                    property_latex = '';
+            end
     end
     property_latex = ['$', property_latex, '$'];
+
+    if strcmpi(type, 'long')
+        property_name = [property_name, ','];
+    end
+    
 end

@@ -11,7 +11,7 @@
 %                    'C2','C2H4','CH','CH','CH3','CH4','CN','H',...
 %                    'HCN','HCO','N','NH','NH2','NH3','NO','O','OH'}
 %   
-% See wiki or ListSpecies() for more predefined sets of species
+% See wiki or list_species() for more predefined sets of species
 %
 % @author: Alberto Cuadra Lara
 %          PhD Candidate - Group Fluid Mechanics

@@ -10,7 +10,7 @@
 %                    'C2','C2H4','CH','CH','CH3','CH4','CN','H',...
 %                    'HCN','HCO','N','NH','NH2','NH3','NO','O','OH'}
 %   
-% See wiki or ListSpecies() for more predefined sets of species
+% See wiki or list_species() for more predefined sets of species
 %
 % @author: Alberto Cuadra Lara
 %          PhD Candidate - Group Fluid Mechanics
@@ -25,7 +25,7 @@ self = App('Soot formation');
 self = set_prop(self, 'TR', 298, 'pR', 1 * 1.01325, 'phi', 0.7:0.01:1.5);
 self.PD.S_Fuel     = {'CH4'};
 self.PD.S_Oxidizer = {'N2', 'O2'};
-self.PD.N_Oxidizer = [0.79, 0.21];
+self.PD.ratio_oxidizers_O2 = [0.79, 0.21] ./ 21;
 %% ADDITIONAL INPUTS (DEPENDS OF THE PROBLEM SELECTED)
 self = set_prop(self, 'pP', self.PD.pR.value); 
 %% SOLVE PROBLEM

@@ -1,5 +1,5 @@
 function LS = find_species_LS(LS, cond_with, type_with, cond_without, type_without)
-    % Find species contained in the given database that contain all/any
+    % Find species in the given list that contain all/any
     % elements of cond_with and that not include all/any elements of
     % cond_without
     %

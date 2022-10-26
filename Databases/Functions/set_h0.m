@@ -8,7 +8,7 @@ function h0 = set_h0(LS, T, DB)
     %     DB (struct): Database with custom thermodynamic polynomials functions generated from NASAs 9 polynomials fits
     %
     % Returns:
-    %     h0 (float): Gibbs energy [J/mol]
+    %     h0 (float): Enthalpy in molar basis [J/mol]
 
     for i=length(LS):-1:1
         species = LS{i};

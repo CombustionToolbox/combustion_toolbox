@@ -1,11 +1,8 @@
-function app = gui_get_reactants(varargin)
+function app = gui_get_reactants(obj, event, app, varargin)
     % Get the species and the number of moles of the current data in
     % UITable_R
-    obj = varargin{1,1};
-    event = varargin{1,2};
-    app = varargin{1,3};
     if nargin > 3
-        FLAG_COMPUTE_FROM_PHI = varargin{1,4};
+        FLAG_COMPUTE_FROM_PHI = varargin{1,1};
     else
         FLAG_COMPUTE_FROM_PHI = false;
     end

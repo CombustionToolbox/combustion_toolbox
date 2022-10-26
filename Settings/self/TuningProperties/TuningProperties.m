@@ -52,12 +52,12 @@ function self = TuningProperties()
     self.Mach_thermo = 2;       % Preshock Mach number above which T2_guess will be computed considering h2 = h1 + u1^2 / 2
     self.tol_oblique = 1e-3;    % Tolerance oblique shocks
     self.it_oblique = 20;       % Max number of iterations - oblique shocks
-    self.N_points_polar = 100;  % Number of points to compute shock polar
+    self.N_points_polar = 100;  % Number of points to compute shock/detonation polar curves
     self.it_guess_det = 5;      % Max number of iterations - guess detonation
     % * Rocket propellant performance
     self.tol_rocket = 1e-4;     % Tolerance rocket performance
     self.it_rocket = 10;        % Max number of iterations - rocket performance
     % * Equation of State (EoS)
-    self.tol_eos = 1e-4;        % Tolerance equation of state (EoS)
-    self.it_eos = 30;           % Max number of iterations - equation of state (EoS)
+    self.tol_eos = 1e-4;        % Tolerance equation of state (EoS) - only Newton-Raphson method (deprecated)
+    self.it_eos = 30;           % Max number of iterations - equation of state (EoS) - only Newton-Raphson method (deprecated)
 end

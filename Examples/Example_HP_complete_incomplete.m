@@ -16,13 +16,13 @@
 %                            'C2','C2H4','CH','CH','CH3','CH4','CN','H',...
 %                            'HCN','HCO','N','NH','NH2','NH3','NO','O','OH'}
 %   
-% See wiki or ListSpecies() for more predefined sets of species
+% See wiki or list_species() for more predefined sets of species
 %
 % @author: Alberto Cuadra Lara
 %          PhD Candidate - Group Fluid Mechanics
 %          Universidad Carlos III de Madrid
 %                 
-% Last update July 29 2022
+% Last update Oct 13 2022
 % -------------------------------------------------------------------------
 
 %% COMPLETE COMBUSTION
@@ -61,5 +61,5 @@ self.Misc.config.labely = 'Temperature $T$ [K]';
 legend_name = {'Complete', 'Incomplete'};
 
 ax = plot_figure('phi', phi, 'T', mix2_complete, 'config', self.Misc.config);
-ax = plot_figure('phi', phi, 'T', mix2_incomplete, 'config', self.Misc.config, 'ax', ax, 'legend', legend_name);
+ax = plot_figure('phi', phi, 'T', mix2_incomplete, 'config', self.Misc.config, 'ax', ax, 'legend', legend_name, 'color', 'auto');
 ax.Legend.Location = 'northeast';

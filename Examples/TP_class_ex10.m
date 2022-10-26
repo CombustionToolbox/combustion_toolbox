@@ -8,7 +8,7 @@
 %   
 % LS_rich_complete == {'CO2', 'H2O', 'N2', 'CO', 'H2'}
 %   
-% See wiki or ListSpecies() for more predefined sets of species
+% See wiki or list_species() for more predefined sets of species
 %
 % @author: Alberto Cuadra Lara
 %          PhD Candidate - Group Fluid Mechanics
@@ -23,7 +23,7 @@ self = App({'CO2', 'H2O', 'N2', 'CO', 'H2'});
 self = set_prop(self, 'TR', 298, 'pR', 1 * 1.01325, 'phi', 1.25);
 self.PD.S_Fuel     = {'CH4'};
 self.PD.S_Oxidizer = {'N2', 'O2'};
-self.PD.N_Oxidizer = [0.79, 0.21];
+self.PD.ratio_oxidizers_O2 = [0.79, 0.21] ./ 21;
 %% ADDITIONAL INPUTS (DEPENDS OF THE PROBLEM SELECTED)
 self = set_prop(self, 'pP', 1 * 1.01325, 'TP', 2000); 
 %% SOLVE PROBLEM

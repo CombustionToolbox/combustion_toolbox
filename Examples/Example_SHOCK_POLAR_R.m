@@ -12,7 +12,7 @@
 %              'Cminus','CN','CNplus','CNminus','CNN','NCO','NCN','Ar',...
 %              'Arplus'}
 %   
-% See wiki or ListSpecies() for more predefined sets of species
+% See wiki or list_species() for more predefined sets of species
 %
 % @author: Alberto Cuadra Lara
 %          PhD Candidate - Group Fluid Mechanics

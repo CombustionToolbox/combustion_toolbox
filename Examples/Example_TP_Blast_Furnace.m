@@ -14,7 +14,7 @@
 % Species == {'O2', 'N2', 'H2O', 'CH4', 'CO', 'CO2', 'H2', ...
 %             'CHO_M', 'CH2O_M', 'OH', 'Febab', 'CaObcrb'}
 %   
-% See wiki or ListSpecies() for more predefined sets of species
+% See wiki or list_species() for more predefined sets of species
 %
 % @author: Alberto Cuadra Lara
 %          PhD Candidate - Group Fluid Mechanics

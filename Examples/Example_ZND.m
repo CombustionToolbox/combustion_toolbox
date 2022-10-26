@@ -8,7 +8,7 @@
 % Air == {'O2','N2','O','O3','N','NO','NO2','NO3','N2O','N2O3','N2O4',...
 %         'N3','C','CO','CO2','Ar','H2O','H2','H','He'}
 %   
-% See wiki or ListSpecies() for more predefined sets of species
+% See wiki or list_species() for more predefined sets of species
 %
 % @author: Alberto Cuadra Lara
 %          PhD Candidate - Group Fluid Mechanics
@@ -29,6 +29,6 @@ u1 = logspace(2, 5, 500); u1 = u1(u1<20000); u1 = u1(u1>=360);
 u1 = 2500;
 self = set_prop(self, 'u1', u1);
 %% SOLVE PROBLEM
-self = SolveProblem(self, 'SHOCK_I');
+self = solve_problem(self, 'SHOCK_I');
 %% DISPLAY RESULTS (PLOTS)
-postResults(self);
+post_results(self);

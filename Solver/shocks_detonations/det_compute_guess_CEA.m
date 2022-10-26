@@ -5,15 +5,15 @@ function [P, T, STOP] = det_compute_guess_CEA(self, mix1)
     % [1] Gordon, S., & McBride, B. J. (1994). NASA reference publication, 1311.
     %
     % Args:
-    %     self (struct):      Data of the mixture, conditions, and databases
-    %     mix1 (struct):      Properties of the mixture in the pre-shock state
+    %     self (struct): Data of the mixture, conditions, and databases
+    %     mix1 (struct): Properties of the mixture in the pre-shock state
     %
     % Returns:
     %     Tuple containing
     %
-    %     - P (float):          Pressure ratio [-]
-    %     - T (float):          Temperature ratio [-]
-    %     - STOP (float):       Relative error [-] 
+    %     - P (float): Pressure ratio [-]
+    %     - T (float): Temperature ratio [-]
+    %     - STOP (float): Relative error [-] 
     
     % Abbreviations 
     R0 = self.C.R0; % [J/mol-K]
@@ -22,7 +22,7 @@ function [P, T, STOP] = det_compute_guess_CEA(self, mix1)
     W1 = meanMolecularWeight(mix1) * 1e-3; % [kg/mol]
     h1 = enthalpy_mass(mix1) * 1e3; % [J/kg]
     m1 = mass(mix1); % [kg]
-    itMax  = 5;
+    itMax  = self.TN.it_guess_det;
     p2p1_0 = 15;
     % Estimate post-shock state considering h2 = h1 + 3/4 * R * T1 / W1 * (p2 / p1)_0
     mix1.h = (h1 + 3/4 * R0 * T1 / W1 * p2p1_0) * m1 * 1e-3; % [kJ]

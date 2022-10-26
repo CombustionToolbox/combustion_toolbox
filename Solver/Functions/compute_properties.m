@@ -16,31 +16,33 @@ function mix =  compute_properties(self, properties_matrix, p, T)
     % Inputs
     mix.p = p; % [bar]
     mix.T = T; % [K]
-    % Unpack SpeciesMatrix
-    Ni        = properties_matrix(:,1);                       % [mol]
-    mix.N     = sum(properties_matrix(:, self.C.M0.ind_ni));  % [mol] 
-    mix.hf    = sum(properties_matrix(:, self.C.M0.ind_hfi)); % [kJ]
-    mix.h     = sum(properties_matrix(:, self.C.M0.ind_hi));  % [kJ]
-    mix.ef    = sum(properties_matrix(:, self.C.M0.ind_efi)); % [kJ]
-    mix.cP    = sum(properties_matrix(:, self.C.M0.ind_cPi)); % [J/K]
-    mix.S0    = sum(properties_matrix(:, self.C.M0.ind_si));  % [kJ/K]
-    mix.pv    = sum(properties_matrix(:, self.C.M0.ind_pVi)); % [bar m3]
-    mix.phase = properties_matrix(:, self.C.M0.ind_phase);    % [bool]
-    mix.mi    = sum(properties_matrix(:, self.C.M0.ind_mi));  % [kg]
-    % Compute mass fractions [-]
-    mix.Yi = properties_matrix(:, self.C.M0.ind_mi) ./ mix.mi;
+    % Unpack properties_matrix
+    Ni        = properties_matrix(:, self.C.M0.ind_ni); % [mol]
+    mix.N     = sum(properties_matrix(:, self.C.M0.ind_ni)); % [mol] 
+    mix.hf    = dot(properties_matrix(:, self.C.M0.ind_hfi), Ni); % [kJ]
+    mix.h     = dot(properties_matrix(:, self.C.M0.ind_hi), Ni);  % [kJ]
+    mix.ef    = dot(properties_matrix(:, self.C.M0.ind_efi), Ni); % [kJ]
+    mix.cP    = dot(properties_matrix(:, self.C.M0.ind_cPi), Ni); % [J/K]
+    mix.S0    = dot(properties_matrix(:, self.C.M0.ind_si), Ni);  % [kJ/K]
+    mix.phase = properties_matrix(:, self.C.M0.ind_phase); % [bool]
     % Compute molar fractions [-]
     mix.Xi = Ni / mix.N;
+    % Compute molecular weight [g/mol]
+    mix.W = dot(Ni, properties_matrix(:, self.C.M0.ind_W)) / molesGas(mix);
     % Compute mean molecular weight [g/mol]
-    mix.W = sum(Ni .* properties_matrix(:, self.C.M0.ind_W)) / molesGas(mix);
+    mix.MW = dot(Ni, properties_matrix(:, self.C.M0.ind_W)) / mix.N;
+    % Compute mass mixture [kg]
+    mix.mi = mix.MW * mix.N * 1e-3; % [kg]
+    % Compute mass fractions [-]
+    mix.Yi = (Ni .* properties_matrix(:, self.C.M0.ind_W) * 1e-3) ./ mix.mi;
     % Get non zero species
     FLAG_NONZERO = mix.Xi > 0;
     % Compute vector atoms of each element
-    mix.NatomE = sum(Ni .* self.C.A0.value);
+    mix.NatomE = sum(Ni .* self.C.A0.value, 1);
     % Compute vector atoms of each element without frozen species
-    mix.NatomE_react = sum(properties_matrix(self.S.ind_react, self.C.M0.ind_ni) .* self.C.A0.value(self.S.ind_react, :));
+    mix.NatomE_react = sum(properties_matrix(self.S.ind_react, self.C.M0.ind_ni) .* self.C.A0.value(self.S.ind_react, :), 1);
     % Compute volume [m3]
-    mix.v = mix.pv / mix.p;
+    mix.v = self.PD.EOS.volume(self, T, convert_bar_to_Pa(p), self.S.LS, mix.Xi) * molesGas(mix);
     % Compute density [kg/m3]
     mix.rho = mix.mi / mix.v;
     % Compute internal energy [kJ]
@@ -56,7 +58,7 @@ function mix =  compute_properties(self, properties_matrix, p, T)
     % Compute Gibbs energy [kJ]
     mix.g = mix.h - mix.T * mix.S;
     % Compute specific heat at constant volume [J/K]
-    mix.cV = mix.cP - R0 * mix.N;
+    mix.cV = mix.cP - R0 * molesGas(mix);
     % Compute Adibatic index [-]
     mix.gamma = mix.cP / mix.cV;
     % Compute sound velocity [m/s]
@@ -69,7 +71,7 @@ function mix =  compute_properties(self, properties_matrix, p, T)
         mix.dVdp_T = -1 + self.dN_p; % [-]
         if ~any(isnan(self.dNi_T)) && ~any(isinf(self.dNi_T))
             delta = ~mix.phase;
-            h0_j = (properties_matrix(:, self.C.M0.ind_hi)) ./ Ni * 1e3; % [J/mol]
+            h0_j = properties_matrix(:, self.C.M0.ind_hi) * 1e3; % [J/mol]
             mix.cP_r = sum(h0_j / T .* (1 +  delta .* (Ni - 1)) .* self.dNi_T, 'omitnan'); % [J/K]
             mix.cP_f = mix.cP;
             mix.cP = mix.cP_f + mix.cP_r; % [J/K]

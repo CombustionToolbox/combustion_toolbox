@@ -5,11 +5,11 @@ function self = App(varargin)
     %     empty (none): Generate default self variable assuming as products LS = Soot formation     
     %
     % Optional Args:
-    %     - LS (cell): List of species
-    %     - obj (class): Class combustion_toolbox_app (GUI)
-    %     - type (str): If value is fast initialize from the given Databases
-    %     - DB_master (struct): Master database
-    %     - DB (struct): Database with custom thermodynamic polynomials functions generated from NASAs 9 polynomials fits
+    %     * LS (cell): List of species
+    %     * obj (class): Class combustion_toolbox_app (GUI)
+    %     * type (str): If value is fast initialize from the given Databases
+    %     * DB_master (struct): Master database
+    %     * DB (struct): Database with custom thermodynamic polynomials functions generated from NASAs 9 polynomials fits
     % 
     % Returns:
     %     self (struct): Data of the mixture (initialization - empty), conditions, and databases 
@@ -28,14 +28,11 @@ function self = App(varargin)
             self = reset_copy(self);
         end
         self = constructor(self, LS, FLAG_FAST);
-        if ~nargin || ~isa(varargin{1,1}, 'combustion_toolbox_app') || (~strcmpi(varargin{1,1}, 'fast') && nargin < 4) || (~strcmpi(varargin{1,1}, 'copy') && nargin < 3) 
+        if ~nargin || ~isobject(varargin{1,1}) || (~strcmpi(varargin{1,1}, 'fast') && nargin < 4) || (~strcmpi(varargin{1,1}, 'copy') && nargin < 3)
             self = initialize(self);
         end
     catch ME
-      errorMessage = sprintf('Error in function %s() at line %d.\n\nError Message:\n%s', ...
-      ME.stack(1).name, ME.stack(1).line, ME.message);
-      fprintf('%s\n', errorMessage);
-      uiwait(warndlg(errorMessage));
+        print_error(ME);
     end
 end
 
@@ -66,7 +63,7 @@ function [self, LS, FLAG_FAST, FLAG_COPY] = unpack(varargin)
             end
             return
         end
-        if isa(varargin{1,1}, 'combustion_toolbox_app')
+        if isobject(varargin{1,1})
             self = varargin{1,1};
             if nargin == 2
                 LS = varargin{1,2};

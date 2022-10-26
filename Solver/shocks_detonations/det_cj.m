@@ -92,7 +92,7 @@ function [p2, T2, p2p1, T2T1, STOP] = get_guess(self, mix1, mix2)
     else
         p2 = convert_bar_to_Pa(mix2.p); % [Pa]
         T2 = mix2.T;       % [K]
-        p2p1 = p2 / ( convert_bar_to_Pa(mix1.p));
+        p2p1 = p2 / (convert_bar_to_Pa(mix1.p));
         T2T1 = T2 / mix1.T;
         STOP = 1;
     end
@@ -109,16 +109,16 @@ end
 
 function [J, b, guess_moles] = update_system(self, mix1, p2, T2, R0, guess_moles, FLAG_FAST)
     % Update Jacobian matrix and vector b
-    r1 = mix1.rho;
+    r1 = density(mix1);
     p1 = convert_bar_to_Pa(mix1.p); % [Pa]
-    h1 = mix1.h / mix1.mi * 1e3; % [J/kg]
+    h1 = enthalpy_mass(mix1) * 1e3; % [J/kg]
     % Calculate frozen state given T & p
     [mix2, r2, dVdT_p, dVdp_T] = state(self, mix1, T2, p2, guess_moles);
     
-    W2 = mix2.W * 1e-3; % [kg/mol]
-    h2 = mix2.h / mix2.mi * 1e3; % [J/kg]
-    cP2 = mix2.cP / mix2.mi; % [J/(K-kg)]
-    gamma2_s = mix2.gamma_s; % [-]
+    W2 = MolecularWeight(mix2) * 1e-3; % [kg/mol]
+    h2 = enthalpy_mass(mix2) * 1e3; % [J/kg]
+    cP2 = cp_mass(mix2) * 1e3; % [J/(K-kg)]
+    gamma2_s = adiabaticIndex_sound(mix2); % [-]
     
     J1 = p1/p2 + r2/r1 * gamma2_s * dVdp_T;
     J2 =         r2/r1 * gamma2_s * dVdT_p;
@@ -143,7 +143,7 @@ function [mix2, r2, dVdT_p, dVdp_T]= state(self, mix1, T, p, guess_moles)
     self.PD.ProblemType = 'TP';
     p = convert_Pa_to_bar(p); % [bar]
     mix2 = equilibrate_T(self, mix1, p, T, guess_moles);
-    r2 = mix2.rho;
+    r2 = density(mix2);
     dVdT_p = mix2.dVdT_p;
     dVdp_T = mix2.dVdp_T;
 end

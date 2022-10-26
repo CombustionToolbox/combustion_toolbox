@@ -6,7 +6,7 @@
 %   
 % LS == {'CH4', 'O2', 'N2', 'Ar', 'CO2'}
 %   
-% See wiki or ListSpecies() for more predefined sets of species
+% See wiki or list_species() for more predefined sets of species
 %
 % @author: Alberto Cuadra Lara
 %          PhD Candidate - Group Fluid Mechanics

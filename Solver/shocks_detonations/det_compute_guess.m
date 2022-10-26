@@ -67,7 +67,7 @@ function [P, T, M1, R, Q, STOP] = det_compute_guess(self, mix1, phi, overdriven)
         DeltaQ = (gamma1 + 1) / (2*gamma1 * (gamma1 - 1)) * T * (gamma2 - gamma1);
 
         STOP = norm([P - P_0, T - T_0]);
-    end
+     end
 %     % Debug
 %     fprintf('T_guess,%d = %.4g\n', it, T)
 %     fprintf('\nP_guess,%d = %.4g\n', it, P)
@@ -78,7 +78,7 @@ function [P, T, M1, M2, R, Q] = body_guess_cj(self, N_2, LS, gamma, DeltaQ, over
     % Get enthalpy of formation [J/mol] and some parameters
     hfi_2 = compute_hfi_molar(N_2, LS, self.DB);
     % Compute heat release - molar base [J/mol]
-    q_molar = - sum(N_2 .* hfi_2) + sum(N_1 .* hfi_1);
+    q_molar = - dot(N_2, hfi_2) + dot(N_1, hfi_1);
     % Compute heat release - molar base [J/kg_mixture]
     q = q_molar * Yi_fuel / W_fuel;
     % Compute dimensionless heat release | with correction
@@ -93,20 +93,28 @@ function [P, T, M1, M2, R, Q] = body_guess_cj(self, N_2, LS, gamma, DeltaQ, over
     T  = P / R;
 end
 
-function [hfi_1, N_1, Yi_fuel, W_fuel] = compute_hfi_1_molar(self)
-    LS_1 = [self.PD.S_Fuel, self.PD.S_Oxidizer, self.PD.S_Inert];
-    N_1  = [self.PD.N_Fuel, self.PD.N_Oxidizer, self.PD.N_Inert];
-    hfi_1 = compute_hfi_molar(N_1, LS_1, self.DB);
-    R = self.PD.R_Fuel + self.PD.R_Oxidizer + self.PD.R_Inert;
-    mi = sum(R(:, self.C.M0.ind_mi)) * 1e-3;
-    Yi = R(:, self.C.M0.ind_mi) ./ mi * 1e-3;
+function [hfi_1, ni, Yi_fuel, W_fuel] = compute_hfi_1_molar(self)
+    % Compute properties initial mixture
+
+    % Compute properties matrix
+    properties_matrix = self.PD.R_Fuel + self.PD.R_Oxidizer + self.PD.R_Inert;
+    properties_matrix(:, 1:self.C.M0.ind_ni-1) = self.C.M0.value(:, 1:self.C.M0.ind_ni-1);
+    % Get moles
+    ni = properties_matrix(:, self.C.M0.ind_ni);
+    % Compute enthalpy of formation [J/mol]
+    hfi_1 = properties_matrix(:, self.C.M0.ind_hfi) * 1e3;
+    % Compute molecular weight Fuel mixture [kg/mol]
+    W_fuel  = MolecularWeight(self.PS.strR_Fuel) * 1e-3;
+    % Compute mass mixture [kg]
+    mi = dot(properties_matrix(:, self.C.M0.ind_W) * 1e-3, ni);
+    % Compute mass fractions
+    Yi = (ni .* properties_matrix(:, self.C.M0.ind_W) * 1e-3) ./ mi;
     Yi_fuel = sum(Yi(self.PD.R_Fuel(:, self.C.M0.ind_ni) > 0));
-    W_fuel  = self.PS.strR_Fuel.W * 1e-3; % [kg/mol]
 end
 
-function hfi = compute_hfi_molar(N, LS, strThProp)
+function hfi = compute_hfi_molar(N, LS, DB)
     for i = length(N):-1:1
-        hfi(i) = strThProp.(LS{i}).hf; % [J/mol]
+        hfi(i) = DB.(LS{i}).hf; % [J/mol]
     end
     hfi(isnan(hfi)) = 0;
     hfi(isinf(hfi)) = 0;
@@ -117,7 +125,7 @@ function gamma = compute_gamma(N, T, LS, DB)
         cP(i) = species_cP(LS{i}, T, DB); % [J/kg-K]
         cV(i) = species_cV(LS{i}, T, DB); % [J/kg-K]
     end
-    gamma = sum(N .* cP) / sum(N .* cV);
+    gamma = dot(N, cP) / dot(N, cV);
 end
 
 function W = compute_W(N, LS, DB)
@@ -125,7 +133,7 @@ function W = compute_W(N, LS, DB)
         W(i) = DB.(LS{i}).mm; % [g/mol]
     end
     N_total = sum(N);
-    W = sum(N/N_total .* W);
+    W = dot(N/N_total, W);
 end
 
 function [P, R, M1, M2] = check_CJ_condition(self, P, R, gamma, Q, M1, M2, Mcj)

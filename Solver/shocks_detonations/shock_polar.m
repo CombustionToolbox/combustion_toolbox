@@ -1,5 +1,5 @@
 function [mix1, mix2] = shock_polar(self, mix1, u1, varargin)
-    % Compute shock polars of an oblique shock wave
+    % Compute shock polar curves
     %
     % Args:
     %     self (struct): Data of the mixture, conditions, and databases
@@ -81,7 +81,7 @@ function [self, mix1, mix2] = unpack(self, mix1, u1, x)
     % Unpack input data
     mix1.u = u1;       % velocity preshock [m/s] - laboratory fixed
     mix1.v_shock = u1; % velocity preshock [m/s] - shock fixed
-    if length(x) > 0
+    if ~isempty(x)
         mix2 = x{1};
     else
         mix2 = [];

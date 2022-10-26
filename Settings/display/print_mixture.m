@@ -64,7 +64,7 @@ function print_properties(ProblemType, varargin)
     fprintf(['e [kJ/kg]      |', string_value], get_properties(@intEnergy_mass, Nmixtures, mix));
     fprintf(['g [kJ/kg]      |', string_value], get_properties(@gibbs_mass, Nmixtures, mix));
     fprintf(['s [kJ/(kg-K)]  |', string_value], get_properties(@entropy_mass, Nmixtures, mix));
-    fprintf(['W [g/mol]      |', string_value], get_properties(@meanMolecularWeight, Nmixtures, mix));
+    fprintf(['W [g/mol]      |', string_value], get_properties(@MolecularWeight, Nmixtures, mix));
     if Nmixtures > 1
         fprintf(['(dlV/dlp)T [-] |                 |', string_value_2], get_properties('dVdp_T', Nmixtures - 1, mix(2:end)));
         fprintf(['(dlV/dlT)p [-] |                 |', string_value_2], get_properties('dVdT_p', Nmixtures - 1, mix(2:end)));
@@ -90,7 +90,8 @@ function print_properties(ProblemType, varargin)
         string_value_3 = set_string_value(Nmixtures - 2);
 
         fprintf('------------------------------------------------------------------------------------------------------------\n');
-        fprintf('PERFORMANCE PARAMETERS\n');    
+        fprintf('PERFORMANCE PARAMETERS\n');
+        fprintf(['A/At [-]       |                 |                 |', string_value_3], get_properties('Aratio', Nmixtures - 2, mix(3:end)));
         fprintf(['CSTAR [m/s]    |                 |                 |', string_value_3], get_properties('cstar', Nmixtures - 2, mix(3:end)));
         fprintf(['CF [-]         |                 |                 |', string_value_3], get_properties('cf', Nmixtures - 2, mix(3:end)));
         fprintf(['Ivac [s]       |                 |                 |', string_value_3], get_properties('I_vac', Nmixtures - 2, mix(3:end)));

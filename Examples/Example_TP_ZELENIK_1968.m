@@ -9,7 +9,7 @@
 %                    'C2H2_acetylene','C2H4','C2O','C3','H','HCO',...
 %                    'HO2','H2','H2O','O','OH','O2'}
 %   
-% See wiki or ListSpecies() for more predefined sets of species
+% See wiki or list_species() for more predefined sets of species
 %
 % @author: Alberto Cuadra Lara
 %          PhD Candidate - Group Fluid Mechanics

@@ -27,6 +27,8 @@ function self = check_FOI(self, FOI_species)
             self.Misc.index_LS_original = find_ind(self.S.LS, self.Misc.LS_original);
             % Set indexes phase species to original List Species (for computations)
             self = reorganize_index_phase_species(self, self.Misc.LS_original);
+            % Fill constant values of properties matrix
+            self = set_species_initilize(self, self.S.LS);
         else
             self.Misc.index_LS_original = 1:1:self.S.NS;
         end
@@ -43,7 +45,6 @@ function self = check_FOI(self, FOI_species)
         if ~isempty(self.PD.wt_ratio_oxidizers) || ~isempty(self.PD.wt_ratio_inerts)
             self.Misc.FLAG_WEIGHT = true;
         end
-
         self.Misc.FLAG_FIRST = false;
     end
 end

@@ -36,7 +36,10 @@ function ax = set_fixed_figure(fixed_number, config)
     ax = gca;
     set(fig, 'position', config.position);
     set(ax, 'LineWidth', config.linewidth, 'FontSize', config.fontsize-2, 'BoxStyle', 'full');
-    grid(ax, 'off'); box(ax, 'off'); hold(ax, 'on'); ax.Layer = 'Top'; axis(ax, 'auto');
+    grid(ax, config.grid); box(ax, config.box); hold(ax, config.hold); ax.Layer = 'Top';
+    set(ax, 'TickLabelInterpreter', 'latex');
+    xlim(ax, config.axis_x);
+    ylim(ax, config.axis_y);
 end
 
 function ax = plot_shock_polar_pressure(mix1, mix2, config, mix2_case, mix0)

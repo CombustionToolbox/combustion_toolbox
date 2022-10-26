@@ -25,9 +25,9 @@ function gui_ReactantsValueChanged(obj, event)
         % In case frozen chemistry or ionization is considered.
         gui_update_frozen(obj);
     catch ME
-        message = {sprintf('Error in function %s() at line %d.\n\nError Message:\n%s', ...
-        ME.stack(1).name, ME.stack(1).line, ME.message)};
-        uialert(obj.UIFigure, message, 'Warning', 'Icon', 'warning');
+        message = sprintf('Error in function %s() at line %d.\n\nError Message:\n%s', ...
+        ME.stack(1).name, ME.stack(1).line, ME.message);
+        fprintf('%s\n', message);
     end
 end
 
@@ -109,10 +109,13 @@ function app = gui_set_reactants(obj, event, app)
             end
             % Get data of the current mixture
             if ~isempty(obj.UITable_R.Data)
+                % Check if the species is already included          
                 app = gui_get_reactants(obj, event, app);
             end
             % Add new species to the mixture (fuel by default)
-            app.PD.S_Fuel = [app.PD.S_Fuel, {species}];
-            app.PD.N_Fuel = [app.PD.N_Fuel, 1];
+            if ~any(find_ind(app.PD.S_Fuel, species))
+                app.PD.S_Fuel = [app.PD.S_Fuel, {species}];
+                app.PD.N_Fuel = [app.PD.N_Fuel, 1];
+            end
     end
 end

@@ -7,6 +7,8 @@ function DB = assign_DB_PR_eos(DB)
     % [1] THERMODYNAMIC AND THERMOPHYSICAL PROPERTIES OF HUMID AIR BY USING CUBIC PENG-ROBINSON EOS
     % [2] PROPERTIES OF GASES, Isidoro Martinez
 
+    
+    DB = add_species(DB, 'Ar', 151, 48.6 * 1e5, 0); % Ref. [2]
 
     DB = add_species(DB, 'CH4', 190.6, 46 * 1e5, 0.008);
     DB = add_species(DB, 'C2H4', 283, 51.2 * 1e5, 0.085); % Ref. [2]
@@ -23,6 +25,7 @@ function DB = assign_DB_PR_eos(DB)
 
     DB = add_species(DB, 'H2', 33, 13.2 * 1e5, -0.22); % Ref. [2]
     DB = add_species(DB, 'H2O', 647.13, 22.34 * 1e5, 0.344);
+    DB = add_species(DB, 'H2ObLb', 647.13, 22.34 * 1e5, 0.344);
 end
 
 % SUB-PASS FUNCTIONS

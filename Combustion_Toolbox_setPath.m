@@ -17,7 +17,7 @@ function [executableFolder] = GetExecutableFolder()
             % User is running an executable in standalone mode.
             [status, result] = system('set PATH');
             executableFolder = char(regexpi(result, 'Path=(.*?);', 'tokens', 'once'));
-            % 			fprintf(1, '\nIn function GetExecutableFolder(), currentWorkingDirectory = %s\n', executableFolder);
+            % fprintf(1, '\nIn function GetExecutableFolder(), currentWorkingDirectory = %s\n', executableFolder);
         else
             % User is running an m-file from the MATLAB integrated development environment (regular MATLAB).
             executableFolder = pwd;

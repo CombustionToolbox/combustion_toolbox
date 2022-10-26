@@ -5,7 +5,7 @@ function problems_solved = run_validation_SHOCK_POLAR_SDToolbox_1
     % Temperature [K]   = 300
     % Pressure    [bar] = 1.01325
     % Initial mixture: AIR (79% N2 + 21% O2)
-    % List of species considered: Frozen
+    % List of species considered: list_species('AIR_IONS')
     
     % Inputs
     Oxidizer = {'N2', 'O2'};

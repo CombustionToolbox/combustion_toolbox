@@ -60,8 +60,8 @@ function self = ProblemDescription()
     self.wt_ratio_oxidizers = []; % Weight ratio percentage of oxidizer species
     self.wt_ratio_inerts = [];    % Weight ratio percentage of inert species
     % * Equation of States
-    self.EOS.pressure = @eos_ideal; % Equation of State to compute pressure [Pa]
-    self.EOS.volume = @eos_ideal_v; % Equation of State to compute volume [m3]
+    self.EOS.pressure = @eos_ideal_p; % Equation of State to compute pressure [Pa]
+    self.EOS.volume = @eos_ideal; % Equation of State to compute molar volume [m3/mol]
     self.EOS.chemical_potential_imp = @mu_imp_ideal; % Compute non ideal contribution of the chemical potential (depends of the Equation of State) [J/mol]
     % * Flags
     self.FLAG_ION = false;       % Flag ionized species in the system

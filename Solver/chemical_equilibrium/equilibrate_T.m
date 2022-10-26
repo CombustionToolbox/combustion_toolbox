@@ -12,6 +12,9 @@ function mix2 = equilibrate_T(self, mix1, pP, TP, varargin)
     %     
     % Returns:
     %     mix2 (struct): Properties of the final mixture
+    %
+    % Example:
+    %     mix2 = equilibrate(self, self.PS.strR{1}, 1.01325, 3000)
     
     % Definitions
     FLAG_FAST = self.TN.FLAG_FAST;
@@ -59,9 +62,9 @@ end
 function pP = set_pressure(self, mix1, TP, N)
     % Compute pressure of product mixture
     if strcmpi(self.PD.ProblemType, 'SV')
-        pP = mix1.p * self.PD.EOS.pressure(self, N/mix1.N, TP/mix1.T, self.PD.vP_vR.value);
+        pP = mix1.p * self.PD.EOS.pressure(self, N/mix1.N, TP/mix1.T, self.PD.vP_vR.value, self.S.LS, mix1.Xi);
     else
-        pP = self.PD.EOS.pressure(self, N, TP, mix1.v) * 1e-5;
+        pP = self.PD.EOS.pressure(self, N, TP, mix1.v, self.S.LS, mix1.Xi) * 1e-5;
     end
 end
 
@@ -74,14 +77,14 @@ function [N, dNi_T, dN_T, dNi_p, dN_p, STOP, STOP_ions] = select_equilibrium(sel
     end
 end
 
-function mix2 = set_properties(self, mix1, P, pP, TP, STOP, STOP_ions)
+function mix2 = set_properties(self, mix1, properties_matrix, pP, TP, STOP, STOP_ions)
     % Compute properties of final mixture
     if strfind(self.PD.ProblemType, 'P') == 2
-        mix2 = compute_properties(self, P, pP, TP);
+        mix2 = compute_properties(self, properties_matrix, pP, TP);
     else
-        NP = sum(P(:, self.C.M0.ind_ni) .* (1 - P(:, self.C.M0.ind_phase)));
+        NP = sum(properties_matrix(:, self.C.M0.ind_ni) .* (1 - properties_matrix(:, self.C.M0.ind_phase)));
         pP = set_pressure(self, mix1, TP, NP);
-        mix2 = compute_properties(self, P, pP, TP);
+        mix2 = compute_properties(self, properties_matrix, pP, TP);
     end    
     mix2.error_moles = STOP;
     mix2.error_moles_ions = STOP_ions;

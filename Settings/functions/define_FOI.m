@@ -46,6 +46,7 @@ function self = define_FOI(self, i)
     self = define_I(self);
     % Compute property matrix of the reactives for the given conditions
     R = self.PD.R_Fuel + self.PD.R_Oxidizer + self.PD.R_Inert;
+    R(:, 1:self.C.M0.ind_ni-1) = self.C.M0.value(:, 1:self.C.M0.ind_ni-1);
     % Compute properties of the reactives for a given temperature and
     % pressure
     self.PS.strR{i} = compute_properties(self, R, self.PD.pR.value, self.PD.TR.value);
@@ -68,11 +69,25 @@ function merged = merged_cells(cells)
     end
 end
 
+function mass = compute_mass_mixture(self, properties_matrix)
+    % Compute mass mixture [kg]
+
+    % Compute total number of moles [mol]
+    N = sum(properties_matrix(:, self.C.M0.ind_ni));
+    % Compute mean molecular weight [g/mol]
+    W = dot(properties_matrix(:, self.C.M0.ind_ni), properties_matrix(:, self.C.M0.ind_W)) / N;
+    % Compute mass mixture [kg]
+    mass = W * N * 1e-3; % [kg]
+end
+
 function self = compute_ratios_fuel_oxidizer(self, R, i)
     % Compute percentage Fuel, Oxidizer/Fuel ratio and equivalence ratio
     if ~isempty(self.PD.S_Fuel) && ~isempty(self.PD.S_Oxidizer)
-        self.PS.strR{i}.percentage_Fuel = sum(self.PD.R_Fuel(:, self.C.M0.ind_mi)) / sum(R(:, self.C.M0.ind_mi)) * 100;
-        self.PS.strR{i}.OF = sum(self.PD.R_Oxidizer(:, self.C.M0.ind_mi)) / sum(self.PD.R_Fuel(:, self.C.M0.ind_mi));
+        mass_fuel = compute_mass_mixture(self, self.PD.R_Fuel);
+        mass_oxidizer = compute_mass_mixture(self, self.PD.R_Oxidizer);
+        mass_mixture = compute_mass_mixture(self, R);
+        self.PS.strR{i}.percentage_Fuel = mass_fuel / mass_mixture * 100;
+        self.PS.strR{i}.OF = mass_oxidizer / mass_fuel;
         self.PS.strR{i}.FO = 1 / self.PS.strR{i}.OF;
         self.PS.strR{i}.FO_moles = sum(self.PD.R_Fuel(:, self.C.M0.ind_ni)) / sum(self.PD.R_Oxidizer(self.S.ind_O2, self.C.M0.ind_ni));
         self.PS.strR{i}.FO_moles_st = abs(sum(self.PD.R_Fuel(:, self.C.M0.ind_ni)) / (self.PS.strR_Fuel.x + self.PS.strR_Fuel.x2 + self.PS.strR_Fuel.x3 + self.PS.strR_Fuel.y/4 - self.PS.strR_Fuel.z/2));

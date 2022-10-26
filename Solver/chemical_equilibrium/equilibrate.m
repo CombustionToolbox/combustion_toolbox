@@ -11,6 +11,9 @@ function mix2 = equilibrate(self, mix1, pP, varargin)
     % 
     % Returns:
     %     mix2 (struct): Properties of the final mixture
+    %
+    % Example:
+    %     mix2 = equilibrate(self, self.PS.strR{1}, 1.01325)
 
     mix1 = get_struct(mix1);
     mix2 = unpack(varargin);
@@ -27,7 +30,7 @@ function mix2 = equilibrate(self, mix1, pP, varargin)
     % save error - root finding
     mix2.error_problem = STOP;
     % save equivalence ratio
-    mix2.phi = mix1.phi;
+    mix2.phi = save_phi(mix1);
 end
 
 %%% SUB-PASS FUNCTIONS
@@ -86,6 +89,14 @@ function print_convergence(STOP, TOL, STOP_ions, TOL_ions, ProblemType)
             fprintf('***********************************************************\n')
             fprintf('Convergence error in charge balance: %.2f\n', STOP_ions);
         end
+    end
+end
+
+function value = save_phi(mix1)
+    try
+        value = mix1.phi;
+    catch
+        value = [];
     end
 end
         

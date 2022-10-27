@@ -1,6 +1,5 @@
-<p align="left">
-    <img alt="UC3M" style="border-width:0" src="https://github.com/AlbertoCuadra/combustion_toolbox/blob/master/GUI/Icons/logo_CT_noversion.svg" width="150"/></a>
-</p>
+<img alt="Combustion Toolbox" align="left" style="border-width:0" src="https://github.com/AlbertoCuadra/combustion_toolbox/blob/master/GUI/Icons/logo_CT_noversion.svg" width="150"/></a>
+
 
 # A MATLAB-GUI based open-source tool for solving gaseous combustion problems
 

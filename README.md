@@ -10,6 +10,7 @@
 [![license](https://img.shields.io/github/license/AlbertoCuadra/combustion_toolbox)](https://www.gnu.org/licenses/gpl-3.0.html)
 
 <br>
+<br>
 
 <p>
     <img src="https://github.com/AlbertoCuadra/combustion_toolbox/blob/master/GUI/Snapshots/example_HP_GUI.gif" width="308">

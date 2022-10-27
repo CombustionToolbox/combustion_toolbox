@@ -9,14 +9,7 @@
 [![Documentation](https://readthedocs.org/projects/combustion-toolbox-website/badge/?version=latest)](https://combustion-toolbox-website.readthedocs.io/en/latest/?badge=latest)
 [![license](https://img.shields.io/github/license/AlbertoCuadra/combustion_toolbox)](https://www.gnu.org/licenses/gpl-3.0.html)
 
-
-
-&nbsp;
-
-#### :information_source: **NOTE**
-- Combustion Toolbox Website is live! Here is the link https://combustion-toolbox-website.readthedocs.io
-- There is a very early version in [Python](https://github.com/AlbertoCuadra/combustion_pytoolbox)
-
+<br>
 <br>
 
 <p align="left">

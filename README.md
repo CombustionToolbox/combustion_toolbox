@@ -11,9 +11,9 @@
 [![license](https://img.shields.io/github/license/AlbertoCuadra/combustion_toolbox)](https://www.gnu.org/licenses/gpl-3.0.html)
 
 
-<p align="center">
-  <b>A MATLAB-GUI based open-source tool for solving gaseous combustion problems</b>
-</p>
+<img align="left" width="100" src="https://github.com/AlbertoCuadra/combustion_toolbox/blob/master/GUI/icons/logo_CT_noversion.svg">&nbsp;
+<b> A MATLAB-GUI based open-source tool for solving gaseous combustion problems</b>
+
 
 ---
 :information_source: **NOTE**

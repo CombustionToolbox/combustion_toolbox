@@ -11,6 +11,7 @@
 
 <br>
 <br>
+<br>
 
 <p align=center>
     <img src="https://github.com/AlbertoCuadra/combustion_toolbox/blob/master/GUI/Snapshots/example_HP_GUI.gif" width="308">

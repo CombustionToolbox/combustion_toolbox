@@ -1,4 +1,4 @@
-<img alt="Combustion Toolbox" align="left" style="border-width:0" src="https://github.com/AlbertoCuadra/combustion_toolbox/blob/master/GUI/Icons/logo_CT_noversion.svg" width="150"/></a>
+<img alt="Combustion Toolbox" align="left" style="border-width:0" src="https://github.com/AlbertoCuadra/combustion_toolbox/blob/master/GUI/Icons/logo_CT_noversion.svg" width="180"/></a>
 
 
 # A MATLAB-GUI based open-source tool for solving gaseous combustion problems
@@ -8,7 +8,6 @@
 [![CI](https://github.com/AlbertoCuadra/combustion_toolbox/actions/workflows/CI.yml/badge.svg)](https://github.com/AlbertoCuadra/combustion_toolbox/actions/workflows/CI.yml)
 [![CD](https://github.com/AlbertoCuadra/combustion_toolbox/actions/workflows/CD.yml/badge.svg)](https://github.com/AlbertoCuadra/combustion_toolbox/actions/workflows/CD.yml)
 [![Documentation](https://readthedocs.org/projects/combustion-toolbox-website/badge/?version=latest)](https://combustion-toolbox-website.readthedocs.io/en/latest/?badge=latest)
-[![last modified](https://img.shields.io/github/last-commit/AlbertoCuadra/combustion_toolbox)](https://github.com/AlbertoCuadra/combustion_toolbox/commits/master)
 [![license](https://img.shields.io/github/license/AlbertoCuadra/combustion_toolbox)](https://www.gnu.org/licenses/gpl-3.0.html)
 
 #### :information_source: **NOTE**

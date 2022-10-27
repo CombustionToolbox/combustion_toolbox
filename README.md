@@ -12,7 +12,7 @@
 <br>
 <br>
 
-<p>
+<p align=center>
     <img src="https://github.com/AlbertoCuadra/combustion_toolbox/blob/master/GUI/Snapshots/example_HP_GUI.gif" width="308">
     &nbsp;&nbsp;
     <img src="https://github.com/AlbertoCuadra/combustion_toolbox/blob/master/GUI/Snapshots/example_HP.gif" width="333">

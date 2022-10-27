@@ -1,6 +1,6 @@
 <img alt="Combustion Toolbox" align="left" href="https://combustion-toolbox-website.readthedocs.io" style="border-width:0" src="https://github.com/AlbertoCuadra/combustion_toolbox/blob/master/GUI/Icons/logo_CT_noversion.svg" width="180"/>
 
-# A MATLAB-GUI based open-source tool for solving gaseous combustion problems
+# Combustion Toolbox: A MATLAB-GUI based open-source tool for solving gaseous combustion problems
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.5554911.svg)](https://doi.org/10.5281/zenodo.5554911)
 [![File Exchange](https://www.mathworks.com/matlabcentral/images/matlab-file-exchange.svg)](https://es.mathworks.com/matlabcentral/fileexchange/101088-combustion-toolbox)

@@ -1,6 +1,8 @@
 <p align="left">
-    <img alt="UC3M" style="border-width:0" src="https://github.com/AlbertoCuadra/combustion_toolbox/blob/master/GUI/Icons/logo.svg" width="1500"/></a>
+    <img alt="UC3M" style="border-width:0" src="https://github.com/AlbertoCuadra/combustion_toolbox/blob/master/GUI/Icons/logo_CT_noversion.svg" width="150"/></a>
 </p>
+
+# A MATLAB-GUI based open-source tool for solving gaseous combustion problems
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.5554911.svg)](https://doi.org/10.5281/zenodo.5554911)
 [![File Exchange](https://www.mathworks.com/matlabcentral/images/matlab-file-exchange.svg)](https://es.mathworks.com/matlabcentral/fileexchange/101088-combustion-toolbox)
@@ -10,23 +12,14 @@
 [![last modified](https://img.shields.io/github/last-commit/AlbertoCuadra/combustion_toolbox)](https://github.com/AlbertoCuadra/combustion_toolbox/commits/master)
 [![license](https://img.shields.io/github/license/AlbertoCuadra/combustion_toolbox)](https://www.gnu.org/licenses/gpl-3.0.html)
 
-
-<img align="left" width="100" src="https://github.com/AlbertoCuadra/combustion_toolbox/blob/master/GUI/icons/logo_CT_noversion.svg">&nbsp;
-<b> A MATLAB-GUI based open-source tool for solving gaseous combustion problems</b>
-
-
----
-:information_source: **NOTE**
+#### :information_source: **NOTE**
 - Combustion Toolbox Website is live! Here is the link https://combustion-toolbox-website.readthedocs.io
 - There is a very early version in [Python](https://github.com/AlbertoCuadra/combustion_pytoolbox)
----
-
 
 <p align="left">
     <img src="https://github.com/AlbertoCuadra/combustion_toolbox/blob/master/GUI/Snapshots/example_HP_GUI.gif" width="342">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp
     <img src="https://github.com/AlbertoCuadra/combustion_toolbox/blob/master/GUI/Snapshots/example_HP.gif" width="370">
 </p>
-
 
 # Main features
   - The code stems from the minimization of the free energy of the system by using Lagrange multipliers combined with a Newton-Raphson method, upon condition that initial gas properties are defined by two functions of states (e.g., temperature and pressure)

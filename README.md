@@ -1,5 +1,4 @@
-<img alt="Combustion Toolbox" align="left" style="border-width:0" src="https://github.com/AlbertoCuadra/combustion_toolbox/blob/master/GUI/Icons/logo_CT_noversion.svg" width="170"/></a>
-
+<img alt="Combustion Toolbox" align="left" style="border-width:0" src="https://github.com/AlbertoCuadra/combustion_toolbox/blob/master/GUI/Icons/logo_CT_noversion.svg" width="170" target="_blank" href="https://combustion-toolbox-website.readthedocs.io"/>
 
 # A MATLAB-GUI based open-source tool for solving gaseous combustion problems
 
@@ -10,9 +9,13 @@
 [![Documentation](https://readthedocs.org/projects/combustion-toolbox-website/badge/?version=latest)](https://combustion-toolbox-website.readthedocs.io/en/latest/?badge=latest)
 [![license](https://img.shields.io/github/license/AlbertoCuadra/combustion_toolbox)](https://www.gnu.org/licenses/gpl-3.0.html)
 
+<br>
+
 #### :information_source: **NOTE**
 - Combustion Toolbox Website is live! Here is the link https://combustion-toolbox-website.readthedocs.io
 - There is a very early version in [Python](https://github.com/AlbertoCuadra/combustion_pytoolbox)
+
+<br>
 
 <p align="left">
     <img src="https://github.com/AlbertoCuadra/combustion_toolbox/blob/master/GUI/Snapshots/example_HP_GUI.gif" width="342">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp

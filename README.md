@@ -10,6 +10,7 @@
 [![license](https://img.shields.io/github/license/AlbertoCuadra/combustion_toolbox)](https://www.gnu.org/licenses/gpl-3.0.html)
 
 &nbsp;
+&nbsp;
 
 ## Combustion Toolbox in action
 

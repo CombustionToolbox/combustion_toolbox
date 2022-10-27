@@ -11,11 +11,9 @@
 
 <br>
 
-## Combustion Toolbox in action
-
-<p align="left">
+<p>
     <img src="https://github.com/AlbertoCuadra/combustion_toolbox/blob/master/GUI/Snapshots/example_HP_GUI.gif" width="342">
-    &nbsp;&nbsp;&nbsp;
+    &nbsp;&nbsp;
     <img src="https://github.com/AlbertoCuadra/combustion_toolbox/blob/master/GUI/Snapshots/example_HP.gif" width="370">
 </p>
 

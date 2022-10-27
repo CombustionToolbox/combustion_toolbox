@@ -1,4 +1,4 @@
-<img alt="Combustion Toolbox" align="left" href="https://combustion-toolbox-website.readthedocs.io" style="border-width:0" src="https://github.com/AlbertoCuadra/combustion_toolbox/blob/master/GUI/Icons/logo_CT_noversion.png" width="160"/>
+<img alt="Combustion Toolbox" align="left" href="https://combustion-toolbox-website.readthedocs.io" style="border-width:0" src="https://github.com/AlbertoCuadra/combustion_toolbox/blob/master/GUI/Icons/logo_CT_noversion.png" width="150"/>
 
 ## Combustion Toolbox: A MATLAB-GUI based open-source tool for solving gaseous combustion problems
 

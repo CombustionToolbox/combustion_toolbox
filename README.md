@@ -1,4 +1,4 @@
-<img alt="Combustion Toolbox" align="left" href="https://combustion-toolbox-website.readthedocs.io" style="border-width:0" src="https://github.com/AlbertoCuadra/combustion_toolbox/blob/master/GUI/Icons/logo_CT_noversion_matlab.png" width="150"/>
+<img alt="Combustion Toolbox" align="left" href="https://combustion-toolbox-website.readthedocs.io" style="border-width:0" src="https://github.com/AlbertoCuadra/combustion_toolbox/blob/master/GUI/assets/logo_CT_noversion_matlab.png" width="150"/>
 
 ## Combustion Toolbox: A MATLAB-GUI based open-source tool for solving gaseous combustion problems
 
@@ -11,9 +11,9 @@
 <br>
 
 <p align=center>
-    <img src="https://github.com/AlbertoCuadra/combustion_toolbox_website/tree/main/docs/source/_static/gif/example_HP_GUI.gif" width="342">
+    <img src="https://github.com/AlbertoCuadra/combustion_toolbox_website/blob/main/docs/source/_static/gif/example_HP_GUI.gif" width="342">
     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-    <img src="https://github.com/AlbertoCuadra/combustion_toolbox_website/tree/main/docs/source/_static/gif/example_HP.gif" width="370">
+    <img src="https://github.com/AlbertoCuadra/combustion_toolbox_website/blob/main/docs/source/_static/gif/example_HP.gif" width="370">
 </p>
 
 ## Main features
@@ -63,7 +63,7 @@ This project is also part of the PhD of [Alberto Cuadra-Lara](https://www.acuadr
 We have several examples of what Combustion Toolbox can do. Here we show a preview of the GUI and some results obtained from Combustion Toolbox.
 
 <p align="left">
-    <img src="https://github.com/AlbertoCuadra/combustion_toolbox/blob/master/GUI/Snapshots/snapshot_1.svg" width="500">
+    <img src="https://github.com/AlbertoCuadra/combustion_toolbox_website/blob/main/docs/source/_static/img/snapshot_1.svg" width="500">
 </p>
 
 **Figure 1:** *Current state of the GUI*.
@@ -117,7 +117,7 @@ See also the list of [contributors](https://github.com/AlbertoCuadra/combustion_
     author = "Cuadra, A and Huete, C and Vera, M",
     title = "Combustion Toolbox: A MATLAB-GUI based open-source tool for solving gaseous combustion problems",
     year = 2022,
-    note = "Version 0.9.93",
+    note = "Version 0.9.99",
     doi = {https://doi.org/10.5281/zenodo.5554911}
 }
 ```

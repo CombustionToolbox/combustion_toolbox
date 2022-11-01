@@ -6,6 +6,9 @@ function gui_ConsoleValueChanged(app, event)
     % Read command
     try
         switch lower(app.Console.Value{1,1})
+            case {'about'}
+                run('uiabout.mlapp');
+                output = 'Running uiabout...';
             case 'clear'
                 ClearButtonPushed(app, event);
                 output = ' ';

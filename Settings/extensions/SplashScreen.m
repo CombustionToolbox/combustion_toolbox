@@ -24,12 +24,12 @@ classdef SplashScreen < matlab.mixin.SetGet
     
     %% Public properties
     properties
-        Visible = 'on'       % Is the splash-screen visible on-screen [on|off]
-        Border = 'on'        % Is the edge pixel darkened to form a border [on|off]
-        ProgressBar = 'off'  % Is the progress bar visible [on|off]
-        ProgressPosition = 10% Height (in pixels) above the bottom of the window for the progress bar
-        ProgressRatio = 0    % The ratio shown on the progress bar (in range 0 to 1)
-        Tag = ''             % User tag for this object
+        Visible = 'on'        % Is the splash-screen visible on-screen [on|off]
+        Border = 'on'         % Is the edge pixel darkened to form a border [on|off]
+        ProgressBar = 'off'   % Is the progress bar visible [on|off]
+        ProgressPosition = 10 % Height (in pixels) above the bottom of the window for the progress bar
+        ProgressRatio = 0     % The ratio shown on the progress bar (in range 0 to 1)
+        Tag = ''              % User tag for this object
     end % Public properties
     
     %% Read-only properties

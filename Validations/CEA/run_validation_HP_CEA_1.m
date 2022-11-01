@@ -6,7 +6,7 @@ function problems_solved = run_validation_HP_CEA_1
     % Pressure    [bar] = 1;
     % Equivalence ratio [-] = 0.5:0.01:4
     % Initial mixture: C2H2_acetylene + AIR_IDEAL (79% N2 + 21% O2)
-    % List of species considered: ListSpecies('Soot Formation Extended')
+    % List of species considered: list_species('Soot Formation Extended')
     
     % Inputs
     Fuel = 'C2H2_acetylene';
@@ -28,9 +28,9 @@ function problems_solved = run_validation_HP_CEA_1
     results_CEA = data_CEA(filename, display_species);
     % Display validation (plot)
     % * Molar fractions
-    fig1 = plot_molar_fractions_validation(results_CT, results_CEA, 'phi', 'Xi', display_species);
+    [~, fig1] = plot_molar_fractions(results_CT, results_CT.PS.strP, 'phi', 'Xi', 'validation', results_CEA, 'display_species', display_species);
     % * Properties mixture 2
-    fig2 = plot_properties_validation(results_CT, results_CEA, {'phi', 'phi', 'phi', 'phi', 'phi', 'phi', 'phi', 'phi'}, {'T', 'rho', 'h', 'e', 'g', 'cP', 'S', 'gamma_s'}, 'mix2');
+    fig2 = plot_properties_validation(results_CT, results_CEA, {'phi', 'phi', 'phi', 'phi', 'phi', 'phi', 'phi', 'phi', 'phi'}, {'T', 'rho', 'h', 'e', 'g', 'cP', 'S', 'gamma_s', 'sound'}, 'mix2');
     % Save plots
     folderpath = strcat(pwd,'\Validations\Figures\');
     stack_trace = dbstack;

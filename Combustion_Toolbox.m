@@ -1,5 +1,5 @@
 % -------------------------------------------------------------------------
-% COMBUSTION TOOLBOX @v0.9.94
+% COMBUSTION TOOLBOX @v0.9.99
 % A MATLAB-GUI based open-source tool for solving gaseous combustion problems
 %
 % Type of problems:
@@ -57,6 +57,7 @@
 %   * Example_DET_OVERDRIVEN_R
 %   * Example_DET_UNDERDRIVEN
 %   * Example_DET_UNDERDRIVEN_R
+%   * Example_DET_OVERDRIVEN_AND_OVERDRIVEN
 %   * Example_DET_OBLIQUE_BETA
 %   * Example_DET_OBLIQUE_THETA
 %   * Example_DET_POLAR
@@ -71,7 +72,7 @@
 %          PhD Candidate - Group Fluid Mechanics
 %          Universidad Carlos III de Madrid
 %                  
-% Last update Oct 11 2022
+% Last update Nov 01 2022
 % -------------------------------------------------------------------------
 help Combustion_Toolbox.m
 

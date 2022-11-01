@@ -3,9 +3,9 @@ function self = TuningProperties()
     % 
     % Attributes:
     %     FLAG_FAST (bool):       Flag indicating use guess composition of the previous computation (default: false)
-    %     itMax_gibbs (float):    Max number of iterations - gibbs minimization method              (default: 70)
+    %     itMax_gibbs (float):    Max number of iterations - Gibbs/Helmholtz minimization method    (default: 70)
     %     itMax_ions (float):     Max number of iterations - charge balance (ions)                  (default: 30)
-    %     tolN (float):           Tolerance of the Gibbs minimization method                        (default: 1e-14)
+    %     tolN (float):           Tolerance of the Gibbs/Helmholtz minimization method              (default: 1e-14)
     %     tolE (float):           Tolerance of the mass balance                                     (default: 1e-06)
     %     tol_pi_e (float):       Tolerance of the dimensionless Lagrangian multiplier - ions       (default: 1e-04)
     %     tol0 (float):           Tolerance of the root finding algorithm                           (default: 1e-03)
@@ -41,16 +41,16 @@ function self = TuningProperties()
     self.tol_pi_e = 1e-4;       % Tolerance of the dimensionless Lagrangian multiplier - ions
     % * Chemical equilibrium HP, EV, SP, SV
     self.tol0 = 1e-3;           % Tolerance of the root finding algorithm
-    self.root_method = @newton; % Method for root finding
+    self.root_method = @newton; % Root finding method
     self.itMax = 30;            % Max number of iterations - root finding method
     self.root_T0_l = 1000;      % First guess T[K] left branch - root finding method
     self.root_T0_r = 2000;      % First guess T[K] right branch - root finding method
     self.root_T0   = 3000;      % Guess T[K] if it's of previous range - root finding method
     % * Shocks and detonations 
-    self.tol_shocks = 5e-5;     % Tolerance of shocks routines
+    self.tol_shocks = 5e-5;     % Tolerance of shocks/detonations kernel
     self.it_shocks = 50;        % Max number of iterations - shocks and detonations
     self.Mach_thermo = 2;       % Preshock Mach number above which T2_guess will be computed considering h2 = h1 + u1^2 / 2
-    self.tol_oblique = 1e-3;    % Tolerance oblique shocks
+    self.tol_oblique = 1e-3;    % Tolerance oblique shocks algorithm
     self.it_oblique = 20;       % Max number of iterations - oblique shocks
     self.N_points_polar = 100;  % Number of points to compute shock/detonation polar curves
     self.it_guess_det = 5;      % Max number of iterations - guess detonation

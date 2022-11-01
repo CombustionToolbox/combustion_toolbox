@@ -59,9 +59,11 @@ function app = gui_set_species_moles_temperatures(obj, app, species, moles, temp
         else
             app.PD.(temperatures_name) = [];
         end
+        
     catch 
         app.PD.(temperatures_name) = [];
     end
+
 end
 
 function moles = gui_get_moles(obj, event, app, FLAG_COMPUTE_FROM_PHI)
@@ -81,10 +83,13 @@ function moles = gui_get_moles(obj, event, app, FLAG_COMPUTE_FROM_PHI)
                 % compute moles from mole fractions
                  moles = gui_compute_moles_from_molar_fractions(obj);
             end
+
         catch
              moles = gui_compute_moles_from_molar_fractions(obj);
         end
+
     end
+
 end
 
 function moles = gui_compute_moles_from_molar_fractions(obj)
@@ -95,6 +100,7 @@ function moles = gui_compute_moles_from_molar_fractions(obj)
     if isnan(moles)
         moles = zeros(1, length(mole_fractions));
     end
+
 end
 
 function moles = gui_compute_moles_from_equivalence_ratio(obj, app)
@@ -108,22 +114,32 @@ function moles = gui_compute_moles_from_equivalence_ratio(obj, app)
         app = gui_set_species_moles_temperatures(obj, app, species, moles, temperatures, 'S_Oxidizer', 'N_Oxidizer', 'T_Oxidizer', 'ind_Oxidizer');
         app = gui_compute_propReactants(obj, app);
     end
+
     if any(obj.ind_Oxidizer)
         moles = assign_vector2cell(moles, app.PD.phi_t/app.PD.phi.value(1) .* obj.PD.ratio_oxidizers_O2, obj.ind_Oxidizer);
     end
+
     if any(obj.ind_Inert)
         moles(obj.ind_Inert) = obj.UITable_R.Data(obj.ind_Inert, 2);
     end
+
 end
 
 function ratio_oxidizers_O2 = gui_ratio_oxidizers_O2(obj)
-    % Get proportion of inert_O2
-    temp_app = [];
-    FLAG_IDEAL_AIR = obj.IdealAirCheckBox.Value;
-    if ~isempty(find_ind(obj.UITable_R.Data(:, 1), 'O2'))
-        temp_app = set_air(temp_app, FLAG_IDEAL_AIR);
-        ratio_oxidizers_O2 = temp_app.PD.ratio_oxidizers_O2;
+    % Get proportion of oxidizers with oxidizer of reference (default: O2)
+    index_oxidizer_ref = find_ind(obj.UITable_R.Data(:, 1), 'O2');
+    if isempty(index_oxidizer_ref)
+        index_oxidizer_ref = find_ind(obj.UITable_R.Data(:, 1), 'O2bLb');
+        if isempty(index_oxidizer_ref)
+            index_oxidizer_ref = obj.ind_Oxidizer(1);
+        end
+
+    end
+
+    if ~isempty(index_oxidizer_ref)
+        ratio_oxidizers_O2 = cell2vector(obj.UITable_R.Data(obj.ind_Oxidizer, 2))' / cell2vector(obj.UITable_R.Data(index_oxidizer_ref, 2));
     else
         ratio_oxidizers_O2 = 1;
     end
+
 end

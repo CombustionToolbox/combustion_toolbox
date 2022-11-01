@@ -2,15 +2,18 @@ function gui_plot_custom_figures(obj)
     % Function that plot custom figures based on the parameters of the
     % GUI's custom figures tab
     
+    % Clear axes
+    cla(obj.UIAxes);
     % Get mixtures
     mixtures_nodes = obj.Tree_mixtures.CheckedNodes;
     % Get variables x
     x_field = get(obj.Tree_variable_x.CheckedNodes, 'Text');
     % Get variables y
     y_field = get(obj.Tree_variable_y.CheckedNodes, 'Text');
-    if ~iscell(y_field)
-        y_field = {y_field};
-    end
+    % Check non empty values
+    if isempty(x_field) || isempty(y_field), return; end
+    % Check that variables y is a cell
+    if ~iscell(y_field), y_field = {y_field}; end
     % Plot settings
     Misc = Miscellaneous();
     config = Misc.config;
@@ -25,12 +28,14 @@ function gui_plot_custom_figures(obj)
         COLOR_PALETTE = config.colorline;
     end
     legend_name = cell(1, NUM_NODES * NUM_PROP);
-    legend_name_1 = get(mixtures_nodes, 'Text')';
+    legend_name_1 = get(mixtures_nodes, 'Text');
     legend_name_2 = y_field;
-    % Clear axes
-    cla(obj.UIAxes);
+    % Check that legend_name_1 is a cell
+    if ~iscell(legend_name_1), legend_name_1 = {legend_name_1}; end
     % Initialize axes
-    ax = set_figure(obj.UIAxes, config);
+    if obj.DefaultsettingsCheckBox.Value
+        ax = set_figure(obj.UIAxes, config);
+    end
     % Plot
     k = NUM_NODES * NUM_PROP;
     for i = NUM_NODES:-1:1
@@ -43,5 +48,7 @@ function gui_plot_custom_figures(obj)
         end
     end
     % Add legends
-    set_legends(ax, legend_name, config)
+    if NUM_PROP + NUM_NODES > 2
+        set_legends(ax, legend_name, config)
+    end
 end

@@ -14,7 +14,7 @@ function problems_solved = run_validation_TP_TEA_3
     %          PhD Candidate - Group Fluid Mechanics
     %          Universidad Carlos III de Madrid
     %                  
-    % Last update April 15 2022
+    % Last update Oct 12 2022
     
     % Inputs
     load Validation_TP_TEA_3 Pressure Temp results_TEA
@@ -23,14 +23,16 @@ function problems_solved = run_validation_TP_TEA_3
     Fuel = {'H', 'He', 'C', 'N', 'O', 'S'};
     N_Fuel = abundances2moles(Fuel, 'abundances.txt', metallicity);
     Oxidizer = {};
-    LS = {'C2H2_acetylene', 'C2H4', 'C', 'CH4', 'CO2', 'CO', 'H2', 'H2O', 'H2S', 'H', 'HCN', 'He', 'HS_M', 'N2', 'N', 'NH3', 'O', 'S'};
+    LS = {'C2H2_acetylene', 'C2H4', 'C', 'CH4', 'CO2', 'CO', 'H2',...
+          'H2O', 'H2S', 'H', 'HCN', 'He', 'HS_M', 'N2', 'N', 'NH3',...
+          'O', 'S'};
     
     T = Temp;
     p = Pressure;
     % Tunning paramenters
     tolN = 1e-32;
     % Custom Plots 
-    DisplaySpecies = LS;
+    display_species = LS;
     mintol = 1e-21;
     % Combustion Toolbox
     results_CT = run_CT('ProblemType', 'TP',...
@@ -44,15 +46,13 @@ function problems_solved = run_validation_TP_TEA_3
     problems_solved = length(results_CT.PD.range);
     % Display validation (plot)
     % * Molar fractions
-    fig1 = plot_molar_fractions_validation(results_CT, results_TEA, 'Xi', 'p', DisplaySpecies, 'mintol', mintol, 'nfrec', 3,...
-        'ydir', 'reverse', 'xscale', 'log');
+    [~, fig1] = plot_molar_fractions(results_CT, results_CT.PS.strP, ...
+        'Xi', 'p', 'validation', results_TEA, 'nfrec', 3,...
+        'ydir', 'reverse', 'xscale', 'log', 'mintol', mintol,...
+        'display_species', display_species);
     % Save plots
     folderpath = strcat(pwd,'\Validations\Figures\');
     stack_trace = dbstack;
     filename = stack_trace.name;
     saveas(fig1, strcat(folderpath, filename, '_molar'), 'svg');
-
-%     results_TEA.Xi = [C2H2_g, C2H4_g, C_g, CH4_g, CO2_g, CO_g, H2_ref, H2O_g, H2S_g, H_g, HCN_g, He_ref, HS_g, N2_ref, N_g, NH3_g, O_g, S_g]';
-%     results_TEA.T = Temp;
-%     results_TEA.p = Pressure;
 end

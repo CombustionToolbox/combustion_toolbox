@@ -7,7 +7,7 @@ function problems_solved = run_validation_ROCKET_CEA_2
     % Area ratio A_e/A_t = 1.2;
     % Equivalence ratio [-] = 0.5:0.01:4
     % Initial mixture: RP-1 + LOX
-    % List of species considered: ListSpecies('HC/O2/N2 PROPELLANTS')
+    % List of species considered: list_species('HC/O2/N2 PROPELLANTS')
 
     % Inputs
     Fuel = 'RP_1';
@@ -30,6 +30,7 @@ function problems_solved = run_validation_ROCKET_CEA_2
                         'Species', LS,...
                         'S_Fuel', Fuel,...
                         'S_Oxidizer', 'O2bLb',...
+                        'ratio_oxidizers_O2', 1,...
                         'EquivalenceRatio', 1:0.01:4,...
                         'tolN', tolN,...
                         'FLAG_IAC', false,...
@@ -43,7 +44,7 @@ function problems_solved = run_validation_ROCKET_CEA_2
     results_CT.Misc.config.title = strcat('Area ratio $A_{\rm exit}/A_{\rm throat} = ', sprintf('%.2f', Aratio), '$');
     % * Molar fractions
 %         results_CEA.OF = OF(:, i);
-    fig1 = plot_molar_fractions_validation(results_CT, results_CEA, 'phi', 'Xi', display_species, 'config', results_CT.Misc.config);
+    [~, fig1] = plot_molar_fractions(results_CT, results_CT.PS.strP, 'phi', 'Xi', 'validation', results_CEA, 'display_species', display_species);
     set_title(gca, results_CT.Misc.config);
     % Save plots
     folderpath = strcat(pwd,'\Validations\Figures\');

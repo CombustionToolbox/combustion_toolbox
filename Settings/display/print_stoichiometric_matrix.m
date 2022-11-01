@@ -10,7 +10,7 @@ function varargout = print_stoichiometric_matrix(self, varargin)
     % Optional returns:
     %     A0 (table): Stoichiometric matrix. In case type == 'transpose'
     %                 it returns the transpose of stoichiometric matrix
-    
+
     % Definitions (print)
     label_type = 'Stoichiometric matrix:';
     type = ' ';
@@ -18,6 +18,7 @@ function varargout = print_stoichiometric_matrix(self, varargin)
     if nargin > 1
         type = varargin{1};
     end
+
     % Get elements
     elements = self.E.elements';
     % Get species
@@ -29,8 +30,9 @@ function varargout = print_stoichiometric_matrix(self, varargin)
     T = array2table(A0_T, 'RowNames', elements, 'VariableNames', species);
     % Print table
     if strcmpi(type, 'transpose')
-        label_type = 'Transpose stochiometric matrix:' ;
+        label_type = 'Transpose stochiometric matrix:';
     end
+
     fprintf('\n%s\n\n', label_type)
     disp(T);
     % Return stoichiometric matrix

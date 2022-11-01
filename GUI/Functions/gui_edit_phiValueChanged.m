@@ -17,6 +17,7 @@ function [obj, temp_app] = gui_edit_phiValueChanged(obj, event)
         % Update GUI: equivalence ratio, O/F, percentage Fuel, and
         % temperature of reactants
         obj.edit_phi2.Value = obj.edit_phi.Value;
+        obj.edit_phi3.Value = obj.edit_phi.Value;
         obj.edit_OF.Value = temp_app.PS.strR{1}.OF;
         obj.edit_F.Value = temp_app.PS.strR{1}.percentage_Fuel;
         obj.PR1.Value = sprintf('%g', round(temp_app.PD.TR.value, 2));

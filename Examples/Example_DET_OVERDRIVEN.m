@@ -10,7 +10,7 @@
 %                    'C2','C2H4','CH','CH','CH3','CH4','CN','H',...
 %                    'HCN','HCO','N','NH','NH2','NH3','NO','O','OH'}
 %   
-% See wiki or ListSpecies() for more predefined sets of species
+% See wiki or list_species() for more predefined sets of species
 %
 % @author: Alberto Cuadra Lara
 %          PhD Candidate - Group Fluid Mechanics
@@ -27,9 +27,8 @@ self.PD.S_Fuel     = {'CH4'};
 self.PD.S_Oxidizer = {'N2', 'O2', 'Ar', 'CO2'};
 self.PD.ratio_oxidizers_O2 = [78.084, 20.9476, 0.9365, 0.0319] ./ 20.9476;
 %% ADDITIONAL INPUTS (DEPENDS OF THE PROBLEM SELECTED)
-overdriven = 1:0.1:10;
-self = set_prop(self, 'overdriven', overdriven);
-% condition
+drive_factor = 1:0.1:10;
+self = set_prop(self, 'drive_factor', drive_factor);
 %% SOLVE PROBLEM
 self = solve_problem(self, 'DET_OVERDRIVEN');
 %% DISPLAY RESULTS (PLOTS)

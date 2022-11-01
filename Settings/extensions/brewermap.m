@@ -139,7 +139,14 @@ if isempty(raw)
 end
 %
 msg = 'A colorscheme must be preselected before calling without a colorscheme name.';
-%
+%%%%% Changes - Alberto Cuadra-Lara
+if strcmpi(scheme, 'custom') && N < 9
+    map = raw(39).rgb(1:N, :)/255;
+    num = raw(39).num;
+    typ = raw(39).typ;
+    return
+end
+%%%%%
 if nargin==0 % Current figure's colormap length and the preselected colorscheme.
 	assert(~isempty(idp),msg)
 	[map,num,typ] = bmSample([],isr,raw(idp));
@@ -384,6 +391,21 @@ end
 function raw = bmColors()
 % Return a structure of all colorschemes: name, scheme type, RGB values, number of nodes.
 % Order: first sort by <typ>, then case-insensitive sort by <str>:
+raw(40).str = 'Seaborn';
+raw(40).typ = 'Qualitative';
+raw(40).rgb = [76,114,176; 221,132,82; 85,168,104; 196,78,82; 129,114,179; 147,120,96; 218,139,195; 140,140,140; 204,185,116; 100,181,205];
+raw(39).str = 'Custom';
+raw(39).typ = 'Qualitative';
+raw(39).rgb = [120,33,33; 33,103,120; 83,108,93; 108,83,93; 160,90,44; 111,124,145; 145,124,111; 160,137,44];
+raw(38).str = 'Paired_custom';
+raw(38).typ = 'Qualitative';
+raw(38).rgb = [222,135,135; 170,0,0; 222,170,135; 235,172,35; 147,167,172; 0,136,170; 147,172,157; 83,108,93; 172,147,157; 160,44,90];
+raw(37).str = 'Rainbow';
+raw(37).typ = 'Qualitative';
+raw(37).rgb = [120,28,129; 67,50,141; 65,111,184; 81,156,184; 112,180,132; 153,189,92; 195,186,69; 224,162,57; 230,107,45; 170,28,59];
+raw(36).str = 'Normal';
+raw(36).typ = 'Qualitative';
+raw(36).rgb = [235,172,35; 184,0,88; 0,140,249; 0,110,0; 0,187,173; 209,99,230; 178,69,2; 255,146,135; 89,84,214; 0,198,248; 135,133,0; 0,167,108; 189,189,189];
 raw(35).str = 'YlOrRd';
 raw(35).typ = 'Sequential';
 raw(35).rgb = [255,255,204;255,255,178;255,237,160;254,217,118;254,204,92;254,178,76;253,141,60;252,78,42;240,59,32;227,26,28;189,0,38;177,0,38;128,0,38];

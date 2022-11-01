@@ -1,0 +1,29 @@
+### CEA analysis performed on Wed 26-Oct-2022 10:48:54
+
+# Problem Type: "Assigned Temperature and Pressure"  
+
+prob case=test___________6590 tp     
+
+# Pressure (1 value):
+p,atm= 1
+# Temperature (16 values):
+t,k= 3600, 3700, 3800, 3900, 4000, 4100, 4200, 4300, 4400, 4500, 4600, 4700, 4800, 4900, 5000, 5100
+
+# You selected the following reactants:
+reac
+name C6H5OH,phenol    mole= 90.0000 
+name Si               mole= 10.0000 
+
+# You selected these options for output:
+# short version of output
+output short 
+# Proportions of any products will be expressed as Mole Fractions.
+# Heat will be expressed as siunits
+output siunits
+# Trace variable:
+output trace=1e-16
+
+# Input prepared by this script:/var/www/sites/cearun.grc.nasa.gov/cgi-bin/CEARUN/prepareInputFile.cgi
+
+### IMPORTANT:  The following line is the end of your CEA input file!
+end

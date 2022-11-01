@@ -6,25 +6,30 @@ function [error_prop, index_max] = compute_error_prop_CEA(results1, results2, va
 
         dataname_y = get_dataname(varname_y, type);
         value_CT = cell2vector(select_data(results1, dataname_y), varname_y);
+
         try
             index_case_CEA = results2.(varname_x) == value;
             value_CEA = results2.(varname_y)(:, index_case_CEA);
         catch
+
             if strcmpi(varname_x, 'u')
                 index_case_CEA = results2.mix1.(varname_x) == value;
             else
                 index_case_CEA = results2.(type).(varname_x) == value;
             end
+
             value_CEA = results2.(type).(varname_y)(:, index_case_CEA);
         end
 
         error_prop(i) = abs((value_CT - value_CEA) ./ value_CT);
     end
+
     [error_prop, index_max] = max(error_prop);
 end
 
 % SUB-PASS FUNCTIONS
 function dataname = get_dataname(var, type)
+
     if strcmpi(var, 'phi')
         dataname = 'PD.phi.value';
     elseif strcmpi(type, 'mix1')
@@ -32,6 +37,7 @@ function dataname = get_dataname(var, type)
     elseif strcmpi(type, 'mix2')
         dataname = 'PS.strP';
     end
+
 end
 
 function dataselected = select_data(self, dataname)
@@ -40,10 +46,12 @@ function dataselected = select_data(self, dataname)
     N = length(index);
     dataselected = self;
     pos1 = 1;
+
     for i = 1:N
         pos2 = index(i) - 1;
         varname = dataname(pos1:pos2);
         dataselected = dataselected.(varname);
         pos1 = index(i) + 1;
     end
+
 end

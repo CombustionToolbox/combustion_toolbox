@@ -8,7 +8,7 @@ function problems_solved = run_validation_ROCKET_CEA_21
     % Area ratio A_e/A_t = 3;
     % Equivalence ratio [-] = 0.5:0.01:4
     % Initial mixture: LCH4 + LOX === CH4bLb + O2bLb
-    % List of species considered: ListSpecies('HYDROGEN_L')
+    % List of species considered: list_species('Soot Formation Extended')
 
     % Inputs
     Fuel = 'CH4bLb';
@@ -43,7 +43,7 @@ function problems_solved = run_validation_ROCKET_CEA_21
     % Display validation (plot)
     results_CT.Misc.config.axis = 'tight';
     % * Molar fractions
-    fig1 = plot_molar_fractions_validation(results_CT, results_CEA, 'phi', 'Xi', display_species);
+    [~, fig1] = plot_molar_fractions(results_CT, results_CT.PS.strP, 'phi', 'Xi', 'validation', results_CEA, 'display_species', display_species);
     % * Properties mixture Exit - 1
     fig2 = plot_properties_validation(results_CT, results_CEA, {'phi', 'phi', 'phi', 'phi', 'phi', 'phi', 'phi', 'phi', 'phi'}, {'T', 'p', 'h', 'cP', 'cV', 'gamma_s', 'u', 'I_sp', 'I_vac'}, 'mix2');
     % Save plots

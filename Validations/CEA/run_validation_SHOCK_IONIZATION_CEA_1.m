@@ -6,7 +6,7 @@
     % Pressure    [bar] = 1
     % Incident velocity [m/s] = [~308, 13000]
     % Initial mixture: AIR (78.084% N2 + 20.9476% O2 + 0.9365% Ar + 0.0319% CO2)
-    % List of species considered: ListSpecies('Air_ions')
+    % List of species considered: list_species('Air_ions')
     
     % Inputs
     Oxidizer = {'N2', 'O2', 'Ar', 'CO2'};

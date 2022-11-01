@@ -17,6 +17,7 @@ function ax = plot_thermo_validation(species, property, DB, varargin)
     if ischar(species)
         species = {species};
     end
+
     % Definitions
     NS = length(species);
     nfrec = 1;
@@ -24,8 +25,10 @@ function ax = plot_thermo_validation(species, property, DB, varargin)
     FLAG_RANGE = true;
     % Unpack inputs
     nargin0 = 3;
-    for i = nargin-nargin0:-2:1
-        switch lower(varargin{i-1})
+
+    for i = nargin - nargin0:-2:1
+
+        switch lower(varargin{i - 1})
             case 'nfrec'
                 nfrec = varargin{i};
             case 'range'
@@ -33,21 +36,25 @@ function ax = plot_thermo_validation(species, property, DB, varargin)
                 range = repmat(range, NS, 1)';
                 FLAG_RANGE = false;
         end
+
     end
+
     % Set input values
     [funname_NASA, funname_CT, y_labelname] = set_inputs_thermo_validations(property);
     % Compute values
-    for i=NS:-1:1
+    for i = NS:-1:1
         % NASA's polynomials
         if FLAG_RANGE
             range(:, i) = DB.(species{i}).T;
         end
+
         fun_NASA = @(T) funname_NASA(species{i}, T, DB);
         result_NASA(:, i) = feval(fun_NASA, range(:, i));
         % Combustion Toolbox
         fun_CT = @(T) funname_CT(species{i}, T, DB);
         result_CT(:, i) = feval(fun_CT, range(:, i));
     end
+
     % Plot results
     ax = plot_results(species, NS, range, result_CT, result_NASA, x_labelname, y_labelname, nfrec);
 end
@@ -55,11 +62,12 @@ end
 % SUB-PASS FUNCTIONS
 function ax = plot_results(species, NS, range, result_CT, result_NASA, x_labelname, y_labelname, nfrec)
     % Plot results
-    
+
     [ax, config] = set_figure();
     set(ax, 'XScale', 'log')
-    
+
     maxLdisplay = config.colorpaletteLenght;
+
     if NS > maxLdisplay
         NUM_COLORS = maxLdisplay;
     else
@@ -68,56 +76,72 @@ function ax = plot_results(species, NS, range, result_CT, result_NASA, x_labelna
 
     LINE_STYLES = {'-', '--', ':', '-.'};
     SYMBOL_STYLES = {'d', 'o', 's', '<'};
-    NUM_STYLES  = length(LINE_STYLES);
+    NUM_STYLES = length(LINE_STYLES);
     colorbw = brewermap(NUM_COLORS, 'Dark2');
-    
+
     k = 1;
     z = 1;
-    for i=1:NS
-        plot(ax, range(:, i), result_CT(:, i), 'LineWidth', config.linewidth, 'color', colorbw(k,:), 'LineStyle', LINE_STYLES{z});
+
+    for i = 1:NS
+        plot(ax, range(:, i), result_CT(:, i), 'LineWidth', config.linewidth, 'color', colorbw(k, :), 'LineStyle', LINE_STYLES{z});
         k = k + 1;
+
         if k == maxLdisplay
             k = 1;
             z = z + 1;
+
             if z > NUM_STYLES
                 z = 1;
             end
+
         end
+
     end
 
     k = 1;
     z = 1;
-    for i=1:NS
-        plot(ax, range(1:nfrec:end, i), result_NASA(1:nfrec:end, i), SYMBOL_STYLES{z}, 'LineWidth', config.linewidth, 'color', colorbw(k,:), 'MarkerFaceColor', 'white');
+
+    for i = 1:NS
+        plot(ax, range(1:nfrec:end, i), result_NASA(1:nfrec:end, i), SYMBOL_STYLES{z}, 'LineWidth', config.linewidth, 'color', colorbw(k, :), 'MarkerFaceColor', 'white');
         k = k + 1;
+
         if k == maxLdisplay
             k = 1;
             z = z + 1;
+
             if z > NUM_STYLES
                 z = 1;
             end
+
         end
+
     end
-    
+
     k = 1;
     z = 1;
     h = zeros(1, NS);
-    for i=1:NS
-        h(i) = plot(ax, NaN, NaN, strcat(LINE_STYLES{z}, SYMBOL_STYLES{z}), 'LineWidth', config.linewidth, 'color', colorbw(k,:));
+
+    for i = 1:NS
+        h(i) = plot(ax, NaN, NaN, strcat(LINE_STYLES{z}, SYMBOL_STYLES{z}), 'LineWidth', config.linewidth, 'color', colorbw(k, :));
         k = k + 1;
+
         if k == maxLdisplay
             k = 1;
             z = z + 1;
+
             if z > NUM_STYLES
                 z = 1;
             end
+
         end
+
     end
 
     for i = NS:-1:1
         legendname{i} = species2latex(species{i});
     end
-    legend(h, legendname, 'FontSize', config.fontsize-2, 'Location', 'northeastoutside', 'interpreter', 'latex');
+
+    legend(h, legendname, 'FontSize', config.fontsize - 2, 'Location', 'northeastoutside', 'interpreter', 'latex');
 
     xlabel(ax, x_labelname)
     ylabel(ax, y_labelname)

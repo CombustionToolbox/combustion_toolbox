@@ -26,7 +26,7 @@ function splash_obj = gui_display_splash(varargin)
     % Get Combustion Toolbox version and published date
     [release, date] = get_combustion_toolbox_version();
     % Generate splash
-    splash_obj = SplashScreen('Combustion Toolbox', fullfile('gui', 'icons', 'splash.png'));               
+    splash_obj = SplashScreen('Combustion Toolbox', fullfile('gui', 'assets', 'splash', 'splash.png'));               
     splash_obj.addText(110, 100, [release,' (', date,')'], 'FontSize', 18, 'Color', color_splash, 'FontName', 'Arial', 'Shadow', 'off');
     % Optional: auto-delete after x seconds
     if ~isempty(time_pause)

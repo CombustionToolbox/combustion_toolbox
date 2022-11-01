@@ -12,7 +12,7 @@ function self = run_CT(varargin)
     S_Fuel = []; N_Fuel = [];
     S_Oxidizer = {'N2', 'O2'}; N_Oxidizer = [];
     S_Inert = []; N_Inert = [];
-    ratio_oxidizers_O2 = [79, 21]/21;
+    ratio_oxidizers_O2 = [79, 21] / 21;
     ratio_inerts_O2 = [];
     ProblemType = 'HP';
     tolN = 1e-18;
@@ -21,62 +21,71 @@ function self = run_CT(varargin)
     Aratio_c = [];
     Aratio = [];
     % GET INPUTS
-    for i=1:2:nargin
+    for i = 1:2:nargin
+
         switch lower(varargin{i})
             case {'problemtype', 'problem'}
-                ProblemType = varargin{i+1};
+                ProblemType = varargin{i + 1};
             case {'listspecies', 'species'}
-                species = varargin{i+1};
+                species = varargin{i + 1};
             case {'tr'}
-                Temp_mix1 = varargin{i+1};
+                Temp_mix1 = varargin{i + 1};
             case {'temperature', 'temp', 'tp'}
-                Temp_mix2 = varargin{i+1};
+                Temp_mix2 = varargin{i + 1};
             case {'pr'}
-                Pressure_mix1 = varargin{i+1};
+                Pressure_mix1 = varargin{i + 1};
             case {'pressure', 'pp'}
-                Pressure_mix2 = varargin{i+1};
+                Pressure_mix2 = varargin{i + 1};
             case {'equivalenceratio', 'phi'}
-                EquivalenceRatio = varargin{i+1};
+                EquivalenceRatio = varargin{i + 1};
             case {'velocity', 'u1'}
-                Velocity = varargin{i+1};
+                Velocity = varargin{i + 1};
             case {'fuel', 's_fuel'}
-                S_Fuel = varargin{i+1};
+                S_Fuel = varargin{i + 1};
+
                 if ~iscell(S_Fuel) && ~isempty(S_Fuel)
                     S_Fuel = {S_Fuel};
                 end
+
             case {'oxidizer', 's_oxidizer'}
-                S_Oxidizer = varargin{i+1};
+                S_Oxidizer = varargin{i + 1};
+
                 if ~iscell(S_Oxidizer) && ~isempty(S_Oxidizer)
                     S_Oxidizer = {S_Oxidizer};
                 end
+
             case {'inert', 's_inert'}
-                S_Inert = varargin{i+1};
+                S_Inert = varargin{i + 1};
+
                 if ~iscell(S_Inert) && ~isempty(S_Inert)
                     S_Inert = {S_Inert};
                 end
+
             case 'n_fuel'
-                N_Fuel = varargin{i+1};
+                N_Fuel = varargin{i + 1};
                 FLAG_PHI = false;
             case 'n_oxidizer'
-                N_Oxidizer = varargin{i+1};
+                N_Oxidizer = varargin{i + 1};
                 FLAG_PHI = false;
             case 'n_inert'
-                N_Inert = varargin{i+1};
+                N_Inert = varargin{i + 1};
                 FLAG_PHI = false;
             case 'ratio_oxidizers_o2'
-                ratio_oxidizers_O2 = varargin{i+1};
+                ratio_oxidizers_O2 = varargin{i + 1};
             case 'ratio_inerts_o2'
-                ratio_inerts_O2 = varargin{i+1};
+                ratio_inerts_O2 = varargin{i + 1};
             case 'toln'
-                tolN = varargin{i+1};
+                tolN = varargin{i + 1};
             case 'flag_iac'
-                FLAG_IAC = varargin{i+1};
+                FLAG_IAC = varargin{i + 1};
             case 'aratio_c'
-                Aratio_c = varargin{i+1};
+                Aratio_c = varargin{i + 1};
             case 'aratio'
-                Aratio = varargin{i+1};
+                Aratio = varargin{i + 1};
         end
+
     end
+
     % INITIALIZE
     self = App(species);
     % MISCELLANEOUS
@@ -85,15 +94,19 @@ function self = run_CT(varargin)
     self.TN.tolN = tolN;
     % INITIAL CONDITIONS
     self = set_prop(self, 'TR', Temp_mix1, 'pR', Pressure_mix1);
+
     if FLAG_PHI
         self = set_prop(self, 'phi', EquivalenceRatio);
     end
+
     if ~isempty(Aratio_c)
         self = set_prop(self, 'Aratio_c', Aratio_c);
     end
+
     if ~isempty(Aratio)
         self = set_prop(self, 'Aratio', Aratio);
     end
+
     self.PD.FLAG_IAC = FLAG_IAC;
     self.PD.S_Fuel = S_Fuel; self.PD.N_Fuel = N_Fuel;
     self.PD.S_Oxidizer = S_Oxidizer; self.PD.N_Oxidizer = N_Oxidizer;
@@ -102,9 +115,11 @@ function self = run_CT(varargin)
     self.PD.ratio_inerts_O2 = ratio_inerts_O2;
     % ADDITIONAL INPUTS (DEPENDS OF THE PROBLEM SELECTED)
     self = set_prop(self, 'pP', Pressure_mix2, 'TP', Temp_mix2);
+
     if exist('Velocity', 'var')
         self = set_prop(self, 'u1', Velocity, 'phi', 1 * ones(1, length(Velocity)));
     end
+
     % INITIALIZE TIMER
     self.Misc.timer_loop = tic;
     % SOLVE PROBLEM
@@ -127,9 +142,11 @@ function self = run_CT(varargin)
         self.PS.strP{i}.S = entropy_mass(self.PS.strP{i});
         self.PS.strP{i}.cP = cp_mass(self.PS.strP{i});
         self.PS.strP{i}.cV = self.PS.strP{i}.cP / self.PS.strP{i}.gamma_s;
+
         if contains(ProblemType, '_R')
             self.PS.strP{i}.u = self.PS.strR{i}.u;
         end
+
         if contains(ProblemType, 'ROCKET')
             self.PS.mix2_c{i}.h = enthalpy_mass(self.PS.mix2_c{i});
             self.PS.mix2_c{i}.e = intEnergy_mass(self.PS.mix2_c{i});
@@ -145,11 +162,14 @@ function self = run_CT(varargin)
             self.PS.mix3{i}.cP = cp_mass(self.PS.mix3{i});
             self.PS.mix3{i}.cV = self.PS.mix3{i}.cP / self.PS.mix3{i}.gamma_s;
         end
+
         if contains(ProblemType, 'SHOCK') || contains(ProblemType, 'DET')
             self.PS.strR{i}.u_preshock = self.PS.strR{i}.u;
             self.PS.strR{i}.u_postshock = self.PS.strP{i}.v_shock;
             self.PS.strP{i}.u_preshock = self.PS.strR{i}.u;
             self.PS.strP{i}.u_postshock = self.PS.strP{i}.v_shock;
         end
+
     end
+
 end

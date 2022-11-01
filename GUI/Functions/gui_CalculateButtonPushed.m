@@ -10,11 +10,15 @@ function obj = gui_CalculateButtonPushed(obj, event)
         app = App('fast', obj.DB_master, obj.DB, obj.LS);
         % Set FLAG GUI
         app.Misc.FLAG_GUI = true;
+        % Get Print results FLAG (debug mode)
+        app.Misc.FLAG_RESULTS = obj.PrintresultsCheckBox.Value;
         % Get tolerances and tunning values
         app = get_tuning_values(obj, app);
         % Get initial conditions
         app = get_input_constrains(obj, app);
         app = gui_get_reactants(obj, event, app);
+        % Get display species
+        app = gui_get_display_species(obj, app);
         % Update GUI terminal
         gui_update_terminal(obj, app, 'start');
         % Solve selected problem
@@ -46,17 +50,10 @@ end
 
 % SUB-PASS FUNCTIONS
 function app = get_tuning_values(obj, app)
-    % Get tolerances and tuning values from GUI and set into app
-    app.TN.tolN = obj.TraceoptionEditField.Value;
-    app.TN.tol0 = obj.RootFindingMethodEditField.Value;
-    app.TN.tol_shocks = obj.ShocksandDetonationsEditField.Value;
+    % Get tuning properties from GUI and set into app
+    app.TN = obj.TN;
+    % Get display species tolerance and set into app
     app.C.mintol_display = obj.DisplaySpeciesEditField.Value;
-    
-    app.TN.itMax = obj.MaxiterationsRFMEditField.Value;
-    app.TN.it_shocks = obj.MaxiterationsSDEditField.Value;
-    app.TN.root_T0_l = obj.RFMT0_LEditField.Value;
-    app.TN.root_T0_r = obj.RFMT0_REditField.Value;
-    app.TN.root_T0 = obj.RFMT0EditField.Value;
 end
 
 function gui_update_results(obj, results)
@@ -84,7 +81,17 @@ function [results, temp_results] = save_results(obj, app)
     
     if strcmpi(app.PD.ProblemType, 'ROCKET')
         label_mix1 = 'strR';
-        label_mix2 = 'mix3';
+        if app.PD.FLAG_IAC
+            label_mix2 = 'mix2_c';
+            label_mix3 = 'mix3';
+            label_mix4 = 'strP';
+            label_mix5 = [];
+        else
+            label_mix2 = 'str2';
+            label_mix3 = 'mix2_c';
+            label_mix4 = 'mix3';
+            label_mix5 = 'strP';
+        end
     else
         label_mix1 = 'strR';
         label_mix2 = 'strP';
@@ -105,6 +112,18 @@ function [results, temp_results] = save_results(obj, app)
         results(i).LS = app.S.LS;
         results(i).LS_products = obj.LS;
         results(i).UITable_R_Data = obj.UITable_R.Data;
+    end
+    if strcmpi(app.PD.ProblemType, 'ROCKET')
+        try
+            label_mix = {label_mix3, label_mix4, label_mix5};
+            for mix = label_mix
+                for i = N:-1:1
+                    results(i).(mix{:}) = app.PS.(mix{:}){i};
+                end
+            end
+        catch
+            %
+        end
     end
     % Save temporally this parametric study
     temp_results = app.PS;
@@ -133,8 +152,8 @@ function app = get_input_constrains(obj, app)
             app = set_prop(app, 'u1', obj.PR3.Value);
         case {'DET', 'DET_R'} % * DET: CALCULATE CHAPMAN-JOUGUET STATE
             % No additional constrains
-        case {'DET_OVERDRIVEN', 'DET_OVERDRIVEN_R'} % * DET_OVERDRIVEN: CALCULATE OVERDRIVEN DETONATION
-            app = set_prop(app, 'overdriven', obj.PR3.Value);
+        case {'DET_OVERDRIVEN', 'DET_OVERDRIVEN_R', 'DET_UNDERDRIVEN', 'DET_UNDERDRIVEN_R'} % * DET_OVERDRIVEN and DET_UNERDRIVEN
+            app = set_prop(app, 'drive_factor', obj.PR3.Value);
         case {'ROCKET'} % * ROCKET: ROCKET PROPELLANT PERFORMANCE
             % Get model
             app.PD.FLAG_IAC = obj.FLAG_IAC.Value;
@@ -152,10 +171,14 @@ function app = get_input_constrains(obj, app)
                 end
             end
             if ~isempty(obj.PR3.Value)
-                app = set_prop(app, 'Aratio_subsonic', obj.PR3.Value);
+                % Set Aratio combustor to throat region (supersonic region)
+                app = set_prop(app, 'Aratio', obj.PR3.Value);
+                app.PD.FLAG_SUBSONIC = true;
             end
             if ~isempty(obj.PP3.Value)
-                app = set_prop(app, 'Aratio_supersonic', obj.PP3.Value);
+                % Set Aratio throat to exit region (supersonic region)
+                app = set_prop(app, 'Aratio', obj.PP3.Value);
+                app.PD.FLAG_SUBSONIC = false;
             end
     end
     if contains(obj.Products.Value, 'complete', 'IgnoreCase', true)
@@ -179,9 +202,9 @@ function gui_update_custom_figures(obj)
         add_node(obj, 'Mixtures', fields);
         % Variables x
         try
-            fields = fieldnames(obj.temp_results.strP{1});
+            fields = sort(fieldnames(obj.temp_results.strP{1}));
         catch
-            fields = fieldnames(obj.temp_results.mix3{1});
+            fields = sort(fieldnames(obj.temp_results.mix3{1}));
         end
         add_node(obj, 'Variable_x', fields);
         % Variables y
@@ -199,4 +222,10 @@ function add_node(obj, field_master, field_names)
     for i = 1:length(field_names)
         uitreenode(obj.(field_master), 'Text', field_names{i});
     end
+end
+
+function app = gui_get_display_species(obj, app)
+    % Set display species in variable app from the display species itembox
+    % (GUI)
+    app.Misc.display_species = obj.listbox_LS_display.Items;
 end

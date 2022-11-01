@@ -1,28 +1,31 @@
 function value = interpreter_label(property, varargin)
     % Interpreter label for properties - returns property name
-    % 
+    %
     % Args:
     %     property (str): Property name
     %
     % Returns:
     %     value (str): Corresponding name of the property
-    
+
     % Default values
     type = 'medium';
+
+    
+    % Check if property is a cell variable
+    if iscell(property)
+
+        if length(property) > 1
+            value = 'Multiple variables';
+            return
+        end
+
+        property = property{1};
+    end
     
     % Check if property is empty
     if isempty(property)
         value = '';
         return
-    end
-
-    % Check if property is a cell variable
-    if iscell(property)
-        if length(property) > 1
-            value = 'Multiple variables';
-            return
-        end
-        property = property{1};
     end
     
     % Check additional inputs
@@ -36,21 +39,27 @@ function value = interpreter_label(property, varargin)
     % Convert property definition to its name
     switch lower(type)
         case 'short'
+
             if ~isempty(property_latex)
                 property_name = '';
             end
+
         case 'medium'
+
             if ~isempty(property_name)
                 property_latex = '';
             end
+
         case 'long'
             % nothing
     end
+
     value = sprintf('%s %s %s', property_name, property_latex, property_unit);
 end
 
 % SUB-PASS FUNCTIONS
 function [property_name, property_latex, property_unit] = property_names(property, type)
+
     switch lower(property)
         case 'phi'
             property_name = 'Equivalance ratio';
@@ -65,9 +74,9 @@ function [property_name, property_latex, property_unit] = property_names(propert
             property_latex = 'T';
             property_unit = '[K]';
         case 'p'
-           property_name = 'Pressure';
-           property_latex = 'p';
-           property_unit = '[bar]';
+            property_name = 'Pressure';
+            property_latex = 'p';
+            property_unit = '[bar]';
         case 'h'
             property_name = 'Enthalpy';
             property_latex = 'h';
@@ -216,7 +225,7 @@ function [property_name, property_latex, property_unit] = property_names(propert
             property_name = 'Relative error problem';
             property_latex = '\epsilon_{\rm problem}';
             property_unit = '';
-        case {'dvdtp','dvdt_p'}
+        case {'dvdtp', 'dvdt_p'}
             property_name = '';
             property_latex = '(\rm{d}V/\rm{d}T)_p';
             property_unit = '';
@@ -258,6 +267,7 @@ function [property_name, property_latex, property_unit] = property_names(propert
             property_unit = '[bar-m$^3$]';
         otherwise
             property_unit = '';
+
             switch type
                 case 'short'
                     property_name = '';
@@ -266,11 +276,13 @@ function [property_name, property_latex, property_unit] = property_names(propert
                     property_name = property;
                     property_latex = '';
             end
+
     end
+
     property_latex = ['$', property_latex, '$'];
 
     if strcmpi(type, 'long')
         property_name = [property_name, ','];
     end
-    
+
 end

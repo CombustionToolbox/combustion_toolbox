@@ -17,15 +17,16 @@ function mainfigure = plot_properties_validation(results1, results2, varsname_x,
         dataname_y = get_dataname(varname_y, type);
         results1.(varname_x) = cell2vector(select_data(results1, dataname_x), varname_x);
         results1.(varname_y) = cell2vector(select_data(results1, dataname_y), varname_y);
-    
+
         nexttile;
-        axes = gca;
-        set(axes, 'LineWidth', config.linewidth, 'FontSize', config.fontsize-2, 'BoxStyle', 'full')
-        grid(axes, 'off'); box(axes, 'off'); hold(axes, 'on'); axes.Layer = 'Top';
-        xlabel(axes, interpreter_label(varname_x), 'FontSize', config.fontsize, 'interpreter', 'latex');
-        ylabel(axes, interpreter_label(varname_y), 'FontSize', config.fontsize, 'interpreter', 'latex');
-        xlim(axes, [min(results1.(varname_x)), max(results1.(varname_x))])
-    
+        ax = gca;
+        set(ax, 'LineWidth', config.linewidth, 'FontSize', config.fontsize - 2, 'BoxStyle', 'full')
+        set(ax, 'TickLabelInterpreter', 'latex', 'Layer', 'top')
+        grid(ax, 'off'); box(ax, 'off'); hold(ax, 'on');
+        xlabel(ax, interpreter_label(varname_x, config.label_type), 'FontSize', config.fontsize, 'interpreter', 'latex');
+        ylabel(ax, interpreter_label(varname_y, config.label_type), 'FontSize', config.fontsize, 'interpreter', 'latex');
+        xlim(ax, [min(results1.(varname_x)), max(results1.(varname_x))])
+
         NUM_COLORS = 1;
         LINE_STYLES = {'-', '--', ':', '-.'};
         SYMBOL_STYLES = {'d', 'o', 's', '<'};
@@ -35,20 +36,22 @@ function mainfigure = plot_properties_validation(results1, results2, varsname_x,
         else
             colorbw = config.colorlines(3, :);
         end
-        
+
         k = 1;
         z = 1;
 
-        plot(axes, results1.(varname_x), results1.(varname_y), 'LineWidth', config.linewidth, 'color', colorbw(k,:), 'LineStyle', LINE_STYLES{z});
-        plot(axes, results2.(varname_x)(1:nfrec:end), results2.(varname_y)(1:nfrec:end), SYMBOL_STYLES{z}, 'LineWidth', config.linewidth, 'color', colorbw(k,:), 'MarkerFaceColor', 'white');
-        
-%         legendname = {'CT', 'CEA-NASA'};
-%         legend(axes, legendname, 'FontSize', config.fontsize-6, 'Location', 'northeastoutside', 'interpreter', 'latex');
-%         title(create_title(results1), 'Interpreter', 'latex', 'FontSize', config.fontsize + 4);
+        plot(ax, results1.(varname_x), results1.(varname_y), 'LineWidth', config.linewidth, 'color', colorbw(k, :), 'LineStyle', LINE_STYLES{z});
+        plot(ax, results2.(varname_x)(1:nfrec:end), results2.(varname_y)(1:nfrec:end), SYMBOL_STYLES{z}, 'LineWidth', config.linewidth, 'color', colorbw(k, :), 'MarkerFaceColor', 'white');
+
+        %         legendname = {'CT', 'CEA-NASA'};
+        %         legend(ax, legendname, 'FontSize', config.fontsize-6, 'Location', 'northeastoutside', 'interpreter', 'latex');
+        %         title(create_title(results1), 'Interpreter', 'latex', 'FontSize', config.fontsize + 4);
     end
+
 end
 
 function dataname = get_dataname(var, type)
+
     if strcmpi(var, 'phi')
         dataname = 'PD.phi.value';
     elseif strcmpi(type, 'mix1')
@@ -60,6 +63,7 @@ function dataname = get_dataname(var, type)
     elseif strcmpi(type, 'mix3')
         dataname = 'PS.mix3';
     end
+
 end
 
 function dataselected = select_data(self, dataname)
@@ -68,52 +72,69 @@ function dataselected = select_data(self, dataname)
     N = length(index);
     dataselected = self;
     pos1 = 1;
+
     for i = 1:N
         pos2 = index(i) - 1;
         varname = dataname(pos1:pos2);
         dataselected = dataselected.(varname);
         pos1 = index(i) + 1;
     end
+
 end
 
 function titlename = create_title(self)
     titlename = [self.PD.ProblemType, ': ', cat_moles_species(self.PD.N_Fuel, self.PD.S_Fuel)];
+
     if ~isempty(self.PD.S_Oxidizer) || ~isempty(self.PD.S_Inert)
+
         if ~isempty(self.PD.S_Fuel)
             titlename = [titlename, ' + '];
         end
+
         titlename = [titlename, '$\frac{', sprintf('%.3g', self.PD.phi_t), '}{\phi}$'];
+
         if ~isempty(self.PD.S_Oxidizer) && ~isempty(self.PD.S_Inert)
             titlename = [titlename, '('];
         end
+
         if ~isempty(self.PD.S_Oxidizer)
             titlename = [titlename, cat_moles_species(1, self.PD.S_Oxidizer)];
         end
+
         if ~isempty(self.PD.S_Inert)
             titlename = [titlename, ' + ', cat_moles_species(self.PD.proportion_inerts_O2, self.PD.S_Inert)];
         end
+
         if ~isempty(self.PD.S_Oxidizer) && ~isempty(self.PD.S_Inert)
             titlename = [titlename, ')'];
         end
+
     end
+
 end
 
 function cat_text = cat_moles_species(moles, species)
     N = length(species);
     cat_text = [];
+
     if N
         cat_text = cat_mol_species(moles(1), species{1});
-        for i=2:N
+
+        for i = 2:N
             cat_text = [cat_text, ' + ', cat_mol_species(moles(i), species{i})];
         end
+
     end
+
 end
 
 function cat_text = cat_mol_species(mol, species)
+
     if mol == 1
         value = [];
     else
         value = sprintf('%.3g', mol);
     end
+
     cat_text = [value, species2latex(species)];
 end

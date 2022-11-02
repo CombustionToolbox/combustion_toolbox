@@ -74,7 +74,7 @@
 %                  
 % Last update Nov 02 2022
 % -------------------------------------------------------------------------
-help Combustion_Toolbox.m
+help combustion_toolbox_contents.m
 
 % Set path
 Combustion_Toolbox_setPath;

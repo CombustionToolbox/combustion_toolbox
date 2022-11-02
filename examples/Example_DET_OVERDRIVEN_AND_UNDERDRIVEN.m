@@ -1,5 +1,5 @@
 % -------------------------------------------------------------------------
-% EXAMPLE: DET_OVERDRIVEN_AND_OVERDRIVEN
+% EXAMPLE: DET_OVERDRIVEN_AND_UNDERDRIVEN
 %
 % Compute pre-shock and post-shock state for a planar underdriven to 
 % overdriven detonation considering Chapman-Jouguet (CJ) theory for a

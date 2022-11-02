@@ -63,7 +63,7 @@ This project is also part of the PhD of [Alberto Cuadra-Lara](https://www.acuadr
 We have several examples of what Combustion Toolbox can do. Here we show a preview of the GUI and some results obtained from Combustion Toolbox.
 
 <p align="left">
-    <img src="https://github.com/AlbertoCuadra/combustion_toolbox_website/blob/main/docs/source/_static/img/snapshot_1.svg" width="500">
+    <img src="https://github.com/AlbertoCuadra/combustion_toolbox_website/blob/main/docs/source/_static/img/cuadra2022/gui_1.svg" width="500">
 </p>
 
 **Figure 1:** *Current state of the GUI*.

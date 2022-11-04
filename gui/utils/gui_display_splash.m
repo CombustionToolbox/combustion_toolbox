@@ -4,7 +4,7 @@ function splash_obj = gui_display_splash(varargin)
     % [1] Ben Tordoff (2022). SplashScreen (https://www.mathworks.com/matlabcentral/fileexchange/30508-splashscreen), MATLAB Central File Exchange.
     %
     % Args:
-    %    obj (object): App object
+    %    app (object): App object
     %
     % Returns:
     %    splash_obj (object): Splash object

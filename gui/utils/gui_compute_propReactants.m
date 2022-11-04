@@ -1,16 +1,16 @@
-function app = gui_compute_propReactants(obj, app)
+function self = gui_compute_propReactants(app, self)
     % Function that compute fundamental properties (e.g., equivalence ratio,
     % molar fractions, ...) of the mixture.
     
     % Get temperature and pressure of the mixture
-    app.PD.TR.value = gui_get_prop(obj, 'TR', obj.PR1.Value);
-    app.PD.pR.value = gui_get_prop(obj, 'pR', obj.PR2.Value);
+    self.PD.TR.value = gui_get_prop(app, 'TR', app.PR1.Value);
+    self.PD.pR.value = gui_get_prop(app, 'pR', app.PR2.Value);
     % Flag if the number of moles of fuel, oxidant and inert species
     % is specified. If not, consider 1 mole for the fuel and calculate
     % the remaining moles from the equivalence relation.
-    app = get_FLAG_N(app);
+    self = get_FLAG_N(self);
     % Compute properties for the first temperature value (in case PR1 is a vector)
-    app.PD.TR.value = app.PD.TR.value(1);
+    self.PD.TR.value = self.PD.TR.value(1);
     % Compute stoichiometric matrix and properties of the mixture
-    app = define_FOI(app, 1);
+    self = define_FOI(self, 1);
 end

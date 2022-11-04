@@ -1,13 +1,13 @@
-function gui_update_frozen(obj)
+function gui_update_frozen(app)
     % Set frozen chemistry and update Listbox of species
-    if obj.FrozenchemistryCheckBox.Value
+    if app.FrozenchemistryCheckBox.Value
         try
-            species = obj.UITable_R.Data(:, 1);
-            obj.listbox_Products.Items = species;
+            species = app.UITable_R.Data(:, 1);
+            app.listbox_Products.Items = species;
         catch
-            obj.listbox_Products.Items = {};
+            app.listbox_Products.Items = {};
         end
     else
-        gui_ProductsValueChanged(obj)
+        gui_ProductsValueChanged(app)
     end
 end

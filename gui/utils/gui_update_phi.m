@@ -1,11 +1,11 @@
-function gui_update_phi(obj, app)
+function gui_update_phi(app, self)
     % Update GUI: equivalence ratio, O/F, and percentage Fuel
     try
-        obj.edit_phi.Value = sprintf('%.5g', round(app.PS.strR{1}.phi, 5));
+        app.edit_phi.Value = sprintf('%.5g', round(self.PS.strR{1}.phi, 5));
     catch
-        obj.edit_phi.Value = app.PS.strR{1}.phi; 
+        app.edit_phi.Value = self.PS.strR{1}.phi; 
     end
-    obj.edit_phi2.Value = obj.edit_phi.Value;
-    obj.edit_OF.Value = app.PS.strR{1}.OF;
-    obj.edit_F.Value = app.PS.strR{1}.percentage_Fuel;
+    app.edit_phi2.Value = app.edit_phi.Value;
+    app.edit_OF.Value = self.PS.strR{1}.OF;
+    app.edit_F.Value = self.PS.strR{1}.percentage_Fuel;
 end

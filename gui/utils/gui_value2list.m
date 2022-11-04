@@ -1,4 +1,4 @@
-function LS = gui_value2list(obj, value, LS, action)
+function LS = gui_value2list(app, value, LS, action)
     % Add/remove (action) selected value to LS
     if ~isempty(value)
         switch lower(action)

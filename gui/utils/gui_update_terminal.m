@@ -1,10 +1,10 @@
-function gui_update_terminal(obj, app, type)
+function gui_update_terminal(app, self, type)
     % Update GUI command window
     switch lower(type)
         case {'start'}
-            message = sprintf('Solving %s problem... ', app.PD.ProblemType);
+            message = sprintf('Solving %s problem... ', self.PD.ProblemType);
         case {'finish'}
-            message = strcat(obj.Console_text.Value, sprintf('Done! check tab "Results"\n\nElapsed time is %.6g seconds', app.Misc.timer_loop));
+            message = strcat(app.Console_text.Value, sprintf('Done! check tab "Results"\n\nElapsed time is %.6g seconds', self.Misc.timer_loop));
     end
-    obj.Console_text.Value = message;
+    app.Console_text.Value = message;
 end

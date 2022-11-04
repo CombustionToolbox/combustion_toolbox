@@ -1,4 +1,4 @@
-function [obj, temperature, FLAG_FIXED] = gui_check_temperature_reactants(obj, DB, species, temperature, Nspecies)
+function [app, temperature, FLAG_FIXED] = gui_check_temperature_reactants(app, DB, species, temperature, Nspecies)
     % Check if is a condensed species with a fixed temperature
     FLAG_FIXED = true;
     for i = 1:Nspecies
@@ -10,6 +10,6 @@ function [obj, temperature, FLAG_FIXED] = gui_check_temperature_reactants(obj, D
     end
 
     if FLAG_FIXED
-        obj.PR1.Value = sprintf('%.4g', max(cell2mat(temperature))); 
+        app.PR1.Value = sprintf('%.4g', max(cell2mat(temperature))); 
     end
 end

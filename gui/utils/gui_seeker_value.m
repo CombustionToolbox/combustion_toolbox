@@ -1,4 +1,4 @@
-function value = gui_seeker_value(obj, event, ListValues)
+function value = gui_seeker_value(app, event, ListValues)
     % Return the value that match with the value introduced in the finder
     try
         seekValue = event.Value;

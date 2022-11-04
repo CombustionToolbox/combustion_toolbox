@@ -1,59 +1,59 @@
-function obj = gui_CalculateButtonPushed(obj, event)
+function app = gui_CalculateButtonPushed(app, event)
     % Solve selected problem, update GUI with the results and generate
     % predefined plots.
     try
         % Set lamp to Working color
-        obj.Lamp.Color = obj.color_lamp_working;
+        app.Lamp.Color = app.color_lamp_working;
         % Get List of Species considered (reactants + products)
-        obj = get_listSpecies_gui(obj);
-        % Initialize variable app
-        app = App('fast', obj.DB_master, obj.DB, obj.LS);
+        app = get_listSpecies_gui(app);
+        % Initialize variable self
+        self = App('fast', app.DB_master, app.DB, app.LS);
         % Set FLAG GUI
-        app.Misc.FLAG_GUI = true;
+        self.Misc.FLAG_GUI = true;
         % Get Print results FLAG (debug mode)
-        app.Misc.FLAG_RESULTS = obj.PrintresultsCheckBox.Value;
+        self.Misc.FLAG_RESULTS = app.PrintresultsCheckBox.Value;
         % Get tolerances and tunning values
-        app = get_tuning_values(obj, app);
+        self = get_tuning_values(app, self);
         % Get initial conditions
-        app = get_input_constrains(obj, app);
-        app = gui_get_reactants(obj, event, app);
+        self = get_input_constrains(app, self);
+        self = gui_get_reactants(app, event, self);
         % Get display species
-        app = gui_get_display_species(obj, app);
+        self = gui_get_display_species(app, self);
         % Update GUI terminal
-        gui_update_terminal(obj, app, 'start');
+        gui_update_terminal(app, self, 'start');
         % Solve selected problem
-        app = solve_problem(app, app.PD.ProblemType);
+        self = solve_problem(self, self.PD.ProblemType);
         % Save results
-        [results, obj.temp_results] = save_results(obj, app);
+        [results, app.temp_results] = save_results(app, self);
         % Update GUI with the last results of the set
-        gui_update_results(obj, results);
+        gui_update_results(app, results);
         % Update GUI custom figures tab
-        gui_update_custom_figures(obj);
+        gui_update_custom_figures(app);
         % Update GUI terminal
-        gui_update_terminal(obj, app, 'finish')
+        gui_update_terminal(app, self, 'finish')
         % Display results (plots)
-        switch lower(obj.Report_type.Value)
+        switch lower(app.Report_type.Value)
             case {'auto'}
-                post_results(app);
+                post_results(self);
         end
         % Set lamp to Done color
-        obj.Lamp.Color = obj.color_lamp_done;
+        app.Lamp.Color = app.color_lamp_done;
     catch ME
         % Set lamp to Error color
-        obj.Lamp.Color = obj.color_lamp_error;
+        app.Lamp.Color = app.color_lamp_error;
         % Print error
         message = {sprintf('Error in function %s() at line %d.\n\nError Message:\n%s', ...
         ME.stack(1).name, ME.stack(1).line, ME.message)};
-        uialert(obj.UIFigure, message, 'Warning', 'Icon', 'warning');
+        uialert(app.UIFigure, message, 'Warning', 'Icon', 'warning');
     end
 end
 
 % SUB-PASS FUNCTIONS
-function app = get_tuning_values(obj, app)
-    % Get tuning properties from GUI and set into app
-    app.TN = obj.TN;
-    % Get display species tolerance and set into app
-    app.C.mintol_display = obj.DisplaySpeciesEditField.Value;
+function self = get_tuning_values(obj, self)
+    % Get tuning properties from GUI and set into self
+    self.TN = obj.TN;
+    % Get display species tolerance and set into self
+    self.C.mintol_display = obj.DisplaySpeciesEditField.Value;
 end
 
 function gui_update_results(obj, results)
@@ -75,13 +75,13 @@ function obj = get_listSpecies_gui(obj)
     end
 end
 
-function [results, temp_results] = save_results(obj, app)
+function [results, temp_results] = save_results(obj, self)
     % Save results
-    N = length(app.PS.strR);
+    N = length(self.PS.strR);
     
-    if strcmpi(app.PD.ProblemType, 'ROCKET')
+    if strcmpi(self.PD.ProblemType, 'ROCKET')
         label_mix1 = 'strR';
-        if app.PD.FLAG_IAC
+        if self.PD.FLAG_IAC
             label_mix2 = 'mix2_c';
             label_mix3 = 'mix3';
             label_mix4 = 'strP';
@@ -97,9 +97,9 @@ function [results, temp_results] = save_results(obj, app)
         label_mix2 = 'strP';
     end
     for i = N:-1:1
-        results(i).mix1 = app.PS.(label_mix1){i};
-        results(i).mix2 = app.PS.(label_mix2){i};
-        results(i).ProblemType = app.PD.ProblemType;
+        results(i).mix1 = self.PS.(label_mix1){i};
+        results(i).mix2 = self.PS.(label_mix2){i};
+        results(i).ProblemType = self.PD.ProblemType;
         if ischar(obj.Reactants.Value)
             results(i).Reactants = 'Custom';
         else
@@ -109,16 +109,16 @@ function [results, temp_results] = save_results(obj, app)
         if isempty(results(i).Products)
             results(i).Products = 'Default';   
         end
-        results(i).LS = app.S.LS;
+        results(i).LS = self.S.LS;
         results(i).LS_products = obj.LS;
         results(i).UITable_R_Data = obj.UITable_R.Data;
     end
-    if strcmpi(app.PD.ProblemType, 'ROCKET')
+    if strcmpi(self.PD.ProblemType, 'ROCKET')
         try
             label_mix = {label_mix3, label_mix4, label_mix5};
             for mix = label_mix
                 for i = N:-1:1
-                    results(i).(mix{:}) = app.PS.(mix{:}){i};
+                    results(i).(mix{:}) = self.PS.(mix{:}){i};
                 end
             end
         catch
@@ -126,42 +126,42 @@ function [results, temp_results] = save_results(obj, app)
         end
     end
     % Save temporally this parametric study
-    temp_results = app.PS;
+    temp_results = self.PS;
 end
 
-function app = get_input_constrains(obj, app)
+function self = get_input_constrains(obj, self)
     % Get input constrains
-    app.PD.ProblemType = obj.ProblemType.Value;
-    app = set_prop(app, 'TR', obj.PR1.Value, 'pR', obj.PR2.Value, 'phi', obj.edit_phi.Value);
-    switch app.PD.ProblemType
+    self.PD.ProblemType = obj.ProblemType.Value;
+    self = set_prop(self, 'TR', obj.PR1.Value, 'pR', obj.PR2.Value, 'phi', obj.edit_phi.Value);
+    switch self.PD.ProblemType
         case 'TP' % * TP: Equilibrium composition at defined T and p
-            app = set_prop(app, 'TP', obj.PP1.Value, 'pP', obj.PP2.Value);
+            self = set_prop(self, 'TP', obj.PP1.Value, 'pP', obj.PP2.Value);
         case 'HP' % * HP: Adiabatic T and composition at constant p
-            app = set_prop(app, 'pP', obj.PP2.Value);
+            self = set_prop(self, 'pP', obj.PP2.Value);
         case 'SP' % * SP: Isentropic (i.e., adiabatic) compression/expansion to a specified p
-            app = set_prop(app, 'pP', obj.PP2.Value);
+            self = set_prop(self, 'pP', obj.PP2.Value);
         case 'TV' % * TV: Equilibrium composition at defined T and constant v
-            app = set_prop(app, 'TP', obj.PP1.Value, 'pP', obj.PP2.Value);
+            self = set_prop(self, 'TP', obj.PP1.Value, 'pP', obj.PP2.Value);
         case 'EV' % * EV: Equilibrium composition at Adiabatic T and constant v
-            app = set_prop(app, 'pP', obj.PP2.Value);
+            self = set_prop(self, 'pP', obj.PP2.Value);
         case 'SV' % * SV: Isentropic (i.e., fast adiabatic) compression/expansion to a specified v
-            app = set_prop(app, 'vP_vR', obj.PP4.Value);
+            self = set_prop(self, 'vP_vR', obj.PP4.Value);
         case 'SHOCK_I' % * SHOCK_I: CALCULATE PLANAR INCIDENT SHOCK WAVE
-            app = set_prop(app, 'u1', obj.PR3.Value);
+            self = set_prop(self, 'u1', obj.PR3.Value);
         case 'SHOCK_R' % * SHOCK_R: CALCULATE PLANAR POST-REFLECTED SHOCK STATE
-            app = set_prop(app, 'u1', obj.PR3.Value);
+            self = set_prop(self, 'u1', obj.PR3.Value);
         case {'DET', 'DET_R'} % * DET: CALCULATE CHAPMAN-JOUGUET STATE
             % No additional constrains
         case {'DET_OVERDRIVEN', 'DET_OVERDRIVEN_R', 'DET_UNDERDRIVEN', 'DET_UNDERDRIVEN_R'} % * DET_OVERDRIVEN and DET_UNERDRIVEN
-            app = set_prop(app, 'drive_factor', obj.PR3.Value);
+            self = set_prop(self, 'drive_factor', obj.PR3.Value);
         case {'ROCKET'} % * ROCKET: ROCKET PROPELLANT PERFORMANCE
             % Get model
-            app.PD.FLAG_IAC = obj.FLAG_IAC.Value;
+            self.PD.FLAG_IAC = obj.FLAG_IAC.Value;
             if ~obj.FLAG_IAC.Value
                 if ~isempty(obj.PP1.Value)
-                    app = set_prop(app, 'Aratio_c', obj.PP1.Value);
+                    self = set_prop(self, 'Aratio_c', obj.PP1.Value);
                 elseif ~isempty(obj.PP2.Value)
-                    app = set_prop(app, 'mass_flux', obj.PP2.Value);
+                    self = set_prop(self, 'mass_flux', obj.PP2.Value);
                 else
                     % Set lamp to Error color
                     obj.Lamp.Color = obj.color_lamp_error;
@@ -172,17 +172,17 @@ function app = get_input_constrains(obj, app)
             end
             if ~isempty(obj.PR3.Value)
                 % Set Aratio combustor to throat region (supersonic region)
-                app = set_prop(app, 'Aratio', obj.PR3.Value);
-                app.PD.FLAG_SUBSONIC = true;
+                self = set_prop(self, 'Aratio', obj.PR3.Value);
+                self.PD.FLAG_SUBSONIC = true;
             end
             if ~isempty(obj.PP3.Value)
                 % Set Aratio throat to exit region (supersonic region)
-                app = set_prop(app, 'Aratio', obj.PP3.Value);
-                app.PD.FLAG_SUBSONIC = false;
+                self = set_prop(self, 'Aratio', obj.PP3.Value);
+                self.PD.FLAG_SUBSONIC = false;
             end
     end
     if contains(obj.Products.Value, 'complete', 'IgnoreCase', true)
-        app.S.FLAG_COMPLETE = true;
+        self.S.FLAG_COMPLETE = true;
     end
 end
 
@@ -224,8 +224,8 @@ function add_node(obj, field_master, field_names)
     end
 end
 
-function app = gui_get_display_species(obj, app)
-    % Set display species in variable app from the display species itembox
+function self = gui_get_display_species(obj, self)
+    % Set display species in variable self from the display species itembox
     % (GUI)
-    app.Misc.display_species = obj.listbox_LS_display.Items;
+    self.Misc.display_species = obj.listbox_LS_display.Items;
 end

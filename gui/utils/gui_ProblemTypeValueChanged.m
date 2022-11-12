@@ -22,8 +22,10 @@ function gui_ProblemTypeValueChanged(app)
             app.PR2.Value = '1';
             app.PP1.Value = '2500';
             app.PP2.Value = app.PR2.Value;
-            % Set invisible shocks/detonation items
+            % Set invisible shock/detonation items
             gui_visible_shocks(app, false);
+            % Set invisible oblique shock/detontions items
+            gui_visible_oblique(app, false);
             % Set invisible rocket items
             gui_visible_rocket(app, false);
         case 'HP' % * HP: Adiabatic T and composition at constant p
@@ -49,8 +51,10 @@ function gui_ProblemTypeValueChanged(app)
             app.PR1.Value = '300';
             app.PR2.Value = '1';
             app.PP2.Value = app.PR2.Value;
-            % Set invisible shocks/detonation items
+            % Set invisible shock/detonation items
             gui_visible_shocks(app, false);
+            % Set invisible oblique shock/detontions items
+            gui_visible_oblique(app, false);
             % Set invisible rocket items
             gui_visible_rocket(app, false);
         case 'SP' % * SP: Isentropic (i.e., adiabatic) compression/expansion to a specified p
@@ -76,8 +80,10 @@ function gui_ProblemTypeValueChanged(app)
             app.PR1.Value = '300';
             app.PR2.Value = '1';
             app.PP2.Value = '100';
-            % Set invisible shocks/detonation items
+            % Set invisible shock/detonation items
             gui_visible_shocks(app, false);
+            % Set invisible oblique shock/detontions items
+            gui_visible_oblique(app, false);
             % Set invisible rocket items
             gui_visible_rocket(app, false);
         case 'TV' % * TV: Equilibrium composition at defined T and constant v
@@ -104,8 +110,10 @@ function gui_ProblemTypeValueChanged(app)
             app.PR2.Value = '1';
             app.PP1.Value = '2500';
             app.PP2.Value = app.PR2.Value;
-            % Set invisible shocks/detonation items
+            % Set invisible shock/detonation items
             gui_visible_shocks(app, false);
+            % Set invisible oblique shock/detontions items
+            gui_visible_oblique(app, false);
             % Set invisible rocket items
             gui_visible_rocket(app, false);
         case 'EV' % * EV: Equilibrium composition at Adiabatic T and constant v
@@ -131,8 +139,10 @@ function gui_ProblemTypeValueChanged(app)
             app.PR1.Value = '1000';
             app.PR2.Value = '1';
             app.PP2.Value = app.PR2.Value;
-            % Set invisible shocks/detonation items
+            % Set invisible shock/detonation items
             gui_visible_shocks(app, false);
+            % Set invisible oblique shock/detontions items
+            gui_visible_oblique(app, false);
             % Set invisible rocket items
             gui_visible_rocket(app, false);
         case 'SV' % * SV: Isentropic (i.e., fast adiabatic) compression/expansion to a specified v
@@ -158,8 +168,10 @@ function gui_ProblemTypeValueChanged(app)
             app.PR1.Value = '300';
             app.PR2.Value = '1';
             app.PP2.Value = app.PR2.Value;
-            % Set invisible shocks/detonation items
+            % Set invisible shock/detonation items
             gui_visible_shocks(app, false);
+            % Set invisible oblique shock/detontions items
+            gui_visible_oblique(app, false);
             % Set invisible rocket items
             gui_visible_rocket(app, false);
         case 'SHOCK_I' % * SHOCK_I: CALCULATE PLANAR INCIDENT SHOCK WAVE
@@ -186,8 +198,12 @@ function gui_ProblemTypeValueChanged(app)
             app.PR2.Value = '1';
             app.PR4.Value = '2';
             gui_compute_mach_or_velocity(app, 'Mach');
-            % Set visible shocks/detonation items
+            % Set visible shock/detonation items
             gui_visible_shocks(app, true);
+            % Set invisible oblique shock/detontions items
+            gui_visible_oblique(app, false);
+            % Set invisible rocket items
+            gui_visible_rocket(app, false);
         case 'SHOCK_R' % * SHOCK_R: CALCULATE PLANAR POST-REFLECTED SHOCK STATE
             % Visible flags
             app.FLAG_IAC.Visible = 'off';
@@ -214,6 +230,8 @@ function gui_ProblemTypeValueChanged(app)
             gui_compute_mach_or_velocity(app, 'Mach');
             % Set visible shocks/detonation items
             gui_visible_shocks(app, true);
+            % Set invisible oblique shock/detontions items
+            gui_visible_oblique(app, false);
             % Set invisible rocket items
             gui_visible_rocket(app, false);
         case {'DET', 'DET_R'} % * DET: CALCULATE CHAPMAN-JOUGUET STATE
@@ -234,7 +252,7 @@ function gui_ProblemTypeValueChanged(app)
             % Set default input values
             app.PR1.Value = '300';
             app.PR2.Value = '1';
-            % Set visible shocks/detonation items
+            % Set visible shock/detonation items
             gui_visible_shocks(app, true);
             % Set invisible rocket items
             gui_visible_rocket(app, false);
@@ -265,12 +283,43 @@ function gui_ProblemTypeValueChanged(app)
             app.PR1.Value = '300';
             app.PR2.Value = '1';
             app.PR3.Value = '2';
-            % Set visible shocks/detonation items
+            % Set visible shock/detonation items
             gui_visible_shocks(app, true);
+            % Set invisible oblique shock/detontions items
+            gui_visible_oblique(app, false);
             % Set invisible rocket items
             gui_visible_rocket(app, false);
-        case {'DET_OBLIQUE', 'DET_OBLIQUE_R'}
-            % 
+        case {'DET_OBLIQUE'}
+            % Visible flags
+            app.FLAG_IAC.Visible = 'off';
+            app.FLAG_IAC.Value = true;
+            gui_FLAG_IACValueChanged(app);
+            % Update input items
+            app.PP1.Visible = 'off'; app.PP2.Visible = 'off';
+            app.PR3.Visible = 'on'; app.PR4.Visible = 'on';
+            app.PP3.Visible = 'off'; app.PP4.Visible = 'off';
+            app.text_P1.Visible = 'on';
+            % Visible flags
+            app.FLAG_IAC.Visible = 'off';
+            % Update Additional constraints panel
+            app.AdditionalconstraintsPanel.Visible = 'on';
+            app.AdditionalconstraintsPanel.Title = 'Additional constraints';
+            app.text_RP.Visible ='off'; app.text_R2.Visible = 'on'; app.text_P2.Visible = 'off';
+            app.text_R2.Text = 'Reactants'; app.text_P2.Text = 'Products';
+            app.text_RP3.Text = 'Driven parameter [-]';
+            app.text_RP4.Text = 'Wave angle [deg]';
+            app.text_RP4.Visible = 'on'; 
+            % Set default input values
+            app.PR1.Value = '300';
+            app.PR2.Value = '1';
+            app.PR3.Value = '2';
+            app.PR4.Value = '60';
+            % Set visible shock/detonation items
+            gui_visible_shocks(app, true);
+            % Set visible oblique shock/detontions items
+            gui_visible_oblique(app, true);
+            % Set invisible rocket items
+            gui_visible_rocket(app, false);
         case {'ROCKET'}
             % Visible flags
             app.FLAG_IAC.Visible = 'on';
@@ -293,10 +342,14 @@ function gui_ProblemTypeValueChanged(app)
             app.PR2.Value = '1';
             app.PR3.Value = '';
             app.PP3.Value = '';
-            % Set visible shocks/detonation items
+            % Set visible shock/detonation items
             gui_visible_shocks(app, true);
+            % Set invisible oblique shock/detontions items
+            gui_visible_oblique(app, false);
             % Set visible rocket items
             gui_visible_rocket(app, true);
+         case {'SHOCK_OBLIQUE', 'SHOCK_OBLIQUE_R', 'SHOCK_POLAR', 'SHOCK_POLAR_R', 'DET_OBLIQUE_R', 'DET_POLAR', 'DET_POLAR_R'}
+            uialert(app.UIFigure, 'Problem not included yet. Sorry for the inconvinience.', 'Error')
     end
 end
 
@@ -307,8 +360,19 @@ function gui_visible_shocks(app, value)
     else
         value = 'off';
     end
-    app.text_u.Visible = value; app.text_uR.Visible = value; app.text_uP.Visible = value;
-    app.text_MR.Visible = value; app.text_MP.Visible = value; app.text_M.Visible = value;
+    app.text_u.Visible = value; app.text_u_1.Visible = value; app.text_u_2.Visible = value;
+    app.text_M.Visible = value; app.text_M_1.Visible = value; app.text_M_2.Visible = value;
+end
+
+function gui_visible_oblique(app, value)
+    if value
+        value = 'on';
+    else
+        value = 'off';
+    end
+    app.text_beta_min.Visible = value; app.text_beta_min_2.Visible = value;
+    app.text_beta.Visible = value; app.text_beta_2.Visible = value;
+    app.text_theta.Visible = value; app.text_theta_2.Visible = value;
 end
 
 function gui_visible_rocket(app, value)
@@ -323,7 +387,7 @@ function gui_visible_rocket(app, value)
     else
         value = 'off';
         app.Panel_parameters.Position = app.default.Panel_parameters.Position;
-        app.text_Products_2.Text = 'Products';
+        app.text_Products.Text = 'Products';
         app.Panel_extra_5.Visible = 'off';
     end
     % Set visible properties of Rockets

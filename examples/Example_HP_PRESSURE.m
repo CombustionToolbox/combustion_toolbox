@@ -74,37 +74,33 @@ ax = plot_figure('phi', phi, 'T', mix2_complete, 'config', self.Misc.config);
 
 for i = 1:length(pressure_vector)
     mix2_incomplete = results_incomplete{i}.PS.strP; 
-    ax = plot_figure('phi', phi, 'T', mix2_incomplete, 'config', self.Misc.config, 'ax', ax);
+    ax = plot_figure('phi', phi, 'T', mix2_incomplete, 'config', self.Misc.config, 'ax', ax, 'color', 'auto');
     legend_name(i+1) = {sprintf('$p_{%d} = %.4g$ bar', i, pressure(mix2_incomplete{1}))};
 end
 
-set_legends(ax, legend_name)
+set_legends(ax, legend_name, 'FLAG_SPECIES', false)
 ax.Legend.Location = 'northeast';
 %% Comparison of the adiabatic index
-yvariable = 'gamma_s';
-
 self.Misc.config.labely = 'Adibatic index $\gamma_s$';
 
-ax = plot_figure(phi, mix2_complete, 'phi', yvariable, self.Misc.config, self.PD.CompleteOrIncomplete);
+ax = plot_figure('phi', phi, 'gamma_s', mix2_complete, 'config', self.Misc.config);
 
 for i = 1:length(pressure_vector)
     mix2_incomplete = results_incomplete{i}.PS.strP; 
-    ax = plot_figure(phi, mix2_incomplete, 'phi', yvariable, self.Misc.config, self.PD.CompleteOrIncomplete, ax);
+    ax = plot_figure('phi', phi, 'gamma_s', mix2_incomplete, 'config', self.Misc.config, 'ax', ax, 'color', 'auto');
 end
 
-set_legends(ax, legend_name)
+set_legends(ax, legend_name, 'FLAG_SPECIES', false)
 ax.Legend.Location = 'best';
 %% Comparison of the Gibbs energy
-yvariable = 'g';
-
 self.Misc.config.labely = 'Gibbs free energy $g$ [kJ/kg]';
 
-ax = plot_figure(phi, mix2_complete, 'phi', yvariable, self.Misc.config, self.PD.CompleteOrIncomplete);
+ax = plot_figure('phi', phi, 'g', mix2_complete, 'config', self.Misc.config);
 
 for i = 1:length(pressure_vector)
     mix2_incomplete = results_incomplete{i}.PS.strP; 
-    ax = plot_figure(phi, mix2_incomplete, 'phi', yvariable, self.Misc.config, self.PD.CompleteOrIncomplete, ax);
+    ax = plot_figure('phi', phi, 'g', mix2_incomplete, 'config', self.Misc.config, 'ax', ax, 'color', 'auto');
 end
 
-set_legends(ax, legend_name)
+set_legends(ax, legend_name, 'FLAG_SPECIES', false)
 ax.Legend.Location = 'best';

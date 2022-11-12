@@ -8,25 +8,54 @@ function position = get_monitor_positions(varargin)
     % Returns:
     %    position (float): Position of the monitor(s)
 
-    position_monitors = get(0, 'MonitorPositions');
+    
+    % Try first using java that does not take into account ui scaling,
+    % so it will return the proper screen size values
+    try
+        dimensions = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
+        position_monitors = [1, 1, dimensions.width, dimensions.height];
+        if nargin
+            % Get position for the given monitor
+            try
+                monitor_id = varargin{1};
+                % Get local graphics environment
+                env = java.awt.GraphicsEnvironment.getLocalGraphicsEnvironment();
+                % Get screen device objects
+                devices = env.getScreenDevices();
+                % Get screen size for the selected monitor
+                position = [1, 1, ...
+                    devices(monitor_id).getDisplayMode().getWidth(),...
+                    devices(monitor_id).getDisplayMode().getHeight()];
+            catch
+                monitor_id = 1;
+                position = position_monitors(monitor_id, :);
+            end
 
-    if nargin
-        % Get position for the given monitor
-        try
-            monitor_id = varargin{1};
-            position = position_monitors(monitor_id, :);
-        catch
-            monitor_id = 1;
-            position = position_monitors(monitor_id, :);
+        else
+            % Find main monitor
+            position = position_monitors;
+        end
+    
+    % Otherwise, get screen position using MATLAB's routines
+    catch
+        position_monitors = get(0, 'MonitorPositions');
+
+        if nargin
+            % Get position for the given monitor
+            try
+                monitor_id = varargin{1};
+                position = position_monitors(monitor_id, :);
+            catch
+                monitor_id = 1;
+                position = position_monitors(monitor_id, :);
+            end
+
+        else
+            % Find main monitor
+            ind_main = find(position_monitors == 1, 1);
+            position = position_monitors(ind_main, :);
         end
 
-    else
-        % Find main monitor
-        ind_main = find(position_monitors == 1, 1);
-        position = position_monitors(ind_main, :);
     end
 
-    % Fit
-    position(2) = 0.9122 * position(2);
-    position(4) = 0.9304 * position(4);
 end

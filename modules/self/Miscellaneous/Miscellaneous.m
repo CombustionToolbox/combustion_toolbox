@@ -31,7 +31,8 @@ function self = Miscellaneous()
     self.config.label_type = 'medium';               % Set label with variable (short), name (medium), or name and variable (long)
     self.config.labelx = [];                         % Set x label
     self.config.labely = [];                         % Set y label
-    self.config.legend_name = [];                    % Set the legend labels
+    self.config.legend_name = [];                    % Set legend labels
+    self.config.legend_location = 'northeastoutside';% Set legend location
     self.config.colorline = [44, 137, 160]/255;      % Default colorline
     self.config.colorlines = [135, 205, 222;...      % Default colorlines
                                95, 188, 211;...      % Default colorlines

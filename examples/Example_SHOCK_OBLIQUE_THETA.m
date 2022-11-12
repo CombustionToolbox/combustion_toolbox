@@ -32,7 +32,7 @@ self.PD.S_Oxidizer = {'N2', 'O2', 'Ar', 'CO2'};
 self.PD.N_Oxidizer = [78.084, 20.9476, 0.9365, 0.0319] ./ 20.9476;
 %% ADDITIONAL INPUTS (DEPENDS OF THE PROBLEM SELECTED)
 Mach_number = 5;
-self = set_prop(self, 'u1', 3.472107491008314e+02 * Mach_number, 'theta', 40);
+self = set_prop(self, 'u1', 3.472107491008314e+02 * Mach_number, 'theta', 5:5:40);
 %% SOLVE PROBLEM
 self = solve_problem(self, 'SHOCK_OBLIQUE');
 %% DISPLAY RESULTS (PLOTS)

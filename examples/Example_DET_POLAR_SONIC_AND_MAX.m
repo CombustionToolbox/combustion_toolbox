@@ -27,7 +27,7 @@ self.PD.S_Fuel = {'H2'};
 self.PD.S_Oxidizer = {'N2', 'O2'};
 self.PD.ratio_oxidizers_O2 = [79, 21]/21;
 %% ADDITIONAL INPUTS (DEPENDS OF THE PROBLEM SELECTED)
-self = set_prop(self, 'overdriven', 1.01:0.01:2.9069);
+self = set_prop(self, 'drive_factor', 1.01:0.1:2.9069);
 %% TUNING PROPERTIES
 self.TN.N_points_polar = 300;  % Number of points to compute shock polar
 %% SOLVE PROBLEM

@@ -64,8 +64,13 @@ function [ax, fig] = plot_molar_fractions(self, x_var, x_field, y_field, varargi
 
     % Read data
     FLAG_Y_AXIS = strcmpi(y_field, 'Xi');
-    mix1.(x_field) = cell2vector(x_var, x_field);
-    mix1.(y_field) = cell2vector(y_var, y_field);
+    if contains(self.PD.ProblemType, 'polar', 'IgnoreCase', true)
+        mix1.(x_field) = cell2vector(x_var.polar, x_field);
+        mix1.(y_field) = cell2vector(y_var.polar, y_field);
+    else
+        mix1.(x_field) = cell2vector(x_var, x_field);
+        mix1.(y_field) = cell2vector(y_var, y_field);
+    end
     % Get index species
     index_species_CT = find_ind(LS, species);
     % Remove species that do not appear

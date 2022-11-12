@@ -23,8 +23,8 @@ function update_properties(app, results, i)
     mix1 = results(i).mix1;
     mix2 = results(i).mix2;
     
-    update_properties_common(app, mix1, 'R');
-    update_properties_common(app, mix2, 'P');
+    update_properties_common(app, mix1, '_1');
+    update_properties_common(app, mix2, '_2');
 
     if strcmpi(results(i).ProblemType, 'TP')
         app.text_error_problem.Value = mix2.error_moles;
@@ -32,8 +32,13 @@ function update_properties(app, results, i)
         app.text_error_problem.Value = mix2.error_problem;
     end
     if contains(results(i).ProblemType, 'SHOCK', 'IgnoreCase', true) || contains(results(i).ProblemType, 'DET', 'IgnoreCase', true) || contains(results(i).ProblemType, 'ROCKET', 'IgnoreCase', true)
-        update_properties_velocities(app, mix1, 'R')
-        update_properties_velocities(app, mix2, 'P')
+        update_properties_velocities(app, mix1, '_1')
+        update_properties_velocities(app, mix2, '_2')
+        
+        if contains(results(i).ProblemType, 'OBLIQUE', 'IgnoreCase', true)
+            update_properties_oblique(app, mix2, '_2');
+        end
+
         if contains(results(i).ProblemType, 'ROCKET', 'IgnoreCase', true)
             app.text_Aratio_2.Value = mix2.Aratio;
             
@@ -46,7 +51,7 @@ function update_properties(app, results, i)
             end
             
             update_properties_common(app, mix3, '_3');
-            update_properties_velocities(app, mix2, '_3')
+            update_properties_velocities(app, mix3, '_3')
             update_properties_rocket(app, mix3, '_3')
             
             if ~isempty(results(i).strP) || ~FLAG_IAC
@@ -64,18 +69,18 @@ function update_properties(app, results, i)
                 % Get max error method
                 app.text_error_problem.Value = max([mix2.error_problem, mix3.error_problem, mix4.error_problem]);
             else
-                app.text_TP_4.Value = 0;
-                app.text_pP_4.Value = 0;
-                app.text_rP_4.Value = 0;
-                app.text_hP_4.Value = 0;
-                app.text_eP_4.Value = 0;
-                app.text_cpP_4.Value = 0;
-                app.text_sP_4.Value = 0;
-                app.text_gammaP_4.Value = 0;
-                app.text_WP_4.Value = 0;
-                app.text_soundP_4.Value = 0;
-                app.text_uP_4.Value = 0;
-                app.text_MP_4.Value = 0;
+                app.text_T_4.Value = 0;
+                app.text_p_4.Value = 0;
+                app.text_r_4.Value = 0;
+                app.text_h_4.Value = 0;
+                app.text_e_4.Value = 0;
+                app.text_cp_4.Value = 0;
+                app.text_s_4.Value = 0;
+                app.text_gamma_4.Value = 0;
+                app.text_W_4.Value = 0;
+                app.text_sound_4.Value = 0;
+                app.text_u_4.Value = 0;
+                app.text_M_4.Value = 0;
                 app.text_Aratio_4.Value = 0;
                 app.text_Cstar_4.Value = 0;
                 app.text_Ivac_4.Value = 0;
@@ -126,6 +131,13 @@ function update_properties_rocket(app, mix, suffix)
     app.(['text_Cstar', suffix]).Value = mix.cstar;
     app.(['text_Ivac', suffix]).Value = mix.I_vac;
     app.(['text_Isp', suffix]).Value = mix.I_sp;
+end
+
+function update_properties_oblique(app, mix, suffix)
+    % Update rocket propellant performance parameters
+    app.(['text_beta_min', suffix]).Value = mix.beta_min;
+    app.(['text_beta', suffix]).Value = mix.beta;
+    app.(['text_theta', suffix]).Value = mix.theta;
 end
 
 function update_error_method()

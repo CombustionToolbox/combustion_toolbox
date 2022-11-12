@@ -126,6 +126,15 @@ classdef combustion_toolbox < matlab.apps.AppBase
         Tab_results                     matlab.ui.container.TabGroup
         ParametersTab                   matlab.ui.container.Tab
         Panel_parameters                matlab.ui.container.Panel
+        text_theta_2                    matlab.ui.control.NumericEditField
+        text_beta_2                     matlab.ui.control.NumericEditField
+        text_beta_min_2                 matlab.ui.control.NumericEditField
+        text_theta                      matlab.ui.control.Label
+        text_beta                       matlab.ui.control.Label
+        text_beta_min                   matlab.ui.control.Label
+        text_Isp_2                      matlab.ui.control.NumericEditField
+        text_Ivac_2                     matlab.ui.control.NumericEditField
+        text_Cstar_2                    matlab.ui.control.NumericEditField
         EpsilonmolesLabel_2             matlab.ui.control.Label
         text_error_problem              matlab.ui.control.NumericEditField
         Panel_extra_5                   matlab.ui.container.Panel
@@ -133,97 +142,97 @@ classdef combustion_toolbox < matlab.apps.AppBase
         text_Ivac_5                     matlab.ui.control.NumericEditField
         text_Cstar_5                    matlab.ui.control.NumericEditField
         text_Aratio_5                   matlab.ui.control.NumericEditField
-        text_TP_5                       matlab.ui.control.NumericEditField
+        text_T_5                        matlab.ui.control.NumericEditField
         text_Products_5                 matlab.ui.control.Label
-        text_pP_5                       matlab.ui.control.NumericEditField
-        text_rP_5                       matlab.ui.control.NumericEditField
-        text_hP_5                       matlab.ui.control.NumericEditField
-        text_cpP_5                      matlab.ui.control.NumericEditField
-        text_WP_5                       matlab.ui.control.NumericEditField
-        text_soundP_5                   matlab.ui.control.NumericEditField
-        text_eP_5                       matlab.ui.control.NumericEditField
-        text_uP_5                       matlab.ui.control.NumericEditField
-        text_MP_5                       matlab.ui.control.NumericEditField
-        text_gammaP_5                   matlab.ui.control.NumericEditField
-        text_sP_5                       matlab.ui.control.NumericEditField
+        text_p_5                        matlab.ui.control.NumericEditField
+        text_r_5                        matlab.ui.control.NumericEditField
+        text_h_5                        matlab.ui.control.NumericEditField
+        text_cp_5                       matlab.ui.control.NumericEditField
+        text_W_5                        matlab.ui.control.NumericEditField
+        text_sound_5                    matlab.ui.control.NumericEditField
+        text_e_5                        matlab.ui.control.NumericEditField
+        text_u_5                        matlab.ui.control.NumericEditField
+        text_M_5                        matlab.ui.control.NumericEditField
+        text_gamma_5                    matlab.ui.control.NumericEditField
+        text_s_5                        matlab.ui.control.NumericEditField
         Panel_extra_4                   matlab.ui.container.Panel
         text_Isp_4                      matlab.ui.control.NumericEditField
         text_Ivac_4                     matlab.ui.control.NumericEditField
         text_Cstar_4                    matlab.ui.control.NumericEditField
         text_Aratio_4                   matlab.ui.control.NumericEditField
-        text_TP_4                       matlab.ui.control.NumericEditField
+        text_T_4                        matlab.ui.control.NumericEditField
         text_Products_4                 matlab.ui.control.Label
-        text_pP_4                       matlab.ui.control.NumericEditField
-        text_rP_4                       matlab.ui.control.NumericEditField
-        text_hP_4                       matlab.ui.control.NumericEditField
-        text_cpP_4                      matlab.ui.control.NumericEditField
-        text_WP_4                       matlab.ui.control.NumericEditField
-        text_soundP_4                   matlab.ui.control.NumericEditField
-        text_eP_4                       matlab.ui.control.NumericEditField
-        text_uP_4                       matlab.ui.control.NumericEditField
-        text_MP_4                       matlab.ui.control.NumericEditField
-        text_gammaP_4                   matlab.ui.control.NumericEditField
-        text_sP_4                       matlab.ui.control.NumericEditField
+        text_p_4                        matlab.ui.control.NumericEditField
+        text_r_4                        matlab.ui.control.NumericEditField
+        text_h_4                        matlab.ui.control.NumericEditField
+        text_cp_4                       matlab.ui.control.NumericEditField
+        text_W_4                        matlab.ui.control.NumericEditField
+        text_sound_4                    matlab.ui.control.NumericEditField
+        text_e_4                        matlab.ui.control.NumericEditField
+        text_u_4                        matlab.ui.control.NumericEditField
+        text_M_4                        matlab.ui.control.NumericEditField
+        text_gamma_4                    matlab.ui.control.NumericEditField
+        text_s_4                        matlab.ui.control.NumericEditField
         Panel_extra_3                   matlab.ui.container.Panel
         text_Isp_3                      matlab.ui.control.NumericEditField
         text_Ivac_3                     matlab.ui.control.NumericEditField
         text_Cstar_3                    matlab.ui.control.NumericEditField
         text_Aratio_3                   matlab.ui.control.NumericEditField
-        text_TP_3                       matlab.ui.control.NumericEditField
+        text_T_3                        matlab.ui.control.NumericEditField
         text_Products_3                 matlab.ui.control.Label
-        text_pP_3                       matlab.ui.control.NumericEditField
-        text_rP_3                       matlab.ui.control.NumericEditField
-        text_hP_3                       matlab.ui.control.NumericEditField
-        text_cpP_3                      matlab.ui.control.NumericEditField
-        text_WP_3                       matlab.ui.control.NumericEditField
-        text_soundP_3                   matlab.ui.control.NumericEditField
-        text_eP_3                       matlab.ui.control.NumericEditField
-        text_uP_3                       matlab.ui.control.NumericEditField
-        text_MP_3                       matlab.ui.control.NumericEditField
-        text_gammaP_3                   matlab.ui.control.NumericEditField
-        text_sP_3                       matlab.ui.control.NumericEditField
+        text_p_3                        matlab.ui.control.NumericEditField
+        text_r_3                        matlab.ui.control.NumericEditField
+        text_h_3                        matlab.ui.control.NumericEditField
+        text_cp_3                       matlab.ui.control.NumericEditField
+        text_W_3                        matlab.ui.control.NumericEditField
+        text_sound_3                    matlab.ui.control.NumericEditField
+        text_e_3                        matlab.ui.control.NumericEditField
+        text_u_3                        matlab.ui.control.NumericEditField
+        text_M_3                        matlab.ui.control.NumericEditField
+        text_gamma_3                    matlab.ui.control.NumericEditField
+        text_s_3                        matlab.ui.control.NumericEditField
         text_Isp                        matlab.ui.control.Label
         text_Ivac                       matlab.ui.control.Label
         text_Cstar                      matlab.ui.control.Label
         text_Aratio_2                   matlab.ui.control.NumericEditField
         text_Aratio                     matlab.ui.control.Label
-        text_MR                         matlab.ui.control.NumericEditField
-        text_uR                         matlab.ui.control.NumericEditField
-        text_TP                         matlab.ui.control.NumericEditField
-        text_pR                         matlab.ui.control.NumericEditField
-        text_TR                         matlab.ui.control.NumericEditField
+        text_M_1                        matlab.ui.control.NumericEditField
+        text_u_1                        matlab.ui.control.NumericEditField
+        text_T_2                        matlab.ui.control.NumericEditField
+        text_p_1                        matlab.ui.control.NumericEditField
+        text_T_1                        matlab.ui.control.NumericEditField
         text_T                          matlab.ui.control.Label
         text_Reactans                   matlab.ui.control.Label
-        text_Products_2                 matlab.ui.control.Label
-        text_pP                         matlab.ui.control.NumericEditField
+        text_Products                   matlab.ui.control.Label
+        text_p_2                        matlab.ui.control.NumericEditField
         text_p                          matlab.ui.control.Label
-        text_rP                         matlab.ui.control.NumericEditField
-        text_rR                         matlab.ui.control.NumericEditField
+        text_r_2                        matlab.ui.control.NumericEditField
+        text_r_1                        matlab.ui.control.NumericEditField
         text_r                          matlab.ui.control.Label
-        text_hP                         matlab.ui.control.NumericEditField
-        text_hR                         matlab.ui.control.NumericEditField
+        text_h_2                        matlab.ui.control.NumericEditField
+        text_h_1                        matlab.ui.control.NumericEditField
         text_h                          matlab.ui.control.Label
-        text_cpP                        matlab.ui.control.NumericEditField
-        text_cpR                        matlab.ui.control.NumericEditField
+        text_cp_2                       matlab.ui.control.NumericEditField
+        text_cp_1                       matlab.ui.control.NumericEditField
         text_cp                         matlab.ui.control.Label
-        text_WP                         matlab.ui.control.NumericEditField
-        text_WR                         matlab.ui.control.NumericEditField
+        text_W_2                        matlab.ui.control.NumericEditField
+        text_W_1                        matlab.ui.control.NumericEditField
         text_W                          matlab.ui.control.Label
-        text_soundP                     matlab.ui.control.NumericEditField
-        text_soundR                     matlab.ui.control.NumericEditField
+        text_sound_2                    matlab.ui.control.NumericEditField
+        text_sound_1                    matlab.ui.control.NumericEditField
         text_sound                      matlab.ui.control.Label
-        text_eP                         matlab.ui.control.NumericEditField
-        text_eR                         matlab.ui.control.NumericEditField
+        text_e_2                        matlab.ui.control.NumericEditField
+        text_e_1                        matlab.ui.control.NumericEditField
         text_e                          matlab.ui.control.Label
-        text_uP                         matlab.ui.control.NumericEditField
+        text_u_2                        matlab.ui.control.NumericEditField
         text_u                          matlab.ui.control.Label
-        text_MP                         matlab.ui.control.NumericEditField
+        text_M_2                        matlab.ui.control.NumericEditField
         text_M                          matlab.ui.control.Label
-        text_gammaP                     matlab.ui.control.NumericEditField
-        text_gammaR                     matlab.ui.control.NumericEditField
+        text_gamma_2                    matlab.ui.control.NumericEditField
+        text_gamma_1                    matlab.ui.control.NumericEditField
         text_gamma                      matlab.ui.control.Label
-        text_sP                         matlab.ui.control.NumericEditField
-        text_sR                         matlab.ui.control.NumericEditField
+        text_s_2                        matlab.ui.control.NumericEditField
+        text_s_1                        matlab.ui.control.NumericEditField
         text_s                          matlab.ui.control.Label
         text_phi_3                      matlab.ui.control.Label
         edit_phi3                       matlab.ui.control.EditField
@@ -344,7 +353,7 @@ classdef combustion_toolbox < matlab.apps.AppBase
                 app.PP1.Visible = 'on'; app.PP2.Visible = 'on';
                 app.PP1.Value = ''; app.PP2.Value = '';
                 app.Panel_extra_5.Visible = 'on';
-                app.text_Products_2.Text = 'Injector';
+                app.text_Products.Text = 'Injector';
                 app.text_Products_3.Text = 'Outlet Chamber';
                 app.text_Products_4.Text = 'Throat';
                 app.text_Products_5.Text = 'Exit';
@@ -355,7 +364,7 @@ classdef combustion_toolbox < matlab.apps.AppBase
                 app.PP1.Visible = 'off'; app.PP2.Visible = 'off';
                 app.PP1.Value = '2500'; app.PP2.Value = '1';
                 app.Panel_extra_5.Visible = 'off';
-                app.text_Products_2.Text = 'Outlet Chamber';
+                app.text_Products.Text = 'Outlet Chamber';
                 app.text_Products_3.Text = 'Throat';
                 app.text_Products_4.Text = 'Exit';
                 app.text_Products_5.Text = 'Exit';
@@ -394,6 +403,11 @@ classdef combustion_toolbox < matlab.apps.AppBase
             app.UIFigure.Visible = 'off';
             % Splash
             splash_obj = gui_display_splash('app', app);
+%             % Get screen position
+%             position = splash_obj.ScreenPosition;
+%             % Centering app
+%             app.UIFigure.Position(1) = position(1) + (position(3) - app.UIFigure.Position(3))/2;
+%             app.UIFigure.Position(2) = position(2) + (position(4) - app.UIFigure.Position(4))/2;
             % Initialze app
             app = App(app);
             % Initialize List box species DataBase master
@@ -1672,19 +1686,19 @@ classdef combustion_toolbox < matlab.apps.AppBase
             app.text_s.Position = [107 254 176 19];
             app.text_s.Text = 'Entropy [kJ/(kg K)]';
 
-            % Create text_sR
-            app.text_sR = uieditfield(app.Panel_parameters, 'numeric');
-            app.text_sR.ValueDisplayFormat = '%.4g';
-            app.text_sR.Editable = 'off';
-            app.text_sR.HorizontalAlignment = 'center';
-            app.text_sR.Position = [6 254 91 19];
+            % Create text_s_1
+            app.text_s_1 = uieditfield(app.Panel_parameters, 'numeric');
+            app.text_s_1.ValueDisplayFormat = '%.4g';
+            app.text_s_1.Editable = 'off';
+            app.text_s_1.HorizontalAlignment = 'center';
+            app.text_s_1.Position = [6 254 91 19];
 
-            % Create text_sP
-            app.text_sP = uieditfield(app.Panel_parameters, 'numeric');
-            app.text_sP.ValueDisplayFormat = '%.4g';
-            app.text_sP.Editable = 'off';
-            app.text_sP.HorizontalAlignment = 'center';
-            app.text_sP.Position = [293 254 91 19];
+            % Create text_s_2
+            app.text_s_2 = uieditfield(app.Panel_parameters, 'numeric');
+            app.text_s_2.ValueDisplayFormat = '%.4g';
+            app.text_s_2.Editable = 'off';
+            app.text_s_2.HorizontalAlignment = 'center';
+            app.text_s_2.Position = [293 254 91 19];
 
             % Create text_gamma
             app.text_gamma = uilabel(app.Panel_parameters);
@@ -1692,19 +1706,19 @@ classdef combustion_toolbox < matlab.apps.AppBase
             app.text_gamma.Position = [107 203 176 19];
             app.text_gamma.Text = 'Adiabatic index [-]';
 
-            % Create text_gammaR
-            app.text_gammaR = uieditfield(app.Panel_parameters, 'numeric');
-            app.text_gammaR.ValueDisplayFormat = '%.4g';
-            app.text_gammaR.Editable = 'off';
-            app.text_gammaR.HorizontalAlignment = 'center';
-            app.text_gammaR.Position = [6 203 91 19];
+            % Create text_gamma_1
+            app.text_gamma_1 = uieditfield(app.Panel_parameters, 'numeric');
+            app.text_gamma_1.ValueDisplayFormat = '%.4g';
+            app.text_gamma_1.Editable = 'off';
+            app.text_gamma_1.HorizontalAlignment = 'center';
+            app.text_gamma_1.Position = [6 203 91 19];
 
-            % Create text_gammaP
-            app.text_gammaP = uieditfield(app.Panel_parameters, 'numeric');
-            app.text_gammaP.ValueDisplayFormat = '%.4g';
-            app.text_gammaP.Editable = 'off';
-            app.text_gammaP.HorizontalAlignment = 'center';
-            app.text_gammaP.Position = [293 203 91 19];
+            % Create text_gamma_2
+            app.text_gamma_2 = uieditfield(app.Panel_parameters, 'numeric');
+            app.text_gamma_2.ValueDisplayFormat = '%.4g';
+            app.text_gamma_2.Editable = 'off';
+            app.text_gamma_2.HorizontalAlignment = 'center';
+            app.text_gamma_2.Position = [293 203 91 19];
 
             % Create text_M
             app.text_M = uilabel(app.Panel_parameters);
@@ -1713,13 +1727,13 @@ classdef combustion_toolbox < matlab.apps.AppBase
             app.text_M.Position = [107 100 176 19];
             app.text_M.Text = 'Mach number [-]';
 
-            % Create text_MP
-            app.text_MP = uieditfield(app.Panel_parameters, 'numeric');
-            app.text_MP.ValueDisplayFormat = '%.4g';
-            app.text_MP.Editable = 'off';
-            app.text_MP.HorizontalAlignment = 'center';
-            app.text_MP.Visible = 'off';
-            app.text_MP.Position = [293 100 91 19];
+            % Create text_M_2
+            app.text_M_2 = uieditfield(app.Panel_parameters, 'numeric');
+            app.text_M_2.ValueDisplayFormat = '%.4g';
+            app.text_M_2.Editable = 'off';
+            app.text_M_2.HorizontalAlignment = 'center';
+            app.text_M_2.Visible = 'off';
+            app.text_M_2.Position = [293 100 91 19];
 
             % Create text_u
             app.text_u = uilabel(app.Panel_parameters);
@@ -1728,13 +1742,13 @@ classdef combustion_toolbox < matlab.apps.AppBase
             app.text_u.Position = [107 125 176 19];
             app.text_u.Text = 'Flow velocity [m/s]';
 
-            % Create text_uP
-            app.text_uP = uieditfield(app.Panel_parameters, 'numeric');
-            app.text_uP.ValueDisplayFormat = '%.4g';
-            app.text_uP.Editable = 'off';
-            app.text_uP.HorizontalAlignment = 'center';
-            app.text_uP.Visible = 'off';
-            app.text_uP.Position = [293 125 91 19];
+            % Create text_u_2
+            app.text_u_2 = uieditfield(app.Panel_parameters, 'numeric');
+            app.text_u_2.ValueDisplayFormat = '%.4g';
+            app.text_u_2.Editable = 'off';
+            app.text_u_2.HorizontalAlignment = 'center';
+            app.text_u_2.Visible = 'off';
+            app.text_u_2.Position = [293 125 91 19];
 
             % Create text_e
             app.text_e = uilabel(app.Panel_parameters);
@@ -1742,19 +1756,19 @@ classdef combustion_toolbox < matlab.apps.AppBase
             app.text_e.Position = [107 280 176 19];
             app.text_e.Text = 'Internal energy [kJ/kg]';
 
-            % Create text_eR
-            app.text_eR = uieditfield(app.Panel_parameters, 'numeric');
-            app.text_eR.ValueDisplayFormat = '%.4g';
-            app.text_eR.Editable = 'off';
-            app.text_eR.HorizontalAlignment = 'center';
-            app.text_eR.Position = [6 280 91 19];
+            % Create text_e_1
+            app.text_e_1 = uieditfield(app.Panel_parameters, 'numeric');
+            app.text_e_1.ValueDisplayFormat = '%.4g';
+            app.text_e_1.Editable = 'off';
+            app.text_e_1.HorizontalAlignment = 'center';
+            app.text_e_1.Position = [6 280 91 19];
 
-            % Create text_eP
-            app.text_eP = uieditfield(app.Panel_parameters, 'numeric');
-            app.text_eP.ValueDisplayFormat = '%.4g';
-            app.text_eP.Editable = 'off';
-            app.text_eP.HorizontalAlignment = 'center';
-            app.text_eP.Position = [293 280 91 19];
+            % Create text_e_2
+            app.text_e_2 = uieditfield(app.Panel_parameters, 'numeric');
+            app.text_e_2.ValueDisplayFormat = '%.4g';
+            app.text_e_2.Editable = 'off';
+            app.text_e_2.HorizontalAlignment = 'center';
+            app.text_e_2.Position = [293 280 91 19];
 
             % Create text_sound
             app.text_sound = uilabel(app.Panel_parameters);
@@ -1762,19 +1776,19 @@ classdef combustion_toolbox < matlab.apps.AppBase
             app.text_sound.Position = [107 151 176 19];
             app.text_sound.Text = 'Sound speed [m/s]';
 
-            % Create text_soundR
-            app.text_soundR = uieditfield(app.Panel_parameters, 'numeric');
-            app.text_soundR.ValueDisplayFormat = '%.4g';
-            app.text_soundR.Editable = 'off';
-            app.text_soundR.HorizontalAlignment = 'center';
-            app.text_soundR.Position = [6 151 91 19];
+            % Create text_sound_1
+            app.text_sound_1 = uieditfield(app.Panel_parameters, 'numeric');
+            app.text_sound_1.ValueDisplayFormat = '%.4g';
+            app.text_sound_1.Editable = 'off';
+            app.text_sound_1.HorizontalAlignment = 'center';
+            app.text_sound_1.Position = [6 151 91 19];
 
-            % Create text_soundP
-            app.text_soundP = uieditfield(app.Panel_parameters, 'numeric');
-            app.text_soundP.ValueDisplayFormat = '%.4g';
-            app.text_soundP.Editable = 'off';
-            app.text_soundP.HorizontalAlignment = 'center';
-            app.text_soundP.Position = [293 151 91 19];
+            % Create text_sound_2
+            app.text_sound_2 = uieditfield(app.Panel_parameters, 'numeric');
+            app.text_sound_2.ValueDisplayFormat = '%.4g';
+            app.text_sound_2.Editable = 'off';
+            app.text_sound_2.HorizontalAlignment = 'center';
+            app.text_sound_2.Position = [293 151 91 19];
 
             % Create text_W
             app.text_W = uilabel(app.Panel_parameters);
@@ -1782,19 +1796,19 @@ classdef combustion_toolbox < matlab.apps.AppBase
             app.text_W.Position = [107 174 176 22];
             app.text_W.Text = 'Molecular Weight [g/mol]';
 
-            % Create text_WR
-            app.text_WR = uieditfield(app.Panel_parameters, 'numeric');
-            app.text_WR.ValueDisplayFormat = '%.4g';
-            app.text_WR.Editable = 'off';
-            app.text_WR.HorizontalAlignment = 'center';
-            app.text_WR.Position = [6 177 91 19];
+            % Create text_W_1
+            app.text_W_1 = uieditfield(app.Panel_parameters, 'numeric');
+            app.text_W_1.ValueDisplayFormat = '%.4g';
+            app.text_W_1.Editable = 'off';
+            app.text_W_1.HorizontalAlignment = 'center';
+            app.text_W_1.Position = [6 177 91 19];
 
-            % Create text_WP
-            app.text_WP = uieditfield(app.Panel_parameters, 'numeric');
-            app.text_WP.ValueDisplayFormat = '%.4g';
-            app.text_WP.Editable = 'off';
-            app.text_WP.HorizontalAlignment = 'center';
-            app.text_WP.Position = [293 177 91 19];
+            % Create text_W_2
+            app.text_W_2 = uieditfield(app.Panel_parameters, 'numeric');
+            app.text_W_2.ValueDisplayFormat = '%.4g';
+            app.text_W_2.Editable = 'off';
+            app.text_W_2.HorizontalAlignment = 'center';
+            app.text_W_2.Position = [293 177 91 19];
 
             % Create text_cp
             app.text_cp = uilabel(app.Panel_parameters);
@@ -1802,19 +1816,19 @@ classdef combustion_toolbox < matlab.apps.AppBase
             app.text_cp.Position = [107 228 176 19];
             app.text_cp.Text = 'Specific heat cp [kJ/(kg K)]';
 
-            % Create text_cpR
-            app.text_cpR = uieditfield(app.Panel_parameters, 'numeric');
-            app.text_cpR.ValueDisplayFormat = '%.4g';
-            app.text_cpR.Editable = 'off';
-            app.text_cpR.HorizontalAlignment = 'center';
-            app.text_cpR.Position = [6 228 91 19];
+            % Create text_cp_1
+            app.text_cp_1 = uieditfield(app.Panel_parameters, 'numeric');
+            app.text_cp_1.ValueDisplayFormat = '%.4g';
+            app.text_cp_1.Editable = 'off';
+            app.text_cp_1.HorizontalAlignment = 'center';
+            app.text_cp_1.Position = [6 228 91 19];
 
-            % Create text_cpP
-            app.text_cpP = uieditfield(app.Panel_parameters, 'numeric');
-            app.text_cpP.ValueDisplayFormat = '%.4g';
-            app.text_cpP.Editable = 'off';
-            app.text_cpP.HorizontalAlignment = 'center';
-            app.text_cpP.Position = [293 228 91 19];
+            % Create text_cp_2
+            app.text_cp_2 = uieditfield(app.Panel_parameters, 'numeric');
+            app.text_cp_2.ValueDisplayFormat = '%.4g';
+            app.text_cp_2.Editable = 'off';
+            app.text_cp_2.HorizontalAlignment = 'center';
+            app.text_cp_2.Position = [293 228 91 19];
 
             % Create text_h
             app.text_h = uilabel(app.Panel_parameters);
@@ -1822,19 +1836,19 @@ classdef combustion_toolbox < matlab.apps.AppBase
             app.text_h.Position = [107 305 176 19];
             app.text_h.Text = 'Enthalpy [kJ/kg]';
 
-            % Create text_hR
-            app.text_hR = uieditfield(app.Panel_parameters, 'numeric');
-            app.text_hR.ValueDisplayFormat = '%.4g';
-            app.text_hR.Editable = 'off';
-            app.text_hR.HorizontalAlignment = 'center';
-            app.text_hR.Position = [6 305 91 19];
+            % Create text_h_1
+            app.text_h_1 = uieditfield(app.Panel_parameters, 'numeric');
+            app.text_h_1.ValueDisplayFormat = '%.4g';
+            app.text_h_1.Editable = 'off';
+            app.text_h_1.HorizontalAlignment = 'center';
+            app.text_h_1.Position = [6 305 91 19];
 
-            % Create text_hP
-            app.text_hP = uieditfield(app.Panel_parameters, 'numeric');
-            app.text_hP.ValueDisplayFormat = '%.4g';
-            app.text_hP.Editable = 'off';
-            app.text_hP.HorizontalAlignment = 'center';
-            app.text_hP.Position = [293 305 91 19];
+            % Create text_h_2
+            app.text_h_2 = uieditfield(app.Panel_parameters, 'numeric');
+            app.text_h_2.ValueDisplayFormat = '%.4g';
+            app.text_h_2.Editable = 'off';
+            app.text_h_2.HorizontalAlignment = 'center';
+            app.text_h_2.Position = [293 305 91 19];
 
             % Create text_r
             app.text_r = uilabel(app.Panel_parameters);
@@ -1842,19 +1856,19 @@ classdef combustion_toolbox < matlab.apps.AppBase
             app.text_r.Position = [107 331 176 19];
             app.text_r.Text = 'Density [kg/m3]';
 
-            % Create text_rR
-            app.text_rR = uieditfield(app.Panel_parameters, 'numeric');
-            app.text_rR.ValueDisplayFormat = '%.4g';
-            app.text_rR.Editable = 'off';
-            app.text_rR.HorizontalAlignment = 'center';
-            app.text_rR.Position = [6 331 91 19];
+            % Create text_r_1
+            app.text_r_1 = uieditfield(app.Panel_parameters, 'numeric');
+            app.text_r_1.ValueDisplayFormat = '%.4g';
+            app.text_r_1.Editable = 'off';
+            app.text_r_1.HorizontalAlignment = 'center';
+            app.text_r_1.Position = [6 331 91 19];
 
-            % Create text_rP
-            app.text_rP = uieditfield(app.Panel_parameters, 'numeric');
-            app.text_rP.ValueDisplayFormat = '%.4g';
-            app.text_rP.Editable = 'off';
-            app.text_rP.HorizontalAlignment = 'center';
-            app.text_rP.Position = [293 331 91 19];
+            % Create text_r_2
+            app.text_r_2 = uieditfield(app.Panel_parameters, 'numeric');
+            app.text_r_2.ValueDisplayFormat = '%.4g';
+            app.text_r_2.Editable = 'off';
+            app.text_r_2.HorizontalAlignment = 'center';
+            app.text_r_2.Position = [293 331 91 19];
 
             % Create text_p
             app.text_p = uilabel(app.Panel_parameters);
@@ -1862,20 +1876,20 @@ classdef combustion_toolbox < matlab.apps.AppBase
             app.text_p.Position = [107 357 176 19];
             app.text_p.Text = 'Pressure [bar]';
 
-            % Create text_pP
-            app.text_pP = uieditfield(app.Panel_parameters, 'numeric');
-            app.text_pP.Limits = [0 Inf];
-            app.text_pP.ValueDisplayFormat = '%.4g';
-            app.text_pP.Editable = 'off';
-            app.text_pP.HorizontalAlignment = 'center';
-            app.text_pP.Position = [293 357 91 19];
+            % Create text_p_2
+            app.text_p_2 = uieditfield(app.Panel_parameters, 'numeric');
+            app.text_p_2.Limits = [0 Inf];
+            app.text_p_2.ValueDisplayFormat = '%.4g';
+            app.text_p_2.Editable = 'off';
+            app.text_p_2.HorizontalAlignment = 'center';
+            app.text_p_2.Position = [293 357 91 19];
 
-            % Create text_Products_2
-            app.text_Products_2 = uilabel(app.Panel_parameters);
-            app.text_Products_2.HorizontalAlignment = 'center';
-            app.text_Products_2.FontWeight = 'bold';
-            app.text_Products_2.Position = [293 408 91 19];
-            app.text_Products_2.Text = 'Products';
+            % Create text_Products
+            app.text_Products = uilabel(app.Panel_parameters);
+            app.text_Products.HorizontalAlignment = 'center';
+            app.text_Products.FontWeight = 'bold';
+            app.text_Products.Position = [293 408 91 19];
+            app.text_Products.Text = 'Products';
 
             % Create text_Reactans
             app.text_Reactans = uilabel(app.Panel_parameters);
@@ -1890,42 +1904,42 @@ classdef combustion_toolbox < matlab.apps.AppBase
             app.text_T.Position = [107 383 176 19];
             app.text_T.Text = 'Temperature [K]';
 
-            % Create text_TR
-            app.text_TR = uieditfield(app.Panel_parameters, 'numeric');
-            app.text_TR.ValueDisplayFormat = '%.4g';
-            app.text_TR.Editable = 'off';
-            app.text_TR.HorizontalAlignment = 'center';
-            app.text_TR.Position = [6 383 91 19];
+            % Create text_T_1
+            app.text_T_1 = uieditfield(app.Panel_parameters, 'numeric');
+            app.text_T_1.ValueDisplayFormat = '%.4g';
+            app.text_T_1.Editable = 'off';
+            app.text_T_1.HorizontalAlignment = 'center';
+            app.text_T_1.Position = [6 383 91 19];
 
-            % Create text_pR
-            app.text_pR = uieditfield(app.Panel_parameters, 'numeric');
-            app.text_pR.ValueDisplayFormat = '%.4g';
-            app.text_pR.Editable = 'off';
-            app.text_pR.HorizontalAlignment = 'center';
-            app.text_pR.Position = [6 357 91 19];
+            % Create text_p_1
+            app.text_p_1 = uieditfield(app.Panel_parameters, 'numeric');
+            app.text_p_1.ValueDisplayFormat = '%.4g';
+            app.text_p_1.Editable = 'off';
+            app.text_p_1.HorizontalAlignment = 'center';
+            app.text_p_1.Position = [6 357 91 19];
 
-            % Create text_TP
-            app.text_TP = uieditfield(app.Panel_parameters, 'numeric');
-            app.text_TP.ValueDisplayFormat = '%.4g';
-            app.text_TP.Editable = 'off';
-            app.text_TP.HorizontalAlignment = 'center';
-            app.text_TP.Position = [293 383 91 19];
+            % Create text_T_2
+            app.text_T_2 = uieditfield(app.Panel_parameters, 'numeric');
+            app.text_T_2.ValueDisplayFormat = '%.4g';
+            app.text_T_2.Editable = 'off';
+            app.text_T_2.HorizontalAlignment = 'center';
+            app.text_T_2.Position = [293 383 91 19];
 
-            % Create text_uR
-            app.text_uR = uieditfield(app.Panel_parameters, 'numeric');
-            app.text_uR.ValueDisplayFormat = '%.4g';
-            app.text_uR.Editable = 'off';
-            app.text_uR.HorizontalAlignment = 'center';
-            app.text_uR.Visible = 'off';
-            app.text_uR.Position = [6 125 91 19];
+            % Create text_u_1
+            app.text_u_1 = uieditfield(app.Panel_parameters, 'numeric');
+            app.text_u_1.ValueDisplayFormat = '%.4g';
+            app.text_u_1.Editable = 'off';
+            app.text_u_1.HorizontalAlignment = 'center';
+            app.text_u_1.Visible = 'off';
+            app.text_u_1.Position = [6 125 91 19];
 
-            % Create text_MR
-            app.text_MR = uieditfield(app.Panel_parameters, 'numeric');
-            app.text_MR.ValueDisplayFormat = '%.4g';
-            app.text_MR.Editable = 'off';
-            app.text_MR.HorizontalAlignment = 'center';
-            app.text_MR.Visible = 'off';
-            app.text_MR.Position = [6 100 91 19];
+            % Create text_M_1
+            app.text_M_1 = uieditfield(app.Panel_parameters, 'numeric');
+            app.text_M_1.ValueDisplayFormat = '%.4g';
+            app.text_M_1.Editable = 'off';
+            app.text_M_1.HorizontalAlignment = 'center';
+            app.text_M_1.Visible = 'off';
+            app.text_M_1.Position = [6 100 91 19];
 
             % Create text_Aratio
             app.text_Aratio = uilabel(app.Panel_parameters);
@@ -1971,83 +1985,83 @@ classdef combustion_toolbox < matlab.apps.AppBase
             app.Panel_extra_3.BackgroundColor = [0.9098 0.9098 0.8902];
             app.Panel_extra_3.Position = [388 1 100 432];
 
-            % Create text_sP_3
-            app.text_sP_3 = uieditfield(app.Panel_extra_3, 'numeric');
-            app.text_sP_3.ValueDisplayFormat = '%.4g';
-            app.text_sP_3.Editable = 'off';
-            app.text_sP_3.HorizontalAlignment = 'center';
-            app.text_sP_3.Position = [5 254 91 19];
+            % Create text_s_3
+            app.text_s_3 = uieditfield(app.Panel_extra_3, 'numeric');
+            app.text_s_3.ValueDisplayFormat = '%.4g';
+            app.text_s_3.Editable = 'off';
+            app.text_s_3.HorizontalAlignment = 'center';
+            app.text_s_3.Position = [5 254 91 19];
 
-            % Create text_gammaP_3
-            app.text_gammaP_3 = uieditfield(app.Panel_extra_3, 'numeric');
-            app.text_gammaP_3.ValueDisplayFormat = '%.4g';
-            app.text_gammaP_3.Editable = 'off';
-            app.text_gammaP_3.HorizontalAlignment = 'center';
-            app.text_gammaP_3.Position = [5 203 91 19];
+            % Create text_gamma_3
+            app.text_gamma_3 = uieditfield(app.Panel_extra_3, 'numeric');
+            app.text_gamma_3.ValueDisplayFormat = '%.4g';
+            app.text_gamma_3.Editable = 'off';
+            app.text_gamma_3.HorizontalAlignment = 'center';
+            app.text_gamma_3.Position = [5 203 91 19];
 
-            % Create text_MP_3
-            app.text_MP_3 = uieditfield(app.Panel_extra_3, 'numeric');
-            app.text_MP_3.ValueDisplayFormat = '%.4g';
-            app.text_MP_3.Editable = 'off';
-            app.text_MP_3.HorizontalAlignment = 'center';
-            app.text_MP_3.Position = [5 100 91 19];
+            % Create text_M_3
+            app.text_M_3 = uieditfield(app.Panel_extra_3, 'numeric');
+            app.text_M_3.ValueDisplayFormat = '%.4g';
+            app.text_M_3.Editable = 'off';
+            app.text_M_3.HorizontalAlignment = 'center';
+            app.text_M_3.Position = [5 100 91 19];
 
-            % Create text_uP_3
-            app.text_uP_3 = uieditfield(app.Panel_extra_3, 'numeric');
-            app.text_uP_3.ValueDisplayFormat = '%.4g';
-            app.text_uP_3.Editable = 'off';
-            app.text_uP_3.HorizontalAlignment = 'center';
-            app.text_uP_3.Position = [5 125 91 19];
+            % Create text_u_3
+            app.text_u_3 = uieditfield(app.Panel_extra_3, 'numeric');
+            app.text_u_3.ValueDisplayFormat = '%.4g';
+            app.text_u_3.Editable = 'off';
+            app.text_u_3.HorizontalAlignment = 'center';
+            app.text_u_3.Position = [5 125 91 19];
 
-            % Create text_eP_3
-            app.text_eP_3 = uieditfield(app.Panel_extra_3, 'numeric');
-            app.text_eP_3.ValueDisplayFormat = '%.4g';
-            app.text_eP_3.Editable = 'off';
-            app.text_eP_3.HorizontalAlignment = 'center';
-            app.text_eP_3.Position = [5 280 91 19];
+            % Create text_e_3
+            app.text_e_3 = uieditfield(app.Panel_extra_3, 'numeric');
+            app.text_e_3.ValueDisplayFormat = '%.4g';
+            app.text_e_3.Editable = 'off';
+            app.text_e_3.HorizontalAlignment = 'center';
+            app.text_e_3.Position = [5 280 91 19];
 
-            % Create text_soundP_3
-            app.text_soundP_3 = uieditfield(app.Panel_extra_3, 'numeric');
-            app.text_soundP_3.ValueDisplayFormat = '%.4g';
-            app.text_soundP_3.Editable = 'off';
-            app.text_soundP_3.HorizontalAlignment = 'center';
-            app.text_soundP_3.Position = [5 151 91 19];
+            % Create text_sound_3
+            app.text_sound_3 = uieditfield(app.Panel_extra_3, 'numeric');
+            app.text_sound_3.ValueDisplayFormat = '%.4g';
+            app.text_sound_3.Editable = 'off';
+            app.text_sound_3.HorizontalAlignment = 'center';
+            app.text_sound_3.Position = [5 151 91 19];
 
-            % Create text_WP_3
-            app.text_WP_3 = uieditfield(app.Panel_extra_3, 'numeric');
-            app.text_WP_3.ValueDisplayFormat = '%.4g';
-            app.text_WP_3.Editable = 'off';
-            app.text_WP_3.HorizontalAlignment = 'center';
-            app.text_WP_3.Position = [5 177 91 19];
+            % Create text_W_3
+            app.text_W_3 = uieditfield(app.Panel_extra_3, 'numeric');
+            app.text_W_3.ValueDisplayFormat = '%.4g';
+            app.text_W_3.Editable = 'off';
+            app.text_W_3.HorizontalAlignment = 'center';
+            app.text_W_3.Position = [5 177 91 19];
 
-            % Create text_cpP_3
-            app.text_cpP_3 = uieditfield(app.Panel_extra_3, 'numeric');
-            app.text_cpP_3.ValueDisplayFormat = '%.4g';
-            app.text_cpP_3.Editable = 'off';
-            app.text_cpP_3.HorizontalAlignment = 'center';
-            app.text_cpP_3.Position = [5 228 91 19];
+            % Create text_cp_3
+            app.text_cp_3 = uieditfield(app.Panel_extra_3, 'numeric');
+            app.text_cp_3.ValueDisplayFormat = '%.4g';
+            app.text_cp_3.Editable = 'off';
+            app.text_cp_3.HorizontalAlignment = 'center';
+            app.text_cp_3.Position = [5 228 91 19];
 
-            % Create text_hP_3
-            app.text_hP_3 = uieditfield(app.Panel_extra_3, 'numeric');
-            app.text_hP_3.ValueDisplayFormat = '%.4g';
-            app.text_hP_3.Editable = 'off';
-            app.text_hP_3.HorizontalAlignment = 'center';
-            app.text_hP_3.Position = [5 305 91 19];
+            % Create text_h_3
+            app.text_h_3 = uieditfield(app.Panel_extra_3, 'numeric');
+            app.text_h_3.ValueDisplayFormat = '%.4g';
+            app.text_h_3.Editable = 'off';
+            app.text_h_3.HorizontalAlignment = 'center';
+            app.text_h_3.Position = [5 305 91 19];
 
-            % Create text_rP_3
-            app.text_rP_3 = uieditfield(app.Panel_extra_3, 'numeric');
-            app.text_rP_3.ValueDisplayFormat = '%.4g';
-            app.text_rP_3.Editable = 'off';
-            app.text_rP_3.HorizontalAlignment = 'center';
-            app.text_rP_3.Position = [5 331 91 19];
+            % Create text_r_3
+            app.text_r_3 = uieditfield(app.Panel_extra_3, 'numeric');
+            app.text_r_3.ValueDisplayFormat = '%.4g';
+            app.text_r_3.Editable = 'off';
+            app.text_r_3.HorizontalAlignment = 'center';
+            app.text_r_3.Position = [5 331 91 19];
 
-            % Create text_pP_3
-            app.text_pP_3 = uieditfield(app.Panel_extra_3, 'numeric');
-            app.text_pP_3.Limits = [0 Inf];
-            app.text_pP_3.ValueDisplayFormat = '%.4g';
-            app.text_pP_3.Editable = 'off';
-            app.text_pP_3.HorizontalAlignment = 'center';
-            app.text_pP_3.Position = [5 357 91 19];
+            % Create text_p_3
+            app.text_p_3 = uieditfield(app.Panel_extra_3, 'numeric');
+            app.text_p_3.Limits = [0 Inf];
+            app.text_p_3.ValueDisplayFormat = '%.4g';
+            app.text_p_3.Editable = 'off';
+            app.text_p_3.HorizontalAlignment = 'center';
+            app.text_p_3.Position = [5 357 91 19];
 
             % Create text_Products_3
             app.text_Products_3 = uilabel(app.Panel_extra_3);
@@ -2057,12 +2071,12 @@ classdef combustion_toolbox < matlab.apps.AppBase
             app.text_Products_3.Position = [5 405 91 22];
             app.text_Products_3.Text = 'Throat';
 
-            % Create text_TP_3
-            app.text_TP_3 = uieditfield(app.Panel_extra_3, 'numeric');
-            app.text_TP_3.ValueDisplayFormat = '%.4g';
-            app.text_TP_3.Editable = 'off';
-            app.text_TP_3.HorizontalAlignment = 'center';
-            app.text_TP_3.Position = [5 383 91 19];
+            % Create text_T_3
+            app.text_T_3 = uieditfield(app.Panel_extra_3, 'numeric');
+            app.text_T_3.ValueDisplayFormat = '%.4g';
+            app.text_T_3.Editable = 'off';
+            app.text_T_3.HorizontalAlignment = 'center';
+            app.text_T_3.Position = [5 383 91 19];
 
             % Create text_Aratio_3
             app.text_Aratio_3 = uieditfield(app.Panel_extra_3, 'numeric');
@@ -2100,83 +2114,83 @@ classdef combustion_toolbox < matlab.apps.AppBase
             app.Panel_extra_4.BackgroundColor = [0.9098 0.9098 0.8902];
             app.Panel_extra_4.Position = [486 0 100 433];
 
-            % Create text_sP_4
-            app.text_sP_4 = uieditfield(app.Panel_extra_4, 'numeric');
-            app.text_sP_4.ValueDisplayFormat = '%.4g';
-            app.text_sP_4.Editable = 'off';
-            app.text_sP_4.HorizontalAlignment = 'center';
-            app.text_sP_4.Position = [3 255 91 19];
+            % Create text_s_4
+            app.text_s_4 = uieditfield(app.Panel_extra_4, 'numeric');
+            app.text_s_4.ValueDisplayFormat = '%.4g';
+            app.text_s_4.Editable = 'off';
+            app.text_s_4.HorizontalAlignment = 'center';
+            app.text_s_4.Position = [3 255 91 19];
 
-            % Create text_gammaP_4
-            app.text_gammaP_4 = uieditfield(app.Panel_extra_4, 'numeric');
-            app.text_gammaP_4.ValueDisplayFormat = '%.4g';
-            app.text_gammaP_4.Editable = 'off';
-            app.text_gammaP_4.HorizontalAlignment = 'center';
-            app.text_gammaP_4.Position = [3 204 91 19];
+            % Create text_gamma_4
+            app.text_gamma_4 = uieditfield(app.Panel_extra_4, 'numeric');
+            app.text_gamma_4.ValueDisplayFormat = '%.4g';
+            app.text_gamma_4.Editable = 'off';
+            app.text_gamma_4.HorizontalAlignment = 'center';
+            app.text_gamma_4.Position = [3 204 91 19];
 
-            % Create text_MP_4
-            app.text_MP_4 = uieditfield(app.Panel_extra_4, 'numeric');
-            app.text_MP_4.ValueDisplayFormat = '%.4g';
-            app.text_MP_4.Editable = 'off';
-            app.text_MP_4.HorizontalAlignment = 'center';
-            app.text_MP_4.Position = [3 101 91 19];
+            % Create text_M_4
+            app.text_M_4 = uieditfield(app.Panel_extra_4, 'numeric');
+            app.text_M_4.ValueDisplayFormat = '%.4g';
+            app.text_M_4.Editable = 'off';
+            app.text_M_4.HorizontalAlignment = 'center';
+            app.text_M_4.Position = [3 101 91 19];
 
-            % Create text_uP_4
-            app.text_uP_4 = uieditfield(app.Panel_extra_4, 'numeric');
-            app.text_uP_4.ValueDisplayFormat = '%.4g';
-            app.text_uP_4.Editable = 'off';
-            app.text_uP_4.HorizontalAlignment = 'center';
-            app.text_uP_4.Position = [3 126 91 19];
+            % Create text_u_4
+            app.text_u_4 = uieditfield(app.Panel_extra_4, 'numeric');
+            app.text_u_4.ValueDisplayFormat = '%.4g';
+            app.text_u_4.Editable = 'off';
+            app.text_u_4.HorizontalAlignment = 'center';
+            app.text_u_4.Position = [3 126 91 19];
 
-            % Create text_eP_4
-            app.text_eP_4 = uieditfield(app.Panel_extra_4, 'numeric');
-            app.text_eP_4.ValueDisplayFormat = '%.4g';
-            app.text_eP_4.Editable = 'off';
-            app.text_eP_4.HorizontalAlignment = 'center';
-            app.text_eP_4.Position = [3 281 91 19];
+            % Create text_e_4
+            app.text_e_4 = uieditfield(app.Panel_extra_4, 'numeric');
+            app.text_e_4.ValueDisplayFormat = '%.4g';
+            app.text_e_4.Editable = 'off';
+            app.text_e_4.HorizontalAlignment = 'center';
+            app.text_e_4.Position = [3 281 91 19];
 
-            % Create text_soundP_4
-            app.text_soundP_4 = uieditfield(app.Panel_extra_4, 'numeric');
-            app.text_soundP_4.ValueDisplayFormat = '%.4g';
-            app.text_soundP_4.Editable = 'off';
-            app.text_soundP_4.HorizontalAlignment = 'center';
-            app.text_soundP_4.Position = [3 152 91 19];
+            % Create text_sound_4
+            app.text_sound_4 = uieditfield(app.Panel_extra_4, 'numeric');
+            app.text_sound_4.ValueDisplayFormat = '%.4g';
+            app.text_sound_4.Editable = 'off';
+            app.text_sound_4.HorizontalAlignment = 'center';
+            app.text_sound_4.Position = [3 152 91 19];
 
-            % Create text_WP_4
-            app.text_WP_4 = uieditfield(app.Panel_extra_4, 'numeric');
-            app.text_WP_4.ValueDisplayFormat = '%.4g';
-            app.text_WP_4.Editable = 'off';
-            app.text_WP_4.HorizontalAlignment = 'center';
-            app.text_WP_4.Position = [3 178 91 19];
+            % Create text_W_4
+            app.text_W_4 = uieditfield(app.Panel_extra_4, 'numeric');
+            app.text_W_4.ValueDisplayFormat = '%.4g';
+            app.text_W_4.Editable = 'off';
+            app.text_W_4.HorizontalAlignment = 'center';
+            app.text_W_4.Position = [3 178 91 19];
 
-            % Create text_cpP_4
-            app.text_cpP_4 = uieditfield(app.Panel_extra_4, 'numeric');
-            app.text_cpP_4.ValueDisplayFormat = '%.4g';
-            app.text_cpP_4.Editable = 'off';
-            app.text_cpP_4.HorizontalAlignment = 'center';
-            app.text_cpP_4.Position = [3 229 91 19];
+            % Create text_cp_4
+            app.text_cp_4 = uieditfield(app.Panel_extra_4, 'numeric');
+            app.text_cp_4.ValueDisplayFormat = '%.4g';
+            app.text_cp_4.Editable = 'off';
+            app.text_cp_4.HorizontalAlignment = 'center';
+            app.text_cp_4.Position = [3 229 91 19];
 
-            % Create text_hP_4
-            app.text_hP_4 = uieditfield(app.Panel_extra_4, 'numeric');
-            app.text_hP_4.ValueDisplayFormat = '%.4g';
-            app.text_hP_4.Editable = 'off';
-            app.text_hP_4.HorizontalAlignment = 'center';
-            app.text_hP_4.Position = [3 306 91 19];
+            % Create text_h_4
+            app.text_h_4 = uieditfield(app.Panel_extra_4, 'numeric');
+            app.text_h_4.ValueDisplayFormat = '%.4g';
+            app.text_h_4.Editable = 'off';
+            app.text_h_4.HorizontalAlignment = 'center';
+            app.text_h_4.Position = [3 306 91 19];
 
-            % Create text_rP_4
-            app.text_rP_4 = uieditfield(app.Panel_extra_4, 'numeric');
-            app.text_rP_4.ValueDisplayFormat = '%.4g';
-            app.text_rP_4.Editable = 'off';
-            app.text_rP_4.HorizontalAlignment = 'center';
-            app.text_rP_4.Position = [3 332 91 19];
+            % Create text_r_4
+            app.text_r_4 = uieditfield(app.Panel_extra_4, 'numeric');
+            app.text_r_4.ValueDisplayFormat = '%.4g';
+            app.text_r_4.Editable = 'off';
+            app.text_r_4.HorizontalAlignment = 'center';
+            app.text_r_4.Position = [3 332 91 19];
 
-            % Create text_pP_4
-            app.text_pP_4 = uieditfield(app.Panel_extra_4, 'numeric');
-            app.text_pP_4.Limits = [0 Inf];
-            app.text_pP_4.ValueDisplayFormat = '%.4g';
-            app.text_pP_4.Editable = 'off';
-            app.text_pP_4.HorizontalAlignment = 'center';
-            app.text_pP_4.Position = [3 358 91 19];
+            % Create text_p_4
+            app.text_p_4 = uieditfield(app.Panel_extra_4, 'numeric');
+            app.text_p_4.Limits = [0 Inf];
+            app.text_p_4.ValueDisplayFormat = '%.4g';
+            app.text_p_4.Editable = 'off';
+            app.text_p_4.HorizontalAlignment = 'center';
+            app.text_p_4.Position = [3 358 91 19];
 
             % Create text_Products_4
             app.text_Products_4 = uilabel(app.Panel_extra_4);
@@ -2186,12 +2200,12 @@ classdef combustion_toolbox < matlab.apps.AppBase
             app.text_Products_4.Position = [3 406 91 22];
             app.text_Products_4.Text = 'Exit';
 
-            % Create text_TP_4
-            app.text_TP_4 = uieditfield(app.Panel_extra_4, 'numeric');
-            app.text_TP_4.ValueDisplayFormat = '%.4g';
-            app.text_TP_4.Editable = 'off';
-            app.text_TP_4.HorizontalAlignment = 'center';
-            app.text_TP_4.Position = [3 384 91 19];
+            % Create text_T_4
+            app.text_T_4 = uieditfield(app.Panel_extra_4, 'numeric');
+            app.text_T_4.ValueDisplayFormat = '%.4g';
+            app.text_T_4.Editable = 'off';
+            app.text_T_4.HorizontalAlignment = 'center';
+            app.text_T_4.Position = [3 384 91 19];
 
             % Create text_Aratio_4
             app.text_Aratio_4 = uieditfield(app.Panel_extra_4, 'numeric');
@@ -2229,83 +2243,83 @@ classdef combustion_toolbox < matlab.apps.AppBase
             app.Panel_extra_5.BackgroundColor = [0.9098 0.9098 0.8902];
             app.Panel_extra_5.Position = [586 0 100 433];
 
-            % Create text_sP_5
-            app.text_sP_5 = uieditfield(app.Panel_extra_5, 'numeric');
-            app.text_sP_5.ValueDisplayFormat = '%.4g';
-            app.text_sP_5.Editable = 'off';
-            app.text_sP_5.HorizontalAlignment = 'center';
-            app.text_sP_5.Position = [5 255 91 19];
+            % Create text_s_5
+            app.text_s_5 = uieditfield(app.Panel_extra_5, 'numeric');
+            app.text_s_5.ValueDisplayFormat = '%.4g';
+            app.text_s_5.Editable = 'off';
+            app.text_s_5.HorizontalAlignment = 'center';
+            app.text_s_5.Position = [5 255 91 19];
 
-            % Create text_gammaP_5
-            app.text_gammaP_5 = uieditfield(app.Panel_extra_5, 'numeric');
-            app.text_gammaP_5.ValueDisplayFormat = '%.4g';
-            app.text_gammaP_5.Editable = 'off';
-            app.text_gammaP_5.HorizontalAlignment = 'center';
-            app.text_gammaP_5.Position = [5 204 91 19];
+            % Create text_gamma_5
+            app.text_gamma_5 = uieditfield(app.Panel_extra_5, 'numeric');
+            app.text_gamma_5.ValueDisplayFormat = '%.4g';
+            app.text_gamma_5.Editable = 'off';
+            app.text_gamma_5.HorizontalAlignment = 'center';
+            app.text_gamma_5.Position = [5 204 91 19];
 
-            % Create text_MP_5
-            app.text_MP_5 = uieditfield(app.Panel_extra_5, 'numeric');
-            app.text_MP_5.ValueDisplayFormat = '%.4g';
-            app.text_MP_5.Editable = 'off';
-            app.text_MP_5.HorizontalAlignment = 'center';
-            app.text_MP_5.Position = [5 101 91 19];
+            % Create text_M_5
+            app.text_M_5 = uieditfield(app.Panel_extra_5, 'numeric');
+            app.text_M_5.ValueDisplayFormat = '%.4g';
+            app.text_M_5.Editable = 'off';
+            app.text_M_5.HorizontalAlignment = 'center';
+            app.text_M_5.Position = [5 101 91 19];
 
-            % Create text_uP_5
-            app.text_uP_5 = uieditfield(app.Panel_extra_5, 'numeric');
-            app.text_uP_5.ValueDisplayFormat = '%.4g';
-            app.text_uP_5.Editable = 'off';
-            app.text_uP_5.HorizontalAlignment = 'center';
-            app.text_uP_5.Position = [5 126 91 19];
+            % Create text_u_5
+            app.text_u_5 = uieditfield(app.Panel_extra_5, 'numeric');
+            app.text_u_5.ValueDisplayFormat = '%.4g';
+            app.text_u_5.Editable = 'off';
+            app.text_u_5.HorizontalAlignment = 'center';
+            app.text_u_5.Position = [5 126 91 19];
 
-            % Create text_eP_5
-            app.text_eP_5 = uieditfield(app.Panel_extra_5, 'numeric');
-            app.text_eP_5.ValueDisplayFormat = '%.4g';
-            app.text_eP_5.Editable = 'off';
-            app.text_eP_5.HorizontalAlignment = 'center';
-            app.text_eP_5.Position = [5 281 91 19];
+            % Create text_e_5
+            app.text_e_5 = uieditfield(app.Panel_extra_5, 'numeric');
+            app.text_e_5.ValueDisplayFormat = '%.4g';
+            app.text_e_5.Editable = 'off';
+            app.text_e_5.HorizontalAlignment = 'center';
+            app.text_e_5.Position = [5 281 91 19];
 
-            % Create text_soundP_5
-            app.text_soundP_5 = uieditfield(app.Panel_extra_5, 'numeric');
-            app.text_soundP_5.ValueDisplayFormat = '%.4g';
-            app.text_soundP_5.Editable = 'off';
-            app.text_soundP_5.HorizontalAlignment = 'center';
-            app.text_soundP_5.Position = [5 152 91 19];
+            % Create text_sound_5
+            app.text_sound_5 = uieditfield(app.Panel_extra_5, 'numeric');
+            app.text_sound_5.ValueDisplayFormat = '%.4g';
+            app.text_sound_5.Editable = 'off';
+            app.text_sound_5.HorizontalAlignment = 'center';
+            app.text_sound_5.Position = [5 152 91 19];
 
-            % Create text_WP_5
-            app.text_WP_5 = uieditfield(app.Panel_extra_5, 'numeric');
-            app.text_WP_5.ValueDisplayFormat = '%.4g';
-            app.text_WP_5.Editable = 'off';
-            app.text_WP_5.HorizontalAlignment = 'center';
-            app.text_WP_5.Position = [5 178 91 19];
+            % Create text_W_5
+            app.text_W_5 = uieditfield(app.Panel_extra_5, 'numeric');
+            app.text_W_5.ValueDisplayFormat = '%.4g';
+            app.text_W_5.Editable = 'off';
+            app.text_W_5.HorizontalAlignment = 'center';
+            app.text_W_5.Position = [5 178 91 19];
 
-            % Create text_cpP_5
-            app.text_cpP_5 = uieditfield(app.Panel_extra_5, 'numeric');
-            app.text_cpP_5.ValueDisplayFormat = '%.4g';
-            app.text_cpP_5.Editable = 'off';
-            app.text_cpP_5.HorizontalAlignment = 'center';
-            app.text_cpP_5.Position = [5 229 91 19];
+            % Create text_cp_5
+            app.text_cp_5 = uieditfield(app.Panel_extra_5, 'numeric');
+            app.text_cp_5.ValueDisplayFormat = '%.4g';
+            app.text_cp_5.Editable = 'off';
+            app.text_cp_5.HorizontalAlignment = 'center';
+            app.text_cp_5.Position = [5 229 91 19];
 
-            % Create text_hP_5
-            app.text_hP_5 = uieditfield(app.Panel_extra_5, 'numeric');
-            app.text_hP_5.ValueDisplayFormat = '%.4g';
-            app.text_hP_5.Editable = 'off';
-            app.text_hP_5.HorizontalAlignment = 'center';
-            app.text_hP_5.Position = [5 306 91 19];
+            % Create text_h_5
+            app.text_h_5 = uieditfield(app.Panel_extra_5, 'numeric');
+            app.text_h_5.ValueDisplayFormat = '%.4g';
+            app.text_h_5.Editable = 'off';
+            app.text_h_5.HorizontalAlignment = 'center';
+            app.text_h_5.Position = [5 306 91 19];
 
-            % Create text_rP_5
-            app.text_rP_5 = uieditfield(app.Panel_extra_5, 'numeric');
-            app.text_rP_5.ValueDisplayFormat = '%.4g';
-            app.text_rP_5.Editable = 'off';
-            app.text_rP_5.HorizontalAlignment = 'center';
-            app.text_rP_5.Position = [5 332 91 19];
+            % Create text_r_5
+            app.text_r_5 = uieditfield(app.Panel_extra_5, 'numeric');
+            app.text_r_5.ValueDisplayFormat = '%.4g';
+            app.text_r_5.Editable = 'off';
+            app.text_r_5.HorizontalAlignment = 'center';
+            app.text_r_5.Position = [5 332 91 19];
 
-            % Create text_pP_5
-            app.text_pP_5 = uieditfield(app.Panel_extra_5, 'numeric');
-            app.text_pP_5.Limits = [0 Inf];
-            app.text_pP_5.ValueDisplayFormat = '%.4g';
-            app.text_pP_5.Editable = 'off';
-            app.text_pP_5.HorizontalAlignment = 'center';
-            app.text_pP_5.Position = [5 358 91 19];
+            % Create text_p_5
+            app.text_p_5 = uieditfield(app.Panel_extra_5, 'numeric');
+            app.text_p_5.Limits = [0 Inf];
+            app.text_p_5.ValueDisplayFormat = '%.4g';
+            app.text_p_5.Editable = 'off';
+            app.text_p_5.HorizontalAlignment = 'center';
+            app.text_p_5.Position = [5 358 91 19];
 
             % Create text_Products_5
             app.text_Products_5 = uilabel(app.Panel_extra_5);
@@ -2315,12 +2329,12 @@ classdef combustion_toolbox < matlab.apps.AppBase
             app.text_Products_5.Position = [5 406 91 22];
             app.text_Products_5.Text = 'Exit';
 
-            % Create text_TP_5
-            app.text_TP_5 = uieditfield(app.Panel_extra_5, 'numeric');
-            app.text_TP_5.ValueDisplayFormat = '%.4g';
-            app.text_TP_5.Editable = 'off';
-            app.text_TP_5.HorizontalAlignment = 'center';
-            app.text_TP_5.Position = [5 384 91 19];
+            % Create text_T_5
+            app.text_T_5 = uieditfield(app.Panel_extra_5, 'numeric');
+            app.text_T_5.ValueDisplayFormat = '%.4g';
+            app.text_T_5.Editable = 'off';
+            app.text_T_5.HorizontalAlignment = 'center';
+            app.text_T_5.Position = [5 384 91 19];
 
             % Create text_Aratio_5
             app.text_Aratio_5 = uieditfield(app.Panel_extra_5, 'numeric');
@@ -2362,6 +2376,75 @@ classdef combustion_toolbox < matlab.apps.AppBase
             app.EpsilonmolesLabel_2.HorizontalAlignment = 'center';
             app.EpsilonmolesLabel_2.Position = [-5 48 114 22];
             app.EpsilonmolesLabel_2.Text = 'Epsilon (method)';
+
+            % Create text_Cstar_2
+            app.text_Cstar_2 = uieditfield(app.Panel_parameters, 'numeric');
+            app.text_Cstar_2.ValueDisplayFormat = '%.4g';
+            app.text_Cstar_2.Editable = 'off';
+            app.text_Cstar_2.HorizontalAlignment = 'center';
+            app.text_Cstar_2.Visible = 'off';
+            app.text_Cstar_2.Position = [293 51 91 19];
+
+            % Create text_Ivac_2
+            app.text_Ivac_2 = uieditfield(app.Panel_parameters, 'numeric');
+            app.text_Ivac_2.ValueDisplayFormat = '%.4g';
+            app.text_Ivac_2.Editable = 'off';
+            app.text_Ivac_2.HorizontalAlignment = 'center';
+            app.text_Ivac_2.Visible = 'off';
+            app.text_Ivac_2.Position = [293 26 91 19];
+
+            % Create text_Isp_2
+            app.text_Isp_2 = uieditfield(app.Panel_parameters, 'numeric');
+            app.text_Isp_2.ValueDisplayFormat = '%.4g';
+            app.text_Isp_2.Editable = 'off';
+            app.text_Isp_2.HorizontalAlignment = 'center';
+            app.text_Isp_2.Visible = 'off';
+            app.text_Isp_2.Position = [293 1 91 19];
+
+            % Create text_beta_min
+            app.text_beta_min = uilabel(app.Panel_parameters);
+            app.text_beta_min.HorizontalAlignment = 'center';
+            app.text_beta_min.Visible = 'off';
+            app.text_beta_min.Position = [129 71 136 22];
+            app.text_beta_min.Text = 'Min wave angle [deg]';
+
+            % Create text_beta
+            app.text_beta = uilabel(app.Panel_parameters);
+            app.text_beta.HorizontalAlignment = 'center';
+            app.text_beta.Visible = 'off';
+            app.text_beta.Position = [137 49 120 19];
+            app.text_beta.Text = 'Wave angle [deg]';
+
+            % Create text_theta
+            app.text_theta = uilabel(app.Panel_parameters);
+            app.text_theta.HorizontalAlignment = 'center';
+            app.text_theta.Visible = 'off';
+            app.text_theta.Position = [132 25 130 19];
+            app.text_theta.Text = 'Deflection angle [deg]';
+
+            % Create text_beta_min_2
+            app.text_beta_min_2 = uieditfield(app.Panel_parameters, 'numeric');
+            app.text_beta_min_2.ValueDisplayFormat = '%.4g';
+            app.text_beta_min_2.Editable = 'off';
+            app.text_beta_min_2.HorizontalAlignment = 'center';
+            app.text_beta_min_2.Visible = 'off';
+            app.text_beta_min_2.Position = [294 74 91 19];
+
+            % Create text_beta_2
+            app.text_beta_2 = uieditfield(app.Panel_parameters, 'numeric');
+            app.text_beta_2.ValueDisplayFormat = '%.4g';
+            app.text_beta_2.Editable = 'off';
+            app.text_beta_2.HorizontalAlignment = 'center';
+            app.text_beta_2.Visible = 'off';
+            app.text_beta_2.Position = [293 51 91 19];
+
+            % Create text_theta_2
+            app.text_theta_2 = uieditfield(app.Panel_parameters, 'numeric');
+            app.text_theta_2.ValueDisplayFormat = '%.4g';
+            app.text_theta_2.Editable = 'off';
+            app.text_theta_2.HorizontalAlignment = 'center';
+            app.text_theta_2.Visible = 'off';
+            app.text_theta_2.Position = [293 26 91 19];
 
             % Create MixturecompositionTab
             app.MixturecompositionTab = uitab(app.Tab_results);

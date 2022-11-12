@@ -6,9 +6,14 @@ function post_results(self)
 
     % Abbreviations ---------------------
     mix1 = self.PS.strR;
-    mix2 = self.PS.strP;
+    try
+        mix2 = self.PS.strP;
+    catch
+        mix2 = self.PS.str2;
+    end
     phi = self.PD.phi.value;
     range = self.PD.range;
+    range_name = self.PD.range_name;
     ProblemType = self.PD.ProblemType;
     % -----------------------------------
     titlename = strrep(ProblemType, '_', ' ');
@@ -26,7 +31,7 @@ function post_results(self)
 
     % PLOTS REACTANTS
     if (self.Misc.FLAGS_PROP.TR || self.Misc.FLAGS_PROP.pR) && FLAG_PLOT_RANGE
-        plot_molar_fractions(self, 'strP', self.PD.range_name, 'Xi');
+        plot_molar_fractions(self, mix2, self.PD.range_name, 'Xi');
     elseif isfield(self.Misc.FLAGS_PROP, 'pP')
 
         if self.Misc.FLAGS_PROP.pP && FLAG_PLOT_RANGE
@@ -87,22 +92,20 @@ function post_results(self)
         for i = length(mix2):-1:1
             titlename = 'Deflection angle $\theta';
             self.Misc.config.title = sprintf('%s = %.2f$ [deg]', titlename, mix2_1{i}.theta);
-            beta = cell2vector(mix3{i}.polar, 'beta');
-            ax = displaysweepresults(self, mix3{i}, beta);
-            set_title(ax, self.Misc.config);
+            plot_molar_fractions(self, mix3{i}, 'beta', 'Xi');
             %         xlim(ax, [min(mix2{i}.polar.beta), 90]);
         end
 
-        % Temperature [K] againts deflection angle [deg]
-        titlename = '\mathcal{M}_1';
-        self.Misc.config.title = sprintf('%s = %.2f', titlename, mix1{i}.u / mix1{i}.sound);
-        ax = plot_figure('theta', mix2_1, 'T', mix2_1, 'config', self.Misc.config);
-        plot_figure('theta', mix3_1, 'T', mix3_1, 'config', self.Misc.config, 'axes', ax, 'color', 'new');
-        plot_figure('theta', mix3_2, 'T', mix3_2, 'config', self.Misc.config, 'axes', ax, 'color', 'new');
-
-        ax = plot_figure('theta', mix2_1, 'p', mix2_1, 'config', self.Misc.config);
-        plot_figure('theta', mix3_1, 'p', mix3_1, 'config', self.Misc.config, 'axes', ax, 'color', 'new');
-        plot_figure('theta', mix3_2, 'p', mix3_2, 'config', self.Misc.config, 'axes', ax, 'color', 'new');
+%         % Temperature [K] againts deflection angle [deg]
+%         titlename = '\mathcal{M}_1';
+%         self.Misc.config.title = sprintf('%s = %.2f', titlename, mix1{i}.u / mix1{i}.sound);
+%         ax = plot_figure('theta', mix2_1{1}.polar, 'T', mix2_1{1}.polar, 'config', self.Misc.config);
+%         plot_figure('theta', mix3_1, 'T', mix3_1, 'config', self.Misc.config, 'axes', ax, 'color', 'auto');
+%         plot_figure('theta', mix3_2, 'T', mix3_2, 'config', self.Misc.config, 'axes', ax, 'color', 'auto');
+% 
+%         ax = plot_figure('theta', mix2_1, 'p', mix2_1, 'config', self.Misc.config);
+%         plot_figure('theta', mix3_1, 'p', mix3_1, 'config', self.Misc.config, 'axes', ax, 'color', 'auto');
+%         plot_figure('theta', mix3_2, 'p', mix3_2, 'config', self.Misc.config, 'axes', ax, 'color', 'auto');
     elseif strcmp(ProblemType, {'SHOCK_I'}) && length(range) > 1
         self.Misc.config.labelx = 'Incident velocity $u_1$ [m/s]';
         self.Misc.config.labely = 'Temperature $T$ [K]';
@@ -144,7 +147,7 @@ function post_results(self)
         ax = plot_figure('u', u, 'T', mix2, 'config', self.Misc.config, 'labelx', self.Misc.config.labelx);
         self.Misc.config.title = 'Reflected';
         self.Misc.config.legend_name = {'Incident', 'Reflected'};
-        plot_figure('u', u, 'T', self.PS.strP, 'config', self.Misc.config, 'axes', ax, 'color', 'new');
+        plot_figure('u', u, 'T', self.PS.strP, 'config', self.Misc.config, 'axes', ax, 'color', 'auto');
         % Plot Molar fractions incident state with incident velocity
         self.Misc.config.title = 'Incident';
         self.Misc.config.labely = 'Molar fraction $X_i$';
@@ -158,9 +161,31 @@ function post_results(self)
         if strcmp(ProblemType, {'SHOCK_R'})
             ax = plot_hugoniot(self, mix1, mix2);
             ax = plot_hugoniot(self, mix2, mix3, ax);
-            set_legends(ax, self.Misc.config.legend_name, self.Misc.config)
+            set_legends(ax, self.Misc.config.legend_name, 'config', self.Misc.config)
         end
-
+    
+    elseif contains(ProblemType, {'OBLIQUE'}) && length(range) > 1
+        % Plot molar fractions
+        ax = displaysweepresults(self, mix2, range);
+        
+        % set title
+        self.Misc.config.title = 'Strong shock';
+        set_title(ax, self.Misc.config);
+        % Plot range variable againts temperature
+        ax = plot_figure(range_name, range, 'T', mix2, 'config', self.Misc.config);
+        if strcmpi(range_name, 'theta')
+            % Plot range variable againts temperature
+            mix2_2 = self.PS.str2;
+            self.Misc.config.legend_name = {'strong shock', 'weak shock'};
+            self.Misc.config.legend_location = {'best'};
+            plot_figure(range_name, range, 'T', mix2_2, 'config', self.Misc.config, 'ax', ax, 'color', 'auto');
+            % Plot molar fractions
+            ax = displaysweepresults(self, mix2_2, range);
+            % set title
+            self.Misc.config.title = 'Weak shock';
+            set_title(ax, self.Misc.config);
+        end
+        
     elseif contains(ProblemType, {'DRIVEN'}) && length(range) > 1
         % Set label x axis
         if contains(ProblemType, 'OVER')
@@ -173,9 +198,7 @@ function post_results(self)
         % Plot drive factor against temperature
         plot_figure('drive_factor', mix1, 'T', mix2, 'config', self.Misc.config, 'labelx', self.Misc.config.labelx);
         % Plot Molar fractions
-        self.Misc.config.labely = 'Molar fraction $X_i$';
-        drive_factor = cell2vector(mix1, 'drive_factor');
-        displaysweepresults(self, mix2, drive_factor);
+        plot_molar_fractions(self, mix1, 'drive_factor', 'Xi', 'ydata', mix2);
         % Plot Hugoniot curves
         plot_hugoniot(self, mix1, mix2);
     end
@@ -203,10 +226,10 @@ function post_results(self)
 
             self.Misc.config.legend_name = {'$I_{\rm sp}$', '$I_{\rm vac}$'};
             ax = plot_figure('phi', mix1, 'I_sp', mix2, 'config', self.Misc.config);
-            plot_figure('phi', mix1, 'I_vac', mix2, 'config', self.Misc.config, 'axes', ax, 'color', 'new');
+            plot_figure('phi', mix1, 'I_vac', mix2, 'config', self.Misc.config, 'axes', ax, 'color', 'auto');
 
             ax = plot_figure('OF', mix1, 'I_sp', mix2, 'config', self.Misc.config);
-            plot_figure('OF', mix1, 'I_vac', mix2, 'config', self.Misc.config, 'axes', ax, 'color', 'new');
+            plot_figure('OF', mix1, 'I_vac', mix2, 'config', self.Misc.config, 'axes', ax, 'color', 'auto');
         end
 
         if isfield(self.Misc.FLAGS_PROP, 'Aratio')
@@ -216,7 +239,7 @@ function post_results(self)
                 self.Misc.config.labelx = 'Area ratio $A_e/A_t$';
                 self.Misc.config.labely = 'Specific impulse $I$ [s]';
                 ax = plot_figure(mix2, mix2, 'Aratio', 'I_sp', self.Misc.config);
-                plot_figure(mix2, mix2, 'Aratio', 'I_vac', self.Misc.config, ax, 'color', 'new');
+                plot_figure(mix2, mix2, 'Aratio', 'I_vac', self.Misc.config, ax, 'color', 'auto');
             end
 
         end
@@ -232,7 +255,7 @@ function post_results(self)
                 self.Misc.config.labelx = 'Pressure $p$ [bar]';
                 self.Misc.config.labely = 'Specific impulse $I$ [s]';
                 ax = plot_figure('p', mix1, 'I_sp', mix2, 'config', self.Misc.config);
-                plot_figure('p', mix1, 'I_vac', mix2, 'config', self.Misc.config, 'axes', ax, 'color', 'new');
+                plot_figure('p', mix1, 'I_vac', mix2, 'config', self.Misc.config, 'axes', ax, 'color', 'auto');
             end
 
         end

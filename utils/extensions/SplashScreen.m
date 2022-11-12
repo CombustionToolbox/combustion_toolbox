@@ -30,6 +30,7 @@ classdef SplashScreen < matlab.mixin.SetGet
         ProgressPosition = 10 % Height (in pixels) above the bottom of the window for the progress bar
         ProgressRatio = 0     % The ratio shown on the progress bar (in range 0 to 1)
         Tag = ''              % User tag for this object
+        ScreenPosition        % Screen position [x0, y0, width, height]
     end % Public properties
     
     %% Read-only properties
@@ -241,11 +242,11 @@ classdef SplashScreen < matlab.mixin.SetGet
             p = obj.Frame.getContentPane();
             p.add( obj.Label );
             % Get position main monitor
-            pos = get_monitor_positions();
+            obj.ScreenPosition = get_monitor_positions();
             % Resize and reposition the window
             obj.Frame.setSize( obj.Icon.getIconWidth(), obj.Icon.getIconHeight() );
-            x0 = pos(1) + (pos(3) - obj.Icon.getIconWidth())/2;
-            y0 = pos(2) + (pos(4) - obj.Icon.getIconHeight())/2;
+            x0 = obj.ScreenPosition(1) + (obj.ScreenPosition(3) - obj.Icon.getIconWidth())/2;
+            y0 = obj.ScreenPosition(2) + (obj.ScreenPosition(4) - obj.Icon.getIconHeight())/2;
             obj.Frame.setLocation( x0, y0 );
             
         end % createInterfaceComponents

@@ -154,6 +154,8 @@ function self = get_input_constrains(obj, self)
             % No additional constrains
         case {'DET_OVERDRIVEN', 'DET_OVERDRIVEN_R', 'DET_UNDERDRIVEN', 'DET_UNDERDRIVEN_R'} % * DET_OVERDRIVEN and DET_UNERDRIVEN
             self = set_prop(self, 'drive_factor', obj.PR3.Value);
+        case {'DET_OBLIQUE', 'DET_OBLIQUE_R'} % * DET_OBLIQUE and DET_OBLIQUE_R
+            self = set_prop(self, 'drive_factor', obj.PR3.Value, 'beta', obj.PR4.Value);
         case {'ROCKET'} % * ROCKET: ROCKET PROPELLANT PERFORMANCE
             % Get model
             self.PD.FLAG_IAC = obj.FLAG_IAC.Value;

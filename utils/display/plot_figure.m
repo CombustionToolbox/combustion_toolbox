@@ -21,6 +21,8 @@ function ax = plot_figure(x_field, x_var, y_field, y_var, varargin)
                 config.labely = interpreter_label(y_field, config.label_type);
             case {'leg', 'legend'}
                 config.legend_name = varargin{i + 1};
+            case {'legend_location'}
+                config.legend_location = varargin{i + 1};
             case {'ax', 'axes', 'figure'}
                 ax = varargin{i + 1};
             case 'linestyle'
@@ -70,7 +72,7 @@ function ax = plot_figure(x_field, x_var, y_field, y_var, varargin)
 
     % Legend
     if ~isempty(config.legend_name)
-        legend(ax, config.legend_name, 'FontSize', config.fontsize - 2, 'Location', 'northeastoutside', 'interpreter', 'latex');
+        legend(ax, config.legend_name, 'FontSize', config.fontsize - 2, 'Location', config.legend_location, 'interpreter', 'latex');
     end
 
 end

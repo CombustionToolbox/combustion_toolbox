@@ -421,11 +421,6 @@ classdef combustion_toolbox < matlab.apps.AppBase
             delete(splash_obj);
         end
 
-        % Callback function
-        function LogoClicked(app, event)
-            system('start http://uc3m.es/');
-        end
-
         % Menu selected function: AboutMenu
         function AboutMenuSelected(app, event)
             uiabout();
@@ -1299,8 +1294,8 @@ classdef combustion_toolbox < matlab.apps.AppBase
 
             % Create ProblemType
             app.ProblemType = uidropdown(app.SelectProblemTypePanel);
-            app.ProblemType.Items = {'TP:  Equilibrium composition at defined T and P', 'HP: Adiabatic T and composition at constant P', 'SP:  Isentropic compression/expansion to a specified P', 'TV: Equilibrium composition at defined T and constant V', 'EV: Adiabatic T and composition at constant V', 'SV: Isentropic compresion/expansion to a specified V', 'SHOCK_I: Planar incident shock wave', 'SHOCK_R: Planar reflected shock wave', 'DET: Chapman-Jouguet Detonation', 'DET_OVERDRIVEN: Overdriven detonation', 'DET_UNDERDRIVEN: Underdriven detonation', 'DET_R: Reflected Chapman-Jouguet detonation', 'DET_OVERDRIVEN_R: Overdriven reflected detonation', 'ROCKET: Rocket propellant  performance'};
-            app.ProblemType.ItemsData = {'TP', 'HP', 'SP', 'TV', 'EV', 'SV', 'SHOCK_I', 'SHOCK_R', 'DET', 'DET_OVERDRIVEN', 'DET_UNDERDRIVEN', 'DET_R', 'DET_OVERDRIVEN_R', 'ROCKET'};
+            app.ProblemType.Items = {'TP:  Equilibrium composition at defined T and P', 'HP: Adiabatic T and composition at constant P', 'SP:  Isentropic compression/expansion to a specified P', 'TV: Equilibrium composition at defined T and constant V', 'EV: Adiabatic T and composition at constant V', 'SV: Isentropic compresion/expansion to a specified V', 'SHOCK_I: Planar incident shock wave', 'SHOCK_R: Planar reflected shock wave', 'SHOCK_OBLIQUE: Oblique incident shock wave', 'SHOCK_OBLIQUE_R: Oblique reflected shock wave', 'SHOCK_POLAR: Polar shocks', 'SHOCK_POLAR_R: Polar shocks (regular reflections)', 'DET: Chapman-Jouguet Detonation', 'DET_OVERDRIVEN: Overdriven detonation', 'DET_UNDERDRIVEN: Underdriven detonation', 'DET_R: Reflected Chapman-Jouguet detonation', 'DET_OVERDRIVEN_R: Overdriven reflected detonation', 'DET_UNDERDRIVEN_R: Underdriven reflected detonation', 'DET_OBLIQUE: Oblique incident detonation', 'DET_OBLIQUE_R: Oblique reflected detonation', 'DET_POLAR: Polar detonations', 'ROCKET: Rocket propellant  performance'};
+            app.ProblemType.ItemsData = {'TP', 'HP', 'SP', 'TV', 'EV', 'SV', 'SHOCK_I', 'SHOCK_R', 'SHOCK_OBLIQUE', 'SHOCK_OBLIQUE_R', 'SHOCK_POLAR', 'SHOCK_POLAR_R', 'DET', 'DET_OVERDRIVEN', 'DET_UNDERDRIVEN', 'DET_R', 'DET_OVERDRIVEN_R', 'DET_UNDERDRIVEN_R', 'DET_OBLIQUE', 'DET_OBLIQUE_R', 'DET_POLAR', 'ROCKET'};
             app.ProblemType.ValueChangedFcn = createCallbackFcn(app, @ProblemTypeValueChanged, true);
             app.ProblemType.Position = [10 18 403 25];
             app.ProblemType.Value = 'TP';
@@ -1784,8 +1779,8 @@ classdef combustion_toolbox < matlab.apps.AppBase
             % Create text_W
             app.text_W = uilabel(app.Panel_parameters);
             app.text_W.HorizontalAlignment = 'center';
-            app.text_W.Position = [107 177 176 19];
-            app.text_W.Text = 'Mean Molecular Weight [g/mol]';
+            app.text_W.Position = [107 174 176 22];
+            app.text_W.Text = 'Molecular Weight [g/mol]';
 
             % Create text_WR
             app.text_WR = uieditfield(app.Panel_parameters, 'numeric');

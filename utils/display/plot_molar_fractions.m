@@ -220,7 +220,8 @@ function [species, index_pass] = clean_display_species(molar_fractions, species,
 end
 
 function titlename = create_title(self)
-    titlename = [self.PD.ProblemType, ': ', cat_moles_species(self.PD.N_Fuel, self.PD.S_Fuel)];
+    label_problemtype = strrep(self.PD.ProblemType, '_', ' ');
+    titlename = [label_problemtype, ': ', cat_moles_species(self.PD.N_Fuel, self.PD.S_Fuel)];
 
     if ~isempty(self.PD.S_Oxidizer) || ~isempty(self.PD.S_Inert)
 

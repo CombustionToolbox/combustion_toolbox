@@ -100,11 +100,11 @@ Thank you for testing Combustion Toolbox!
 * Combustion Toolbox's splash screen is based on a routine from the following repository: Ben Tordoff (2022). SplashScreen (https://www.mathworks.com/matlabcentral/fileexchange/30508-splashscreen), MATLAB Central File Exchange. Retrieved October 15, 2022.
 * Combustion Toolbox's periodic table layout is based in the following repository: Bruno Salcedo (2018). latex-periodic-table (https://github.com/brunosalcedo/latex-periodic-table), Github. Retrieved October 15, 2022.
 
-## Developers
+## People
 
-* **[Alberto Cuadra-Lara](https://acuadralara.com/)** - *Core Developer and App designer*
-* **César Huete** - *Developer*
-* **Marcos Vera** - *Developer*
+* **[Alberto Cuadra-Lara](https://acuadralara.com/)** - *Lead developer*
+* **César Huete** - *Advisor*
+* **Marcos Vera** - *Advisor*
 
 Grupo de Mecánica de Fluidos, Universidad Carlos III, Av. Universidad 30, 28911, Leganés, Spain
 

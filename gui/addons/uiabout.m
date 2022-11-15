@@ -161,7 +161,7 @@ classdef uiabout < matlab.apps.AppBase
             app.categLabel3.FontColor = [0.6 0.6 0.6];
             app.categLabel3.Layout.Row = 3;
             app.categLabel3.Layout.Column = [1 4];
-            app.categLabel3.Text = 'Developer';
+            app.categLabel3.Text = 'Advisor';
 
             % Create chueteResearch
             app.chueteResearch = uiimage(app.GridLayout_chuete);
@@ -211,7 +211,7 @@ classdef uiabout < matlab.apps.AppBase
             app.categLabel2.FontColor = [0.6 0.6 0.6];
             app.categLabel2.Layout.Row = 3;
             app.categLabel2.Layout.Column = [1 4];
-            app.categLabel2.Text = 'Developer';
+            app.categLabel2.Text = 'Advisor';
 
             % Create nameLabel2
             app.nameLabel2 = uilabel(app.GridLayout_mvera);
@@ -283,7 +283,7 @@ classdef uiabout < matlab.apps.AppBase
             app.categLabel1.FontColor = [0.6 0.6 0.6];
             app.categLabel1.Layout.Row = 3;
             app.categLabel1.Layout.Column = [1 4];
-            app.categLabel1.Text = 'Core developer';
+            app.categLabel1.Text = 'Lead developer';
 
             % Create acuadraGithub
             app.acuadraGithub = uiimage(app.GridLayoutacuadra);

@@ -11,7 +11,9 @@ function self = Miscellaneous()
     self.timer_0 = [];
     self.timer_loop = [];
     % * Plot
-    self.config.position = get_monitor_positions(2); % Default figure position
+    self.config.position = get_monitor_positions(2); % Default figure position [pixels]
+    self.config.innerposition = [0.05 0.05 0.9 0.9]; % Set figure inner position [normalized]
+    self.config.outerposition = [0.05 0.05 0.9 0.9]; % Set figure outer position [normalized]
     self.config.linestyle = '-';                     % Set line style for plots
     self.config.symbolstyle = 'o';                   % Set symbol style for plots
     self.config.linewidth = 1.8;                     % Set line width for plots

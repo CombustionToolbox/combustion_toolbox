@@ -25,6 +25,7 @@ function [ax, fig] = plot_molar_fractions(self, x_var, x_field, y_field, varargi
     %    * fig (figure): Figure object
 
     % Default values
+    ax = [];
     results2 = [];
     nfrec = 1;
     config = self.Misc.config;
@@ -58,6 +59,8 @@ function [ax, fig] = plot_molar_fractions(self, x_var, x_field, y_field, varargi
                 config.xdir = varargin{i + 1};
             case {'ydir'}
                 config.ydir = varargin{i + 1};
+            case {'ax', 'axes'}
+                ax = varargin{i + 1};
         end
 
     end
@@ -76,7 +79,12 @@ function [ax, fig] = plot_molar_fractions(self, x_var, x_field, y_field, varargi
     % Remove species that do not appear
     [species, index_species_CT] = clean_display_species(mix1.Xi, LS, index_species_CT);
     % Set figure
-    [ax, ~, fig] = set_figure(config);
+    if isempty(ax)
+        [ax, ~, fig] = set_figure(config);
+    else
+        fig = [];
+    end
+
     % Set axis limits
     if FLAG_Y_AXIS
         xlim(ax, [min(mix1.(x_field)), max(mix1.(x_field))])

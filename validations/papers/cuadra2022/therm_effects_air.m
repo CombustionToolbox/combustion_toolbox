@@ -6,7 +6,7 @@ function r = therm_effects_air(varargin)
 %     clearvars R P T M1 M2 Gammas;
 
     % Get RH jump conditions
-    self = compute_shock(varargin);
+    self = compute_shock(varargin{:});
 %     [r.R, r.P, r.T, r.M1, r.M2, r.Gammas, r.alpha] = get_parameters(self);
     
     [R, P, T, M1, M2, Gammas] = get_parameters(self);
@@ -106,11 +106,6 @@ end
 
 function value = P0(R)
     value = @(gamma) ((gamma + 1) - (gamma - 1) .* R.^(-1)) ./ ((gamma + 1).* R.^(-1) - (gamma - 1)); 
-end
-
-function value = compute_Gammas(M1, R, P)
-%     value =  7/5 * (M1(1:end-1).^2 ./ R(1:end-1).^2) .* ((P(2:end)  - P(1:end-1)) ./ (R(2:end)  - R(1:end-1))).^(-1);
-    value =  7/5 * (M1(1:end-1).^2 ./ R(1:end-1).^2) .* compute_first_derivative(P, R).^(-1);
 end
 
 function value = thetaOfzeta(R, M2, zeta)
@@ -351,21 +346,28 @@ function [R, P, T, M1, M2, Gammas, alpha] = get_parameters(self)
 end
 
 function self = compute_shock(varargin)
-    % Read list of species considered as products
-    if ~isempty(varargin{nargin})
-        ListProducts = varargin{1}{1};
-    else 
-        ListProducts = 'Air_ions';
+    % Default values
+    T = 300; % [K]
+    p = 1;   % [bar]
+    LS = 'Air_ions';
+    % Unpack inputs
+    for i = 1:2:nargin
+        switch lower(varargin{i})
+            case 't'
+                T = varargin{i + 1};
+            case 'p'
+                p = varargin{i + 1};
+            case {'species', 'ls', 'list_products', 'list products'}
+                LS = varargin{i + 1};
+        end
     end
-    if nargin > 2, T = varargin{1}{2}; else, T = 300; end % [K]
-    if nargin > 3, p = varargin{1}{3}; else, p = 1; end % [bar]
-    self = App(ListProducts);
+    % Initialization
+    self = App(LS);
     self.Misc.FLAG_RESULTS = false;
-    % Initial conditions
+    % Set initial conditions
     self = set_prop(self, 'TR', T, 'pR', 1.01325 * p);
-    self.PD.S_Oxidizer = {'O2'};
-    self.PD.S_Inert    = {'N2', 'Ar', 'CO2'};
-    self.PD.proportion_inerts_O2 = [78.084, 0.9365, 0.0319] ./ 20.9476;
+    self.PD.S_Oxidizer = {'N2', 'O2', 'Ar', 'CO2'};
+    self.PD.N_Oxidizer = [3.7276, 1.0000, 0.0447, 0.0015];
     % Additional inputs
 %     initial_velocity_sound = 3.529546069689621e+02; % N2
 %     initial_velocity_sound = 329.4216; % O2
@@ -380,7 +382,7 @@ function self = compute_shock(varargin)
     u1 = logspace(2, 5, 1e4);
     u1 = u1(u1 < 20000.1); u1 = u1(u1 >= initial_velocity_sound);
 
-    self = set_prop(self, 'u1', u1, 'phi', self.PD.phi.value(1) * ones(1, length(u1)));
+    self = set_prop(self, 'u1', u1);
     % Solve problem
-    self = SolveProblem(self, 'SHOCK_I');
+    self = solve_problem(self, 'SHOCK_I');
 end

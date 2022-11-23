@@ -46,8 +46,8 @@ function [ax, config, fig] = set_figure(varargin)
     % Set axes
     if isempty(ax)
         fig = figure;
-        set(fig, 'units', 'normalized', 'innerposition', [0.05 0.05 0.9 0.9], ...
-            'outerposition', [0.05 0.05 0.9 0.9])
+        set(fig, 'units', 'normalized', 'innerposition', config.innerposition, ...
+            'outerposition', config.outerposition)
         ax = axes(fig);
     end
 

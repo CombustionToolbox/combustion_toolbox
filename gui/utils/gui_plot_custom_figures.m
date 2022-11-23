@@ -49,6 +49,6 @@ function gui_plot_custom_figures(app)
     end
     % Add legends
     if NUM_PROP + NUM_NODES > 2
-        set_legends(ax, legend_name, config)
+        set_legends(ax, flip(legend_name), 'config', config)
     end
 end

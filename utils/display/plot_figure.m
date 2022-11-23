@@ -69,6 +69,15 @@ function ax = plot_figure(x_field, x_var, y_field, y_var, varargin)
     else
         plot(ax, x, y, config.linestyle, 'LineWidth', config.linewidth, 'Color', config.colorline);
     end
+    
+    % Set labels
+    xlabel(ax, config.labelx, 'FontSize', config.fontsize, 'interpreter', 'latex');
+    ylabel(ax, config.labely, 'FontSize', config.fontsize, 'interpreter', 'latex');
+
+    % Set title
+    if ~isempty(config.title)
+        title(ax, config.title, 'Interpreter', 'latex', 'FontSize', config.fontsize + 4);
+    end
 
     % Legend
     if ~isempty(config.legend_name)

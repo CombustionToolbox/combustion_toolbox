@@ -120,12 +120,12 @@ function [results, mix2] = compute_detonation(self, fun_det, mix1, beta, mix2, F
         u2n(i) = mix2.v_shock; % [m/s]
         p2(i) = pressure(mix2); % [bar]
         theta(i) = beta(i) - atan(u2n(i) / ut(i)); % [rad]
-        a2(i) = soundspeed(mix2) * csc(beta(i) - theta(i)); % [m/s]
+        a2(i) = soundspeed(mix2); % [m/s]
         u2(i) = u2n(i) * csc(beta(i) - theta(i)); % [m/s]
         T(i) = mix2.T; % [K]
         Xi(:, i) = mix2.Xi; % [-]
         % Get index spurious results
-        if (FLAG_UNDER && u2(i) / a2(i) < 1) || (~FLAG_UNDER && u2(i) / a2(i) > 1)
+        if (FLAG_UNDER && u2n(i) / a2(i) < 1) || (~FLAG_UNDER && u2n(i) / a2(i) > 1)
             index = [index, i];
             mix2 = [];
         end

@@ -19,7 +19,7 @@ function self = define_F(self)
         self.PD.Fuel.w = self.PS.strR_Fuel.w;
         self.PD.phi_t = abs(self.PD.Fuel.x + self.PD.Fuel.x2 + ...
             self.PD.Fuel.x3 + self.PD.Fuel.y / 4 + ...
-            - self.PD.Fuel.z / 2);
+            - self.PD.Fuel.z / 2) / (0.5 * self.S.atoms_ox_ref);
     else
         self.PD.R_Fuel = 0; self.PD.phi_t = 1;
         self.PD.Fuel.x = 0;

@@ -9,12 +9,14 @@ function self = solve_problem(self, ProblemType)
     %     self (struct): Data of the mixtures (initial and final), conditions, databases
 
     try
-        % Save Problem Type
+        % Set Problem Type
         self.PD.ProblemType = ProblemType;
         % Check inputs and set length of the loop
         self = check_inputs(self);
         % Get Flags and length of the loop
         self = get_FLAG_N(self);
+        % Get oxidizer of reference
+        self = get_oxidizer_reference(self);
 
         for i = self.C.l_phi:-1:1
             % Set problem conditions by case

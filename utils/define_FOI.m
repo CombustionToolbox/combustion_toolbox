@@ -97,8 +97,8 @@ function self = compute_ratios_fuel_oxidizer(self, R, i)
         self.PS.strR{i}.percentage_Fuel = mass_fuel / mass_mixture * 100;
         self.PS.strR{i}.OF = mass_oxidizer / mass_fuel;
         self.PS.strR{i}.FO = 1 / self.PS.strR{i}.OF;
-        self.PS.strR{i}.FO_moles = sum(self.PD.R_Fuel(:, self.C.M0.ind_ni)) / sum(self.PD.R_Oxidizer(self.S.ind_O2, self.C.M0.ind_ni));
-        self.PS.strR{i}.FO_moles_st = abs(sum(self.PD.R_Fuel(:, self.C.M0.ind_ni)) / (self.PS.strR_Fuel.x + self.PS.strR_Fuel.x2 + self.PS.strR_Fuel.x3 + self.PS.strR_Fuel.y / 4 - self.PS.strR_Fuel.z / 2));
+        self.PS.strR{i}.FO_moles = sum(self.PD.R_Fuel(:, self.C.M0.ind_ni)) / sum(self.PD.R_Oxidizer(self.S.ind_ox_ref, self.C.M0.ind_ni));
+        self.PS.strR{i}.FO_moles_st = abs(sum(self.PD.R_Fuel(:, self.C.M0.ind_ni)) / (self.PS.strR_Fuel.x + self.PS.strR_Fuel.x2 + self.PS.strR_Fuel.x3 + self.PS.strR_Fuel.y / 4 - self.PS.strR_Fuel.z / 2) * (0.5 * self.S.atoms_ox_ref));
         self.PS.strR{i}.phi = self.PS.strR{i}.FO_moles / self.PS.strR{i}.FO_moles_st;
     elseif ~isempty(self.PD.S_Fuel)
         self.PS.strR{i}.percentage_Fuel = 100;

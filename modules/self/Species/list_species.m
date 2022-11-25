@@ -210,9 +210,7 @@ function [self, LS] = list_species(varargin)
     if any(get_index_ions(self.S.LS))
         self.PD.FLAG_ION = true;
     end
-
-    % Find index O2
-    self.S.ind_O2 = find_ind(self.S.LS, 'O2');
+    
 end
 
 % SUB-PASS FUNCTIONS

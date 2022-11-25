@@ -76,6 +76,8 @@ function self = check_inputs(self)
             self.PD.phi.value(self.PD.phi.value == 1) = 1 + self.TN.tolN * 10;
         end
 
+        % Check reactant species are contained in the list of products (initial computations)
+        self = check_FOI(self, [self.PD.S_Fuel, self.PD.S_Oxidizer, self.PD.S_Inert]);
     end
 
     self.Misc.FLAG_CHECK_INPUTS = true;

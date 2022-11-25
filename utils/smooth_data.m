@@ -7,7 +7,7 @@ function [x, y] = smooth_data(x, y, start_point)
     opts.Display = 'Off';
     opts.StartPoint = start_point;
     % Fit model to data
-    fitresult = fit(xData, yData, ft);
+    fitresult = fit(xData, yData, ft, opts);
     % Get smooth values
     y = fitresult(xData)';
     x = xData';

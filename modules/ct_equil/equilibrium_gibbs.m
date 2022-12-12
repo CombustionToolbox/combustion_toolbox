@@ -47,14 +47,15 @@ function [N0, dNi_T, dN_T, dNi_p, dN_p, STOP, STOP_ions] = equilibrium_gibbs(sel
     % Find indeces of the species/elements that we have to remove from the stoichiometric matrix A0
     % for the sum of elements whose value is <= tolN
     [A0, ind_A0_E0, E.ind_E, NatomE] = remove_elements(NatomE, A0, S.LS, E.ind_E, guess_moles, TN.tolN);
+
     % List of indices with nonzero values
     [temp_ind, temp_ind_nswt, temp_ind_swt, temp_ind_ions, temp_ind_E, temp_NE, temp_NG, temp_NS] = temp_values(E.ind_E, S, NatomE, TN.tolN);
+
     % Update temp values
     [temp_ind, temp_ind_swt, temp_ind_nswt, temp_ind_ions, temp_NG] = update_temp(N0, N0(ind_A0_E0, 1), ind_A0_E0, temp_ind_swt, temp_ind_nswt, temp_ind_E, E.ind_E, temp_ind_ions, [], NP, SIZE, flag_ions_first);
 
     % Update temp values
     temp_NS0 = temp_NS + 1;
-    
     temp_ind_nswt_0 = temp_ind_nswt;
     temp_ind_swt_0 = temp_ind_swt;
     temp_ind_swt = [];
@@ -76,6 +77,7 @@ function [N0, dNi_T, dN_T, dNi_p, dN_p, STOP, STOP_ions] = equilibrium_gibbs(sel
 
     % Standard Gibbs free energy [J/mol]
     g0 = set_g0(S.LS, TP, self.DB);
+
     % Dimensionless Chemical potential
     muRT_0 = g0/R0TP;
     muRT = muRT_0;
@@ -83,12 +85,24 @@ function [N0, dNi_T, dN_T, dNi_p, dN_p, STOP, STOP_ions] = equilibrium_gibbs(sel
 %     for i = S.NS:-1:1
 %         W(i) = self.DB.(S.LS{i}).mm * 1e-3;
 %     end
+
     % Construction of part of matrix A
     [A1, temp_NS0] = update_matrix_A1(A0, [], temp_NG, temp_NS, temp_NS0, temp_ind, temp_ind_E);
     A22 = zeros(temp_NE + 1);
     A0_T = A0';
+
     % Solve system
     x = equilibrium_loop;
+    if isnan(x)
+        ind = find_ind(self.S.LS, mix1.LS);
+        N0(:, 1) = 0;
+        N0(ind, 1) = mix1.Xi(mix1.ind_LS) * mix1.N;
+        dNi_T = zeros(length(N0), 1); dN_T = 0;
+        dNi_p = dNi_T; dN_p = 0;
+        STOP = 0; STOP_ions = 0;
+        return
+    end
+
     % Check condensed species
     [temp_ind, temp_ind_swt, FLAG] = check_condensed_species(A0, x, temp_ind_nswt, temp_ind_swt_0, temp_ind_E, temp_NE, muRT);
     if FLAG
@@ -101,6 +115,7 @@ function [N0, dNi_T, dN_T, dNi_p, dN_p, STOP, STOP_ions] = equilibrium_gibbs(sel
             A22 = zeros(temp_NE + 1);
             A0_T = A0';
         end
+
         STOP = 1;
         temp_NS = length(temp_ind);
         temp_NS0 = temp_NS + 1;
@@ -116,8 +131,7 @@ function [N0, dNi_T, dN_T, dNi_p, dN_p, STOP, STOP_ions] = equilibrium_gibbs(sel
 
     % NESTED FUNCTION
     function x = equilibrium_loop
-        it = 0;
-%         itMax = 50 + round(S.NS/2);
+        it = 0; counter_errors = 0;
         itMax = TN.itMax_gibbs;
         STOP = 1;
         while STOP > TN.tolN && it < itMax
@@ -136,7 +150,17 @@ function [N0, dNi_T, dN_T, dNi_p, dN_p, STOP, STOP_ions] = equilibrium_gibbs(sel
             % Solve of the linear system A*x = b
             x = A\b;
             % Omit nan or inf values
-            x(isnan(x) | isinf(x)) = 0;
+            if any(isnan(x)) || any(isinf(x))
+
+                if counter_errors > 3
+                    x = NaN;
+                    return
+                end
+
+                x(isnan(x) | isinf(x)) = 0;
+                counter_errors = counter_errors + 1;
+            end
+
             % Calculate correction factor
             Delta = relax_factor(NP, N0(temp_ind, 1), x(1:temp_NS), x(end), temp_NG);
             % Apply correction
@@ -156,8 +180,8 @@ function [N0, dNi_T, dN_T, dNi_p, dN_p, STOP, STOP_ions] = equilibrium_gibbs(sel
         % Check convergence of charge balance (ionized species)
         [N0, STOP_ions] = check_convergence_ions(N0, A0, E.ind_E, temp_ind_nswt, temp_ind_ions, TN.tolN, TN.tol_pi_e, TN.itMax_ions);
         if ~any(N0(temp_ind_ions) > TN.tolN) && ~isempty(N0(temp_ind_ions))
-            temp_ind_E(temp_ind_E == E.ind_E) = [];
-            temp_NE = temp_NE - 1;
+            [temp_ind, temp_ind_swt, temp_ind_nswt, temp_ind_ions, temp_NG, temp_NS, temp_ind_E, A22, flag_ions_first, N0] = update_temp(N0, N0(temp_ind, 1), temp_ind, temp_ind_swt, temp_ind_nswt, temp_ind_E, E.ind_E, temp_ind_ions, A22, NP, SIZE, flag_ions_first);
+            temp_NE = length(temp_ind_E);
         end
         % Debug  
 %         debug_plot_error(it, aux_STOP, aux_Delta);
@@ -165,20 +189,25 @@ function [N0, dNi_T, dN_T, dNi_p, dN_p, STOP, STOP_ions] = equilibrium_gibbs(sel
 
     function A = check_singularity(A, it)
         % Check if matrix is matrix is singular
-        if it > 10*temp_NS
-            if cond(A) > exp(0.5 * log(TN.tolN))
-                FLAG_OLD = ~ismember(temp_ind_nswt_0, temp_ind_nswt);
-                if any(FLAG_OLD)
-                    temp_ind_nswt = temp_ind_nswt_0;
-                    temp_ind = [temp_ind_nswt, temp_ind_swt];
-                    temp_NG = length(temp_ind_nswt);
-                    temp_NS = length(temp_ind);
-                    N0(temp_ind_nswt(FLAG_OLD)) = TN.tolN * 1e-1;
-                    [A1, temp_NS0] = update_matrix_A1(A0, A1, temp_NG, temp_NS, temp_NS0, temp_ind, temp_ind_E);
-                    A = update_matrix_A(A0_T, A1, A22, N0, NP, temp_ind, temp_ind_nswt, temp_ind_swt, temp_ind_E, temp_NG);
-                    N0(temp_ind_nswt(FLAG_OLD)) = 0;
-                end
-            end
+        if it <= 10*temp_NS
+            return
+        end
+
+        if cond(A) <= exp(0.5 * log(TN.tolN))
+            return
+        end
+
+        FLAG_OLD = ~ismember(temp_ind_nswt_0, temp_ind_nswt);
+
+        if any(FLAG_OLD)
+            temp_ind_nswt = temp_ind_nswt_0;
+            temp_ind = [temp_ind_nswt, temp_ind_swt];
+            temp_NG = length(temp_ind_nswt);
+            temp_NS = length(temp_ind);
+            N0(temp_ind_nswt(FLAG_OLD)) = TN.tolN * 1e-1;
+            [A1, temp_NS0] = update_matrix_A1(A0, A1, temp_NG, temp_NS, temp_NS0, temp_ind, temp_ind_E);
+            A = update_matrix_A(A0_T, A1, A22, N0, NP, temp_ind, temp_ind_nswt, temp_ind_swt, temp_ind_E, temp_NG);
+            N0(temp_ind_nswt(FLAG_OLD)) = 0;
         end
     end
 end
@@ -200,7 +229,7 @@ function [temp_ind, temp_ind_swt, FLAG] = check_condensed_species(A0, x, temp_in
     if any(isnan(x))
         aux = true;
     else
-        for i=length(temp_ind_swt_0):-1:1
+        for i = length(temp_ind_swt_0):-1:1
             % Only check if there were atoms of the species in the initial
             % mixture
             if sum(A0(temp_ind_swt_0(i), temp_ind_E))
@@ -211,14 +240,17 @@ function [temp_ind, temp_ind_swt, FLAG] = check_condensed_species(A0, x, temp_in
             end
         end
     end
+
     if any(aux)
         FLAG = true;
     end
+
     if ~isempty(temp_ind_swt_0)
         temp_ind_swt = temp_ind_swt_0(aux);
     else
         temp_ind_swt = [];
     end
+
     temp_ind = [temp_ind_nswt, temp_ind_swt];
 end
 
@@ -284,21 +316,24 @@ function [temp_ind_swt, temp_ind_nswt, temp_ind_E, temp_ind_ions, A22, flag_ions
     % species and append the indeces of species that we have to remove
     for i=1:length(n)
         if log(n(i)/NP) < -SIZE
-            if N0(ind(i), 2)
-                temp_ind_swt(temp_ind_swt==ind(i)) = [];
-            else
-                temp_ind_nswt(temp_ind_nswt==ind(i)) = [];
-                temp_ind_ions(temp_ind_ions==ind(i)) = [];
-                if isempty(temp_ind_ions) && flag_ions_first
-                    % remove element E from matrix
-                    temp_ind_E(ind_E) = [];
-                    A22 = zeros(length(temp_ind_E) + 1);
-                    flag_ions_first = false;
-                end
-            end
-%             N0(ind(i), 1) = 0;
+            temp_ind_swt(temp_ind_swt==ind(i)) = [];
+            temp_ind_nswt(temp_ind_nswt==ind(i)) = [];
+            temp_ind_ions(temp_ind_ions==ind(i)) = [];   
         end
     end
+
+    if ~flag_ions_first
+        return
+    end
+
+    if ~isempty(temp_ind_ions)
+        return
+    end
+        
+    % remove element E from matrix
+    temp_ind_E(ind_E) = [];
+    A22 = zeros(length(temp_ind_E) + 1);
+    flag_ions_first = false;
 end
 
 function [temp_ind, temp_ind_swt, temp_ind_nswt, temp_ind_ions, temp_NG, temp_NS, temp_ind_E, A22, flag_ions_first, N0] = update_temp(N0, zip1, zip2, temp_ind_swt, temp_ind_nswt, temp_ind_E, ind_E, temp_ind_ions, A22, NP, SIZE, flag_ions_first)
@@ -321,8 +356,10 @@ function [A1, temp_NS0] = update_matrix_A1(A0, A1, temp_NG, temp_NS, temp_NS0, t
 end
 
 function [temp_ind, temp_ind_swt] = check_cryogenic(temp_ind, temp_ind_swt, temp_ind_cryogenic)
-    temp_ind = temp_ind(~ismember(temp_ind, temp_ind_cryogenic));
-    temp_ind_swt = temp_ind_swt(~ismember(temp_ind_swt, temp_ind_cryogenic));
+    for i = 1:length(temp_ind_cryogenic)
+        temp_ind(temp_ind == temp_ind_cryogenic(i)) = [];
+        temp_ind_swt(temp_ind_swt == temp_ind_cryogenic(i)) = [];
+    end
 end
 
 function A2 = update_matrix_A2(A0_T, A22, N0, NP, temp_ind, temp_ind_nswt, temp_ind_swt, temp_ind_E, temp_NG)
@@ -362,7 +399,7 @@ end
 function [STOP, DeltaN1, DeltaN2, Deltab] = compute_STOP(NP, DeltaNP, N0, DeltaN0, temp_NG, A0, NatomE, max_NatomE, tolE)
     NPi = sum(N0);
     DeltaN1 = N0 .* abs(DeltaN0) / NPi;
-    DeltaN1(temp_NG+1:end) = abs(DeltaN0(temp_NG+1:end)) / NPi;
+    DeltaN1(temp_NG + 1:end) = abs(DeltaN0(temp_NG + 1:end)) / NPi;
     DeltaN2 = NP * abs(DeltaNP) / NPi;
     Deltab = abs(NatomE - sum(N0 .* A0, 1)');
     Deltab = max(Deltab(NatomE > max_NatomE * tolE));

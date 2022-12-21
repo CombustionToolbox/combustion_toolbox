@@ -16,6 +16,7 @@ function self = run_CT(varargin)
     ratio_inerts_O2 = [];
     ProblemType = 'HP';
     tolN = 1e-18;
+    N_points_polar = 100;
     FLAG_PHI = true;
     FLAG_IAC = true;
     Aratio_c = [];
@@ -76,6 +77,8 @@ function self = run_CT(varargin)
                 ratio_inerts_O2 = varargin{i + 1};
             case 'toln'
                 tolN = varargin{i + 1};
+            case 'n_points_polar'
+                N_points_polar = varargin{i + 1};
             case 'flag_iac'
                 FLAG_IAC = varargin{i + 1};
             case 'aratio_c'
@@ -92,6 +95,7 @@ function self = run_CT(varargin)
     self.Misc.FLAG_RESULTS = false;
     % TUNNING PROPERTIES
     self.TN.tolN = tolN;
+    self.TN.N_points_polar = N_points_polar;
     % INITIAL CONDITIONS
     self = set_prop(self, 'TR', Temp_mix1, 'pR', Pressure_mix1);
 

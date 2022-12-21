@@ -1,7 +1,6 @@
 function self = App(varargin)
     % Generate self variable with all the data required to initialize the computations
     %
-
     % Optional Args:
     %     * LS (cell): List of species
     %     * obj (class): Class combustion_toolbox_app (GUI)

@@ -79,8 +79,8 @@ function post_results(self)
         mix3 = mix2;
         mix2 = self.PS.str2;
         mix2_1 = self.PS.str2_1;
-        mix3_1 = self.PS.str3_1;
-        mix3_2 = self.PS.str3_2;
+        % mix3_1 = self.PS.str3_1;
+        % mix3_2 = self.PS.str3_2;
         % Shock polars incident
         plot_shock_polar(self, mix1, mix2);
         % Shock polars reflected

@@ -17,10 +17,12 @@ function [mix1, mix2] = det_overdriven(self, mix1, drive_factor, varargin)
 
     % Unpack input data
     [self, mix1, mix2] = unpack(self, mix1, drive_factor, varargin);
-    % Compute CJ speed
+    % Compute CJ speed and initial guess
     if isempty(mix1.cj_speed)
+        % Compute CJ speed
         [str1_cj, ~] = det_cj(self, mix1);
         mix1.cj_speed = str1_cj.u;
+        % The initial guess is computed as for an incident shock
     end
 
     % Solve overdriven detonation
@@ -45,5 +47,5 @@ function [self, mix1, mix2] = unpack(self, mix1, drive_factor, x)
     else
         mix1.cj_speed = mix2.cj_speed;
     end
-
+    
 end

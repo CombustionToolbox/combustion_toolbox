@@ -1,5 +1,5 @@
 function self = initialize(self)
-    % This routine have three tasks:
+    % This routine has three tasks:
     %   - Check that all species are contained in the Database
     %   - Establish cataloged list of species according to the state of the
     %     phase (gaseous or condensed). It also obtains the indices of

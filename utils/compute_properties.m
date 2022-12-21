@@ -25,10 +25,12 @@ function mix = compute_properties(self, properties_matrix, p, T)
     mix.cP = dot(properties_matrix(:, self.C.M0.ind_cPi), Ni); % [J/K]
     mix.S0 = dot(properties_matrix(:, self.C.M0.ind_si), Ni); % [kJ/K]
     mix.phase = properties_matrix(:, self.C.M0.ind_phase); % [bool]
+    % Compute total composition of gas species [mol]
+    N_gas = sum(Ni(mix.phase == 0));
     % Compute molar fractions [-]
     mix.Xi = Ni / mix.N;
     % Compute molecular weight [g/mol]
-    mix.W = dot(Ni, properties_matrix(:, self.C.M0.ind_W)) / molesGas(mix);
+    mix.W = dot(Ni, properties_matrix(:, self.C.M0.ind_W)) / N_gas;
     % Compute mean molecular weight [g/mol]
     mix.MW = dot(Ni, properties_matrix(:, self.C.M0.ind_W)) / mix.N;
     % Compute mass mixture [kg]
@@ -42,23 +44,23 @@ function mix = compute_properties(self, properties_matrix, p, T)
     % Compute vector atoms of each element without frozen species
     mix.NatomE_react = sum(properties_matrix(self.S.ind_react, self.C.M0.ind_ni) .* self.C.A0.value(self.S.ind_react, :), 1);
     % Compute volume [m3]
-    mix.v = self.PD.EOS.volume(self, T, convert_bar_to_Pa(p), self.S.LS, mix.Xi) * molesGas(mix);
+    mix.v = self.PD.EOS.volume(self, T, convert_bar_to_Pa(p), self.S.LS, mix.Xi) * N_gas;
     % Compute density [kg/m3]
     mix.rho = mix.mi / mix.v;
     % Compute internal energy [kJ]
-    mix.e = mix.h - molesGas(mix) * R0 * T * 1e-3;
+    mix.e = mix.h - N_gas * R0 * T * 1e-3;
     % Compute thermal internal energy [kJ]
     mix.DeT = mix.e - mix.ef;
     % Compute thermal enthalpy [kJ]
     mix.DhT = mix.h - mix.hf;
     % Compute entropy of mixing [kJ/K]
-    mix.DS = compute_entropy_mixing(mix, Ni, R0, FLAG_NONZERO);
+    mix.DS = compute_entropy_mixing(mix, Ni, N_gas, R0, FLAG_NONZERO);
     % Compute entropy [kJ/K]
     mix.S = mix.S0 + mix.DS;
     % Compute Gibbs energy [kJ]
     mix.g = mix.h - mix.T * mix.S;
     % Compute specific heat at constant volume [J/K]
-    mix.cV = mix.cP - R0 * molesGas(mix);
+    mix.cV = mix.cP - R0 * N_gas;
     % Compute Adibatic index [-]
     mix.gamma = mix.cP / mix.cV;
     % Compute sound velocity [m/s]
@@ -76,7 +78,7 @@ function mix = compute_properties(self, properties_matrix, p, T)
             mix.cP_r = sum(h0_j / T .* (1 + delta .* (Ni - 1)) .* self.dNi_T, 'omitnan'); % [J/K]
             mix.cP_f = mix.cP;
             mix.cP = mix.cP_f + mix.cP_r; % [J/K]
-            mix.cV = mix.cP + (molesGas(mix) * R0 * mix.dVdT_p^2) / mix.dVdp_T; % [J/K]
+            mix.cV = mix.cP + (N_gas * R0 * mix.dVdT_p^2) / mix.dVdp_T; % [J/K]
             mix.gamma = mix.cP / mix.cV; % [-]
             mix.gamma_s =- mix.gamma / mix.dVdp_T; % [-]
             mix.sound = sqrt(mix.gamma_s * convert_bar_to_Pa(p) / mix.rho); % [m/s]
@@ -91,9 +93,9 @@ function mix = compute_properties(self, properties_matrix, p, T)
 end
 
 % SUB-PASS FUNCTIONS
-function DS = compute_entropy_mixing(mix, Ni, R0, FLAG_NONZERO)
+function DS = compute_entropy_mixing(mix, Ni, N_gas, R0, FLAG_NONZERO)
     % Compute entropy of mixing [kJ/K].
     % Note: only nonzero for gaseous species
-    DSi = Ni(FLAG_NONZERO) .* log(Ni(FLAG_NONZERO) / molesGas(mix) * mix.p) .* (1 - mix.phase(FLAG_NONZERO));
+    DSi = Ni(FLAG_NONZERO) .* log(Ni(FLAG_NONZERO) / N_gas * mix.p) .* (1 - mix.phase(FLAG_NONZERO));
     DS = -R0 * sum(DSi) * 1e-3;
 end

@@ -40,7 +40,7 @@ function [mix1, mix2] = shock_oblique_beta(self, mix1, u1, beta, varargin)
 
     u2n = mix2.v_shock;
     theta = beta - atan(u2n / (u1 .* cos(beta)));
-    a2 = mix2.sound * csc(beta - theta);
+    a2 = mix2.sound;
     u2 = u2n * csc(beta - theta);
     % Save results
     mix2.beta = beta * 180 / pi; % [deg]

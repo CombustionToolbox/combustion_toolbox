@@ -13,12 +13,12 @@ function [P, T, M1, R, Q, STOP] = det_compute_guess(self, mix1, phi, overdriven)
     % Returns:
     %     Tuple containing
     %
-    %     - P (float):          Pressure ratio [-]
-    %     - T (float):          Temperature ratio [-]
-    %     - M1 (float):         Pre-shock Mach number [-]
-    %     - R (float):          Density ratio [-]
-    %     - Q (float):          Dimensionless Heat release []
-    %     - STOP (float):       Relative error [-]
+    %     * P (float):        Pressure ratio [-]
+    %     * T (float):        Temperature ratio [-]
+    %     * M1 (float):       Pre-shock Mach number [-]
+    %     * R (float):        Density ratio [-]
+    %     * Q (float):        Dimensionless Heat release []
+    %     * STOP (float):     Relative error [-]
 
     % Parameters
     gamma1 = mix1.gamma;

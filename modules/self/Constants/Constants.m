@@ -5,7 +5,7 @@ function self = Constants()
     %     self (struct): struct with constants data
 
     % Description
-    self.description = "Constants and tolerances";
+    self.description = "Constants";
     % Variables
     [self.release, self.date] = get_combustion_toolbox_version();
     self.R0 = 8.31446261815324; % [J/(K mol)]. Universal gas constant

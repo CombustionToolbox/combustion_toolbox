@@ -19,7 +19,8 @@ function [R, P, T, Gammas, M1] = shock_ideal_gas(gamma, M1)
 
     if length(M1) > 1
         % Compute Gamma
-        Gammas = compute_Gammas(M1, R, P);
+        % Gammas = compute_Gammas_frozen(M1, R, P);
+        Gammas = compute_Gammas(u2, rho2, p2);
         % Remove last point of the dataset to match dimensions with Gammas
         R = R(1:end-1);
         P = P(1:end-1);

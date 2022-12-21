@@ -88,7 +88,7 @@ function [p2, T2, p2p1, T2T1, STOP] = get_guess(self, mix1, mix2)
 
         try
             [p2p1, T2T1, ~, ~, Q, STOP] = det_compute_guess(self, mix1, mix1.phi, 1);
-            %             print_guess(T2T1, p2p1, mix1.T, mix1.p, Q)
+            % print_guess(T2T1, p2p1, mix1.T, mix1.p, Q)
         catch
             [p2p1, T2T1, STOP] = det_compute_guess_CEA(self, mix1);
         end

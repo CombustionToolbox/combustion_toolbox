@@ -11,9 +11,9 @@ function [P, T, STOP] = det_compute_guess_CEA(self, mix1)
     % Returns:
     %     Tuple containing
     %
-    %     - P (float): Pressure ratio [-]
-    %     - T (float): Temperature ratio [-]
-    %     - STOP (float): Relative error [-]
+    %     * P (float): Pressure ratio [-]
+    %     * T (float): Temperature ratio [-]
+    %     * STOP (float): Relative error [-]
 
     % Abbreviations
     R0 = self.C.R0; % [J/mol-K]

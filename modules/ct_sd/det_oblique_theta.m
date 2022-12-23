@@ -77,7 +77,7 @@ function [mix1, mix2_1, mix2_2] = det_oblique_theta(self, mix1, drive_factor, th
             end
 
             % Compute error
-            STOP = max(abs(beta - beta_guess) / abs(beta), abs(f0));
+            STOP = max(abs((beta - beta_guess) / beta), abs(f0));
             % Update guess
             beta_guess = beta;
         end

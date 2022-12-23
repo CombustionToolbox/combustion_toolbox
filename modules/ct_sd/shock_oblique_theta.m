@@ -41,9 +41,13 @@ function [mix1, mix2_1, mix2_2] = shock_oblique_theta(self, mix1, u1, theta, var
     %     beta_guess = compute_guess_beta(M1, mix1.gamma, theta, true);
     mix2_1 = solve_shock_oblique(mix2_1);
     % Solve second branch (strong shock)
-    beta_guess = beta_max * 0.97; % [rad]
-    %     beta_guess = compute_guess_beta(M1, mix1.gamma, theta, false);
-    mix2_2 = solve_shock_oblique(mix2_2);
+    if nargout > 2
+        beta_guess = beta_max * 0.97; % [rad]
+        %     beta_guess = compute_guess_beta(M1, mix1.gamma, theta, false);
+        mix2_2 = solve_shock_oblique(mix2_2);
+    else
+        mix2_2 = [];
+    end
     % NESTED FUNCTIONS
     function mix2 = solve_shock_oblique(mix2)
         % Obtain wave angle, pre-shock state and post-shock states for an oblique shock

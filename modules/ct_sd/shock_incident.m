@@ -15,11 +15,20 @@ function [mix1, mix2] = shock_incident(self, mix1, u1, varargin)
     % Returns:
     %     Tuple containing
     %
-    %     - mix1 (struct): Properties of the mixture in the pre-shock state
-    %     - mix2 (struct): Properties of the mixture in the post-shock state
+    %     * mix1 (struct): Properties of the mixture in the pre-shock state
+    %     * mix2 (struct): Properties of the mixture in the post-shock state
 
     % Unpack input data
     [self, mix1, mix2, guess_moles] = unpack(self, mix1, u1, varargin);
+
+    if self.TN.FLAG_TCHEM_FROZEN
+        STOP = 0;
+        [~, p2p1, T2T1, ~, ~] = shock_ideal_gas(mix1.gamma, u1 / mix1.sound);
+        T2 = T2T1 * mix1.T;
+        p2 = p2p1 * convert_bar_to_Pa(mix1.p);
+        mix2 = save_state(self, mix1, T2, p2, STOP);
+        return
+    end
     % Abbreviations
     C = self.C;
     TN = self.TN;
@@ -45,11 +54,12 @@ function [mix1, mix2] = shock_incident(self, mix1, u1, varargin)
     % NESTED-FUNCTIONS
     function [T2, p2, STOP] = solve_shock_incident(FLAG_FAST)
         % Miscellaneous
-        it = 0; itMax = TN.it_shocks; STOP = 1.;
+        it = 0; itMax = TN.it_shocks; STOP = 1.0;
         % Initial estimates of p2/p1 and T2/T1
         [p2, T2, p2p1, T2T1] = get_guess(self, mix1, mix2, TN);
         % Check FLAG
-        if ~FLAG_FAST, guess_moles = []; end
+        % if ~FLAG_FAST, guess_moles = []; end
+        guess_moles = [];
         % Loop
         while STOP > TN.tol_shocks && it < itMax
             it = it + 1;
@@ -69,11 +79,11 @@ function [mix1, mix2] = shock_incident(self, mix1, u1, varargin)
             % Compute STOP criteria
             STOP = compute_STOP(x);
             % Debug
-            %             aux_lambda(it) = lambda;
-            %             aux_STOP(it) = STOP;
+            % aux_lambda(it) = lambda;
+            % aux_STOP(it) = STOP;
         end
 
-        %         debug_plot_error(it, aux_STOP, aux_lambda);
+        % debug_plot_error(it, aux_STOP, aux_lambda);
     end
 
 end
@@ -119,7 +129,7 @@ function [p2, T2, p2p1, T2T1] = get_guess(self, mix1, mix2, TN)
         p2p1 = p2 / convert_bar_to_Pa(mix1.p);
         T2T1 = T2 / mix1.T;
     end
-
+    
 end
 
 function [J, b, guess_moles] = update_system(self, mix1, p2, T2, R0, guess_moles, FLAG_FAST)
@@ -150,9 +160,9 @@ function [J, b, guess_moles] = update_system(self, mix1, p2, T2, R0, guess_moles
     b = [b1; b2];
 
     % Update guess moles
-    if FLAG_FAST
-        guess_moles = mix2.Xi * mix2.N;
-    end
+    % if FLAG_FAST
+    %     guess_moles = mix2.Xi * mix2.N;
+    % end
 
 end
 
@@ -168,7 +178,7 @@ end
 
 function relax = relax_factor(x)
     % Compute relaxation factor
-    %     factor = [0.40546511; 0.04879016];
+    % factor = [0.40546511; 0.04879016];
     factor = [0.40546511; 0.40546511];
     lambda = factor ./ abs(x);
     relax = min(1, min(lambda));
@@ -207,7 +217,7 @@ function print_convergence(STOP, TOL, T)
 
     if T > 2e4
         fprintf('***********************************************************\n')
-        fprintf('Validity of the next results compromise\n')
+        fprintf('Validity of the results compromise: T = %d K\n', round(T))
         fprintf('Thermodynamic properties fitted to 20000 K\n');
     end
 

@@ -17,6 +17,15 @@ function mix2 = equilibrate(self, mix1, pP, varargin)
 
     mix1 = get_struct(mix1);
     mix2 = unpack(varargin);
+
+    if self.TN.FLAG_TCHEM_FROZEN
+        mix2 = mix1;
+        mix2.p = pP;
+        mix2.error_problem = 0;
+        mix2.phi = save_phi(mix1);
+        return
+    end
+
     % get attribute xx of the specified transformations
     attr_name = get_attr_name(self);
     % compute initial guess
@@ -26,8 +35,8 @@ function mix2 = equilibrate(self, mix1, pP, varargin)
     % compute properties
     mix2 = equilibrate_T(self, mix1, pP, T, guess_moles);
     % check convergence in case the problemType is TP (defined Temperature and Pressure)
-    print_convergence(mix2.error_moles, self.TN.tolN, mix2.error_moles_ions, self.TN.tol_pi_e, self.PD.ProblemType)
-    % save error - root finding
+    print_convergence(mix2.error_moles, self.TN.tol_gibbs, mix2.error_moles_ions, self.TN.tol_pi_e, self.PD.ProblemType)
+    % save error from root finding algorithm
     mix2.error_problem = STOP;
     % save equivalence ratio
     mix2.phi = save_phi(mix1);
@@ -93,12 +102,12 @@ function print_convergence(STOP, TOL, STOP_ions, TOL_ions, ProblemType)
 
         if STOP > TOL
             fprintf('***********************************************************\n')
-            fprintf('Convergence error number of moles:   %.2f\n', STOP);
+            fprintf('Convergence error number of moles:   %1.2e\n', STOP);
         end
 
         if STOP_ions > TOL_ions
             fprintf('***********************************************************\n')
-            fprintf('Convergence error in charge balance: %.2f\n', STOP_ions);
+            fprintf('Convergence error in charge balance: %1.2e\n', STOP_ions);
         end
 
     end

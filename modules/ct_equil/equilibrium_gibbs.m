@@ -26,34 +26,32 @@ function [N0, dNi_T, dN_T, dNi_p, dN_p, STOP, STOP_ions] = equilibrium_gibbs(sel
     %     * STOP_ions (float): Relative error in moles of ionized species [-] 
 
     % Generalized Gibbs minimization method
-    
-    % Abbreviations ---------------------
-    E = self.E;
-    S = self.S;
-    C = self.C;
-    TN = self.TN;
-    % -----------------------------------
+
     % Definitions
-    N0 = C.N0.value;
-    A0 = C.A0.value;
-    R0TP = C.R0 * TP; % [J/mol]
+    N0 = self.C.N0.value;  % Composition matrix [ni, FLAG_CONDENSED_i]
+    A0 = self.C.A0.value;  % Stoichiometric matrix [a_ij]
+    R0TP = self.C.R0 * TP; % [J/mol]
+
     % Initialization
     NatomE = mix1.NatomE_react';
     max_NatomE = max(NatomE);
     NP = 0.1;
-    SIZE = -log(TN.tolN);
-    flag_ions_first = true;
+    SIZE = -log(self.TN.tolN);
+    FLAG_CONDENSED = false;
+
+    % Set moles from guess_moles (if it was given) to 1e-6 to avoid singular matrix
+    guess_moles(guess_moles < self.TN.tolN_guess) = self.TN.tolN_guess;
 
     % Find indeces of the species/elements that we have to remove from the stoichiometric matrix A0
     % for the sum of elements whose value is <= tolN
-    [A0, ind_A0_E0, E.ind_E, NatomE] = remove_elements(NatomE, A0, S.LS, E.ind_E, guess_moles, TN.tolN);
+    [A0, ind_remove_species, NatomE] = remove_elements(NatomE, A0, self.E.ind_E, self.TN.tolN);
 
     % List of indices with nonzero values
-    [temp_ind, temp_ind_nswt, temp_ind_swt, temp_ind_ions, temp_ind_E, temp_NE, temp_NG, temp_NS] = temp_values(E.ind_E, S, NatomE, TN.tolN);
+    [temp_ind, temp_ind_nswt, temp_ind_swt, temp_ind_ions, temp_ind_E, temp_NE, temp_NG, temp_NS] = temp_values(self.S, NatomE);
 
     % Update temp values
-    [temp_ind, temp_ind_swt, temp_ind_nswt, temp_ind_ions, temp_NG] = update_temp(N0, N0(ind_A0_E0, 1), ind_A0_E0, temp_ind_swt, temp_ind_nswt, temp_ind_E, E.ind_E, temp_ind_ions, [], NP, SIZE, flag_ions_first);
-
+    [temp_ind, temp_ind_swt, temp_ind_nswt, temp_ind_ions, temp_NG] = update_temp(N0(ind_remove_species, 1), ind_remove_species, temp_ind_swt, temp_ind_nswt, temp_ind_ions, NP, SIZE);
+    
     % Update temp values
     temp_NS0 = temp_NS + 1;
     temp_ind_nswt_0 = temp_ind_nswt;
@@ -62,29 +60,20 @@ function [N0, dNi_T, dN_T, dNi_p, dN_p, STOP, STOP_ions] = equilibrium_gibbs(sel
     temp_ind = [temp_ind_nswt, temp_ind_swt];
     temp_NS = length(temp_ind);
 
-    % Initialize species vector N0    
-%     % Entropy [J/(mol-K)]   
-%     Qj = exp(-C.R0 * set_s0(S.LS(temp_ind_nswt), TP, self.DB) * 1e-3);
-%     % Entropy of mixing
-%     Qj = exp(R0TP * N0(temp_ind_nswt, 1) .* log(N0(temp_ind_nswt, 1) / NP * pP));
-%     % Thermal enthalpy
-%     Qj = exp(-set_DhT(S.LS(temp_ind_nswt), TP, self.DB) / R0TP);
-%     % Compute distribution
-%     N0(temp_ind_nswt, 1) = Qj ./ sum(Qj);
-%     NP = sum(N0(:, 1));
-
+    % Initialize species vector N0
     [N0, NP] = initialize_moles(N0, NP, temp_ind, temp_NG, guess_moles);
 
     % Standard Gibbs free energy [J/mol]
-    g0 = set_g0(S.LS, TP, self.DB);
+    g0 = set_g0(self.S.LS, TP, self.DB);
 
-    % Dimensionless Chemical potential
+    % Dimensionless chemical potential
     muRT_0 = g0/R0TP;
     muRT = muRT_0;
-%     % Get Molar mass [kg/mol]
-%     for i = S.NS:-1:1
-%         W(i) = self.DB.(S.LS{i}).mm * 1e-3;
-%     end
+
+    % Get Molar mass [kg/mol]
+    % for i = self.S.NS:-1:1
+    %     W(i) = self.DB.(self.S.LS{i}).mm * 1e-3;
+    % end
 
     % Construction of part of matrix A
     [A1, temp_NS0] = update_matrix_A1(A0, [], temp_NG, temp_NS, temp_NS0, temp_ind, temp_ind_E);
@@ -104,24 +93,14 @@ function [N0, dNi_T, dN_T, dNi_p, dN_p, STOP, STOP_ions] = equilibrium_gibbs(sel
     end
 
     % Check condensed species
-    [temp_ind, temp_ind_swt, FLAG] = check_condensed_species(A0, x, temp_ind_nswt, temp_ind_swt_0, temp_ind_E, temp_NE, muRT);
-    if FLAG
-        if any(isnan(x))
-            % Update temp values
-            [temp_ind, temp_ind_nswt, temp_ind_swt, temp_ind_ions, temp_ind_E, temp_NE, temp_NG, temp_NS] = temp_values(E.ind_E, S, NatomE, TN.tolN);
-            % Initialize species vector N0 
-            N0(:, 1) = NP/temp_NS;
-            % Construction of part of matrix A
-            A22 = zeros(temp_NE + 1);
-            A0_T = A0';
-        end
-
+    [temp_ind, temp_ind_swt, FLAG_CONDENSED] = check_condensed_species(A0, x, temp_ind, temp_ind_nswt, temp_ind_swt_0, temp_ind_E, temp_NE, muRT);
+    if FLAG_CONDENSED
         STOP = 1;
         temp_NS = length(temp_ind);
         temp_NS0 = temp_NS + 1;
         [A1, temp_NS0] = update_matrix_A1(A0, A1, temp_NG, temp_NS, temp_NS0, temp_ind, temp_ind_E);
 
-        TN.itMax_gibbs = TN.itMax_gibbs / 2;
+        self.TN.itMax_gibbs = self.TN.itMax_gibbs / 2;
         equilibrium_loop;
     end
 
@@ -131,187 +110,199 @@ function [N0, dNi_T, dN_T, dNi_p, dN_p, STOP, STOP_ions] = equilibrium_gibbs(sel
 
     % NESTED FUNCTION
     function x = equilibrium_loop
+        % Calculate composition at chemical equilibrium
+        
         it = 0; counter_errors = 0;
-        itMax = TN.itMax_gibbs;
+        itMax = self.TN.itMax_gibbs;
         STOP = 1;
-        while STOP > TN.tolN && it < itMax
+        while STOP > self.TN.tol_gibbs && it < itMax
             it = it + 1;
             % Chemical potential
             muRT(temp_ind_nswt) =  muRT_0(temp_ind_nswt) + log(N0(temp_ind_nswt, 1) / NP) + log(pP);
-            % Gibbs free energy [cal/g] (debug)
-%             Gibbs(it) = dot(N0(:, 1), muRT * R0TP) / dot(N0(:, 1), W) / 4186.8;
-%             fprintf('Gibbs: %f\n', Gibbs(it));
+
+            % Debug: Gibbs free energy [cal/g]
+            % Gibbs(it) = dot(N0(:, 1), muRT * R0TP) / dot(N0(:, 1), W) / 4186.8;
+            % fprintf('Gibbs: %f\n', Gibbs(it));
+
             % Construction of matrix A (Jacobian)
             A = update_matrix_A(A0_T, A1, A22, N0, NP, temp_ind, temp_ind_nswt, temp_ind_swt, temp_ind_E, temp_NG);
-            % Check singularity
-%             A = check_singularity(A, it);
-            % Construction of vector b            
-            b = update_vector_b(A0, N0, NP, NatomE, E.ind_E, temp_ind_ions, temp_ind, temp_ind_nswt, temp_ind_E, muRT);
-            % Solve of the linear system A*x = b
-            x = A\b;
-            % Omit nan or inf values
-            if any(isnan(x)) || any(isinf(x))
 
-                if counter_errors > 3
+            % Construction of vector b            
+            b = update_vector_b(A0, N0, NP, NatomE, self.E.ind_E, temp_ind_ions, temp_ind, temp_ind_nswt, temp_ind_E, muRT);
+
+            % Solve linear system A*x = b
+            x = A\b;
+
+            % Check singular matrix
+            if any(isnan(x)) || any(isinf(x))
+                
+                % Update temp indeces
+                temp_ind_nswt = temp_ind_nswt_0;
+                
+                if FLAG_CONDENSED
+                    temp_ind_swt = temp_ind_swt_0;
+                end
+
+                % Reset removed species to 1e-6 to try the avoid singular matrix
+                N0( N0([temp_ind_nswt, temp_ind_swt], 1) < self.TN.tolN, 1) = 1e-6;
+
+                if counter_errors > 2
                     x = NaN;
                     return
                 end
 
-                x(isnan(x) | isinf(x)) = 0;
                 counter_errors = counter_errors + 1;
+                continue
             end
 
             % Calculate correction factor
-            Delta = relax_factor(NP, N0(temp_ind, 1), x(1:temp_NS), x(end), temp_NG);
+            delta = relax_factor(NP, N0(temp_ind, 1), x(1:temp_NS), x(end), temp_NG);
+            
             % Apply correction
-            N0(temp_ind_nswt, 1) = exp(log(N0(temp_ind_nswt, 1)) + Delta * x(1:temp_NG));
-            N0(temp_ind_swt, 1) = N0(temp_ind_swt, 1) + Delta * x(temp_NG+1:temp_NS);
-            NP = exp(log(NP) + Delta * x(end));
+            N0(temp_ind_nswt, 1) = N0(temp_ind_nswt, 1) .* exp(delta * x(1:temp_NG));
+            N0(temp_ind_swt, 1) = N0(temp_ind_swt, 1) + delta * x(temp_NG+1:temp_NS);
+            NP = NP * exp(delta * x(end));
+            
             % Compute STOP criteria
-            STOP = compute_STOP(NP, x(end), N0(temp_ind, 1), x(1:temp_NS), temp_NG, A0(temp_ind, temp_ind_E), NatomE, max_NatomE, TN.tolE);
+            STOP = compute_STOP(NP, x(end), N0(temp_ind, 1), x(1:temp_NS), temp_NG, A0(temp_ind, temp_ind_E), NatomE, max_NatomE, self.TN.tolE);
+            
             % Update temp values in order to remove species with moles < tolerance
-            [temp_ind, temp_ind_swt, temp_ind_nswt, temp_ind_ions, temp_NG, temp_NS, temp_ind_E, A22, flag_ions_first, N0] = update_temp(N0, N0(temp_ind, 1), temp_ind, temp_ind_swt, temp_ind_nswt, temp_ind_E, E.ind_E, temp_ind_ions, A22, NP, SIZE, flag_ions_first);
+            [temp_ind, temp_ind_swt, temp_ind_nswt, temp_ind_ions, temp_NG, temp_NS] = update_temp(N0(temp_ind, 1), temp_ind, temp_ind_swt, temp_ind_nswt, temp_ind_ions, NP, SIZE);
+            
             % Update matrix A
             [A1, temp_NS0] = update_matrix_A1(A0, A1, temp_NG, temp_NS, temp_NS0, temp_ind, temp_ind_E);
+
             % Debug            
-%             aux_Delta(it) = min(Delta);
-%             aux_STOP(it) = STOP;
+            % aux_delta(it) = min(delta);
+            % aux_STOP(it) = STOP;
         end
+        
         % Check convergence of charge balance (ionized species)
-        [N0, STOP_ions] = check_convergence_ions(N0, A0, E.ind_E, temp_ind_nswt, temp_ind_ions, TN.tolN, TN.tol_pi_e, TN.itMax_ions);
-        if ~any(N0(temp_ind_ions) > TN.tolN) && ~isempty(N0(temp_ind_ions))
-            [temp_ind, temp_ind_swt, temp_ind_nswt, temp_ind_ions, temp_NG, temp_NS, temp_ind_E, A22, flag_ions_first, N0] = update_temp(N0, N0(temp_ind, 1), temp_ind, temp_ind_swt, temp_ind_nswt, temp_ind_E, E.ind_E, temp_ind_ions, A22, NP, SIZE, flag_ions_first);
-            temp_NE = length(temp_ind_E);
+        [N0, STOP_ions] = check_convergence_ions(N0, A0, self.E.ind_E, temp_ind_nswt, temp_ind_ions, self.TN.tolN, self.TN.tol_pi_e, self.TN.itMax_ions);
+        
+        if ~any(N0(temp_ind_ions) > self.TN.tolN) && ~isempty(N0(temp_ind_ions))
+            [temp_ind, temp_ind_swt, temp_ind_nswt, temp_ind_ions, temp_NG, temp_NS] = update_temp(N0(temp_ind, 1), temp_ind, temp_ind_swt, temp_ind_nswt, temp_ind_ions, NP, SIZE);
+            
+            if ~isempty(temp_ind_ions)
+                return
+            end
+        
+            % Remove element E from matrix
+            temp_ind_E(self.E.ind_E) = [];
+            A22 = zeros(length(temp_ind_E) + 1);
+            temp_NE = temp_NE - 1;
+
         end
         % Debug  
-%         debug_plot_error(it, aux_STOP, aux_Delta);
+        % debug_plot_error(it, aux_STOP, aux_delta);
     end
 
-    function A = check_singularity(A, it)
-        % Check if matrix is matrix is singular
-        if it <= 10*temp_NS
-            return
-        end
-
-        if cond(A) <= exp(0.5 * log(TN.tolN))
-            return
-        end
-
-        FLAG_OLD = ~ismember(temp_ind_nswt_0, temp_ind_nswt);
-
-        if any(FLAG_OLD)
-            temp_ind_nswt = temp_ind_nswt_0;
-            temp_ind = [temp_ind_nswt, temp_ind_swt];
-            temp_NG = length(temp_ind_nswt);
-            temp_NS = length(temp_ind);
-            N0(temp_ind_nswt(FLAG_OLD)) = TN.tolN * 1e-1;
-            [A1, temp_NS0] = update_matrix_A1(A0, A1, temp_NG, temp_NS, temp_NS0, temp_ind, temp_ind_E);
-            A = update_matrix_A(A0_T, A1, A22, N0, NP, temp_ind, temp_ind_nswt, temp_ind_swt, temp_ind_E, temp_NG);
-            N0(temp_ind_nswt(FLAG_OLD)) = 0;
-        end
-    end
 end
 
 % SUB-PASS FUNCTIONS
 function [N0, NP] = initialize_moles(N0, NP, temp_ind_nswt, temp_NG, guess_moles)
+    % Initialize composition from a previous calculation or using an
+    % uniform distribution [mol]
+
     if isempty(guess_moles)
         N0(temp_ind_nswt, 1) = NP/temp_NG;
     else
         N0(temp_ind_nswt, 1) = guess_moles(temp_ind_nswt);
         NP = sum(guess_moles(temp_ind_nswt));
     end
+
 end
 
-function [temp_ind, temp_ind_swt, FLAG] = check_condensed_species(A0, x, temp_ind_nswt, temp_ind_swt_0, temp_ind_E, temp_NE, muRT)
+function [temp_ind, temp_ind_swt, FLAG_CONDENSED] = check_condensed_species(A0, x, temp_ind, temp_ind_nswt, temp_ind_swt, temp_ind_E, temp_NE, muRT)
     % Check condensed species
-    aux = [];
-    FLAG = false;
-    if any(isnan(x))
-        aux = true;
-    else
-        for i = length(temp_ind_swt_0):-1:1
-            % Only check if there were atoms of the species in the initial
-            % mixture
-            if sum(A0(temp_ind_swt_0(i), temp_ind_E))
-                dG_dn = muRT(temp_ind_swt_0(i)) - dot(x(end-temp_NE:end-1), A0(temp_ind_swt_0(i), temp_ind_E));
-                if dG_dn < 0
-                    aux = [aux, i];
-                end
-            end
+    
+    % Initialization
+    FLAG_CONDENSED = false;
+    
+    % Check if there are condensed species
+    if isempty(temp_ind_swt)
+        return
+    end
+    
+    % Get length condensed species
+    NC = length(temp_ind_swt);
+    
+    % Initialize false vector
+    temp = false(NC, 1);
+    
+    for i = length(NC):-1:1
+        % Only check if there were atoms of the species in the initial
+        % mixture
+        if ~sum(A0(temp_ind_swt(i), temp_ind_E))
+            continue
         end
-    end
 
-    if any(aux)
-        FLAG = true;
-    end
+        dG_dn = muRT(temp_ind_swt(i)) - dot(x(end-temp_NE:end-1), A0(temp_ind_swt(i), temp_ind_E));
+        
+        if dG_dn < 0
+            temp(i) = true;
+        end
 
-    if ~isempty(temp_ind_swt_0)
-        temp_ind_swt = temp_ind_swt_0(aux);
-    else
+    end
+    
+    % Check if any condensed species have to be considered
+    if ~sum(temp)
         temp_ind_swt = [];
+        return
     end
+    
+    % Update flag
+    FLAG_CONDENSED = true;
 
+    % Update indeces
+    temp_ind_swt = temp_ind_swt(temp);
     temp_ind = [temp_ind_nswt, temp_ind_swt];
 end
 
-function ind_A = find_ind_Matrix(A, bool)
-    ls = find(bool>0);
-    ind_A = [];
-    i = 1;
-    for ind = ls
-        ind_A = [ind_A, find(A(:, ind) > 0)'];
-        i = i + 1;
-    end
+function ind_remove_species = find_remove_species(A, FLAG_REMOVE_ELEMENTS)
+    % Get flag of species to be removed from stoichiometrix matrix
+    ind_remove_species = find(sum(A(:, FLAG_REMOVE_ELEMENTS) > 0, 2) > 0);
 end
 
-function [A0, ind_A0_E0, ind_E, NatomE] = remove_elements(NatomE, A0, species, ind_E, guess_moles, tol)
+function [A0, ind_remove_species, NatomE] = remove_elements(NatomE, A0, ind_E, tol)
     % Find zero sum elements
 
-    % Ions
-    temp_ind_ions = contains(species, 'minus') | contains(species, 'plus'); %S.ind_ions;
-    if ~isempty(guess_moles)
-        pass_ions = guess_moles(temp_ind_ions) > TN.tolN;
-        temp_ind_ions = temp_ind_ions(pass_ions);
-    end
-    aux = NatomE;
-    if any(temp_ind_ions)
-        NatomE(ind_E) = 1; % temporal fictitious value
-    end
-    % No-ions
-    bool_E0 = NatomE' <= tol;
-    ind_A0_E0 = find_ind_Matrix(A0, bool_E0);
-    A0 = A0(:, NatomE > tol);
+    % Define temporal fictitious value if there are ionized species
+    temp_NatomE = NatomE;
+    temp_NatomE(ind_E) = 1;
+
+    % Get flag of elements to be removed from stoichiometrix matrix
+    FLAG_REMOVE_ELEMENTS = temp_NatomE' <= tol;
+
+    % Get the species to be removed from stoichiometrix matrix
+    ind_remove_species = find_remove_species(A0, FLAG_REMOVE_ELEMENTS);
+
+    % Update stoichiometrix matrix
+    A0(:, FLAG_REMOVE_ELEMENTS) = [];
+
     % Set number of atoms
-    if any(temp_ind_ions)
-        bool_range1 = aux(1:ind_E-1) > tol;
-        bool_range2 = aux(ind_E+1:end) > tol;
-        NatomE = aux([bool_range1; true; bool_range2]);
-        ind_E = sum(bool_range1) + 1;
-    else
-        NatomE = aux(aux > tol);
-    end
+    NatomE(FLAG_REMOVE_ELEMENTS) = [];
 end
 
-function [temp_ind, temp_ind_nswt, temp_ind_swt, temp_ind_ions, temp_ind_E, temp_NE, temp_NG, temp_NS] = temp_values(ind_E, S, NatomE, tol)
+function [temp_ind, temp_ind_nswt, temp_ind_swt, temp_ind_ions, temp_ind_E, temp_NE, temp_NG, temp_NS] = temp_values(S, NatomE)
     % List of indices with nonzero values and lengths
-    FLAG_IONS = S.ind_ions;
-    if any(FLAG_IONS)
-        NatomE(ind_E) = 1; % temporal fictitious value
-    end
-    temp_ind_E = find(NatomE > tol);
+    
+    % Get indeces
+    temp_ind_E = 1:length(NatomE);
     temp_ind_nswt = S.ind_nswt;
     temp_ind_swt = S.ind_swt;
-    temp_ind_ions = S.ind_nswt(FLAG_IONS);
+    temp_ind_ions = S.ind_nswt(S.ind_ions);
     temp_ind = [temp_ind_nswt, temp_ind_swt];
     temp_ind_cryogenic = S.ind_cryogenic;
     [temp_ind, temp_ind_swt] = check_cryogenic(temp_ind, temp_ind_swt, temp_ind_cryogenic);
-
+    
+    % Get lengths
     temp_NE = length(temp_ind_E);
     temp_NG = length(temp_ind_nswt);
     temp_NS = length(temp_ind);
 end
 
-function [temp_ind_swt, temp_ind_nswt, temp_ind_E, temp_ind_ions, A22, flag_ions_first, N0] = remove_item(N0, n, ind, temp_ind_swt, temp_ind_nswt, temp_ind_E, ind_E, temp_ind_ions, A22, NP, SIZE, flag_ions_first)
+function [temp_ind_swt, temp_ind_nswt, temp_ind_ions] = remove_item(n, ind, temp_ind_swt, temp_ind_nswt, temp_ind_ions, NP, SIZE)
     % Remove species from the computed indeces list of gaseous and condensed
     % species and append the indeces of species that we have to remove
     for i=1:length(n)
@@ -320,25 +311,14 @@ function [temp_ind_swt, temp_ind_nswt, temp_ind_E, temp_ind_ions, A22, flag_ions
             temp_ind_nswt(temp_ind_nswt==ind(i)) = [];
             temp_ind_ions(temp_ind_ions==ind(i)) = [];   
         end
+
     end
 
-    if ~flag_ions_first
-        return
-    end
-
-    if ~isempty(temp_ind_ions)
-        return
-    end
-        
-    % remove element E from matrix
-    temp_ind_E(ind_E) = [];
-    A22 = zeros(length(temp_ind_E) + 1);
-    flag_ions_first = false;
 end
 
-function [temp_ind, temp_ind_swt, temp_ind_nswt, temp_ind_ions, temp_NG, temp_NS, temp_ind_E, A22, flag_ions_first, N0] = update_temp(N0, zip1, zip2, temp_ind_swt, temp_ind_nswt, temp_ind_E, ind_E, temp_ind_ions, A22, NP, SIZE, flag_ions_first)
+function [temp_ind, temp_ind_swt, temp_ind_nswt, temp_ind_ions, temp_NG, temp_NS] = update_temp(n, ind, temp_ind_swt, temp_ind_nswt, temp_ind_ions, NP, SIZE)
     % Update temp items
-    [temp_ind_swt, temp_ind_nswt, temp_ind_E, temp_ind_ions, A22, flag_ions_first, N0] = remove_item(N0, zip1, zip2, temp_ind_swt, temp_ind_nswt, temp_ind_E, ind_E, temp_ind_ions, A22, NP, SIZE, flag_ions_first);
+    [temp_ind_swt, temp_ind_nswt, temp_ind_ions] = remove_item(n, ind, temp_ind_swt, temp_ind_nswt, temp_ind_ions, NP, SIZE);
     temp_ind = [temp_ind_nswt, temp_ind_swt];
     temp_NG = length(temp_ind_nswt);
     temp_NS = length(temp_ind);
@@ -353,13 +333,16 @@ function [A1, temp_NS0] = update_matrix_A1(A0, A1, temp_NG, temp_NS, temp_NS0, t
         A1 = [A11, A12];
         temp_NS0 = temp_NS;
     end
+
 end
 
 function [temp_ind, temp_ind_swt] = check_cryogenic(temp_ind, temp_ind_swt, temp_ind_cryogenic)
+    % Remove cryogenic species from calculations
     for i = 1:length(temp_ind_cryogenic)
         temp_ind(temp_ind == temp_ind_cryogenic(i)) = [];
         temp_ind_swt(temp_ind_swt == temp_ind_cryogenic(i)) = [];
     end
+
 end
 
 function A2 = update_matrix_A2(A0_T, A22, N0, NP, temp_ind, temp_ind_nswt, temp_ind_swt, temp_ind_E, temp_NG)
@@ -380,77 +363,98 @@ end
 function b = update_vector_b(A0, N0, NP, NatomE, ind_E, temp_ind_ions, temp_ind, temp_ind_nswt, temp_ind_E, muRT)
     % Update coefficient vector b
     bi = (sum(N0(temp_ind, 1) .* A0(temp_ind, temp_ind_E)))';
+
     if any(temp_ind_ions)
         bi(temp_ind_E == ind_E) = 0;
     end
+
     NP_0 = NP - sum(N0(temp_ind_nswt, 1));
     b = [-muRT(temp_ind); NatomE - bi; NP_0];
 end
 
-function Delta = relax_factor(NP, ni, eta, Delta_ln_NP, temp_NG)
+function delta = relax_factor(NP, ni, eta, delta_ln_NP, temp_NG)
     % Compute relaxation factor
     FLAG = eta(1:temp_NG) > 0;
     FLAG_MINOR = ni(1:temp_NG) / NP <= 1e-8 & FLAG;
-    Delta1 = 2./max(5*abs(Delta_ln_NP), abs(eta(FLAG)));
-    Delta2 = min(abs((-log(ni(FLAG_MINOR)/NP) - 9.2103404) ./ (eta(FLAG_MINOR) - Delta_ln_NP)));
-    Delta = min([1; Delta1; Delta2]);
+    delta1 = 2./max(5*abs(delta_ln_NP), abs(eta(FLAG)));
+    delta2 = min(abs((-log(ni(FLAG_MINOR)/NP) - 9.2103404) ./ (eta(FLAG_MINOR) - delta_ln_NP)));
+    delta = min([1; delta1; delta2]);
 end
 
-function [STOP, DeltaN1, DeltaN2, Deltab] = compute_STOP(NP, DeltaNP, N0, DeltaN0, temp_NG, A0, NatomE, max_NatomE, tolE)
+function [STOP, deltaN1, deltaN2, deltab] = compute_STOP(NP, deltaNP, N0, deltaN0, temp_NG, A0, NatomE, max_NatomE, tolE)
+    % Compute stop criteria
     NPi = sum(N0);
-    DeltaN1 = N0 .* abs(DeltaN0) / NPi;
-    DeltaN1(temp_NG + 1:end) = abs(DeltaN0(temp_NG + 1:end)) / NPi;
-    DeltaN2 = NP * abs(DeltaNP) / NPi;
-    Deltab = abs(NatomE - sum(N0 .* A0, 1)');
-    Deltab = max(Deltab(NatomE > max_NatomE * tolE));
-    STOP = max(max(max(DeltaN1), DeltaN2), Deltab);
+    deltaN1 = N0 .* abs(deltaN0) / NPi;
+    deltaN1(temp_NG + 1:end) = abs(deltaN0(temp_NG + 1:end)) / NPi;
+    deltaN2 = NP * abs(deltaNP) / NPi;
+    deltab = abs(NatomE - sum(N0 .* A0, 1)') / max_NatomE;
+    deltab = max(deltab(NatomE > tolE));
+    STOP = max(max(max(deltaN1), deltaN2), deltab);
 end
 
 function [N0, STOP] = check_convergence_ions(N0, A0, ind_E, temp_ind_nswt, temp_ind_ions, TOL, TOL_pi, itMax)
     % Check convergence of ionized species
+    
+    % Initialization
     STOP = 0;
-    if any(temp_ind_ions)
-        [Delta_ions, ~] = ions_factor(N0, A0, ind_E, temp_ind_nswt, temp_ind_ions);
-        if abs(Delta_ions) > TOL_pi
-            [N0, STOP] = recompute_ions(N0, A0, ind_E, temp_ind_nswt, temp_ind_ions, Delta_ions, TOL, TOL_pi, itMax);
-        end
+
+    % Check if there are ionized species
+    if ~any(temp_ind_ions)
+        return
     end
+    
+    % Get error in the electro-neutrality of the mixture
+    [delta_ions, ~] = ions_factor(N0, A0, ind_E, temp_ind_nswt, temp_ind_ions);
+    
+    % Reestimate composition of ionized species
+    if abs(delta_ions) > TOL_pi
+        [N0, STOP] = recompute_ions(N0, A0, ind_E, temp_ind_nswt, temp_ind_ions, delta_ions, TOL, TOL_pi, itMax);
+    end
+
 end
 
-function [N0, STOP] = recompute_ions(N0, A0, ind_E, temp_ind_nswt, temp_ind_ions, Delta_ions, TOL, TOL_pi, itMax)
+function [N0, STOP] = recompute_ions(N0, A0, ind_E, temp_ind_nswt, temp_ind_ions, delta_ions, TOL, TOL_pi, itMax)
     % Reestimate composition of ionized species
     
-    % Parameters
+    % Initialization
     A0_ions = A0(temp_ind_ions, ind_E);
     STOP = 1;
     it = 0;
+    % Reestimate composition of ionized species
     while STOP > TOL_pi && it < itMax
         it = it + 1;
         % Apply correction
-        N0_ions = log(N0(temp_ind_ions, 1)) + A0_ions * Delta_ions;
+        N0_ions = log(N0(temp_ind_ions, 1)) + A0_ions * delta_ions;
         % Apply antilog
         N0_ions = exp(N0_ions);
         % Assign values to original vector
         N0(temp_ind_ions, 1) = N0_ions;
         % Compute correction of the Lagrangian multiplier for ions divided by RT
-        [Delta_ions, ~] = ions_factor(N0, A0, ind_E, temp_ind_nswt, temp_ind_ions);
-        STOP = abs(Delta_ions);
+        [delta_ions, ~] = ions_factor(N0, A0, ind_E, temp_ind_nswt, temp_ind_ions);
+        % Compute STOP criteria
+        STOP = abs(delta_ions);
     end   
     
     Xi_ions = N0(temp_ind_ions, 1) / sum(N0(:, 1));
+    
+    % Set error to zero if molar fraction of ionized species are below
+    % tolerance
     if ~any(Xi_ions > TOL)
         STOP = 0;
-    end 
+    end
+
 end
 
-function [Delta, DeltaN3] = ions_factor(N0, A0, ind_E, temp_ind_nswt, temp_ind_ions)
-    % Compute relaxation factor ions
-    if any(temp_ind_ions)
-        Delta = -sum(A0(temp_ind_nswt, ind_E) .* N0(temp_ind_nswt, 1))/ ...
-                 sum(A0(temp_ind_nswt, ind_E).^2 .* N0(temp_ind_nswt, 1));
-        DeltaN3 = abs(sum(N0(temp_ind_nswt, 1) .* A0(temp_ind_nswt, ind_E)));
-    else
-        Delta = [];
-        DeltaN3 = 0;
-    end 
+function [delta, deltaN3] = ions_factor(N0, A0, ind_E, temp_ind_nswt, temp_ind_ions)
+    % Compute relaxation factor for ionized species
+    
+    if ~any(temp_ind_ions)
+        delta = [];
+        deltaN3 = 0;
+        return
+    end
+
+    delta = -sum(A0(temp_ind_nswt, ind_E) .* N0(temp_ind_nswt, 1))/ ...
+             sum(A0(temp_ind_nswt, ind_E).^2 .* N0(temp_ind_nswt, 1));
+    deltaN3 = abs(sum(N0(temp_ind_nswt, 1) .* A0(temp_ind_nswt, ind_E)));
 end

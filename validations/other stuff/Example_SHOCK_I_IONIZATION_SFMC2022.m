@@ -25,17 +25,16 @@
 self = App('Air_ions');
 %% INITIAL CONDITIONS
 self = set_prop(self, 'TR', 300, 'pR', 1 * 1.01325);
-self.PD.S_Oxidizer = {'O2'};
-self.PD.S_Inert    = {'N2', 'Ar', 'CO2'};
-self.PD.proportion_inerts_O2 = [78.084, 0.9365, 0.0319] ./ 20.9476;
+self.PD.S_Oxidizer = {'N2', 'O2', 'Ar', 'CO2'};
+self.PD.N_Oxidizer = [78.084, 20.9476, 0.9365, 0.0319] ./ 20.9476;
 %% ADDITIONAL INPUTS (DEPENDS OF THE PROBLEM SELECTED)
 u1 = logspace(2, 5, 500); u1 = u1(u1<20000); u1 = u1(u1>=360);
 self = set_prop(self, 'u1', u1, 'phi', self.PD.phi.value(1) * ones(1, length(u1)));
 %% SOLVE PROBLEM
-self = SolveProblem(self, 'SHOCK_I');
+self = solve_problem(self, 'SHOCK_I');
 %% DISPLAY RESULTS (PLOTS)
 self.Misc.display_species = self.S.LS;
-postResults(self);
+post_results(self);
 %%
 
 Xi = cell2vector(self.PS.strP, 'Xi');
@@ -43,23 +42,27 @@ M1 = cell2vector(self.PS.strR, 'u') ./ cell2vector(self.PS.strR, 'sound');
 R = cell2vector(self.PS.strP, 'rho') ./ cell2vector(self.PS.strR, 'rho');
 P = cell2vector(self.PS.strP, 'p') ./ cell2vector(self.PS.strR, 'p');
 
+ind_pass = sum(Xi > 1e-2, 2) > 0;
+Xi = Xi(ind_pass, :);
 [Nx, Ny] = size(Xi);
 dXidM1 = zeros(Nx, Ny-1);
+
+
 for i = 1:Nx
     dXidM1(i, 1:Ny-1) = compute_first_derivative(Xi(i, :), M1);
 end
+
+% ind_pass = sum(dXidM1 > 0.001, 2) > 0;
 
 % xx = linspace(M1_new(1), M1_new(end), 250);
 % dXO2dM1 = interp1(M1_new, dXO2dM1, xx);
 % dXN2dM1 = interp1(M1_new, dXN2dM1, xx);
 % M1_new = xx;
 
-indy = find_ind(self.S.LS, self.Misc.display_species);
-colorbw = brewermap(length(indy), self.Misc.config.colorpalette);
-figure; hold on;
+colorbw = brewermap(Nx, self.Misc.config.colorpalette);
+ax = set_figure();
 
-for i=1:numel(indy)
-    dl = plot(abs(dXidM1(indy(i), :)), P(1:end-1), 'LineWidth', self.Misc.config.linewidth, 'color', colorbw(i,:));
+for i=1:Nx
+    dl = plot_figure('M1', M1(1:end-1), 'dXidM1', dXidM1(i, :), 'color', colorbw(i,:), 'XScale', 'log', 'ax', ax);
 end
-legend(self.Misc.display_species)
-set(gca,'yscale','log')
+legend(self.Misc.display_species(ind_pass))

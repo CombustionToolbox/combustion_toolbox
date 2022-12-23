@@ -15,28 +15,32 @@ function mix2 = equilibrate_T(self, mix1, pP, TP, varargin)
     %
     % Example:
     %     mix2 = equilibrate(self, self.PS.strR{1}, 1.01325, 3000)
-
-    % Definitions
-    FLAG_FAST = self.TN.FLAG_FAST;
+    
+    % Check if calculations are for a thermochemical frozen gas (calorically perfect)
+    if self.TN.FLAG_TCHEM_FROZEN        
+        mix2 = equilibrate_T_tchem(self, mix1, pP, TP);
+        return
+    end
+    
     % Unpack
     guess_moles = unpack(varargin);
     % Check flag
-    if ~FLAG_FAST, guess_moles = []; end
+    if ~self.TN.FLAG_FAST, guess_moles = []; end
     % Set List of Species to List of Products
-    self_ListProducts = set_LS_original(self);
+    self_ListProducts = set_LS_original(self, TP);
     % Compute number of moles
     [N, self.dNi_T, self.dN_T, self.dNi_p, self.dN_p, STOP, STOP_ions] = select_equilibrium(self_ListProducts, pP, TP, mix1, guess_moles);
-    % Reshape matrix of number of moles, N
+    % Reshape composition matrix N, and partial composition partial derivatives 
     N = reshape_vectors(self, self_ListProducts, N);
     self.dNi_T = reshape_vectors(self, self_ListProducts, self.dNi_T);
     self.dNi_p = reshape_vectors(self, self_ListProducts, self.dNi_p);
     % Add moles of frozen species to the moles vector N
     N_mix1 = moles(mix1);
     N(self.S.ind_frozen) = N_mix1(self.S.ind_frozen);
-    % Compute properties matrix
-    properties_matrix = set_species(self, self.S.LS, N(:, 1), TP);
+    % Compute property matrix
+    M0 = set_species(self, self.S.LS, N(:, 1), TP);
     % Compute properties of final mixture
-    mix2 = set_properties(self, mix1, properties_matrix, pP, TP, STOP, STOP_ions);
+    mix2 = set_properties(self, mix1, M0, pP, TP, STOP, STOP_ions);
 end
 
 % SUB-PASS FUNCTIONS
@@ -50,13 +54,26 @@ function guess_moles = unpack(value)
 
 end
 
-function self = set_LS_original(self)
+function self = set_LS_original(self, TP)
     % Set List of Species to List of Products
-    self.S.ind_nswt = []; self.S.ind_swt = []; self.S.ind_cryogenic = [];
+    
+    % Remove ionized species if TP is below T_ions
+    if any(self.S.ind_ions) && TP < self.TN.T_ions
+        self.Misc.index_LS_original(self.S.ind_ions) = [];
+        self.E.ind_E = [];
+    end
+    % Initialization
+    self.S.ind_nswt = []; self.S.ind_swt = [];
+    self.S.ind_cryogenic = []; self.S.ind_ions = [];
+    % Set list of species for calculations
     self.S.LS = self.S.LS(self.Misc.index_LS_original);
+    % Establish cataloged list of species according to the state of the phase
     self = list_phase_species(self, self.S.LS);
+    % Update stoichiometric matrix
     self.C.A0.value = self.C.A0.value(self.Misc.index_LS_original, :);
+    % Update property matrix
     self.C.M0.value = self.C.M0.value(self.Misc.index_LS_original, :);
+    % Update compostion matrix
     self.C.N0.value = self.C.N0.value(self.Misc.index_LS_original, :);
 end
 

@@ -16,8 +16,8 @@ function performance_test_thermo()
         [time_NASA, time_CT] = compute_performance(self, LS, properties{i}, N, NS);
         sum_time_NASA(i) = sum(time_NASA);
         sum_time_CT(i) = sum(time_CT);
-    %     print_results(time_NASA, time_CT, N * NS);
-    %     plot_time_cases(time_NASA, time_CT);
+%         print_results(time_NASA, time_CT, N, NS);
+%         plot_time_cases(time_NASA, time_CT, NS);
     end
     % Bar plot with the total execution time [s] per property
     plot_bar(properties, sum_time_NASA, sum_time_CT, N, NS, NP);
@@ -59,7 +59,7 @@ function print_results(time_NASA, time_CT, N, NS)
     fprintf('Performance:  %.2f %%\n', (sum(time_NASA) / sum(time_CT) - 1) * 100);
 end
 
-function ax = plot_time_cases(time_NASA, time_CT)
+function ax = plot_time_cases(time_NASA, time_CT, NS)
     % Plot time per case
 
     % Compute max value

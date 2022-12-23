@@ -111,7 +111,7 @@ for i = length(LS):-1:10
     % self.gammacurve = griddedInterpolant(OF_gamma_real, gamma_real, 'pchip', 'linear');
     %% SOLVE PROBLEM
     t0 = tic;
-    self = SolveProblem(self, 'HP');
+    self = solve_problem(self, 'HP');
     NS(i) = i;
     time(i) = toc(t0);
     %% DISPLAY RESULTS (PLOTS)
@@ -122,5 +122,25 @@ end
 ax = set_figure;
 plot(ax, NS, time)
 x = linspace(NS(1), NS(end));
-y = 0.0001*x.^2;
-plot(ax, x, y)
+
+
+%% Fit: 'untitled fit 1'.
+[xData, yData] = prepareCurveData( NS, time );
+
+% Set up fittype and options.
+ft = fittype( 'poly1' );
+excludedPoints = xData < 1;
+opts = fitoptions( 'Method', 'LinearLeastSquares' );
+opts.Exclude = excludedPoints;
+
+% Fit model to data.
+[fitresult, gof] = fit( xData, yData, ft, opts );
+
+% Plot fit with data.
+figure( 'Name', 'untitled fit 1' );
+h = plot( fitresult, xData, yData, excludedPoints );
+legend( h, 'time vs. NS', 'Excluded time vs. NS', 'untitled fit 1', 'Location', 'NorthEast', 'Interpreter', 'none' );
+% Label axes
+xlabel( 'NS', 'Interpreter', 'none' );
+ylabel( 'time', 'Interpreter', 'none' );
+grid on

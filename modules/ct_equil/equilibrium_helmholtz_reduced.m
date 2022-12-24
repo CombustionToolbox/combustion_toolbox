@@ -44,7 +44,7 @@ function [N0, dNi_T, dN_T, dNi_p, dN_p, STOP, STOP_ions] = equilibrium_helmholtz
 
     % Find indeces of the species/elements that we have to remove from the stoichiometric matrix A0
     % for the sum of elements whose value is <= tolN
-    [A0, ind_remove_species, NatomE] = remove_elements(NatomE, A0, self.E.ind_E, self.TN.tolN);
+    [A0, ind_remove_species, self.E.ind_E, NatomE] = remove_elements(NatomE, A0, self.E.ind_E, self.TN.tolN);
     
     % List of indices with nonzero values
     [ind, ind_nswt, ind_swt, ind_ions, ind_elem, NE, NG, NS] = temp_values(self.S, NatomE);
@@ -252,7 +252,7 @@ function ind_remove_species = find_remove_species(A, FLAG_REMOVE_ELEMENTS)
     ind_remove_species = find(sum(A(:, FLAG_REMOVE_ELEMENTS) > 0, 2) > 0);
 end
 
-function [A0, ind_remove_species, NatomE] = remove_elements(NatomE, A0, ind_E, tol)
+function [A0, ind_remove_species, ind_E, NatomE] = remove_elements(NatomE, A0, ind_E, tol)
     % Find zero sum elements
 
     % Define temporal fictitious value if there are ionized species
@@ -270,6 +270,11 @@ function [A0, ind_remove_species, NatomE] = remove_elements(NatomE, A0, ind_E, t
 
     % Set number of atoms
     NatomE(FLAG_REMOVE_ELEMENTS) = [];
+
+    % Check position "element" electron
+    if ind_E
+        ind_E = ind_E - sum(FLAG_REMOVE_ELEMENTS(1:ind_E-1));
+    end
 end
 
 function [ind, ind_nswt, ind_swt, ind_ions, ind_elem, NE, NG, NS] = temp_values(S, NatomE)

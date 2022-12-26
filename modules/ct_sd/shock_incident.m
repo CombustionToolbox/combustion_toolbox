@@ -58,8 +58,7 @@ function [mix1, mix2] = shock_incident(self, mix1, u1, varargin)
         % Initial estimates of p2/p1 and T2/T1
         [p2, T2, p2p1, T2T1] = get_guess(self, mix1, mix2, TN);
         % Check FLAG
-        % if ~FLAG_FAST, guess_moles = []; end
-        guess_moles = [];
+        if ~FLAG_FAST, guess_moles = []; end
         % Loop
         while STOP > TN.tol_shocks && it < itMax
             it = it + 1;
@@ -82,7 +81,8 @@ function [mix1, mix2] = shock_incident(self, mix1, u1, varargin)
             % aux_lambda(it) = lambda;
             % aux_STOP(it) = STOP;
         end
-
+        
+        % Debug
         % debug_plot_error(it, aux_STOP, aux_lambda);
     end
 
@@ -160,9 +160,9 @@ function [J, b, guess_moles] = update_system(self, mix1, p2, T2, R0, guess_moles
     b = [b1; b2];
 
     % Update guess moles
-    % if FLAG_FAST
-    %     guess_moles = mix2.Xi * mix2.N;
-    % end
+    if FLAG_FAST
+        guess_moles = mix2.Xi * mix2.N;
+    end
 
 end
 

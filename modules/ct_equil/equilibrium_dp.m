@@ -1,10 +1,10 @@
-function [dNi_p, dN_p] = equilibrium_dp(self, moles, A0, temp_NG, temp_NS, temp_NE, temp_ind, temp_ind_nswt, temp_ind_swt, temp_ind_E)
+function [dNi_p, dN_p] = equilibrium_dp(self, N0, A0, temp_NG, temp_NS, temp_NE, temp_ind, temp_ind_nswt, temp_ind_swt, temp_ind_E)
     % Obtain thermodynamic derivative of the moles of the species and of the moles of the mixture
     % respect to pressure from a given composition [moles] at equilibrium
     %
     % Args:
     %     self (struct): Data of the mixture, conditions, and databases
-    %     moles (float): Equilibrium composition [moles]
+    %     N0 (float): Equilibrium composition [moles]
     %     A0 (float): Stoichiometric matrix
     %     temp_NG (float): Temporal total number of gaseous species
     %     temp_NS (float): Temporal total number of species
@@ -15,20 +15,20 @@ function [dNi_p, dN_p] = equilibrium_dp(self, moles, A0, temp_NG, temp_NS, temp_
     %     temp_ind_E (float): Temporal index of elements in the final mixture
     %
     % Returns:
-    %     Tuple containing:
+    %     Tuple containing
     %
     %     * dNi_p (float): Thermodynamic derivative of the moles of the species respect to pressure
     %     * dN_p (float):  Thermodynamic derivative of the moles of the mixture respect to pressure
 
     % Initialization
-    NP = sum(moles(temp_ind_nswt, 1));
-    dNi_p = zeros(length(moles), 1);
+    NP = sum(N0(temp_ind_nswt, 1));
+    dNi_p = zeros(length(N0), 1);
     % Construction of part of matrix A (complete)
     A1 = update_matrix_A1(A0, temp_NG, temp_NS, temp_ind, temp_ind_E);
     A22 = zeros(temp_NE + 1);
     A0_T = A0';
     % Construction of matrix A
-    A = update_matrix_A(A0_T, A1, A22, moles, NP, temp_ind_nswt, temp_ind_swt, temp_ind_E, temp_NG, temp_NS);
+    A = update_matrix_A(A0_T, A1, A22, N0, NP, temp_ind_nswt, temp_ind_swt, temp_ind_E, temp_NG, temp_NS);
     % Construction of vector b
     b = update_vector_b(temp_NG, temp_NS, temp_ind_E);
     % Solve of the linear system A*x = b

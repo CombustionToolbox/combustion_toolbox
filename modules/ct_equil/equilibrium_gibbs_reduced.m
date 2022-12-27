@@ -2,9 +2,10 @@ function [N0, dNi_T, dN_T, dNi_p, dN_p, STOP, STOP_ions] = equilibrium_gibbs_red
     % Obtain equilibrium composition [moles] for the given temperature [K] and pressure [bar].
     % The code stems from the minimization of the free energy of the system by using Lagrange
     % multipliers combined with a Newton-Raphson method, upon condition that initial gas
-    % properties are defined by two functions of states. e.g., temperature and pressure.
+    % properties are defined by temperature and pressure.
+    %
     % The algorithm implemented take advantage of the sparseness of the
-    % upper left submatrix obtaining a matrix A of size NE + NS - NG + 1. 
+    % upper left submatrix obtaining a matrix J of size NE + NS - NG + 1. 
     %
     % This method is based on Gordon, S., & McBride, B. J. (1994). NASA reference publication,
     % 1311.
@@ -69,8 +70,8 @@ function [N0, dNi_T, dN_T, dNi_p, dN_p, STOP, STOP_ions] = equilibrium_gibbs_red
     % Dimensionless chemical potential
     muRT = g0/R0TP;
     
-    % Construction of part of matrix A
-    A22 = zeros(NS - NG + 1);
+    % Construction of part of matrix J
+    J22 = zeros(NS - NG + 1);
     A0_T = A0';
 
     % Solve system
@@ -83,17 +84,24 @@ function [N0, dNi_T, dN_T, dNi_p, dN_p, STOP, STOP_ions] = equilibrium_gibbs_red
         STOP = 1;
         % Update lenght
         NS = length(ind);
-        % Update A matrix
-        A22 = zeros(NS - NG + 1);
+        % Update J matrix
+        J22 = zeros(NS - NG + 1);
         % Reduce maximum number of iterations
         self.TN.itMax_gibbs = self.TN.itMax_gibbs / 2;
         % Compute chemical equilibrium considering condensed species
         equilibrium_loop;
     end
-
+    
+    % Update matrix J (jacobian) to compute the thermodynamic derivatives
+    J = update_matrix_J(A0_T, J22, N0, NP, ind_nswt, ind_swt, NE);
+    J(end, end) = 0;
+    % Standard-state enthalpy [J/mol]
+    h0 = set_h0(self.S.LS, TP, self.DB);
+    % Dimensionless standard-state enthalpy
+    H0RT = h0 / R0TP;
     % Compute thermodynamic derivates
-    [dNi_T, dN_T] = equilibrium_dT(self, N0, TP, A0, NG, NS, NE, ind, ind_nswt, ind_swt, ind_elem);
-    [dNi_p, dN_p] = equilibrium_dp(self, N0, A0, NG, NS, NE, ind, ind_nswt, ind_swt, ind_elem);
+    [dNi_T, dN_T] = equilibrium_dT_reduced(J, N0, A0, NE, ind_nswt, ind_swt, ind_elem, H0RT);
+    [dNi_p, dN_p] = equilibrium_dp_reduced(J, N0, A0, NE, ind_nswt, ind_swt, ind_elem);
 
     % NESTED FUNCTION
     function x = equilibrium_loop
@@ -110,14 +118,14 @@ function [N0, dNi_T, dN_T, dNi_p, dN_p, STOP, STOP_ions] = equilibrium_gibbs_red
             % Chemical potential
             muRT(ind_nswt) =  g0(ind_nswt) / R0TP + log(N0(ind_nswt, 1) / NP) + log(pP);
             
-            % Construction of matrix A
-            A = update_matrix_A(A0_T, A22, N0, NP, ind_nswt, ind_swt, NE);
+            % Construction of matrix J
+            J = update_matrix_J(A0_T, J22, N0, NP, ind_nswt, ind_swt, NE);
             
             % Construction of vector b      
             b = update_vector_b(A0, N0, NP, NatomE, self.E.ind_E, ind, ind_nswt, ind_swt, ind_ions, muRT);
             
-            % Solve of the linear system A*x = b
-            x = A\b;
+            % Solve of the linear system J*x = b
+            x = J\b;
             
             % Check singular matrix
             if any(isnan(x)) || any(isinf(x))
@@ -249,9 +257,9 @@ function [ind, ind_swt, FLAG_CONDENSED] = check_condensed_species(A0, x, ind, in
     ind = [ind_nswt, ind_swt];
 end
 
-function ind_remove_species = find_remove_species(A, FLAG_REMOVE_ELEMENTS)
-    % Get flag of species to be removed from stoichiometrix matrix
-    ind_remove_species = find(sum(A(:, FLAG_REMOVE_ELEMENTS) > 0, 2) > 0);
+function ind_remove_species = find_remove_species(A0, FLAG_REMOVE_ELEMENTS)
+    % Get flag of species to be removed from stoichiometrix matrix A0
+    ind_remove_species = find(sum(A0(:, FLAG_REMOVE_ELEMENTS) > 0, 2) > 0);
 end
 
 function [A0, ind_remove_species, ind_E, NatomE] = remove_elements(NatomE, A0, ind_E, tol)
@@ -281,7 +289,6 @@ end
 
 function [ind, ind_nswt, ind_swt, ind_ions, ind_elem, NE, NG, NS] = temp_values(S, NatomE)
     % List of indices with nonzero values and lengths
-
     ind_elem = 1:length(NatomE);
     ind_nswt = S.ind_nswt;
     ind_swt = S.ind_swt;
@@ -347,32 +354,31 @@ function STOP = compute_STOP(NP, deltaNP, N0, deltaN0, NG, A0, NatomE, max_Natom
     STOP = max(max(max(deltaN1), deltaN2), deltab);
 end
 
-function A11 = update_matrix_A11(A0_T, N0, ind_nswt, NE)
-    % Compute submatrix A11
+function J11 = update_matrix_J11(A0_T, N0, ind_nswt, NE)
+    % Compute submatrix J11
     for k = NE:-1:1
-        A11(:, k) = sum(A0_T(k, ind_nswt) .* A0_T(:, ind_nswt) .* N0(ind_nswt), 2);
+        J11(:, k) = sum(A0_T(k, ind_nswt) .* A0_T(:, ind_nswt) .* N0(ind_nswt), 2);
     end
 end
 
-function A12 = update_matrix_A12(A0_T, N0, ind_nswt, ind_swt)
-    % Compute submatrix A12
-    A12_1 = A0_T(:, ind_swt);
-    A12_2 = sum(A0_T(:, ind_nswt) .* N0(ind_nswt), 2);
-    A12 = [A12_1, A12_2];
+function J12 = update_matrix_J12(A0_T, N0, ind_nswt, ind_swt)
+    % Compute submatrix J12
+    J12_1 = A0_T(:, ind_swt);
+    J12_2 = sum(A0_T(:, ind_nswt) .* N0(ind_nswt), 2);
+    J12 = [J12_1, J12_2];
 end
 
-
-function A22 = update_matrix_A22(A22, N0, NP, ind_nswt)
-    % Compute submatrix A22
-    A22(end, end) = sum(N0(ind_nswt, 1) - NP);
+function J22 = update_matrix_J22(J22, N0, NP, ind_nswt)
+    % Compute submatrix J22
+    J22(end, end) = sum(N0(ind_nswt, 1) - NP);
 end
 
-function A = update_matrix_A(A0_T, A22, N0, NP, ind_nswt, ind_swt, NE)
-    % Compute matrix A
-    A11 = update_matrix_A11(A0_T, N0, ind_nswt, NE);
-    A12 = update_matrix_A12(A0_T, N0, ind_nswt, ind_swt);
-    A22 = update_matrix_A22(A22, N0, NP, ind_nswt);
-    A = [A11, A12; A12', A22];
+function J = update_matrix_J(A0_T, J22, N0, NP, ind_nswt, ind_swt, NE)
+    % Compute matrix J
+    J11 = update_matrix_J11(A0_T, N0, ind_nswt, NE);
+    J12 = update_matrix_J12(A0_T, N0, ind_nswt, ind_swt);
+    J22 = update_matrix_J22(J22, N0, NP, ind_nswt);
+    J = [J11, J12; J12', J22];
 end
 
 function b = update_vector_b(A0, N0, NP, NatomE, ind_E, ind, ind_nswt, ind_swt, ind_ions, muRT) 

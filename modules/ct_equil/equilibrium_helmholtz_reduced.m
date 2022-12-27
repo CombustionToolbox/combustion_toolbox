@@ -4,6 +4,9 @@ function [N0, dNi_T, dN_T, dNi_p, dN_p, STOP, STOP_ions] = equilibrium_helmholtz
     % multipliers combined with a Newton-Raphson method, upon condition that initial gas
     % properties are defined by temperature and volume.
     %
+    % The algorithm implemented take advantage of the sparseness of the
+    % upper left submatrix obtaining a matrix J of size NE + NS - NG. 
+    %
     % This method is based on Gordon, S., & McBride, B. J. (1994). NASA reference publication,
     % 1311.
     %
@@ -69,8 +72,8 @@ function [N0, dNi_T, dN_T, dNi_p, dN_p, STOP, STOP_ions] = equilibrium_helmholtz
     muRT_0 = g0/R0TP;
     muRT = muRT_0;
     
-    % Construction of part of matrix A
-    A22 = [];
+    % Construction of part of matrix J
+    J22 = [];
     A0_T = A0';
     
     % Solve system
@@ -83,17 +86,26 @@ function [N0, dNi_T, dN_T, dNi_p, dN_p, STOP, STOP_ions] = equilibrium_helmholtz
         STOP = 1;
         % Update lenght
         NS = length(ind);
-        % Update A matrix
-        A22 = zeros(NS - NG);
+        % Update J matrix
+        J22 = zeros(NS - NG);
         % Reduce maximum number of iterations
         self.TN.itMax_gibbs = self.TN.itMax_gibbs / 2;
         % Compute chemical equilibrium considering condensed species
         equilibrium_loop;
     end
 
+    % Update matrix J (jacobian) to compute the thermodynamic derivatives
+    J = update_matrix_J(A0_T, J22, N0, ind_nswt, ind_swt, NE);
+    temp_zero = zeros(1, NS - NG + 1);
+    J12_2 = [sum(A0_T(:, ind_nswt) .* N0(ind_nswt), 2); temp_zero(1:end-1)];
+    J = [J, J12_2; J12_2', 0];
+    % Standard-state enthalpy [J/mol]
+    h0 = set_h0(self.S.LS, TP, self.DB);
+    % Dimensionless standard-state enthalpy
+    H0RT = h0 / R0TP;
     % Compute thermodynamic derivates
-    [dNi_T, dN_T] = equilibrium_dT(self, N0, TP, A0, NG, NS, NE, ind, ind_nswt, ind_swt, ind_elem);
-    [dNi_p, dN_p] = equilibrium_dp(self, N0, A0, NG, NS, NE, ind, ind_nswt, ind_swt, ind_elem);
+    [dNi_T, dN_T] = equilibrium_dT_reduced(J, N0, A0, NE, ind_nswt, ind_swt, ind_elem, H0RT);
+    [dNi_p, dN_p] = equilibrium_dp_reduced(J, N0, A0, NE, ind_nswt, ind_swt, ind_elem);
 
     % NESTED FUNCTION
     function x = equilibrium_loop
@@ -113,14 +125,14 @@ function [N0, dNi_T, dN_T, dNi_p, dN_p, STOP, STOP_ions] = equilibrium_helmholtz
             % Compute total number of moles
             NP = sum(N0(ind_nswt, 1));
             
-            % Construction of matrix A
-            A = update_matrix_A(A0_T, A22, N0, ind_nswt, ind_swt, NE);
+            % Construction of matrix J
+            J = update_matrix_J(A0_T, J22, N0, ind_nswt, ind_swt, NE);
             
             % Construction of vector b      
             b = update_vector_b(A0, N0, NatomE, ind, ind_nswt, ind_swt, muRT);
             
-            % Solve of the linear system A*x = b
-            x = A\b;
+            % Solve of the linear system J*x = b
+            x = J\b;
             
             % Check singular matrix
             if any(isnan(x)) || any(isinf(x))
@@ -247,9 +259,9 @@ function [ind, ind_swt, FLAG_CONDENSED] = check_condensed_species(A0, x, ind, in
     ind = [ind_nswt, ind_swt];
 end
 
-function ind_remove_species = find_remove_species(A, FLAG_REMOVE_ELEMENTS)
-    % Get flag of species to be removed from stoichiometrix matrix
-    ind_remove_species = find(sum(A(:, FLAG_REMOVE_ELEMENTS) > 0, 2) > 0);
+function ind_remove_species = find_remove_species(A0, FLAG_REMOVE_ELEMENTS)
+    % Get flag of species to be removed from stoichiometrix matrix A0
+    ind_remove_species = find(sum(A0(:, FLAG_REMOVE_ELEMENTS) > 0, 2) > 0);
 end
 
 function [A0, ind_remove_species, ind_E, NatomE] = remove_elements(NatomE, A0, ind_E, tol)
@@ -279,7 +291,6 @@ end
 
 function [ind, ind_nswt, ind_swt, ind_ions, ind_elem, NE, NG, NS] = temp_values(S, NatomE)
     % List of indices with nonzero values and lengths
-
     ind_elem = 1:length(NatomE);
     ind_nswt = S.ind_nswt;
     ind_swt = S.ind_swt;
@@ -344,23 +355,23 @@ function STOP = compute_STOP(N0, deltaN0, NG, A0, NatomE, max_NatomE, tolE)
     STOP = max(max(deltaN1), deltab);
 end
 
-function A11 = update_matrix_A11(A0_T, N0, ind_nswt, NE)
-    % Compute submatrix A11
+function J11 = update_matrix_J11(A0_T, N0, ind_nswt, NE)
+    % Compute submatrix J11
     for k = NE:-1:1
-        A11(:, k) = sum(A0_T(k, ind_nswt) .* A0_T(:, ind_nswt) .* N0(ind_nswt), 2);
+        J11(:, k) = sum(A0_T(k, ind_nswt) .* A0_T(:, ind_nswt) .* N0(ind_nswt), 2);
     end
 end
 
-function A12 = update_matrix_A12(A0_T, ind_swt)
-    % Compute submatrix A12
-    A12 = A0_T(:, ind_swt);
+function J12 = update_matrix_J12(A0_T, ind_swt)
+    % Compute submatrix J12
+    J12 = A0_T(:, ind_swt);
 end
 
-function A = update_matrix_A(A0_T, A22, N0, ind_nswt, ind_swt, NE)
-    % Compute matrix A
-    A11 = update_matrix_A11(A0_T, N0, ind_nswt, NE);
-    A12 = update_matrix_A12(A0_T, ind_swt);
-    A = [A11, A12; A12', A22];
+function J = update_matrix_J(A0_T, J22, N0, ind_nswt, ind_swt, NE)
+    % Compute matrix J
+    J11 = update_matrix_J11(A0_T, N0, ind_nswt, NE);
+    J12 = update_matrix_J12(A0_T, ind_swt);
+    J = [J11, J12; J12', J22];
 end
 
 function b = update_vector_b(A0, N0, NatomE, ind, ind_nswt, ind_swt, muRT) 

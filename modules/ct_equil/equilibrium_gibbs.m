@@ -50,7 +50,9 @@ function [N0, dNi_T, dN_T, dNi_p, dN_p, STOP, STOP_ions] = equilibrium_gibbs(sel
     [temp_ind, temp_ind_nswt, temp_ind_swt, temp_ind_ions, temp_ind_elem, temp_NE, temp_NG, temp_NS] = temp_values(self.S, NatomE);
 
     % Update temp values
-    [temp_ind, temp_ind_swt, temp_ind_nswt, temp_ind_ions, temp_NG] = update_temp(N0(ind_remove_species, 1), ind_remove_species, temp_ind_swt, temp_ind_nswt, temp_ind_ions, NP, SIZE);
+    if ~isempty(ind_remove_species)
+        [temp_ind, temp_ind_swt, temp_ind_nswt, temp_ind_ions, temp_NG] = update_temp(N0(ind_remove_species, 1), ind_remove_species, temp_ind_swt, temp_ind_nswt, temp_ind_ions, NP, SIZE);
+    end
     
     % Update temp values
     temp_NS0 = temp_NS + 1;
@@ -75,9 +77,9 @@ function [N0, dNi_T, dN_T, dNi_p, dN_p, STOP, STOP_ions] = equilibrium_gibbs(sel
     %     W(i) = self.DB.(self.S.LS{i}).mm * 1e-3;
     % end
 
-    % Construction of part of matrix A
-    [A1, temp_NS0] = update_matrix_A1(A0, [], temp_NG, temp_NS, temp_NS0, temp_ind, temp_ind_elem);
-    A22 = zeros(temp_NE + 1);
+    % Construction of part of matrix J
+    [J1, temp_NS0] = update_matrix_J1(A0, [], temp_NG, temp_NS, temp_NS0, temp_ind, temp_ind_elem);
+    J22 = zeros(temp_NE + 1);
     A0_T = A0';
 
     % Solve system
@@ -101,7 +103,7 @@ function [N0, dNi_T, dN_T, dNi_p, dN_p, STOP, STOP_ions] = equilibrium_gibbs(sel
         temp_NS = length(temp_ind);
         temp_NS0 = temp_NS + 1;
         % Update A matrix
-        [A1, temp_NS0] = update_matrix_A1(A0, A1, temp_NG, temp_NS, temp_NS0, temp_ind, temp_ind_elem);
+        [J1, temp_NS0] = update_matrix_J1(A0, J1, temp_NG, temp_NS, temp_NS0, temp_ind, temp_ind_elem);
         % Reduce maximum number of iterations
         self.TN.itMax_gibbs = self.TN.itMax_gibbs / 2;
         % Compute chemical equilibrium considering condensed species
@@ -132,13 +134,13 @@ function [N0, dNi_T, dN_T, dNi_p, dN_p, STOP, STOP_ions] = equilibrium_gibbs(sel
             % fprintf('Gibbs: %f\n', Gibbs(it));
 
             % Construction of matrix A (Jacobian)
-            A = update_matrix_A(A0_T, A1, A22, N0, NP, temp_ind, temp_ind_nswt, temp_ind_swt, temp_ind_elem, temp_NG);
+            J = update_matrix_J(A0_T, J1, J22, N0, NP, temp_ind, temp_ind_nswt, temp_ind_swt, temp_ind_elem, temp_NG);
 
             % Construction of vector b            
             b = update_vector_b(A0, N0, NP, NatomE, self.E.ind_E, temp_ind_ions, temp_ind, temp_ind_nswt, temp_ind_elem, muRT);
 
-            % Solve linear system A*x = b
-            x = A\b;
+            % Solve linear system J*x = b
+            x = J\b;
 
             % Check singular matrix
             if any(isnan(x)) || any(isinf(x))
@@ -176,8 +178,8 @@ function [N0, dNi_T, dN_T, dNi_p, dN_p, STOP, STOP_ions] = equilibrium_gibbs(sel
             % Update temp values in order to remove species with moles < tolerance
             [temp_ind, temp_ind_swt, temp_ind_nswt, temp_ind_ions, temp_NG, temp_NS] = update_temp(N0(temp_ind, 1), temp_ind, temp_ind_swt, temp_ind_nswt, temp_ind_ions, NP, SIZE);
             
-            % Update matrix A
-            [A1, temp_NS0] = update_matrix_A1(A0, A1, temp_NG, temp_NS, temp_NS0, temp_ind, temp_ind_elem);
+            % Update matrix J
+            [J1, temp_NS0] = update_matrix_J1(A0, J1, temp_NG, temp_NS, temp_NS0, temp_ind, temp_ind_elem);
 
             % Debug            
             % aux_delta(it) = min(delta);
@@ -196,7 +198,7 @@ function [N0, dNi_T, dN_T, dNi_p, dN_p, STOP, STOP_ions] = equilibrium_gibbs(sel
         
             % Remove element E from matrix
             temp_ind_elem(self.E.ind_E) = [];
-            A22 = zeros(length(temp_ind_elem) + 1);
+            J22 = zeros(length(temp_ind_elem) + 1);
             temp_NE = temp_NE - 1;
 
         end
@@ -266,9 +268,9 @@ function [temp_ind, temp_ind_swt, FLAG_CONDENSED] = check_condensed_species(A0, 
     temp_ind = [temp_ind_nswt, temp_ind_swt];
 end
 
-function ind_remove_species = find_remove_species(A, FLAG_REMOVE_ELEMENTS)
-    % Get flag of species to be removed from stoichiometrix matrix
-    ind_remove_species = find(sum(A(:, FLAG_REMOVE_ELEMENTS) > 0, 2) > 0);
+function ind_remove_species = find_remove_species(A0, FLAG_REMOVE_ELEMENTS)
+    % Get flag of species to be removed from stoichiometrix matrix A0
+    ind_remove_species = find(sum(A0(:, FLAG_REMOVE_ELEMENTS) > 0, 2) > 0);
 end
 
 function [A0, ind_remove_species, ind_E, NatomE] = remove_elements(NatomE, A0, ind_E, tol)
@@ -336,13 +338,13 @@ function [temp_ind, temp_ind_swt, temp_ind_nswt, temp_ind_ions, temp_NG, temp_NS
     temp_NS = length(temp_ind);
 end
 
-function [A1, temp_NS0] = update_matrix_A1(A0, A1, temp_NG, temp_NS, temp_NS0, temp_ind, temp_ind_elem)
-    % Update submatrix A1
+function [J1, temp_NS0] = update_matrix_J1(A0, J1, temp_NG, temp_NS, temp_NS0, temp_ind, temp_ind_elem)
+    % Update submatrix J1
     if temp_NS < temp_NS0
-        A11 = eye(temp_NS);
-        A11(temp_NG+1:end, temp_NG+1:end) = 0;
-        A12 = -[A0(temp_ind, temp_ind_elem), [ones(temp_NG, 1); zeros(temp_NS-temp_NG, 1)]];
-        A1 = [A11, A12];
+        J11 = eye(temp_NS);
+        J11(temp_NG+1:end, temp_NG+1:end) = 0;
+        J12 = -[A0(temp_ind, temp_ind_elem), [ones(temp_NG, 1); zeros(temp_NS-temp_NG, 1)]];
+        J1 = [J11, J12];
         temp_NS0 = temp_NS;
     end
 
@@ -357,19 +359,19 @@ function [temp_ind, temp_ind_swt] = check_cryogenic(temp_ind, temp_ind_swt, temp
 
 end
 
-function A2 = update_matrix_A2(A0_T, A22, N0, NP, temp_ind, temp_ind_nswt, temp_ind_swt, temp_ind_elem, temp_NG)
-    % Update submatrix A2
-    A20 = N0(temp_ind, 1)';
-    A20(temp_NG+1:end) = 0;
-    A21 = [[N0(temp_ind_nswt, 1)' .* A0_T(temp_ind_elem, temp_ind_nswt), A0_T(temp_ind_elem, temp_ind_swt)]; A20];
-    A22(end, end) = -NP;
-    A2 = [A21, A22];
+function J2 = update_matrix_J2(A0_T, J22, N0, NP, temp_ind, temp_ind_nswt, temp_ind_swt, temp_ind_elem, temp_NG)
+    % Update submatrix J2
+    J20 = N0(temp_ind, 1)';
+    J20(temp_NG+1:end) = 0;
+    J21 = [[N0(temp_ind_nswt, 1)' .* A0_T(temp_ind_elem, temp_ind_nswt), A0_T(temp_ind_elem, temp_ind_swt)]; J20];
+    J22(end, end) = -NP;
+    J2 = [J21, J22];
 end
 
-function A = update_matrix_A(A0_T, A1, A22, N0, NP, temp_ind, temp_ind_nswt, temp_ind_swt, temp_ind_elem, temp_NG)
-    % Update matrix A (Jacobian)
-    A2 = update_matrix_A2(A0_T, A22, N0, NP, temp_ind, temp_ind_nswt, temp_ind_swt, temp_ind_elem, temp_NG);
-    A = [A1; A2];
+function J = update_matrix_J(A0_T, J1, J22, N0, NP, temp_ind, temp_ind_nswt, temp_ind_swt, temp_ind_elem, temp_NG)
+    % Update matrix J (Jacobian)
+    J2 = update_matrix_J2(A0_T, J22, N0, NP, temp_ind, temp_ind_nswt, temp_ind_swt, temp_ind_elem, temp_NG);
+    J = [J1; J2];
 end
 
 function b = update_vector_b(A0, N0, NP, NatomE, ind_E, temp_ind_ions, temp_ind, temp_ind_nswt, temp_ind_elem, muRT)

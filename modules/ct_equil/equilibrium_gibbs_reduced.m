@@ -52,7 +52,9 @@ function [N0, dNi_T, dN_T, dNi_p, dN_p, STOP, STOP_ions] = equilibrium_gibbs_red
     [ind, ind_nswt, ind_swt, ind_ions, ind_elem, NE, NG, NS] = temp_values(self.S, NatomE);
     
     % Update temp values
-    [ind, ind_swt, ind_nswt, ind_ions, NG] = update_temp(N0, ind_remove_species, ind_swt, ind_nswt, ind_ions, NP, SIZE);
+    if ~isempty(ind_remove_species)
+        [ind, ind_swt, ind_nswt, ind_ions, NG] = update_temp(N0, ind_remove_species, ind_swt, ind_nswt, ind_ions, NP, SIZE);
+    end
     
     % First, compute chemical equilibrium with only gaseous species
     ind_nswt_0 = ind_nswt;
@@ -93,7 +95,7 @@ function [N0, dNi_T, dN_T, dNi_p, dN_p, STOP, STOP_ions] = equilibrium_gibbs_red
     end
     
     % Update matrix J (jacobian) to compute the thermodynamic derivatives
-    J = update_matrix_J(A0_T, J22, N0, NP, ind_nswt, ind_swt, NE);
+    J = update_matrix_J(A0_T(ind_elem, :), J22, N0, NP, ind_nswt, ind_swt, NE);
     J(end, end) = 0;
     % Standard-state enthalpy [J/mol]
     h0 = set_h0(self.S.LS, TP, self.DB);
@@ -163,8 +165,8 @@ function [N0, dNi_T, dN_T, dNi_p, dN_p, STOP, STOP_ions] = equilibrium_gibbs_red
             % Apply correction
             N0(ind_nswt, 1) = N0(ind_nswt, 1) .* exp(delta * Delta_ln_nj);
             N0(ind_swt, 1) = N0(ind_swt, 1) + delta * Delta_nj;
-            NP = sum(N0(ind_nswt, 1)) * exp(delta * Delta_ln_NP);
-            
+            NP = NP * exp(delta * Delta_ln_NP);
+
             % Compute STOP criteria
             STOP = compute_STOP(NP, Delta_ln_NP, N0(ind, 1), [Delta_ln_nj; Delta_nj], NG, A0(ind, :), NatomE, max_NatomE, self.TN.tolE);
             
@@ -180,7 +182,7 @@ function [N0, dNi_T, dN_T, dNi_p, dN_p, STOP, STOP_ions] = equilibrium_gibbs_red
         [N0, STOP_ions] = check_convergence_ions(N0, A0, self.E.ind_E, ind_nswt, ind_ions, self.TN.tolN, self.TN.tol_pi_e, self.TN.itMax_ions);
         
         if ~any(N0(ind_ions) > self.TN.tolN) && ~isempty(N0(ind_ions))
-            [ind, ind_swt, ind_nswt, ind_ions, NG, NS, N0] = update_temp(N0, ind, ind_swt, ind_nswt, ind_ions, NP, SIZE);
+            [ind, ind_swt, ind_nswt, ind_ions, NG, NS] = update_temp(N0, ind, ind_swt, ind_nswt, ind_ions, NP, SIZE);
             
             if ~isempty(ind_ions)
                 return
@@ -370,7 +372,7 @@ end
 
 function J22 = update_matrix_J22(J22, N0, NP, ind_nswt)
     % Compute submatrix J22
-    J22(end, end) = sum(N0(ind_nswt, 1) - NP);
+    J22(end, end) = sum(N0(ind_nswt, 1)) - NP;
 end
 
 function J = update_matrix_J(A0_T, J22, N0, NP, ind_nswt, ind_swt, NE)

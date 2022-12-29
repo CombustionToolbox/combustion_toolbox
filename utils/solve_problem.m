@@ -15,9 +15,7 @@ function self = solve_problem(self, ProblemType)
         self = check_inputs(self);
         % Get Flags and length of the loop
         self = get_FLAG_N(self);
-        % Get oxidizer of reference
-        self = get_oxidizer_reference(self);
-
+        % Loop
         for i = self.C.l_phi:-1:1
             % Set problem conditions by case
             self = set_problem_conditions(self, i);

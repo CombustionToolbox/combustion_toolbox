@@ -9,10 +9,14 @@ function self = get_oxidizer_reference(self, varargin)
     %                   included the oxidizer of reference which can be
     %                   obtained as self.S.ind_ox_ref
     
+    % Definitions
+    LS = self.S.LS;
+
+    % Unpack
     if nargin > 1
-        self.S.LS = {}; self.PD.S_Oxidizer = {};
-        self.S.LS(1, :) = varargin{1};
+        LS = {}; self.PD.S_Oxidizer = {};
         self.PD.S_Oxidizer(1, :) = varargin{1};
+        LS(1, :) = varargin{1};
     end
 
     % Check if there are oxidizers in the mixtures
@@ -26,17 +30,17 @@ function self = get_oxidizer_reference(self, varargin)
     % selected as reference oxidizers in this order. Otherwise, the first
     % oxidizer with oxygen as element will be selected.
     if any(ismember(self.PD.S_Oxidizer, 'O2'))
-        self.S.ind_ox_ref = find_ind(self.S.LS, 'O2');
+        self.S.ind_ox_ref = find_ind(LS, 'O2');
         self.S.atoms_ox_ref = 2;
     elseif any(ismember(self.PD.S_Oxidizer, 'O2bLb'))
-        self.S.ind_ox_ref = find_ind(self.S.LS, 'O2bLb');
+        self.S.ind_ox_ref = find_ind(LS, 'O2bLb');
         self.S.atoms_ox_ref = 2;
     else
         % Get first oxidizer with oxygen as element
         temp_ind = find(contains(self.PD.S_Oxidizer, 'O'), 1);
         species = self.PD.S_Oxidizer{temp_ind};
         % Find index of reference oxidizer
-        self.S.ind_ox_ref = find_ind(self.S.LS, species);
+        self.S.ind_ox_ref = find_ind(LS, species);
         % Find position oxygen element
         temp_ind_O = find(self.PD.S_Oxidizer{temp_ind} == 'O');
         % Get position numbers and letters

@@ -10,6 +10,8 @@ function self = gui_get_reactants(app, event, self, varargin)
     app = gui_get_typeSpecies(app);
     % Get species in the mixture
     species = app.UITable_R.Data(:, 1);
+    % Get oxidizer of reference
+    self = get_oxidizer_reference(self, species);
     % Get number of moles of each species in the mixture
     moles = gui_get_moles(app, event, self, FLAG_COMPUTE_FROM_PHI);
     % Get temperature of the species in the mixture
@@ -71,8 +73,8 @@ function moles = gui_get_moles(app, event, self, FLAG_COMPUTE_FROM_PHI)
     if FLAG_COMPUTE_FROM_PHI
         % Set equivalence ratio
         self.PD.phi.value = gui_get_prop(self, 'phi', app.edit_phi.Value, 'direction', 'first');
-        % Get proportion of inert_O2
-        app.PD.ratio_oxidizers_O2 = gui_ratio_oxidizers_O2(app);
+        % Get proportion of oxidizers_O2
+        app.PD.ratio_oxidizers_O2 = gui_ratio_oxidizers_O2(app, self.S.ind_ox_ref);
         % compute moles from equivalence ratio
         moles = gui_compute_moles_from_equivalence_ratio(app, self);
     else
@@ -125,19 +127,11 @@ function moles = gui_compute_moles_from_equivalence_ratio(app, self)
 
 end
 
-function ratio_oxidizers_O2 = gui_ratio_oxidizers_O2(app)
+function ratio_oxidizers_O2 = gui_ratio_oxidizers_O2(app, ind_ox_ref)
     % Get proportion of oxidizers with oxidizer of reference (default: O2)
-    index_oxidizer_ref = find_ind(app.UITable_R.Data(:, 1), 'O2');
-    if isempty(index_oxidizer_ref)
-        index_oxidizer_ref = find_ind(app.UITable_R.Data(:, 1), 'O2bLb');
-        if isempty(index_oxidizer_ref)
-            index_oxidizer_ref = app.ind_Oxidizer(1);
-        end
 
-    end
-
-    if ~isempty(index_oxidizer_ref)
-        ratio_oxidizers_O2 = cell2vector(app.UITable_R.Data(app.ind_Oxidizer, 2))' / cell2vector(app.UITable_R.Data(index_oxidizer_ref, 2));
+    if ~isempty(ind_ox_ref)
+        ratio_oxidizers_O2 = cell2vector(app.UITable_R.Data(app.ind_Oxidizer, 2))' / cell2vector(app.UITable_R.Data(ind_ox_ref, 2));
     else
         ratio_oxidizers_O2 = 1;
     end

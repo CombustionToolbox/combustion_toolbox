@@ -22,8 +22,10 @@ function position = get_monitor_positions(varargin)
                 env = java.awt.GraphicsEnvironment.getLocalGraphicsEnvironment();
                 % Get screen device objects
                 devices = env.getScreenDevices();
+                % Get initial points
+                position = get_monitor_positions_MATLAB(varargin{:});
                 % Get screen size for the selected monitor
-                position = [1, 1, ...
+                position = [position(1), position(2), ...
                     devices(monitor_id).getDisplayMode().getWidth(),...
                     devices(monitor_id).getDisplayMode().getHeight()];
             catch
@@ -38,24 +40,28 @@ function position = get_monitor_positions(varargin)
     
     % Otherwise, get screen position using MATLAB's routines
     catch
-        position_monitors = get(0, 'MonitorPositions');
-
-        if nargin
-            % Get position for the given monitor
-            try
-                monitor_id = varargin{1};
-                position = position_monitors(monitor_id, :);
-            catch
-                monitor_id = 1;
-                position = position_monitors(monitor_id, :);
-            end
-
-        else
-            % Find main monitor
-            ind_main = find(position_monitors == 1, 1);
-            position = position_monitors(ind_main, :);
-        end
+        position = get_monitor_positions_MATLAB(varargin{:});
 
     end
 
+end
+
+function position = get_monitor_positions_MATLAB(varargin)
+    position_monitors = get(0, 'MonitorPositions');
+
+    if nargin
+        % Get position for the given monitor
+        try
+            monitor_id = varargin{1};
+            position = position_monitors(monitor_id, :);
+        catch
+            monitor_id = 1;
+            position = position_monitors(monitor_id, :);
+        end
+
+    else
+        % Find main monitor
+        ind_main = find(position_monitors == 1, 1);
+        position = position_monitors(ind_main, :);
+    end
 end

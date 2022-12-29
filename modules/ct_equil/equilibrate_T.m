@@ -31,9 +31,9 @@ function mix2 = equilibrate_T(self, mix1, pP, TP, varargin)
     % Compute number of moles
     [N, self.dNi_T, self.dN_T, self.dNi_p, self.dN_p, STOP, STOP_ions] = select_equilibrium(self_ListProducts, pP, TP, mix1, guess_moles);
     % Reshape composition matrix N, and partial composition partial derivatives 
-    N = reshape_vectors(self, self_ListProducts, N);
-    self.dNi_T = reshape_vectors(self, self_ListProducts, self.dNi_T);
-    self.dNi_p = reshape_vectors(self, self_ListProducts, self.dNi_p);
+    N = reshape_vector(self, self_ListProducts, N);
+    self.dNi_T = reshape_vector(self, self_ListProducts, self.dNi_T);
+    self.dNi_p = reshape_vector(self, self_ListProducts, self.dNi_p);
     % Add moles of frozen species to the moles vector N
     N_mix1 = moles(mix1);
     N(self.S.ind_frozen) = N_mix1(self.S.ind_frozen);
@@ -111,7 +111,7 @@ function mix2 = set_properties(self, mix1, properties_matrix, pP, TP, STOP, STOP
     mix2.error_moles_ions = STOP_ions;
 end
 
-function vector = reshape_vectors(self, self_modified, vector_modified)
+function vector = reshape_vector(self, self_modified, vector_modified)
     % Reshape vector containing all the species
     index = find_ind(self.S.LS, self_modified.S.LS);
     vector = self.C.N0.value(:, 1);

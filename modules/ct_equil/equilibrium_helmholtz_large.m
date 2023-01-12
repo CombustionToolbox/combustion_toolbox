@@ -219,7 +219,7 @@ function [temp_ind, temp_ind_swt, FLAG_CONDENSED] = check_condensed_species(A0, 
     % Initialize false vector
     temp = false(NC, 1);
     
-    for i = length(NC):-1:1
+    for i = NC:-1:1
         % Only check if there were atoms of the species in the initial
         % mixture
         if ~sum(A0(temp_ind_swt(i), temp_ind_elem))

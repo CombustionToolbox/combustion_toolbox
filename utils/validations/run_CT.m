@@ -124,12 +124,8 @@ function self = run_CT(varargin)
         self = set_prop(self, 'u1', Velocity, 'phi', 1 * ones(1, length(Velocity)));
     end
 
-    % INITIALIZE TIMER
-    self.Misc.timer_loop = tic;
     % SOLVE PROBLEM
     self = solve_problem(self, ProblemType);
-    % SAVE TIMER (COMPUTATIONAL TIME [s])
-    self.Misc.timer_loop = toc(self.Misc.timer_0);
     % SET PROPERTIES AS CEA
     for i = length(self.PD.range):-1:1
         % Mix 1

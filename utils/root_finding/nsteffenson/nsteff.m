@@ -1,5 +1,5 @@
-function [x, STOP, guess_moles] = newton(self, mix1, pP, field, x0, guess_moles)
-    % Find the temperature [K] (root) for the set chemical transformation at equilibrium using the second-order Newton-Raphson method
+function [x, STOP, guess_moles] = nsteff(self, mix1, pP, field, x0, guess_moles)
+    % Find the temperature [K] (root) for the set chemical transformation at equilibrium using the third-order Newton-Steffensen method
     %
     % Args:
     %     self (struct): Data of the mixture, conditions, and databases
@@ -26,8 +26,12 @@ function [x, STOP, guess_moles] = newton(self, mix1, pP, field, x0, guess_moles)
     while STOP > self.TN.tol0 && it < self.TN.itMax
         it = it + 1;
         [f0, fprime0, frel, guess_moles] = get_ratio_newton(self, mix1, pP, field, x0, guess_moles);
-        % Compute solution
+        % Compute pseudo-solution
         x = abs(x0 - f0 / fprime0);
+        % Re-estimation of first derivative
+        f0_2 = get_ratio_newton(self, mix1, pP, field, x, guess_moles);
+        % Compute solution
+        x = abs(x0 - f0^2 / (fprime0 * (f0 - f0_2)));
         % Compute stop criteria
         STOP = max(abs((x - x0) / x), frel);
         % Update solution
@@ -39,9 +43,9 @@ function [x, STOP, guess_moles] = newton(self, mix1, pP, field, x0, guess_moles)
     % debug_plot_error(it, aux_STOP);
     if STOP > self.TN.tol0
         fprintf('\n***********************************************************\n')
-        fprintf('Newton method not converged\nCalling Newton-Steffensen root finding algorithm\n')
+        fprintf('Newton method not converged\nCalling Steffensen-Aitken root finding algorithm\n')
         x0 = regula_guess(self, mix1, pP, field);
-        [x, STOP] = nsteff(self, mix1, pP, field, x0, []);
+        [x, STOP] = steff(self, mix1, pP, field, x0, []);
     else
         print_error_root(it, self.TN.itMax, x, STOP);
     end

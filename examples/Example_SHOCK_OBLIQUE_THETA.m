@@ -24,8 +24,6 @@
 
 %% INITIALIZE
 self = App('Air_ions');
-% self = App({'O2', 'N2', 'Ar', 'CO2'}); % Frozen
-% self = App({'O2'}); % Frozen
 %% INITIAL CONDITIONS
 self = set_prop(self, 'TR', 300, 'pR', 1 * 1.01325);
 self.PD.S_Oxidizer = {'N2', 'O2', 'Ar', 'CO2'};

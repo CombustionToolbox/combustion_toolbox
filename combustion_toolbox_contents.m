@@ -1,5 +1,5 @@
 % -------------------------------------------------------------------------
-% COMBUSTION TOOLBOX @v0.9.99c
+% COMBUSTION TOOLBOX @v0.9.99f
 % A MATLAB-GUI based open-source tool for solving gaseous combustion problems
 %
 % Type of problems:
@@ -15,7 +15,7 @@
 %   * SHOCK_OBLIQUE_R ----> Oblique incident and reflected states
 %   * SHOCK_POLAR --------> Shock polar curves
 %   * SHOCK_POLAR_R ------> Shock polar curves for incident and reflected states
-%   * SHOCK_IDEAL_GAS ----> Planar incident shock wave for a fixed adibatic index
+%   * SHOCK_IDEAL_GAS ----> Planar incident shock wave for a fixed adiabatic index
 %   * DET ----------------> Chapman-Jouguet Detonation
 %   * DET_R --------------> Reflected Chapman-Jouguet Detonation
 %   * DET_OBLIQUE --------> Oblique Detonation
@@ -72,7 +72,7 @@
 %          PhD Candidate - Group Fluid Mechanics
 %          Universidad Carlos III de Madrid
 %                  
-% Last update Dec 29 2022
+% Last update Mar 06 2023
 % -------------------------------------------------------------------------
 help combustion_toolbox_contents.m
 

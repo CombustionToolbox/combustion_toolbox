@@ -4,7 +4,7 @@
 % Compute pre-shock and post-shock state for a oblique detonation
 % considering Chapman-Jouguet (CJ) theory for a stoichiometric CH4-air
 % mixture at standard conditions, a set of 24 species considered, an 
-% overdrive of 4 and a set of deflection angles [10:5:50] [deg].
+% overdrive of 4 and a set of deflection angles [15:5:50] [deg].
 %   
 % Soot formation == {'CO2', 'CO', 'H2O', 'H2', 'O2', 'N2', 'He', 'Ar',...
 %                    'HCN','H','OH','O','CN','NH3','CH4','C2H4','CH3',...
@@ -28,7 +28,7 @@ self.PD.S_Oxidizer = {'N2', 'O2', 'Ar', 'CO2'};
 self.PD.ratio_oxidizers_O2 = [78.084, 20.9476, 0.9365, 0.0319] ./ 20.9476;
 %% ADDITIONAL INPUTS (DEPENDS OF THE PROBLEM SELECTED)
 drive_factor = 4;
-self = set_prop(self, 'drive_factor', drive_factor, 'theta', 10:5:50);
+self = set_prop(self, 'drive_factor', drive_factor, 'theta', 15:5:50);
 %% SOLVE PROBLEM
 self = solve_problem(self, 'DET_OBLIQUE');
 %% DISPLAY RESULTS (PLOTS)

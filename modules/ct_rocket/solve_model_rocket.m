@@ -21,10 +21,10 @@ function [mix2_inj, mix2_c, mix3, mix4] = solve_model_rocket(self, mix1, mix2_in
     % Returns:
     %     Tuple containing
     %
-    %     - mix2_1 (struct): Properties of the mixture at injector of the chamber (only FAC)
-    %     - mix2 (struct): Properties of the mixture at the outlet of the chamber
-    %     - mix3 (struct): Properties of the mixture at the throat
-    %     - mix4 (struct): Properties of the mixture at the given exit points
+    %     * mix2_1 (struct): Properties of the mixture at injector of the chamber (only FAC)
+    %     * mix2 (struct): Properties of the mixture at the outlet of the chamber
+    %     * mix3 (struct): Properties of the mixture at the throat
+    %     * mix4 (struct): Properties of the mixture at the given exit points
 
     if self.PD.FLAG_IAC
         mix2_inj = [];
@@ -32,7 +32,7 @@ function [mix2_inj, mix2_c, mix3, mix4] = solve_model_rocket(self, mix1, mix2_in
         mix3 = compute_throat_IAC(self, mix2_c, mix3);
         mix4 = compute_exit(self, mix2_c, mix3, mix4, Aratio);
     else
-        [mix2_inj, mix2_c, mix3] = compute_chamber_FAC(self, mix1, mix2_inj, mix2_c, mix3);
+        [mix2_inj, mix2_c, mix3] = compute_FAC(self, mix1, mix2_inj, mix2_c, mix3);
         mix4 = compute_exit(self, mix2_c, mix3, mix4, Aratio, mix2_inj);
     end
 

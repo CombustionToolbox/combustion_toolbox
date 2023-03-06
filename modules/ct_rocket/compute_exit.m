@@ -39,7 +39,7 @@ function mix4 = compute_exit(self, mix2, mix3, mix4, Aratio, varargin)
         % Extract pressure [bar]
         pressure = extract_pressure(logP, mix2.p);
         % Solve chemical equilibrium (SP)
-        mix4 = compute_chemical_equilibria(self, mix2, pressure, mix4);
+        mix4 = equilibrate(self, mix2, pressure, mix4);
         % Compute velocity at the exit point
         mix4.u = compute_velocity(mix2_in, mix4);
         % Compute new estimate

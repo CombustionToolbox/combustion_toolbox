@@ -11,7 +11,7 @@ function self = gui_get_reactants(app, event, self, varargin)
     % Get species in the mixture
     species = app.UITable_R.Data(:, 1);
     % Get oxidizer of reference
-    self = get_oxidizer_reference(self, species);
+    self = get_oxidizer_reference(self, species(app.ind_Oxidizer));
     % Get number of moles of each species in the mixture
     moles = gui_get_moles(app, event, self, FLAG_COMPUTE_FROM_PHI);
     % Get temperature of the species in the mixture

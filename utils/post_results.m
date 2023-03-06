@@ -14,6 +14,7 @@ function post_results(self)
     phi = self.PD.phi.value;
     range = self.PD.range;
     range_name = self.PD.range_name;
+    range_name(range_name == 'R' | range_name == 'P') = [];
     ProblemType = self.PD.ProblemType;
     % -----------------------------------
     titlename = strrep(ProblemType, '_', ' ');
@@ -31,11 +32,11 @@ function post_results(self)
 
     % PLOTS REACTANTS
     if (self.Misc.FLAGS_PROP.TR || self.Misc.FLAGS_PROP.pR) && FLAG_PLOT_RANGE
-        plot_molar_fractions(self, mix2, self.PD.range_name, 'Xi');
+        plot_molar_fractions(self, mix2, range_name, 'Xi');
     elseif isfield(self.Misc.FLAGS_PROP, 'pP')
 
         if self.Misc.FLAGS_PROP.pP && FLAG_PLOT_RANGE
-            plot_molar_fractions(self, mix2, self.PD.range_name, 'Xi');
+            plot_molar_fractions(self, mix2, range_name, 'Xi');
         end
 
     end

@@ -1,4 +1,4 @@
-function debug_plot_error(it, STOP, Delta)
+function debug_plot_error(it, STOP, varargin)
     % Debug function that plots the error per iteration along with the
     % value of the correction factor
 
@@ -7,7 +7,12 @@ function debug_plot_error(it, STOP, Delta)
     yyaxis left
     plot(1:1:it, STOP, '-', 'Color', '#0072BD');
     ylabel('Error', 'Interpreter', 'latex')
-    yyaxis right
-    plot(1:1:it, Delta, '-', 'Color', '#D95319');
-    ylabel('$\Delta$', 'Interpreter', 'latex')
+    
+    if nargin > 2
+        Delta = varargin{1};
+        yyaxis right
+        plot(1:1:it, Delta, '-', 'Color', '#D95319');
+        ylabel('$\Delta$', 'Interpreter', 'latex')
+    end
+
 end

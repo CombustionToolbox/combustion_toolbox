@@ -25,7 +25,7 @@ function [dNi_T, dN_T] = equilibrium_dT(J, N0, A0, NE, ind_nswt, ind_swt, ind_el
     dNi_T = zeros(length(N0), 1);
     % Construction of vector b
     b = update_vector_b(A0, N0, ind_nswt, ind_swt, H0RT);
-    % Solve of the linear system A*x = b
+    % Solve of the linear system J*x = b
     x = J \ b;
     % Extract solution
     dpii_T = x(1:NE);

@@ -35,9 +35,12 @@ function speciesLatex = species2latex(species)
     % Check if ions
     speciesLatex = strrep(speciesLatex, 'plus', '$^+$');
     speciesLatex = strrep(speciesLatex, 'minus', '$^-$');
-    % Check if is a condensed species
-    speciesLatex = strrep(speciesLatex, 'bgrb', '$_{(gr)}$');
-    speciesLatex = strrep(speciesLatex, 'bLb', '$_{(L)}$');
+    % Check if is there are parenthesis
+    [ind_start, ind_end] = regexp(speciesLatex, '(?=b)(.*?)(?=b)');
+    if ind_start
+        speciesLatex(ind_start(1)) = '(';
+        speciesLatex(ind_end(end) + 1) = ')';
+    end
     % Check concatenate $$
     speciesLatex = strrep(speciesLatex, '$$', '');
     % Check suffix

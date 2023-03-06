@@ -11,16 +11,21 @@ function [gpoint, gpoint_relative] = get_gpoint(self, mix1, pP, field, x0, guess
     % Returns:
     %     Tuple containing
     %
-    %     - gpoint (float): Fixed point of the function [kJ] (HP, EV) or [kJ/K] (SP, SV)
-    %     - gpoint_relative (float): Fixed relative point of the function [kJ] (HP, EV) or [kJ/K] (SP, SV)
+    %     * gpoint (float): Fixed point of the function [kJ] (HP, EV) or [kJ/K] (SP, SV)
+    %     * gpoint_relative (float): Fixed relative point of the function [kJ] (HP, EV) or [kJ/K] (SP, SV)
     
     try
+        % Compute TP problem
         mix2 = equilibrate_T(self, mix1, pP, x0, guess_moles);
+        % Compute f(x) = f2(x) - f1 = 0
         gpoint = (mix2.(field) - mix1.(field));
+        % Compute f(x) / f2(x)
         gpoint_relative = gpoint / (mix2.(field));
+
         if strcmpi(field, 's')
             gpoint = gpoint * 1e3;
         end
+
     catch
         gpoint = NaN;
         gpoint_relative = NaN;

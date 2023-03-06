@@ -1,4 +1,4 @@
-function [mix3, varargout] = compute_rocket_parameters(mix2, mix3, gravity, varargin)
+function [mix3, varargout] = rocket_parameters(mix2, mix3, gravity, varargin)
     % Compute Rocket performance parameters at the throat
     %
     % This method is based on Gordon, S., & McBride, B. J. (1994). NASA reference publication,

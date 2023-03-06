@@ -21,7 +21,7 @@ function mix3 = compute_throat_IAC(self, mix2, mix3)
     % Loop
     while STOP > self.TN.tol_rocket && it < self.TN.it_rocket
         it = it + 1;
-        mix3 = compute_chemical_equilibria(self, mix2, pressure, mix3);
+        mix3 = equilibrate(self, mix2, pressure, mix3);
         mix3.u = compute_velocity(mix2, mix3);
         pressure = compute_pressure(mix3);
         STOP = compute_STOP(mix3);

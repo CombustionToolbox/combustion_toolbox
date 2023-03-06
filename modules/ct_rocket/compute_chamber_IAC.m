@@ -16,7 +16,7 @@ function mix2 = compute_chamber_IAC(self, mix1, mix2)
     % Definitions
     self.PD.ProblemType = 'HP';
     % Compute chemical equilibria at the exit of the chamber (HP)
-    mix2 = compute_chemical_equilibria(self, mix1, mix1.p, mix2);
+    mix2 = equilibrate(self, mix1, mix1.p, mix2);
     % Set A_chamber/A_throat
     mix2.Aratio = Inf;
 end

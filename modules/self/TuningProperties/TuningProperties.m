@@ -12,7 +12,7 @@ function self = TuningProperties()
     %     root_method (function): Method for root finding                                           (default: newton)
     %     itMax (float):          Max number of iterations - root finding method - HP, EV, SP, SV   (default: 30)
     %     root_T0_l (float):      First guess T [K] left branch - root finding method               (default: 1000)
-    %     root_T0_r (float):      First guess T [K] right branch - root finding method              (default: 2000)
+    %     root_T0_r (float):      First guess T [K] right branch - root finding method              (default: 3000)
     %     root_T0 (float):        Guess T[K] if it's of previous range - root finding method        (default: 3000)
     %     tol_shocks (float):     Tolerance of shocks routines                                      (default: 5e-05)
     %     it_shocks (float):      Max number of iterations - shocks and detonations                 (default: 50)
@@ -32,7 +32,7 @@ function self = TuningProperties()
     self.description = "Tuning properties";
     % Attributes
     % * Flags
-    self.FLAG_FAST = false;     % Flag indicating use guess composition of the previous computation
+    self.FLAG_FAST = true;     % Flag indicating use guess composition of the previous computation
     self.FLAG_TCHEM_FROZEN = false; % Flag to considerate a thermochemically frozen gas
     % * Chemical equilibrium TP, TV
     self.itMax_gibbs = 70;      % Max number of iterations - Gibbs/Helmholtz minimization method
@@ -45,10 +45,10 @@ function self = TuningProperties()
     self.T_ions = 500;          % Minimum temperature [K] to consider ionized species
     % * Chemical equilibrium HP, EV, SP, SV
     self.tol0 = 1e-3;           % Tolerance of the root finding algorithm
-    self.root_method = @newton; % Root finding method
+    self.root_method = @newton; % Root finding method [newton (2nd order), steff (2nd order), or nsteff (3rd order)]
     self.itMax = 30;            % Max number of iterations - root finding method
     self.root_T0_l = 1000;      % First guess T[K] left branch - root finding method
-    self.root_T0_r = 2000;      % First guess T[K] right branch - root finding method
+    self.root_T0_r = 3000;      % First guess T[K] right branch - root finding method
     self.root_T0   = 3000;      % Guess T[K] if it's of previous range - root finding method
     % * Shocks and detonations 
     self.tol_shocks = 1e-5;     % Tolerance of shocks/detonations kernel

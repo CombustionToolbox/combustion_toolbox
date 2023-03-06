@@ -15,6 +15,8 @@ function self = solve_problem(self, ProblemType)
         self = check_inputs(self);
         % Get Flags and length of the loop
         self = get_FLAG_N(self);
+        % Initialize loop timer
+        self.Misc.timer_loop = tic;
         % Loop
         for i = self.C.l_phi:-1:1
             % Set problem conditions by case
@@ -30,8 +32,10 @@ function self = solve_problem(self, ProblemType)
         end
 
         % Print execution time
-        self.Misc.timer_loop = toc(self.Misc.timer_0);
-        fprintf('Elapsed time is %.6g seconds\n', self.Misc.timer_loop);
+        self.Misc.timer_0 = toc(self.Misc.timer_0);
+        self.Misc.timer_loop = toc(self.Misc.timer_loop);
+        fprintf('Elapsed time is %.6g seconds\n', self.Misc.timer_0);
+        fprintf('Elapsed time in the loop is %.6g seconds\n', self.Misc.timer_loop);
         % Retrieve range values (problem set only)
         if isfield(self.PD, 'range_name')
             self.PD.(self.PD.range_name).value = self.PD.range;

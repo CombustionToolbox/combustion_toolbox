@@ -1,4 +1,4 @@
-function [N0, dNi_T, dN_T, dNi_p, dN_p, STOP, STOP_ions] = equilibrium_helmholtz(self, vP, TP, mix1, guess_moles)
+function [N0, dNi_T, dN_T, dNi_p, dN_p, ind, STOP, STOP_ions] = equilibrium_helmholtz(self, vP, TP, mix1, guess_moles)
     % Obtain equilibrium composition [moles] for the given temperature [K] and volume [m3].
     % The code stems from the minimization of the free energy of the system by using Lagrange
     % multipliers combined with a Newton-Raphson method, upon condition that initial gas
@@ -25,6 +25,7 @@ function [N0, dNi_T, dN_T, dNi_p, dN_p, STOP, STOP_ions] = equilibrium_helmholtz
     %     * dN_T (float): Thermodynamic derivative of the moles of the mixture respect to temperature
     %     * dNi_p (float): Thermodynamic derivative of the moles of the species respect to pressure
     %     * dN_p (float): Thermodynamic derivative of the moles of the mixture respect to pressure
+    %     * ind (float): List of chemical species indices
     %     * STOP (float): Relative error in moles of species [-] 
     %     * STOP_ions (float): Relative error in moles of ionized species [-] 
 
@@ -41,7 +42,7 @@ function [N0, dNi_T, dN_T, dNi_p, dN_p, STOP, STOP_ions] = equilibrium_helmholtz
     NP = 0.1;
     SIZE = -log(self.TN.tolN);
     FLAG_CONDENSED = false;
-    
+
     % Set moles from guess_moles (if it was given) to 1e-6 to avoid singular matrix
     guess_moles(guess_moles < self.TN.tolN_guess) = self.TN.tolN_guess;
 
@@ -56,19 +57,40 @@ function [N0, dNi_T, dN_T, dNi_p, dN_p, STOP, STOP_ions] = equilibrium_helmholtz
     if ~isempty(ind_remove_species)
         [ind, ind_swt, ind_nswt, ind_ions, NG] = update_temp(N0, ind_remove_species, ind_swt, ind_nswt, ind_ions, NP, SIZE);
     end
-    
+
+    % Remove gas species with temperature out of bounds
+    for i = length(ind_nswt):-1:1
+        species = self.S.LS{ind_nswt(i)};
+        if TP < self.DB.(species).T(1)
+            ind_nswt(i) = [];
+        end
+    end
+
+    % Remove condensed species with temperature out of bounds
+    % fprintf('T = %.2f\n', TP);
+    for i = length(ind_swt):-1:1
+        species = self.S.LS{ind_swt(i)};
+        if TP < self.DB.(species).T(1) || TP > self.DB.(species).T(end)
+            ind_swt(i) = [];
+        end
+    end
+
     % First, compute chemical equilibrium with only gaseous species
     ind_nswt_0 = ind_nswt;
     ind_swt_0 = ind_swt;
     ind_swt = [];
     ind = [ind_nswt, ind_swt];
     NS = length(ind);
-    
+
+    % Initialize vectors g0 and h0 with zeros
+    g0 = N0(:, 1);
+    h0 = N0(:, 1);
+
     % Initialize composition matrix N0 [mol, FLAG_CONDENSED]    
     [N0, NP] = initialize_moles(N0, NP, ind_nswt, NG, guess_moles);
     
     % Standard Gibbs free energy [J/mol]
-    g0 = set_g0(self.S.LS, TP, self.DB);
+    g0([ind_nswt_0, ind_swt_0]) = set_g0(self.S.LS([ind_nswt_0, ind_swt_0]), TP, self.DB);
     
     % Dimensionless chemical potential
     muRT_0 = g0/R0TP;
@@ -81,28 +103,16 @@ function [N0, dNi_T, dN_T, dNi_p, dN_p, STOP, STOP_ions] = equilibrium_helmholtz
     % Solve system
     x = equilibrium_loop;
     
-    % Check condensed species
-    [ind, ind_swt, FLAG_CONDENSED] = check_condensed_species(A0, x, ind, ind_nswt, ind_swt_0, NE, muRT);
-    if FLAG_CONDENSED
-        % Initialization
-        STOP = 1;
-        % Update lenght
-        NS = length(ind);
-        % Update J matrix
-        J22 = zeros(NS - NG);
-        % Reduce maximum number of iterations
-        self.TN.itMax_gibbs = self.TN.itMax_gibbs / 2;
-        % Compute chemical equilibrium considering condensed species
-        equilibrium_loop;
-    end
+    % Compute chemical equilibrium with condensed species
+    x = equilibrium_loop_condensed(x);
 
     % Update matrix J (jacobian) to compute the thermodynamic derivatives
     J = update_matrix_J(A0_T(ind_elem, :), J22, N0, ind_nswt, ind_swt, NE);
-    temp_zero = zeros(1, NS - NG + 1);
+    temp_zero = zeros(NS - NG + 1, 1);
     J12_2 = [sum(A0_T(ind_elem, ind_nswt) .* N0(ind_nswt), 2); temp_zero(1:end-1)];
     J = [J, J12_2; J12_2', 0];
     % Standard-state enthalpy [J/mol]
-    h0 = set_h0(self.S.LS, TP, self.DB);
+    h0(ind) = set_h0(self.S.LS(ind), TP, self.DB);
     % Dimensionless standard-state enthalpy
     H0RT = h0 / R0TP;
     % Compute thermodynamic derivates
@@ -175,9 +185,17 @@ function [N0, dNi_T, dN_T, dNi_p, dN_p, STOP, STOP_ions] = equilibrium_helmholtz
             % Compute STOP criteria
             STOP = compute_STOP(N0(ind, 1), [Delta_ln_nj; Delta_nj], NG, A0(ind, :), NatomE, max_NatomE, self.TN.tolE);
             
+            % Check for negative condensed species
+            FLAG_NEGATIVE = N0(ind_swt, 1) < 0;
+
             % Update temp values in order to remove species with moles < tolerance
-            [ind, ind_swt, ind_nswt, ind_ions, NG, NS] = update_temp(N0, ind, ind_swt, ind_nswt, ind_ions, NP, SIZE);
+            [ind, ind_swt, ind_nswt, ind_ions, NG, NS, N0] = update_temp(N0, ind, ind_swt, ind_nswt, ind_ions, NP, SIZE);
             
+            % Update J22 matrix
+            if sum(FLAG_NEGATIVE)
+                J22 = zeros(NS - NG);
+            end
+
             % Debug 
             % aux_delta(it) = delta;
             % aux_STOP(it) = STOP;
@@ -202,6 +220,67 @@ function [N0, dNi_T, dN_T, dNi_p, dN_p, STOP, STOP_ions] = equilibrium_helmholtz
         % debug_plot_error(it, aux_STOP, aux_delta);
     end
 
+    function x = equilibrium_loop_condensed(x)
+        % Calculate composition at chemical equilibrium with condensed
+        % species
+
+        if isempty(ind_swt_0)
+            return
+        end
+
+        % Set list with indeces of the condensed species to be checked
+        ind_swt_check = ind_swt_0;
+
+        % Get molecular weight species [kg/mol]
+        W = set_prop_DB(self.S.LS(ind_swt_check), 'mm', self.DB) * 1e-3;
+
+        % Initialization
+        j = 0;
+        while ind_swt_check
+            j = j + 1;
+            % Check condensed species
+            [ind_swt_add, FLAG_CONDENSED] = check_condensed_species(A0, x(1:NE), W, ind_swt_check, muRT);
+            
+            if ~FLAG_CONDENSED
+                break
+            end
+
+            % Update indeces
+            ind_swt_check(ind_swt_check == ind_swt_add) = [];
+            ind_swt = [ind_swt, ind_swt_add];
+            ind = [ind_nswt, ind_swt];
+            ind_swt_0 = ind_swt;
+
+            % Initialization
+            STOP = 1;
+
+            % Update lenght
+            NS = length(ind);
+
+            % Update J matrix
+            J22 = zeros(NS - NG);
+
+            % Save backup
+            N0_backup = N0;
+
+            % Compute chemical equilibrium considering condensed species
+            x0 = equilibrium_loop;
+
+            % Update solution vector
+            if ~isnan(x0(1))
+                x = x0;
+                ind_nswt_0 = ind_nswt;
+                continue
+            end
+
+            % Singular matrix: remove last added condensed species
+            ind_nswt = ind_nswt_0;
+            N0 = N0_backup;
+            [~, ind_swt, ind_nswt, ind_ions, NG, NS] = update_temp(N0, ind_swt(end), ind_swt, ind_nswt, ind_ions, NP, SIZE);
+        end
+
+    end
+
 end
 
 % SUB-PASS FUNCTIONS
@@ -215,23 +294,14 @@ function [N0, NP] = initialize_moles(N0, NP, ind_nswt, NG, guess_moles)
     end
 end
 
-function [ind, ind_swt, FLAG_CONDENSED] = check_condensed_species(A0, x, ind, ind_nswt, ind_swt, NE, muRT)
+function [ind_swt, FLAG_CONDENSED] = check_condensed_species(A0, pi_i, W, ind_swt, muRT)
     % Check condensed species
     
     % Initialization
     FLAG_CONDENSED = false;
-    
-    % Check if there are condensed species
-    if isempty(ind_swt)
-        return
-    end
-    
     % Get length condensed species
     NC = length(ind_swt);
-    
-    % Initialize false vector
-    temp = false(NC, 1);
-    
+
     for i = NC:-1:1
         % Only check if there were atoms of the species in the initial
         % mixture
@@ -239,26 +309,22 @@ function [ind, ind_swt, FLAG_CONDENSED] = check_condensed_species(A0, x, ind, in
             continue
         end
 
-        dG_dn = muRT(ind_swt(i)) - dot(x(end-NE+1:end), A0(ind_swt(i), :));
-        
-        if dG_dn < 0
-            temp(i) = true;
-        end
-
+        % Calculate dLdnj of the condensed species
+        dL_dn(i) = (muRT(ind_swt(i)) - dot(pi_i, A0(ind_swt(i), :))) / W(i);
     end
     
+    FLAG = dL_dn < 0;
     % Check if any condensed species have to be considered
-    if ~sum(temp)
+    if ~sum(FLAG)
         ind_swt = [];
         return
     end
     
+    % Get index of the condensed species to be added to the system
+    [~, temp] = min(dL_dn);
+    ind_swt = ind_swt(temp);
     % Update flag
     FLAG_CONDENSED = true;
-
-    % Update indeces
-    ind_swt = ind_swt(temp);
-    ind = [ind_nswt, ind_swt];
 end
 
 function ind_remove_species = find_remove_species(A0, FLAG_REMOVE_ELEMENTS)
@@ -307,11 +373,12 @@ function [ind, ind_nswt, ind_swt, ind_ions, ind_elem, NE, NG, NS] = temp_values(
     NS = length(ind);
 end
 
-function [ind_swt, ind_nswt, ind_ions] = remove_item(n, ind, ind_swt, ind_nswt, ind_ions, NP, SIZE)
+function [ind_swt, ind_nswt, ind_ions, n] = remove_item(n, ind, ind_swt, ind_nswt, ind_ions, NP, SIZE)
     % Remove species from the computed indeces list of gaseous and condensed
     % species and append the indeces of species that we have to remove
     for i=1:length(n)
-        if log(n(i) / NP) < -SIZE
+        if n(i) / NP < exp(-SIZE)
+            n(i) = 0;
             ind_swt(ind_swt==ind(i)) = [];
             ind_nswt(ind_nswt==ind(i)) = [];
             ind_ions(ind_ions==ind(i)) = [];
@@ -321,9 +388,10 @@ function [ind_swt, ind_nswt, ind_ions] = remove_item(n, ind, ind_swt, ind_nswt, 
 
 end
 
-function [ind, ind_swt, ind_nswt, ind_ions, NG, NS] = update_temp(N0, ind, ind_swt, ind_nswt, ind_ions, NP, SIZE)
+function [ind, ind_swt, ind_nswt, ind_ions, NG, NS, N0] = update_temp(N0, ind, ind_swt, ind_nswt, ind_ions, NP, SIZE)
     % Update temp items
-    [ind_swt, ind_nswt, ind_ions] = remove_item(N0(ind, 1), ind, ind_swt, ind_nswt, ind_ions, NP, SIZE);
+    [ind_swt, ind_nswt, ind_ions, n] = remove_item(N0(ind, 1), ind, ind_swt, ind_nswt, ind_ions, NP, SIZE);
+    N0(ind, 1) = n;
     ind = [ind_nswt, ind_swt];
     NG = length(ind_nswt);
     NS = length(ind);

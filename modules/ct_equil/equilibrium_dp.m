@@ -35,8 +35,8 @@ function [dNi_p, dN_p] = equilibrium_dp(J, N0, A0, NE, ind_nswt, ind_swt, ind_el
 end
 
 % SUB-PASS FUNCTIONS
-function b = update_vector_b(A, N0, ind_nswt)
+function b = update_vector_b(J, N0, ind_nswt)
     % Compute vector b
-    b = A(:, end);
+    b = J(:, end);
     b(end) = sum(N0(ind_nswt, 1));
 end

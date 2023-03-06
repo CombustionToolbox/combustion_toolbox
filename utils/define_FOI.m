@@ -23,7 +23,6 @@ function self = define_FOI(self, i)
 
         if self.Misc.FLAG_WEIGHT
             self.PD.N_Oxidizer = self.PD.phi_t / self.PD.phi.value(i) .* convert_weight_percentage_to_moles(self.PD.S_Oxidizer, self.PD.wt_ratio_oxidizers, self.DB) / sum(self.PD.N_Fuel);
-            %             self.PD.N_Oxidizer = sum(self.PD.N_Fuel) ./ (self.PD.phi.value(i) .* self.PD.phi_t .* sum(convert_weight_percentage_to_moles(self.PD.S_Oxidizer, self.PD.wt_ratio_oxidizers, self.DB)));
         else
             self.PD.N_Oxidizer = self.PD.phi_t / self.PD.phi.value(i) .* self.PD.ratio_oxidizers_O2;
         end
@@ -69,6 +68,7 @@ end
 
 % SUB-PASS FUNCTIONS
 function merged = merged_cells(cells)
+    % Merge several cells in one
     merged = [];
 
     for i = 1:length(cells)

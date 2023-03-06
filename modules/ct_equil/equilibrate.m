@@ -22,7 +22,7 @@ function mix2 = equilibrate(self, mix1, pP, varargin)
         mix2 = mix1;
         mix2.p = pP;
         mix2.error_problem = 0;
-        mix2.phi = save_phi(mix1);
+        mix2.phi = get_phi(mix1);
         return
     end
 
@@ -39,12 +39,12 @@ function mix2 = equilibrate(self, mix1, pP, varargin)
     % save error from root finding algorithm
     mix2.error_problem = STOP;
     % save equivalence ratio
-    mix2.phi = save_phi(mix1);
+    mix2.phi = get_phi(mix1);
 end
 
 %%% SUB-PASS FUNCTIONS
 function mix2 = unpack(value)
-
+    % Unpack input parameters
     if ~isempty(value)
         mix2 = get_struct(value{1});
     else
@@ -54,7 +54,7 @@ function mix2 = unpack(value)
 end
 
 function str = get_struct(var)
-
+    % Get struct
     try
         str = var{1, 1};
     catch
@@ -64,7 +64,7 @@ function str = get_struct(var)
 end
 
 function attr_name = get_attr_name(self)
-
+    % Get attribute of the problem type
     if any(strcmpi(self.PD.ProblemType, {'TP', 'TV'}))
         attr_name = 'T';
     elseif any(strcmpi(self.PD.ProblemType, 'HP'))
@@ -78,7 +78,7 @@ function attr_name = get_attr_name(self)
 end
 
 function [guess, guess_moles] = get_guess(self, mix1, pP, attr_name, mix2)
-
+    % Get initial estimates for temperature and molar composition
     if any(strcmpi(self.PD.ProblemType, {'TP', 'TV'}))
         guess = get_transformation(self, 'TP');
         guess_moles = [];
@@ -86,36 +86,39 @@ function [guess, guess_moles] = get_guess(self, mix1, pP, attr_name, mix2)
         guess = mix2.T;
         guess_moles = mix2.Xi * mix2.N;
     else
-        guess = steff_guess(self, mix1, pP, attr_name);
+        guess = regula_guess(self, mix1, pP, attr_name);
         guess_moles = [];
     end
 
 end
 
 function [x, STOP, guess_moles] = root_finding(self, mix1, pP, attr_name, x0, guess_moles)
+    % Calculate the temperature value that satisfied the problem conditions
+    % using the @root_method
     [x, STOP, guess_moles] = self.TN.root_method(self, mix1, pP, attr_name, x0, guess_moles);
 end
 
 function print_convergence(STOP, TOL, STOP_ions, TOL_ions, ProblemType)
+    % Print tolerance error if the convergence criteria was not satisfied
 
-    if strcmpi(ProblemType, 'TP')
+    if ~strcmpi(ProblemType, 'TP')
+        return
+    end
 
-        if STOP > TOL
-            fprintf('***********************************************************\n')
-            fprintf('Convergence error number of moles:   %1.2e\n', STOP);
-        end
+    if STOP > TOL
+        fprintf('***********************************************************\n')
+        fprintf('Convergence error number of moles:   %1.2e\n', STOP);
+    end
 
-        if STOP_ions > TOL_ions
-            fprintf('***********************************************************\n')
-            fprintf('Convergence error in charge balance: %1.2e\n', STOP_ions);
-        end
-
+    if STOP_ions > TOL_ions
+        fprintf('***********************************************************\n')
+        fprintf('Convergence error in charge balance: %1.2e\n', STOP_ions);
     end
 
 end
 
-function value = save_phi(mix1)
-
+function value = get_phi(mix1)
+    % Get equivalence ratio
     try
         value = mix1.phi;
     catch

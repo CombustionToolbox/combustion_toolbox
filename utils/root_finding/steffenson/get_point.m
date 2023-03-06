@@ -1,11 +1,11 @@
-function point = get_point(x_vector, g_vector)
-    % Get point of the fixed point function
+function point = get_point(x_vector, f_vector)
+    % Get point using the regula falsi method
     %
     % Args:
     %     x_vector (float):  Guess temperature [K]
-    %     g_vector (struct): Fixed points of the function [kJ] (HP, EV) or [kJ/K] (SP, SV)
+    %     f_vector (struct): evaluated functions [kJ] (HP, EV) or [kJ/K] (SP, SV)
     % Returns:
     %     point (float): Point of the function [K]
 
-    point =  x_vector(2) - (x_vector(2) - x_vector(1)) / (g_vector(2) - g_vector(1)) * g_vector(2);
+    point = (f_vector(2) * x_vector(1) - f_vector(1) * x_vector(2)) / (f_vector(2) - f_vector(1));
 end

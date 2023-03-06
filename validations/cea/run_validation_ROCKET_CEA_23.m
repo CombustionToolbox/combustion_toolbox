@@ -7,8 +7,8 @@ function problems_solved = run_validation_ROCKET_CEA_23
     % Area ratio A_c/A_t = 2;
     % Area ratio A_e/A_t = 8;
     % Equivalence ratio [-] = 0.5:0.01:4
-    % Initial mixture: LH2 + LOX === H2bLb + O2bLb
-    % List of species considered: list_species('HYDROGEN_L')
+    % Initial mixture: CH6N2bLb + MMH
+    % List of species considered: list_species('Soot formation extended')
 
     % Inputs
     Fuel = 'CH6N2bLb';

@@ -1559,7 +1559,7 @@ classdef combustion_toolbox < matlab.apps.AppBase
             app.RFMT0_REditField.ValueDisplayFormat = '%d K';
             app.RFMT0_REditField.ValueChangedFcn = createCallbackFcn(app, @RFMT0_REditFieldValueChanged, true);
             app.RFMT0_REditField.Position = [142 44 72 22];
-            app.RFMT0_REditField.Value = 2000;
+            app.RFMT0_REditField.Value = 3000;
 
             % Create RFMT0_LEditFieldLabel
             app.RFMT0_LEditFieldLabel = uilabel(app.TuningparametersPanel);

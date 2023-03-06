@@ -8,20 +8,30 @@ function problems_solved = run_validation_SHOCK_POLAR_SDToolbox_1
     % List of species considered: list_species('AIR_IONS')
     
     % Inputs
+
+%     Oxidizer = {'N2', 'O2', 'Ar', 'CO2'};
+%     moles = [3.7276, 1.0000, 0.0447, 0.0015];
+
     Oxidizer = {'N2', 'O2'};
     moles = [79, 21]/21;
-    LS = 'AIR_IONS';
+%     LS = 'AIR_IONS';
+
+    LS = {'O2', 'O', 'N2', 'N', 'NO', 'eminus', 'Nplus', 'NOplus',...
+          'N2plus', 'Oplus', 'O2plus'};
+    
     u1 = 3.472107491008314e+02 * [2, 3, 5, 14];
     filename = 'shock_polar_equilwithions_SDToolbox';
     % Tunning parameters
     tolN = 1e-14;
+    N_points_polar = 300;
     % Combustion Toolbox
     results_CT = run_CT('ProblemType', 'SHOCK_POLAR',...
                         'Species', LS,...
                         'S_Oxidizer', Oxidizer,...
                         'N_Oxidizer', moles,...
                         'u1', u1,...
-                        'tolN', tolN);
+                        'tolN', tolN,...
+                        'N_points_polar', N_points_polar);
     problems_solved = get_problems_solved(results_CT.PS.strP, 'polar', 'theta');
     % Load results SDToolbox 
     results_SDToolbox = load_struct(filename, 'data');

@@ -23,16 +23,22 @@ function problems_solved = run_validation_TP_TEA_4
     Fuel = {'H', 'He', 'C', 'N', 'O', 'S'};
     N_Fuel = abundances2moles(Fuel, 'abundances.txt', metallicity);
     Oxidizer = {};
-    LS = {'C2H2_acetylene', 'C2H4', 'C', 'CH4', 'CO2', 'CO', 'H2',...
+    
+    LS_TEA = {'C2H2_acetylene', 'C2H4', 'C', 'CH4', 'CO2', 'CO', 'H2',...
           'H2O', 'H2S', 'H', 'HCN', 'He', 'HS_M', 'N2', 'N', 'NH3',...
           'O', 'S'};
+
+    LS = {'C2H2_acetylene', 'C2H4', 'C', 'CH4', 'CO2', 'CO', 'H2',...
+          'H2O', 'H2S', 'H', 'HCN', 'He', 'HS_M', 'N2', 'N', 'NH3',...
+          'O', 'S', 'HSO_M', 'HSO2_M', 'HSO3_M', 'HS2_M', 'S2',...
+          'S2O_M', 'S_OH_M', 'OH'};
     
     T = Temp;
     p = Pressure;
     % Tunning paramenters
     tolN = 1e-32;
     % Custom Plots 
-    display_species = LS;
+    display_species = LS_TEA;
     mintol = 1e-21;
     % Combustion Toolbox
     results_CT = run_CT('ProblemType', 'TP',...

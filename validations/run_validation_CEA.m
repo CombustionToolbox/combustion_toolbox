@@ -8,6 +8,7 @@ function run_validation_CEA
     run_validation_TP_CEA_2;
     run_validation_TP_CEA_3;
     run_validation_TP_CEA_4;
+    run_validation_TP_CEA_6;
     % HP:
     run_validation_HP_CEA_1;
     run_validation_HP_CEA_2;
@@ -28,4 +29,8 @@ function run_validation_CEA
     % ROCKET:
     run_validation_ROCKET_CEA_17;
     run_validation_ROCKET_CEA_18;
+    run_validation_ROCKET_CEA_20;
+    run_validation_ROCKET_CEA_21;
+    run_validation_ROCKET_CEA_22;
+    run_validation_ROCKET_CEA_23;
 end

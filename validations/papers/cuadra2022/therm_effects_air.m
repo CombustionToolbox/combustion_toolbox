@@ -286,7 +286,7 @@ function [R, P, T, M1, M2, Gammas, alpha] = get_parameters(self)
     T = cell2vector(self.PS.strP, 'T') ./ cell2vector(self.PS.strR, 'T');
     M1 = cell2vector(self.PS.strR, 'u') ./ cell2vector(self.PS.strR, 'sound');
     M2 = cell2vector(self.PS.strP, 'v_shock') ./ cell2vector(self.PS.strP, 'sound');
-    Gammas = compute_Gammas(M1, R, P);
+    Gammas = compute_Gammas_frozen(M1, R, P);
 
     Yi = cell2vector(self.PS.strP, 'Yi');
     alpha = Yi(2, :);
@@ -347,8 +347,8 @@ end
 
 function self = compute_shock(varargin)
     % Default values
-    T = 300; % [K]
-    p = 1;   % [bar]
+    T = 700; % [K]
+    p = 0.0844575; % [bar]
     LS = 'Air_ions';
     % Unpack inputs
     for i = 1:2:nargin
@@ -365,13 +365,14 @@ function self = compute_shock(varargin)
     self = App(LS);
     self.Misc.FLAG_RESULTS = false;
     % Set initial conditions
-    self = set_prop(self, 'TR', T, 'pR', 1.01325 * p);
+    self = set_prop(self, 'TR', T, 'pR', p);
     self.PD.S_Oxidizer = {'N2', 'O2', 'Ar', 'CO2'};
     self.PD.N_Oxidizer = [3.7276, 1.0000, 0.0447, 0.0015];
     % Additional inputs
 %     initial_velocity_sound = 3.529546069689621e+02; % N2
 %     initial_velocity_sound = 329.4216; % O2
-    initial_velocity_sound = 347.25; % Air
+%     initial_velocity_sound = 347.25; % Air
+    initial_velocity_sound = compute_sound(T, p, self.PD.S_Oxidizer, self.PD.N_Oxidizer, 'self', self);
 
 %     u1 = linspace(initial_velocity_sound, 9681.1, 966);
 %     u1 = [u1, linspace(500.1, 3000, 1000)];
@@ -381,6 +382,9 @@ function self = compute_shock(varargin)
 %     u1 = linspace(initial_velocity_sound,  20000, 1500);
     u1 = logspace(2, 5, 1e4);
     u1 = u1(u1 < 20000.1); u1 = u1(u1 >= initial_velocity_sound);
+    
+%     delta = 1e-6;
+%     u1 = initial_velocity_sound .* linspace(3 - delta, 3 + delta, 100);
 
     self = set_prop(self, 'u1', u1);
     % Solve problem

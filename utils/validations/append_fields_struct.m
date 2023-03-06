@@ -7,7 +7,7 @@ function struct_var = append_fields_struct(struct_var)
 
     for i = 1:N
         N_cases = numel(struct_var.(fields{i}));
-        struct_var.(fields{i}) = reshape(struct_var.(fields{i}), N_cases, 1);
+        struct_var.(fields{i}) = reshape(struct_var.(fields{i})', N_cases, 1);
         temp_cases = max(temp_cases, N_cases);
 
         if strcmpi(fields{i}, 'X')

@@ -58,7 +58,7 @@ function [mix1, mix2, mix5] = shock_reflected(self, mix1, u1, mix2, varargin)
             it = it + 1;
             % Construction of the Jacobian matrix and vector b
             [J, b, guess_moles] = update_system(self, mix2, p5, T5, R0, guess_moles, FLAG_FAST);
-            % Solve of the linear system A*x = b
+            % Solve of the linear system J*x = b
             x = J \ b;
             % Calculate correction factor
             lambda = relax_factor(x);
@@ -156,8 +156,7 @@ end
 
 function relax = relax_factor(x)
     % Compute relaxation factor
-    factor = [0.40546511; 0.04879016];
-    %     factor = [0.40546511; 0.40546511];
+    factor = [0.40546511; 0.40546511];
     lambda = factor ./ abs(x);
     relax = min(1, min(lambda));
 end

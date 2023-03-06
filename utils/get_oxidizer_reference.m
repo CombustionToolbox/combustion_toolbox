@@ -14,6 +14,11 @@ function self = get_oxidizer_reference(self, varargin)
 
     % Unpack
     if nargin > 1
+        
+        if isempty(varargin{1})
+            return
+        end
+
         LS = {}; self.PD.S_Oxidizer = {};
         self.PD.S_Oxidizer(1, :) = varargin{1};
         LS(1, :) = varargin{1};

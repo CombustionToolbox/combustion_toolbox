@@ -12,8 +12,8 @@ function [mix1, mix2] = shock_polar(self, mix1, u1, varargin)
     % Returns:
     %     Tuple containing
     %
-    %     - mix1 (struct): Properties of the mixture in the pre-shock state
-    %     - mix2 (struct): Properties of the mixture at the post-shock state with the shock polar results
+    %     * mix1 (struct): Properties of the mixture in the pre-shock state
+    %     * mix2 (struct): Properties of the mixture at the post-shock state with the shock polar results
 
     % Unpack input data
     [self, mix1, mix2] = unpack(self, mix1, u1, varargin);
@@ -36,7 +36,7 @@ function [mix1, mix2] = shock_polar(self, mix1, u1, varargin)
     N = length(u1n);
     ut = u1 .* cos(beta);
     % Loop
-    for i = N:-1:1
+    for i = N:-1:2
         [~, mix2] = shock_incident(self, mix1, u1n(i), mix2);
         a2(i) = soundspeed(mix2);
         u2n(i) = mix2.v_shock;
@@ -45,13 +45,27 @@ function [mix1, mix2] = shock_polar(self, mix1, u1, varargin)
         u2(i) = u2n(i) * csc(beta(i) - theta(i));
         Xi(:, i) = mix2.Xi;
     end
-
+    % Calculate last case (beta = beta_min), which corresponds with the sonic condition
+    i = 1;
+    mix2 = mix1;
+    a2(i) = soundspeed(mix2);
+    u2n(i) = a2(i);
+    p2(i) = pressure(mix2);
+    theta(i) = beta(i) - atan(u2n(i) / ut(i));
+    u2(i) = u2n(i) * csc(beta(i) - theta(i));
+    Xi(:, i) = mix2.Xi;
+    mix2.u = 0;
+    mix2.v_shock = soundspeed(mix2);
+    mix2.dVdT_p = 1;
+    mix2.dVdp_T = -1;
+    mix2.error_moles = 0; mix2.error_moles_ions = 0; mix2.error_problem = 0;
+    
     % Velocity components downstream - laboratory fixed
     u2x = u2 .* cos(theta); % [m/s]
     u2y = u2 .* sin(theta); % [m/s]
     % Sonic point
     M2 = u2 ./ a2;
-    ind_sonic = find(M2 > 1, 1, 'last');
+    ind_sonic = find(M2 >= 1, 1, 'last');
     theta_sonic = theta(ind_sonic) * 180 / pi;
     % Max deflection angle
     [theta_max, ind_max] = max(theta * 180 / pi); % [deg]

@@ -38,8 +38,8 @@ function [mix1, mix2] = shock_incident(self, mix1, u1, varargin)
     FLAG_FAST = TN.FLAG_FAST;
     % Solve shock incident
     [T2, p2, STOP] = solve_shock_incident(FLAG_FAST);
-    % If error, repeat without guess
-    if isnan(STOP)
+    if STOP > TN.tol_shocks
+        % If solution has not converged, repeat without composition estimate
         fprintf('Recalculating: %.2f [m/s]\n', u1);
         guess_moles = [];
         FLAG_FAST = false;
@@ -64,7 +64,7 @@ function [mix1, mix2] = shock_incident(self, mix1, u1, varargin)
             it = it + 1;
             % Construction of the Jacobian matrix and vector b
             [J, b, guess_moles] = update_system(self, mix1, p2, T2, R0, guess_moles, FLAG_FAST);
-            % Solve of the linear system A*x = b
+            % Solve of the linear system J*x = b
             x = J \ b;
             % Calculate correction factor
             lambda = relax_factor(x);
@@ -76,7 +76,13 @@ function [mix1, mix2] = shock_incident(self, mix1, u1, varargin)
             p2p1 = p2 / (convert_bar_to_Pa(mix1.p));
             T2T1 = T2 / mix1.T;
             % Compute STOP criteria
-            STOP = compute_STOP(x);
+            aux = compute_STOP(x);
+            if aux > STOP && it > itMax / 5
+                fprintf('NR not converging. It: %d, STOP: %1.2e\n', it, aux);
+                return
+            end
+
+            STOP = aux;
             % Debug
             % aux_lambda(it) = lambda;
             % aux_STOP(it) = STOP;
@@ -178,7 +184,6 @@ end
 
 function relax = relax_factor(x)
     % Compute relaxation factor
-    % factor = [0.40546511; 0.04879016];
     factor = [0.40546511; 0.40546511];
     lambda = factor ./ abs(x);
     relax = min(1, min(lambda));
@@ -212,7 +217,7 @@ function print_convergence(STOP, TOL, T)
 
     if STOP > TOL
         fprintf('***********************************************************\n')
-        fprintf('Convergence error: %.2f\n', STOP);
+        fprintf('Convergence error: %1.2e\n', STOP);
     end
 
     if T > 2e4

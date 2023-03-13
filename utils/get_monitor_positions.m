@@ -41,7 +41,6 @@ function position = get_monitor_positions(varargin)
     % Otherwise, get screen position using MATLAB's routines
     catch
         position = get_monitor_positions_MATLAB(varargin{:});
-
     end
 
 end

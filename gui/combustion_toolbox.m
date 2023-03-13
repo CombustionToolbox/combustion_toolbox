@@ -403,11 +403,17 @@ classdef combustion_toolbox < matlab.apps.AppBase
             app.UIFigure.Visible = 'off';
             % Splash
             splash_obj = gui_display_splash('app', app);
-%             % Get screen position
-%             position = splash_obj.ScreenPosition;
-%             % Centering app
-%             app.UIFigure.Position(1) = position(1) + (position(3) - app.UIFigure.Position(3))/2;
-%             app.UIFigure.Position(2) = position(2) + (position(4) - app.UIFigure.Position(4))/2;
+            % Get screen position
+            position = splash_obj.ScreenPosition;
+            % Centering app
+            app.UIFigure.Position(1) = position(1) + (position(3) - app.UIFigure.Position(3))/2;
+            app.UIFigure.Position(2) = position(2) + (position(4) - app.UIFigure.Position(4))/2;
+            % Check screen size
+            if position(4) <= app.UIFigure.Position(4)
+                app.UIFigure.Position(4) = 0.9 * position(4);
+                app.UIFigure.Resize = true;
+                app.UIFigure.Scrollable = true;
+            end
             % Initialze app
             app = App(app);
             % Initialize List box species DataBase master
@@ -983,25 +989,30 @@ classdef combustion_toolbox < matlab.apps.AppBase
 
             % Create Tab_lateral_bar
             app.Tab_lateral_bar = uitabgroup(app.UIFigure);
+            app.Tab_lateral_bar.AutoResizeChildren = 'off';
             app.Tab_lateral_bar.TabLocation = 'left';
             app.Tab_lateral_bar.Position = [0 -2 639 771];
 
             % Create SetupTab
             app.SetupTab = uitab(app.Tab_lateral_bar);
+            app.SetupTab.AutoResizeChildren = 'off';
             app.SetupTab.Title = 'Setup';
             app.SetupTab.BackgroundColor = [0.9098 0.9098 0.8902];
 
             % Create TabGroup2
             app.TabGroup2 = uitabgroup(app.SetupTab);
+            app.TabGroup2.AutoResizeChildren = 'off';
             app.TabGroup2.Position = [1 94 568 676];
 
             % Create InputsTab
             app.InputsTab = uitab(app.TabGroup2);
+            app.InputsTab.AutoResizeChildren = 'off';
             app.InputsTab.Title = 'Inputs';
             app.InputsTab.BackgroundColor = [0.9098 0.9098 0.8902];
 
             % Create DefinereactantsandspeciestobeconsideredPanel
             app.DefinereactantsandspeciestobeconsideredPanel = uipanel(app.InputsTab);
+            app.DefinereactantsandspeciestobeconsideredPanel.AutoResizeChildren = 'off';
             app.DefinereactantsandspeciestobeconsideredPanel.BorderType = 'none';
             app.DefinereactantsandspeciestobeconsideredPanel.Title = 'Define reactants and species to be considered';
             app.DefinereactantsandspeciestobeconsideredPanel.BackgroundColor = [0.9098 0.9098 0.8902];
@@ -1021,6 +1032,7 @@ classdef combustion_toolbox < matlab.apps.AppBase
 
             % Create ReactantsPanel
             app.ReactantsPanel = uipanel(app.DefinereactantsandspeciestobeconsideredPanel);
+            app.ReactantsPanel.AutoResizeChildren = 'off';
             app.ReactantsPanel.BorderType = 'none';
             app.ReactantsPanel.Title = 'Reactants';
             app.ReactantsPanel.BackgroundColor = [0.9098 0.9098 0.8902];
@@ -1038,6 +1050,7 @@ classdef combustion_toolbox < matlab.apps.AppBase
 
             % Create ListofSpeciesPanel
             app.ListofSpeciesPanel = uipanel(app.DefinereactantsandspeciestobeconsideredPanel);
+            app.ListofSpeciesPanel.AutoResizeChildren = 'off';
             app.ListofSpeciesPanel.BorderType = 'none';
             app.ListofSpeciesPanel.Title = 'List of Species';
             app.ListofSpeciesPanel.BackgroundColor = [0.9098 0.9098 0.8902];
@@ -1081,6 +1094,7 @@ classdef combustion_toolbox < matlab.apps.AppBase
 
             % Create ProductsPanel
             app.ProductsPanel = uipanel(app.DefinereactantsandspeciestobeconsideredPanel);
+            app.ProductsPanel.AutoResizeChildren = 'off';
             app.ProductsPanel.BorderType = 'none';
             app.ProductsPanel.Title = 'Products';
             app.ProductsPanel.BackgroundColor = [0.9098 0.9098 0.8902];
@@ -1121,6 +1135,7 @@ classdef combustion_toolbox < matlab.apps.AppBase
 
             % Create DefinestateofreactantsandproductsPanel
             app.DefinestateofreactantsandproductsPanel = uipanel(app.InputsTab);
+            app.DefinestateofreactantsandproductsPanel.AutoResizeChildren = 'off';
             app.DefinestateofreactantsandproductsPanel.BorderType = 'none';
             app.DefinestateofreactantsandproductsPanel.Title = 'Define state of reactants and products';
             app.DefinestateofreactantsandproductsPanel.BackgroundColor = [0.9098 0.9098 0.8902];
@@ -1207,6 +1222,7 @@ classdef combustion_toolbox < matlab.apps.AppBase
 
             % Create AdditionalconstraintsPanel
             app.AdditionalconstraintsPanel = uipanel(app.InputsTab);
+            app.AdditionalconstraintsPanel.AutoResizeChildren = 'off';
             app.AdditionalconstraintsPanel.BorderType = 'none';
             app.AdditionalconstraintsPanel.Title = 'Additional constraints';
             app.AdditionalconstraintsPanel.Visible = 'off';
@@ -1299,6 +1315,7 @@ classdef combustion_toolbox < matlab.apps.AppBase
 
             % Create SelectProblemTypePanel
             app.SelectProblemTypePanel = uipanel(app.InputsTab);
+            app.SelectProblemTypePanel.AutoResizeChildren = 'off';
             app.SelectProblemTypePanel.BorderType = 'none';
             app.SelectProblemTypePanel.Title = 'Select Problem Type';
             app.SelectProblemTypePanel.BackgroundColor = [0.9098 0.9098 0.8902];
@@ -1337,15 +1354,18 @@ classdef combustion_toolbox < matlab.apps.AppBase
 
             % Create QuicksettingsTab
             app.QuicksettingsTab = uitab(app.TabGroup2);
+            app.QuicksettingsTab.AutoResizeChildren = 'off';
             app.QuicksettingsTab.Title = 'Quick settings';
             app.QuicksettingsTab.BackgroundColor = [0.9098 0.9098 0.8902];
 
             % Create TabGroup4
             app.TabGroup4 = uitabgroup(app.QuicksettingsTab);
+            app.TabGroup4.AutoResizeChildren = 'off';
             app.TabGroup4.Position = [47 350 477 286];
 
             % Create SelectionofspeciesTab
             app.SelectionofspeciesTab = uitab(app.TabGroup4);
+            app.SelectionofspeciesTab.AutoResizeChildren = 'off';
             app.SelectionofspeciesTab.Title = 'Selection of species';
             app.SelectionofspeciesTab.BackgroundColor = [0.9098 0.9098 0.8902];
 
@@ -1410,6 +1430,7 @@ classdef combustion_toolbox < matlab.apps.AppBase
 
             % Create DisplayspeciesTab
             app.DisplayspeciesTab = uitab(app.TabGroup4);
+            app.DisplayspeciesTab.AutoResizeChildren = 'off';
             app.DisplayspeciesTab.Title = 'Display species';
             app.DisplayspeciesTab.BackgroundColor = [0.9098 0.9098 0.8902];
 
@@ -1464,6 +1485,7 @@ classdef combustion_toolbox < matlab.apps.AppBase
 
             % Create TolerancesPanel
             app.TolerancesPanel = uipanel(app.QuicksettingsTab);
+            app.TolerancesPanel.AutoResizeChildren = 'off';
             app.TolerancesPanel.BorderType = 'none';
             app.TolerancesPanel.Title = 'Tolerances';
             app.TolerancesPanel.BackgroundColor = [0.9098 0.9098 0.8902];
@@ -1527,6 +1549,7 @@ classdef combustion_toolbox < matlab.apps.AppBase
 
             % Create TuningparametersPanel
             app.TuningparametersPanel = uipanel(app.QuicksettingsTab);
+            app.TuningparametersPanel.AutoResizeChildren = 'off';
             app.TuningparametersPanel.BorderType = 'none';
             app.TuningparametersPanel.Title = 'Tuning parameters';
             app.TuningparametersPanel.BackgroundColor = [0.9098 0.9098 0.8902];
@@ -1605,6 +1628,7 @@ classdef combustion_toolbox < matlab.apps.AppBase
 
             % Create OthersPanel
             app.OthersPanel = uipanel(app.QuicksettingsTab);
+            app.OthersPanel.AutoResizeChildren = 'off';
             app.OthersPanel.BorderType = 'none';
             app.OthersPanel.Title = 'Others';
             app.OthersPanel.BackgroundColor = [0.9098 0.9098 0.8902];
@@ -1618,6 +1642,7 @@ classdef combustion_toolbox < matlab.apps.AppBase
 
             % Create ReportPanel
             app.ReportPanel = uipanel(app.QuicksettingsTab);
+            app.ReportPanel.AutoResizeChildren = 'off';
             app.ReportPanel.BorderType = 'none';
             app.ReportPanel.Title = 'Report';
             app.ReportPanel.BackgroundColor = [0.9098 0.9098 0.8902];

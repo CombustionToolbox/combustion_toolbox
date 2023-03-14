@@ -452,7 +452,7 @@ end
 
 function Delta_ln_nj = update_Delta_ln_nj(A0, pi_i, muRT, ind_nswt)
     % Compute correction moles of gases
-    Delta_ln_nj = sum(A0(ind_nswt, :)' .* pi_i)' - muRT(ind_nswt);
+    Delta_ln_nj = sum(A0(ind_nswt, :)' .* pi_i, 1)' - muRT(ind_nswt);
 end
 
 function [N0, STOP] = check_convergence_ions(N0, A0, ind_E, ind_nswt, ind_ions, TOL, TOL_pi, itMax)

@@ -25,6 +25,7 @@ function LS = find_products(self, species, varargin)
     % Initialization
     FLAG_BURCAT = false;
     LS = [];
+    
     % Unpack
     for i = 1:2:nargin-2
         switch lower(varargin{i})

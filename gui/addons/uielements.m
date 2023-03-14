@@ -213,7 +213,7 @@ classdef uielements < matlab.apps.AppBase
             % Search species with the elements selected
             if app.NE
                 try
-                    LS = find_species_LS(app.S.LS_DB, app.LE_selected, 'all', app.LE_omit, 'all');
+                    LS = find_products(app, app.LE_selected, 'flag', true);
                 catch
                     LS = {};
                 end
@@ -1239,6 +1239,7 @@ classdef uielements < matlab.apps.AppBase
             % Create enableremoveMenu
             app.enableremoveMenu = uimenu(app.ContextMenu);
             app.enableremoveMenu.MenuSelectedFcn = createCallbackFcn(app, @enableremoveMenuSelected, true);
+            app.enableremoveMenu.Visible = 'off';
             app.enableremoveMenu.Text = 'enable/remove';
             
             % Assign app.ContextMenu

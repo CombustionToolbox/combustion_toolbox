@@ -20,6 +20,7 @@ function LS = find_species_LS(LS, cond_with, type_with, cond_without, type_witho
     %                              'U','Co','Cu','B','V','Ni','Na','Mg',...
     %                              'Mo','Ag','Nb','Cb','Cl','D','T',...
     %                              'Ca','Cs','Ne','Cd','Mn'}, 'all')
+    %    LS = find_species_LS(self.S.LS_DB, {}, 'any', {'_M'}, 'all')
 
     % Initialization
     FLAG_WITH = [];

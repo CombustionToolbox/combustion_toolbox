@@ -1,4 +1,4 @@
-function LS = find_products(self, species, varargin)
+function [LS, ind_elements_DB] = find_products(self, species, varargin)
     % Find all the combinations of species from DB that can appear as
     % products for the given list of reactants
     %
@@ -7,30 +7,37 @@ function LS = find_products(self, species, varargin)
     %     species (cell): List of reactants
     %
     % Optional Args:
-    %     flag (bool): Flag to consider Burcat's database (Third millenium)
+    %     FLAG_BURCAT (bool): Flag to consider Burcat's database (Third millenium)
+    %     ind_elements_DB (float): Matrix NS_DB x MAX_ELEMENTS with element indeces of the species contained in the database
     %
     % Returns:
-    %     LS (cell): List of products
+    %     Tuple containing
+    %
+    %     * LS (cell): List of products
+    %     * ind_elements_DB (float): Matrix NS_DB x MAX_ELEMENTS with element indeces of the species contained in the database
     %
     % Examples:
-    %     LS = find_products({'O2'}, DB)
-    %     LS = find_products({'O2', 'CO', 'N'}, DB)
-    %     LS = find_products({'O2', 'N', 'eminus'}, DB)
-    %     LS = find_products({'O2', 'CO', 'N'}, DB, 'Flag', true)
+    %     [LS, ind_elements_DB] = find_products(self, {'O2', 'N', 'eminus'})
+    %     [LS, ind_elements_DB] = find_products(self, {'O2', 'CO', 'N'}, DB, 'Flag', true)
+    %     [LS, ind_elements_DB] = find_products(self, {'O2', 'CO', 'N'}, DB, 'Flag', true, 'ind', ind_elements_DB)
     
     % Definitions
     MAX_ELEMENTS = 5;
     [elements, ~] = set_elements(); % Elements list
     
     % Initialization
-    FLAG_BURCAT = false;
-    LS = [];
+    FLAG_BURCAT = false; % Flag to consider Burcat's database (Third millenium)
+    FLAG_IND = false;    % Flag indicating that ind_elements_DB is an input
+    LS = [];             % Initialize list of products
     
     % Unpack
     for i = 1:2:nargin-2
         switch lower(varargin{i})
             case {'flag', 'flag_burcat'}
                 FLAG_BURCAT = varargin{i + 1};
+            case {'ind', 'ind_elements', 'ind_elements_db', 'ind_db'}
+                ind_elements_DB = varargin{i + 1};
+                FLAG_IND = true;
         end
         
     end
@@ -41,13 +48,15 @@ function LS = find_products(self, species, varargin)
     end
 
     % Remove incompatible species
-    self.S.LS_DB(find_ind(self.S.LS_DB,'Air')) = [];
+    self.S.LS_DB(find_ind(self.S.LS_DB, 'Air')) = [];
     
     % Get element indeces of the reactants
-    ind_elements_R = sort(sort(get_elements(species, self.DB, elements, MAX_ELEMENTS), 2, 'descend'), 1);
+    ind_elements_R = sort(get_ind_elements(species, self.DB, elements, MAX_ELEMENTS), 1);
 
     % Get element indeces of each species in the database
-    ind_elements_DB = sort(get_elements(self.S.LS_DB, self.DB, elements, MAX_ELEMENTS), 2, 'descend');
+    if ~FLAG_IND
+        ind_elements_DB = get_ind_elements(self.S.LS_DB, self.DB, elements, MAX_ELEMENTS);
+    end
     
     % Remove common vectors
     ind_elements_R = unique(ind_elements_R, 'rows');
@@ -67,24 +76,6 @@ function LS = find_products(self, species, varargin)
 end
 
 % SUB-PASS FUNCTIONS
-function ind_elements = get_elements(LS, DB, elements, MAX_ELEMENTS)
-    % Get element indeces of each species contained in LS
-    
-    % Definitions
-    NS = length(LS);
-
-    % Initialization
-    ind_elements = zeros(NS, MAX_ELEMENTS);
-
-    % Get indeces
-    for i = NS:-1:1
-        species = LS{i};
-        temp = set_element_matrix(DB.(species).txFormula, elements);
-        ind_elements(i, 1:length(temp(1, :))) = temp(1, :);
-    end
-    
-end
-
 function temp = get_cross_termms(ind_elements_R, MAX_ELEMENTS)
     % Get cross terms 
 

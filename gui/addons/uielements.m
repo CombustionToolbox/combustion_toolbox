@@ -188,6 +188,9 @@ classdef uielements < matlab.apps.AppBase
                 app.DB = app.caller_app.DB;
             end
             app.LE_omit = [];
+
+            % Get element indeces of each species contained in the database
+            app.S.ind_elements_DB = get_ind_elements(app.S.LS_DB, app.DB, set_elements(), 5);
         end
 
         % Image clicked function: element_1, element_10, element_11, 
@@ -213,7 +216,7 @@ classdef uielements < matlab.apps.AppBase
             % Search species with the elements selected
             if app.NE
                 try
-                    LS = find_products(app, app.LE_selected, 'flag', true);
+                    LS = find_products(app, app.LE_selected, 'flag', true, 'ind', app.S.ind_elements_DB);
                 catch
                     LS = {};
                 end

@@ -7,7 +7,6 @@ function [LS, ind_elements_DB] = find_products(self, species, varargin)
     %     species (cell): List of reactants
     %
     % Optional Args:
-    %     FLAG_BURCAT (bool): Flag to consider Burcat's database (Third millenium)
     %     ind_elements_DB (float): Matrix NS_DB x MAX_ELEMENTS with element indeces of the species contained in the database
     %
     % Returns:
@@ -23,21 +22,21 @@ function [LS, ind_elements_DB] = find_products(self, species, varargin)
     
     % Definitions
     MAX_ELEMENTS = 5;
+    FLAG_BURCAT = self.S.FLAG_BURCAT; % Flag indicating to look for species also in Burcat's database
     [elements, ~] = set_elements(); % Elements list
     
     % Initialization
-    FLAG_BURCAT = false; % Flag to consider Burcat's database (Third millenium)
     FLAG_IND = false;    % Flag indicating that ind_elements_DB is an input
     LS = [];             % Initialize list of products
     
     % Unpack
     for i = 1:2:nargin-2
         switch lower(varargin{i})
-            case {'flag', 'flag_burcat'}
-                FLAG_BURCAT = varargin{i + 1};
             case {'ind', 'ind_elements', 'ind_elements_db', 'ind_db'}
                 ind_elements_DB = varargin{i + 1};
                 FLAG_IND = true;
+            case {'flag', 'flag_burcat'}
+                FLAG_BURCAT = varargin{i + 1};
         end
         
     end
@@ -46,15 +45,15 @@ function [LS, ind_elements_DB] = find_products(self, species, varargin)
     if ~FLAG_BURCAT
         self.S.LS_DB = find_species_LS(self.S.LS_DB, {}, 'any', {'_M'}, 'all');
     end
-
-    % Remove incompatible species
-    self.S.LS_DB(find_ind(self.S.LS_DB, 'Air')) = [];
     
     % Get element indeces of the reactants
     ind_elements_R = sort(get_ind_elements(species, self.DB, elements, MAX_ELEMENTS), 1);
 
     % Get element indeces of each species in the database
     if ~FLAG_IND
+        % Remove incompatible species
+        self.S.LS_DB(find_ind(self.S.LS_DB, 'Air')) = [];
+        % Get element indeces of each species in the database
         ind_elements_DB = get_ind_elements(self.S.LS_DB, self.DB, elements, MAX_ELEMENTS);
     end
     

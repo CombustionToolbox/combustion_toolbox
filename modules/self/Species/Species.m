@@ -31,4 +31,5 @@ function self = Species()
     self.LS_soot = {'N2', 'Ar', 'CO', 'H2', 'Cbgrb', 'CO2', 'H2O'}; % List of species for a lean complete combustion (equivalence ratio > equivalence ratio soot)
     % * Flags
     self.FLAG_COMPLETE = false;
+    self.FLAG_BURCAT = false; % Find all the combinations of species from the database (without BURCAT's DB) that can appear as products for the given list of reactants
 end

@@ -10,8 +10,8 @@ function [e0, DeT] = species_e0_NASA(species, temperature, DB)
     % Returns:
     %     Tuple containing
     %
-    %     - e0 (float): Internal energy [kJ/mol]
-    %     - DeT (float): Thermal internal energy [kJ/mol]
+    %     * e0 (float): Internal energy [kJ/mol]
+    %     * DeT (float): Thermal internal energy [kJ/mol]
 
     % Definitions
     R0 = 8.31446261815324; % Universal Gas Constant [J/(mol-K)];

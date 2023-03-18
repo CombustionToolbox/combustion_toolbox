@@ -5,6 +5,7 @@ function vector = cell2vector(value, varargin)
     %
     % Args:
     %     value (cell or struct): Data of the mixture, conditions, and databases
+    %
     % Optional Args:
     %     field (str): Fieldname of the given value (struct)
     %

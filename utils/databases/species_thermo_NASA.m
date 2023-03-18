@@ -9,14 +9,14 @@ function [cP, cV, h0, DhT, e0, DeT, s0, g0] = species_thermo_NASA(species, tempe
     % Returns:
     %     Tuple containing
     %
-    %     - cP  (float): Specific heat at constant pressure [J/(mol-K)]
-    %     - cV  (float): Specific heat at constant volume   [J/(mol-K)]
-    %     - h0  (float): Enthalpy [kJ/mol]
-    %     - DhT (float): Thermal enthalpy [kJ/mol]
-    %     - e0  (float): Internal energy [kJ/mol]
-    %     - DeT (float): Thermal internal energy [kJ/mol]
-    %     - s0  (float): Entropy [J/(mol-K)]
-    %     - g0  (float): Gibbs energy [kJ/mol]
+    %     * cP  (float): Specific heat at constant pressure [J/(mol-K)]
+    %     * cV  (float): Specific heat at constant volume   [J/(mol-K)]
+    %     * h0  (float): Enthalpy [kJ/mol]
+    %     * DhT (float): Thermal enthalpy [kJ/mol]
+    %     * e0  (float): Internal energy [kJ/mol]
+    %     * DeT (float): Thermal internal energy [kJ/mol]
+    %     * s0  (float): Entropy [J/(mol-K)]
+    %     * g0  (float): Gibbs energy [kJ/mol]
 
     % Definitions
     R0 = 8.31446261815324; % Universal Gas Constant [J/(mol-K)];

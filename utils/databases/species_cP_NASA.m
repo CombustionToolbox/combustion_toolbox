@@ -11,8 +11,8 @@ function [cP, cV] = species_cP_NASA(species, temperature, DB)
     % Returns:
     %     Tuple containing
     %
-    %     - cP (float): Specific heat at constant pressure [J/(mol-K)]
-    %     - cV (float): Specific heat at constant volume   [J/(mol-K)]
+    %     * cP (float): Specific heat at constant pressure [J/(mol-K)]
+    %     * cV (float): Specific heat at constant volume   [J/(mol-K)]
 
     % Definitions
     R0 = 8.31446261815324; % Universal Gas Constant [J/(mol-K)];

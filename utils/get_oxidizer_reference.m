@@ -5,9 +5,7 @@ function self = get_oxidizer_reference(self, varargin)
     %     self (struct): Data of the mixture, conditions, and databases
     %
     % Returns:
-    %     self (struct): Data of the mixture, conditions, and databases, 
-    %                   included the oxidizer of reference which can be
-    %                   obtained as self.S.ind_ox_ref
+    %     self (struct): Data of the mixture, conditions, and databases, included the oxidizer of reference which can be obtained as self.S.ind_ox_ref
     
     % Definitions
     LS = self.S.LS;

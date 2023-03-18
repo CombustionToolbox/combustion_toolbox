@@ -1,5 +1,6 @@
 function [fig1, fig2] = plot_validation_shock_polar_SDToolbox(results_CT, results_SDToolbox, config)
     % Plot numerical results obtained with SDToolbox, which use CANTERA as a thermochemical kernel.
+    %
     %   * Pressure ratio with the deflection angle [deg]
     %   * Wave angle [deg] with the deflection angle [deg]
 

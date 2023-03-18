@@ -77,11 +77,11 @@ function [mix1, mix2] = shock_incident_2(self, mix1, u1, varargin)
             % Update post-shock velocity u20
             u20 = u2;
             % Debug
-            %             aux_lambda(it) = lambda;
-            %             aux_STOP(it) = STOP;
+            % aux_lambda(it) = lambda;
+            % aux_STOP(it) = STOP;
         end
 
-        %         debug_plot_error(it, aux_STOP, aux_lambda);
+        % debug_plot_error(it, aux_STOP, aux_lambda);
     end
 
 end

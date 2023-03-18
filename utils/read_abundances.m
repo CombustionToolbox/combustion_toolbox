@@ -1,12 +1,13 @@
 function [abundances, elements] = read_abundances(filename)
     % Read solar abundances file
+    %
     % Format: [number element, element, abundance, name, molar mass (g/mol)]
     %
     % Args:
     %    filename (file): Filename with the data
     %
     % Returns:
-    %    Tuple containing:
+    %    Tuple containing
     %
     %    * abundances (float): Vector with the logarithmic base 10 solar abundances
     %    * elements (cell): List with the given elements

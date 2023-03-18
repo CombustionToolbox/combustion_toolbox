@@ -12,9 +12,9 @@ function [x, STOP] = newton_2(f, fprime, x0)
     % Returns:
     %     Tuple containing
     %
-    %     - x (float): Temperature at equilibrium [K]
-    %     - STOP (float): Relative error [-] 
-    %     - guess_moles (struct): Guess moles final mixture
+    %     * x (float): Temperature at equilibrium [K]
+    %     * STOP (float): Relative error [-] 
+    %     * guess_moles (struct): Guess moles final mixture
 
     it = 0; STOP = 1.0;
 

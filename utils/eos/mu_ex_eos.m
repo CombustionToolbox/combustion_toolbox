@@ -13,7 +13,7 @@ function chemical_potential_ex = mu_ex_eos(self, Xi, T, p, V, a_mix, b_mix, a, b
     %     b (float): Repulsion factor components of the cubic EoS
     %
     % Returns:
-    %     chemical_potential_ex (float): chemical potential excess [J/mol]
+    %     chemical_potential_ex (float): Chemical potential excess [J/mol]
     
     % Constants
     R0 = self.C.R0;

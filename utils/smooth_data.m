@@ -9,7 +9,8 @@ function [x, y] = smooth_data(x, y, varargin)
     %     start_point (float): initial point of the fit
     %
     % Return:
-    %     Tuple
+    %     Tuple containing
+    %
     %     * x (float): smooth data in the x direction
     %     * y (float): smooth data in the y direction
     

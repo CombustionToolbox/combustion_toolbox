@@ -6,9 +6,11 @@ function gui_add_nodes_validations(app, code_validation_name)
         for i = 1:length(filenames)
             uitreenode(app.(code_validation_name), 'Text', filenames(i).name);
         end
+        
     catch ME
         % Print error
         fprintf('Error in function %s() at line %d.\n\nError Message:\n%s', ...
         ME.stack(1).name, ME.stack(1).line, ME.message);
     end
+
 end

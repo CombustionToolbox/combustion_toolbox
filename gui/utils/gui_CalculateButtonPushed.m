@@ -36,8 +36,10 @@ function app = gui_CalculateButtonPushed(app, event)
             case {'auto'}
                 post_results(self);
         end
+
         % Set lamp to Done color
         app.Lamp.Color = app.color_lamp_done;
+
     catch ME
         % Set lamp to Error color
         app.Lamp.Color = app.color_lamp_error;
@@ -46,6 +48,7 @@ function app = gui_CalculateButtonPushed(app, event)
         ME.stack(1).name, ME.stack(1).line, ME.message)};
         uialert(app.UIFigure, message, 'Warning', 'Icon', 'warning');
     end
+
 end
 
 % SUB-PASS FUNCTIONS
@@ -73,6 +76,7 @@ function obj = get_listSpecies_gui(obj)
         % Get default value
         obj.LS = list_species('Soot Formation');
     end
+
 end
 
 function [results, temp_results] = save_results(obj, self)
@@ -92,10 +96,12 @@ function [results, temp_results] = save_results(obj, self)
             label_mix4 = 'mix3';
             label_mix5 = 'strP';
         end
+
     else
         label_mix1 = 'strR';
         label_mix2 = 'strP';
     end
+
     for i = N:-1:1
         results(i).mix1 = self.PS.(label_mix1){i};
         results(i).mix2 = self.PS.(label_mix2){i};
@@ -105,14 +111,17 @@ function [results, temp_results] = save_results(obj, self)
         else
             results(i).Reactants = obj.Reactants.Items{obj.Reactants.Value};
         end
+
         results(i).Products = obj.Products.Value;
         if isempty(results(i).Products)
             results(i).Products = 'Default';   
         end
+
         results(i).LS = self.S.LS;
         results(i).LS_products = obj.LS;
         results(i).UITable_R_Data = obj.UITable_R.Data;
     end
+
     if strcmpi(self.PD.ProblemType, 'ROCKET')
         try
             label_mix = {label_mix3, label_mix4, label_mix5};
@@ -120,10 +129,13 @@ function [results, temp_results] = save_results(obj, self)
                 for i = N:-1:1
                     results(i).(mix{:}) = self.PS.(mix{:}){i};
                 end
+
             end
+
         catch
-            %
+            % Nothing to do
         end
+
     end
     % Save temporally this parametric study
     temp_results = self.PS;
@@ -171,21 +183,26 @@ function self = get_input_constrains(obj, self)
                     message = {'The FAC model needs an additional value! The contraction factor A_chamber/A_throat or the mass flux.'};
                     uialert(obj.UIFigure, message, 'Warning', 'Icon', 'warning');
                 end
+
             end
+
             if ~isempty(obj.PR3.Value)
                 % Set Aratio combustor to throat region (supersonic region)
                 self = set_prop(self, 'Aratio', obj.PR3.Value);
                 self.PD.FLAG_SUBSONIC = true;
             end
+
             if ~isempty(obj.PP3.Value)
                 % Set Aratio throat to exit region (supersonic region)
                 self = set_prop(self, 'Aratio', obj.PP3.Value);
                 self.PD.FLAG_SUBSONIC = false;
             end
+
     end
     if contains(obj.Products.Value, 'complete', 'IgnoreCase', true)
         self.S.FLAG_COMPLETE = true;
     end
+
 end
 
 function gui_update_custom_figures(obj)
@@ -208,14 +225,17 @@ function gui_update_custom_figures(obj)
         catch
             fields = sort(fieldnames(obj.temp_results.mix3{1}));
         end
+
         add_node(obj, 'Variable_x', fields);
         % Variables y
         add_node(obj, 'Variable_y', fields);
+
     catch ME
         % Print error
         fprintf('Error in function %s() at line %d.\n\nError Message:\n%s', ...
         ME.stack(1).name, ME.stack(1).line, ME.message);
     end
+    
 end
 
 
@@ -224,6 +244,7 @@ function add_node(obj, field_master, field_names)
     for i = 1:length(field_names)
         uitreenode(obj.(field_master), 'Text', field_names{i});
     end
+
 end
 
 function self = gui_get_display_species(obj, self)

@@ -2,7 +2,7 @@ function point = get_point_aitken(x0, g_vector)
     % Get fixed point of a function based on the chemical transformation using the Aitken acceleration method
     %
     % Args:
-    %     x0 (float):        Guess temperature [K]
+    %     x0 (float): Guess temperature [K]
     %     g_vector (struct): Fixed points of the function [kJ] (HP, EV) or [kJ/K] (SP, SV)
     %
     % Returns:

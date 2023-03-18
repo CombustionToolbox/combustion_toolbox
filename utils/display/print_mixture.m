@@ -2,11 +2,13 @@ function print_mixture(self, varargin)
     % Print properties and composition of a given mixture
     %
     % Args:
-    %     self (struct):
-    %     mix (struct):
+    %     self (struct): Data of the mixture, conditions, and databases
     %
     % Optional Args:
-    %
+    %     mix1 (struct): Struct with the properties of the mixture
+    %     mix2 (struct): Struct with the properties of the mixture
+    %     mixi (struct): Struct with the properties of the mixture
+    %     mixN (struct): Struct with the properties of the mixture
     %
     % Returns:
     %     Results on command window

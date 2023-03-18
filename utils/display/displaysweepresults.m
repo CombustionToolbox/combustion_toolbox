@@ -2,12 +2,19 @@ function ax = displaysweepresults(self, mix, xvar, varargin)
     % Plot a given variable against the molar fractions of the mixture
     %
     % Args:
-    %    self (struct): Data of the mixture, conditions, and databases
-    %    mix (struct): Properties of the mixture
-    %    xvar (float): Vector with the x data
+    %     self (struct): Data of the mixture, conditions, and databases
+    %     mix (struct): Properties of the mixture
+    %     xvar (float): Vector with the x data
+    %
+    % Optional Args:
+    %     * config (struct): Struct with the configuration for plots
+    %     * xscale (string): Scale fot the x-axis (linear or log)
+    %     * yscale (string): Scale fot the y-axis (linear or log)
+    %     * xdir (string): Direction of the x-axis (normal or reverse)
+    %     * ydir (string): Direction of the x-axis (normal or reverse)
     %
     % Returns:
-    %    ax (axes): Axes object
+    %     ax (axes): Axes object
 
     % Default values
     config = self.Misc.config;

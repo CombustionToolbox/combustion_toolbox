@@ -2,27 +2,28 @@ function [ax, fig] = plot_molar_fractions(self, x_var, x_field, y_field, varargi
     % Plot molar fractions againts any variable
     %
     % Args:
-    %    self (struct): Data of the mixture, conditions, and databases
-    %    x_var (cell): Properties of the mixture for all the cases
-    %    x_field (char): Fieldname to plot on the x-axis
-    %    y_field (char): Fieldname to plot on the y-axis
+    %     self (struct): Data of the mixture, conditions, and databases
+    %     x_var (cell): Properties of the mixture for all the cases
+    %     x_field (char): Fieldname to plot on the x-axis
+    %     y_field (char): Fieldname to plot on the y-axis
     %
     % Optional Args:
-    %    * validation (struct): Struct that contains validations with (x_field, y_field)
-    %    * nfrec (float): Frequency points to plot validations
-    %    * mintol (float): Minimum limit i-axis with the composition of the mixture
-    %    * config (struct): Struct with the configuration for plots
-    %    * axis_x (char): Set x-axis limits
-    %    * axis_y (char): Set y-axis limits
-    %    * xscale (char): Set x-axis scale (linear or logarithmic)
-    %    * yscale (char): Set y-axis scale (linear or logarithmic)
-    %    * xdir (char): Set x-axis direction (normal or reverse)
-    %    * ydir (char): Set y-axis direction (normal or reverse)
+    %     * validation (struct): Struct that contains validations with (x_field, y_field)
+    %     * nfrec (float): Frequency points to plot validations
+    %     * mintol (float): Minimum limit i-axis with the composition of the mixture
+    %     * config (struct): Struct with the configuration for plots
+    %     * axis_x (char): Set x-axis limits
+    %     * axis_y (char): Set y-axis limits
+    %     * xscale (char): Set x-axis scale (linear or log)
+    %     * yscale (char): Set y-axis scale (linear or log)
+    %     * xdir (char): Set x-axis direction (normal or reverse)
+    %     * ydir (char): Set y-axis direction (normal or reverse)
     %
     % Returns:
-    %    Tuple containing
-    %    * ax (axes): Axes object
-    %    * fig (figure): Figure object
+    %     Tuple containing
+    %
+    %     * ax (axes): Axes object
+    %     * fig (figure): Figure object
 
     % Default values
     ax = [];

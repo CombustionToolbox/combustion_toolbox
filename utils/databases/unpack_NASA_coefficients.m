@@ -2,8 +2,8 @@ function [a, b, tRange, tExponents, ctTInt, txFormula, phase] = unpack_NASA_coef
     % Unpack NASA's polynomials coefficients from database
     %
     % Args:
-    %     species (str) : Chemical species
-    %     DB (struct) : Database with custom thermodynamic polynomials functions generated from NASAs 9 polynomials fits
+    %     species (str): Chemical species
+    %     DB (struct): Database with custom thermodynamic polynomials functions generated from NASAs 9 polynomials fits
     %
     % Returns:
     %     Tuple containing

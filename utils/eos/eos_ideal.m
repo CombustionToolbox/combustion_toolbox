@@ -3,11 +3,11 @@ function V = eos_ideal(self, T, p, varargin)
     %
     % Args:
     %     self (struct): Data of the mixture, conditions, and databases
-    %     T (float): temperature of the mixture [K]
-    %     p (float): pressure of the mixture [Pa]
+    %     T (float): Temperature of the mixture [K]
+    %     p (float): Pressure of the mixture [Pa]
     % 
     % Returns:
-    %     V (float): molar volume of the mixture [m3/mol]
+    %     V (float): Molar volume of the mixture [m3/mol]
 
     V = self.C.R0 * T ./ p;
 end

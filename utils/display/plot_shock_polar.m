@@ -1,5 +1,6 @@
 function [ax1, ax2, ax3] = plot_shock_polar(varargin)
     % Routine to obtain shock polar plots
+    %
     %   * Plot (pressure, deflection)
     %   * Plot (wave angle, deflection)
     %   * Plot velocity components

@@ -1,9 +1,9 @@
 function list_reference = get_reference_elements_with_T_intervals()
     % Get list with reference form of elements and its temperature intervals
     %
-    %   Return:
-    %       list (cell): List with reference form of elements and its
-    %       temperature intervals
+    % Returns:
+    %     list (cell): List with reference form of elements and its temperature intervals
+
     list_reference = {
                 'Ar [200-20000]';
                 'CL2 [200-6000]';

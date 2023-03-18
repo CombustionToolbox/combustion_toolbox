@@ -4,23 +4,23 @@ function LS = find_species_LS(LS, cond_with, type_with, cond_without, type_witho
     % cond_without
     %
     % Args:
-    %    LS (cell): List of species
-    %    cond_with (cell): List of elements to include
-    %    type_with (str): Satisfy all or any of the elements in cond_with
-    %    cond_without (cell): List of elements to avoid
-    %    type_without (str): Satisfy all or any of the elements in cond_without
+    %     LS (cell): List of species
+    %     cond_with (cell): List of elements to include
+    %     type_with (str): Satisfy all or any of the elements in cond_with
+    %     cond_without (cell): List of elements to avoid
+    %     type_without (str): Satisfy all or any of the elements in cond_without
     %
     % Returns:
-    %    LS (cell): List of species
+    %     LS (cell): List of species
     %
     % Examples:
-    %    LS = find_species_LS(LS, {'C','N','O','minus','plus','Ar'}, 'any',...
+    %     LS = find_species_LS(LS, {'C','N','O','minus','plus','Ar'}, 'any',...
     %                             {'I', 'S', 'L', 'T', 'P', 'F', 'ab', 'W',...
     %                              'Z','X','R','Os','Cr','H','Br','G','K',...
     %                              'U','Co','Cu','B','V','Ni','Na','Mg',...
     %                              'Mo','Ag','Nb','Cb','Cl','D','T',...
     %                              'Ca','Cs','Ne','Cd','Mn'}, 'all')
-    %    LS = find_species_LS(self.S.LS_DB, {}, 'any', {'_M'}, 'all')
+    %     LS = find_species_LS(self.S.LS_DB, {}, 'any', {'_M'}, 'all')
 
     % Initialization
     FLAG_WITH = [];

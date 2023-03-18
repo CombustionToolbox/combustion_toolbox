@@ -1,8 +1,7 @@
 % Get list with reference form of elements and its temperature intervals
 %
-%   Return:
-%       list (cell): List with reference form of elements and its
-%       temperature intervals
+% Returns:
+%     Reference_form_of_elements_with_T_intervals (cell): List with reference form of elements and its temperature intervals
 
 Reference_form_of_elements_with_T_intervals = {
                                             'Ar [200-20000]';

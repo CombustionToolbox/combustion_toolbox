@@ -16,8 +16,10 @@ function gui_add_nodes(parent_node, results)
         set_node(category3, match_text, 'NodeData', results(i));
         category3.UserData = category3.UserData + 1;
     end
+
 end
 
+% SUB-PASS FUNCTIONS
 function category_children = set_node(category_parent, match_text, varargin)
     % Default values
     NodeData = [];
@@ -29,7 +31,9 @@ function category_children = set_node(category_parent, match_text, varargin)
                 NodeData = varargin{i + 1};
                 FLAG_CHECK = false;
         end
+
     end
+
     % Set node
     j = 0;
     if ~isempty(category_parent.Children) && FLAG_CHECK
@@ -40,11 +44,15 @@ function category_children = set_node(category_parent, match_text, varargin)
                 j = 1;
                 break;
             end
+
             i = i + 1;
         end
+
     end
+
     if j == 0
         category_children = uitreenode(category_parent, 'Text', match_text, 'NodeData', NodeData, 'UserData', 1);
     end
+
     expand(category_parent,'all');
 end

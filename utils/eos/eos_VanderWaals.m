@@ -5,15 +5,15 @@ function [V, a_mix, b_mix, Vi, a, b] = eos_VanderWaals(self, species, Xi, T, p)
     % Args:
     %     self (struct): Data of the mixture, conditions, and databases
     %     species (cell): List of the species in the mixture
-    %     Xi (float): molar fractions of the mixture
+    %     Xi (float): Molar fractions of the mixture
     %     T (float): Temperature [K]
     %     p (float): Pressure [bar]
     % 
     % Returns:
     %     Tuple containing
     %
-    %     - V (float): molar volume of the mixture [m3/mol]
-    %     - Vi (float): molar volume of the components [m3/mol]
+    %     * V (float): Molar volume of the mixture [m3/mol]
+    %     * Vi (float): Molar volume of the components [m3/mol]
 
     % Definitions
     R0 = self.C.R0; % Universal gas constant [J/mol-K]

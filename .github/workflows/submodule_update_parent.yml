@@ -28,6 +28,11 @@ jobs:
         run: |
           git config user.email "actions@github.com"
           git config user.name "GitHub Actions - update submodules"
+          git checkout main
           git add --all
           git commit -m "Update submodules" || echo "No changes to commit"
-          git push --all origin
+          git push
+          git checkout develop
+          git add --all
+          git commit -m "Update submodules" || echo "No changes to commit"
+          git push

@@ -6,6 +6,7 @@ function y_poly = polynomial_regression(x, y, n)
     %     x (float): x values
     %     y (float): y values
     %     n (float): polynomial order
+    %
     % Returns:
     %     y_poly (float): y values of the polynomial regression
 

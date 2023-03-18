@@ -10,8 +10,8 @@ function [h0, DhT] = species_h0_NASA(species, temperature, DB)
     % Returns:
     %     Tuple containing
     %
-    %     - h0 (float): Enthalpy [kJ/mol]
-    %     - DhT (float): Thermal enthalpy [kJ/mol]
+    %     * h0 (float): Enthalpy [kJ/mol]
+    %     * DhT (float): Thermal enthalpy [kJ/mol]
 
     % Definitions
     R0 = 8.31446261815324; % Universal Gas Constant [J/(mol-K)];

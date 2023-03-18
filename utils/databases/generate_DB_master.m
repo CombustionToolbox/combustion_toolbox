@@ -2,7 +2,7 @@ function DB_master = generate_DB_master(varargin)
     % Generate Mater Database (DB_master) with the thermodynamic data of
     % the chemical species
     %
-    % Optional args:
+    % Optional Args:
     %     * reducedDB (flag):  Flag indicating reduced database
     %     * thermoFile (file): File with NASA's thermodynamic database
     %

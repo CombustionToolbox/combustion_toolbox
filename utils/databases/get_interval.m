@@ -4,8 +4,8 @@ function tInterval = get_interval(species, T, DB)
     %
     % Args:
     %     species (str): Chemical species
-    %     T (float):     Temperature [K]
-    %     DB (struct):   Database with custom thermodynamic polynomials functions generated from NASAs 9 polynomials fits
+    %     T (float): Temperature [K]
+    %     DB (struct): Database with custom thermodynamic polynomials functions generated from NASAs 9 polynomials fits
     %
     % Returns:
     %     tInterval (float): Index of the interval of temperatures

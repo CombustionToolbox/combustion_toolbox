@@ -3,14 +3,14 @@ function [funname_NASA, funname_CT, y_labelname] = set_inputs_thermo_validations
     % Toolbox
     %
     % Args:
-    %   property (str): Thermodynamic property name
+    %     property (str): Thermodynamic property name
     %
     % Returns:
     %     Tuple containing
     %
-    %     - funname_NASA (function): Function to use NASA's polynomials
-    %     - funname_CT (function): Function to use Combustion Toolbox polynomials
-    %     - y_labelname (str): Label y axis
+    %     * funname_NASA (function): Function to use NASA's polynomials
+    %     * funname_CT (function): Function to use Combustion Toolbox polynomials
+    %     * y_labelname (str): Label y axis
 
     switch lower(property)
         case 'cp'
@@ -21,23 +21,23 @@ function [funname_NASA, funname_CT, y_labelname] = set_inputs_thermo_validations
             funname_NASA = @species_cV_NASA;
             funname_CT = @species_cV;
             y_labelname = 'Heat capacity at constant volume [J/(mol-K)]';
-        case 'det'
+        case {'det', 'et'}
             funname_NASA = @species_DeT_NASA;
             funname_CT = @species_DeT;
             y_labelname = 'Thermal internal energy [kJ/(mol)]';
-        case 'dht'
+        case {'dht', 'ht'}
             funname_NASA = @species_DhT_NASA;
             funname_CT = @species_DhT;
             y_labelname = 'Thermal enthalpy [kJ/(mol)]';
-        case 'g0'
+        case {'g0', 'g'}
             funname_NASA = @species_g0_NASA;
             funname_CT = @species_g0;
             y_labelname = 'Gibbs energy [kJ/(mol)]';
-        case 'h0'
+        case {'h0', 'h'}
             funname_NASA = @species_h0_NASA;
             funname_CT = @species_h0;
             y_labelname = 'Enthalpy [kJ/(mol)]';
-        case 's0'
+        case {'s0', 's'}
             funname_NASA = @species_s0_NASA;
             funname_CT = @species_s0;
             y_labelname = 'Entropy [kJ/(mol-K)]';

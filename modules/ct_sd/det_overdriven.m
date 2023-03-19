@@ -12,8 +12,8 @@ function [mix1, mix2] = det_overdriven(self, mix1, drive_factor, varargin)
     % Returns:
     %     Tuple containing
     %
-    %     - mix1 (struct): Properties of the mixture in the pre-shock state
-    %     - mix2 (struct): Properties of the mixture in the post-shock state
+    %     * mix1 (struct): Properties of the mixture in the pre-shock state
+    %     * mix2 (struct): Properties of the mixture in the post-shock state
 
     % Unpack input data
     [self, mix1, mix2] = unpack(self, mix1, drive_factor, varargin);

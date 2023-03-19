@@ -2,7 +2,8 @@ function [mix2_inj, mix2_c, mix3] = compute_FAC(self, mix1, mix2_inj, mix2_c, mi
     % Compute chemical equilibria at the injector, outlet of the chamber and at the throat
     % using the Finite-Area-Chamber (FAC) model
     %
-    % This method is based on Gordon, S., & McBride, B. J. (1994). NASA reference publication, 1311.
+    % This method is based on the method outlined in Gordon, S., & McBride,
+    % B. J. (1994). NASA reference publication, 1311.
     %
     % Args:
     %     self (struct): Data of the mixture, conditions, and databases

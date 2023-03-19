@@ -1,10 +1,10 @@
 function self = initialize(self)
     % This routine has three tasks:
-    %   - Check that all species are contained in the Database
-    %   - Establish cataloged list of species according to the state of the
+    %   * Check that all species are contained in the Database
+    %   * Establish cataloged list of species according to the state of the
     %     phase (gaseous or condensed). It also obtains the indices of
     %     cryogenic liquid species, e.g., liquified gases
-    %   - Compute Stoichiometric Matrix
+    %   * Compute Stoichiometric Matrix
     %
     % Args:
     %     self (struct): Data of the mixture, conditions, and databases

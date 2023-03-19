@@ -1,9 +1,6 @@
 function [mix1, mix2] = shock_incident_2(self, mix1, u1, varargin)
     % Compute pre-shock and post-shock states of a planar incident shock wave
     %
-    % This method is based on Gordon, S., & McBride, B. J. (1994). NASA reference publication,
-    % 1311.
-    %
     % Args:
     %     self (struct): Data of the mixture, conditions, and databases
     %     mix1 (struct): Properties of the mixture in the pre-shock state
@@ -15,8 +12,8 @@ function [mix1, mix2] = shock_incident_2(self, mix1, u1, varargin)
     % Returns:
     %     Tuple containing
     %
-    %     - mix1 (struct): Properties of the mixture in the pre-shock state
-    %     - mix2 (struct): Properties of the mixture in the post-shock state
+    %     * mix1 (struct): Properties of the mixture in the pre-shock state
+    %     * mix2 (struct): Properties of the mixture in the post-shock state
 
     % Unpack input data
     [self, mix1, mix2, guess_moles] = unpack(self, mix1, u1, varargin);

@@ -14,6 +14,9 @@ function [P, T, STOP] = det_compute_guess_CEA(self, mix1)
     %     * P (float): Pressure ratio [-]
     %     * T (float): Temperature ratio [-]
     %     * STOP (float): Relative error [-]
+    %
+    % Example:
+    %     [P, T, STOP] = det_compute_guess_CEA(self, self.PS.strR{1})
 
     % Abbreviations
     R0 = self.C.R0; % [J/mol-K]

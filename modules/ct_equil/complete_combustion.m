@@ -11,6 +11,9 @@ function [moles, species] = complete_combustion(self, mix, phi)
     %
     %     * moles (float): Equilibrium composition [moles] at defined temperature
     %     * species (str): Species considered in the complemte combustion model
+    %
+    % Example:
+    %     [moles, species] = complete_combustion(self, self.PS.strR{1}, 0.5)
 
     % Parameters ---------------------
     Fuel = self.PD.Fuel;

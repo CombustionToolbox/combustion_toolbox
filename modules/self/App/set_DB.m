@@ -2,12 +2,12 @@ function self = set_DB(self, FLAG_REDUCED_DB, FLAG_FAST)
     % Generate Database with custom polynomials from DB_master
     %
     % Args:
-    %     self (struct):          Data of the mixture, conditions, and databases
+    %     self (struct): Data of the mixture, conditions, and databases
     %     FLAG_REDUCED_DB (bool): Flag compute from reduced database
-    %     FLAG_FAST (bool):       Flag load databases
+    %     FLAG_FAST (bool): Flag load databases
     %
     % Returns:
-    %     self (struct):          Data of the mixture, conditions, and databases
+    %     self (struct): Data of the mixture, conditions, and databases
 
     if ~FLAG_FAST
         % FLAG_REDUCED_DB:

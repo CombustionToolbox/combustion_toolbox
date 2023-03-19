@@ -1,8 +1,8 @@
 function [mix1, mix2] = det_cj(self, mix1, varargin)
     % Compute pre-shock and post-shock states of a Chapman-Jouguet detonation
     %
-    % This method is based on Gordon, S., & McBride, B. J. (1994). NASA reference publication,
-    % 1311.
+    % This method is based on the method outlined in Gordon, S., & McBride,
+    % B. J. (1994). NASA reference publication, 1311.
     %
     % Args:
     %     self (struct): Data of the mixture, conditions, and databases
@@ -12,10 +12,14 @@ function [mix1, mix2] = det_cj(self, mix1, varargin)
     %     mix2 (struct): Properties of the mixture in the post-shock state (previous calculation)
     %
     % Returns:
-    %     Tuple containing:
+    %     Tuple containing
     %
     %     * mix1 (struct): Properties of the mixture in the pre-shock state
     %     * mix2 (struct): Properties of the mixture in the post-shock state
+    %
+    % Examples:
+    %     [mix1, mix2] = det_cj(self, self.PS.strR{1})
+    %     [mix1, mix2] = det_cj(self, self.PS.strR{1}, self.PS.strP{1})
 
     % Unpack input data
     [self, mix1, mix2, guess_moles] = unpack(self, mix1, varargin);

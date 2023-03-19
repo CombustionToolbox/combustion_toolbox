@@ -6,8 +6,8 @@ function [mix2_inj, mix2_c, mix3, mix4] = solve_model_rocket(self, mix1, mix2_in
     %   * Infinite-Area-Chamber (IAC)
     %   * Finite-Area-Chamber (FAC)
     %
-    % This method is based on Gordon, S., & McBride, B. J. (1994). NASA reference publication,
-    % 1311.
+    % This method is based on the method outlined in Gordon, S., & McBride,
+    % B. J. (1994). NASA reference publication, 1311.
     %
     % Args:
     %     self (struct): Data of the mixture, conditions, and databases

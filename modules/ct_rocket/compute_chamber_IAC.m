@@ -2,8 +2,8 @@ function mix2 = compute_chamber_IAC(self, mix1, mix2)
     % Compute chemical equilibria at the exit of the chamber (HP) using
     % the Infinite-Area-Chamber (IAC) model
     %
-    % This method is based on Gordon, S., & McBride, B. J. (1994). NASA reference publication,
-    % 1311.
+    % This method is based on the method outlined in Gordon, S., & McBride,
+    % B. J. (1994). NASA reference publication, 1311.
     %
     % Args:
     %     self (struct): Data of the mixture, conditions, and databases

@@ -1,8 +1,8 @@
 function [mix3, varargout] = rocket_parameters(mix2, mix3, gravity, varargin)
     % Compute Rocket performance parameters at the throat
     %
-    % This method is based on Gordon, S., & McBride, B. J. (1994). NASA reference publication,
-    % 1311.
+    % This method is based on the method outlined in Gordon, S., & McBride,
+    % B. J. (1994). NASA reference publication, 1311.
     %
     % Args:
     %     mix2 (struct): Properties of the mixture at the outlet of the chamber

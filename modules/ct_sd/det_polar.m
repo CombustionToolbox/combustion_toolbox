@@ -1,5 +1,5 @@
 function [mix1, mix2] = det_polar(self, mix1, drive_factor, varargin)
-    % Compute detonation polars
+    % Compute detonation polar diagrams
     %
     % Args:
     %     self (struct): Data of the mixture, conditions, and databases
@@ -12,8 +12,8 @@ function [mix1, mix2] = det_polar(self, mix1, drive_factor, varargin)
     % Returns:
     %     Tuple containing
     %
-    %     - mix1 (struct): Properties of the mixture in the pre-shock state
-    %     - mix2 (struct): Properties of the mixture at the post-shock state with the shock polar results
+    %     * mix1 (struct): Properties of the mixture in the pre-shock state
+    %     * mix2 (struct): Properties of the mixture at the post-shock state with the shock polar results
 
     % Unpack input data
     [self, mix1, mix2] = unpack(self, mix1, drive_factor, varargin);

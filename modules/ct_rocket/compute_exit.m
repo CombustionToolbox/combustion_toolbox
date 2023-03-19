@@ -1,8 +1,8 @@
 function mix4 = compute_exit(self, mix2, mix3, mix4, Aratio, varargin)
     % Compute thermochemical composition for a given Aratio
     %
-    % This method is based on Gordon, S., & McBride, B. J. (1994). NASA reference publication,
-    % 1311.
+    % This method is based on the method outlined in Gordon, S., & McBride,
+    % B. J. (1994). NASA reference publication, 1311.
     %
     % Args:
     %     self (struct): Data of the mixture, conditions, and databases

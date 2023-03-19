@@ -3,6 +3,9 @@ function log_Pe = guess_pressure_exit_IAC(mix2, mix3, Aratio, FLAG_SUBSONIC)
     % [-] for the given Area ratio [-] and indicanting if the point of
     % interest is in the subsonic area ratios or the supersonic area ratios
     %
+    % This method is based on the method outlined in Gordon, S., & McBride,
+    % B. J. (1994). NASA reference publication, 1311.
+    %
     % Args:
     %      mix2 (struct): Properties of the mixture at the outlet of the chamber
     %      mix3 (struct): Properties of the mixture at the throat

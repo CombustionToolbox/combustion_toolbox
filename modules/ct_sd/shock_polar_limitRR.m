@@ -4,7 +4,7 @@ function [mix1, mix2, mix2_1, mix3] = shock_polar_limitRR(self, mix1, u1)
     % Args:
     %    self (struct): Data of the mixture, conditions, and databases
     %    mix1 (struct): Properties of the mixture in the pre-shock state
-    %    u1 (float): pre-shock velocity [m/s]
+    %    u1 (float): Pre-shock velocity [m/s]
     %
     % Returns:
     %    Tuple containing

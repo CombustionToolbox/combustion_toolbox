@@ -1,4 +1,4 @@
-function [P, T, M1, R, Q, STOP] = det_compute_guess(self, mix1, phi, overdriven)
+function [P, T, M1, R, Q, STOP] = det_compute_guess(self, mix1, phi, drive_factor)
     % Obtain guess of the jump conditions for a Chapman-Jouguet detonation.
     % Only valid if the mixture have CHON. It computes the guess assuming
     % first a complete combustion, next it recomputes assuming an incomplete
@@ -8,7 +8,7 @@ function [P, T, M1, R, Q, STOP] = det_compute_guess(self, mix1, phi, overdriven)
     %     self (struct):      Data of the mixture, conditions, and databases
     %     mix1 (struct):      Properties of the mixture in the pre-shock state
     %     phi (float):        Equivalence ratio [-]
-    %     overdriven (float): Overdriven ratio [-] respect to the sound velocity of the mixture
+    %     drive_factor (float): Overdriven ratio [-] respect to the sound velocity of the mixture
     %
     % Returns:
     %     Tuple containing
@@ -19,6 +19,9 @@ function [P, T, M1, R, Q, STOP] = det_compute_guess(self, mix1, phi, overdriven)
     %     * R (float):        Density ratio [-]
     %     * Q (float):        Dimensionless Heat release []
     %     * STOP (float):     Relative error [-]
+    %
+    % Example:
+    %     [P, T, M1, R, Q, STOP] = det_compute_guess(self, self.PS.strR{1}, 1, 2)
 
     % Parameters
     gamma1 = mix1.gamma;
@@ -28,7 +31,7 @@ function [P, T, M1, R, Q, STOP] = det_compute_guess(self, mix1, phi, overdriven)
     % Compute moles considering COMPLETE combustion
     [N_2_cc, LS] = complete_combustion(self, mix1, phi);
     [hfi_1, N_1, Yi_fuel, W_fuel] = compute_hfi_1_molar(self);
-    [P, T, M1, M2, R, Q] = body_guess_cj(self, N_2_cc, LS, gamma1, DeltaQ, overdriven, a1, hfi_1, N_1, Yi_fuel, W_fuel);
+    [P, T, M1, M2, R, Q] = body_guess_cj(self, N_2_cc, LS, gamma1, DeltaQ, drive_factor, a1, hfi_1, N_1, Yi_fuel, W_fuel);
     % Compute moles considering INCOMPLETE combustion
     [~, ind_a, ind_b] = intersect(self.S.LS, LS);
     N_2 = zeros(1, length(self.S.LS));
@@ -62,7 +65,7 @@ function [P, T, M1, R, Q, STOP] = det_compute_guess(self, mix1, phi, overdriven)
         gamma2 = compute_gamma(N_2, T * mix1.T, LS, self.DB);
         gamma2 = gamma1 + lambda * (gamma2 - gamma1);
         % Compute ratios and dimensionless heat release
-        [P, T, M1, ~, R, Q] = body_guess_cj(self, N_2, LS, gamma1, DeltaQ, overdriven, a1, hfi_1, N_1, Yi_fuel, W_fuel);
+        [P, T, M1, ~, R, Q] = body_guess_cj(self, N_2, LS, gamma1, DeltaQ, drive_factor, a1, hfi_1, N_1, Yi_fuel, W_fuel);
         T = T * W2 / W1;
         % Update ratios
         P = P_0 + lambda * (P - P_0);

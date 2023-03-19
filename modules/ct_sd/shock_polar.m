@@ -1,5 +1,5 @@
 function [mix1, mix2] = shock_polar(self, mix1, u1, varargin)
-    % Compute shock polar curves
+    % Compute shock polar diagrams
     %
     % Args:
     %     self (struct): Data of the mixture, conditions, and databases

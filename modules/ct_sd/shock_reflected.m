@@ -1,8 +1,8 @@
 function [mix1, mix2, mix5] = shock_reflected(self, mix1, u1, mix2, varargin)
     % Compute pre-shock and post-shock states of a planar reflected shock wave
     %
-    % This method is based on Gordon, S., & McBride, B. J. (1994). NASA reference publication,
-    % 1311.
+    % This method is based on the method outlined in Gordon, S., & McBride,
+    % B. J. (1994). NASA reference publication, 1311.
     %
     % Args:
     %     self (struct): Data of the mixture, conditions, and databases

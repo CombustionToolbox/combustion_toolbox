@@ -4,13 +4,13 @@ function [abundances, elements] = read_abundances(filename)
     % Format: [number element, element, abundance, name, molar mass (g/mol)]
     %
     % Args:
-    %    filename (file): Filename with the data
+    %     filename (file): Filename with the data
     %
     % Returns:
-    %    Tuple containing
+    %     Tuple containing
     %
-    %    * abundances (float): Vector with the logarithmic base 10 solar abundances
-    %    * elements (cell): List with the given elements
+    %     * abundances (float): Vector with the logarithmic base 10 solar abundances
+    %     * elements (cell): List with the given elements
 
     % Open file
     fileID = fopen(filename, 'r');

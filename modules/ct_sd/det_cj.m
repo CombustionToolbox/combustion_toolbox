@@ -18,8 +18,8 @@ function [mix1, mix2] = det_cj(self, mix1, varargin)
     %     * mix2 (struct): Properties of the mixture in the post-shock state
     %
     % Examples:
-    %     [mix1, mix2] = det_cj(self, self.PS.strR{1})
-    %     [mix1, mix2] = det_cj(self, self.PS.strR{1}, self.PS.strP{1})
+    %     * [mix1, mix2] = det_cj(self, self.PS.strR{1})
+    %     * [mix1, mix2] = det_cj(self, self.PS.strR{1}, self.PS.strP{1})
 
     % Unpack input data
     [self, mix1, mix2, guess_moles] = unpack(self, mix1, varargin);

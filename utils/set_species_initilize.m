@@ -2,7 +2,7 @@ function self = set_species_initilize(self, species)
     % Fill the properties matrix with the data of the mixture
     %
     % Args:
-    %     self (struct):  Data of the mixture, conditions, and databases
+    %     self (struct): Data of the mixture, conditions, and databases
     %     species (cell): Species contained in the system
     %
     % Returns:

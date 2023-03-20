@@ -4,8 +4,8 @@ function [N0, dNi_T, dN_T, dNi_p, dN_p, STOP, STOP_ions] = equilibrium_gibbs_eos
     % multipliers combined with a Newton-Raphson method, upon condition that initial gas
     % properties are defined by temperature and pressure.
     %
-    % This method is based on Gordon, S., & McBride, B. J. (1994). NASA reference publication,
-    % 1311.
+    % This method is based on the method outlined in Gordon, S., & McBride,
+    % B. J. (1994). NASA reference publication, 1311.
     %
     % Args:
     %     self (struct): Data of the mixture, conditions, and databases
@@ -15,7 +15,7 @@ function [N0, dNi_T, dN_T, dNi_p, dN_p, STOP, STOP_ions] = equilibrium_gibbs_eos
     %     guess_moles (float): mixture composition [mol] of a previous computation
     %
     % Returns:
-    %     Tuple containing:
+    %     Tuple containing
     %
     %     * N0 (float): Equilibrium composition [moles] for the given temperature [K] and pressure [bar]
     %     * dNi_T (float): Thermodynamic derivative of the moles of the species respect to temperature
@@ -290,21 +290,24 @@ function [temp_ind_swt, temp_ind_nswt, temp_ind_E, temp_ind_ions, A22, flag_ions
     % species and append the indeces of species that we have to remove
     for i=1:length(n)
         if log(n(i)/NP) < -SIZE
-            if N0(ind(i), 2)
-                temp_ind_swt(temp_ind_swt==ind(i)) = [];
-            else
-                temp_ind_nswt(temp_ind_nswt==ind(i)) = [];
-                temp_ind_ions(temp_ind_ions==ind(i)) = [];
-                if isempty(temp_ind_ions) && flag_ions_first
-                    % remove element E from matrix
-                    temp_ind_E(ind_E) = [];
-                    A22 = zeros(length(temp_ind_E) + 1);
-                    flag_ions_first = false;
-                end
-            end
-%             N0(ind(i), 1) = 0;
+            temp_ind_swt(temp_ind_swt==ind(i)) = [];
+            temp_ind_nswt(temp_ind_nswt==ind(i)) = [];
+            temp_ind_ions(temp_ind_ions==ind(i)) = [];   
         end
     end
+
+    if ~flag_ions_first
+        return
+    end
+
+    if ~isempty(temp_ind_ions)
+        return
+    end
+        
+    % remove element E from matrix
+    temp_ind_E(ind_E) = [];
+    A22 = zeros(length(temp_ind_E) + 1);
+    flag_ions_first = false;
 end
 
 function [temp_ind, temp_ind_swt, temp_ind_nswt, temp_ind_ions, temp_NG, temp_NS, temp_ind_E, A22, flag_ions_first, N0] = update_temp(N0, zip1, zip2, temp_ind_swt, temp_ind_nswt, temp_ind_E, ind_E, temp_ind_ions, A22, NP, SIZE, flag_ions_first)

@@ -1,5 +1,5 @@
 function [htext] = label(h,textString,varargin)
-%LABEL places a label next to your data.  
+% LABEL places a label next to your data.  
 % 
 % This function provides an option between the legend and text or annotation commands
 % for labeling data that you plot.  Edward Tufte

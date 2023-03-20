@@ -18,11 +18,9 @@ function [LS, ind_elements_DB] = find_products(self, species, varargin)
     %     * FLAG_ION (bool): Flag indicating to include ionized species
     %
     % Examples:
-    %     [LS, ind_elements_DB] = find_products(self, {'O2', 'N', 'eminus'})
-    %
-    %     [LS, ind_elements_DB] = find_products(self, {'O2', 'CO', 'N'}, DB, 'Flag', true)
-    %
-    %     [LS, ind_elements_DB] = find_products(self, {'O2', 'CO', 'N'}, DB, 'Flag', true, 'ind', ind_elements_DB)
+    %     * [LS, ind_elements_DB] = find_products(self, {'O2', 'N', 'eminus'})
+    %     * [LS, ind_elements_DB] = find_products(self, {'O2', 'CO', 'N'}, DB, 'Flag', true)
+    %     * [LS, ind_elements_DB] = find_products(self, {'O2', 'CO', 'N'}, DB, 'Flag', true, 'ind', ind_elements_DB)
     
     % Definitions
     MAX_ELEMENTS = 5;

@@ -38,10 +38,11 @@ function [e0, DeT] = species_e0_NASA(species, temperature, DB)
             ef0 = hf0 - Delta_n * R0 * Tref;
             e0(i) = (ef0 + (h0(i) - hf0) - (1 - swtCondensed) * R0 * (T - Tref));
             DeT(i) = e0(i) - ef0;
-            % If the species is only a reactant determine it's reference temperature
-            % Tref. For noncryogenic reactants, assigned enthalpies are given at 298.15
-            % K. For cryogenic liquids, assigned enthalpies are given at their boiling
-            % points instead of 298.15 K
+            
+        % If the species is only a reactant determine it's reference temperature
+        % Tref. For noncryogenic reactants, assigned enthalpies are given at 298.15
+        % K. For cryogenic liquids, assigned enthalpies are given at their boiling
+        % points instead of 298.15 K
         else
             Tref = tRange(1);
             e0(i) = hf0 - Delta_n * R0 * Tref;

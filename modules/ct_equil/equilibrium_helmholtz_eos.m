@@ -4,8 +4,8 @@ function [N0, dNi_T, dN_T, dNi_p, dN_p, STOP, STOP_ions] = equilibrium_helmholtz
     % multipliers combined with a Newton-Raphson method, upon condition that initial gas
     % properties are defined by temperature and volume.
     %
-    % This method is based on Gordon, S., & McBride, B. J. (1994). NASA reference publication,
-    % 1311.
+    % This method is based on the method outlined in Gordon, S., & McBride,
+    % B. J. (1994). NASA reference publication, 1311.
     %
     % Args:
     %     self (struct): Data of the mixture, conditions, and databases
@@ -15,7 +15,7 @@ function [N0, dNi_T, dN_T, dNi_p, dN_p, STOP, STOP_ions] = equilibrium_helmholtz
     %     guess_moles (float): mixture composition [mol] of a previous computation
     %
     % Returns:
-    %     Tuple containing:
+    %     Tuple containing
     %
     %     * N0 (float): Equilibrium composition [moles] for the given temperature [K] and pressure [bar]
     %     * dNi_T (float): Thermodynamic derivative of the moles of the species respect to temperature

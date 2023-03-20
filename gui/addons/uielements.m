@@ -11,6 +11,11 @@ classdef uielements < matlab.apps.AppBase
         Export                 matlab.ui.control.Button
         Database               matlab.ui.container.Panel
         GridLayout2            matlab.ui.container.GridLayout
+        log                    matlab.ui.control.CheckBox
+        type                   matlab.ui.control.DropDown
+        temperature_range      matlab.ui.control.EditField
+        property               matlab.ui.control.DropDown
+        plot                   matlab.ui.control.Button
         RemoveButton1          matlab.ui.control.Button
         listbox_LS             matlab.ui.control.ListBox
         AddButton1             matlab.ui.control.Button
@@ -144,6 +149,7 @@ classdef uielements < matlab.apps.AppBase
     properties (Access = private)
         caller_app % Handle to caller app
         caller_app_tag % Tag of caller app
+        FLAG_LAST_CLICK % true == listbox_LS_DB, false = listbox_LS
     end
     
     methods (Access = private)
@@ -152,6 +158,7 @@ classdef uielements < matlab.apps.AppBase
             try
                 image_source = split(event.Source.ImageSource, '\');
                 image_element = image_source{end};
+
                 if contains(image_element, 'clicked')
                     FLAG_CLICKED = false;
                     event.Source.ImageSource = strrep(image_element, '_clicked', '');
@@ -159,16 +166,164 @@ classdef uielements < matlab.apps.AppBase
                     FLAG_CLICKED = true;
                     event.Source.ImageSource = strrep(image_element, '.svg', '_clicked.svg');
                 end
+
             catch
                 FLAG_CLICKED = false;
             end
+
         end
+        
+        function plot_property(app)
+            % Plot property against temperature
+            
+            % Get species
+            if app.FLAG_LAST_CLICK
+                species = app.listbox_LS_DB.Value;
+            else
+                species = app.listbox_LS.Value;
+            end
+            
+            % Get number of species
+            NS = length(species);
+
+            % Check that there are species selected
+            if NS == 0
+                return
+            end
+
+            % Read temperature range
+            app = set_prop(app, 'TR', app.temperature_range.Value);
+
+            % Get temperature range
+            T = app.PD.TR.value;
+            NT = length(T);
+
+            % Get function
+            [funname_NASA, funname_CT, property_labelname] = set_inputs_thermo_validations(app.property.Value);
+            
+            if strcmpi(app.type.Value, 'CT')
+                funname = funname_CT;
+            else
+                funname = funname_NASA;
+            end
+
+            % MATLAB OOP access to properties that contains a lot of data
+            % is very very very ... slow.
+
+            % tic
+            % % Evaluate property for the temperature range
+            % for i = NS:-1:1
+            %     for j = NT:-1:1
+            %         values(i, j) = funname(species{i}, temperature(j), app.DB);
+            %     end
+            % 
+            % end
+            % toc
+            
+            % Initialization
+            ind_REMOVE = [];
+            messages = [];
+            
+            % Copy DB local variables
+            DB = app.DB;
+
+            % Evaluate property for the temperature range
+            for i = NS:-1:1
+                try
+                    for j = NT:-1:1
+                        values(i, j) = funname(species{i}, T(j), DB);
+                    end
+
+                catch
+                    % Get index of the species that can not be evaluated
+                    ind_REMOVE = [ind_REMOVE, i];
+                    % Print message in the command window
+                    message = ['%s can not be evaluated outside T = %.2f K.\n'...
+                               'Species removed from the calculations.\n'];
+                    message = sprintf(message, species{i}, DB.(species{i}).T);
+                    % Update messages
+                    messages = [messages, message, newline];
+                    % Print
+                    fprintf(message);
+                end
+
+                species_label{i} = species2latex(species{i});
+            end
+            
+            % Show warning if ind_REMOVE
+            if ~isempty(ind_REMOVE)
+                uialert(app.UIElements, messages, 'Warning', 'Icon', 'warning');
+            end
+
+            % Remove species that can not be evaluated
+            species(ind_REMOVE) = [];
+            NS = length(species);
+            
+            % Check that there are species that satisfied the requirements
+            if NS == 0
+                return
+            end
+            
+            % Get FLAG if the calculations imply extrapolation
+            FLAG_EXTRAPOLATION_PRE = false(NS, NT);
+            FLAG_EXTRAPOLATION_POST = false(NS, NT);
+            for i = NS:-1:1
+                FLAG_EXTRAPOLATION_PRE(i, :) = T < DB.(species{i}).T(1);
+                FLAG_EXTRAPOLATION_POST(i, :) = T > DB.(species{i}).T(end);
+            end
+            
+            % Check figure scale
+            FLAG_LOG = app.log.Value;
+            if FLAG_LOG
+                app.Misc.config.xscale = 'log';
+                app.Misc.config.yscale = 'log';
+            end
+
+            % Initialize figure
+            ax = set_figure(app.Misc.config);
+            
+            % Define color palette
+            color_palette = brewermap(NS, app.Misc.config.colorpalette);
+
+            % Plot
+            dline = zeros(1, NS);
+
+            for i = 1:NS
+                try
+                    [ax, dline(i)] = plot_figure('T', T(~FLAG_EXTRAPOLATION_POST(i, :) & ~FLAG_EXTRAPOLATION_PRE(i, :)), property_labelname, values(i, ~FLAG_EXTRAPOLATION_POST(i, :) & ~FLAG_EXTRAPOLATION_PRE(i, :)), 'color', color_palette(i, :), 'linestyle', '-', 'ax', ax);
+                catch
+                    ax = plot_figure('T', T(~FLAG_EXTRAPOLATION_POST(i, :) & ~FLAG_EXTRAPOLATION_PRE(i, :)), property_labelname, values(i, ~FLAG_EXTRAPOLATION_POST(i, :) & ~FLAG_EXTRAPOLATION_PRE(i, :)), 'color', color_palette(i, :), 'linestyle', '-', 'ax', ax);
+                end
+                
+                try
+                    [ax, dline(i)] = plot_figure('T', T(FLAG_EXTRAPOLATION_PRE(i, :)), property_labelname, values(i, FLAG_EXTRAPOLATION_PRE(i, :)), 'color', color_palette(i, :), 'linestyle', '--', 'ax', ax);
+                catch
+                    ax = plot_figure('T', T(FLAG_EXTRAPOLATION_PRE(i, :)), property_labelname, values(i, FLAG_EXTRAPOLATION_PRE(i, :)), 'color', color_palette(i, :), 'linestyle', '--', 'ax', ax);
+                end
+
+                try
+                    [ax, dline(i)] = plot_figure('T', T(FLAG_EXTRAPOLATION_POST(i, :)), property_labelname, values(i, FLAG_EXTRAPOLATION_POST(i, :)), 'color', color_palette(i, :), 'linestyle', '--', 'ax', ax);
+                catch
+                    ax = plot_figure('T', T(FLAG_EXTRAPOLATION_POST(i, :)), property_labelname, values(i, FLAG_EXTRAPOLATION_POST(i, :)), 'color', color_palette(i, :), 'linestyle', '--', 'ax', ax);
+                end
+                
+            end
+
+            % Set legends
+            if NS < 2
+                return
+            end
+            
+            legend(ax, dline, species_label, 'FontSize', app.Misc.config.fontsize - 4, 'Location', 'best', 'interpreter', 'latex')
+        end
+
     end
 
     methods
         function value = get.NE(app)
             value = length(app.LE_selected);
         end
+
     end
 
     % Callbacks that handle component events
@@ -187,12 +342,16 @@ classdef uielements < matlab.apps.AppBase
                 app.S = app.caller_app.S;
                 app.DB = app.caller_app.DB;
             end
+
             app.LE_omit = [];
             
             % Remove incompatible species
             app.S.LS_DB(find_ind(app.S.LS_DB, 'Air')) = [];
             % Get element indeces of each species contained in the database
             app.S.ind_elements_DB = get_ind_elements(app.S.LS_DB, app.DB, set_elements(), 5);
+            % Default size for plots
+            app.Misc.config.innerposition = [0.2, 0.15, 0.7, 0.7];
+            app.Misc.config.outerposition = [0.2, 0.15, 0.7, 0.7];
         end
 
         % Image clicked function: element_1, element_10, element_11, 
@@ -207,6 +366,7 @@ classdef uielements < matlab.apps.AppBase
                 else
                     app.LE_selected = {event.Source.Tag};
                 end
+
             else
                 % Remove element of the list of elements
                 index_remove = find_ind(app.LE_selected, event.Source.Tag);
@@ -214,6 +374,7 @@ classdef uielements < matlab.apps.AppBase
                 if ~app.NE
                     app.listbox_LS_DB.Items = {};
                 end
+
             end
             % Search species with the elements selected
             if app.NE
@@ -222,6 +383,7 @@ classdef uielements < matlab.apps.AppBase
                 catch
                     LS = {};
                 end
+
                 app.listbox_LS_DB.Items = LS;
             end
         end
@@ -252,6 +414,7 @@ classdef uielements < matlab.apps.AppBase
             else
                 app.text_phase.Value = 'gas';
             end
+
             app.text_W.Value = W;
             app.text_hf.Value = app.DB.(species).hf * W * 1e-6;
             app.text_ef.Value = app.DB.(species).ef * W * 1e-6;
@@ -292,8 +455,10 @@ classdef uielements < matlab.apps.AppBase
                 if i > 1
                     LS_copy = [LS_copy, ', '];
                 end
+
                 LS_copy = [LS_copy, '''', app.listbox_LS.Items{i}, ''''];
             end
+
             LS_copy = [LS_copy, '}'];
             % Copy to clipboard
             clipboard('copy', LS_copy);
@@ -317,6 +482,7 @@ classdef uielements < matlab.apps.AppBase
                 ind = find_ind(app.LE_omit, current_obj.Tag);
                 app.LE_omit(ind) = [];
             end
+            
             % Update GUI
             element_1ImageClicked(app, event);
         end
@@ -335,6 +501,24 @@ classdef uielements < matlab.apps.AppBase
             else
                 app.listbox_LS_DB.Items = {};
             end
+        end
+
+        % Button pushed function: plot
+        function plotButtonPushed(app, event)
+            % Plot property against temperature
+            plot_property(app);
+        end
+
+        % Clicked callback: listbox_LS_DB
+        function listbox_LS_DBClicked(app, event)
+            % Get last click | true == listbox_LS_DB, false = listbox_LS
+            app.FLAG_LAST_CLICK = true;
+        end
+
+        % Clicked callback: listbox_LS
+        function listbox_LSClicked(app, event)
+            % Get last click | true == listbox_LS_DB, false = listbox_LS
+            app.FLAG_LAST_CLICK = false;
         end
     end
 
@@ -1183,6 +1367,7 @@ classdef uielements < matlab.apps.AppBase
             app.listbox_LS_DB.ValueChangedFcn = createCallbackFcn(app, @listbox_LSValueChanged, true);
             app.listbox_LS_DB.Layout.Row = [4 6];
             app.listbox_LS_DB.Layout.Column = [1 2];
+            app.listbox_LS_DB.ClickedFcn = createCallbackFcn(app, @listbox_LS_DBClicked, true);
             app.listbox_LS_DB.Value = {};
 
             % Create AddButton1
@@ -1199,6 +1384,7 @@ classdef uielements < matlab.apps.AppBase
             app.listbox_LS.ValueChangedFcn = createCallbackFcn(app, @listbox_LSValueChanged, true);
             app.listbox_LS.Layout.Row = [4 6];
             app.listbox_LS.Layout.Column = [4 5];
+            app.listbox_LS.ClickedFcn = createCallbackFcn(app, @listbox_LSClicked, true);
             app.listbox_LS.Value = {};
 
             % Create RemoveButton1
@@ -1207,6 +1393,44 @@ classdef uielements < matlab.apps.AppBase
             app.RemoveButton1.Layout.Row = 5;
             app.RemoveButton1.Layout.Column = 3;
             app.RemoveButton1.Text = 'Remove <<';
+
+            % Create plot
+            app.plot = uibutton(app.GridLayout2, 'push');
+            app.plot.ButtonPushedFcn = createCallbackFcn(app, @plotButtonPushed, true);
+            app.plot.Layout.Row = 1;
+            app.plot.Layout.Column = 3;
+            app.plot.Text = 'Plot';
+
+            % Create property
+            app.property = uidropdown(app.GridLayout2);
+            app.property.Items = {'Specific heat capacity at constant pressure', 'Specific heat capacity at constant volume', 'Adiabatic index', 'Internal energy', 'Enthalpy', 'Entropy', 'Gibbs energy'};
+            app.property.ItemsData = {'cp', 'cv', 'gamma', 'e', 'h', 's', 'g'};
+            app.property.Layout.Row = 2;
+            app.property.Layout.Column = [4 5];
+            app.property.Value = 'cp';
+
+            % Create temperature_range
+            app.temperature_range = uieditfield(app.GridLayout2, 'text');
+            app.temperature_range.HorizontalAlignment = 'center';
+            app.temperature_range.Tooltip = {'Select temperature range [initial:step:final] values'};
+            app.temperature_range.Layout.Row = 1;
+            app.temperature_range.Layout.Column = 4;
+            app.temperature_range.Value = '[300:10:20000]';
+
+            % Create type
+            app.type = uidropdown(app.GridLayout2);
+            app.type.Items = {'CT', 'NASA'};
+            app.type.Tooltip = {'Select polynomial fits'};
+            app.type.Layout.Row = 2;
+            app.type.Layout.Column = 3;
+            app.type.Value = 'CT';
+
+            % Create log
+            app.log = uicheckbox(app.GridLayout2);
+            app.log.Tooltip = {'Set logarithmic scale'};
+            app.log.Text = '';
+            app.log.Layout.Row = 1;
+            app.log.Layout.Column = 5;
 
             % Create Panel_Export
             app.Panel_Export = uipanel(app.GridLayout);

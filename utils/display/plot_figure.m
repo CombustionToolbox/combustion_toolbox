@@ -1,4 +1,4 @@
-function ax = plot_figure(x_field, x_var, y_field, y_var, varargin)
+function [ax, dline] = plot_figure(x_field, x_var, y_field, y_var, varargin)
     % Plot figure
 
     % Default settings
@@ -65,9 +65,9 @@ function ax = plot_figure(x_field, x_var, y_field, y_var, varargin)
 
     % Plot
     if FLAG_COLOR_NEW
-        plot(ax, x, y, config.linestyle, 'LineWidth', config.linewidth);
+        dline = plot(ax, x, y, config.linestyle, 'LineWidth', config.linewidth);
     else
-        plot(ax, x, y, config.linestyle, 'LineWidth', config.linewidth, 'Color', config.colorline);
+        dline = plot(ax, x, y, config.linestyle, 'LineWidth', config.linewidth, 'Color', config.colorline);
     end
     
     % Set labels

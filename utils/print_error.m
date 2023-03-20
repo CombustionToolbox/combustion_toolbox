@@ -7,7 +7,7 @@ function error_message = print_error(ME, varargin)
     % Optional Args:
     %     message_solution (str): Message solution
     %
-    % Reutnrs:
+    % Returns:
     %     error_message (str): Message error
 
     % Default

@@ -2,16 +2,15 @@ function mixtures = get_mixtures(PS, pattern)
     % Get all non-empty mixture
     %
     % Args:
-    %       PS (struct): Struct with all the data of Problem Solution (PS)
-    %       pattern (str): Pattern/s name of the mixture
+    %     PS (struct): Struct with all the data of Problem Solution (PS)
+    %     pattern (str): Pattern/s name of the mixture
     %
     % Returns:
-    %       mixtures (cell): Cell with all the non-empty mixtures
+    %     mixtures (cell): Cell with all the non-empty mixtures
     %
-    % Example:
-    %
-    %       mixtures = get_mixtures(self.PS, 'mix');
-    %       mixtures = get_mixtures(self.PS, 'strP');
+    % Examples:
+    %     * mixtures = get_mixtures(self.PS, 'mix');
+    %     * mixtures = get_mixtures(self.PS, 'strP');
 
     % Get fieldnames
     fieldnames_value = fieldnames(PS);

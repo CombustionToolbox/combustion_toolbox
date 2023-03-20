@@ -5,7 +5,7 @@ function species_with = name_with_parenthesis(species)
     % Args:
     %     species (str): Chemical species in NASA's Database format
     %
-    % Return:
+    % Returns:
     %     species_with (str): Chemical species with parenthesis
 
     j = find(species(:) == 'b');

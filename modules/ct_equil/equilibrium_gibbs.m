@@ -7,8 +7,8 @@ function [N0, dNi_T, dN_T, dNi_p, dN_p, ind, STOP, STOP_ions] = equilibrium_gibb
     % The algorithm implemented take advantage of the sparseness of the
     % upper left submatrix obtaining a matrix J of size NE + NS - NG + 1. 
     %
-    % This method is based on Gordon, S., & McBride, B. J. (1994). NASA reference publication,
-    % 1311.
+    % This method is based on the method outlined in Gordon, S., & McBride,
+    % B. J. (1994). NASA reference publication, 1311.
     %
     % Args:
     %     self (struct): Data of the mixture, conditions, and databases
@@ -27,6 +27,10 @@ function [N0, dNi_T, dN_T, dNi_p, dN_p, ind, STOP, STOP_ions] = equilibrium_gibb
     %     * dN_p (float): Thermodynamic derivative of the moles of the mixture respect to pressure
     %     * ind (float): List of chemical species indices
     %     * STOP (float): Relative error in moles of species [-]
+    %
+    % Examples:
+    %     * N0 = equilibrium_gibbs(self, 1.01325, 3000, self.PS.strR{1}, [])
+    %     * [N0, dNi_T, dN_T, dNi_p, dN_p, ind, STOP, STOP_ions] = equilibrium_gibbs(self, 1.01325, 3000, self.PS.strR{1}, [])
 
     % Generalized Gibbs minimization method (reduced)
     
@@ -54,25 +58,14 @@ function [N0, dNi_T, dN_T, dNi_p, dN_p, ind, STOP, STOP_ions] = equilibrium_gibb
     
     % Update temp values
     if ~isempty(ind_remove_species)
-        [ind, ind_swt, ind_nswt, ind_ions, NG] = update_temp(N0, ind_remove_species, ind_swt, ind_nswt, ind_ions, NP, SIZE);
+        [ind, ind_swt, ind_nswt, ind_ions, NG, NS] = update_temp(N0, ind_remove_species, ind_swt, ind_nswt, ind_ions, NP, SIZE);
     end
     
-    % Remove gas species with temperature out of bounds
-    for i = length(ind_nswt):-1:1
-        species = self.S.LS{ind_nswt(i)};
-        if TP < self.DB.(species).T(1)
-            ind_nswt(i) = [];
-        end
-    end
-
     % Remove condensed species with temperature out of bounds
-    % fprintf('T = %.2f\n', TP);
-    for i = length(ind_swt):-1:1
-        species = self.S.LS{ind_swt(i)};
-        if TP < self.DB.(species).T(1) || TP > self.DB.(species).T(end)
-            ind_swt(i) = [];
-        end
-    end
+    ind_swt = check_temperature_range(self, TP, ind_swt, NS - NG, false);
+
+    % Remove gas species with temperature out of bounds
+    [ind_nswt, NG] = check_temperature_range(self, TP, ind_nswt, NG, self.TN.FLAG_EXTRAPOLATE);
 
     % First, compute chemical equilibrium with only gaseous species
     ind_nswt_0 = ind_nswt;
@@ -316,7 +309,7 @@ function [ind_swt, FLAG_CONDENSED] = check_condensed_species(A0, pi_i, W, ind_sw
         ind_swt = [];
         return
     end
-    
+
     % Get index of the condensed species to be added to the system
     [~, temp] = min(dL_dn);
     ind_swt = ind_swt(temp);

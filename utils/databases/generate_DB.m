@@ -37,11 +37,11 @@ function DB = get_DB(DB_master)
         species = FullName2name(LS{i});
 
         if isfield(DB_master, species)
-
             ctTInt = DB_master.(species).ctTInt;
             tRange = DB_master.(species).tRange;
             phase = sign(DB_master.(species).phase);
-
+            
+            % Species that can be evaluated at different temperatures
             if ctTInt > 0
 
                 [txFormula, mm, ~, Hf0, ~, Ef0, ~, ~] = get_speciesProperties(DB_master, LS{i}, 298.15, 'molar', 0);
@@ -62,27 +62,29 @@ function DB = get_DB(DB_master)
 
                 for j = NT:-1:1
                     [~, ~, Cp0, ~, H0, ~, S0, ~] = get_speciesProperties(DB_master, LS{i}, T_vector(j), 'molar', 0);
+                    cp_vector(j) = Cp0;
                     h0_vector(j) = H0;
                     s0_vector(j) = S0;
-                    cp_vector(j) = Cp0;
                     g0_vector(j) = H0 - T_vector(j) * S0;
                 end
 
                 DB.(species).T = T_vector;
 
-                % INTERPOLATION CURVES
+                % Interpolation curves
                 DB.(species).cPcurve = griddedInterpolant(T_vector, cp_vector, 'pchip', 'linear');
                 DB.(species).h0curve = griddedInterpolant(T_vector, h0_vector, 'pchip', 'linear');
                 DB.(species).s0curve = griddedInterpolant(T_vector, s0_vector, 'pchip', 'linear');
                 DB.(species).g0curve = griddedInterpolant(T_vector, g0_vector, 'pchip', 'linear');
 
-                % DATA COEFFICIENTS NASA 9 POLYNOMIAL (ONLY GASES)
+                % Coefficients NASA's 9 polynomial fits
                 DB.(species).ctTInt = DB_master.(species).ctTInt;
                 DB.(species).tRange = DB_master.(species).tRange;
                 DB.(species).tExponents = DB_master.(species).tExponents;
                 DB.(species).ctTInt = DB_master.(species).ctTInt;
                 DB.(species).a = DB_master.(species).a;
                 DB.(species).b = DB_master.(species).b;
+
+            % Species that can be evaluated at a fixed temperature
             else
 
                 Tref = tRange(1);

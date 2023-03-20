@@ -1,5 +1,5 @@
 classdef SplashScreen < matlab.mixin.SetGet
-    %SplashScreen  create a SplashScreen
+    % SplashScreen  create a SplashScreen
     %
     %   s = SplashScreen(title,imagefile) creates a SplashScreen using
     %   the specified image. The title is the name of the window as shown

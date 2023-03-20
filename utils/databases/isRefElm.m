@@ -6,7 +6,7 @@ function [FLAG_RE, REname] = isRefElm(reference_elements, species, T)
     %     species (str): Chemical species
     %     T (float): Temperature
     %
-    % Return:
+    % Returns:
     %     name (str): Full name of the given species
 
     % Change lowercase 'l' to uppercase 'L' for Al, Cl, Tl, and Fl

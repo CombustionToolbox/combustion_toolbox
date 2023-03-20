@@ -1,5 +1,5 @@
 function info = cpuinfo()
-%CPUINFO  read CPU configuration
+% CPUINFO  read CPU configuration
 %
 %   info = CPUINFO() returns a structure containing various bits of
 %   information about the CPU and operating system as provided by /proc/cpu
@@ -13,6 +13,7 @@ function info = cpuinfo()
 %   See also: COMPUTER, ISUNIX, ISMAC
 %   Author: Ben Tordoff
 %   Copyright 2011-2021 The MathWorks, Inc.
+
 if isunix
     if ismac
         info = cpuInfoMac();

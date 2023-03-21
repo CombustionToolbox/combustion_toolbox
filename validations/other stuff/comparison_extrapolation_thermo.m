@@ -1,6 +1,6 @@
 function comparison_extrapolation_thermo(varargin)
-    % Comparison of the thermodynamic functions with the higher order terms of
-    % the polynomials fits and with a linearized extrapolation
+    % Routine to compare the extrapolation of polynomial fits with higher
+    % order or linearized terms
     %
     % Optional Args:
     %     * species (cell): List of species

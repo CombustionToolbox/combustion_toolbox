@@ -3,7 +3,9 @@ function self = run_CT(varargin)
     % inputs. Otherwise, it will run the predefined case.
 
     % DEFAULT VALUES
-    species = 'Soot Formation';
+    DB = [];
+    DB_master = [];
+    species = [];
     Temp_mix1 = 300;
     Temp_mix2 = 2500;
     Pressure_mix1 = 1;
@@ -20,12 +22,17 @@ function self = run_CT(varargin)
     FLAG_PHI = true;
     FLAG_IAC = true;
     FLAG_FAST = true;
+    FLAG_RESULTS = false;
     Aratio_c = [];
     Aratio = [];
     % GET INPUTS
     for i = 1:2:nargin
 
         switch lower(varargin{i})
+            case {'db'}
+                DB = varargin{i + 1};
+            case {'db_master'}
+                DB_master = varargin{i + 1};
             case {'problemtype', 'problem'}
                 ProblemType = varargin{i + 1};
             case {'listspecies', 'species'}
@@ -88,14 +95,20 @@ function self = run_CT(varargin)
                 Aratio = varargin{i + 1};
             case 'flag_fast'
                 FLAG_FAST = varargin{i + 1};
+            case 'flag_results'
+                FLAG_RESULTS = varargin{i + 1};
         end
 
     end
 
     % INITIALIZE
-    self = App(species);
+    if isempty(DB) || isempty(DB_master)
+        self = App(species);
+    else
+        self = App('fast', DB_master, DB, species);
+    end
     % MISCELLANEOUS
-    self.Misc.FLAG_RESULTS = false;
+    self.Misc.FLAG_RESULTS = FLAG_RESULTS;
     % TUNNING PROPERTIES
     self.TN.tolN = tolN;
     self.TN.N_points_polar = N_points_polar;

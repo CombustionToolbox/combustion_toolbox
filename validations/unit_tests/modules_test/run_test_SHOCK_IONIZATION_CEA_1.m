@@ -1,4 +1,4 @@
- function [max_rel_error_prop_mix1, max_rel_error_prop_mix2] = run_test_SHOCK_IONIZATION_CEA_1(value)
+ function [max_rel_error_prop_mix1, max_rel_error_prop_mix2] = run_test_SHOCK_IONIZATION_CEA_1(value, DB, DB_master)
     % Run test_SHOCK_IONIZATION_CEA_1:
     % Contrasted with: NASA's Chemical Equilibrium with Applications software
     % Problem type: Planar incident shock wave
@@ -29,7 +29,9 @@
                         'S_Oxidizer', Oxidizer,...
                         'N_Oxidizer', moles,...
                         'u1', value,...
-                        'tolN', tolN);
+                        'tolN', tolN,...
+                        'DB', DB,...
+                        'DB_master', DB_master);
     % Load results CEA 
     results_CEA = data_CEA(filename, display_species, find_ind(list_species(LS), display_species));
     % Compute error

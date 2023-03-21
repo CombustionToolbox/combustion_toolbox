@@ -8,7 +8,7 @@ function mix2 = equilibrate_T(self, mix1, pP, TP, varargin)
     %     TP (float): Temperature [K]
     %
     % Optional Args:
-    %     guess_moles (float): mixture composition [mol] of a previous computation
+    %     guess_moles (float): Mixture composition [mol] of a previous computation
     %
     % Returns:
     %     mix2 (struct): Properties of the final mixture

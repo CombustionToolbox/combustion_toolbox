@@ -12,7 +12,7 @@ function [N0, dNi_T, dN_T, dNi_p, dN_p, STOP, STOP_ions] = equilibrium_gibbs_eos
     %     pP (float): Pressure [bar]
     %     TP (float): Temperature [K]
     %     mix1 (struct): Properties of the initial mixture
-    %     guess_moles (float): mixture composition [mol] of a previous computation
+    %     guess_moles (float): Mixture composition [mol] of a previous computation
     %
     % Returns:
     %     Tuple containing

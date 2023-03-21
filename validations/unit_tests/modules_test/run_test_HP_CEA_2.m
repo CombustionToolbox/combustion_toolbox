@@ -1,17 +1,17 @@
-function [max_rel_error_moles, max_rel_error_prop] = run_test_HP_CEA_1(value)
+function [max_rel_error_moles, max_rel_error_prop] = run_test_HP_CEA_2(value, DB, DB_master)
     % Run test_HP_CEA_1:
     % Contrasted with: NASA's Chemical Equilibrium with Applications software
     % Problem type: Adiabatic T and composition at constant p
     % Temperature [K]   = 300;
     % Pressure    [bar] = 1;
     % Equivalence ratio [-] = value
-    % Initial mixture: Fuel + AIR_IDEAL (79% N2 + 21% O2)
+    % Initial mixture: Fuel + O2
     % List of species considered: ListSpecies('Soot Formation Extended')
     
     % Inputs
     Fuel = 'C2H2_acetylene';
     prefixDataName = 'C2H2';
-    filename = {strcat(prefixDataName, '_air1_HP.out'), strcat(prefixDataName, '_air1_HP2.out'), strcat(prefixDataName, '_air1_HP3.out')};
+    filename = {strcat(prefixDataName, '_O2_HP.out'), strcat(prefixDataName, '_O2_HP2.out'), strcat(prefixDataName, '_O2_HP3.out')};
     LS =  'Soot Formation Extended';
     display_species = {'CO2', 'CO', 'H2O', 'H2', 'O2', 'N2', 'He', 'Ar',...
                       'HCN','H','OH','O','CN','NH3','CH4','C2H4','CH3',...
@@ -19,7 +19,11 @@ function [max_rel_error_moles, max_rel_error_prop] = run_test_HP_CEA_1(value)
     % Combustion Toolbox
     results_CT = run_CT('ListSpecies', LS,...
                         'S_Fuel', Fuel,...
-                        'EquivalenceRatio', value);
+                        'S_Oxidizer', 'O2',...
+                        'ratio_oxidizers_O2', 1,...
+                        'EquivalenceRatio', value,...
+                        'DB', DB,...
+                        'DB_master', DB_master);
     % Load results CEA 
     results_CEA = data_CEA(filename, display_species);
     % Compute error

@@ -8,6 +8,8 @@ function app = gui_CalculateButtonPushed(app, event)
         app = get_listSpecies_gui(app);
         % Initialize variable self
         self = App('fast', app.DB_master, app.DB, app.LS);
+        % Get Miscellaneous
+        self = get_miscellaneous_values(app, self);
         % Set FLAG GUI
         self.Misc.FLAG_GUI = true;
         % Get Print results FLAG (debug mode)
@@ -52,6 +54,11 @@ function app = gui_CalculateButtonPushed(app, event)
 end
 
 % SUB-PASS FUNCTIONS
+function self = get_miscellaneous_values(obj, self)
+    % Get miscellaneous properties from GUI and set into self
+    self.Misc = obj.Misc;
+end
+
 function self = get_tuning_values(obj, self)
     % Get tuning properties from GUI and set into self
     self.TN = obj.TN;

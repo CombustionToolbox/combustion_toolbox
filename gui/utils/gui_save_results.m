@@ -1,5 +1,10 @@
 function gui_save_results(app, format)
     % Save results as the given format (.xls or .mat)
+    
+    if isempty(app.Node_Results.Children)
+        app.Console_text.Value = 'Nothing to export.';
+        return
+    end
 
     switch lower(format)
         case {'xls', '.xls', 'excel'}
@@ -10,8 +15,12 @@ function gui_save_results(app, format)
             format = '*.mat';
     end
 
-    [data_mix1, data_mix2, filename] = gui_save_format_results(app, format, FLAG_EXCEL);
+    [data_mix1, data_mix2, filename, FLAG_CANCEL] = gui_save_format_results(app, format, FLAG_EXCEL);
     
+    if FLAG_CANCEL
+        return
+    end
+
     if FLAG_EXCEL
         return
     end
@@ -20,13 +29,31 @@ function gui_save_results(app, format)
 end
 
 % SUB-PASS FUNCTIONS
- function [data_mix1, data_mix2, filename] = gui_save_format_results(app, format, FLAG_EXCEL)
+ function [data_mix1, data_mix2, filename, FLAG_CANCEL] = gui_save_format_results(app, format, FLAG_EXCEL)
+    % Save results as the given format (.xls or .mat)
+    
+    % Initialization
+    data_mix1 = [];
+    data_mix2 = [];
+    filename = [];
+    FLAG_CANCEL = false;
+
+    % Read data
     results = app.Tree.Children;
     sumcases = 0;
     if ~isempty(results.Children)
         child1 = results.Children;
         maxi = numel(child1);
-        [file, name, path] = uiputfile(format, 'File Selection', '');
+
+        % Ask for filename
+        [file, name, path] = uiputfile(format, 'File Selection', app.Misc.export_results.filename);
+        
+        if isfloat(file)
+            FLAG_CANCEL = true;
+            app.Console_text.Value = 'Export cancelled.';
+            return
+        end
+
         filename = strcat(name, file);
         if isequal(file,0) || isequal(path,0)
             disp('User clicked Cancel.')

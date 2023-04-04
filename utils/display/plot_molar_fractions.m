@@ -7,7 +7,7 @@ function [ax, fig] = plot_molar_fractions(self, x_var, x_field, y_field, varargi
     %     x_field (char): Fieldname to plot on the x-axis
     %     y_field (char): Fieldname to plot on the y-axis
     %
-    % Optional Args:
+    % Optional Name-Value Pair Args:
     %     * validation (struct): Struct that contains validations with (x_field, y_field)
     %     * nfrec (float): Frequency points to plot validations
     %     * mintol (float): Minimum limit i-axis with the composition of the mixture
@@ -18,24 +18,26 @@ function [ax, fig] = plot_molar_fractions(self, x_var, x_field, y_field, varargi
     %     * yscale (char): Set y-axis scale (linear or log)
     %     * xdir (char): Set x-axis direction (normal or reverse)
     %     * ydir (char): Set y-axis direction (normal or reverse)
+    %     * ax (object): Handle of the axes to plot on
     %
     % Returns:
     %     Tuple containing
     %
-    %     * ax (axes): Axes object
-    %     * fig (figure): Figure object
+    %     * ax (object): Handle of the axes
+    %     * fig (object): Handle of the figure
 
     % Default values
     ax = [];
     results2 = [];
     nfrec = 1;
     config = self.Misc.config;
-    config.labelx = interpreter_label(x_field, config.label_type); % Set x label
-    config.labely = interpreter_label(y_field, config.label_type); % Set y label
+    config.labelx = interpreter_label(x_field, config.label_type);
+    config.labely = interpreter_label(y_field, config.label_type);
     mintol_display = self.C.mintol_display;
     config.yscale = 'log';
     [species, LS] = get_display_species(self);
     y_var = x_var;
+
     % Unpack
     for i = 1:2:nargin - 5
 
@@ -75,10 +77,13 @@ function [ax, fig] = plot_molar_fractions(self, x_var, x_field, y_field, varargi
         mix1.(x_field) = cell2vector(x_var, x_field);
         mix1.(y_field) = cell2vector(y_var, y_field);
     end
+    
     % Get index species
     index_species_CT = find_ind(LS, species);
+
     % Remove species that do not appear
     [species, index_species_CT] = clean_display_species(mix1.Xi, LS, index_species_CT);
+
     % Set figure
     if isempty(ax)
         [ax, ~, fig] = set_figure(config);
@@ -109,6 +114,7 @@ function [ax, fig] = plot_molar_fractions(self, x_var, x_field, y_field, varargi
     SYMBOL_STYLES = {'d', 'o', 's', '<'};
     NUM_STYLES = length(LINE_STYLES);
     colorbw = brewermap(NUM_COLORS, config.colorpalette);
+
     % Plot main results
     k = 1;
     z = 1;
@@ -201,6 +207,7 @@ function [ax, fig] = plot_molar_fractions(self, x_var, x_field, y_field, varargi
     end
 
     legend(h, legendname, 'FontSize', config.fontsize - 6, 'Location', 'northeastoutside', 'interpreter', 'latex');
+    
     % Set title
     title(create_title(self), 'Interpreter', 'latex', 'FontSize', config.fontsize + 4);
 end

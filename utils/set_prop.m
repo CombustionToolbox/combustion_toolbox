@@ -12,7 +12,6 @@ function self = set_prop(self, varargin)
     %     self (struct): Data of the mixture, conditions, and databases
 
     try
-
         for i = 1:2:nargin - 1
             self = set_prop_common(self, varargin{i}, varargin{i + 1});
         end
@@ -27,10 +26,14 @@ end
 function self = set_prop_common(self, name, value)
     % Assign property values to the given variable name
 
-    % If the value is a string, convert it to a float - (GUI)
+    % If the value is a char, convert it to a float - (GUI)
     if value(1) == '['
         value = sscanf(value, '[%f:%f:%f]');
         value = value(1):value(2):value(3);
+    elseif sum(value == ':') == 2
+        value = sscanf(value, '%f:%f:%f');
+        value = value(1):value(2):value(3);
+
     elseif ischar(value)
         value = sscanf(value, '%f');
     end

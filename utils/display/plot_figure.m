@@ -2,27 +2,27 @@ function [ax, dline] = plot_figure(x_field, x_var, y_field, y_var, varargin)
     % Plot figure with customizable settings
     %
     % Args:
-    %     x_field (string): Field name for the x-axis data
+    %     x_field (char): Field name for the x-axis data
     %     x_var (cell): Cell array containing the x-axis data
-    %     y_field (string): Field name for the y-axis data
+    %     y_field (char): Field name for the y-axis data
     %     y_var (cell): Cell array containing the y-axis data
     %
     % Optional Name-Value Pair Args:
     %     * config (struct): Struct with the configuration for plots
     %     * leg or legend (cell): Cell array of strings containing the legend names
-    %     * legend_location (string): Location of the legend
+    %     * legend_location (char): Location of the legend
     %     * ax or axes (object): Handle of the axes to plot on
-    %     * linestyle (string): Line style
+    %     * linestyle (char): Line style
     %     * linewidth (float): Line width
     %     * fontsize (float): Font size
-    %     * title (string): Title of the figure
-    %     * labelx, xlabel, label_x, or x_label (string): x-axis label
-    %     * labely, ylabel, label_y, or 'y_label (string): y-axis label
-    %     * label_type (string): Label type
-    %     * xscale (string): Set x-axis scale (linear or log)
-    %     * yscale (string): Set y-axis scale (linear or log)
-    %     * xdir (string): Set x-axis direction (normal or reverse)
-    %     * ydir (string): Set y-axis direction (normal or reverse)
+    %     * title (char): Title of the figure
+    %     * labelx, xlabel, label_x, or x_label (char): x-axis label
+    %     * labely, ylabel, label_y, or 'y_label (char): y-axis label
+    %     * label_type (char): Label type
+    %     * xscale (char): Set x-axis scale (linear or log)
+    %     * yscale (char): Set y-axis scale (linear or log)
+    %     * xdir (char): Set x-axis direction (normal or reverse)
+    %     * ydir (char): Set y-axis direction (normal or reverse)
     %     * color (float): Line color [R, G, B]
     %
     % Returns:

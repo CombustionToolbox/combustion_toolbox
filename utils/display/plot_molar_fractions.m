@@ -4,8 +4,8 @@ function [ax, fig] = plot_molar_fractions(self, x_var, x_field, y_field, varargi
     % Args:
     %     self (struct): Data of the mixture, conditions, and databases
     %     x_var (cell): Properties of the mixture for all the cases
-    %     x_field (char): Fieldname to plot on the x-axis
-    %     y_field (char): Fieldname to plot on the y-axis
+    %     x_field (char): Field name for the x-axis data
+    %     y_field (char): Field name for the y-axis data
     %
     % Optional Name-Value Pair Args:
     %     * validation (struct): Struct that contains validations with (x_field, y_field)

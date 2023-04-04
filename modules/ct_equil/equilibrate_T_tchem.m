@@ -1,6 +1,6 @@
 function mix2 = equilibrate_T_tchem(self, mix1, pP, TP)
     % Obtain equilibrium properties and composition for the given
-    % temperature [K] and pressure [bar] assuming a calorically frozen gas
+    % temperature [K] and pressure [bar] assuming a calorically perfect gas
     %
     % Args:
     %     self (struct): Data of the mixture, conditions, and databases
@@ -9,7 +9,7 @@ function mix2 = equilibrate_T_tchem(self, mix1, pP, TP)
     %     TP (float): Temperature [K]
     %
     % Returns:
-    %     mix2 (struct): Properties of the final mixture assuming a calorically frozen gas
+    %     mix2 (struct): Properties of the final mixture assuming a calorically perfect gas
     %
     % Example:
     %     mix2 = equilibrate_T_tchem(self, self.PS.strR{1}, 1.01325, 3000)
@@ -33,6 +33,7 @@ function mix2 = equilibrate_T_tchem(self, mix1, pP, TP)
         % Set pressure [bar] of the mixture
         mix2.p = convert_Pa_to_bar(self.PD.EOS.pressure(self, molesGas(mix2), TP, mix2.v));
     end
+    
     % Set density [kg/m3] of the mixture
     mix2.rho = mix2.mi / mix2.v;
     % Set sound velocity [m/s]

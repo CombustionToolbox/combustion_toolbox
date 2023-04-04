@@ -18,8 +18,9 @@ function [P, T, STOP] = det_compute_guess_CEA(self, mix1)
     % Example:
     %     [P, T, STOP] = det_compute_guess_CEA(self, self.PS.strR{1})
 
-    % Abbreviations
+    % Definitions
     R0 = self.C.R0; % [J/mol-K]
+
     % Parameters
     T1 = temperature(mix1); % [K]
     W1 = meanMolecularWeight(mix1) * 1e-3; % [kg/mol]
@@ -27,6 +28,7 @@ function [P, T, STOP] = det_compute_guess_CEA(self, mix1)
     m1 = mass(mix1); % [kg]
     itMax = self.TN.it_guess_det;
     p2p1_0 = 15;
+
     % Estimate post-shock state considering h2 = h1 + 3/4 * R * T1 / W1 * (p2 / p1)_0
     mix1.h = (h1 + 3/4 * R0 * T1 / W1 * p2p1_0) * m1 * 1e-3; % [kJ]
     self.PD.ProblemType = 'HP';
@@ -34,6 +36,7 @@ function [P, T, STOP] = det_compute_guess_CEA(self, mix1)
     cp2 = cp_mass(mix2) * 1e3; % [J/kg-K]
     gamma2_s = adiabaticIndex_sound(mix2); % [-]
     W2 = meanMolecularWeight(mix2) * 1e-3; % [kg]
+    
     % Initialization
     P_0 = p2p1_0; % [-]
     T_0 = temperature(mix2) / T1; % [-]

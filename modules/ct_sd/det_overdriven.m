@@ -17,6 +17,7 @@ function [mix1, mix2] = det_overdriven(self, mix1, drive_factor, varargin)
 
     % Unpack input data
     [self, mix1, mix2] = unpack(self, mix1, drive_factor, varargin);
+    
     % Compute CJ speed and initial guess
     if isempty(mix1.cj_speed)
         % Compute CJ speed

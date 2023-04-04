@@ -15,10 +15,13 @@ function self = initialize(self)
     try
         % Check if minors products species are contained in DB
         [self.DB, self.E, self.S, self.C] = check_DB(self, self.DB_master, self.DB);
+
         % Sort species: first gaseous species, secondly condensed species
         self = list_phase_species(self, self.S.LS);
+        
         % Set Stoichiometric and Properties Matrix
         self = stoich_prop_matrix(self);
+
     catch ME
         errorMessage = sprintf('Error in function %s() at line %d.\n\nError Message:\n%s', ...
             ME.stack(1).name, ME.stack(1).line, ME.message);

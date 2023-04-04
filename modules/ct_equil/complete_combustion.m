@@ -1,10 +1,11 @@
 function [moles, species] = complete_combustion(self, mix, phi)
     % Solve chemical equilibrium for CHNO mixtures assuming a complete combustion
+    % using the equilibrium constants method
     %
     % Args:
-    %     self (struct):   Data of the mixture, conditions, and databases
-    %     mix (struct):    Properties of the initial mixture
-    %     phi (float):     Equivalence ratio [-]
+    %     self (struct): Data of the mixture, conditions, and databases
+    %     mix (struct): Properties of the initial mixture
+    %     phi (float): Equivalence ratio [-]
     %
     % Returns:
     %     Tuple containing
@@ -14,13 +15,14 @@ function [moles, species] = complete_combustion(self, mix, phi)
     %
     % Example:
     %     [moles, species] = complete_combustion(self, self.PS.strR{1}, 0.5)
-
-    % Parameters ---------------------
-    Fuel = self.PD.Fuel;
-    phi_c = compute_phi_c(Fuel);
-    % -----------------------------------
+    
+    % Definitions
     species = {'CO2', 'CO', 'H2O', 'H2', 'O2', 'N2', 'Cbgrb'};
 
+    % Get theoretical equivalence ratio at which soot may appears
+    phi_c = compute_phi_c(self.PD.Fuel);
+
+    % Get moles [x, y, z, w] per element of [C, H, O, N], respectively
     if isempty(self.E.ind_C), x = 0; phi_c = inf; else, x = mix.NatomE(self.E.ind_C); end
     if isempty(self.E.ind_H), y = 0; else, y = mix.NatomE(self.E.ind_H); end
     if isempty(self.E.ind_O), z = 0; else, z = mix.NatomE(self.E.ind_O); end
@@ -39,7 +41,6 @@ function [moles, species] = complete_combustion(self, mix, phi)
             moles = compute_moles_rich_carbon(x, z, w);
         elseif phi < phi_c
             % general case of rich mixtures with hydrogens (H) and carbons (C)
-            % moles = compute_moles_rich_appr(x, y, z);
             T = 1500;
             moles = compute_moles_rich(x, y, z, w, T, self.C.R0, self.DB);
         elseif phi >= phi_c
@@ -53,8 +54,9 @@ function [moles, species] = complete_combustion(self, mix, phi)
     moles(moles < 0) = 0;
 end
 
-% NESTED FUNCTIONS
+% SUB-PASS FUNCTIONS
 function moles = compute_moles_lean(x, y, z, w)
+    % Calculate molar composition assuming lean CHON mixture 
     NCO2_0 = x;
     NCO_0 = 0;
     NH2O_0 = y / 2;
@@ -66,6 +68,7 @@ function moles = compute_moles_lean(x, y, z, w)
 end
 
 function moles = compute_moles_rich_hydrogen(y, z, w)
+    % Calculate molar composition assuming rich HON mixture
     NCO2_0 = 0;
     NCO_0 = 0;
     NH2O_0 = z;
@@ -77,6 +80,7 @@ function moles = compute_moles_rich_hydrogen(y, z, w)
 end
 
 function moles = compute_moles_rich_carbon(x, z)
+    % Calculate molar composition assuming rich CON mixture
     NCO2_0 = -x + z;
     NCO_0 = 2 * x - z;
     NH2O_0 = 0;
@@ -85,19 +89,8 @@ function moles = compute_moles_rich_carbon(x, z)
     moles = [NCO2_0, NCO_0, NH2O_0, NH2_0, NO2_0];
 end
 
-function moles = compute_moles_rich_appr(x, y, z, w)
-    z = z / 2;
-    NCO2_0 = -x + z;
-    NCO_0 = 2 * x - z;
-    NH2O_0 = z;
-    NH2_0 = y / 2 - z;
-    NO2_0 = 0;
-    NN2_0 = w / 2;
-    NCgr_0 = 0;
-    moles = [NCO2_0, NCO_0, NH2O_0, NH2_0, NO2_0, NN2_0, NCgr_0];
-end
-
 function moles = compute_moles_rich(x, y, z, w, T, R0, DB)
+    % Calculate molar composition assuming rich CHON mixture without soot
     DG0 = (species_g0('CO', T, DB) + species_g0('H2O', T, DB) - species_g0('CO2', T, DB)) * 1000;
     k4 = exp(-DG0 / (R0 * T));
 
@@ -112,6 +105,7 @@ function moles = compute_moles_rich(x, y, z, w, T, R0, DB)
 end
 
 function moles = compute_moles_rich_soot(x, y, z, w, T, R0, DB)
+    % Calculate molar composition assuming rich CHON mixture with soot
     DG0 = (species_g0('CO2', T, DB) - 2 * species_g0('CO', T, DB)) * 1000;
     k7 = exp(-DG0 / (R0 * T));
     DG0 = (species_g0('CO', T, DB) + species_g0('H2O', T, DB) - species_g0('CO2', T, DB)) * 1000;

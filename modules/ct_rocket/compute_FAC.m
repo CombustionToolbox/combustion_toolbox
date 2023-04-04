@@ -19,24 +19,28 @@ function [mix2_inj, mix2_c, mix3] = compute_FAC(self, mix1, mix2_inj, mix2_c, mi
     %     * mix2_c (struct): Properties of the mixture at the outlet of the chamber
     %     * mix3 (struct): Properties of the mixture at the throat
 
-    % Abbreviations
-    TN = self.TN;
     % Definitions
     Aratio_chamber = self.PD.Aratio_c.value;
+
     % Obtain mixture compostion and properties at the injector of the chamber (equivalent to the outlet of the chamber using IAC model)
     mix2_inj = compute_chamber_IAC(self, mix1, mix2_inj);
+
     % Set A_chamber/A_throat
     mix2_inj.Aratio = Aratio_chamber;
+
     % Get results
     pressure_inj = pressure(mix2_inj); % [bar]
+
     % Compute guess pressure_inf
     pressure_inf = compute_initial_guess_pressure(pressure_inj, Aratio_chamber); % [bar]
+
     % Initialization
     STOP = 1; it = 0;
     mix2_inf = [];
     pressure_inj = convert_bar_to_Pa(pressure_inj); % [Pa]
+    
     % Loop
-    while STOP > TN.tol_rocket && it < TN.it_rocket
+    while STOP > self.TN.tol_rocket && it < self.TN.it_rocket
         % Update iteration
         it = it + 1;
         % Get guess

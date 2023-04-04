@@ -1,5 +1,6 @@
 function [mix1, mix2, mix2_1, mix3] = shock_polar_limitRR(self, mix1, u1)
-    % Obtain polar curves for the given pre-shock conditions
+    % Obtain polar curves for the given pre-shock conditions using
+    % Broyden's method
     %
     % Args:
     %    self (struct): Data of the mixture, conditions, and databases
@@ -21,10 +22,12 @@ function [mix1, mix2, mix2_1, mix3] = shock_polar_limitRR(self, mix1, u1)
     mix2_1 = [];
     theta0 = mix2.theta_max / 2; % [deg]
     fprime = -2;
+
     % Miscellaneous
-    it = 0; itMax = self.TN.it_limitRR; STOP = 1.; tol_limitRR = self.TN.tol_limitRR;
+    it = 0; itMax = self.TN.it_limitRR; STOP = 1; tol_limitRR = self.TN.tol_limitRR;
+
     % Loop to find regular reflection limit, which is reached when
-    % theta_min_polar2 == 0.
+    % theta_min_polar2 == 0
     while STOP > tol_limitRR && it < itMax
         % Update iteration
         it = it + 1;

@@ -152,7 +152,7 @@ function f = plot_molar_fractions_validation(results1, results2, varname_x, varn
     end
 
     legend(h, legendname, 'FontSize', config.fontsize - 6, 'Location', 'northeastoutside', 'interpreter', 'latex');
-    title(create_title(results1), 'Interpreter', 'latex', 'FontSize', config.fontsize + 4);
+    title(get_title(results1), 'Interpreter', 'latex', 'FontSize', config.fontsize + 4);
 end
 
 function dataname = get_dataname(var)
@@ -181,72 +181,4 @@ function dataselected = select_data(self, dataname)
         pos1 = index(i) + 1;
     end
 
-end
-
-function titlename = create_title(self)
-    titlename = [self.PD.ProblemType, ': ', cat_moles_species(self.PD.N_Fuel, self.PD.S_Fuel)];
-
-    if ~isempty(self.PD.S_Oxidizer) || ~isempty(self.PD.S_Inert)
-
-        if ~isempty(self.PD.S_Fuel)
-            titlename = [titlename, ' + '];
-        end
-
-        titlename = [titlename, '$\ \frac{', sprintf('%.3g', self.PD.phi_t), '}{\phi}$'];
-
-        if ~isempty(self.PD.S_Oxidizer)
-
-            if length(self.PD.S_Oxidizer) > 1
-                titlename = [titlename, '('];
-            end
-
-            ind = find_ind(self.PD.S_Oxidizer, 'O2');
-
-            if ind
-                self.PD.N_Oxidizer = self.PD.N_Oxidizer / self.PD.N_Oxidizer(ind);
-            end
-
-            titlename = [titlename, cat_moles_species(self.PD.N_Oxidizer, self.PD.S_Oxidizer)];
-        end
-
-        if ~isempty(self.PD.S_Inert) && ~isempty(self.PD.ratio_inerts_O2)
-            titlename = [titlename, ' + ', cat_moles_species(self.PD.N_Inert, self.PD.S_Inert)];
-        end
-
-        if ~isempty(self.PD.S_Oxidizer) && length(self.PD.S_Oxidizer) > 1
-            titlename = [titlename, ')'];
-        end
-
-        if ~isempty(self.PD.S_Inert) && isempty(self.PD.ratio_inerts_O2)
-            titlename = [titlename, ' + ', cat_moles_species(self.PD.N_Inert, self.PD.S_Inert)];
-        end
-
-    end
-
-end
-
-function cat_text = cat_moles_species(moles, species)
-    N = length(species);
-    cat_text = [];
-
-    if N
-        cat_text = cat_mol_species(moles(1), species{1});
-
-        for i = 2:N
-            cat_text = [cat_text, ' + ', cat_mol_species(moles(i), species{i})];
-        end
-
-    end
-
-end
-
-function cat_text = cat_mol_species(mol, species)
-
-    if mol == 1
-        value = [];
-    else
-        value = sprintf('%.3g', mol);
-    end
-
-    cat_text = [value, species2latex(species)];
 end

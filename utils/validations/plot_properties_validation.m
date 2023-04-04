@@ -1,13 +1,19 @@
 function mainfigure = plot_properties_validation(results1, results2, varsname_x, varsname_y, type, varargin)
-    % Plot properties varname_y vs varname_x from CT (results1) against results obtained from other code (results2)
-
+    % Plot properties varname_y vs varname_x from CT (results1) against
+    % results obtained from other code (results2). The properties to plot
+    % are specified by varsname_x and varsname_y, which are cell arrays
+    % of strings.
+    
     % Default values
     nfrec = 1;
     config = results1.Misc.config;
+
     % Create main figure
     mainfigure = figure;
-    set(mainfigure, 'position', config.position);
+    % set(mainfigure, 'position', config.position);
+    set(mainfigure, 'units', 'normalized', 'innerposition', config.innerposition, 'outerposition', config.outerposition);
     tiledlayout(mainfigure, 'flow');
+
     % Loop
     for i = 1:length(varsname_x)
         varname_x = varsname_x{i};
@@ -42,14 +48,11 @@ function mainfigure = plot_properties_validation(results1, results2, varsname_x,
 
         plot(ax, results1.(varname_x), results1.(varname_y), 'LineWidth', config.linewidth, 'color', colorbw(k, :), 'LineStyle', LINE_STYLES{z});
         plot(ax, results2.(varname_x)(1:nfrec:end), results2.(varname_y)(1:nfrec:end), SYMBOL_STYLES{z}, 'LineWidth', config.linewidth, 'color', colorbw(k, :), 'MarkerFaceColor', 'white');
-
-        %         legendname = {'CT', 'CEA-NASA'};
-        %         legend(ax, legendname, 'FontSize', config.fontsize-6, 'Location', 'northeastoutside', 'interpreter', 'latex');
-        %         title(create_title(results1), 'Interpreter', 'latex', 'FontSize', config.fontsize + 4);
     end
 
 end
 
+% SUB-PASS FUNCTIONS
 function dataname = get_dataname(var, type)
 
     if strcmpi(var, 'phi')
@@ -80,61 +83,4 @@ function dataselected = select_data(self, dataname)
         pos1 = index(i) + 1;
     end
 
-end
-
-function titlename = create_title(self)
-    titlename = [self.PD.ProblemType, ': ', cat_moles_species(self.PD.N_Fuel, self.PD.S_Fuel)];
-
-    if ~isempty(self.PD.S_Oxidizer) || ~isempty(self.PD.S_Inert)
-
-        if ~isempty(self.PD.S_Fuel)
-            titlename = [titlename, ' + '];
-        end
-
-        titlename = [titlename, '$\frac{', sprintf('%.3g', self.PD.phi_t), '}{\phi}$'];
-
-        if ~isempty(self.PD.S_Oxidizer) && ~isempty(self.PD.S_Inert)
-            titlename = [titlename, '('];
-        end
-
-        if ~isempty(self.PD.S_Oxidizer)
-            titlename = [titlename, cat_moles_species(1, self.PD.S_Oxidizer)];
-        end
-
-        if ~isempty(self.PD.S_Inert)
-            titlename = [titlename, ' + ', cat_moles_species(self.PD.proportion_inerts_O2, self.PD.S_Inert)];
-        end
-
-        if ~isempty(self.PD.S_Oxidizer) && ~isempty(self.PD.S_Inert)
-            titlename = [titlename, ')'];
-        end
-
-    end
-
-end
-
-function cat_text = cat_moles_species(moles, species)
-    N = length(species);
-    cat_text = [];
-
-    if N
-        cat_text = cat_mol_species(moles(1), species{1});
-
-        for i = 2:N
-            cat_text = [cat_text, ' + ', cat_mol_species(moles(i), species{i})];
-        end
-
-    end
-
-end
-
-function cat_text = cat_mol_species(mol, species)
-
-    if mol == 1
-        value = [];
-    else
-        value = sprintf('%.3g', mol);
-    end
-
-    cat_text = [value, species2latex(species)];
 end

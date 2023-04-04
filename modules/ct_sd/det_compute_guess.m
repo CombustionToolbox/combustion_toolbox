@@ -28,10 +28,12 @@ function [P, T, M1, R, Q, STOP] = det_compute_guess(self, mix1, phi, drive_facto
     a1 = mix1.sound;
     DeltaQ = 0;
     itMax = self.TN.it_guess_det;
+
     % Compute moles considering COMPLETE combustion
     [N_2_cc, LS] = complete_combustion(self, mix1, phi);
     [hfi_1, N_1, Yi_fuel, W_fuel] = compute_hfi_1_molar(self);
     [P, T, M1, M2, R, Q] = body_guess_cj(self, N_2_cc, LS, gamma1, DeltaQ, drive_factor, a1, hfi_1, N_1, Yi_fuel, W_fuel);
+    
     % Compute moles considering INCOMPLETE combustion
     [~, ind_a, ind_b] = intersect(self.S.LS, LS);
     N_2 = zeros(1, length(self.S.LS));
@@ -41,9 +43,9 @@ function [P, T, M1, R, Q, STOP] = det_compute_guess(self, mix1, phi, drive_facto
     W1 = mix1.W;
     lambda = 2 - sqrt(1 + M2^2);
 
-    %     % Debug
-    %     fprintf('T_guess,0 = %.4g\n', T)
-    %     fprintf('\nP_guess,0 = %.4g\n', P)
+    % Debug
+    % fprintf('T_guess,0 = %.4g\n', T)
+    % fprintf('\nP_guess,0 = %.4g\n', P)
 
     it = 0; STOP = 1;
 

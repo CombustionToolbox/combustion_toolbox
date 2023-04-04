@@ -17,12 +17,10 @@ function [mix1, mix2] = shock_incident_2(self, mix1, u1, varargin)
 
     % Unpack input data
     [self, mix1, mix2, guess_moles] = unpack(self, mix1, u1, varargin);
-    % Abbreviations
-    TN = self.TN;
     % Miscellaneous
     self.PD.ProblemType = 'TP';
     % Definitions
-    FLAG_FAST = TN.FLAG_FAST;
+    FLAG_FAST = self.TN.FLAG_FAST;
     lambda = 0.5; % Correction factor
     T1 = temperature(mix1); % [K]
     h1 = enthalpy_mass(mix1) * 1e3; % [J/kg]
@@ -38,14 +36,14 @@ function [mix1, mix2] = shock_incident_2(self, mix1, u1, varargin)
     end
 
     % Check convergence
-    print_convergence(STOP, TN.tol_shocks, temperature(mix2));
+    print_convergence(STOP, self.TN.tol_shocks, temperature(mix2));
     % Save state
     mix2 = save_state(mix1, mix2, STOP);
 
     % NESTED-FUNCTIONS
     function [mix2, STOP] = solve_shock_incident(mix2, FLAG_FAST)
         % Miscellaneous
-        it = 0; itMax = TN.it_shocks; STOP = 2;
+        it = 0; itMax = self.TN.it_shocks; STOP = 1;
         % Initial estimate of post-shock state
         [mix2, u20] = get_guess(self, mix1, mix2);
         % Get properties
@@ -55,7 +53,7 @@ function [mix1, mix2] = shock_incident_2(self, mix1, u1, varargin)
         % Loop
         u2 = u20;
 
-        while STOP > TN.tol_shocks && it < itMax
+        while STOP > self.TN.tol_shocks && it < itMax
             it = it + 1;
             % Obtain f0 and fprime0
             f0 = h2 - h1 + 0.5 * (u2^2 - u1^2);

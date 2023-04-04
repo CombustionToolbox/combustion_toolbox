@@ -4,7 +4,7 @@ function [mix1, mix2] = shock_polar(self, mix1, u1, varargin)
     % Args:
     %     self (struct): Data of the mixture, conditions, and databases
     %     mix1 (struct): Properties of the mixture in the pre-shock state
-    %     u1 (float):    Pre-shock velocity [m/s]
+    %     u1 (float): Pre-shock velocity [m/s]
     %
     % Optional Args:
     %     mix2 (struct): Properties of the mixture in the post-shock state (previous calculation)
@@ -17,14 +17,13 @@ function [mix1, mix2] = shock_polar(self, mix1, u1, varargin)
 
     % Unpack input data
     [self, mix1, mix2] = unpack(self, mix1, u1, varargin);
-    % Abbreviations
-    TN = self.TN;
+
     % Definitions
     a1 = soundspeed(mix1);
     u1 = mix1.u;
 
     beta_min = asin(a1 / u1);
-    beta = linspace(beta_min, pi / 2, TN.N_points_polar);
+    beta = linspace(beta_min, pi / 2, self.TN.N_points_polar);
     u1n = u1 * sin(beta);
 
     % Compute as SDToolbox for comparison
@@ -35,6 +34,7 @@ function [mix1, mix2] = shock_polar(self, mix1, u1, varargin)
 
     N = length(u1n);
     ut = u1 .* cos(beta);
+
     % Loop
     for i = N:-1:2
         [~, mix2] = shock_incident(self, mix1, u1n(i), mix2);
@@ -45,6 +45,7 @@ function [mix1, mix2] = shock_polar(self, mix1, u1, varargin)
         u2(i) = u2n(i) * csc(beta(i) - theta(i));
         Xi(:, i) = mix2.Xi;
     end
+
     % Calculate last case (beta = beta_min), which corresponds with the sonic condition
     i = 1;
     mix2 = mix1;
@@ -63,12 +64,15 @@ function [mix1, mix2] = shock_polar(self, mix1, u1, varargin)
     % Velocity components downstream - laboratory fixed
     u2x = u2 .* cos(theta); % [m/s]
     u2y = u2 .* sin(theta); % [m/s]
+
     % Sonic point
     M2 = u2 ./ a2;
     ind_sonic = find(M2 >= 1, 1, 'last');
     theta_sonic = theta(ind_sonic) * 180 / pi;
+
     % Max deflection angle
     [theta_max, ind_max] = max(theta * 180 / pi); % [deg]
+
     % Save results
     mix2.beta = beta(end) * 180 / pi; % [deg]
     mix2.theta = theta(end) * 180 / pi; % [deg]
@@ -79,6 +83,7 @@ function [mix1, mix2] = shock_polar(self, mix1, u1, varargin)
     mix2.beta_sonic = beta(ind_sonic) * 180 / pi; % [deg]
     mix2.ind_max = ind_max;
     mix2.ind_sonic = ind_sonic;
+    
     % Range values for the shock polar
     mix2.polar.p = p2; % [bar]
     mix2.polar.Mach = M2; % [-]

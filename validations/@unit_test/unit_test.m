@@ -1,17 +1,20 @@
-classdef app_test < matlab.unittest.TestCase
-    % Test solutions from Combustion Toolbox against NASA's Chemical with
-    % Applications (CEA) code
+classdef unit_test < matlab.unittest.TestCase
+    % Class that defines a unit test for the Combustion Toolbox.
+    % 
+    % The unit test compares the results from the Combustion Toolbox with
+    % the results from NASA's Chemical with Applications (CEA) code to
+    % verify the accuracy of the calculations.
     %
     % Local test:
-    % testCase = app_test;
-    % results = testCase.run;
+    %     * results = run(unit_test);
+    %     * results = unit_test().run;
 
     properties (Constant)
         max_rel_error = 0.02; % Max relative error 2%
     end
     
     properties (Access = public)
-        DB;  % Database with PCHIP polynomial fits
+        DB; % Database with PCHIP polynomial fits
         DB_master; % Database    
     end
 
@@ -22,14 +25,17 @@ classdef app_test < matlab.unittest.TestCase
     end
 
     methods (Test)
-        function obj = app_test(varargin)
+        function obj = unit_test(varargin)
+            % Initialization
 
+            % Unpack inputs
             if nargin
                 obj.DB = varargin{1}.DB;
                 obj.DB_master = varargin{1}.DB_master;
                 return
             end
 
+            % Get databases
             self = App();
             obj.DB = self.DB;
             obj.DB_master = self.DB;
@@ -71,11 +77,11 @@ classdef app_test < matlab.unittest.TestCase
             verifyLessThanOrEqual(testCase, act_max_rel_error_prop, testCase.max_rel_error);
         end
 
-%         function test_DET_CEA_2(testCase, equivalence_ratio)
-%             [act_max_rel_error_moles, act_max_rel_error_prop] = run_test_DET_CEA_2(equivalence_ratio);
-%             verifyLessThanOrEqual(testCase, act_max_rel_error_moles, testCase.max_rel_error);
-%             verifyLessThanOrEqual(testCase, act_max_rel_error_prop, testCase.max_rel_error);
-%         end
+        % function test_DET_CEA_2(testCase, equivalence_ratio)
+        %     [act_max_rel_error_moles, act_max_rel_error_prop] = run_test_DET_CEA_2(equivalence_ratio);
+        %     verifyLessThanOrEqual(testCase, act_max_rel_error_moles, testCase.max_rel_error);
+        %     verifyLessThanOrEqual(testCase, act_max_rel_error_prop, testCase.max_rel_error);
+        % end
 
     end
 

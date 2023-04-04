@@ -6,7 +6,7 @@ function [max_rel_error_moles, max_rel_error_prop] = run_test_EV_CEA_1(value, DB
     % Pressure    [bar] = 1.01325;
     % Equivalence ratio [-] = value
     % Initial mixture: Fuel + AIR (78.084% N2, 20.9476% O2, 0.9365% Ar, 0.0319% CO2)
-    % List of species considered: ListSpecies('Soot Formation Extended')
+    % List of species considered: list_species('Soot Formation Extended')
     
     % Inputs
     Fuel = 'CH4';

@@ -11,9 +11,9 @@ function export_results(self)
     end
     
     % Format data
-    data_mix1 = FormattedOutput_test([], self.PD.phi.value, self.PS.strR, self.S.LS);
-    data_mix2 = FormattedOutput_test([], self.PD.phi.value, self.PS.strP, self.S.LS);
-    
+    data_mix1 = get_excel_cell(self.PS.strR, self.S.LS, self.PD.phi.value);
+    data_mix2 = get_excel_cell(self.PS.strP, self.S.LS, self.PD.phi.value);
+
     % Export data
     switch lower(self.Misc.export_results.format)
         case {'.xls', 'xls', 'excel', 'spreadsheet'}

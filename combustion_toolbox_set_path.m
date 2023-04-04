@@ -1,4 +1,4 @@
-function Combustion_Toolbox_setPath()
+function combustion_toolbox_set_path()
     % Set directories to MATLAB search path
     
     % Get current path

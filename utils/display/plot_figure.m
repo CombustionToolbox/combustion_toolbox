@@ -1,16 +1,48 @@
 function [ax, dline] = plot_figure(x_field, x_var, y_field, y_var, varargin)
-    % Plot figure
+    % Plot figure with customizable settings
+    %
+    % Args:
+    %     x_field (string): Field name for the x-axis data
+    %     x_var (cell): Cell array containing the x-axis data
+    %     y_field (string): Field name for the y-axis data
+    %     y_var (cell): Cell array containing the y-axis data
+    %
+    % Optional Name-Value Pair Args:
+    %     * config (struct): Struct with the configuration for plots
+    %     * leg or legend (cell): Cell array of strings containing the legend names
+    %     * legend_location (string): Location of the legend
+    %     * ax or axes (object): Handle of the axes to plot on
+    %     * linestyle (string): Line style
+    %     * linewidth (float): Line width
+    %     * fontsize (float): Font size
+    %     * title (string): Title of the figure
+    %     * labelx, xlabel, label_x, or x_label (string): x-axis label
+    %     * labely, ylabel, label_y, or 'y_label (string): y-axis label
+    %     * label_type (string): Label type
+    %     * xscale (string): Set x-axis scale (linear or log)
+    %     * yscale (string): Set y-axis scale (linear or log)
+    %     * xdir (string): Set x-axis direction (normal or reverse)
+    %     * ydir (string): Set y-axis direction (normal or reverse)
+    %     * color (float): Line color [R, G, B]
+    %
+    % Returns:
+    %     Tuple containing
+    %     
+    %     * ax (object): Handle of the axes
+    %     * dline (object): Handle of the plotted line
 
     % Default settings
     FLAG_COLOR_NEW = false;
     Misc = Miscellaneous();
     config = Misc.config;
-    config.labelx = interpreter_label(x_field, config.label_type); % Set x label
-    config.labely = interpreter_label(y_field, config.label_type); % Set y label
-    ax = []; % Set empty axes
+    config.labelx = interpreter_label(x_field, config.label_type);
+    config.labely = interpreter_label(y_field, config.label_type);
+    ax = [];
+
     % Get x and y values
     x = cell2vector(x_var, x_field);
     y = cell2vector(y_var, y_field);
+
     % Check aditional inputs
     for i = 1:2:nargin - 5
 
@@ -23,7 +55,7 @@ function [ax, dline] = plot_figure(x_field, x_var, y_field, y_var, varargin)
                 config.legend_name = varargin{i + 1};
             case {'legend_location'}
                 config.legend_location = varargin{i + 1};
-            case {'ax', 'axes', 'figure'}
+            case {'ax', 'axes'}
                 ax = varargin{i + 1};
             case 'linestyle'
                 config.linestyle = varargin{i + 1};

@@ -17,7 +17,7 @@ function [mix3, varargout] = rocket_parameters(mix2, mix3, gravity, varargin)
     mix3.cf = velocity_relative(mix3) / mix3.cstar;
     [mix3.I_sp, mix3.I_vac] = specific_impulse(mix3, gravity);
 
-    for i = nargin - 3:-1:1
+    for i = nargin-3:-1:1
 
         if ~isempty(varargin{i})
             varargin{i}.cstar = mix3.cstar;

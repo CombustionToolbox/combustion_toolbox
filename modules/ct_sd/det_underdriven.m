@@ -17,6 +17,7 @@ function [mix1, mix2] = det_underdriven(self, mix1, drive_factor, varargin)
     
     % Definitions
     zeta = 0.1;
+    
     % Unpack input data
     [self, mix1, mix2] = unpack(self, mix1, drive_factor, varargin);
     if isempty(mix1.cj_speed)

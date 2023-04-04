@@ -7,11 +7,11 @@ function [mix1, mix2, mix5_1, mix5_2] = shock_oblique_reflected_theta(self, mix1
     %   * Strong shock
     %
     % Args:
-    %     self (struct):   Data of the mixture, conditions, and databases
-    %     mix1 (struct):   Properties of the mixture in the pre-shock state of the incident shock
-    %     u2 (float):      Post-shock velocity [m/s] of the incident shock
-    %     theta (float):   Deflection angle [deg]
-    %     mix2 (struct):   Properties of the mixture in the post-shock state of the incident shock
+    %     self (struct): Data of the mixture, conditions, and databases
+    %     mix1 (struct): Properties of the mixture in the pre-shock state of the incident shock
+    %     u2 (float): Post-shock velocity [m/s] of the incident shock
+    %     theta (float): Deflection angle [deg]
+    %     mix2 (struct): Properties of the mixture in the post-shock state of the incident shock
     %
     % Optional Args:
     %     * mix5_1 (struct): Properties of the mixture in the post-shock state of the reflected shock - weak shock (previous calculation)
@@ -20,15 +20,14 @@ function [mix1, mix2, mix5_1, mix5_2] = shock_oblique_reflected_theta(self, mix1
     % Returns:
     %     Tuple containing
     %
-    %     * mix1 (struct):   Properties of the mixture in the pre-shock state of the incident shock
-    %     * mix2 (struct):   Properties of the mixture in the post-shock state of the incident shock
+    %     * mix1 (struct): Properties of the mixture in the pre-shock state of the incident shock
+    %     * mix2 (struct): Properties of the mixture in the post-shock state of the incident shock
     %     * mix5_1 (struct): Properties of the mixture in the post-shock state of the reflected shock - weak shock
     %     * mix5_2 (struct): Properties of the mixture in the post-shock state of the reflected shock - strong shock
 
     % Unpack input data
     [self, mix1, mix2, mix5] = unpack(self, mix1, u2, theta, mix2, varargin);
-    % Abbreviations
-    TN = self.TN;
+
     % Definitions
     a2 = soundspeed(mix2); % [m/s]
     u2 = mix2.u; % [m/s]
@@ -36,9 +35,11 @@ function [mix1, mix2, mix5_1, mix5_2] = shock_oblique_reflected_theta(self, mix1
     theta = mix2.theta * pi / 180; % [rad]
     beta_min = asin(1 / M2); % [rad]
     beta_max = pi / 2; % [rad]
+
     % Obtain maximum deflection angle
     [~, mix5_polar] = shock_polar(self, mix2, u2);
     theta_max_reflected = mix5_polar.theta_max * pi / 180;
+
     % Check if theta is in the range for a Regular Reflection (RR)
     if theta > theta_max_reflected
         error(['There is not Regular Reflection (RR) solution for the given conditions:\n' ...
@@ -49,15 +50,17 @@ function [mix1, mix2, mix5_1, mix5_2] = shock_oblique_reflected_theta(self, mix1
     % Solve first branch  (weak shock)
     beta_guess = 0.5 * (beta_min + beta_max); % [rad]
     mix5_1 = solve_shock_oblique(mix5);
+
     % Solve second branch (strong shock)
     beta_guess = beta_max * 0.95; % [rad]
     mix5_2 = solve_shock_oblique(mix5);
+
     % NESTED FUNCTIONS
     function mix5 = solve_shock_oblique(mix5)
         % Obtain wave angle, pre-shock state and post-shock states for an oblique shock
-        STOP = 1; it = 0; itMax = TN.it_oblique;
+        STOP = 1; it = 0; itMax = self.TN.it_oblique;
 
-        while STOP > TN.tol_shocks && it < itMax
+        while STOP > self.TN.tol_shocks && it < itMax
             it = it + 1;
 
             u2n = u2 * sin(beta_guess); % [m/s]
@@ -78,7 +81,7 @@ function [mix1, mix2, mix5_1, mix5_2] = shock_oblique_reflected_theta(self, mix1
         u5 = u5n * csc(beta - theta);
         M5 = u5 / soundspeed(mix5);
 
-        if STOP > TN.tol_oblique || beta < beta_min || beta > pi / 2 || theta < 0 || M5 >= M2
+        if STOP > self.TN.tol_oblique || beta < beta_min || beta > pi / 2 || theta < 0 || M5 >= M2
             error('There is not solution for the given deflection angle %.2g', mix5.theta);
         end
 

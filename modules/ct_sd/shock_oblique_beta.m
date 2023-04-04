@@ -19,6 +19,7 @@ function [mix1, mix2] = shock_oblique_beta(self, mix1, u1, beta, varargin)
 
     % Unpack input data
     [self, mix1, mix2] = unpack(self, mix1, u1, beta, varargin);
+
     % Definitions
     a1 = soundspeed(mix1); % [m/s]
     u1 = mix1.u; % [m/s]
@@ -27,6 +28,7 @@ function [mix1, mix2] = shock_oblique_beta(self, mix1, u1, beta, varargin)
     beta_min = asin(1 / M1); % [rad]
     beta_max = pi / 2; % [rad]
     u1n = u1 * sin(beta); % [m/s]
+
     % Check range beta
     if beta < beta_min || beta > beta_max
         error([' \ nERROR !The given wave angle beta = %.2g is not in the '...
@@ -42,6 +44,7 @@ function [mix1, mix2] = shock_oblique_beta(self, mix1, u1, beta, varargin)
     theta = beta - atan(u2n / (u1 .* cos(beta)));
     a2 = mix2.sound;
     u2 = u2n * csc(beta - theta);
+    
     % Save results
     mix2.beta = beta * 180 / pi; % [deg]
     mix2.theta = theta * 180 / pi; % [deg]

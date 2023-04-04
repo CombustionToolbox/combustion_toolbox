@@ -11,7 +11,7 @@ function [dNi_T, dN_T] = equilibrium_dT(J, N0, A0, NE, ind_nswt, ind_swt, ind_el
     %     ind_nswt (float): Temporal index of gaseous species in the final mixture
     %     ind_swt (float): Temporal index of condensed species in the final mixture
     %     ind_elem (float): Temporal index of elements in the final mixture
-    %     H0RT (float): Dimensionless standard-state enthalpy
+    %     H0RT (float): Dimensionless enthalpy
     %
     % Returns:
     %     Tuple containing
@@ -21,16 +21,21 @@ function [dNi_T, dN_T] = equilibrium_dT(J, N0, A0, NE, ind_nswt, ind_swt, ind_el
 
     % Definitions
     A0 = A0(:, ind_elem);
+
     % Initialization
     dNi_T = zeros(length(N0), 1);
+
     % Construction of vector b
     b = update_vector_b(A0, N0, ind_nswt, ind_swt, H0RT);
+
     % Solve of the linear system J*x = b
     x = J \ b;
+
     % Extract solution
     dpii_T = x(1:NE);
     dNi_T(ind_swt) = x(NE+1:end-1);
     dN_T = x(end);
+
     % Compute remainder dNi_T (gas)
     dNi_T(ind_nswt) = H0RT(ind_nswt) + A0(ind_nswt, :) * dpii_T + dN_T;
 end

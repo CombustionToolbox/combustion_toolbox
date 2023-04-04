@@ -29,13 +29,14 @@ function [mix1, mix2_1, mix2_2] = det_oblique_theta(self, mix1, drive_factor, th
 
     % Unpack input data
     [self, mix1, mix2_1, mix2_2] = unpack(self, mix1, drive_factor, theta, varargin);
-    % Abbreviations
-    TN = self.TN;
+
     % Compute CJ state
     [mix1, ~] = det_cj(self, mix1);
     mix1.cj_speed = mix1.u;
+
     % Set initial velocity for the given drive_factor factor
     mix1.u = mix1.u * drive_factor; % [m/s]
+
     % Definitions
     a1 = soundspeed(mix1); % [m/s]
     u1 = mix1.u; % [m/s]
@@ -45,19 +46,22 @@ function [mix1, mix2_1, mix2_2] = det_oblique_theta(self, mix1, drive_factor, th
     beta_max = pi / 2; % [rad]
     lambda = 0.7;
     m = 4;
+
     % Solve first branch  (weak shock)
     beta_guess = 0.5 * (beta_min + beta_max); % [rad]
     mix2_1 = solve_det_oblique(mix2_1);
+
     % Solve second branch (strong shock)
     beta_guess = beta_max * 0.97; % [rad]
     mix2_2 = solve_det_oblique(mix2_2);
+    
     % NESTED FUNCTIONS
     function mix2 = solve_det_oblique(mix2)
         % Obtain wave angle, pre-shock state and post-shock states for an
         % overdriven oblique detonation
-        STOP = 1; it = 0; itMax = TN.it_oblique;
+        STOP = 1; it = 0; itMax = self.TN.it_oblique;
 
-        while STOP > TN.tol_oblique && it < itMax
+        while STOP > self.TN.tol_oblique && it < itMax
             % Update iteration
             it = it + 1;
             % Compute incident normal velocity
@@ -94,7 +98,7 @@ function [mix1, mix2_1, mix2_2] = det_oblique_theta(self, mix1, drive_factor, th
             error('There is not solution for the given deflection angle %.2g', mix1.theta);
         end
 
-        if STOP > TN.tol_oblique
+        if STOP > self.TN.tol_oblique
             print_error_root(it, itMax, mix2.T, STOP);
         end
 

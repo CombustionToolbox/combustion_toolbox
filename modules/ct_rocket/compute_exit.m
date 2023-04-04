@@ -29,10 +29,13 @@ function mix4 = compute_exit(self, mix2, mix3, mix4, Aratio, varargin)
 
     % Definitions
     self.PD.ProblemType = 'SP';
+
     % Compute pressure guess [bar] for Infinite-Area-Chamber (IAC)
     logP = guess_pressure_exit_IAC(mix2, mix3, Aratio, self.PD.FLAG_SUBSONIC);
+
     % Initialization
     STOP = 1; it = 0; logP0 = logP;
+    
     % Loop
     while STOP > self.TN.tol_rocket && it < self.TN.it_rocket
         it = it + 1;

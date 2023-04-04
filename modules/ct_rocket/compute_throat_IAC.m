@@ -14,10 +14,13 @@ function mix3 = compute_throat_IAC(self, mix2, mix3)
 
     % Definitions
     self.PD.ProblemType = 'SP';
+
     % Compute pressure guess [bar] for Infinite-Area-Chamber (IAC)
     pressure = guess_pressure_IAC_model(mix2);
+
     % Initialization
     STOP = 1; it = 0;
+    
     % Loop
     while STOP > self.TN.tol_rocket && it < self.TN.it_rocket
         it = it + 1;

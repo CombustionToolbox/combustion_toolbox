@@ -7,7 +7,7 @@ function [mix1, mix2, mix5] = shock_reflected(self, mix1, u1, mix2, varargin)
     % Args:
     %     self (struct): Data of the mixture, conditions, and databases
     %     mix1 (struct): Properties of the mixture in the pre-shock state of the incident shock
-    %     u1 (float):    Pre-shock velocity [m/s]
+    %     u1 (float): Pre-shock velocity [m/s]
     %     mix2 (struct): Properties of the mixture at the post-shock state of the incident shock
     %
     % Optional Args:
@@ -22,15 +22,14 @@ function [mix1, mix2, mix5] = shock_reflected(self, mix1, u1, mix2, varargin)
 
     % Unpack input data
     [self, mix1, mix2, mix5, guess_moles] = unpack(self, mix1, u1, mix2, varargin);
-    % Abbreviations
-    C = self.C;
-    TN = self.TN;
-    % Constants
-    R0 = C.R0; % Universal gas constant [J/(mol-K)]
+
     % Definitions
-    FLAG_FAST = TN.FLAG_FAST;
+    FLAG_FAST = self.TN.FLAG_FAST;
+    R0 = self.C.R0; % Universal gas constant [J/(mol-K)]
+
     % Solve shock reflected
     [T5, p5, STOP] = solve_shock_reflected(FLAG_FAST);
+
     % If error, repeat without guess
     if isnan(STOP)
         fprintf('Recalculating: %.2f [m/s]\n', u1);
@@ -40,20 +39,21 @@ function [mix1, mix2, mix5] = shock_reflected(self, mix1, u1, mix2, varargin)
     end
 
     % Check convergence
-    print_convergence(STOP, TN.tol_shocks);
+    print_convergence(STOP, self.TN.tol_shocks);
+    
     % Save state
     mix5 = save_state(self, mix2, T5, p5, STOP, guess_moles);
 
     % NESTED-FUNCTIONS
     function [T5, p5, STOP] = solve_shock_reflected(FLAG_FAST)
         % Miscellaneous
-        it = 0; itMax = TN.it_shocks; STOP = 1.;
+        it = 0; itMax = self.TN.it_shocks; STOP = 1;
         % Initial estimates of p5/p2 and T5/T2
         [p5, T5, p5p2, T5T2] = get_guess(mix2, mix5);
         % Check FLAG
         if ~FLAG_FAST, guess_moles = []; end
         % Loop
-        while STOP > TN.tol_shocks && it < itMax
+        while STOP > self.TN.tol_shocks && it < itMax
             % Update iteration
             it = it + 1;
             % Construction of the Jacobian matrix and vector b

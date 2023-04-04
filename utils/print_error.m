@@ -5,14 +5,15 @@ function error_message = print_error(ME, varargin)
     %     ME (obj): MException object that allows to identify the error
     %
     % Optional Args:
-    %     message_solution (str): Message solution
+    %     message_solution (char): Message solution
     %
     % Returns:
-    %     error_message (str): Message error
+    %     error_message (char): Message error
 
     % Default
     type = 'Error';
     message_solution = 'None.';
+
     % Unpack
     for i = 1:2:nargin - 1
 
@@ -43,8 +44,10 @@ function error_message = print_error(ME, varargin)
         otherwise
             f_print = @fprintf;
     end
+
     % Set error solution
     error_solution = sprintf('%s Solution: %s', type, message_solution);
+    
     % Print message
     f_print('%s\n%s\n', error_message, error_solution);
 end

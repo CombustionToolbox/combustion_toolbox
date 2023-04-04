@@ -7,10 +7,10 @@ function [mix1, mix2_1, mix2_2] = shock_oblique_theta(self, mix1, u1, theta, var
     %   * Strong shock
     %
     % Args:
-    %     self (struct):   Data of the mixture, conditions, and databases
-    %     mix1 (struct):   Properties of the mixture in the pre-shock state
-    %     u1 (float):      Pre-shock velocity [m/s]
-    %     theta (float):   Deflection angle [deg]
+    %     self (struct): Data of the mixture, conditions, and databases
+    %     mix1 (struct): Properties of the mixture in the pre-shock state
+    %     u1 (float): Pre-shock velocity [m/s]
+    %     theta (float): Deflection angle [deg]
     %
     % Optional Args:
     %     * mix2_1 (struct): Properties of the mixture in the post-shock state - weak shock (previous calculation)
@@ -19,14 +19,13 @@ function [mix1, mix2_1, mix2_2] = shock_oblique_theta(self, mix1, u1, theta, var
     % Returns:
     %     Tuple containing
     %
-    %     * mix1 (struct):   Properties of the mixture in the pre-shock state
+    %     * mix1 (struct): Properties of the mixture in the pre-shock state
     %     * mix2_1 (struct): Properties of the mixture in the post-shock state - weak shock
     %     * mix2_2 (struct): Properties of the mixture in the post-shock state - strong shock
 
     % Unpack input data
     [self, mix1, mix2_1, mix2_2] = unpack(self, mix1, u1, theta, varargin);
-    % Abbreviations
-    TN = self.TN;
+
     % Definitions
     a1 = soundspeed(mix1); % [m/s]
     u1 = mix1.u; % [m/s]
@@ -36,24 +35,27 @@ function [mix1, mix2_1, mix2_2] = shock_oblique_theta(self, mix1, u1, theta, var
     beta_max = pi / 2; % [rad]
     lambda = 0.7;
     m = 4;
+    
     % Solve first branch  (weak shock)
     beta_guess = 0.5 * (beta_min + beta_max); % [rad]
-    %     beta_guess = compute_guess_beta(M1, mix1.gamma, theta, true);
+    % beta_guess = compute_guess_beta(M1, mix1.gamma, theta, true);
     mix2_1 = solve_shock_oblique(mix2_1);
+
     % Solve second branch (strong shock)
     if nargout > 2
         beta_guess = beta_max * 0.97; % [rad]
-        %     beta_guess = compute_guess_beta(M1, mix1.gamma, theta, false);
+        % beta_guess = compute_guess_beta(M1, mix1.gamma, theta, false);
         mix2_2 = solve_shock_oblique(mix2_2);
     else
         mix2_2 = [];
     end
+    
     % NESTED FUNCTIONS
     function mix2 = solve_shock_oblique(mix2)
         % Obtain wave angle, pre-shock state and post-shock states for an oblique shock
-        STOP = 1; it = 0; itMax = TN.it_oblique;
+        STOP = 1; it = 0; itMax = self.TN.it_oblique;
 
-        while STOP > TN.tol_oblique && it < itMax
+        while STOP > self.TN.tol_oblique && it < itMax
             % Update iteration
             it = it + 1;
             % Compute incident normal velocity
@@ -94,7 +96,7 @@ function [mix1, mix2_1, mix2_2] = shock_oblique_theta(self, mix1, u1, theta, var
         % if beta < beta_min || beta > pi/2 || theta < 0 || M2 >= M1
         %     error('There is not solution for the given deflection angle %.2g', mix1.theta);
         % end
-        if STOP > TN.tol_oblique
+        if STOP > self.TN.tol_oblique
             print_error_root(it, itMax, mix2.T, STOP);
         end
 

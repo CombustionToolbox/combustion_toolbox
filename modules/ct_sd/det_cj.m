@@ -23,17 +23,17 @@ function [mix1, mix2] = det_cj(self, mix1, varargin)
 
     % Unpack input data
     [self, mix1, mix2, guess_moles] = unpack(self, mix1, varargin);
-    % Abbreviations
-    C = self.C;
-    TN = self.TN;
-    % Constants
-    R0 = C.R0; % Universal gas constant [J/(mol-K)]
+    
     % Definitions
-    FLAG_FAST = TN.FLAG_FAST;
+    R0 = self.C.R0; % Universal gas constant [J/(mol-K)]
+    FLAG_FAST = self.TN.FLAG_FAST;
+    
     % Solve Chapman-Jouguet detonation
     [T2, p2, STOP, T_guess, p2_guess] = solve_cj_detonation(FLAG_FAST);
+
     % Check convergence
-    print_convergence(STOP, TN.tol_shocks);
+    print_convergence(STOP, self.TN.tol_shocks);
+    
     % Save state
     [mix1, mix2] = save_state(self, mix1, T2, p2, STOP);
     mix2.T_guess = T_guess;
@@ -42,14 +42,14 @@ function [mix1, mix2] = det_cj(self, mix1, varargin)
     % NESTED-FUNCTIONS
     function [T2, p2, STOP, T_guess, p2_guess] = solve_cj_detonation(FLAG_FAST)
         % Miscellaneous
-        it = 0; itMax = TN.it_shocks;
+        it = 0; itMax = self.TN.it_shocks;
         % Initial estimates of p2/p1 and T2/T1
         [p2, T2, p2p1, T2T1, STOP] = get_guess(self, mix1, mix2);
         T_guess = T2; p2_guess = p2;
         % Check FLAG
         if ~FLAG_FAST, guess_moles = []; end
         % Loop
-        while STOP > TN.tol_shocks && it < itMax
+        while STOP > self.TN.tol_shocks && it < itMax
             % Update iteration
             it = it + 1;
             % Construction of the Jacobian matrix and vector b

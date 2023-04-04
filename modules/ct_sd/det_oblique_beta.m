@@ -19,17 +19,21 @@ function [mix1, mix2] = det_oblique_beta(self, mix1, drive_factor, beta, varargi
 
     % Unpack input data
     [self, mix1, mix2] = unpack(self, mix1, drive_factor, beta, varargin);
+
     % Compute CJ state
     [mix1, ~] = det_cj(self, mix1);
     mix1.cj_speed = mix1.u;
+
     % Set initial velocity for the given drive factor
     mix1.u = mix1.u * drive_factor; % [m/s]
+
     % Definitions
     u1 = mix1.u; % [m/s]
     beta = mix1.beta * pi / 180; % [rad]
     beta_min = asin(mix1.cj_speed / u1); % [rad]
     beta_max = pi / 2; % [rad]
     drive_factor_n = mix1.drive_factor * sin(beta); % [-]
+    
     % Check range beta
     if beta < beta_min || beta > beta_max
         error([' \ nERROR !The given wave angle beta = %.2g is not in the '...

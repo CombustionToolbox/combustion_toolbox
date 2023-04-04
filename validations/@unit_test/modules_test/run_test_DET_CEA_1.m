@@ -6,7 +6,7 @@ function [max_rel_error_moles, max_rel_error_prop] = run_test_DET_CEA_1(value, D
     % Pressure    [bar] = 1;
     % Equivalence ratio [-] = 0.5:0.01:4
     % Initial mixture: Fuel + AIR_IDEAL (79% N2 + 21% O2)
-    % List of species considered: ListSpecies('Soot Formation Extended')
+    % List of species considered: list_species('Soot Formation Extended')
     
     % Inputs
     Fuel = 'C2H2_acetylene';

@@ -25,17 +25,27 @@ function [mix1, mix2_inj, mix2_c, mix3, mix4] = rocket_performance(self, mix1, v
     %     * mix3 (struct): Properties of the mixture at the throat
     %     * mix4 (struct): Properties of the mixture at the given exit points
     
+    % Initialization
+    Aratio = [];
+    mix2_inj = [];
+    mix2_c = [];
+    mix3 = [];
+    mix4 = [];
+
     % Unpack additional input parameters
-    if nargin > 2, Aratio = varargin{1}; else, Aratio = []; end
-    if nargin > 3, mix2_inj = get_struct(varargin{2}); else, mix2_inj = []; end
-    if nargin > 4, mix2_c = get_struct(varargin{3}); else, mix2_c = []; end
-    if nargin > 5, mix3 = get_struct(varargin{4}); else, mix3 = []; end
-    if nargin > 6, mix4 = get_struct(varargin{5}); else, mix4 = []; end
+    if nargin > 2, Aratio = varargin{1}; end
+    if nargin > 3, mix2_inj = get_struct(varargin{2}); end
+    if nargin > 4, mix2_c = get_struct(varargin{3}); end
+    if nargin > 5, mix3 = get_struct(varargin{4}); end
+    if nargin > 6, mix4 = get_struct(varargin{5}); end
+
     % Compute chemical equilibria at different points of the rocket
     % depending of the model selected
     [mix2_inj, mix2_c, mix3, mix4] = solve_model_rocket(self, mix1, mix2_inj, mix2_c, mix3, mix4, Aratio);
+    
     % Initial velocity of the gas
     mix1.u = 0; mix1.v_shock = 0;
+    
     % Compute rocket parameters
     if self.PD.FLAG_IAC
         % Velocity at the outlet of the chamber

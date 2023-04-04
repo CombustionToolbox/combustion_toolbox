@@ -1,8 +1,16 @@
-% Routine that checks a set of test of the code
+% Routine that checks a set of unit tests of the code
+% 
+% Note:
+%     Stop the build if any tests failed
 
-% Run the tests and fail the build if any of the tests fails
-Combustion_Toolbox_setPath()
-testCase = app_test;
-results = testCase.run;
-nfailed = nnz([results.Failed]);
-assert(nfailed == 0, [num2str(nfailed) ' test(s) failed.'])
+% Set the path for the combustion toolbox
+combustion_toolbox_set_path()
+
+% Run the tests and store the results
+results = unit_test().run;
+
+% Count the number of failed tests
+N_failed = nnz([results.Failed]);
+
+% Stop the build if any tests failed
+assert(N_failed == 0, sprintf('%d test(s) failed.', N_failed));

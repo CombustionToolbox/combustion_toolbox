@@ -6,23 +6,29 @@ function titlename = get_title(self)
     %
     % Returns:
     %     titlename (char): Title based on the problem type and species involved
-
+    
+    % Definitions
+    FLAG_FUEL = ~isempty(self.PD.S_Fuel);
+    FLAG_OXIDIZER = ~isempty(self.PD.S_Oxidizer);
+    FLAG_INERT = ~isempty(self.PD.S_Inert);
+    FLAG_RATIO_INERTS_O2 = ~isempty(self.PD.ratio_inerts_O2);
+    N_oxidizer = length(self.PD.S_Oxidizer);
+    
+    % Get the title based on the problem type and species involved
     label_problemtype = strrep(self.PD.ProblemType, '_', ' ');
     titlename = [label_problemtype, ': ', cat_moles_species(self.PD.N_Fuel, self.PD.S_Fuel)];
 
-    if isempty(self.PD.S_Oxidizer) && isempty(self.PD.S_Inert)
+    if ~FLAG_OXIDIZER && ~FLAG_INERT
         return
     end
 
-    if ~isempty(self.PD.S_Fuel)
-        titlename = [titlename, ' + '];
+    if FLAG_FUEL
+        titlename = [titlename, ' + $\frac{', sprintf('%.3g', self.PD.phi_t), '}{\phi}$'];
     end
 
-    titlename = [titlename, '$\ \frac{', sprintf('%.3g', self.PD.phi_t), '}{\phi}$'];
+    if FLAG_OXIDIZER
 
-    if ~isempty(self.PD.S_Oxidizer)
-
-        if length(self.PD.S_Oxidizer) > 1
+        if N_oxidizer > 1 && FLAG_FUEL
             titlename = [titlename, '('];
         end
 
@@ -35,15 +41,15 @@ function titlename = get_title(self)
         titlename = [titlename, cat_moles_species(self.PD.N_Oxidizer, self.PD.S_Oxidizer)];
     end
 
-    if ~isempty(self.PD.S_Inert) && ~isempty(self.PD.ratio_inerts_O2)
+    if FLAG_INERT && FLAG_RATIO_INERTS_O2
         titlename = [titlename, ' + ', cat_moles_species(self.PD.N_Inert, self.PD.S_Inert)];
     end
 
-    if ~isempty(self.PD.S_Oxidizer) && length(self.PD.S_Oxidizer) > 1
+    if FLAG_OXIDIZER && N_oxidizer > 1 && FLAG_FUEL
         titlename = [titlename, ')'];
     end
 
-    if ~isempty(self.PD.S_Inert) && isempty(self.PD.ratio_inerts_O2)
+    if FLAG_INERT && ~FLAG_RATIO_INERTS_O2
         titlename = [titlename, ' + ', cat_moles_species(self.PD.N_Inert, self.PD.S_Inert)];
     end
 

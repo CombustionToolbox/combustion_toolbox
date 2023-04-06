@@ -1,5 +1,5 @@
 function PT = ask_problem(self)
-    % Create a list selection dialog box
+    % Create a list selection dialog box (deprecated)
     %
     % Args:
     %     self (struct): Data of the mixture, conditions, and databases

@@ -4,9 +4,9 @@ function [txFormula, mm, cP0, hf0, h0, ef0, s0, g0] = get_speciesProperties(DB, 
     %
     % Args:
     %     DB (struct): Database with custom thermodynamic polynomials functions generated from NASAs 9 polynomials fits
-    %     species (str): Chemical species
+    %     species (char): Chemical species
     %     T (float): Temperature [K]
-    %     MassOrMolar (str): Label indicating mass [kg] or molar [mol] units
+    %     MassOrMolar (char): Label indicating mass [kg] or molar [mol] units
     %     echo (float): 0 or 1 indicating species not found
     %
     % Returns:

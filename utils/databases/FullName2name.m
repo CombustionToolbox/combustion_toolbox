@@ -2,10 +2,10 @@ function name = FullName2name(species)
     % Get full name of the given species
     %
     % Args:
-    %     species (str): Chemical species
+    %     species (char): Chemical species
     %
     % Returns:
-    %     name (str): Full name of the given species
+    %     name (char): Full name of the given species
 
     FLAG_MILLENIUM = false;
 

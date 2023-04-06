@@ -14,6 +14,9 @@ function [mix1, mix2, mix2_1, mix3] = shock_polar_limitRR(self, mix1, u1)
     %    * mix2 (struct): Properties of the mixture in the post-shock state - polar diagrams from mix1 (incident)
     %    * mix2_1 (struct): Properties of the mixture in the post-shock state - weak shock
     %    * mix3 (struct): Properties of the mixture in the post-shock state - polar diagrams from mix2_1 (reflected)
+    %
+    % Example:
+    %    [mix1, mix2, mix2_1, mix3] = shock_polar_limitRR(self, mix1, u1)
 
     % Compute first polar curve
     [mix1, mix2] = shock_polar(self, mix1, u1);

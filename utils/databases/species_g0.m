@@ -3,12 +3,15 @@ function g0 = species_g0(species, T, DB)
     % using piecewise cubic Hermite interpolating polynomials and linear extrapolation
     %
     % Args:
-    %     species (str): Chemical species
+    %     species (char): Chemical species
     %     T (float): Temperature [K]
     %     DB (struct): Database with custom thermodynamic polynomials functions generated from NASAs 9 polynomials fits
     %
     % Returns:
-    %     g0 (float): Gibbs energy [kJ/mol]
+    %     g0 (float): Gibbs energy in molar basis [kJ/mol]
+    %
+    % Example:
+    %     g0 = species_g0('H2O', 298.15, DB)
 
     try
         g0 = DB.(species).g0curve(T) / 1000;

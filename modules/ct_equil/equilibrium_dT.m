@@ -18,6 +18,9 @@ function [dNi_T, dN_T] = equilibrium_dT(J, N0, A0, NE, ind_nswt, ind_swt, ind_el
     %
     %     * dNi_T (float): Thermodynamic derivative of the moles of the species respect to temperature
     %     * dN_T (float):  Thermodynamic derivative of the moles of the mixture respect to temperature
+    %
+    % Example:
+    %     [dNi_T, dN_T] = equilibrium_dT(J, N0, A0, NE, ind, ind_nswt, ind_swt, ind_elem, H0RT)
 
     % Definitions
     A0 = A0(:, ind_elem);

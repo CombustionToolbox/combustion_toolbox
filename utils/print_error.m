@@ -2,13 +2,18 @@ function error_message = print_error(ME, varargin)
     % Print message error
     %
     % Args:
-    %     ME (obj): MException object that allows to identify the error
+    %     ME (object): MException object that allows to identify the error
     %
-    % Optional Args:
-    %     message_solution (char): Message solution
+    % Optional Name-Value Pairs Args:
+    %     * type (char): Type of message (error, warning, or other)
+    %     * message_solution (char): Message solution
     %
     % Returns:
     %     error_message (char): Message error
+    %
+    % Examples:
+    %     * error_message = print_error(ME, 'Type', 'Warning')
+    %     * error_message = print_error(ME, 'Type', 'Warning', 'Solution', 'Returning an empty index value.')
 
     % Default
     type = 'Error';
@@ -18,10 +23,10 @@ function error_message = print_error(ME, varargin)
     for i = 1:2:nargin - 1
 
         switch lower(varargin{i})
-            case {'solution', 'sol', 'action'}
-                message_solution = varargin{i + 1};
             case {'type'}
                 type = varargin{i + 1};
+            case {'solution', 'sol', 'action'}
+                message_solution = varargin{i + 1};
         end
 
     end

@@ -6,20 +6,20 @@ function LS = find_species_LS(LS, cond_with, type_with, cond_without, type_witho
     % Args:
     %     LS (cell): List of species
     %     cond_with (cell): List of elements to include
-    %     type_with (str): Satisfy all or any of the elements in cond_with
+    %     type_with (char): Satisfy all or any of the elements in cond_with
     %     cond_without (cell): List of elements to avoid
-    %     type_without (str): Satisfy all or any of the elements in cond_without
+    %     type_without (char): Satisfy all or any of the elements in cond_without
     %
     % Returns:
     %     LS (cell): List of species
     %
     % Examples:
     %     * LS = find_species_LS(LS, {'C','N','O','minus','plus','Ar'}, 'any',...
-    %                              {'I', 'S', 'L', 'T', 'P', 'F', 'ab', 'W',...
-    %                              'Z','X','R','Os','Cr','H','Br','G','K',...
-    %                              'U','Co','Cu','B','V','Ni','Na','Mg',...
-    %                              'Mo','Ag','Nb','Cb','Cl','D','T',...
-    %                              'Ca','Cs','Ne','Cd','Mn'}, 'all')
+    %                                {'I', 'S', 'L', 'T', 'P', 'F', 'ab', 'W',...
+    %                                 'Z','X','R','Os','Cr','H','Br','G','K',...
+    %                                 'U','Co','Cu','B','V','Ni','Na','Mg',...
+    %                                 'Mo','Ag','Nb','Cb','Cl','D','T',...
+    %                                 'Ca','Cs','Ne','Cd','Mn'}, 'all')
     %     * LS = find_species_LS(self.S.LS_DB, {}, 'any', {'_M'}, 'all')
 
     % Initialization
@@ -45,7 +45,7 @@ end
 
 % SUB-PASS FUNCTION
 function f = get_fun_type(type)
-
+    % Get function all or any
     if isempty(type)
         f = [];
         return
@@ -63,7 +63,7 @@ function f = get_fun_type(type)
 end
 
 function FLAG = get_FLAG(f, FLAG)
-
+    % Get flag that satisfy all/any of the given elements
     if ~isempty(FLAG)
         FLAG = f(FLAG, 2);
     else

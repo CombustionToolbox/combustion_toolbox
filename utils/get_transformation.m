@@ -3,7 +3,7 @@ function value = get_transformation(self, field)
     %
     % Args:
     %     self (struct): Data of the mixture, conditions, and databases
-    %     field (str):   Fieldname in Problem Description (PD)
+    %     field (char): Fieldname in Problem Description (PD)
     %
     % Returns:
     %     value (float): Value/s assigned to the field

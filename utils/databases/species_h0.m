@@ -3,12 +3,15 @@ function h0 = species_h0(species, T, DB)
     % using piecewise cubic Hermite interpolating polynomials and linear extrapolation
     %
     % Args:
-    %     species (str): Chemical species
+    %     species (char): Chemical species
     %     T (float): Temperature [K]
     %     DB (struct): Database with custom thermodynamic polynomials functions generated from NASAs 9 polynomials fits
     %
     % Returns:
-    %     h0 (float): enthalpy [kJ/mol]
+    %     h0 (float): Enthalpy in molar basis [kJ/mol]
+    %
+    % Example:
+    %     h0 = species_h0('H2O', 300, DB)
 
     try
         h0 = DB.(species).h0curve(T) / 1000;

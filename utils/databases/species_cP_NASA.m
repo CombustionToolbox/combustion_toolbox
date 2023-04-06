@@ -4,15 +4,18 @@ function [cP, cV] = species_cP_NASA(species, temperature, DB)
     % 9 polynomials
     %
     % Args:
-    %     species (str): Chemical species
+    %     species (char): Chemical species
     %     temperature (float): Range of temperatures to evaluate [K]
     %     DB (struct): Database with custom thermodynamic polynomials functions generated from NASAs 9 polynomials fits
     %
     % Returns:
     %     Tuple containing
     %
-    %     * cP (float): Specific heat at constant pressure [J/(mol-K)]
-    %     * cV (float): Specific heat at constant volume   [J/(mol-K)]
+    %     * cP (float): Specific heat at constant pressure in molar basis [J/(mol-K)]
+    %     * cV (float): Specific heat at constant volume in molar basis   [J/(mol-K)]
+    %
+    % Example:
+    %     [cP, cV] = species_cP_NASA('H2O', 300:100:6000, DB)
 
     % Definitions
     R0 = 8.31446261815324; % Universal Gas Constant [J/(mol-K)];

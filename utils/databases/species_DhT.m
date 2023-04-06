@@ -3,12 +3,15 @@ function DhT = species_DhT(species, T, DB)
     % using piecewise cubic Hermite interpolating polynomials and linear extrapolation
     %
     % Args:
-    %     species (str): Chemical species
+    %     species (char): Chemical species
     %     T (float): Temperature [K]
     %     DB (struct): Database with custom thermodynamic polynomials functions generated from NASAs 9 polynomials fits
     %
     % Returns:
-    %     DhT (float): Thermal enthalpy [kJ/mol]
+    %     DhT (float): Thermal enthalpy in molar basis [kJ/mol]
+    %
+    % Example:
+    %     DhT = species_DhT('H2O', 300, DB)
 
     try
         DhT = DB.(species).DhTcurve(T) / 1000;

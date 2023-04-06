@@ -2,11 +2,14 @@ function index = find_ind(LS, species)
     % Find the index of the species based on the given list (LS)
     %
     % Args:
-    %     LS (cell):      List of species
+    %     LS (cell): List of species
     %     species (cell): Species to find index values
     %
     % Returns:
-    %     index (float):  List with the index of the species based on the given list (LS)
+    %     index (float): List with the index of the species based on the given list (LS)
+    %
+    % Example:
+    %     index = find_ind({'H2O', 'CO2', 'CH4'}, {'H2O', 'CH4'})
 
     try
         % Initialization

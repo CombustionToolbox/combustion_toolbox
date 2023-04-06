@@ -18,7 +18,7 @@ function mix2 = equilibrate(self, mix1, pP, varargin)
     mix1 = get_struct(mix1);
     mix2 = unpack(varargin);
 
-    if self.TN.FLAG_TCHEM_FROZEN
+    if self.PD.FLAG_TCHEM_FROZEN
         mix2 = mix1;
         mix2.p = pP;
         mix2.error_problem = 0;
@@ -42,7 +42,7 @@ function mix2 = equilibrate(self, mix1, pP, varargin)
     mix2.phi = get_phi(mix1);
 end
 
-%%% SUB-PASS FUNCTIONS
+% SUB-PASS FUNCTIONS
 function mix2 = unpack(value)
     % Unpack input parameters
     if ~isempty(value)

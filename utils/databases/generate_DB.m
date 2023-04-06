@@ -7,21 +7,19 @@ function DB = generate_DB(DB_master)
     %
     % Returns:
     %     DB (struct): Database with custom thermodynamic polynomials functions generated from NASAs 9 polynomials fits
+    %
+    % Example:
+    %     DB = generate_DB(DB_master)
 
-    if ~exist('DB', 'var')
-
-        if exist('DB.mat', 'file')
-            fprintf('NASA short database loaded from main path ... ')
-            load('DB.mat', 'DB');
-        else
-            DB = get_DB(DB_master);
-        end
-
-        fprintf('OK!\n');
+    % Load database
+    if exist('DB.mat', 'file')
+        fprintf('NASA database with thermo loaded from main path ... ')
+        load('DB.mat', 'DB');
     else
-        fprintf('NASA short database already loaded\n')
+        DB = get_DB(DB_master);
     end
 
+    fprintf('OK!\n');
 end
 
 % SUB-PASS FUNCTIONS
@@ -31,7 +29,7 @@ function DB = get_DB(DB_master)
 
     LS = fieldnames(DB_master);
 
-    fprintf('Generating short NASA database ... ')
+    fprintf('Generating NASA database with thermo ... ')
 
     for i = 1:length(LS)
         species = FullName2name(LS{i});
@@ -108,7 +106,7 @@ function DB = get_DB(DB_master)
             end
 
         else
-            fprintf(['\n- Species ''', LS{i}, ''' does not exist as a field in strMaster structure ... '])
+            fprintf(['\n- Species ''', LS{i}, ''' does not exist as a field in DB_master structure ... '])
         end
 
     end

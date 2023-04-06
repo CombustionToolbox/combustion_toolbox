@@ -6,6 +6,9 @@ function order = get_order(value)
     %
     % Returns:
     %     order (float): order of magnitude of a number in base 10
+    %
+    % Example:
+    %     order = get_order(0.0001)
 
     order = floor(log(abs(value)) ./ log(10));
 end

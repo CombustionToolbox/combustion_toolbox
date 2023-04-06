@@ -3,11 +3,14 @@ function [FLAG_RE, REname] = isRefElm(reference_elements, species, T)
     %
     % Args:
     %     reference_elements (cell): List of reference elements with temperature intervals [K]
-    %     species (str): Chemical species
+    %     species (char): Chemical species
     %     T (float): Temperature
     %
     % Returns:
-    %     name (str): Full name of the given species
+    %     name (char): Full name of the given species
+    %
+    % Example:
+    %     [FLAG_RE, REname] = isRefElm(reference_elements, 'O', 1000)
 
     % Change lowercase 'l' to uppercase 'L' for Al, Cl, Tl, and Fl
     species(strfind(species, 'Al') + 1) = 'L';

@@ -14,6 +14,10 @@ function [mix1, mix2] = shock_incident_2(self, mix1, u1, varargin)
     %
     %     * mix1 (struct): Properties of the mixture in the pre-shock state
     %     * mix2 (struct): Properties of the mixture in the post-shock state
+    %
+    % Examples:
+    %     [mix1, mix2] = shock_incident_2(self, mix1, u1)
+    %     [mix1, mix2] = shock_incident_2(self, mix1, u1, mix2)
 
     % Unpack input data
     [self, mix1, mix2, guess_moles] = unpack(self, mix1, u1, varargin);

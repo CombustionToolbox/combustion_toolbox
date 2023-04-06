@@ -14,16 +14,27 @@ function [mix1, mix2_inj, mix2_c, mix3, mix4] = rocket_performance(self, mix1, v
     %
     % Optional Args:
     %     * Aratio (struct): Ratio area_exit / area_throat
-    %     * mix2 (struct): Properties of the mixture at the outlet of the chamber (previous calculation)
+    %     * mix2_inj (struct): Properties of the mixture at the injector (previous calculation)
+    %     * mix2_c (struct): Properties of the mixture at the outlet of the chamber (previous calculation)
     %     * mix3 (struct): Properties of the mixture at the throat (previous calculation)
+    %     * mix4 (struct): Properties of the mixture at the given exit points (previous calculation)
     %
     % Returns:
     %     Tuple containing
     %
     %     * mix1 (struct): Properties of the initial mixture
-    %     * mix2 (struct): Properties of the mixture at the outlet of the chamber
+    %     * mix2_inj (struct): Properties of the mixture at the injector
+    %     * mix2_c (struct): Properties of the mixture at the outlet of the chamber
     %     * mix3 (struct): Properties of the mixture at the throat
     %     * mix4 (struct): Properties of the mixture at the given exit points
+    %
+    % Examples:
+    %     * [mix1, mix2_inj, mix2_c, mix3, mix4] = rocket_performance(self, mix1)
+    %     * [mix1, mix2_inj, mix2_c, mix3, mix4] = rocket_performance(self, mix1, Aratio)
+    %     * [mix1, mix2_inj, mix2_c, mix3, mix4] = rocket_performance(self, mix1, Aratio, mix2_inj)
+    %     * [mix1, mix2_inj, mix2_c, mix3, mix4] = rocket_performance(self, mix1, Aratio, mix2_inj, mix2_c)
+    %     * [mix1, mix2_inj, mix2_c, mix3, mix4] = rocket_performance(self, mix1, Aratio, mix2_inj, mix2_c, mix3)
+    %     * [mix1, mix2_inj, mix2_c, mix3, mix4] = rocket_performance(self, mix1, Aratio, mix2_inj, mix2_c, mix3, mix4)
     
     % Initialization
     Aratio = [];

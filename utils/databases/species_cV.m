@@ -4,12 +4,15 @@ function cV = species_cV(species, T, DB)
     % interpolating polynomials and linear extrapolation
     %
     % Args:
-    %     species (str): Chemical species
+    %     species (char): Chemical species
     %     T (float): Temperature [K]
     %     DB (struct): Database with custom thermodynamic polynomials functions generated from NASAs 9 polynomials fits
     %
     % Returns:
-    %     cV (float): Specific heat at constant volume [J/(mol-K)]
+    %     cV (float): Specific heat at constant volume in molar basis [J/(mol-K)]
+    %
+    % Example:
+    %     cV = species_cV('H2O', 300, DB)
 
     try
         cV = DB.(species).cPcurve(T) - 8.31446261815324;

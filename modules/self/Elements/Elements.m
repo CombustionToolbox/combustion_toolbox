@@ -4,14 +4,14 @@ function self = Elements()
     % Attributes:
     %     description (char): Description of the struct
     %     elements (cell): Cell with the elements in the periodic table
-    %     NE (int): Number of elements
-    %     ind_C (int): Index element Carbon
-    %     ind_H (int): Index element Hydrogen
-    %     ind_O (int): Index element Oxygen
-    %     ind_N (int): Index element Nytrogen
-    %     ind_E (int): Index element Electron
-    %     ind_S (int): Index element Sulfur
-    %     ind_Si (int): Index element Silicon
+    %     NE (float): Number of elements
+    %     ind_C (float): Index element Carbon
+    %     ind_H (float): Index element Hydrogen
+    %     ind_O (float): Index element Oxygen
+    %     ind_N (float): Index element Nytrogen
+    %     ind_E (float): Index element Electron
+    %     ind_S (float): Index element Sulfur
+    %     ind_Si (float): Index element Silicon
     %
     % Returns:
     %     self (struct): Struct with elements data

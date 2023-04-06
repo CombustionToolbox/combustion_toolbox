@@ -14,6 +14,9 @@ function log_Pe = guess_pressure_exit_IAC(mix2, mix3, Aratio, FLAG_SUBSONIC)
     %
     % Returns:
     %      log_P (float): Log pressure ratio [-]
+    %
+    % Example:
+    %      log_P = guess_pressure_exit_IAC(mix2, mix3, 3, false)
 
     % Definitions
     log_Pt = log(mix2.p / mix3.p);

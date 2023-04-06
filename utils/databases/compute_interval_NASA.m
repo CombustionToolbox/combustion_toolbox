@@ -2,7 +2,7 @@ function tInterval = compute_interval_NASA(species, T, DB, tRange, ctTInt)
     % Compute interval NASA polynomials
     %
     % Args:
-    %     species (str) : Chemical species
+    %     species (char) : Chemical species
     %     T (float): Temperature [K]
     %     DB (struct) : Database with custom thermodynamic polynomials functions generated from NASAs 9 polynomials fits
     %     tRange (cell): Ranges of temperatures [K]
@@ -13,26 +13,25 @@ function tInterval = compute_interval_NASA(species, T, DB, tRange, ctTInt)
 
     tInterval = [];
 
-    if DB.(species).ctTInt > 0
+    if DB.(species).ctTInt == 0
+        return
+    end
 
-        for j = 1:ctTInt
-
-            if (T >= tRange{j}(1)) && (T <= tRange{j}(2))
-                tInterval = j;
-            end
-
+    for j = 1:ctTInt
+        if (T >= tRange{j}(1)) && (T <= tRange{j}(2))
+            tInterval = j;
         end
 
-        if isempty(tInterval)
+    end
 
-            if T > tRange{j}(2)
-                tInterval = ctTInt;
-            elseif T < tRange{j}(2)
-                tInterval = 1;
-            end
+    if ~isempty(tInterval)
+        return
+    end
 
-        end
-
+    if T > tRange{j}(2)
+        tInterval = ctTInt;
+    elseif T < tRange{j}(2)
+        tInterval = 1;
     end
 
 end

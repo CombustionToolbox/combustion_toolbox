@@ -2,7 +2,7 @@ function [a, b, tRange, tExponents, ctTInt, txFormula, phase] = unpack_NASA_coef
     % Unpack NASA's polynomials coefficients from database
     %
     % Args:
-    %     species (str): Chemical species
+    %     species (char): Chemical species
     %     DB (struct): Database with custom thermodynamic polynomials functions generated from NASAs 9 polynomials fits
     %
     % Returns:
@@ -13,8 +13,11 @@ function [a, b, tRange, tExponents, ctTInt, txFormula, phase] = unpack_NASA_coef
     %     * tRange (cell): Ranges of temperatures [K]
     %     * tExponents (cell): Exponent coefficients
     %     * ctTInt (float): Number of intervals of temperatures
-    %     * txFormula (str): Chemical formula
+    %     * txFormula (char): Chemical formula
     %     * phase (float): 0 or 1 indicating gas or condensed phase, respectively
+    %
+    % Example:
+    %     [a, b, tRange, tExponents, ctTInt, txFormula, phase] = unpack_NASA_coefficients('H2O', DB)
 
     a = DB.(species).a;
     b = DB.(species).b;

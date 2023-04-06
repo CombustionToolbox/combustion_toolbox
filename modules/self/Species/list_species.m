@@ -21,16 +21,20 @@ function [self, LS] = list_species(varargin)
     %     empty (none): return default list of species (soot formation)
     %
     % Optional Args:
-    %     - self (struct): Data of the mixture, conditions, and databases
-    %     - LS (cell): Name list species / list of species
-    %     - EquivalenceRatio (float): Equivalence ratio
-    %     - EquivalenceRatio_soot (float): Equivalence ratio in which theoretically appears soot
+    %     * self (struct): Data of the mixture, conditions, and databases
+    %     * LS (cell): Name list species / list of species
+    %     * phi (float): Equivalence ratio
+    %     * phi_c (float): Equivalence ratio in which theoretically appears soot
     %
     % Returns:
-    %     self (struct): Data of the mixture, conditions, and databases
+    %     Tuple containing
+    %
+    %     * self (struct): Data of the mixture, conditions, and databases
+    %     * LS (cell): List of species
 
     % Unpack inputs
     [self, LS, FLAG] = unpack(varargin{:});
+
     % Set ListSpecies (LS)
     if ~isempty(LS)
 
@@ -39,12 +43,12 @@ function [self, LS] = list_species(varargin)
                 self.S.FLAG_COMPLETE = true;
 
                 if nargin > 2
-                    EquivalenceRatio = varargin{1, 3};
-                    EquivalenceRatio_soot = varargin{1, 4};
+                    phi = varargin{1, 3};
+                    phi_c = varargin{1, 4};
 
-                    if EquivalenceRatio < 1
+                    if phi < 1
                         self.S.LS = self.S.LS_lean;
-                    elseif EquivalenceRatio >= 1 && EquivalenceRatio < EquivalenceRatio_soot
+                    elseif phi >= 1 && phi < phi_c
                         self.S.LS = self.S.LS_rich;
                     else
                         self.S.LS = self.S.LS_soot;
@@ -238,6 +242,7 @@ function [self, LS, FLAG] = unpack(varargin)
     % Default values
     self = struct();
     LS = 'SOOT FORMATION'; % Default list of species
+    
     % Unpack
     if nargin < 2
         FLAG = true; % Return variable "LS"

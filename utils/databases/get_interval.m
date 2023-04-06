@@ -3,7 +3,7 @@ function tInterval = get_interval(species, T, DB)
     % given species and temperature [K].
     %
     % Args:
-    %     species (str): Chemical species
+    %     species (char): Chemical species
     %     T (float): Temperature [K]
     %     DB (struct): Database with custom thermodynamic polynomials functions generated from NASAs 9 polynomials fits
     %

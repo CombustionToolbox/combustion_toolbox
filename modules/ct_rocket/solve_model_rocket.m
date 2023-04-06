@@ -25,6 +25,9 @@ function [mix2_inj, mix2_c, mix3, mix4] = solve_model_rocket(self, mix1, mix2_in
     %     * mix2 (struct): Properties of the mixture at the outlet of the chamber
     %     * mix3 (struct): Properties of the mixture at the throat
     %     * mix4 (struct): Properties of the mixture at the given exit points
+    %
+    % Example:
+    %     [mix2_1, mix2, mix3, mix4] = solve_model_rocket(self, mix1, mix2_1, mix2, mix3, mix4, Aratio)
     
     if self.PD.FLAG_IAC
         mix2_inj = [];

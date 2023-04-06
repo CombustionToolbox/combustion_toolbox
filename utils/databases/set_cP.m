@@ -8,7 +8,10 @@ function cP = set_cP(LS, T, DB)
     %     DB (struct): Database with custom thermodynamic polynomials functions generated from NASAs 9 polynomials fits
     %
     % Returns:
-    %     cP (float): Specific heat at constant pressure [J/(mol-K)]
+    %     cP (float): Specific heat at constant pressure in molar basis [J/(mol-K)]
+    %
+    % Example:
+    %     cP = set_cP({'H2O', 'CO2'}, 298.15, DB)
 
     for i = length(LS):-1:1
         species = LS{i};

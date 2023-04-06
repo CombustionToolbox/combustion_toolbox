@@ -23,7 +23,10 @@ function [N0, dNi_T, dN_T, dNi_p, dN_p, STOP, STOP_ions] = equilibrium_gibbs_eos
     %     * dNi_p (float): Thermodynamic derivative of the moles of the species respect to pressure
     %     * dN_p (float): Thermodynamic derivative of the moles of the mixture respect to pressure
     %     * STOP (float): Relative error in moles of species [-] 
-    %     * STOP_ions (float): Relative error in moles of ionized species [-] 
+    %     * STOP_ions (float): Relative error in moles of ionized species [-]
+    %
+    % Example:
+    %     [N0, dNi_T, dN_T, dNi_p, dN_p, STOP, STOP_ions] = equilibrium_gibbs_eos(self, pP, TP, mix1, guess_moles)
 
     % Generalized Gibbs minimization method
     

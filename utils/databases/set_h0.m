@@ -9,6 +9,9 @@ function h0 = set_h0(LS, T, DB)
     %
     % Returns:
     %     h0 (float): Enthalpy in molar basis [J/mol]
+    %
+    % Example:
+    %     h0 = set_h0({'H2O', 'CO2'}, 298.15, DB)
 
     for i = length(LS):-1:1
         species = LS{i};

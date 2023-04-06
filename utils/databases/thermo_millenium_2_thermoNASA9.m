@@ -4,7 +4,7 @@ function thermo_millenium_2_thermoNASA9(filename)
     % file compatible with thermo NASA 9 format
     %
     % Args:
-    %     filename (file): Filename of the thermo_millenium data
+    %     filename (char): Filename of the thermo_millenium data
 
     new_filename = 'thermo_millenium_2_thermoNASA9.inp';
     fid = fopen(filename, 'r');

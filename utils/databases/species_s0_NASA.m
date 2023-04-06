@@ -3,12 +3,15 @@ function s0 = species_s0_NASA(species, temperature, DB)
     % using NASA's 9 polynomials
     %
     % Args:
-    %     species (str): Chemical species
+    %     species (char): Chemical species
     %     temperature (float): Range of temperatures to evaluate [K]
     %     DB (struct): Database with custom thermodynamic polynomials functions generated from NASAs 9 polynomials fits
     %
     % Returns:
-    %     s0 (float): Entropy [kJ/(mol-K)]
+    %     s0 (float): Entropy in molar basis [kJ/(mol-K)]
+    %
+    % Example:
+    %     s0 = species_s0_NASA('H2O', 300:100:6000, DB)
 
     % Definitions
     R0 = 8.31446261815324; % Universal Gas Constant [J/(mol-K)];

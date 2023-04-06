@@ -3,15 +3,18 @@ function [h0, DhT] = species_h0_NASA(species, temperature, DB)
     % given temperature [K] using NASA's 9 polynomials
     %
     % Args:
-    %     species (str): Chemical species
+    %     species (char): Chemical species
     %     temperature (float): Range of temperatures to evaluate [K]
     %     DB (struct): Database with custom thermodynamic polynomials functions generated from NASAs 9 polynomials fits
     %
     % Returns:
     %     Tuple containing
     %
-    %     * h0 (float): Enthalpy [kJ/mol]
-    %     * DhT (float): Thermal enthalpy [kJ/mol]
+    %     * h0 (float): Enthalpy in molar basis [kJ/mol]
+    %     * DhT (float): Thermal enthalpy in molar basis [kJ/mol]
+    %
+    % Example:
+    %     [h0, DhT] = species_h0_NASA('H2O', 300:100:6000, DB)
 
     % Definitions
     R0 = 8.31446261815324; % Universal Gas Constant [J/(mol-K)];

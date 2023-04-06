@@ -3,42 +3,41 @@ function DB_master = generate_DB_master(varargin)
     % the chemical species
     %
     % Optional Args:
-    %     * reducedDB (flag):  Flag indicating reduced database
-    %     * thermoFile (file): File with NASA's thermodynamic database
+    %     FLAG_REDUCED_DB (bool): Flag indicating reduced database (default: false)
+    %     thermoFile (char): File name of NASA's thermodynamic database (default: thermo.inp)
     %
     % Returns:
-    %     DB_master (struct):  Database with the thermodynamic data of the chemical species
+    %     DB_master (struct): Database with the thermodynamic data of the chemical species
+    %
+    % Examples:
+    %     * DB_master = generate_DB_master(false)
+    %     * DB_master = generate_DB_master(false, 'thermo.inp')
+    
+    % Default
+    FLAG_REDUCED_DB = false;
+    thermoFile = 'thermo.inp';
 
-    reducedDB = varargin{1, 1};
+    % Unpack
+    if nargin > 0, FLAG_REDUCED_DB = varargin{1}; end
+    if nargin > 1, thermoFile = varargin{1}; end
 
-    if nargin > 1
-        thermoFile = varargin{1, 2};
+    % Load master database
+    if exist('DB_master.mat', 'file') && ~FLAG_REDUCED_DB
+        fprintf('Loading NASA database ... ')
+        load('DB_master.mat', 'DB_master');
+    elseif exist('DB_master_reduced.mat', 'file') && FLAG_REDUCED_DB
+        fprintf('Loading Reduced NASA database ... ')
+        load('DB_master_reduced.mat', 'DB_master');
     else
-        thermoFile = 'thermo.inp';
-    end
+        DB_master = get_DB_master(thermoFile);
 
-    if ~exist('DB_master', 'var')
-
-        if exist('DB_master.mat', 'file') && ~reducedDB
-            fprintf('Loading NASA database ... ')
-            load('DB_master.mat', 'DB_master');
-        elseif exist('DB_master_reduced.mat', 'file') && reducedDB
-            fprintf('Loading Reduced NASA database ... ')
-            load('DB_master_reduced.mat', 'DB_master');
-        else
-            DB_master = get_DB_master(thermoFile);
-
-            if reducedDB
-                DB_master = generate_DB_master_reduced(DB_master);
-            end
-
+        if FLAG_REDUCED_DB
+            DB_master = generate_DB_master_reduced(DB_master);
         end
 
-        fprintf('OK!\n');
-    else
-        fprintf('NASA database already loaded\n')
     end
 
+    fprintf('OK!\n');
 end
 
 % SUB-PASS FUNCTIONS

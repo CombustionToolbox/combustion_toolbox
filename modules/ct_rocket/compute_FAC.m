@@ -18,6 +18,9 @@ function [mix2_inj, mix2_c, mix3] = compute_FAC(self, mix1, mix2_inj, mix2_c, mi
     %     * mix2_inj (struct): Properties of the mixture at the injector of the chamber
     %     * mix2_c (struct): Properties of the mixture at the outlet of the chamber
     %     * mix3 (struct): Properties of the mixture at the throat
+    %
+    % Example:
+    %     [mix2_inj, mix2_c, mix3] = compute_FAC(self, mix1, mix2_inj, mix2_c, mix3)
 
     % Definitions
     Aratio_chamber = self.PD.Aratio_c.value;

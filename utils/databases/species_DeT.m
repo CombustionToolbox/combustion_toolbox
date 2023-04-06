@@ -3,12 +3,15 @@ function DeT = species_DeT(species, T, DB)
     % using piecewise cubic Hermite interpolating polynomials and linear extrapolation
     %
     % Args:
-    %     species (str): Chemical species
+    %     species (char): Chemical species
     %     T (float): Temperature [K]
     %     DB (struct): Database with custom thermodynamic polynomials functions generated from NASAs 9 polynomials fits
     %
     % Returns:
-    %     DeT (float): Thermal internal energy [kJ/mol]
+    %     DeT (float): Thermal internal energy in molar basis [kJ/mol]
+    %
+    % Example:
+    %     DeT = species_DeT('H2O', 300, DB)
 
     try
         DeT = DB.(species).DeTcurve(T) / 1000;

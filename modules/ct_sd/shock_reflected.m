@@ -19,6 +19,10 @@ function [mix1, mix2, mix5] = shock_reflected(self, mix1, u1, mix2, varargin)
     %     * mix1 (struct): Properties of the mixture in the pre-shock state of the incident shock
     %     * mix2 (struct): Properties of the mixture at the post-shock state of the incident shock
     %     * mix5 (struct): Properties of the mixture in the post-shock state of the reflected shock
+    %
+    % Examples:
+    %     * [mix1, mix2, mix5] = shock_reflected(self, mix1, u1, mix2)
+    %     * [mix1, mix2, mix5] = shock_reflected(self, mix1, u1, mix2, mix5)
 
     % Unpack input data
     [self, mix1, mix2, mix5, guess_moles] = unpack(self, mix1, u1, mix2, varargin);

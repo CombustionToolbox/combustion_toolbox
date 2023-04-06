@@ -1,15 +1,18 @@
 function [release, git_data] = get_latest_version_github(user, repo_name)
-    % Get latest version from a repository from Github.
+    % Get latest version from a repository from Github
     %
     % Args:
-    %    user (char): Username of the owner of the repository
-    %    repo_name (char): Name of the repository
+    %     user (char): Username of the owner of the repository
+    %     repo_name (char): Name of the repository
     %
     % Returns:
-    %    Tuple containing
+    %     Tuple containing
     %
-    %    - release (char): Release tag (latest)
-    %    - git_data (struct): Body data of the request
+    %     * release (char): Release tag (latest)
+    %     * git_data (struct): Body data of the request
+    %
+    % Example:
+    %     [release, git_data] = get_latest_version_github('AlbertoCuadra', 'combustion_toolbox')
 
     % Define request
     git_api = 'https://api.github.com/repos/';

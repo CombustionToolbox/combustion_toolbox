@@ -39,25 +39,49 @@ function self = check_inputs(self)
             self = check_inputs_prop(self, 'vP_vR');
             self = set_prop(self, 'pP', self.PD.pR.value); % Guess
         case {'SHOCK_I', 'SHOCK_R'} % * SHOCK_I and SHOCK_R: Calculate planar shock wave
-            self = check_inputs_prop(self, 'u1');
-        case {'SHOCK_POLAR', 'SHOCK_POLAR_LIMITRR'} % * SHOCK_POLAR: Calculate oblique shock polars
-            self = check_inputs_prop(self, 'u1');
-        case {'SHOCK_OBLIQUE', 'SHOCK_POLAR_R'} % * SHOCK_OBLIQUE OR SHOCK_POLAR
-            self = check_inputs_prop(self, 'u1');
-
+            
+            % Check pre-shock velocity/Mach
             try
-                self = check_inputs_prop(self, 'theta'); % Compute from deflection angle (1 solution)
+                self = check_inputs_prop(self, 'u1');
             catch
-                self = check_inputs_prop(self, 'beta'); % Compute from wave angle (2 solutions: weak and stron shocks)
+                self = set_velocity_from_Mach(self);
+            end
+
+        case {'SHOCK_POLAR', 'SHOCK_POLAR_LIMITRR'} % * SHOCK_POLAR: Calculate oblique shock polars
+            
+            % Check pre-shock velocity/Mach
+            try
+                self = check_inputs_prop(self, 'u1');
+            catch
+                self = set_velocity_from_Mach(self);
+            end
+
+        case {'SHOCK_OBLIQUE', 'SHOCK_POLAR_R'} % * SHOCK_OBLIQUE OR SHOCK_POLAR
+            
+            % Check pre-shock velocity/Mach
+            try
+                self = check_inputs_prop(self, 'u1');
+            catch
+                self = set_velocity_from_Mach(self);
+            end
+            
+            try
+                % Compute from deflection angle (1 solution)
+                self = check_inputs_prop(self, 'theta'); 
+            catch
+                % Compute from wave angle (2 solutions: weak and stron shocks)
+                self = check_inputs_prop(self, 'beta');
             end
 
         case {'DET_OBLIQUE'} % * DET_OBLIQUE: Compute oblique detonation
             self = check_inputs_prop(self, 'drive_factor');
 
             try
-                self = check_inputs_prop(self, 'theta'); % Compute from deflection angle (1 solution)
+                % Compute from deflection angle (1 solution)
+                self = check_inputs_prop(self, 'theta');
             catch
-                self = check_inputs_prop(self, 'beta'); % Compute from wave angle (2 solutions: weak and stron shocks)
+                % Compute from wave angle (2 solutions: weak and stron shocks)
+                self = check_inputs_prop(self, 'beta');
             end
 
         case {'DET_OVERDRIVEN', 'DET_OVERDRIVEN_R', 'DET_UNDERDRIVEN', 'DET_UNDERDRIVEN_R', 'DET_POLAR'} % * DET_OVERDRIVEN, DET_UNDERDRIVEN, DET_POLAR, incident and reflected states
@@ -189,4 +213,19 @@ function self = check_input_temperatures(self, name)
     end
 
     self.PD.(Tname) = T;
+end
+
+function self = set_velocity_from_Mach(self)
+    % Set pre-shock velocity from pre-shock Mach number
+    % 
+    % Note:
+    %     This is only valid with fixed reactant's composition, because
+    %     check_inputs routines only perform this check one time
+
+    self = check_inputs_prop(self, 'M1');
+    species = [self.PD.S_Fuel, self.PD.S_Oxidizer, self.PD.S_Inert];
+    moles = [self.PD.N_Fuel, self.PD.N_Oxidizer, self.PD.N_Inert];
+    sound_velocity = compute_sound(self.PD.TR.value, self.PD.pR.value, species, moles, 'self', self);
+    u1 = self.PD.M1.value * sound_velocity;
+    self = set_prop(self, 'u1', u1);
 end

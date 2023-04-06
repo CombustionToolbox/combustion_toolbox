@@ -23,7 +23,7 @@ function self = Miscellaneous()
     %     export_results (struct): Struct with data to export results
     %     index_LS_original (float): Vector with the indeces original list of products
     %     display_species (struct): Struct with data to display species
-    %     i (int): Index of the current calculation
+    %     i (float): Index of the current calculation
     %
     % Returns:
     %     self (struct): Struct with miscellaneous data

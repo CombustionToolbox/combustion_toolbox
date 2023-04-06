@@ -17,11 +17,15 @@ function [mix1, mix2] = shock_incident(self, mix1, u1, varargin)
     %
     %     * mix1 (struct): Properties of the mixture in the pre-shock state
     %     * mix2 (struct): Properties of the mixture in the post-shock state
+    %
+    % Examples:
+    %     * [mix1, mix2] = shock_incident(self, mix1, u1)
+    %     * [mix1, mix2] = shock_incident(self, mix1, u1, mix2)
 
     % Unpack input data
     [self, mix1, mix2, guess_moles] = unpack(self, mix1, u1, varargin);
 
-    if self.TN.FLAG_TCHEM_FROZEN
+    if self.PD.FLAG_TCHEM_FROZEN
         STOP = 0;
         [~, p2p1, T2T1, ~, ~] = shock_ideal_gas(mix1.gamma, u1 / mix1.sound);
         T2 = T2T1 * mix1.T;
@@ -29,16 +33,16 @@ function [mix1, mix2] = shock_incident(self, mix1, u1, varargin)
         mix2 = save_state(self, mix1, T2, p2, STOP);
         return
     end
-    % Abbreviations
-    C = self.C;
-    TN = self.TN;
-    % Constants
-    R0 = C.R0; % Universal gas constant [J/(mol-K)]
+
     % Definitions
-    FLAG_FAST = TN.FLAG_FAST;
+    FLAG_FAST = self.TN.FLAG_FAST;
+    R0 = self.C.R0; % Universal gas constant [J/(mol-K)]
+
     % Solve shock incident
-    [T2, p2, STOP] = solve_shock_incident(FLAG_FAST);
-    if STOP > TN.tol_shocks
+    try
+        [T2, p2, STOP] = solve_shock_incident(FLAG_FAST);
+        assert(STOP < self.TN.tol_shocks);
+    catch
         % If solution has not converged, repeat without composition estimate
         fprintf('Recalculating: %.2f [m/s]\n', u1);
         guess_moles = [];
@@ -47,20 +51,21 @@ function [mix1, mix2] = shock_incident(self, mix1, u1, varargin)
     end
 
     % Check convergence
-    print_convergence(STOP, TN.tol_shocks, T2);
+    print_convergence(STOP, self.TN.tol_shocks, T2);
+    
     % Save state
     mix2 = save_state(self, mix1, T2, p2, STOP);
 
     % NESTED-FUNCTIONS
     function [T2, p2, STOP] = solve_shock_incident(FLAG_FAST)
         % Miscellaneous
-        it = 0; itMax = TN.it_shocks; STOP = 1.0;
+        it = 0; itMax = self.TN.it_shocks; STOP = 1;
         % Initial estimates of p2/p1 and T2/T1
-        [p2, T2, p2p1, T2T1] = get_guess(self, mix1, mix2, TN);
+        [p2, T2, p2p1, T2T1] = get_guess(self, mix1, mix2);
         % Check FLAG
         if ~FLAG_FAST, guess_moles = []; end
         % Loop
-        while STOP > TN.tol_shocks && it < itMax
+        while STOP > self.TN.tol_shocks && it < itMax
             it = it + 1;
             % Construction of the Jacobian matrix and vector b
             [J, b, guess_moles] = update_system(self, mix1, p2, T2, R0, guess_moles, FLAG_FAST);
@@ -110,14 +115,14 @@ function [self, mix1, mix2, guess_moles] = unpack(self, mix1, u1, x)
 
 end
 
-function [p2, T2, p2p1, T2T1] = get_guess(self, mix1, mix2, TN)
+function [p2, T2, p2p1, T2T1] = get_guess(self, mix1, mix2)
 
     if isempty(mix2)
         M1 = mix1.u / mix1.sound;
         p2p1 = (2 * mix1.gamma * M1^2 - mix1.gamma + 1) / (mix1.gamma + 1);
         T2T1 = p2p1 * (2 / M1^2 + mix1.gamma - 1) / (mix1.gamma + 1);
 
-        if M1 > TN.Mach_thermo
+        if M1 > self.TN.Mach_thermo
             % Estimate post-shock state considering h2 = h1 + u1^2 / 2
             mix1.h = (enthalpy_mass(mix1) * 1e3 + velocity_relative(mix1)^2/2) * mass(mix1) * 1e-3; % [kJ]
             self.PD.ProblemType = 'HP';

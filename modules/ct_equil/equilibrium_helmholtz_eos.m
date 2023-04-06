@@ -12,7 +12,7 @@ function [N0, dNi_T, dN_T, dNi_p, dN_p, STOP, STOP_ions] = equilibrium_helmholtz
     %     vP (float): Volume [m3]
     %     TP (float): Temperature [K]
     %     mix1 (struct): Properties of the initial mixture
-    %     guess_moles (float): mixture composition [mol] of a previous computation
+    %     guess_moles (float): Mixture composition [mol] of a previous computation
     %
     % Returns:
     %     Tuple containing
@@ -23,7 +23,10 @@ function [N0, dNi_T, dN_T, dNi_p, dN_p, STOP, STOP_ions] = equilibrium_helmholtz
     %     * dNi_p (float): Thermodynamic derivative of the moles of the species respect to pressure
     %     * dN_p (float): Thermodynamic derivative of the moles of the mixture respect to pressure
     %     * STOP (float): Relative error in moles of species [-] 
-    %     * STOP_ions (float): Relative error in moles of ionized species [-] 
+    %     * STOP_ions (float): Relative error in moles of ionized species [-]
+    %
+    % Example:
+    %     [N0, dNi_T, dN_T, dNi_p, dN_p, STOP, STOP_ions] = equilibrium_helmholtz_eos(self, vP, TP, mix1, guess_moles)
 
     % Generalized Helmholtz minimization method
     

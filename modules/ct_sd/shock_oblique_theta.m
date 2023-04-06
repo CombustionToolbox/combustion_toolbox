@@ -22,6 +22,10 @@ function [mix1, mix2_1, mix2_2] = shock_oblique_theta(self, mix1, u1, theta, var
     %     * mix1 (struct): Properties of the mixture in the pre-shock state
     %     * mix2_1 (struct): Properties of the mixture in the post-shock state - weak shock
     %     * mix2_2 (struct): Properties of the mixture in the post-shock state - strong shock
+    %
+    % Examples:
+    %     * [mix1, mix2_1, mix2_2] = shock_oblique_theta(self, mix1, u1, theta)
+    %     * [mix1, mix2_1, mix2_2] = shock_oblique_theta(self, mix1, u1, theta, mix2_1, mix2_2)
 
     % Unpack input data
     [self, mix1, mix2_1, mix2_2] = unpack(self, mix1, u1, theta, varargin);

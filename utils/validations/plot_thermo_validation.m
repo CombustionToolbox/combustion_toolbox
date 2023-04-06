@@ -2,16 +2,16 @@ function ax = plot_thermo_validation(species, property, DB, varargin)
     % Validation custom thermodynamic polynomials with NASA's 9 polynomials
     %
     % Args:
-    %    species (cell): List of species
-    %    property (str): Name of the thermodynamic property to check
-    %    DB (struct):    Database with custom thermodynamic polynomials functions generated from NASAs 9 polynomials fits
+    %     species (cell): List of species
+    %     property (str): Name of the thermodynamic property to check
+    %     DB (struct): Database with custom thermodynamic polynomials functions generated from NASAs 9 polynomials fits
     %
     % Optional Args:
-    %    nfrec(float):   Points frequency for NASA values
-    %    range(float):   Temperature range [K]
+    %     * nfrec (float): Points frequency for NASA values
+    %     * range (float): Temperature range [K]
     %
     % Returns:
-    %    ax (axes): Axes of the plotted figure
+    %     ax (object): Axes of the plotted figure
 
     % Check input species
     if ischar(species)

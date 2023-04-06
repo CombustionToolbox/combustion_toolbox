@@ -20,6 +20,9 @@ function [dNi_T, dN_T] = equilibrium_dT_large(self, moles, T, A0, NG, NS, NE, in
     %
     %     * dNi_T (float): Thermodynamic derivative of the moles of the species respect to temperature
     %     * dN_T (float):  Thermodynamic derivative of the moles of the mixture respect to temperature
+    %
+    % Example:
+    %     [dNi_T, dN_T] = equilibrium_dT_large(self, moles, T, A0, NG, NS, NE, ind, ind_nswt, ind_swt, ind_E)
     
     % Definitions
     R0TP = self.C.R0 * T; % [J/mol]

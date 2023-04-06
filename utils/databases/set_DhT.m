@@ -8,7 +8,10 @@ function DhT = set_DhT(LS, T, DB)
     %     DB (struct): Database with custom thermodynamic polynomials functions generated from NASAs 9 polynomials fits
     %
     % Returns:
-    %     DhT (float): Thermal enthalpy [J/mol]
+    %     DhT (float): Thermal enthalpy in molar basis [J/mol]
+    %
+    % Example:
+    %     DhT = set_DhT({'H2O', 'CO2'}, 298.15, DB)
 
     for i = length(LS):-1:1
         species = LS{i};

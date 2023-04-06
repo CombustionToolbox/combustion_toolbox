@@ -3,12 +3,15 @@ function e0 = species_e0(species, T, DB)
     % using piecewise cubic Hermite interpolating polynomials and linear extrapolation
     %
     % Args:
-    %     species (str): Chemical species
+    %     species (char): Chemical species
     %     T (float): Temperature [K]
     %     DB (struct): Database with custom thermodynamic polynomials functions generated from NASAs 9 polynomials fits
     %
     % Returns:
-    %     e0 (float): Internal energy [kJ/mol]
+    %     e0 (float): Internal energy in molar basis [kJ/mol]
+    %
+    % Example:
+    %     e0 = species_e0('H2O', 300, DB)
     
     % Specific value
     moles = 1;

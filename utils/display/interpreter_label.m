@@ -2,15 +2,17 @@ function value = interpreter_label(property, varargin)
     % Interpreter label for properties - returns property name
     %
     % Args:
-    %     property (str): Property name
+    %     property (char): Property name
+    %
+    % Optional Args:
+    %     type (char): Type of label to return. Can be 'short', 'medium' or 'long' (default: medium)
     %
     % Returns:
-    %     value (str): Corresponding name of the property
+    %     value (char): Corresponding name of the property
 
     % Default values
     type = 'medium';
 
-    
     % Check if property is a cell variable
     if iscell(property)
 
@@ -209,7 +211,7 @@ function [property_name, property_latex, property_unit] = property_names(propert
             property_name = 'Mass fractions';
             property_latex = 'Y_i';
             property_unit = '';
-        case 'v_p/v_r'
+        case {'v_p/v_r', 'v_v', 'vp_vr'}
             property_name = 'Volume ratio';
             property_latex = 'v_2/v_1';
             property_unit = '';
@@ -265,6 +267,14 @@ function [property_name, property_latex, property_unit] = property_names(propert
             property_name = 'Pressure $\times$ Volume';
             property_latex = 'pv';
             property_unit = '[bar-m$^3$]';
+        case 'aratio'
+            property_name = 'Area exit / throat';
+            property_latex = 'A_{\rm ratio} = A_e/A_t';
+            property_unit = '';
+        case 'aratio_c'
+            property_name = 'Area combustor / throat';
+            property_latex = 'A_{\rm ratio, c} = A_c/A_t';
+            property_unit = '';
         otherwise
             property_unit = '';
 

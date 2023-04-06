@@ -17,7 +17,7 @@ function mix2 = equilibrate_T(self, mix1, pP, TP, varargin)
     %     mix2 = equilibrate(self, self.PS.strR{1}, 1.01325, 3000)
     
     % Check if calculations are for a thermochemical frozen gas (calorically perfect)
-    if self.TN.FLAG_TCHEM_FROZEN        
+    if self.PD.FLAG_TCHEM_FROZEN        
         mix2 = equilibrate_T_tchem(self, mix1, pP, TP);
         return
     end
@@ -36,7 +36,7 @@ function mix2 = equilibrate_T(self, mix1, pP, TP, varargin)
     N = reshape_vector(self, ind, ind_ListProducts, N);
     self.dNi_T = reshape_vector(self, ind, ind_ListProducts, self.dNi_T);
     self.dNi_p = reshape_vector(self, ind, ind_ListProducts, self.dNi_p);
-    % Add moles of frozen species to the moles vector N
+    % Add moles of inert species to the moles vector N
     N_mix1 = moles(mix1);
     N(self.S.ind_frozen) = N_mix1(self.S.ind_frozen);
     % Compute property matrix of the species at chemical equilibrium
@@ -66,6 +66,7 @@ function self = set_LS_original(self, TP)
         self.Misc.index_LS_original(self.S.ind_ions) = [];
         self.E.ind_E = [];
     end
+    
     % Initialization
     self.S.ind_nswt = []; self.S.ind_swt = [];
     self.S.ind_cryogenic = []; self.S.ind_ions = [];
@@ -101,14 +102,14 @@ function [N, dNi_T, dN_T, dNi_p, dN_p, ind, STOP, STOP_ions] = select_equilibriu
 
 end
 
-function mix2 = set_properties(self, mix1, properties_matrix, pP, TP, STOP, STOP_ions)
+function mix2 = set_properties(self, mix1, M0, pP, TP, STOP, STOP_ions)
     % Compute properties of final mixture
     if strfind(self.PD.ProblemType, 'P') == 2
-        mix2 = compute_properties(self, properties_matrix, pP, TP);
+        mix2 = compute_properties(self, M0, pP, TP);
     else
-        NP = sum(properties_matrix(:, self.C.M0.ind_ni) .* (1 - properties_matrix(:, self.C.M0.ind_phase)));
+        NP = sum(M0(:, self.C.M0.ind_ni) .* (1 - M0(:, self.C.M0.ind_phase)));
         pP = set_pressure(self, mix1, TP, NP);
-        mix2 = compute_properties(self, properties_matrix, pP, TP);
+        mix2 = compute_properties(self, M0, pP, TP);
     end
 
     mix2.error_moles = STOP;

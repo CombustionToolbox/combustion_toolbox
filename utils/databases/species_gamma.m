@@ -4,12 +4,15 @@ function gamma = species_gamma(species, T, DB)
     % linear extrapolation
     %
     % Args:
-    %     species (str): Chemical species
+    %     species (char): Chemical species
     %     T (float): Temperature [K]
     %     DB (struct): Database with custom thermodynamic polynomials functions generated from NASAs 9 polynomials fits
     %
     % Returns:
     %     gamma (float): Adiabatic index [-]
+    %
+    % Example:
+    %     gamma = species_gamma('H2O', 300, DB)
 
     gamma = species_cP(species, T, DB) / species_cV(species, T, DB);
 

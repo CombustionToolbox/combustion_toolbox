@@ -8,7 +8,10 @@ function e0 = set_e0(LS, T, DB)
     %     DB (struct): Database with custom thermodynamic polynomials functions generated from NASAs 9 polynomials fits
     %
     % Returns:
-    %     e0 (float): Internal energy [J/mol]
+    %     e0 (float): Internal energy in molar basis [J/mol]
+    %
+    % Example:
+    %     e0 = set_e0({'H2O', 'CO2'}, 298.15, DB)
 
     for i = length(LS):-1:1
         species = LS{i};

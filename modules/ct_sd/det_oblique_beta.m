@@ -16,6 +16,10 @@ function [mix1, mix2] = det_oblique_beta(self, mix1, drive_factor, beta, varargi
     %
     %     * mix1 (struct): Properties of the mixture in the pre-shock state
     %     * mix2 (struct): Properties of the mixture at the post-shock state
+    %
+    % Examples:
+    %     * [mix1, mix2] = det_oblique_theta(self, self.PS.strR{1}, 2, 60)
+    %     * [mix1, mix2] = det_oblique_theta(self, self.PS.strR{1}, 2, 60, self.PS.strP{1})
 
     % Unpack input data
     [self, mix1, mix2] = unpack(self, mix1, drive_factor, beta, varargin);

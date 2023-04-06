@@ -6,7 +6,7 @@ function self = get_index_phase_species(self, LS)
     %     LS (cell): Name list species / list of species
     %
     % Returns:
-    %     self (struct):   Data of the mixture, conditions, and databases
+    %     self (struct): Data of the mixture, conditions, and databases
 
     % Initialize vectors
     self.S.ind_nswt = [];

@@ -11,6 +11,9 @@ function mix3 = compute_throat_IAC(self, mix2, mix3)
     %
     % Returns:
     %     mix3 (struct): Properties of the mixture at the throat
+    %
+    % Example:
+    %     mix3 = compute_throat_IAC(self, mix2, mix3)
 
     % Definitions
     self.PD.ProblemType = 'SP';

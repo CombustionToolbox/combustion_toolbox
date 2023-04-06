@@ -13,6 +13,10 @@ function [R, P, T, Gammas, M1] = shock_ideal_gas(gamma, M1)
     %     * P (float): Pressure ratio [-]
     %     * T (float): Temperature ratio [-]
     %     * Gammas (float): Rankine-Hugoniot slope parameter [-]
+    %     * M1 (float): Pre-shock Mach number [-]
+    %
+    % Example:
+    %     [R, P, T, Gammas, M1] = shock_ideal_gas(1.4, 2.0)
 
     R = (gamma + 1) .* M1.^2 ./ ((gamma - 1) .* M1.^2 + 2);
     P = (2 * gamma * M1.^2 - (gamma - 1)) ./ (gamma + 1);

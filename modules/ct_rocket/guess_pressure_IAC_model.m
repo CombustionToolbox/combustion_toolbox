@@ -9,6 +9,9 @@ function pressure = guess_pressure_IAC_model(mix)
     %
     % Returns:
     %     pressure (float): Pressure at the throat [bar]
+    %
+    % Example:
+    %     pressure = guess_pressure_IAC_model(mix)
 
     pressure = mix.p / ((mix.gamma_s + 1) / 2)^(mix.gamma_s / (mix.gamma_s - 1));
 end

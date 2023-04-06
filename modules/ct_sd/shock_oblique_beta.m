@@ -16,6 +16,11 @@ function [mix1, mix2] = shock_oblique_beta(self, mix1, u1, beta, varargin)
     %
     %     * mix1 (struct): Properties of the mixture in the pre-shock state
     %     * mix2 (struct): Properties of the mixture at the post-shock state
+    %
+    % Examples:
+    %     * [mix1, mix2] = shock_oblique_beta(self, mix1, u1, beta)
+    %     * [mix1, mix2] = shock_oblique_beta(self, mix1, u1, beta, mix2)
+
 
     % Unpack input data
     [self, mix1, mix2] = unpack(self, mix1, u1, beta, varargin);

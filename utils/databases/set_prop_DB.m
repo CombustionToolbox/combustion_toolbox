@@ -9,6 +9,9 @@ function value = set_prop_DB(LS, property, DB)
     %
     % Returns:
     %     value (float): Property vector
+    %
+    % Example:
+    %     value = set_prop_DB({'H2O', 'CO2'}, 'hf', DB)
 
     for i = length(LS):-1:1
         species = LS{i};

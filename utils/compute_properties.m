@@ -10,9 +10,15 @@ function mix = compute_properties(self, properties_matrix, p, T)
     %
     % Returns:
     %     mix (struct): Properties of the mixture
+    %
+    % Example:
+    %     mix = compute_properties(self, properties_matrix, p, T)
 
     % Definitions
     R0 = self.C.R0; % [J/(K mol)] Universal gas constant
+    % Initialization
+    mix.error_moles = [];
+    mix.error_moles_ions = [];
     % Inputs
     mix.p = p; % [bar]
     mix.T = T; % [K]
@@ -29,7 +35,7 @@ function mix = compute_properties(self, properties_matrix, p, T)
     N_gas = sum(Ni(mix.phase == 0));
     % Compute molar fractions [-]
     mix.Xi = Ni / mix.N;
-    % Compute molecular weight [g/mol]
+    % Compute molecular weight (gases) [g/mol]
     mix.W = dot(Ni, properties_matrix(:, self.C.M0.ind_W)) / N_gas;
     % Compute mean molecular weight [g/mol]
     mix.MW = dot(Ni, properties_matrix(:, self.C.M0.ind_W)) / mix.N;
@@ -94,8 +100,24 @@ end
 
 % SUB-PASS FUNCTIONS
 function DS = compute_entropy_mixing(mix, Ni, N_gas, R0, FLAG_NONZERO)
-    % Compute entropy of mixing [kJ/K].
-    % Note: only nonzero for gaseous species
+    % Compute entropy of mixing [kJ/K]
+    %
+    % Args:
+    %     mix (struct): Mixture struct
+    %     Ni (moles): Vector of moles of each species [mol]
+    %     N_gas (moles): Total moles of gas species [mol]
+    %     R0 (float): Universal gas constant [J/(mol-K)]
+    %     FLAG_NONZERO (bool): Vector of nonzero species
+    %
+    % Returns:
+    %     DS (float): Entropy of mixing [kJ/K]
+    %
+    % Note: 
+    %     only nonzero for gaseous species
+    %
+    % Example:
+    %     DS = compute_entropy_mixing(mix, Ni, N_gas, R0, FLAG_NONZERO)
+
     DSi = Ni(FLAG_NONZERO) .* log(Ni(FLAG_NONZERO) / N_gas * mix.p) .* (1 - mix.phase(FLAG_NONZERO));
     DS = -R0 * sum(DSi) * 1e-3;
 end

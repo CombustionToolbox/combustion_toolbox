@@ -12,7 +12,7 @@ function [N0, dNi_T, dN_T, dNi_p, dN_p, ind, STOP, STOP_ions] = equilibrium_helm
     %     vP (float): Volume [m3]
     %     TP (float): Temperature [K]
     %     mix1 (struct): Properties of the initial mixture
-    %     guess_moles (float): mixture composition [mol] of a previous computation
+    %     guess_moles (float): Mixture composition [mol] of a previous computation
     %
     % Returns:
     %     Tuple containing
@@ -76,10 +76,10 @@ function [N0, dNi_T, dN_T, dNi_p, dN_p, ind, STOP, STOP_ions] = equilibrium_helm
     % Initialize species vector N0    
     [N0, NP] = initialize_moles(N0, NP, ind, NG, guess_moles);
     
-    % Initialize vectors g0 zeros
+    % Initialize vector g0 (molar Gibbs energy) with zeros
     g0 = N0(:, 1);
 
-    % Standard Gibbs free energy [J/mol]
+    % Molar Gibbs energy [J/mol]
     g0([ind_nswt_0, ind_swt_0]) = set_g0(self.S.LS([ind_nswt_0, ind_swt_0]), TP, self.DB);
 
     % Dimensionless chemical potential
@@ -133,7 +133,7 @@ function [N0, dNi_T, dN_T, dNi_p, dN_p, ind, STOP, STOP_ions] = equilibrium_helm
             x = J\b;
 
             % Check singular matrix
-            if any(isnan(x)) || any(isinf(x))
+            if any(isnan(x) | isinf(x))
                 
                 % Update temp indeces
                 ind_nswt = ind_nswt_0;
@@ -180,11 +180,30 @@ function [N0, dNi_T, dN_T, dNi_p, dN_p, ind, STOP, STOP_ions] = equilibrium_helm
         end
 
         % Check convergence of charge balance (ionized species)
-        [N0, STOP_ions] = check_convergence_ions(N0, A0, self.E.ind_E, ind_nswt, ind_ions, self.TN.tolN, self.TN.tol_pi_e, self.TN.itMax_ions);
-        if ~any(N0(ind_ions) > self.TN.tolN) && ~isempty(N0(ind_ions))
-            ind_elem(ind_elem == self.E.ind_E) = [];
-            NE = NE - 1;
+        [N0, STOP_ions, FLAG_ION] = check_convergence_ions(N0, A0, self.E.ind_E, ind_nswt, ind_ions, self.TN.tolN, self.TN.tol_pi_e, self.TN.itMax_ions);
+        
+        % Additional checks in case there are ions in the mixture
+        if ~FLAG_ION
+            return
         end
+        
+        % Check that there is at least one species with n_i > tolerance 
+        if any(N0(ind_ions) > self.TN.tolN)
+            return
+        end
+
+        % Remove ionized species that do not satisfy n_i > tolerance
+        [ind, ind_swt, ind_nswt, ind_ions, NG, NS] = update_temp(N0, ind, ind_swt, ind_nswt, ind_ions, NP, SIZE);
+        
+        % If none of the ionized species satisfy n_i > tolerance, remove
+        % electron "element" from the stoichiometric matrix
+        if ~isempty(ind_ions)
+            return
+        end
+        
+        % Remove element E from matrix
+        ind_elem(self.E.ind_E) = [];
+        NE = NE - 1;
 
         % Debug  
         % debug_plot_error(it, aux_STOP, aux_lambda);
@@ -434,7 +453,7 @@ function [STOP, deltaN1, deltab] = compute_STOP(N0, deltaN0, NG, A0, NatomE, max
     STOP = max(max(deltaN1), deltab);
 end
 
-function [N0, STOP] = check_convergence_ions(N0, A0, ind_E, ind_nswt, ind_ions, TOL, TOL_pi, itMax)
+function [N0, STOP, FLAG_ION] = check_convergence_ions(N0, A0, ind_E, ind_nswt, ind_ions, TOL, TOL_pi, itMax)
     % Check convergence of ionized species
     
     % Initialization
@@ -442,9 +461,13 @@ function [N0, STOP] = check_convergence_ions(N0, A0, ind_E, ind_nswt, ind_ions, 
 
     % Check if there are ionized species
     if ~any(ind_ions)
+        FLAG_ION = false;
         return
     end
     
+    % Update FLAG_ION
+    FLAG_ION = true;
+
     % Get error in the electro-neutrality of the mixture
     [delta_ions, ~] = ions_factor(N0, A0, ind_E, ind_nswt, ind_ions);
     
@@ -452,7 +475,7 @@ function [N0, STOP] = check_convergence_ions(N0, A0, ind_E, ind_nswt, ind_ions, 
     if abs(delta_ions) > TOL_pi
         [N0, STOP] = recompute_ions(N0, A0, ind_E, ind_nswt, ind_ions, delta_ions, TOL, TOL_pi, itMax);
     end
-
+    
 end
 
 function [N0, STOP] = recompute_ions(N0, A0, ind_E, ind_nswt, ind_ions, delta_ions, TOL, TOL_pi, itMax)

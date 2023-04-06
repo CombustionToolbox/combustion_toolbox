@@ -6,21 +6,22 @@ function [LS, ind_elements_DB] = find_products(self, species, varargin)
     %     self (struct): Data of the mixture, conditions, and databases
     %     species (cell): List of reactants
     %
-    % Optional Args:
-    %     ind_elements_DB (float): Matrix NS_DB x MAX_ELEMENTS with element indeces of the species contained in the database
+    % Optional Name-Value Pairs Args:
+    %     * ind_elements_DB (float): Matrix NS_DB x MAX_ELEMENTS with element indeces of the species contained in the database
+    %     * FLAG_BURCAT (bool): Flag indicating to look for species also in Burcat's database
+    %     * FLAG_ION (bool): Flag indicating to include ionized species
     %
     % Returns:
     %     Tuple containing
     %
     %     * LS (cell): List of products
     %     * ind_elements_DB (float): Matrix NS_DB x MAX_ELEMENTS with element indeces of the species contained in the database
-    %     * FLAG_BURCAT (bool): Flag indicating to look for species also in Burcat's database
-    %     * FLAG_ION (bool): Flag indicating to include ionized species
     %
     % Examples:
     %     * [LS, ind_elements_DB] = find_products(self, {'O2', 'N', 'eminus'})
-    %     * [LS, ind_elements_DB] = find_products(self, {'O2', 'CO', 'N'}, DB, 'Flag', true)
-    %     * [LS, ind_elements_DB] = find_products(self, {'O2', 'CO', 'N'}, DB, 'Flag', true, 'ind', ind_elements_DB)
+    %     * [LS, ind_elements_DB] = find_products(self, {'O2', 'CO', 'N'}, DB, 'flag_burcat', true)
+    %     * [LS, ind_elements_DB] = find_products(self, {'O2', 'CO', 'N'}, DB, 'flag_burcat', true, 'flag_ion', true)
+    %     * [LS, ind_elements_DB] = find_products(self, {'O2', 'CO', 'N'}, DB, 'flag_burcat', true, 'flag_ion', true, 'ind', ind_elements_DB)
     
     % Definitions
     MAX_ELEMENTS = 5;

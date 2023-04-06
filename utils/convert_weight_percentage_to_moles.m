@@ -8,6 +8,9 @@ function moles = convert_weight_percentage_to_moles(LS, weight_percentage, DB)
     %
     % Returns:
     %     moles (float): Number of moles [mol]
+    %
+    % Example:
+    %     moles = convert_weight_percentage_to_moles({'H2O', 'CO2'}, [50, 50], DB)
 
     % Check if value is a cell
     if ~iscell(LS)

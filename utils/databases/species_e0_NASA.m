@@ -3,15 +3,18 @@ function [e0, DeT] = species_e0_NASA(species, temperature, DB)
     % the species at the given temperature [K] using NASA's 9 polynomials
     %
     % Args:
-    %     species (str): Chemical species
+    %     species (char): Chemical species
     %     temperature (float): Range of temperatures to evaluate [K]
     %     DB (struct): Database with custom thermodynamic polynomials functions generated from NASAs 9 polynomials fits
     %
     % Returns:
     %     Tuple containing
     %
-    %     * e0 (float): Internal energy [kJ/mol]
-    %     * DeT (float): Thermal internal energy [kJ/mol]
+    %     * e0 (float): Internal energy in molar basis [kJ/mol]
+    %     * DeT (float): Thermal internal energy in molar basis [kJ/mol]
+    %
+    % Example:
+    %     [e0, DeT] = species_e0_NASA('H2O', 300:100:6000, DB)
 
     % Definitions
     R0 = 8.31446261815324; % Universal Gas Constant [J/(mol-K)];

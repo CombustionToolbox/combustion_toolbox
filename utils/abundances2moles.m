@@ -3,14 +3,18 @@ function moles = abundances2moles(elements, filename, varargin)
     % fractions in the mixture [-]
     %
     % Args:
-    %    elements (cell): List with the given elements
-    %    filename (file): Filename with the data
+    %     elements (cell): List with the given elements
+    %     filename (file): Filename with the data
     %
     % Optional Args:
-    %    metallicity (float): Metallicity
+    %     metallicity (float): Metallicity
     %
     % Returns:
-    %   moles (float): moles relative to H of the remaining elements in the mixture
+    %     moles (float): moles relative to H of the remaining elements in the mixture
+    %
+    % Examples:
+    %     * moles = abundances2moles({'H', 'He', 'C', 'N', 'O', 'Ne', 'Ar', 'S', 'Cl', 'Fe'}, 'abundances.txt')
+    %     * moles = abundances2moles({'H', 'He', 'C', 'N', 'O', 'Ne', 'Ar', 'S', 'Cl', 'Fe'}, 'abundances.txt', 10)
 
     % Unpack
     metallicity = unpack(varargin);

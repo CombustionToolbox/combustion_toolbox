@@ -1,5 +1,5 @@
 function [DB, E, S, C] = check_DB(self, DB_master, DB, varargin)
-    % Include not defined species in database from master database
+    % Include not defined species in database from master database (deprecated)
     %
     % Args:
     %     self (struct): Data of the mixture, conditions, and databases
@@ -16,6 +16,10 @@ function [DB, E, S, C] = check_DB(self, DB_master, DB, varargin)
     %     * E (struct): Elements data
     %     * S (struct): Slements data
     %     * C (struct): Constant data
+    %
+    % Examples:
+    %     * [DB, E, S, C] = check_DB(self, DB_master, DB)
+    %     * [DB, E, S, C] = check_DB(self, DB_master, DB, {'H2O', 'CO2'})
 
     % Abbreviations
     E = self.E; S = self.S; C = self.C;

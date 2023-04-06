@@ -17,6 +17,9 @@ function [dNi_p, dN_p] = equilibrium_dp(J, N0, A0, NE, ind_nswt, ind_swt, ind_el
     %
     %     * dNi_p (float): Thermodynamic derivative of the moles of the species respect to pressure
     %     * dN_p (float):  Thermodynamic derivative of the moles of the mixture respect to pressure
+    %
+    % Example:
+    %     [dNi_p, dN_p] = equilibrium_dp(J, N0, A0, NE, ind, ind_nswt, ind_swt, ind_elem)
 
     % Definitions
     A0 = A0(:, ind_elem);

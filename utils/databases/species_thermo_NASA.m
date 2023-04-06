@@ -2,21 +2,24 @@ function [cP, cV, h0, DhT, e0, DeT, s0, g0] = species_thermo_NASA(species, tempe
     % Compute thermodynamic function using NASA's 9 polynomials
     %
     % Args:
-    %     species (str): Chemical species
+    %     species (char): Chemical species
     %     temperature (float): Range of temperatures to evaluate [K]
     %     DB (struct): Database with custom thermodynamic polynomials functions generated from NASAs 9 polynomials fits
     %
     % Returns:
     %     Tuple containing
     %
-    %     * cP  (float): Specific heat at constant pressure [J/(mol-K)]
-    %     * cV  (float): Specific heat at constant volume   [J/(mol-K)]
-    %     * h0  (float): Enthalpy [kJ/mol]
-    %     * DhT (float): Thermal enthalpy [kJ/mol]
-    %     * e0  (float): Internal energy [kJ/mol]
-    %     * DeT (float): Thermal internal energy [kJ/mol]
-    %     * s0  (float): Entropy [J/(mol-K)]
-    %     * g0  (float): Gibbs energy [kJ/mol]
+    %     * cP  (float): Specific heat at constant pressure in molar basis [J/(mol-K)]
+    %     * cV  (float): Specific heat at constant volume in molar basis   [J/(mol-K)]
+    %     * h0  (float): Enthalpy in molar basis [kJ/mol]
+    %     * DhT (float): Thermal enthalpy in molar basis [kJ/mol]
+    %     * e0  (float): Internal energy in molar basis [kJ/mol]
+    %     * DeT (float): Thermal internal energy in molar basis [kJ/mol]
+    %     * s0  (float): Entropy in molar basis [J/(mol-K)]
+    %     * g0  (float): Gibbs energy in molar basis [kJ/mol]
+    %
+    % Example:
+    %     [cP, cV, h0, DhT, e0, DeT, s0, g0] = species_thermo_NASA('H2O', 300:100:6000, DB)
 
     % Definitions
     R0 = 8.31446261815324; % Universal Gas Constant [J/(mol-K)];

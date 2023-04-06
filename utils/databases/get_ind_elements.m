@@ -9,6 +9,9 @@ function ind_elements = get_ind_elements(LS, DB, elements, MAX_ELEMENTS)
     %
     % Returns:
     %     ind_elements (float): Matrix numel(LS) x MAX_ELEMENTS with element indeces of the species contained in LS
+    %
+    % Example:
+    %     ind_elements = get_ind_elements(LS, DB, elements, MAX_ELEMENTS)
     
     % Definitions
     NS = length(LS);

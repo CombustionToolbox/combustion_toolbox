@@ -11,8 +11,15 @@ function mix4 = compute_exit(self, mix2, mix3, mix4, Aratio, varargin)
     %     mix4 (struct): Properties of the mixture at the exit (previous calculation)
     %     Aratio (struct): Ratio area_exit / area_throat
     %
+    % Optional Args:
+    %     mix2_in (struct): Properties of the mixture at the inlet of the chamber
+    %
     % Returns:
     %     mix3 (struct): Properties of the mixture at the throat
+    %
+    % Examples:
+    %     * mix4 = compute_exit(self, mix2, mix3, mix4, Aratio)
+    %     * mix4 = compute_exit(self, mix2, mix3, mix4, Aratio, mix2_in)
 
     % Check Aratio
     if isempty(Aratio)

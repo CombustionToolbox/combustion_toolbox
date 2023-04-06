@@ -4,12 +4,15 @@ function cP = species_cP(species, T, DB)
     % interpolating polynomials and linear extrapolation
     %
     % Args:
-    %     species (str): Chemical species
+    %     species (char): Chemical species
     %     T (float): Temperature [K]
     %     DB (struct): Database with custom thermodynamic polynomials functions generated from NASAs 9 polynomials fits
     %
     % Returns:
-    %     cP (float): Specific heat at constant pressure [J/(mol-K)]
+    %     cP (float): Specific heat at constant pressure in molar basis [J/(mol-K)]
+    %
+    % Example:
+    %     cP = species_cP('H2O', 300, DB)
 
     try
         cP = DB.(species).cPcurve(T);

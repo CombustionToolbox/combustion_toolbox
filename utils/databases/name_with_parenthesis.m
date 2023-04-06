@@ -1,12 +1,15 @@
 function species_with = name_with_parenthesis(species)
-    % Update the name of the given string with parenthesis. The character b
+    % Update the name of the given char with parenthesis. The character b
     % if comes in pair represents parenthesis in the NASA's database
     %
     % Args:
-    %     species (str): Chemical species in NASA's Database format
+    %     species (char): Chemical species in NASA's Database format
     %
     % Returns:
-    %     species_with (str): Chemical species with parenthesis
+    %     species_with (char): Chemical species with parenthesis
+    %
+    % Example:
+    %    species_with = name_with_parenthesis('Cbgrb')
 
     j = find(species(:) == 'b');
 

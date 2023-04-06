@@ -8,20 +8,25 @@ function sound = compute_sound(T, p, species, composition, varargin)
     %     species (cell): List of species
     %     composition (float): composition of species (mol) 
     %
-    % Optional Args:
+    % Optional Name-Value Pairs Args:
     %     self (struct): Data of the mixtures, conditions, databases
     %
     % Returns:
     %     sound (float): Sound velocity [m/s]
+    %
+    % Examples:
+    %     sound = compute_sound(300, 1, {'H2', 'O2'}, [1, 1])
+    %     sound = compute_sound(300, 1, {'H2', 'O2'}, [1, 1], 'self', self)
     
     % Default
-    self = [];
+    FLAG_SELF = false;
 
     % Unpack
     for i = 1:2:nargin - 4
         switch lower(varargin{i})
             case 'self'
                 self = varargin{i + 1};
+                FLAG_SELF = true;
         end
     end
     
@@ -31,7 +36,7 @@ function sound = compute_sound(T, p, species, composition, varargin)
     end
 
     % Initialization
-    if ~isempty(self)
+    if FLAG_SELF
         self = App('FAST',  self.DB_master, self.DB, species);
     else
         self = App(species);
@@ -66,12 +71,12 @@ end
 % SUB-PASS FUNCTIONS
 function self = set_problem_conditions(self, i)
     % Set problem conditions per case
-    if isfield(self.PD, 'range_name')
+    if ~isfield(self.PD, 'range_name')
+        return
+    end
 
-        if ~strcmpi(self.PD.range_name, 'phi')
-            self.PD.(self.PD.range_name).value = self.PD.range(i);
-        end
-
+    if ~strcmpi(self.PD.range_name, 'phi')
+        self.PD.(self.PD.range_name).value = self.PD.range(i);
     end
 
 end

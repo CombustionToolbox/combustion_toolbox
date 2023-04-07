@@ -341,6 +341,7 @@ classdef uielements < matlab.apps.AppBase
                 app.caller_app_tag = varargin{2}.Source.Tag;
                 app.S = app.caller_app.S;
                 app.DB = app.caller_app.DB;
+                app.Misc = app.caller_app.Misc;
             end
 
             app.LE_omit = [];

@@ -1,45 +1,45 @@
-function ax = plot_hugoniot(varargin)
-    app = varargin(1); app = app{1, 1};
-    mix1 = varargin(2); mix1 = mix1{1, 1};
-    mix2 = varargin(3); mix2 = mix2{1, 1};
+function ax = plot_hugoniot(self, mix1, mix2, varargin)
+    % Plot the Hugoniot curve for a a given pre-shock state (mix1)
+    % and post-shock state (mix2)
+    %
+    % Args:
+    %     self (struct): Data of the mixture, conditions, and databases
+    %     mix1 (struct): Pre-shock mixture
+    %     mix2 (struct): Post-shock mixture
+    %
+    % Optional Args:
+    %     ax (object): Axis handle to plot on
+    %
+    % Returns:
+    %     ax (object): Axis handle to plot on
+    %
+    % Examples:
+    %     * ax = plot_hugoniot(self, mix1, mix2)
+    %     * ax = plot_hugoniot(self, mix1, mix2, ax)
 
-    app.Misc.config.labelx = '$R^{-1}$';
-    app.Misc.config.labely = '$P$';
-    config = app.Misc.config;
-
+    
+    % Definitions
+    self.Misc.config.grid = 'on';
+    self.Misc.config.yscale = 'log';
+    self.Misc.config.axis_x = [0 , 1];
+    self.Misc.config.axis_y = [1, 1e4];
+    
+    % Unpack
     if nargin > 3
-        ax = varargin(4);
-        ax = ax{1, 1};
+        ax = varargin{1};
         legend
     else
-        ax = set_figure(config);
+        ax = set_figure(self.Misc.config);
     end
 
-    %%% CHECK TITLE COMPATIBILITY LATEX
-    config.title = strrep(config.title, '%', '\%');
-    %%%
-    x1 = cell2vector(mix1, 'rho');
-    x2 = cell2vector(mix2, 'rho');
-    y1 = cell2vector(mix1, 'p');
-    y2 = cell2vector(mix2, 'p');
-    x = x2 ./ x1;
-    y = y2 ./ y1;
-    % Plot configuration
-    plot(ax, 1 ./ x, y, 'LineWidth', config.linewidth);
-end
-
-%%% SUB-PASS FUNCTIONS
-function ax = set_figure(config)
-    f = figure;
-    set(f, 'units', 'normalized', 'innerposition', [0.1 0.1 0.9 0.8], ...
-        'outerposition', [0.1 0.1 0.9 0.8])
-    ax = axes(f);
-    set(ax, 'LineWidth', config.linewidth, 'FontSize', config.fontsize - 2, 'BoxStyle', 'full')
-    grid(ax, 'on'); box(ax, 'on'); hold(ax, 'on'); axis(ax, 'tight');
-    xlabel(ax, config.labelx, 'FontSize', config.fontsize, 'interpreter', 'latex');
-    ylabel(ax, config.labely, 'FontSize', config.fontsize, 'interpreter', 'latex');
-    title({strcat('$', config.title, '$')}, 'Interpreter', 'latex', 'FontSize', config.fontsize + 4);
-    set(ax, 'yscale', 'log')
-    xlim(ax, [0, 1])
-    ylim(ax, [1, 10000])
+    % Get jump conditions
+    rho1 = cell2vector(mix1, 'rho');
+    rho2 = cell2vector(mix2, 'rho');
+    p1 = cell2vector(mix1, 'p');
+    p2 = cell2vector(mix2, 'p');
+    R = rho2 ./ rho1;
+    P = p2 ./ p1;
+    
+    % Plot
+    ax = plot_figure('$R^{-1}$', 1 ./ R, '$P$', P, 'ax', ax);
 end

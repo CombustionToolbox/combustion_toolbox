@@ -3,8 +3,8 @@
 % Note:
 %     Stop the build if any tests failed
 
-% Set the path for the combustion toolbox
-combustion_toolbox_set_path()
+% Set the path for the Combustion Toolbox
+INSTALL('install', 'path');
 
 % Run the tests and store the results
 results = unit_test().run;

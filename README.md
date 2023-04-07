@@ -32,7 +32,7 @@
   - EV: Adiabatic temperature and composition at constant volume
   - SV: Isentropic compression/expansion to a specified volume
 * `Shock calculations:`
-  - Pre-shock and post shock states
+  - Pre-shock and post-shock states
   - Equilibrium or frozen composition
   - Incident or reflected shocks
   - Chapman-Jouguet detonations, overdriven detonations, and underdriven detonations
@@ -60,7 +60,7 @@ This project is also part of the PhD of [Alberto Cuadra-Lara](https://www.acuadr
 
 ## Gallery
 
-We have several examples of what Combustion Toolbox can do. Here we show a preview of the GUI and some results obtained from Combustion Toolbox.
+We have several examples of what the Combustion Toolbox can do. Here we show a preview of the GUI and some results obtained from the Combustion Toolbox.
 
 <p align="left">
     <img src="https://github.com/AlbertoCuadra/combustion_toolbox_website/blob/main/docs/source/_static/img/cuadra2022/gui_1.svg" width="500">
@@ -88,11 +88,11 @@ We have several examples of what Combustion Toolbox can do. Here we show a previ
 
 ## Contributing
 
-Please read [CONTRIBUTING.md](https://github.com/AlbertoCuadra/combustion_toolbox/blob/master/CONTRIBUTING.md) for details on our code of conduct, and the process for submitting pull requests to us.
+Please read [CONTRIBUTING.md](https://github.com/AlbertoCuadra/combustion_toolbox/blob/master/CONTRIBUTING.md) for details of the process for submitting pull requests to the repository.
 
 Please send feedback or inquiries to [acuadra@ing.uc3m.es](mailto:acuadra@ing.uc3m.es)
 
-Thank you for testing Combustion Toolbox!
+Thank you for using the Combustion Toolbox!
 
 ## Acknowledgements
 * Combustion Toolbox's color palette is obtained from the following repository: Stephen (2021). ColorBrewer: Attractive and Distinctive Colormaps (https://github.com/DrosteEffect/BrewerMap), GitHub. Retrieved December 3, 2021.

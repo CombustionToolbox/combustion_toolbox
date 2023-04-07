@@ -5,7 +5,7 @@ function problems_solved = run_validation_ROCKET_CEA_23
     % Pressure chamber [bar] = 101.325;
     % Model: Finite Area Chamber (FAC)
     % Area ratio A_c/A_t = 2;
-    % Area ratio A_e/A_t = 8;
+    % Area ratio A_e/A_t = 3;
     % Equivalence ratio [-] = 0.5:0.01:4
     % Initial mixture: CH6N2bLb + MMH
     % List of species considered: list_species('Soot formation extended')

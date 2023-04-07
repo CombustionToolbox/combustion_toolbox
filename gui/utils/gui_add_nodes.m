@@ -1,5 +1,10 @@
 function gui_add_nodes(parent_node, results)
-    % Function that generate nodes in a UITree and save data on them.
+    % Function that generate nodes in a UITree and save data on them
+    %
+    % Args:
+    %     parent_node (object): Parent node of the UITree
+    %     results (struct): struct with the data to save in the nodes
+
 
     % * Category 1: new children node: Results -> ProblemType
     match_text = strcat('Problem Type: ', results(1).ProblemType);

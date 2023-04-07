@@ -21,10 +21,16 @@ function [x, STOP, guess_moles] = newton(self, mix1, pP, field, x0, guess_moles)
         STOP = 0;
         return
     end
-
+    
+    % Initialization
     it = 0; STOP = 1.0;
+
+    % Loop
     while STOP > self.TN.tol0 && it < self.TN.itMax
+        % Update iteration number
         it = it + 1;
+        % Get the residual of f, its derivative with temperature, and the
+        % relative value of the residual
         [f0, fprime0, frel, guess_moles] = get_ratio_newton(self, mix1, pP, field, x0, guess_moles);
         % Compute solution
         x = abs(x0 - f0 / fprime0);
@@ -36,6 +42,7 @@ function [x, STOP, guess_moles] = newton(self, mix1, pP, field, x0, guess_moles)
         % aux_x(it) = x;
         % aux_STOP(it) = STOP;
     end
+
     % debug_plot_error(it, aux_STOP);
     if STOP > self.TN.tol0
         fprintf('\n***********************************************************\n')
@@ -50,9 +57,19 @@ end
 
 % SUB-PASS FUNCTIONS
 function [f, fprime, frel, guess_moles] = get_ratio_newton(self, mix1, pP, field, x, guess_moles)
-    mix2 = equilibrate_T(self, mix1, pP, x, guess_moles);
+    % Get the residual of f, its derivative with temperature, and the
+    % relative value of the residual
+    try
+        mix2 = equilibrate_T(self, mix1, pP, x, guess_moles);
+    catch
+        mix2 = equilibrate_T(self, mix1, pP, x);
+    end
+
+    % Calculate residual of f = 0
     f = mix2.(field) - mix1.(field);
+    % Calculate partial derivative of f with temperature
     fprime = get_partial_derivative(self, mix2);
+    % Get relative value of the residual
     frel = abs(f / mix2.(field));
     % Update guess moles
     guess_moles = mix2.N * mix2.Xi;

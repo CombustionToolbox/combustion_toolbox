@@ -1,5 +1,6 @@
 function gui_UITable_RCellEdit(app, event)
     % Update values of the UITable items with the changes made
+    
     try
         % Initialize self (fast: transfer DB)
         self = App('fast', app.DB_master, app.DB);

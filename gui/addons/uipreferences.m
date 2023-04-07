@@ -777,24 +777,24 @@ classdef uipreferences < matlab.apps.AppBase
 
             % Tuning parameters: Flags
             obj_num = obj_num + 1;
-            obj_total = 3;
+            obj_total = 2;
 
             % * Tuning parameters: Flags
             panel_name = create_panel(app, [app.x0_panel_right,...
                 app.y0_panel_right - obj_total * app.height_panel_0,...
                 app.width_right,  obj_total * app.height_panel_0],...
                 ' Flags', 'obj_num', obj_num);
+            
+            % ** Problem Description: Flags - FLAG_TCHEM_FROZEN
+            % obj_num_children = obj_num_children + 1;
+            % tag = {'TN', 'FLAG_TCHEM_FROZEN'};
+            % title = 'Consider thermochemically frozen gas';
+            % create_panel_checkbox(app, panel_name, obj_num_children, tag, title)
 
             % ** Tuning parameters: Flags - FLAG_FAST
             obj_num_children = obj_num_children + 1;
             tag = {'TN', 'FLAG_FAST'};
             title = 'Use the composition of the previous calculation as guess';
-            create_panel_checkbox(app, panel_name, obj_num_children, tag, title)
-
-            % ** Tuning parameters: Flags - FLAG_TCHEM_FROZEN
-            obj_num_children = obj_num_children + 1;
-            tag = {'TN', 'FLAG_TCHEM_FROZEN'};
-            title = 'Consider thermochemically frozen gas';
             create_panel_checkbox(app, panel_name, obj_num_children, tag, title)
 
             % ** Tuning parameters: Flags - FLAG_EXTRAPOLATE

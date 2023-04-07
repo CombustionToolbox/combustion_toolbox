@@ -7,10 +7,13 @@ function self = define_FOI(self, i)
     %
     % Returns:
     %     self (struct): Data of the mixture, conditions, and databases
-
+    
+    % Get reactants
     species = [self.PD.S_Fuel, self.PD.S_Oxidizer, self.PD.S_Inert];
+
     % Check reactant species are contained in the list of products (initial computations)
     self = check_FOI(self, species);
+    
     % Define moles Fuel
     if ~self.Misc.FLAG_N_Fuel && ~self.Misc.FLAG_GUI
         self.PD.N_Fuel = 1;
@@ -18,6 +21,7 @@ function self = define_FOI(self, i)
 
     % Computation of theoretical equivalence ratio
     self = define_F(self);
+
     % Define moles Oxidizer
     if ~self.Misc.FLAG_N_Oxidizer && ~isempty(self.PD.S_Oxidizer)
 
@@ -43,25 +47,27 @@ function self = define_FOI(self, i)
     % Set inputs
     moles = [self.PD.N_Fuel, self.PD.N_Oxidizer, self.PD.N_Inert];
     temperatures = [self.PD.T_Fuel, self.PD.T_Oxidizer, self.PD.T_Inert];
+
     % Compute Temperature of the reactants (species with different temperature)
     self.PD.TR.value = compute_temperature_mixture(self, species, moles, temperatures);
+
     % Define mixture at equilibrium temperature
     self = define_F(self);
     self = define_O(self);
     self = define_I(self);
+
     % Compute property matrix of the reactives for the given conditions
     R = self.PD.R_Fuel + self.PD.R_Oxidizer + self.PD.R_Inert;
     R(:, 1:self.C.M0.ind_ni - 1) = self.C.M0.value(:, 1:self.C.M0.ind_ni - 1);
-    % Compute properties of the reactives for a given temperature and
-    % pressure
+
+    % Compute properties of the reactives for a given temperature and pressure
     self.PS.strR{i} = compute_properties(self, R, self.PD.pR.value, self.PD.TR.value);
+
+    % Assign properties
     self.PS.strR{i}.phi = self.PD.phi.value(i);
     self.PS.strR{i}.LS = merged_cells({self.PD.S_Fuel, self.PD.S_Oxidizer, self.PD.S_Inert});
-    [~, ind_LS, ~] = intersect(self.S.LS, self.PS.strR{i}.LS);
-    [~, ind_LS_Inert, ~] = intersect(self.S.LS, self.PD.S_Inert);
-    self.PS.strR{i}.ind_LS = ind_LS;
-    self.PS.strR{i}.ind_LS_Inert = ind_LS_Inert;
     self.PS.strR{i}.phi_c = compute_phi_c(self.PD.Fuel);
+
     % Compute percentage Fuel, Oxidizer/Fuel ratio and equivalence ratio
     self = compute_ratios_fuel_oxidizer(self, R, i);
 end
@@ -84,8 +90,8 @@ function mass = compute_mass_mixture(self, properties_matrix)
     N = sum(properties_matrix(:, self.C.M0.ind_ni));
     % Compute mean molecular weight [g/mol]
     W = dot(properties_matrix(:, self.C.M0.ind_ni), properties_matrix(:, self.C.M0.ind_W)) / N;
-    % Compute mass mixture [kg]
-    mass = W * N * 1e-3; % [kg]
+    % Compute mass of the mixture [kg]
+    mass = W * N * 1e-3;
 end
 
 function self = compute_ratios_fuel_oxidizer(self, R, i)

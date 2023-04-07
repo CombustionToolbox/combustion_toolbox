@@ -21,6 +21,8 @@ function self = run_CT(varargin)
     N_points_polar = 100;
     FLAG_PHI = true;
     FLAG_IAC = true;
+    FLAG_TCHEM_FROZEN = false;
+    FLAG_FROZEN = false;
     FLAG_FAST = true;
     FLAG_RESULTS = false;
     Aratio_c = [];
@@ -89,6 +91,10 @@ function self = run_CT(varargin)
                 N_points_polar = varargin{i + 1};
             case 'flag_iac'
                 FLAG_IAC = varargin{i + 1};
+            case {'flag_tchem_frozen', 'flag_tchem'}
+                FLAG_TCHEM_FROZEN = varargin{i + 1};
+            case 'flag_frozen'
+                FLAG_FROZEN = varargin{i + 1};
             case 'aratio_c'
                 Aratio_c = varargin{i + 1};
             case 'aratio'
@@ -129,6 +135,8 @@ function self = run_CT(varargin)
     end
 
     self.PD.FLAG_IAC = FLAG_IAC;
+    self.PD.FLAG_TCHEM_FROZEN = FLAG_TCHEM_FROZEN;
+    self.PD.FLAG_FROZEN = FLAG_FROZEN;
     self.PD.S_Fuel = S_Fuel; self.PD.N_Fuel = N_Fuel;
     self.PD.S_Oxidizer = S_Oxidizer; self.PD.N_Oxidizer = N_Oxidizer;
     self.PD.S_Inert = S_Inert; self.PD.N_Inert = N_Inert;

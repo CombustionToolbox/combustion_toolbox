@@ -12,11 +12,17 @@ function mix2 = compute_chamber_IAC(self, mix1, mix2)
     %
     % Returns:
     %     mix2 (struct): Properties of the mixture at the outlet of the chamber
+    %
+    % Example:
+    %     mix2 = compute_chamber_IAC(self, mix1, mix2)
 
     % Definitions
     self.PD.ProblemType = 'HP';
+    self.PD.FLAG_FROZEN = false;
+
     % Compute chemical equilibria at the exit of the chamber (HP)
     mix2 = equilibrate(self, mix1, mix1.p, mix2);
+    
     % Set A_chamber/A_throat
     mix2.Aratio = Inf;
 end

@@ -21,6 +21,12 @@ function mix2 = equilibrate_T(self, mix1, pP, TP, varargin)
         mix2 = equilibrate_T_tchem(self, mix1, pP, TP);
         return
     end
+
+    % Check if calculations are for a calorically imperfect gas with frozen chemistry
+    if self.PD.FLAG_FROZEN
+        mix2 = equilibrate_T_frozen(self, mix1, pP, TP);
+        return
+    end
     
     % Unpack
     guess_moles = unpack(varargin);
@@ -120,4 +126,37 @@ function vector = reshape_vector(self, index, ind_modified, vector_modified)
     % Reshape vector containing all the species
     vector = self.C.N0.value(:, 1);
     vector(index, 1) = vector_modified(ind_modified, 1);
+end
+
+function mix2 = equilibrate_T_frozen(self, mix1, pP, TP)
+    % Obtain equilibrium properties and composition for the given
+    % temperature [K] and pressure [bar] assuming a calorically imperfect
+    % gas with frozen chemistry
+    
+    % Initialization
+    N = self.C.N0.value; % Composition matrix [n_i, FLAG_CONDENSED_i]
+
+    % Get data from mix1
+    STOP = mix1.error_moles;
+    STOP_ions = mix1.error_moles_ions;
+
+    % Set all species as frozen
+    self = set_react_index(self, self.S.LS(self.Misc.index_LS_original));
+    ind = self.S.ind_frozen;
+
+    % Add moles of frozen species to the moles vector N
+    N_mix1 = moles(mix1);
+    N(self.S.ind_frozen) = N_mix1(self.S.ind_frozen);
+
+    % Compute property matrix of the species at chemical equilibrium
+    % NOTE: If the ind variable is removed from the inputs, the set_species 
+    % routine will completely fill the properties matrix
+    M0 = set_species(self, self.S.LS, N(:, 1), TP, ind);
+
+    % Compute properties of final mixture
+    mix2 = set_properties(self, mix1, M0, pP, TP, STOP, STOP_ions);
+
+    % Set thermodynamic derivative to their frozen values
+    mix2.dVdT_p = 1;
+    mix2.dVdp_T = -1;
 end

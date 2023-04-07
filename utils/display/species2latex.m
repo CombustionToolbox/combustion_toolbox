@@ -1,8 +1,35 @@
-function speciesLatex = species2latex(species)
-    % Convert string of a species into latex
+function speciesLatex = species2latex(species, varargin)
+    % Convert species name into LateX format
+    %
+    % Args:
+    %     species (char): Species name
+    %
+    % Optional Args:
+    %     FLAG_BURCAT (bool): If true, do not remove Burcat database prefix (default: true)
+    %
+    % Returns:
+    %     speciesLatex (char): Species name in LateX format
+    %
+    % Examples:
+    %     * species2latex('H2ObLb') % This will return 'H$_{2}$O(L)'
+    %     * species2latex('Si2H6_M') % This will return 'Si$_{2}$H$_{6\rm M}$'
+    %     * species2latex('Si2H6_M', false) % This will return 'Si$_{2}$H$_{6}$'
+    
+    % Default
+    FLAG_BURCAT = true;
+
+    % Unpack
+    if nargin > 1
+        FLAG_BURCAT = varargin{1};
+    end
 
     % Remove database Millennium prefix '_M'
-    species = strrep(species, '_M', '');
+    if ~FLAG_BURCAT
+        species = strrep(species, '_M', '');
+    else
+        species = strrep(species, '_M', '$_{\rm M}$');
+    end
+
     % Check numbers
     index = regexp(species, '[0-9]');
     N = length(index);
@@ -21,7 +48,7 @@ function speciesLatex = species2latex(species)
 
         if pos1 < length(species) + 1
 
-            if isletter(species(pos1))
+            if isletter(species(pos1)) || species(pos1) == '$'
                 aux = 0;
             else
                 aux = 1;

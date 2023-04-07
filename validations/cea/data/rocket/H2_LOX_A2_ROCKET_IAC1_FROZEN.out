@@ -1,0 +1,1187 @@
+
+
+         NASA-GLENN CHEMICAL EQUILIBRIUM PROGRAM CEA2, FEBRUARY 5, 2004
+                   BY  BONNIE MCBRIDE AND SANFORD GORDON
+      REFS: NASA RP-1311, PART I, 1994 AND NASA RP-1311, PART II, 1996
+
+ *******************************************************************************
+
+  
+ ### CEA analysis performed on Tue 28-Mar-2023 03:09:36
+  
+ # Problem Type: "Rocket" (Infinite Area Combustor)
+  
+ prob case=test___________2410 ro frozen
+  
+ # Pressure (1 value):
+ p,atm= 100
+ # Supersonic Area Ratio (1 value):
+ supar= 8
+  
+ # Equivalence based on Fuel/Oxid. wt ratio (Eq 9.19*) (26 values):
+ phi= 0.5, 0.6, 0.7, 0.8, 0.9, 1, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 2,
+  2.1, 2.2, 2.3, 2.4, 2.5, 2.6, 2.7, 2.8, 2.9, 3
+  
+ # You selected the following fuels and oxidizers:
+ reac
+ fuel H2(L)            mole=100.0000
+ oxid O2(L)            mole=100.0000
+  
+ # You selected these options for output:
+ # short version of output
+ output short
+ # Proportions of any products will be expressed as Mole Fractions.
+ # Heat will be expressed as siunits
+ output siunits
+ # Trace variable:
+ output trace=1e-16
+  
+ # Input prepared by this script:/var/www/sites/cearun.grc.nasa.gov/cgi-bin/CEARU
+ N/prepareInputFile.cgi
+  
+ ### IMPORTANT:  The following line is the end of your CEA input file!
+ end
+
+           THEORETICAL ROCKET PERFORMANCE ASSUMING FROZEN COMPOSITION
+
+ Pin =  1469.6 PSIA
+ CASE = test___________
+
+             REACTANT                       MOLES         ENERGY      TEMP
+                                                         KJ/KG-MOL      K
+ FUEL        H2(L)                      100.0000000     -9012.000     20.270
+ OXIDANT     O2(L)                      100.0000000    -12979.000     90.170
+
+ O/F=   15.87337  %FUEL=  5.926500  R,EQ.RATIO= 0.500000  PHI,EQ.RATIO= 0.500000
+
+                 CHAMBER   THROAT     EXIT
+ Pinf/P            1.0000   1.7735   62.717
+ P, BAR            101.33   57.132   1.6156
+ T, K             3199.40  2907.01  1529.37
+ RHO, KG/CU M    8.3752 0 5.1973 0 2.7936-1
+ H, KJ/KG         -646.51 -1307.62 -4221.81
+ U, KJ/KG        -1856.34 -2406.88 -4800.13
+ G, KJ/KG        -37752.7 -35022.7 -21959.2
+ S, KJ/(KG)(K)    11.5978  11.5978  11.5978
+
+ M, (1/n)          21.988   21.988   21.988
+ Cp, KJ/(KG)(K)    2.2784   2.2426   1.9424
+ GAMMAs            1.1990   1.2028   1.2417
+ SON VEL,M/SEC     1204.4   1149.9    847.4
+ MACH NUMBER        0.000    1.000    3.156
+
+ PERFORMANCE PARAMETERS
+
+ Ae/At                      1.0000   8.0000
+ CSTAR, M/SEC               1695.5   1695.5
+ CF                         0.6782   1.5772
+ Ivac, M/SEC                2105.9   2890.3
+ Isp, M/SEC                 1149.9   2674.1
+
+ MOLE FRACTIONS
+
+ *H              0.00266   HO2             0.00062   *H2             0.00907
+ H2O             0.59934   H2O2            0.00008   *O              0.01177
+ *OH             0.07259   *O2             0.30387   O3              0.00000
+
+  * THERMODYNAMIC PROPERTIES FITTED TO 20000.K
+
+           THEORETICAL ROCKET PERFORMANCE ASSUMING FROZEN COMPOSITION
+
+ Pin =  1469.6 PSIA
+ CASE = test___________
+
+             REACTANT                       MOLES         ENERGY      TEMP
+                                                         KJ/KG-MOL      K
+ FUEL        H2(L)                      100.0000000     -9012.000     20.270
+ OXIDANT     O2(L)                      100.0000000    -12979.000     90.170
+
+ O/F=   13.22780  %FUEL=  7.028491  R,EQ.RATIO= 0.600000  PHI,EQ.RATIO= 0.600000
+
+                 CHAMBER   THROAT     EXIT
+ Pinf/P            1.0000   1.7705   61.681
+ P, BAR            101.33   57.231   1.6427
+ T, K             3363.65  3063.02  1640.68
+ RHO, KG/CU M    7.4461 0 4.6185 0 2.4749-1
+ H, KJ/KG         -691.31 -1433.44 -4729.51
+ U, KJ/KG        -2052.09 -2672.60 -5393.26
+ G, KJ/KG        -42586.0 -39583.7 -25164.4
+ S, KJ/(KG)(K)    12.4551  12.4551  12.4551
+
+ M, (1/n)          20.552   20.552   20.552
+ Cp, KJ/(KG)(K)    2.4863   2.4498   2.1337
+ GAMMAs            1.1943   1.1978   1.2340
+ SON VEL,M/SEC     1274.8   1218.3    905.0
+ MACH NUMBER        0.000    1.000    3.140
+
+ PERFORMANCE PARAMETERS
+
+ Ae/At                      1.0000   8.0000
+ CSTAR, M/SEC               1800.8   1800.8
+ CF                         0.6766   1.5782
+ Ivac, M/SEC                2235.4   3075.5
+ Isp, M/SEC                 1218.3   2841.9
+
+ MOLE FRACTIONS
+
+ *H              0.00578   HO2             0.00065   *H2             0.01841
+ H2O             0.64833   H2O2            0.00009   *O              0.01597
+ *OH             0.09304   *O2             0.21773   O3              0.00000
+
+  * THERMODYNAMIC PROPERTIES FITTED TO 20000.K
+
+           THEORETICAL ROCKET PERFORMANCE ASSUMING FROZEN COMPOSITION
+
+ Pin =  1469.6 PSIA
+ CASE = test___________
+
+             REACTANT                       MOLES         ENERGY      TEMP
+                                                         KJ/KG-MOL      K
+ FUEL        H2(L)                      100.0000000     -9012.000     20.270
+ OXIDANT     O2(L)                      100.0000000    -12979.000     90.170
+
+ O/F=   11.33812  %FUEL=  8.104964  R,EQ.RATIO= 0.700000  PHI,EQ.RATIO= 0.700000
+
+                 CHAMBER   THROAT     EXIT
+ Pinf/P            1.0000   1.7684   60.998
+ P, BAR            101.33   57.297   1.6611
+ T, K             3483.15  3176.48  1722.03
+ RHO, KG/CU M    6.7444 0 4.1820 0 2.2365-1
+ H, KJ/KG         -735.07 -1553.34 -5205.70
+ U, KJ/KG        -2237.42 -2923.42 -5948.44
+ G, KJ/KG        -46958.9 -43707.5 -28058.2
+ S, KJ/(KG)(K)    13.2707  13.2707  13.2707
+
+ M, (1/n)          19.277   19.277   19.277
+ Cp, KJ/(KG)(K)    2.6865   2.6490   2.3174
+ GAMMAs            1.1913   1.1945   1.2287
+ SON VEL,M/SEC     1337.8   1279.3    955.3
+ MACH NUMBER        0.000    1.000    3.130
+
+ PERFORMANCE PARAMETERS
+
+ Ae/At                      1.0000   8.0000
+ CSTAR, M/SEC               1893.9   1893.9
+ CF                         0.6755   1.5788
+ Ivac, M/SEC                2350.3   3238.6
+ Isp, M/SEC                 1279.3   2990.2
+
+ MOLE FRACTIONS
+
+ *H              0.01012   HO2             0.00059   *H2             0.03206
+ H2O             0.68472   H2O2            0.00009   *O              0.01809
+ *OH             0.10564   *O2             0.14869   O3              0.00000
+
+  * THERMODYNAMIC PROPERTIES FITTED TO 20000.K
+
+           THEORETICAL ROCKET PERFORMANCE ASSUMING FROZEN COMPOSITION
+
+ Pin =  1469.6 PSIA
+ CASE = test___________
+
+             REACTANT                       MOLES         ENERGY      TEMP
+                                                         KJ/KG-MOL      K
+ FUEL        H2(L)                      100.0000000     -9012.000     20.270
+ OXIDANT     O2(L)                      100.0000000    -12979.000     90.170
+
+ O/F=    9.92085  %FUEL=  9.156794  R,EQ.RATIO= 0.800000  PHI,EQ.RATIO= 0.800000
+
+                 CHAMBER   THROAT     EXIT
+ Pinf/P            1.0000   1.7671   60.569
+ P, BAR            101.33   57.339   1.6729
+ T, K             3568.12  3256.97  1779.17
+ RHO, KG/CU M    6.1936 0 3.8397 0 2.0508-1
+ H, KJ/KG         -777.82 -1668.14 -5654.52
+ U, KJ/KG        -2413.79 -3161.44 -6470.26
+ G, KJ/KG        -50907.4 -47426.4 -30650.6
+ S, KJ/(KG)(K)    14.0493  14.0493  14.0493
+
+ M, (1/n)          18.134   18.134   18.134
+ Cp, KJ/(KG)(K)    2.8803   2.8414   2.4934
+ GAMMAs            1.1893   1.1924   1.2253
+ SON VEL,M/SEC     1394.9   1334.4    999.8
+ MACH NUMBER        0.000    1.000    3.124
+
+ PERFORMANCE PARAMETERS
+
+ Ae/At                      1.0000   8.0000
+ CSTAR, M/SEC               1977.6   1977.6
+ CF                         0.6748   1.5792
+ Ivac, M/SEC                2453.5   3384.2
+ Isp, M/SEC                 1334.4   3123.0
+
+ MOLE FRACTIONS
+
+ *H              0.01544   HO2             0.00048   *H2             0.05101
+ H2O             0.70981   H2O2            0.00008   *O              0.01791
+ *OH             0.10974   *O2             0.09553   O3              0.00000
+
+  * THERMODYNAMIC PROPERTIES FITTED TO 20000.K
+
+           THEORETICAL ROCKET PERFORMANCE ASSUMING FROZEN COMPOSITION
+
+ Pin =  1469.6 PSIA
+ CASE = test___________
+
+             REACTANT                       MOLES         ENERGY      TEMP
+                                                         KJ/KG-MOL      K
+ FUEL        H2(L)                      100.0000000     -9012.000     20.270
+ OXIDANT     O2(L)                      100.0000000    -12979.000     90.170
+
+ O/F=    8.81854  %FUEL= 10.184817  R,EQ.RATIO= 0.900000  PHI,EQ.RATIO= 0.900000
+
+                 CHAMBER   THROAT     EXIT
+ Pinf/P            1.0000   1.7665   60.357
+ P, BAR            101.33   57.359   1.6788
+ T, K             3621.85  3307.52  1813.61
+ RHO, KG/CU M    5.7527 0 3.5661 0 1.9034-1
+ H, KJ/KG         -819.61 -1777.77 -6074.53
+ U, KJ/KG        -2580.95 -3386.24 -6956.50
+ G, KJ/KG        -54400.2 -50708.2 -32904.5
+ S, KJ/(KG)(K)    14.7937  14.7937  14.7937
+
+ M, (1/n)          17.097   17.097   17.097
+ Cp, KJ/(KG)(K)    3.0680   3.0273   2.6607
+ GAMMAs            1.1884   1.1914   1.2237
+ SON VEL,M/SEC     1446.8   1384.3   1038.9
+ MACH NUMBER        0.000    1.000    3.121
+
+ PERFORMANCE PARAMETERS
+
+ Ae/At                      1.0000   8.0000
+ CSTAR, M/SEC               2052.6   2052.6
+ CF                         0.6744   1.5794
+ Ivac, M/SEC                2546.2   3513.9
+ Isp, M/SEC                 1384.3   3241.9
+
+ MOLE FRACTIONS
+
+ *H              0.02121   HO2             0.00036   *H2             0.07641
+ H2O             0.72383   H2O2            0.00007   *O              0.01573
+ *OH             0.10543   *O2             0.05697   O3              0.00000
+
+  * THERMODYNAMIC PROPERTIES FITTED TO 20000.K
+
+           THEORETICAL ROCKET PERFORMANCE ASSUMING FROZEN COMPOSITION
+
+ Pin =  1469.6 PSIA
+ CASE = test___________
+
+             REACTANT                       MOLES         ENERGY      TEMP
+                                                         KJ/KG-MOL      K
+ FUEL        H2(L)                      100.0000000     -9012.000     20.270
+ OXIDANT     O2(L)                      100.0000000    -12979.000     90.170
+
+ O/F=    7.93668  %FUEL= 11.189834  R,EQ.RATIO= 1.000000  PHI,EQ.RATIO= 1.000000
+
+                 CHAMBER   THROAT     EXIT
+ Pinf/P            1.0000   1.7665   60.356
+ P, BAR            101.33   57.359   1.6788
+ T, K             3644.27  3327.99  1824.87
+ RHO, KG/CU M    5.3982 0 3.3463 0 1.7861-1
+ H, KJ/KG         -860.46 -1881.56 -6460.57
+ U, KJ/KG        -2737.49 -3595.68 -7400.50
+ G, KJ/KG        -57368.3 -53485.1 -34756.9
+ S, KJ/(KG)(K)    15.5059  15.5059  15.5059
+
+ M, (1/n)          16.143   16.143   16.143
+ Cp, KJ/(KG)(K)    3.2494   3.2062   2.8177
+ GAMMAs            1.1884   1.1914   1.2237
+ SON VEL,M/SEC     1493.5   1429.1   1072.5
+ MACH NUMBER        0.000    1.000    3.121
+
+ PERFORMANCE PARAMETERS
+
+ Ae/At                      1.0000   8.0000
+ CSTAR, M/SEC               2118.9   2118.9
+ CF                         0.6744   1.5794
+ Ivac, M/SEC                2628.5   3627.5
+ Isp, M/SEC                 1429.1   3346.7
+
+ MOLE FRACTIONS
+
+ *H              0.02655   HO2             0.00023   *H2             0.10897
+ H2O             0.72667   H2O2            0.00005   *O              0.01229
+ *OH             0.09394   *O2             0.03129   O3              0.00000
+
+  * THERMODYNAMIC PROPERTIES FITTED TO 20000.K
+
+           THEORETICAL ROCKET PERFORMANCE ASSUMING FROZEN COMPOSITION
+
+ Pin =  1469.6 PSIA
+ CASE = test___________
+
+             REACTANT                       MOLES         ENERGY      TEMP
+                                                         KJ/KG-MOL      K
+ FUEL        H2(L)                      100.0000000     -9012.000     20.270
+ OXIDANT     O2(L)                      100.0000000    -12979.000     90.170
+
+ O/F=    7.21517  %FUEL= 12.172608  R,EQ.RATIO= 1.100000  PHI,EQ.RATIO= 1.100000
+
+                 CHAMBER   THROAT     EXIT
+ Pinf/P            1.0000   1.7671   60.562
+ P, BAR            101.33   57.339   1.6731
+ T, K             3635.58  3318.57  1813.04
+ RHO, KG/CU M    5.1142 0 3.1705 0 1.6933-1
+ H, KJ/KG         -900.41 -1978.64 -6806.63
+ U, KJ/KG        -2881.68 -3787.14 -7794.67
+ G, KJ/KG        -59751.7 -55698.3 -36155.3
+ S, KJ/(KG)(K)    16.1876  16.1876  16.1876
+
+ M, (1/n)          15.257   15.257   15.257
+ Cp, KJ/(KG)(K)    3.4237   3.3776   2.9627
+ GAMMAs            1.1893   1.1924   1.2254
+ SON VEL,M/SEC     1535.0   1468.5   1100.3
+ MACH NUMBER        0.000    1.000    3.124
+
+ PERFORMANCE PARAMETERS
+
+ Ae/At                      1.0000   8.0000
+ CSTAR, M/SEC               2176.3   2176.3
+ CF                         0.6748   1.5793
+ Ivac, M/SEC                2700.0   3724.4
+ Isp, M/SEC                 1468.5   3436.9
+
+ MOLE FRACTIONS
+
+ *H              0.03040   HO2             0.00014   *H2             0.14817
+ H2O             0.71883   H2O2            0.00004   *O              0.00859
+ *OH             0.07792   *O2             0.01592   O3              0.00000
+
+  * THERMODYNAMIC PROPERTIES FITTED TO 20000.K
+
+           THEORETICAL ROCKET PERFORMANCE ASSUMING FROZEN COMPOSITION
+
+ Pin =  1469.6 PSIA
+ CASE = test___________
+
+             REACTANT                       MOLES         ENERGY      TEMP
+                                                         KJ/KG-MOL      K
+ FUEL        H2(L)                      100.0000000     -9012.000     20.270
+ OXIDANT     O2(L)                      100.0000000    -12979.000     90.170
+
+ O/F=    6.61390  %FUEL= 13.133870  R,EQ.RATIO= 1.200000  PHI,EQ.RATIO= 1.200000
+
+                 CHAMBER   THROAT     EXIT
+ Pinf/P            1.0000   1.7683   60.958
+ P, BAR            101.33   57.301   1.6622
+ T, K             3599.02  3282.44  1780.78
+ RHO, KG/CU M    4.8879 0 3.0308 0 1.6206-1
+ H, KJ/KG         -939.49 -2068.47 -7109.46
+ U, KJ/KG        -3012.47 -3959.11 -8135.17
+ G, KJ/KG        -61548.3 -57346.0 -37098.5
+ S, KJ/(KG)(K)    16.8404  16.8404  16.8404
+
+ M, (1/n)          14.435   14.435   14.435
+ Cp, KJ/(KG)(K)    3.5904   3.5407   3.0947
+ GAMMAs            1.1911   1.1943   1.2287
+ SON VEL,M/SEC     1571.3   1502.6   1122.6
+ MACH NUMBER        0.000    1.000    3.129
+
+ PERFORMANCE PARAMETERS
+
+ Ae/At                      1.0000   8.0000
+ CSTAR, M/SEC               2224.9   2224.9
+ CF                         0.6754   1.5789
+ Ivac, M/SEC                2760.9   3804.8
+ Isp, M/SEC                 1502.6   3512.8
+
+ MOLE FRACTIONS
+
+ *H              0.03202   HO2             0.00008   *H2             0.19197
+ H2O             0.70206   H2O2            0.00002   *O              0.00545
+ *OH             0.06076   *O2             0.00763   O3              0.00000
+
+  * THERMODYNAMIC PROPERTIES FITTED TO 20000.K
+
+           THEORETICAL ROCKET PERFORMANCE ASSUMING FROZEN COMPOSITION
+
+ Pin =  1469.6 PSIA
+ CASE = test___________
+
+             REACTANT                       MOLES         ENERGY      TEMP
+                                                         KJ/KG-MOL      K
+ FUEL        H2(L)                      100.0000000     -9012.000     20.270
+ OXIDANT     O2(L)                      100.0000000    -12979.000     90.170
+
+ O/F=    6.10514  %FUEL= 14.074317  R,EQ.RATIO= 1.300000  PHI,EQ.RATIO= 1.300000
+
+                 CHAMBER   THROAT     EXIT
+ Pinf/P            1.0000   1.7699   61.510
+ P, BAR            101.33   57.250   1.6473
+ T, K             3540.77  3225.61  1733.07
+ RHO, KG/CU M    4.7076 0 2.9197 0 1.5637-1
+ H, KJ/KG         -977.71 -2151.12 -7370.21
+ U, KJ/KG        -3130.07 -4111.89 -8423.70
+ G, KJ/KG        -62821.4 -58490.1 -37640.2
+ S, KJ/(KG)(K)    17.4662  17.4662  17.4662
+
+ M, (1/n)          13.678   13.678   13.678
+ Cp, KJ/(KG)(K)    3.7493   3.6955   3.2143
+ GAMMAs            1.1935   1.1969   1.2332
+ SON VEL,M/SEC     1602.8   1531.9   1139.8
+ MACH NUMBER        0.000    1.000    3.137
+
+ PERFORMANCE PARAMETERS
+
+ Ae/At                      1.0000   8.0000
+ CSTAR, M/SEC               2265.3   2265.3
+ CF                         0.6762   1.5784
+ Ivac, M/SEC                2811.9   3870.2
+ Isp, M/SEC                 1531.9   3575.6
+
+ MOLE FRACTIONS
+
+ *H              0.03138   HO2             0.00004   *H2             0.23763
+ H2O             0.67903   H2O2            0.00001   *O              0.00322
+ *OH             0.04516   *O2             0.00353   O3              0.00000
+
+  * THERMODYNAMIC PROPERTIES FITTED TO 20000.K
+
+           THEORETICAL ROCKET PERFORMANCE ASSUMING FROZEN COMPOSITION
+
+ Pin =  1469.6 PSIA
+ CASE = test___________
+
+             REACTANT                       MOLES         ENERGY      TEMP
+                                                         KJ/KG-MOL      K
+ FUEL        H2(L)                      100.0000000     -9012.000     20.270
+ OXIDANT     O2(L)                      100.0000000    -12979.000     90.170
+
+ O/F=    5.66906  %FUEL= 14.994619  R,EQ.RATIO= 1.400000  PHI,EQ.RATIO= 1.400000
+
+                 CHAMBER   THROAT     EXIT
+ Pinf/P            1.0000   1.7718   62.182
+ P, BAR            101.33   57.188   1.6295
+ T, K             3467.70  3154.70  1675.28
+ RHO, KG/CU M    4.5633 0 2.8311 0 1.5190-1
+ H, KJ/KG        -1015.12 -2227.12 -7592.96
+ U, KJ/KG        -3235.56 -4247.14 -8665.68
+ G, KJ/KG        -63664.9 -59222.0 -37859.7
+ S, KJ/(KG)(K)    18.0667  18.0667  18.0667
+
+ M, (1/n)          12.985   12.985   12.985
+ Cp, KJ/(KG)(K)    3.9006   3.8422   3.3226
+ GAMMAs            1.1964   1.2000   1.2387
+ SON VEL,M/SEC     1629.9   1556.9   1152.7
+ MACH NUMBER        0.000    1.000    3.146
+
+ PERFORMANCE PARAMETERS
+
+ Ae/At                      1.0000   8.0000
+ CSTAR, M/SEC               2298.8   2298.8
+ CF                         0.6773   1.5778
+ Ivac, M/SEC                2854.4   3922.8
+ Isp, M/SEC                 1556.9   3627.1
+
+ MOLE FRACTIONS
+
+ *H              0.02901   HO2             0.00002   *H2             0.28273
+ H2O             0.65238   H2O2            0.00001   *O              0.00181
+ *OH             0.03244   *O2             0.00161   O3              0.00000
+
+  * THERMODYNAMIC PROPERTIES FITTED TO 20000.K
+
+           THEORETICAL ROCKET PERFORMANCE ASSUMING FROZEN COMPOSITION
+
+ Pin =  1469.6 PSIA
+ CASE = test___________
+
+             REACTANT                       MOLES         ENERGY      TEMP
+                                                         KJ/KG-MOL      K
+ FUEL        H2(L)                      100.0000000     -9012.000     20.270
+ OXIDANT     O2(L)                      100.0000000    -12979.000     90.170
+
+ O/F=    5.29112  %FUEL= 15.895416  R,EQ.RATIO= 1.500000  PHI,EQ.RATIO= 1.500000
+
+                 CHAMBER   THROAT     EXIT
+ Pinf/P            1.0000   1.7739   62.945
+ P, BAR            101.33   57.119   1.6097
+ T, K             3385.51  3075.24  1611.84
+ RHO, KG/CU M    4.4468 0 2.7597 0 1.4838-1
+ H, KJ/KG        -1051.74 -2297.16 -7782.68
+ U, KJ/KG        -3330.33 -4366.92 -8867.52
+ G, KJ/KG        -64170.0 -59630.8 -37833.2
+ S, KJ/(KG)(K)    18.6436  18.6436  18.6436
+
+ M, (1/n)          12.354   12.354   12.354
+ Cp, KJ/(KG)(K)    4.0447   3.9813   3.4212
+ GAMMAs            1.1996   1.2034   1.2449
+ SON VEL,M/SEC     1653.3   1578.2   1162.1
+ MACH NUMBER        0.000    1.000    3.157
+
+ PERFORMANCE PARAMETERS
+
+ Ae/At                      1.0000   8.0000
+ CSTAR, M/SEC               2326.4   2326.4
+ CF                         0.6784   1.5771
+ Ivac, M/SEC                2889.7   3964.7
+ Isp, M/SEC                 1578.2   3669.0
+
+ MOLE FRACTIONS
+
+ *H              0.02564   HO2             0.00001   *H2             0.32570
+ H2O             0.62420   H2O2            0.00000   *O              0.00098
+ *OH             0.02275   *O2             0.00072   O3              0.00000
+
+  * THERMODYNAMIC PROPERTIES FITTED TO 20000.K
+
+           THEORETICAL ROCKET PERFORMANCE ASSUMING FROZEN COMPOSITION
+
+ Pin =  1469.6 PSIA
+ CASE = test___________
+
+             REACTANT                       MOLES         ENERGY      TEMP
+                                                         KJ/KG-MOL      K
+ FUEL        H2(L)                      100.0000000     -9012.000     20.270
+ OXIDANT     O2(L)                      100.0000000    -12979.000     90.170
+
+ O/F=    4.96043  %FUEL= 16.777322  R,EQ.RATIO= 1.600000  PHI,EQ.RATIO= 1.600000
+
+                 CHAMBER   THROAT     EXIT
+ Pinf/P            1.0000   1.7762   63.777
+ P, BAR            101.33   57.046   1.5887
+ T, K             3298.35  2991.20  1545.88
+ RHO, KG/CU M    4.3523 0 2.7019 0 1.4560-1
+ H, KJ/KG        -1087.59 -2361.90 -7943.96
+ U, KJ/KG        -3415.68 -4473.20 -9035.09
+ G, KJ/KG        -64411.5 -59788.9 -37622.7
+ S, KJ/(KG)(K)    19.1987  19.1987  19.1987
+
+ M, (1/n)          11.780   11.780   11.780
+ Cp, KJ/(KG)(K)    4.1822   4.1134   3.5115
+ GAMMAs            1.2030   1.2071   1.2516
+ SON VEL,M/SEC     1673.6   1596.4   1168.6
+ MACH NUMBER        0.000    1.000    3.169
+
+ PERFORMANCE PARAMETERS
+
+ Ae/At                     1.00000   8.0000
+ CSTAR, M/SEC               2349.0   2349.0
+ CF                         0.6796   1.5764
+ Ivac, M/SEC                2918.9   3997.7
+ Isp, M/SEC                 1596.4   3703.1
+
+ MOLE FRACTIONS
+
+ *H              0.02189   HO2             0.00000   *H2             0.36571
+ H2O             0.59587   H2O2            0.00000   *O              0.00052
+ *OH             0.01568   *O2             0.00033   O3              0.00000
+
+  * THERMODYNAMIC PROPERTIES FITTED TO 20000.K
+
+           THEORETICAL ROCKET PERFORMANCE ASSUMING FROZEN COMPOSITION
+
+ Pin =  1469.6 PSIA
+ CASE = test___________
+
+             REACTANT                       MOLES         ENERGY      TEMP
+                                                         KJ/KG-MOL      K
+ FUEL        H2(L)                      100.0000000     -9012.000     20.270
+ OXIDANT     O2(L)                      100.0000000    -12979.000     90.170
+
+ O/F=    4.66864  %FUEL= 17.640925  R,EQ.RATIO= 1.700000  PHI,EQ.RATIO= 1.700000
+
+                 CHAMBER   THROAT     EXIT
+ Pinf/P            1.0000   1.7786   64.662
+ P, BAR            101.33   56.970   1.5670
+ T, K             3209.03  2905.28  1479.47
+ RHO, KG/CU M    4.2752 0 2.6551 0 1.4341-1
+ H, KJ/KG        -1122.69 -2421.92 -8080.68
+ U, KJ/KG        -3492.75 -4567.64 -9173.35
+ G, KJ/KG        -64446.7 -59752.0 -37275.2
+ S, KJ/(KG)(K)    19.7331  19.7331  19.7331
+
+ M, (1/n)          11.258   11.258   11.258
+ Cp, KJ/(KG)(K)    4.3134   4.2389   3.5949
+ GAMMAs            1.2066   1.2110   1.2586
+ SON VEL,M/SEC     1691.1   1612.0   1172.7
+ MACH NUMBER        0.000    1.000    3.181
+
+ PERFORMANCE PARAMETERS
+
+ Ae/At                      1.0000   8.0000
+ CSTAR, M/SEC               2367.5   2367.5
+ CF                         0.6809   1.5757
+ Ivac, M/SEC                2943.1   4023.3
+ Isp, M/SEC                 1612.0   3730.4
+
+ MOLE FRACTIONS
+
+ *H              0.01817   HO2             0.00000   *H2             0.40247
+ H2O             0.56827   H2O2            0.00000   *O              0.00027
+ *OH             0.01067   *O2             0.00015   O3              0.00000
+
+  * THERMODYNAMIC PROPERTIES FITTED TO 20000.K
+
+           THEORETICAL ROCKET PERFORMANCE ASSUMING FROZEN COMPOSITION
+
+ Pin =  1469.6 PSIA
+ CASE = test___________
+
+             REACTANT                       MOLES         ENERGY      TEMP
+                                                         KJ/KG-MOL      K
+ FUEL        H2(L)                      100.0000000     -9012.000     20.270
+ OXIDANT     O2(L)                      100.0000000    -12979.000     90.170
+
+ O/F=    4.40927  %FUEL= 18.486789  R,EQ.RATIO= 1.800000  PHI,EQ.RATIO= 1.800000
+
+                 CHAMBER   THROAT     EXIT
+ Pinf/P            1.0000   1.7810   65.588
+ P, BAR            101.33   56.891   1.5449
+ T, K             3119.43  2819.26  1413.98
+ RHO, KG/CU M    4.2124 0 2.6169 0 1.4169-1
+ H, KJ/KG        -1157.08 -2477.75 -8196.09
+ U, KJ/KG        -3562.50 -4651.71 -9286.43
+ G, KJ/KG        -64319.7 -59562.5 -36826.6
+ S, KJ/(KG)(K)    20.2481  20.2481  20.2481
+
+ M, (1/n)          10.783   10.783   10.783
+ Cp, KJ/(KG)(K)    4.4388   4.3584   3.6726
+ GAMMAs            1.2102   1.2150   1.2658
+ SON VEL,M/SEC     1706.2   1625.2   1174.8
+ MACH NUMBER        0.000    1.000    3.194
+
+ PERFORMANCE PARAMETERS
+
+ Ae/At                      1.0000   8.0000
+ CSTAR, M/SEC               2382.4   2382.4
+ CF                         0.6822   1.5749
+ Ivac, M/SEC                2962.9   4042.7
+ Isp, M/SEC                 1625.2   3752.1
+
+ MOLE FRACTIONS
+
+ *H              0.01476   HO2             0.00000   *H2             0.43596
+ H2O             0.54188   H2O2            0.00000   *O              0.00014
+ *OH             0.00719   *O2             0.00007   O3              0.00000
+
+  * THERMODYNAMIC PROPERTIES FITTED TO 20000.K
+
+           THEORETICAL ROCKET PERFORMANCE ASSUMING FROZEN COMPOSITION
+
+ Pin =  1469.6 PSIA
+ CASE = test___________
+
+             REACTANT                       MOLES         ENERGY      TEMP
+                                                         KJ/KG-MOL      K
+ FUEL        H2(L)                      100.0000000     -9012.000     20.270
+ OXIDANT     O2(L)                      100.0000000    -12979.000     90.170
+
+ O/F=    4.17720  %FUEL= 19.315455  R,EQ.RATIO= 1.900000  PHI,EQ.RATIO= 1.900000
+
+                 CHAMBER   THROAT     EXIT
+ Pinf/P            1.0000   1.7835   66.546
+ P, BAR            101.33   56.813   1.5226
+ T, K             3030.81  2734.37  1350.29
+ RHO, KG/CU M    4.1612 0 2.5861 0 1.4036-1
+ H, KJ/KG        -1190.76 -2529.72 -8292.97
+ U, KJ/KG        -3625.75 -4726.55 -9377.80
+ G, KJ/KG        -64064.7 -59254.1 -36304.5
+ S, KJ/(KG)(K)    20.7449  20.7449  20.7449
+
+ M, (1/n)          10.349   10.349   10.349
+ Cp, KJ/(KG)(K)    4.5587   4.4723   3.7456
+ GAMMAs            1.2139   1.2190   1.2731
+ SON VEL,M/SEC     1719.3   1636.4   1175.2
+ MACH NUMBER        0.000    1.000    3.207
+
+ PERFORMANCE PARAMETERS
+
+ Ae/At                      1.0000   8.0000
+ CSTAR, M/SEC               2394.2   2394.2
+ CF                         0.6835   1.5741
+ Ivac, M/SEC                2978.9   4056.7
+ Isp, M/SEC                 1636.4   3768.9
+
+ MOLE FRACTIONS
+
+ *H              0.01178   HO2             0.00000   *H2             0.46635
+ H2O             0.51696   H2O2            0.00000   *O              0.00007
+ *OH             0.00481   *O2             0.00003   O3              0.00000
+
+  * THERMODYNAMIC PROPERTIES FITTED TO 20000.K
+
+           THEORETICAL ROCKET PERFORMANCE ASSUMING FROZEN COMPOSITION
+
+ Pin =  1469.6 PSIA
+ CASE = test___________
+
+             REACTANT                       MOLES         ENERGY      TEMP
+                                                         KJ/KG-MOL      K
+ FUEL        H2(L)                      100.0000000     -9012.000     20.270
+ OXIDANT     O2(L)                      100.0000000    -12979.000     90.170
+
+ O/F=    3.96834  %FUEL= 20.127441  R,EQ.RATIO= 2.000000  PHI,EQ.RATIO= 2.000000
+
+                 CHAMBER   THROAT     EXIT
+ Pinf/P            1.0000   1.7860   67.524
+ P, BAR            101.33   56.734   1.5006
+ T, K             2944.04  2651.40  1288.97
+ RHO, KG/CU M    4.1198 0 2.5614 0 1.3935-1
+ H, KJ/KG        -1223.77 -2578.28 -8373.62
+ U, KJ/KG        -3683.23 -4793.27 -9450.43
+ G, KJ/KG        -63709.3 -58852.7 -35731.2
+ S, KJ/(KG)(K)    21.2244  21.2244  21.2244
+
+ M, (1/n)           9.953    9.953    9.953
+ Cp, KJ/(KG)(K)    4.6735   4.5809   3.8150
+ GAMMAs            1.2177   1.2230   1.2804
+ SON VEL,M/SEC     1730.5   1645.9   1174.2
+ MACH NUMBER        0.000    1.000    3.221
+
+ PERFORMANCE PARAMETERS
+
+ Ae/At                      1.0000   8.0000
+ CSTAR, M/SEC               2403.5   2403.5
+ CF                         0.6848   1.5733
+ Ivac, M/SEC                2991.7   4066.3
+ Isp, M/SEC                 1645.9   3781.5
+
+ MOLE FRACTIONS
+
+ *H              0.00927   HO2             0.00000   *H2             0.49388
+ H2O             0.49361   H2O2            0.00000   *O              0.00003
+ *OH             0.00319   *O2             0.00001   O3              0.00000
+
+  * THERMODYNAMIC PROPERTIES FITTED TO 20000.K
+
+           THEORETICAL ROCKET PERFORMANCE ASSUMING FROZEN COMPOSITION
+
+ Pin =  1469.6 PSIA
+ CASE = test___________
+
+             REACTANT                       MOLES         ENERGY      TEMP
+                                                         KJ/KG-MOL      K
+ FUEL        H2(L)                      100.0000000     -9012.000     20.270
+ OXIDANT     O2(L)                      100.0000000    -12979.000     90.170
+
+ O/F=    3.77937  %FUEL= 20.923248  R,EQ.RATIO= 2.100000  PHI,EQ.RATIO= 2.100000
+
+                 CHAMBER   THROAT     EXIT
+ Pinf/P            1.0000   1.7885   68.522
+ P, BAR            101.33   56.655   1.4787
+ T, K             2859.69  2570.89  1230.35
+ RHO, KG/CU M    4.0866 0 2.5416 0 1.3862-1
+ H, KJ/KG        -1256.12 -2623.76 -8440.28
+ U, KJ/KG        -3735.58 -4852.82 -9507.04
+ G, KJ/KG        -63275.7 -58379.9 -35123.5
+ S, KJ/(KG)(K)    21.6875  21.6875  21.6875
+
+ M, (1/n)           9.590    9.590    9.590
+ Cp, KJ/(KG)(K)    4.7835   4.6846   3.8818
+ GAMMAs            1.2214   1.2271   1.2876
+ SON VEL,M/SEC     1740.2   1653.9   1172.0
+ MACH NUMBER        0.000    1.000    3.234
+
+ PERFORMANCE PARAMETERS
+
+ Ae/At                      1.0000   8.0000
+ CSTAR, M/SEC               2410.5   2410.5
+ CF                         0.6861   1.5725
+ Ivac, M/SEC                3001.7   4072.0
+ Isp, M/SEC                 1653.9   3790.6
+
+ MOLE FRACTIONS
+
+ *H              0.00720   HO2             0.00000   *H2             0.51884
+ H2O             0.47182   H2O2            0.00000   *O              0.00002
+ *OH             0.00211   *O2             0.00001   O3              0.00000
+
+  * THERMODYNAMIC PROPERTIES FITTED TO 20000.K
+
+           THEORETICAL ROCKET PERFORMANCE ASSUMING FROZEN COMPOSITION
+
+ Pin =  1469.6 PSIA
+ CASE = test___________
+
+             REACTANT                       MOLES         ENERGY      TEMP
+                                                         KJ/KG-MOL      K
+ FUEL        H2(L)                      100.0000000     -9012.000     20.270
+ OXIDANT     O2(L)                      100.0000000    -12979.000     90.170
+
+ O/F=    3.60758  %FUEL= 21.703353  R,EQ.RATIO= 2.200000  PHI,EQ.RATIO= 2.200000
+
+                 CHAMBER   THROAT     EXIT
+ Pinf/P            1.0000   1.7910   69.530
+ P, BAR            101.33   56.576   1.4573
+ T, K             2778.15  2493.19  1174.66
+ RHO, KG/CU M    4.0602 0 2.5262 0 1.3811-1
+ H, KJ/KG        -1287.83 -2666.47 -8494.73
+ U, KJ/KG        -3783.39 -4906.05 -9549.90
+ G, KJ/KG        -62782.0 -57853.0 -34495.7
+ S, KJ/(KG)(K)    22.1349  22.1349  22.1349
+
+ M, (1/n)           9.256    9.256    9.256
+ Cp, KJ/(KG)(K)    4.8890   4.7837   3.9468
+ GAMMAs            1.2251   1.2312   1.2947
+ SON VEL,M/SEC     1748.5   1660.5   1168.8
+ MACH NUMBER        0.000    1.000    3.248
+
+ PERFORMANCE PARAMETERS
+
+ Ae/At                      1.0000   8.0000
+ CSTAR, M/SEC               2415.5   2415.5
+ CF                         0.6874   1.5717
+ Ivac, M/SEC                3009.2   4074.5
+ Isp, M/SEC                 1660.5   3796.6
+
+ MOLE FRACTIONS
+
+ *H              0.00554   HO2             0.00000   *H2             0.54149
+ H2O             0.45156   H2O2            0.00000   *O              0.00001
+ *OH             0.00139   *O2             0.00000   O3              0.00000
+
+  * THERMODYNAMIC PROPERTIES FITTED TO 20000.K
+
+           THEORETICAL ROCKET PERFORMANCE ASSUMING FROZEN COMPOSITION
+
+ Pin =  1469.6 PSIA
+ CASE = test___________
+
+             REACTANT                       MOLES         ENERGY      TEMP
+                                                         KJ/KG-MOL      K
+ FUEL        H2(L)                      100.0000000     -9012.000     20.270
+ OXIDANT     O2(L)                      100.0000000    -12979.000     90.170
+
+ O/F=    3.45073  %FUEL= 22.468216  R,EQ.RATIO= 2.300000  PHI,EQ.RATIO= 2.300000
+
+                 CHAMBER   THROAT     EXIT
+ Pinf/P            1.0000   1.7935   70.541
+ P, BAR            101.33   56.497   1.4364
+ T, K             2699.65  2418.50  1121.98
+ RHO, KG/CU M    4.0397 0 2.5143 0 1.3779-1
+ H, KJ/KG        -1318.92 -2706.69 -8538.61
+ U, KJ/KG        -3827.15 -4953.71 -9581.04
+ G, KJ/KG        -62243.4 -57286.3 -33859.0
+ S, KJ/(KG)(K)    22.5676  22.5676  22.5676
+
+ M, (1/n)           8.949    8.949    8.949
+ Cp, KJ/(KG)(K)    4.9903   4.8786   4.0109
+ GAMMAs            1.2288   1.2352   1.3015
+ SON VEL,M/SEC     1755.6   1666.0   1164.8
+ MACH NUMBER        0.000    1.000    3.262
+
+ PERFORMANCE PARAMETERS
+
+ Ae/At                      1.0000   8.0000
+ CSTAR, M/SEC               2418.9   2418.9
+ CF                         0.6887   1.5709
+ Ivac, M/SEC                3014.8   4074.2
+ Isp, M/SEC                 1666.0   3799.9
+
+ MOLE FRACTIONS
+
+ *H              0.00423   HO2             0.00000   *H2             0.56211
+ H2O             0.43274   H2O2            0.00000   *O              0.00000
+ *OH             0.00091   *O2             0.00000   O3              0.00000
+
+  * THERMODYNAMIC PROPERTIES FITTED TO 20000.K
+
+           THEORETICAL ROCKET PERFORMANCE ASSUMING FROZEN COMPOSITION
+
+ Pin =  1469.6 PSIA
+ CASE = test___________
+
+             REACTANT                       MOLES         ENERGY      TEMP
+                                                         KJ/KG-MOL      K
+ FUEL        H2(L)                      100.0000000     -9012.000     20.270
+ OXIDANT     O2(L)                      100.0000000    -12979.000     90.170
+
+ O/F=    3.30695  %FUEL= 23.218281  R,EQ.RATIO= 2.400000  PHI,EQ.RATIO= 2.400000
+
+                 CHAMBER   THROAT     EXIT
+ Pinf/P            1.0000   1.7959   71.549
+ P, BAR            101.33   56.419   1.4162
+ T, K             2624.30  2346.93  1072.35
+ RHO, KG/CU M    4.0241 0 2.5055 0 1.3764-1
+ H, KJ/KG        -1349.41 -2744.66 -8573.37
+ U, KJ/KG        -3867.35 -4996.47 -9602.26
+ G, KJ/KG        -61671.7 -56691.3 -33222.5
+ S, KJ/(KG)(K)    22.9860  22.9860  22.9860
+
+ M, (1/n)           8.666    8.666    8.666
+ Cp, KJ/(KG)(K)    5.0876   4.9694   4.0750
+ GAMMAs            1.2324   1.2393   1.3080
+ SON VEL,M/SEC     1761.6   1670.5   1160.1
+ MACH NUMBER        0.000    1.000    3.277
+
+ PERFORMANCE PARAMETERS
+
+ Ae/At                      1.0000   8.0000
+ CSTAR, M/SEC               2420.9   2420.9
+ CF                         0.6900   1.5701
+ Ivac, M/SEC                3018.5   4071.7
+ Isp, M/SEC                 1670.5   3801.0
+
+ MOLE FRACTIONS
+
+ *H              0.00321   HO2             0.00000   *H2             0.58092
+ H2O             0.41527   H2O2            0.00000   *O              0.00000
+ *OH             0.00060   *O2             0.00000   O3              0.00000
+
+  * THERMODYNAMIC PROPERTIES FITTED TO 20000.K
+
+           THEORETICAL ROCKET PERFORMANCE ASSUMING FROZEN COMPOSITION
+
+ Pin =  1469.6 PSIA
+ CASE = test___________
+
+             REACTANT                       MOLES         ENERGY      TEMP
+                                                         KJ/KG-MOL      K
+ FUEL        H2(L)                      100.0000000     -9012.000     20.270
+ OXIDANT     O2(L)                      100.0000000    -12979.000     90.170
+
+ O/F=    3.17467  %FUEL= 23.953971  R,EQ.RATIO= 2.500000  PHI,EQ.RATIO= 2.500000
+
+                 CHAMBER   THROAT     EXIT
+ Pinf/P            1.0000   1.7984   72.547
+ P, BAR            101.33   56.342   1.3967
+ T, K             2552.16  2278.51  1025.73
+ RHO, KG/CU M    4.0128 0 2.4993 0 1.3763-1
+ H, KJ/KG        -1379.31 -2780.60 -8600.25
+ U, KJ/KG        -3904.36 -5034.90 -9615.08
+ G, KJ/KG        -61076.9 -56077.2 -32593.1
+ S, KJ/(KG)(K)    23.3910  23.3910  23.3910
+
+ M, (1/n)           8.404    8.404    8.404
+ Cp, KJ/(KG)(K)    5.1812   5.0566   4.1397
+ GAMMAs            1.2360   1.2433   1.3141
+ SON VEL,M/SEC     1766.6   1674.1   1154.8
+ MACH NUMBER        0.000    1.000    3.291
+
+ PERFORMANCE PARAMETERS
+
+ Ae/At                      1.0000   8.0000
+ CSTAR, M/SEC               2421.7   2421.7
+ CF                         0.6913   1.5693
+ Ivac, M/SEC                3020.7   4067.3
+ Isp, M/SEC                 1674.1   3800.2
+
+ MOLE FRACTIONS
+
+ *H              0.00242   HO2             0.00000   *H2             0.59814
+ H2O             0.39905   H2O2            0.00000   *O              0.00000
+ *OH             0.00039   *O2             0.00000   O3              0.00000
+
+  * THERMODYNAMIC PROPERTIES FITTED TO 20000.K
+
+           THEORETICAL ROCKET PERFORMANCE ASSUMING FROZEN COMPOSITION
+
+ Pin =  1469.6 PSIA
+ CASE = test___________
+
+             REACTANT                       MOLES         ENERGY      TEMP
+                                                         KJ/KG-MOL      K
+ FUEL        H2(L)                      100.0000000     -9012.000     20.270
+ OXIDANT     O2(L)                      100.0000000    -12979.000     90.170
+
+ O/F=    3.05257  %FUEL= 24.675698  R,EQ.RATIO= 2.600000  PHI,EQ.RATIO= 2.600000
+
+                 CHAMBER   THROAT     EXIT
+ Pinf/P            1.0000   1.8008   73.531
+ P, BAR            101.33   56.265   1.3780
+ T, K             2483.20  2213.19   982.03
+ RHO, KG/CU M    4.0051 0 2.4953 0 1.3773-1
+ H, KJ/KG        -1408.65 -2814.75 -8620.33
+ U, KJ/KG        -3938.56 -5069.57 -9620.83
+ G, KJ/KG        -60466.6 -55451.1 -31976.0
+ S, KJ/(KG)(K)    23.7830  23.7830  23.7830
+
+ M, (1/n)           8.161    8.161    8.161
+ Cp, KJ/(KG)(K)    5.2712   5.1403   4.2045
+ GAMMAs            1.2396   1.2472   1.3198
+ SON VEL,M/SEC     1770.9   1677.0   1149.1
+ MACH NUMBER        0.000    1.000    3.305
+
+ PERFORMANCE PARAMETERS
+
+ Ae/At                      1.0000   8.0000
+ CSTAR, M/SEC               2421.4   2421.4
+ CF                         0.6926   1.5684
+ Ivac, M/SEC                3021.5   4061.3
+ Isp, M/SEC                 1677.0   3797.8
+
+ MOLE FRACTIONS
+
+ *H              0.00182   HO2             0.00000   *H2             0.61396
+ H2O             0.38396   H2O2            0.00000   *O              0.00000
+ *OH             0.00025   *O2             0.00000   O3              0.00000
+
+  * THERMODYNAMIC PROPERTIES FITTED TO 20000.K
+
+           THEORETICAL ROCKET PERFORMANCE ASSUMING FROZEN COMPOSITION
+
+ Pin =  1469.6 PSIA
+ CASE = test___________
+
+             REACTANT                       MOLES         ENERGY      TEMP
+                                                         KJ/KG-MOL      K
+ FUEL        H2(L)                      100.0000000     -9012.000     20.270
+ OXIDANT     O2(L)                      100.0000000    -12979.000     90.170
+
+ O/F=    2.93951  %FUEL= 25.383854  R,EQ.RATIO= 2.700000  PHI,EQ.RATIO= 2.700000
+
+                 CHAMBER   THROAT     EXIT
+ Pinf/P            1.0000   1.8032   74.496
+ P, BAR            101.33   56.191   1.3601
+ T, K             2417.35  2150.92   941.12
+ RHO, KG/CU M    4.0005 0 2.4933 0 1.3794-1
+ H, KJ/KG        -1437.44 -2847.18 -8634.58
+ U, KJ/KG        -3970.23 -5100.83 -9620.64
+ G, KJ/KG        -59847.0 -54819.1 -31374.5
+ S, KJ/(KG)(K)    24.1627  24.1627  24.1627
+
+ M, (1/n)           7.936    7.936    7.936
+ Cp, KJ/(KG)(K)    5.3579   5.2207   4.2694
+ GAMMAs            1.2431   1.2511   1.3252
+ SON VEL,M/SEC     1774.4   1679.1   1143.1
+ MACH NUMBER        0.000    1.000    3.319
+
+ PERFORMANCE PARAMETERS
+
+ Ae/At                      1.0000   8.0000
+ CSTAR, M/SEC               2420.2   2420.2
+ CF                         0.6938   1.5676
+ Ivac, M/SEC                3021.3   4053.9
+ Isp, M/SEC                 1679.1   3794.0
+
+ MOLE FRACTIONS
+
+ *H              0.00136   HO2             0.00000   *H2             0.62855
+ H2O             0.36992   H2O2            0.00000   *O              0.00000
+ *OH             0.00017   *O2             0.00000
+
+  * THERMODYNAMIC PROPERTIES FITTED TO 20000.K
+
+           THEORETICAL ROCKET PERFORMANCE ASSUMING FROZEN COMPOSITION
+
+ Pin =  1469.6 PSIA
+ CASE = test___________
+
+             REACTANT                       MOLES         ENERGY      TEMP
+                                                         KJ/KG-MOL      K
+ FUEL        H2(L)                      100.0000000     -9012.000     20.270
+ OXIDANT     O2(L)                      100.0000000    -12979.000     90.170
+
+ O/F=    2.83453  %FUEL= 26.078818  R,EQ.RATIO= 2.800000  PHI,EQ.RATIO= 2.800000
+
+                 CHAMBER   THROAT     EXIT
+ Pinf/P            1.0000   1.8056   75.438
+ P, BAR            101.33   56.118   1.3432
+ T, K             2354.49  2091.57   902.85
+ RHO, KG/CU M    3.9987 0 2.4930 0 1.3823-1
+ H, KJ/KG        -1465.69 -2878.09 -8643.78
+ U, KJ/KG        -3999.66 -5129.10 -9615.45
+ G, KJ/KG        -59222.7 -54185.4 -30791.1
+ S, KJ/(KG)(K)    24.5305  24.5305  24.5305
+
+ M, (1/n)           7.726    7.726    7.726
+ Cp, KJ/(KG)(K)    5.4416   5.2982   4.3356
+ GAMMAs            1.2465   1.2549   1.3302
+ SON VEL,M/SEC     1777.3   1680.7   1136.9
+ MACH NUMBER        0.000    1.000    3.333
+
+ PERFORMANCE PARAMETERS
+
+ Ae/At                      1.0000   8.0000
+ CSTAR, M/SEC               2418.2   2418.2
+ CF                         0.6950   1.5668
+ Ivac, M/SEC                3020.0   4045.4
+ Isp, M/SEC                 1680.7   3789.0
+
+ MOLE FRACTIONS
+
+ *H              0.00102   HO2             0.00000   *H2             0.64204
+ H2O             0.35683   H2O2            0.00000   *O              0.00000
+ *OH             0.00011   *O2             0.00000
+
+  * THERMODYNAMIC PROPERTIES FITTED TO 20000.K
+
+           THEORETICAL ROCKET PERFORMANCE ASSUMING FROZEN COMPOSITION
+
+ Pin =  1469.6 PSIA
+ CASE = test___________
+
+             REACTANT                       MOLES         ENERGY      TEMP
+                                                         KJ/KG-MOL      K
+ FUEL        H2(L)                      100.0000000     -9012.000     20.270
+ OXIDANT     O2(L)                      100.0000000    -12979.000     90.170
+
+ O/F=    2.73679  %FUEL= 26.760957  R,EQ.RATIO= 2.900000  PHI,EQ.RATIO= 2.900000
+
+                 CHAMBER   THROAT     EXIT
+ Pinf/P            1.0000   1.8079   76.354
+ P, BAR            101.33   56.046   1.3270
+ T, K             2294.52  2035.02   867.08
+ RHO, KG/CU M    3.9992 0 2.4941 0 1.3860-1
+ H, KJ/KG        -1493.41 -2907.61 -8648.62
+ U, KJ/KG        -4027.06 -5154.71 -9606.06
+ G, KJ/KG        -58597.3 -53553.3 -30227.7
+ S, KJ/(KG)(K)    24.8870  24.8870  24.8870
+
+ M, (1/n)           7.530    7.530    7.530
+ Cp, KJ/(KG)(K)    5.5222   5.3728   4.4028
+ GAMMAs            1.2499   1.2587   1.3348
+ SON VEL,M/SEC     1779.6   1681.8   1130.5
+ MACH NUMBER        0.000    1.000    3.346
+
+ PERFORMANCE PARAMETERS
+
+ Ae/At                      1.0000   8.0000
+ CSTAR, M/SEC               2415.6   2415.6
+ CF                         0.6962   1.5660
+ Ivac, M/SEC                3017.9   4036.0
+ Isp, M/SEC                 1681.8   3782.9
+
+ MOLE FRACTIONS
+
+ *H              0.00076   HO2             0.00000   *H2             0.65456
+ H2O             0.34461   H2O2            0.00000   *O              0.00000
+ *OH             0.00007   *O2             0.00000
+
+  * THERMODYNAMIC PROPERTIES FITTED TO 20000.K
+
+           THEORETICAL ROCKET PERFORMANCE ASSUMING FROZEN COMPOSITION
+
+ Pin =  1469.6 PSIA
+ CASE = test___________
+
+             REACTANT                       MOLES         ENERGY      TEMP
+                                                         KJ/KG-MOL      K
+ FUEL        H2(L)                      100.0000000     -9012.000     20.270
+ OXIDANT     O2(L)                      100.0000000    -12979.000     90.170
+
+ O/F=    2.64556  %FUEL= 27.430621  R,EQ.RATIO= 3.000000  PHI,EQ.RATIO= 3.000000
+
+                 CHAMBER   THROAT     EXIT
+ Pinf/P            1.0000   1.8102   77.241
+ P, BAR            101.33   55.975   1.3118
+ T, K             2237.30  1981.13   833.65
+ RHO, KG/CU M    4.0018 0 2.4965 0 1.3904-1
+ H, KJ/KG        -1520.63 -2935.84 -8649.69
+ U, KJ/KG        -4052.64 -5177.93 -9593.15
+ G, KJ/KG        -57973.7 -52925.2 -29684.9
+ S, KJ/(KG)(K)    25.2327  25.2327  25.2327
+
+ M, (1/n)           7.347    7.347    7.347
+ Cp, KJ/(KG)(K)    5.6001   5.4448   4.4709
+ GAMMAs            1.2533   1.2624   1.3389
+ SON VEL,M/SEC     1781.4   1682.4   1123.9
+ MACH NUMBER        0.000    1.000    3.360
+
+ PERFORMANCE PARAMETERS
+
+ Ae/At                      1.0000   8.0000
+ CSTAR, M/SEC               2412.4   2412.4
+ CF                         0.6974   1.5652
+ Ivac, M/SEC                3015.1   4025.8
+ Isp, M/SEC                 1682.4   3776.0
+
+ MOLE FRACTIONS
+
+ *H              0.00056   HO2             0.00000   *H2             0.66621
+ H2O             0.33319   H2O2            0.00000   *O              0.00000
+ *OH             0.00005   *O2             0.00000
+
+  * THERMODYNAMIC PROPERTIES FITTED TO 20000.K

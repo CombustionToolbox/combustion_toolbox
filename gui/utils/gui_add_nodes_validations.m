@@ -1,5 +1,11 @@
 function gui_add_nodes_validations(app, code_validation_name)
-    % Add nodes with the name of the validations routines
+    % Add nodes with the name of the validations routines into the 
+    % corresponding tree in the UIValidation app
+    %
+    % Args:
+    %     app (object): UIValidation app object
+    %     code_validation_name (char): Name of the validation code
+    
     try
         mfiledir = fileparts(fileparts(fileparts(mfilename('fullpath'))));
         filenames = dir(fullfile(mfiledir, 'Validations', code_validation_name, '*.m'));

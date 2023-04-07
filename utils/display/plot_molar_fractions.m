@@ -11,6 +11,8 @@ function [ax, fig] = plot_molar_fractions(self, x_var, x_field, y_field, varargi
     %     * validation (struct): Struct that contains validations with (x_field, y_field)
     %     * nfrec (float): Frequency points to plot validations
     %     * mintol (float): Minimum limit i-axis with the composition of the mixture
+    %     * display_species (cell): List of species to plot
+    %     * y_var (cell): Get y-axis data from a different mixture
     %     * config (struct): Struct with the configuration for plots
     %     * axis_x (char): Set x-axis limits
     %     * axis_y (char): Set y-axis limits
@@ -25,6 +27,12 @@ function [ax, fig] = plot_molar_fractions(self, x_var, x_field, y_field, varargi
     %
     %     * ax (object): Handle of the axes
     %     * fig (object): Handle of the figure
+    %
+    % Examples:
+    %     * [ax, fig] = plot_molar_fractions(self, mix1, 'phi', 'Xi')
+    %     * [ax, fig] = plot_molar_fractions(self, mix1, 'phi', 'Xi', 'y_var', mix2)
+    %     * [ax, fig] = plot_molar_fractions(self, mix1, 'phi', 'Xi', 'y_var', mix2, 'validation', results_CEA)
+    %     * [ax, fig] = plot_molar_fractions(self, mix1, 'phi', 'Xi', 'y_var', mix2, 'validation', results_CEA, 'display_species', display_species)
 
     % Default values
     ax = [];

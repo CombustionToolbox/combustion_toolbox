@@ -4,7 +4,7 @@ function self = gui_create_temp_app(app, event, FLAG_COMPUTE_FROM_PHI)
     % Args:
     %     app (object): Combustion Toolbox app object
     %     event (object): Event object
-    %     FLAG_COMPUTE_FROM_PHI (logical): Flag to compute properties from the equivalence ratio
+    %     FLAG_COMPUTE_FROM_PHI (bool): Flag to compute properties from the equivalence ratio
     %
     % Returns:
     %     self (struct): Struct containing the properties of the mixture and the databases

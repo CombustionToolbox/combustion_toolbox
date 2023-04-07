@@ -11,9 +11,9 @@ function speciesLatex = species2latex(species, varargin)
     %     speciesLatex (char): Species name in LateX format
     %
     % Examples:
-    %     * species2latex('H2ObLb') % This will return 'H$_{2}$O(L)'
-    %     * species2latex('Si2H6_M') % This will return 'Si$_{2}$H$_{6\rm M}$'
-    %     * species2latex('Si2H6_M', false) % This will return 'Si$_{2}$H$_{6}$'
+    %     * species2latex('H2ObLb')
+    %     * species2latex('Si2H6_M')
+    %     * species2latex('Si2H6_M', false)
     
     % Default
     FLAG_BURCAT = true;

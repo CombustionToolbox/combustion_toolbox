@@ -72,12 +72,12 @@
 %          PhD Candidate - Group Fluid Mechanics
 %          Universidad Carlos III de Madrid
 %                  
-% Last update Mar 14 2023
+% Last update Apr 07 2023
 % -------------------------------------------------------------------------
 help combustion_toolbox_contents.m
 
 % Set path
-Combustion_Toolbox_setPath;
+INSTALL();
 % Display splash
 gui_display_splash('pause', 2);
 % Check for updates

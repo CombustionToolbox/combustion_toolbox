@@ -1,5 +1,8 @@
 function gui_clear_results(app)
     % Function that clears the result tab panel, setting them to 0
+    %
+    % Args:
+    %     app (object): Combustion Toolbox app object
     
     % Clear Tab results: parameters
     update_properties_common(app, 0, '_1');

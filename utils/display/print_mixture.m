@@ -1,5 +1,5 @@
 function print_mixture(self, varargin)
-    % Print properties and composition of a given mixture in the command
+    % Print properties and composition of the given mixtures in the command
     % window
     %
     % Args:
@@ -10,14 +10,23 @@ function print_mixture(self, varargin)
     %     * mix2 (struct): Struct with the properties of the mixture
     %     * mixi (struct): Struct with the properties of the mixture
     %     * mixN (struct): Struct with the properties of the mixture
+    %
+    % Examples:
+    %     * print_mixture(self, mix1)
+    %     * print_mixture(self, mix1, mix2)
+    %     * print_mixture(self, mix1, mix2, mix3)
+    %     * print_mixture(self, mix1, mix2, mix3, mix4)
 
+    % Definitions
+    Nmixtures = nargin - 1;
+    % Unpack cell with mixtures
     mix = varargin;
     % Start
     fprintf('************************************************************************************************************\n');
     % Print header
-    header_composition = print_header(self.PD.ProblemType, nargin - 1, mix);
+    header_composition = print_header(self.PD.ProblemType, Nmixtures, mix);
     % Print properties
-    print_properties(self.PD.ProblemType, mix);
+    print_properties(self.PD.ProblemType, Nmixtures, mix);
     % Print composition
     for i = 1:nargin - 1
         print_composition(mix{i}, self.S.LS, self.C.composition_units, header_composition{i}, self.C.mintol_display);
@@ -28,39 +37,58 @@ function print_mixture(self, varargin)
 end
 
 % SUB-PASS FUNCTIONS
-function value = get_properties(property, Nmixtures, varargin)
+function value = get_properties(property, Nmixtures, mix)
     % Get properties of the given mixtures
-    mix = varargin{1};
+    %
+    % Args:
+    %     property (function/char): Function/char to get the property
+    %     Nmixtures (float): Number of mixtures
+    %     mix (cell): Cell with the properties of the N mixtures
+    %
+    % Returns:
+    %     value (float): Value of the property
+    %
+    % Examples:
+    %     * get_properties(@temperature, 1, mix)
+    %     * get_properties('v_shock', 1, mix)
 
-    if ~ischar(property)
-
-        for i = Nmixtures:-1:1
-            value(i) = property(mix{i});
-        end
-
-    else
+    if ischar(property)
         value = cell2vector(mix, property);
+        return
+    end
+
+    for i = Nmixtures:-1:1
+        value(i) = property(mix{i});
     end
 
 end
 
 function line = set_string_value(Nmixtures)
+    % Set the char to print the properties
     %
+    % Args:
+    %     Nmixtures (float): Number of mixtures
+    %
+    % Returns:
+    %     line (char): Char to print the properties
+    
     line_body = '   %12.4f  |';
     line_end = '   %12.4f\n';
     line = [repmat(line_body, 1, Nmixtures - 1), line_end];
 end
 
-function print_properties(ProblemType, varargin)
-    % Print properties of the mixture
-
-    % Read mixture
-    mix = varargin{1};
-    % Definitions
-    Nmixtures = length(mix);
+function print_properties(ProblemType, Nmixtures, mix)
+    % Print properties of the mixture in the command window
     %
+    % Args:
+    %     ProblemType (char): Type of problem
+    %     Nmixtures (float): Number of mixtures
+    %     mix (cell): Cell with the properties of the N mixtures
+
+    % Definitions
     string_value = set_string_value(Nmixtures);
     string_value_2 = set_string_value(Nmixtures - 1);
+    
     % Print properties
     fprintf(['T [K]          |', string_value], get_properties(@temperature, Nmixtures, mix));
     fprintf(['p [bar]        |', string_value], get_properties(@pressure, Nmixtures, mix));
@@ -114,7 +142,15 @@ function print_properties(ProblemType, varargin)
 end
 
 function print_composition(mix, LS, units, header, mintol_display)
-    % Print composition of a given mixture
+    % Print composition of the mixture in the command window
+    %
+    % Args:
+    %     mix (struct): Struct with the properties of the mixture
+    %     LS (cell): Cell with the names of the species
+    %     units (char): Units of the composition
+    %     header (char): Header of the composition
+    %     mintol_display (double): Minimum value to be displayed
+
     switch lower(units)
         case 'mol'
             variable = moles(mix);
@@ -150,7 +186,16 @@ function print_composition(mix, LS, units, header, mintol_display)
 end
 
 function header_composition = print_header(ProblemType, Nmixtures, mix)
-    % Print header
+    % Print header in the command window
+    %
+    % Args:
+    %     ProblemType (char): Type of the problem
+    %     Nmixtures (float): Number of mixtures
+    %     mix (cell): Cell with the properties of the N mixtures
+    %
+    % Returns:
+    %     header_composition (cell): Cell with the header indicating the type/state of the mixture
+
     fprintf('------------------------------------------------------------------------------------------------------------\n');
     fprintf('Problem type: %s  | phi = %4.4f\n', ProblemType, equivalenceRatio(mix{1}));
     fprintf('------------------------------------------------------------------------------------------------------------\n');
@@ -176,19 +221,19 @@ function header_composition = print_header(ProblemType, Nmixtures, mix)
         fprintf(['               |', header], value);
 
         header_composition = {'STATE 1               ', ...
-                            'STATE 2               ', ...
-                            'STATE 3               ', ...
-                            'STATE 4               ', ...
-                            'STATE 5               ', ...
-                            'STATE 6               ', ...
-                            'STATE 7               ', ...
-                        'STATE 8               '};
+                              'STATE 2               ', ...
+                              'STATE 3               ', ...
+                              'STATE 4               ', ...
+                              'STATE 5               ', ...
+                              'STATE 6               ', ...
+                              'STATE 7               ', ...
+                              'STATE 8               '};
     elseif contains(ProblemType, 'ROCKET')
 
         if Nmixtures == 3
             header_composition = {'INLET CHAMBER         ', ...
-                                'OUTLET CHAMBER        ', ...
-                            'THROAT                '};
+                                  'OUTLET CHAMBER        ', ...
+                                  'THROAT                '};
             fprintf('               |  INLET CHAMBER  | OUTLET CHAMBER  |      THROAT \n');
         elseif Nmixtures > 3
 
@@ -201,8 +246,8 @@ function header_composition = print_header(ProblemType, Nmixtures, mix)
             if mix{3}.Aratio == 1
                 header_exit = repmat({'EXIT                  '}, 1, Nmixtures - 3);
                 header_composition = {'INLET CHAMBER         ', ...
-                                    'OUTLET CHAMBER        ', ...
-                                    'THROAT                ', ...
+                                      'OUTLET CHAMBER        ', ...
+                                      'THROAT                ', ...
                                     header_exit{1:end}};
 
                 if Nmixtures > 4
@@ -215,9 +260,9 @@ function header_composition = print_header(ProblemType, Nmixtures, mix)
             else
                 header_exit = repmat({'EXIT                  '}, 1, Nmixtures - 4);
                 header_composition = {'INLET CHAMBER         ', ...
-                                    'INJECTOR              ', ...
-                                    'OUTLET CHAMBER        ', ...
-                                    'THROAT                ', ...
+                                      'INJECTOR              ', ...
+                                      'OUTLET CHAMBER        ', ...
+                                      'THROAT                ', ...
                                     header_exit{1:end}};
 
                 if Nmixtures > 4

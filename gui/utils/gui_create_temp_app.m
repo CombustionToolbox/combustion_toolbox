@@ -1,6 +1,14 @@
 function self = gui_create_temp_app(app, event, FLAG_COMPUTE_FROM_PHI)
-    % Function that creates an self required for preliminary calculations
-    
+    % Function that creates a self struct required for preliminary calculations
+    % 
+    % Args:
+    %     app (object): Combustion Toolbox app object
+    %     event (object): Event object
+    %     FLAG_COMPUTE_FROM_PHI (logical): Flag to compute properties from the equivalence ratio
+    %
+    % Returns:
+    %     self (struct): Struct containing the properties of the mixture and the databases
+
     % Initialize self (fast: transfer DB)
     self = App('fast', app.DB_master, app.DB);
     % Get reactant species

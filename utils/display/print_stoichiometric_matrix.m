@@ -5,7 +5,7 @@ function varargout = print_stoichiometric_matrix(self, varargin)
     %     self (struct): Data of the mixture, conditions, and databases
     %
     % Optional args:
-    %     type (str): 'transpose'
+    %     type (char): 'transpose'
     %
     % Optional returns:
     %     A0 (table): Stoichiometric matrix. In case type == 'transpose'

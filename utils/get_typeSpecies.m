@@ -5,7 +5,7 @@ function typeSpecies = get_typeSpecies(self)
     %     self (struct): Data of the mixture, conditions, and databases
     %
     % Returns:
-    %     self (struct): Data of the mixture, conditions, and databases
+    %     typeSpecies (cell): Cell array with the type of species in the mixture
 
     typeFuel = create_cell_ntimes('Fuel', length(self.PD.N_Fuel));
     typeOxidizer = create_cell_ntimes('Oxidizer', length(self.PD.N_Oxidizer));

@@ -1,6 +1,14 @@
 function app = gui_CalculateButtonPushed(app, event)
-    % Solve selected problem, update GUI with the results and generate
-    % predefined plots.
+    % Solve selected problem, update GUI with the results, and generate
+    % predefined plots
+    %
+    % Args:
+    %   app (object): Combustion Toolbox app object
+    %   event (object): Event object
+    %
+    % Returns:
+    %   app (object): Combustion Toolbox app object
+    
     try
         % Set lamp to Working color
         app.Lamp.Color = app.color_lamp_working;

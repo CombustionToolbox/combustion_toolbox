@@ -1,6 +1,7 @@
 function position = get_monitor_positions_MATLAB(varargin)
     % Routine that gets the position in pixels of the monitor(s) connected
-    % to the device using MATLAB's routines
+    % to the device using MATLAB's routines. If no monitor is specified,
+    % the position of the main monitor is returned.
     %
     % Optional Args:
     %    monitor_id (float): Get position in pixels for the given monitor

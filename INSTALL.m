@@ -119,6 +119,11 @@ function INSTALL(varargin)
             f_path(genpath_subfolders);
         end
         
+        % Save the path permanently
+        if strcmpi(action, 'install')
+            savepath;
+        end
+
         fprintf('OK!\n')
     end
 

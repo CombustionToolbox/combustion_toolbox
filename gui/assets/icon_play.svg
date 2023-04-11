@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools -->
+
+<svg
+   fill="#000000"
+   width="72"
+   height="72"
+   viewBox="0 0 2.88 2.88"
+   version="1.1"
+   id="svg11941"
+   sodipodi:docname="icon_play.svg"
+   inkscape:version="1.2.1 (9c6d41e410, 2022-07-14)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <defs
+     id="defs11945" />
+  <sodipodi:namedview
+     id="namedview11943"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     showgrid="false"
+     inkscape:zoom="5.8619152"
+     inkscape:cx="-3.4118542"
+     inkscape:cy="47.254181"
+     inkscape:window-width="1920"
+     inkscape:window-height="1009"
+     inkscape:window-x="2552"
+     inkscape:window-y="363"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg11941" />
+  <title
+     id="title11937">play</title>
+  <metadata
+     id="metadata12064">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:title>play</dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <path
+     d="m 0.32,2.88 h 2.24 c 0.176731,0 0.32,-0.143269 0.32,-0.32 V 0.32 C 2.88,0.143269 2.736731,0 2.56,0 H 0.32 C 0.143269,0 0,0.143269 0,0.32 v 2.24 c 0,0.176731 0.143269,0.32 0.32,0.32 z"
+     fill="#3E75C3"
+     id="path2"
+     style="display:none;fill:#577a95;fill-opacity:1;stroke-width:0.04" />
+  <g
+     inkscape:groupmode="layer"
+     id="layer3"
+     inkscape:label="Layer 1"
+     transform="translate(-56.752585,-19.194894)">
+    <path
+       d="m 57.37517,21.270029 q 0,0.08821 0.07525,0.140109 0.04151,0.02335 0.08821,0.02335 0.03631,0 0.07265,-0.01816 l 1.310283,-0.653843 q 0.03892,-0.02075 0.06486,-0.05967 0.02594,-0.03892 0.02336,-0.08822 -0.0026,-0.0493 -0.02336,-0.08563 -0.02076,-0.03631 -0.06486,-0.05967 l -1.310282,-0.653844 q -0.03631,-0.01816 -0.07265,-0.01816 -0.04411,0 -0.08821,0.02335 -0.07525,0.0493 -0.07525,0.140109 z"
+       id="path11939"
+       style="fill:#ffffff;fill-opacity:1;stroke-width:0.0810819" />
+  </g>
+</svg>

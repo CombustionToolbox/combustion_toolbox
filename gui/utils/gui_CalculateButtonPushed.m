@@ -22,7 +22,7 @@ function app = gui_CalculateButtonPushed(app, event)
         self.Misc.FLAG_GUI = true;
         % Get Print results FLAG (debug mode)
         self.Misc.FLAG_RESULTS = app.PrintresultsCheckBox.Value;
-        % Get tolerances and tunning values
+        % Get tuning values and constants
         self = get_tuning_values(app, self);
         % Get initial conditions
         self = get_input_constrains(app, self);
@@ -68,10 +68,10 @@ function self = get_miscellaneous_values(obj, self)
 end
 
 function self = get_tuning_values(obj, self)
-    % Get tuning properties from GUI and set into self
+    % Get properties from GUI and set into self
+    self.PD = obj.PD;
     self.TN = obj.TN;
-    % Get display species tolerance and set into self
-    self.C.mintol_display = obj.DisplaySpeciesEditField.Value;
+    self.C = obj.C;
 end
 
 function gui_update_results(obj, results)
@@ -202,7 +202,7 @@ function self = get_input_constrains(obj, self)
             end
 
             if ~isempty(obj.PR3.Value)
-                % Set Aratio combustor to throat region (supersonic region)
+                % Set Aratio combustor to throat region (subsonic region)
                 self = set_prop(self, 'Aratio', obj.PR3.Value);
                 self.PD.FLAG_SUBSONIC = true;
             end

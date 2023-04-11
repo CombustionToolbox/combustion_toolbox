@@ -1,15 +1,18 @@
-function FLAG_UPDATE = check_update(varargin)
+function [FLAG_UPDATE, message] = check_update(varargin)
     % Check if there is a new release of the Combustion Toolbox
     %
     % Optional Args:
     %    fig (object): UIFigure class
     %
     % Returns:
-    %    FLAG_UPDATE (bool): FLAG indicating true (false) if there is (not) an update of the Combustion Toolbox
+    %    Tuple containing
+    %
+    %    * FLAG_UPDATE (bool): FLAG indicating true (false) if there is (not) an update of the Combustion Toolbox
+    %    * message (char): Message displayed 
     %
     % Examples:
-    %    * FLAG_UPDATE = check_update();
-    %    * FLAG_UPDATE = check_update(UIFigure);
+    %    * [FLAG_UPDATE, message] = check_update();
+    %    * [FLAG_UPDATE, message] = check_update(UIFigure);
 
     % Definitions
     user = 'AlbertoCuadra';

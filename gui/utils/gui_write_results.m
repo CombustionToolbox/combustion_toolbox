@@ -43,9 +43,11 @@ function update_properties(app, results, i)
             app.text_Aratio_2.Value = mix2.Aratio;
             
             if isfield(results(i), 'mix2_c')
+                % Combustor end (c)
                 mix3 = results(i).mix2_c;
                 FLAG_IAC = false;
             else
+                % Throat
                 mix3 = results(i).mix3;
                 FLAG_IAC = true;
             end
@@ -54,21 +56,26 @@ function update_properties(app, results, i)
             update_properties_velocities(app, mix3, '_3')
             update_properties_rocket(app, mix3, '_3')
             
-            if ~isempty(results(i).strP) || ~FLAG_IAC
-
+            if ~FLAG_IAC || (~isempty(results(i).strP) && FLAG_IAC)
+                
                 if ~FLAG_IAC
+                    % Throat
                     mix4 = results(i).mix3;
                 else
+                    % Exit
                     mix4 = results(i).strP;
                 end
-                
+
+                % Update values
                 update_properties_common(app, mix4, '_4');
                 update_properties_velocities(app, mix4, '_4')
                 update_properties_rocket(app, mix4, '_4')
 
                 % Get max error method
                 app.text_error_problem.Value = max([mix2.error_problem, mix3.error_problem, mix4.error_problem]);
+
             else
+                % Exit
                 app.text_T_4.Value = 0;
                 app.text_p_4.Value = 0;
                 app.text_r_4.Value = 0;
@@ -85,10 +92,46 @@ function update_properties(app, results, i)
                 app.text_Cstar_4.Value = 0;
                 app.text_Ivac_4.Value = 0;
                 app.text_Isp_4.Value = 0;
+            end
+            
+            if FLAG_IAC
+                return
+            end
+
+            if ~isempty(results(i).strP)
+                % Exit
+                mix5 = results(i).strP;
+                
+                % Update values
+                update_properties_common(app, mix5, '_5');
+                update_properties_velocities(app, mix5, '_5')
+                update_properties_rocket(app, mix5, '_5')
 
                 % Get max error method
-                app.text_error_problem.Value = max(mix2.error_problem, mix3.error_problem);
+                app.text_error_problem.Value = max([mix2.error_problem, mix3.error_problem, mix4.error_problem, mix5.error_problem]);
+            
+            else
+                app.text_T_5.Value = 0;
+                app.text_p_5.Value = 0;
+                app.text_r_5.Value = 0;
+                app.text_h_5.Value = 0;
+                app.text_e_5.Value = 0;
+                app.text_cp_5.Value = 0;
+                app.text_s_5.Value = 0;
+                app.text_gamma_5.Value = 0;
+                app.text_W_5.Value = 0;
+                app.text_sound_5.Value = 0;
+                app.text_u_5.Value = 0;
+                app.text_M_5.Value = 0;
+                app.text_Aratio_5.Value = 0;
+                app.text_Cstar_5.Value = 0;
+                app.text_Ivac_5.Value = 0;
+                app.text_Isp_5.Value = 0;
+
+                % Get max error method
+                app.text_error_problem.Value = max([mix2.error_problem, mix3.error_problem, mix4.error_problem]);
             end
+
         end
     end
 end

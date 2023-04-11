@@ -1,30 +1,49 @@
 function FLAG_UPDATE = check_update(varargin)
-    % Check if there is a new release of Combustion Toolbox
+    % Check if there is a new release of the Combustion Toolbox
     %
     % Optional Args:
-    %    fig (uifigure): UIFigure class
+    %    fig (object): UIFigure class
     %
     % Returns:
-    %    FLAG_UPDATE (bool): FLAG indicating true (false) if there is (not) an update of Combustion Toolbox
+    %    FLAG_UPDATE (bool): FLAG indicating true (false) if there is (not) an update of the Combustion Toolbox
+    %
+    % Examples:
+    %    * FLAG_UPDATE = check_update();
+    %    * FLAG_UPDATE = check_update(UIFigure);
+
+    % Definitions
+    user = 'AlbertoCuadra';
+    repo_name = 'combustion_toolbox';
 
     % Unpack additional inputs
     fig = unpack(varargin{:});
+
     % Initialization
     FLAG_UPDATE = true;
+
     % Get current version of CT
     [tag_1, date_1] = get_combustion_toolbox_version();
+
     % Get latest version of CT on Github
-    [tag_2, git_data] = get_latest_version_github('AlbertoCuadra', 'combustion_toolbox');
+    [tag_2, git_data] = get_latest_version_github(user, repo_name);
     date_2 = git_data.published_at(1:end - 1);
+
     % Convert tag to id
     tag_id_1 = get_tag_id(tag_1);
     tag_id_2 = get_tag_id(tag_2);
+
     % Compare versions
     l_1 = length(tag_id_1);
     l_2 = length(tag_id_2);
     N = min(l_1, l_2);
     i = 0;
+    
+    % Format date
+    date_1 = datetime(date_1, 'Format', 'dd MMM yyyy');
+    date_2 = datetime(date_2, 'Format', 'uuuu-MM-dd''T''HH:mmXXX', 'TimeZone', 'UTC');
+    date_2.Format = 'dd MMM yyyy';
 
+    % Check latest version
     while FLAG_UPDATE && i < N
         i = i + 1;
 
@@ -35,37 +54,24 @@ function FLAG_UPDATE = check_update(varargin)
     end
 
     % Get display message
-    if FLAG_UPDATE
-        % Combustion Toolbox is NOT up-to-date
-        date_2 = datetime(date_2, 'Format', 'uuuu-MM-dd''T''HH:mmXXX', 'TimeZone', 'UTC');
-        date_2.Format = 'dd MMM yyyy';
-        message = sprintf(['There is a new release of Combustion Toolbox.\n\n', ...
-                            'Latest relase: %s\n', ...
-                        'Date: %s'], tag_2, date_2);
-        title = 'Warning';
-        icon = 'warning';
-    else
-        % Combustion Toolbox is up-to-date
-        date_1 = datetime(date_1, 'Format', 'dd MMM yyyy');
-        message = sprintf(['Combustion Toolbox is up to date.\n\n', ...
-                            'Latest relase: %s\n', ...
-                        'Date: %s'], tag_1, date_1);
-        title = 'Success';
-        icon = 'success';
-    end
+    [message, title, icon] = get_message(tag_1, tag_2, date_2, FLAG_UPDATE);
 
     % Display modal dialog
     if isa(fig, 'matlab.ui.Figure')
         uialert(fig, message, title, 'Icon', icon);
     else
+        S.Interpreter = 'tex';
+        S.WindowStyle = 'modal';
 
-        if strcmpi(icon, warning)
+        if strcmpi(icon, 'warning')
             icon = 'warn';
-        else
-            icon = 'none';
+            msgbox(['\fontsize{10} ', message], title, icon, S);
+            return
         end
-
-        msgbox(message, title, icon);
+        
+        icon = 'custom';
+        [icondata, iconcmap] = imread('icon_success.ico');
+        msgbox(['\fontsize{10} ', message], title, icon, icondata, iconcmap, S); 
     end
 
 end
@@ -84,4 +90,25 @@ end
 function value = get_tag_id(tag)
     ind = regexp(tag, '\d');
     value = tag(ind);
+end
+
+function [message, title, icon] = get_message(tag_1, tag_2, date_2, FLAG_UPDATE)
+    % Get display message
+    if FLAG_UPDATE
+        msg_1 = 'There is a new release of Combustion Toolbox.';
+        title = 'Warning';
+        icon = 'warning';
+    else
+        msg_1 = 'Combustion Toolbox is up to date.';
+        title = 'Success';
+        icon = 'success';
+    end
+
+    message = sprintf(['%s\n\n',...
+                       'Current release: %s\n',...
+                       'Latest relase: %s\n',...
+                       'Date: %s'], msg_1, tag_1, tag_2, date_2);
+
+    % Print message in the command window
+    disp(message);
 end

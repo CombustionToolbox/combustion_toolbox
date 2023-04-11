@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools -->
+
+<svg
+   width="72"
+   height="72.000023"
+   viewBox="0 0 1.44 1.4400005"
+   fill="none"
+   version="1.1"
+   id="svg16854"
+   sodipodi:docname="icon_docs.svg"
+   inkscape:version="1.2.1 (9c6d41e410, 2022-07-14)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs16858" />
+  <sodipodi:namedview
+     id="namedview16856"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     showgrid="false"
+     inkscape:zoom="4.385"
+     inkscape:cx="30.216648"
+     inkscape:cy="48.118586"
+     inkscape:window-width="1920"
+     inkscape:window-height="1009"
+     inkscape:window-x="2552"
+     inkscape:window-y="363"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg16854" />
+  <path
+     d="m 0.16,1.4400005 h 1.12 c 0.08837,0 0.16,-0.07164 0.16,-0.16 V 0.16 C 1.44,0.071634 1.36837,0 1.28,0 H 0.16 C 0.07163,0 0,0.071634 0,0.16 v 1.1200005 c 0,0.08836 0.07163,0.16 0.16,0.16 z"
+     fill="#3E75C3"
+     id="path2"
+     style="display:none;fill:#577a95;fill-opacity:1;stroke-width:0.02" />
+  <g
+     inkscape:groupmode="layer"
+     id="layer4"
+     inkscape:label="Layer 1"
+     transform="translate(-26.135188,-9.3506955)">
+    <g
+       fill="#000000"
+       id="g16852"
+       transform="matrix(0.0649943,0,0,0.0649943,26.335259,9.5407421)"
+       style="fill:#ffffff;fill-opacity:1">
+      <path
+         fill-rule="evenodd"
+         d="M 3.5,3.25 A 0.75,0.75 0 0 1 4.25,2.5 H 8 A 0.75,0.75 0 0 0 8,1 H 4.25 A 2.25,2.25 0 0 0 2,3.25 v 9.5 A 2.25,2.25 0 0 0 4.25,15 h 8.5 C 13.44,15 14,14.44 14,13.75 V 7 a 0.75,0.75 0 0 0 -1.5,0 v 3 H 4.25 C 3.987,10 3.735,10.045 3.5,10.128 Z m 0,9 v 0.5 c 0,0.414 0.336,0.75 0.75,0.75 h 8.25 v -2 H 4.25 A 0.75,0.75 0 0 0 3.5,12.25 Z"
+         clip-rule="evenodd"
+         id="path16848"
+         style="fill:#ffffff;fill-opacity:1" />
+      <path
+         d="m 12.5,3.56 v 0.69 a 0.75,0.75 0 0 0 1.5,0 V 1.75 A 0.75,0.75 0 0 0 13.25,1 h -2.5 a 0.75,0.75 0 0 0 0,1.5 h 0.69 L 9.47,4.47 a 0.75,0.75 0 0 0 1.06,1.06 z"
+         id="path16850"
+         style="fill:#ffffff;fill-opacity:1" />
+    </g>
+  </g>
+</svg>

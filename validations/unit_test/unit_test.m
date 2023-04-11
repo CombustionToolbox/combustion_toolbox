@@ -19,6 +19,7 @@ classdef unit_test < matlab.unittest.TestCase
     end
 
     properties (TestParameter)
+        temperature = {200, 300, 400, 500, 600, 700, 800, 900, 1000, 1100, 1200, 1300, 1400, 1500, 1600, 1700, 1800};
         equivalence_ratio = {0.5, 1, 2, 4};
         velocity_preshock = {505, 3140, 7830, 11862};
         velocity_preshock_R = {505, 3140, 5169, 5617, 6103, 6632, 7206, 7830};
@@ -39,6 +40,12 @@ classdef unit_test < matlab.unittest.TestCase
             self = App();
             obj.DB = self.DB;
             obj.DB_master = self.DB;
+        end
+
+        function test_TP_CEA_1(testCase, temperature)
+            [act_max_rel_error_moles, act_max_rel_error_prop] = run_test_TP_CEA_1(temperature, testCase.DB, testCase.DB_master);
+            verifyLessThanOrEqual(testCase, act_max_rel_error_moles, testCase.max_rel_error);
+            verifyLessThanOrEqual(testCase, act_max_rel_error_prop, testCase.max_rel_error);
         end
 
         function test_HP_CEA_1(testCase, equivalence_ratio)

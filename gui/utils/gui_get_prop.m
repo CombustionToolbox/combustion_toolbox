@@ -3,6 +3,10 @@ function [value, flag_prop] = gui_get_prop(app, name, value, varargin)
         flag_prop = true;
         value = sscanf(value, '[%f:%f:%f]');
         value = value(1):value(2):value(3);
+    elseif sum(value == ':') == 2
+        flag_prop = true;
+        value = sscanf(value, '%f:%f:%f');
+        value = value(1):value(2):value(3);
     else
         flag_prop = false;
         value = sscanf(value,'%f');

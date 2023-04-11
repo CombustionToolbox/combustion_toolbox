@@ -159,6 +159,14 @@ function [property_name, property_latex, property_unit] = property_names(propert
             property_name = 'Post-shock velocity';
             property_latex = 'u_{\rm postshock}';
             property_unit = '[m/s]';
+        case 'm1'
+            property_name = 'Pre-shock Mach number';
+            property_latex = '\mathcal{M}_1';
+            property_unit = '';
+        case 'm2'
+            property_name = 'Post-shock Mach number';
+            property_latex = '\mathcal{M}_2';
+            property_unit = '';
         case 'cstar'
             property_name = 'Characteristic velocity';
             property_latex = 'C^*';

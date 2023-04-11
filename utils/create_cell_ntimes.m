@@ -1,5 +1,6 @@
 function C = create_cell_ntimes(varargin)
     % Create cell array with the same item n-times
+    
     if nargin > 2
         value = varargin{1};
         C = varargin{3};
@@ -8,7 +9,7 @@ function C = create_cell_ntimes(varargin)
         n = varargin{2};
         C = cell(1, n);
     else
-        error('Error sub-pass fuinction @create_cell_ntimes inside @guiReactantsValueChanged');
+        error('Error sub-pass function @create_cell_ntimes inside @guiReactantsValueChanged');
     end
 
     % Set value

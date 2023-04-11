@@ -3,7 +3,7 @@ function self = solve_problem(self, ProblemType)
     %
     % Args:
     %     self (struct): Data of the mixture, conditions, and databases
-    %     ProblemType (str): Tag of the problem to solve
+    %     ProblemType (char): Tag of the problem to solve
     %
     % Returns:
     %     self (struct): Data of the mixtures (initial and final), conditions, databases
@@ -11,6 +11,8 @@ function self = solve_problem(self, ProblemType)
     try
         % Set Problem Type
         self.PD.ProblemType = ProblemType;
+        % Complete initialization process
+        self = complete_initialize(self, [self.PD.S_Fuel, self.PD.S_Oxidizer]);
         % Check inputs and set length of the loop
         self = check_inputs(self);
         % Get Flags and length of the loop
@@ -50,14 +52,15 @@ end
 % SUB-PASS FUNCTIONS
 function self = set_problem_conditions(self, i)
     % Set problem conditions per case
-    if isfield(self.PD, 'range_name')
-
-        if ~strcmpi(self.PD.range_name, 'phi')
-            self.PD.(self.PD.range_name).value = self.PD.range(i);
-        end
-
+    if ~isfield(self.PD, 'range_name')
+        return
     end
 
+    if strcmpi(self.PD.range_name, 'phi')
+        return
+    end
+
+    self.PD.(self.PD.range_name).value = self.PD.range(i);
 end
 
 function self = select_problem(self, i)
@@ -387,22 +390,23 @@ function self = check_complete_reaction(self, i)
     % Check if the list of species corresponds to "complete_reaction"
     % If FLAG_COMPLETE is true, establish the list of species based on the
     % given equivalence ratio (phi)
-    if self.S.FLAG_COMPLETE
-        EquivalenceRatio = self.PS.strR{i}.phi;
-        EquivalenceRatio_soot = self.PS.strR{i}.phi_c;
-
-        if EquivalenceRatio < 1
-            LS = self.S.LS_lean;
-        elseif EquivalenceRatio >= 1 && EquivalenceRatio < EquivalenceRatio_soot
-            LS = self.S.LS_rich;
-        else
-            LS = self.S.LS_soot;
-        end
-
-        self.Misc.index_LS_original = find_ind(self.S.LS, LS);
-        self = reorganize_index_phase_species(self, LS);
+    if ~self.S.FLAG_COMPLETE
+        return
     end
 
+    phi = self.PS.strR{i}.phi;
+    phi_c = self.PS.strR{i}.phi_c;
+
+    if phi < 1
+        LS = self.S.LS_lean;
+    elseif phi >= 1 && phi < phi_c
+        LS = self.S.LS_rich;
+    else
+        LS = self.S.LS_soot;
+    end
+
+    self.Misc.index_LS_original = find_ind(self.S.LS, LS);
+    self = reorganize_index_phase_species(self, LS);
 end
 
 function mix = assign_shock_polar(mix, mix_polar)

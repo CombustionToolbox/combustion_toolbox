@@ -271,10 +271,10 @@ classdef combustion_toolbox < matlab.apps.AppBase
         E            % Elements
         S            % Species
         C            % Constants
-        Misc         % Miscelaneous
+        Misc         % Miscellaneous
         PD           % Problem Description
         PS           % Problem Solution
-        TN           % Tunning properties
+        TN           % Tuning properties
         DB_master    % Master DataBase
         DB           % Reduced DataBase
         fig          % Auxiliary figure
@@ -309,12 +309,14 @@ classdef combustion_toolbox < matlab.apps.AppBase
         temp_results % Temporal variable that contains the last parametric study
         current_history % Current history of commands
         temp_index % Temporal index to get current position of command history
+        dynamic_components % Struct with all the dynamic components
         welcome_message = 'Welcome to Combustion Toolbox %s --- A MATLAB-GUI based open-source tool for solving gaseous combustion problems.';
     end
     
     properties (Dependent)
         NS_products % Number of product species (computations)
         NS_display  % Number of display species (plots)
+        LS_reactants % List of reactants
     end
 
     methods (Access = public)
@@ -380,6 +382,10 @@ classdef combustion_toolbox < matlab.apps.AppBase
             app.current_history = current_history;
             app.temp_index = temp_index;
         end
+        
+        function public_ClearButtonPushed(app, event)
+            ClearButtonPushed(app, event)
+        end
 
     end
 
@@ -390,6 +396,32 @@ classdef combustion_toolbox < matlab.apps.AppBase
 
         function value = get.NS_display(app)
             value = length(app.listbox_LS_display.Items);
+        end
+
+        function value = get.LS_reactants(app)
+            try
+                value = app.UITable_R.Data(:,1)';
+            catch
+                value = [];
+            end
+            
+        end
+
+    end
+
+    methods (Access = private)
+        
+        function create_components(app)
+            % Create additional components
+            
+            % Create toolbar background
+            app.dynamic_components.toolbar_background = uiimage(app.UIFigure, 'Position', [485 746 180 20], 'ImageSource', 'toolbar_background.svg');
+            % Add icons
+            app.dynamic_components.toolbar_button1 = uiimage(app.UIFigure, 'Position', [520 746 20 20], 'ImageSource', 'icon_new.svg', 'Tooltip', 'New (Ctrl + N)', 'ImageClickedFcn', createCallbackFcn(app, @ClearButtonPushed, true));
+            app.dynamic_components.toolbar_button2 = uiimage(app.UIFigure, 'Position', [542 746 20 20], 'ImageSource', 'icon_save.svg', 'Tooltip', 'Save (Ctrl + S)', 'ImageClickedFcn', createCallbackFcn(app, @xlsMenuSelected, true));
+            app.dynamic_components.toolbar_button3 = uiimage(app.UIFigure, 'Position', [564 746 20 20], 'ImageSource', 'icon_play.svg', 'Tooltip', 'Calculate (F5)', 'ImageClickedFcn', createCallbackFcn(app, @CalculateButtonPushed, true));
+            app.dynamic_components.toolbar_button4 = uiimage(app.UIFigure, 'Position', [586 746 20 20], 'ImageSource', 'icon_help.svg', 'Tooltip', 'Help (F1)', 'ImageClickedFcn', @(~,~) system('start https://combustion-toolbox-website.readthedocs.io/_/downloads/en/latest/pdf/'));
+            app.dynamic_components.toolbar_button5 = uiimage(app.UIFigure, 'Position', [608 746 20 20], 'ImageSource', 'icon_github_CT.svg', 'Tooltip', 'GitHub', 'ImageClickedFcn', @(~,~) system('start https://github.com/AlbertoCuadra/combustion_toolbox'));
         end
 
     end
@@ -403,8 +435,11 @@ classdef combustion_toolbox < matlab.apps.AppBase
             app.UIFigure.Visible = 'off';
             % Splash
             splash_obj = gui_display_splash('app', app);
+            % Add additional components
+            % create_components(app); % Next release
             % Get screen position
-            position = splash_obj.ScreenPosition;
+            % position = splash_obj.ScreenPosition;
+            position = get_monitor_positions_MATLAB();
             % Centering app
             app.UIFigure.Position(1) = position(1) + (position(3) - app.UIFigure.Position(3))/2;
             app.UIFigure.Position(2) = position(2) + (position(4) - app.UIFigure.Position(4))/2;
@@ -691,7 +726,8 @@ classdef combustion_toolbox < matlab.apps.AppBase
 
         % Menu selected function: CheckforupdatesMenu
         function CheckforupdatesMenuSelected(app, event)
-            check_update(app.UIFigure);
+            [~, message] = check_update(app.UIFigure);
+            app.Console_text.Value = message;
         end
 
         % Button pushed function: PeriodicTable_R
@@ -835,7 +871,7 @@ classdef combustion_toolbox < matlab.apps.AppBase
 
         % Value changed function: RFMT0_REditField
         function RFMT0_REditFieldValueChanged(app, event)
-            app.app.TN.root_T0_r = app.RFMT0_REditField.Value;
+            app.TN.root_T0_r = app.RFMT0_REditField.Value;
         end
 
         % Value changed function: RFMT0EditField
@@ -849,21 +885,69 @@ classdef combustion_toolbox < matlab.apps.AppBase
             FLAG_ENTER = false;
             % Get key
             key = event.Key;
+            try
+                modifier = event.Modifier{:};
+            catch
+                modifier = '';
+            end
             % Read action
-            switch lower(key)
-                case 'uparrow'
-                    app.temp_index = app.temp_index - 1;
-                case 'downarrow'
-                    app.temp_index = app.temp_index + 1;
-                case 'rightarrow'
-                    [~, app.temp_index] = public_get_current_history(app);
-                case 'leftarrow'
-                    app.temp_index = 1;
-                case 'return'
-                    FLAG_ENTER = true;
-                    gui_ConsoleValueChanged(app, event);
-                otherwise
-                    return
+
+            % Modifier used (shift + key press)
+            if isequal(modifier,'shift')
+                switch lower(key)
+                    case 'f1'
+                        event.Source.Tag = 'R';
+                        PeriodicTable_RButtonPushed(app, event);
+                    case 'f2'
+                        event.Source.Tag = 'P';
+                        PeriodicTable_PButtonPushed(app, event);
+                end
+                
+                return
+
+            % Modifier used (control + key press)
+            elseif isequal(modifier, 'control')
+                switch lower(key)
+                    case 'n'
+                        ClearButtonPushed(app, event);
+                    case 'p'
+                        PreferencesMenuSelected(app, event);
+                    case 'q'
+                        app.Console_text.Value = 'Closing the Combustion Toolbox';
+                        UIFigureCloseRequest(app, event);
+                    case 's'
+                        xlsMenuSelected(app, event);
+                    case 'x'
+                        app.Console_text.Value = 'Taking snapshot...';
+                        SnapshotMenuSelected(app, event);
+                        app.Console_text.Value = 'Taking snapshot... OK!';
+                end
+
+                return
+            
+            % No modifier used (one key press)
+            else
+                switch lower(key)
+                    case 'uparrow'
+                        app.temp_index = app.temp_index - 1;
+                    case 'downarrow'
+                        app.temp_index = app.temp_index + 1;
+                    case 'rightarrow'
+                        [~, app.temp_index] = public_get_current_history(app);
+                    case 'leftarrow'
+                        app.temp_index = 1;
+                    case 'return'
+                        FLAG_ENTER = true;
+                        gui_ConsoleValueChanged(app, event);
+                    case 'f1'
+                        DocumentationMenuSelected(app, event);
+                    case 'f5'
+                        CalculateButtonPushed(app, event);
+                        return
+                    otherwise
+                        return
+                end
+            
             end
             % Print currhistory for that index
             if ~FLAG_ENTER
@@ -874,6 +958,16 @@ classdef combustion_toolbox < matlab.apps.AppBase
                     [~, app.temp_index] = public_get_current_history(app);
                 end
             end
+        end
+
+        % Menu selected function: NewMenu
+        function NewMenuSelected(app, event)
+            ClearButtonPushed(app, event);
+        end
+
+        % Close request function: UIFigure
+        function UIFigureCloseRequest(app, event)
+            delete(app)
         end
     end
 
@@ -894,6 +988,7 @@ classdef combustion_toolbox < matlab.apps.AppBase
             app.UIFigure.Name = 'Combustion Toolbox';
             app.UIFigure.Icon = fullfile(pathToMLAPP, 'assets', 'logo_CT_noversion.png');
             app.UIFigure.Resize = 'off';
+            app.UIFigure.CloseRequestFcn = createCallbackFcn(app, @UIFigureCloseRequest, true);
             app.UIFigure.KeyPressFcn = createCallbackFcn(app, @UIFigureKeyPress, true);
 
             % Create FileMenu
@@ -902,6 +997,7 @@ classdef combustion_toolbox < matlab.apps.AppBase
 
             % Create NewMenu
             app.NewMenu = uimenu(app.FileMenu);
+            app.NewMenu.MenuSelectedFcn = createCallbackFcn(app, @NewMenuSelected, true);
             app.NewMenu.Text = 'New';
 
             % Create OpenMenu
@@ -1504,7 +1600,7 @@ classdef combustion_toolbox < matlab.apps.AppBase
             app.TraceoptionEditField.ValueDisplayFormat = '%.1e';
             app.TraceoptionEditField.ValueChangedFcn = createCallbackFcn(app, @TraceoptionEditFieldValueChanged, true);
             app.TraceoptionEditField.Position = [149 110 72 22];
-            app.TraceoptionEditField.Value = 1e-15;
+            app.TraceoptionEditField.Value = 1e-14;
 
             % Create DisplaySpeciesEditFieldLabel
             app.DisplaySpeciesEditFieldLabel = uilabel(app.TolerancesPanel);
@@ -1675,7 +1771,7 @@ classdef combustion_toolbox < matlab.apps.AppBase
             % Create Tab_results
             app.Tab_results = uitabgroup(app.ResultsTab);
             app.Tab_results.AutoResizeChildren = 'off';
-            app.Tab_results.Position = [1 294 569 475];
+            app.Tab_results.Position = [1 294 568 476];
 
             % Create ParametersTab
             app.ParametersTab = uitab(app.Tab_results);
@@ -1689,7 +1785,7 @@ classdef combustion_toolbox < matlab.apps.AppBase
             app.Panel_parameters.AutoResizeChildren = 'off';
             app.Panel_parameters.BorderType = 'none';
             app.Panel_parameters.BackgroundColor = [0.9098 0.9098 0.8902];
-            app.Panel_parameters.Position = [92 5 475 441];
+            app.Panel_parameters.Position = [92 6 475 441];
 
             % Create edit_phi3
             app.edit_phi3 = uieditfield(app.Panel_parameters, 'text');
@@ -2481,20 +2577,20 @@ classdef combustion_toolbox < matlab.apps.AppBase
             app.UITable_R2 = uitable(app.MixturecompositionTab);
             app.UITable_R2.ColumnName = {'Species'; 'Nº moles'; 'Mole fraction'};
             app.UITable_R2.RowName = {};
-            app.UITable_R2.Position = [10 9 270 380];
+            app.UITable_R2.Position = [10 10 270 380];
 
             % Create UITable_P
             app.UITable_P = uitable(app.MixturecompositionTab);
             app.UITable_P.ColumnName = {'Species'; 'Nº moles'; 'Mole fraction'};
             app.UITable_P.RowName = {};
-            app.UITable_P.Position = [290 9 270 380];
+            app.UITable_P.Position = [290 10 270 380];
 
             % Create text_P3
             app.text_P3 = uilabel(app.MixturecompositionTab);
             app.text_P3.HorizontalAlignment = 'center';
             app.text_P3.VerticalAlignment = 'top';
             app.text_P3.FontWeight = 'bold';
-            app.text_P3.Position = [379 401 91 19];
+            app.text_P3.Position = [379 402 91 19];
             app.text_P3.Text = 'Products';
 
             % Create text_R3
@@ -2502,21 +2598,21 @@ classdef combustion_toolbox < matlab.apps.AppBase
             app.text_R3.HorizontalAlignment = 'center';
             app.text_R3.VerticalAlignment = 'top';
             app.text_R3.FontWeight = 'bold';
-            app.text_R3.Position = [86 401 91 19];
+            app.text_R3.Position = [86 402 91 19];
             app.text_R3.Text = 'Reactants';
 
             % Create edit_phi2
             app.edit_phi2 = uieditfield(app.MixturecompositionTab, 'text');
             app.edit_phi2.Editable = 'off';
             app.edit_phi2.HorizontalAlignment = 'center';
-            app.edit_phi2.Position = [252 401 64 19];
+            app.edit_phi2.Position = [252 402 64 19];
             app.edit_phi2.Value = '-';
 
             % Create text_phi_2
             app.text_phi_2 = uilabel(app.MixturecompositionTab);
             app.text_phi_2.HorizontalAlignment = 'center';
             app.text_phi_2.FontWeight = 'bold';
-            app.text_phi_2.Position = [265 418 40 25];
+            app.text_phi_2.Position = [265 419 40 25];
             app.text_phi_2.Text = 'phi';
 
             % Create CustomFiguresTab
@@ -2530,14 +2626,14 @@ classdef combustion_toolbox < matlab.apps.AppBase
             zlabel(app.UIAxes, 'Z')
             app.UIAxes.LabelFontSizeMultiplier = 1;
             app.UIAxes.LineWidth = 1.2;
+            app.UIAxes.Box = 'on';
             app.UIAxes.FontSize = 12;
             app.UIAxes.TitleFontSizeMultiplier = 1;
-            app.UIAxes.Box = 'on';
-            app.UIAxes.Position = [8 9 552 260];
+            app.UIAxes.Position = [8 10 552 260];
 
             % Create Tree_mixtures
             app.Tree_mixtures = uitree(app.CustomFiguresTab, 'checkbox');
-            app.Tree_mixtures.Position = [12 316 150 125];
+            app.Tree_mixtures.Position = [12 317 150 125];
 
             % Create Mixtures
             app.Mixtures = uitreenode(app.Tree_mixtures);
@@ -2545,7 +2641,7 @@ classdef combustion_toolbox < matlab.apps.AppBase
 
             % Create Tree_variable_x
             app.Tree_variable_x = uitree(app.CustomFiguresTab, 'checkbox');
-            app.Tree_variable_x.Position = [181 316 180 125];
+            app.Tree_variable_x.Position = [181 317 180 125];
 
             % Create Variable_x
             app.Variable_x = uitreenode(app.Tree_variable_x);
@@ -2553,7 +2649,7 @@ classdef combustion_toolbox < matlab.apps.AppBase
 
             % Create Tree_variable_y
             app.Tree_variable_y = uitree(app.CustomFiguresTab, 'checkbox');
-            app.Tree_variable_y.Position = [379 316 180 125];
+            app.Tree_variable_y.Position = [379 317 180 125];
 
             % Create Variable_y
             app.Variable_y = uitreenode(app.Tree_variable_y);
@@ -2562,31 +2658,31 @@ classdef combustion_toolbox < matlab.apps.AppBase
             % Create figure_plot
             app.figure_plot = uibutton(app.CustomFiguresTab, 'push');
             app.figure_plot.ButtonPushedFcn = createCallbackFcn(app, @figure_plotButtonPushed, true);
-            app.figure_plot.Position = [411 278 70 25];
+            app.figure_plot.Position = [411 279 70 25];
             app.figure_plot.Text = 'Plot';
 
             % Create figure_clear
             app.figure_clear = uibutton(app.CustomFiguresTab, 'push');
             app.figure_clear.ButtonPushedFcn = createCallbackFcn(app, @figure_clearButtonPushed, true);
-            app.figure_clear.Position = [488 278 70 25];
+            app.figure_clear.Position = [488 279 70 25];
             app.figure_clear.Text = 'Clear';
 
             % Create figure_size
             app.figure_size = uibutton(app.CustomFiguresTab, 'push');
             app.figure_size.ButtonPushedFcn = createCallbackFcn(app, @figure_sizeButtonPushed, true);
-            app.figure_size.Position = [333 278 70 25];
+            app.figure_size.Position = [333 279 70 25];
             app.figure_size.Text = 'Maximize';
 
             % Create figure_settings
             app.figure_settings = uibutton(app.CustomFiguresTab, 'push');
             app.figure_settings.ButtonPushedFcn = createCallbackFcn(app, @figure_settingsButtonPushed, true);
-            app.figure_settings.Position = [13 278 70 25];
+            app.figure_settings.Position = [13 279 70 25];
             app.figure_settings.Text = 'Settings';
 
             % Create DefaultsettingsCheckBox
             app.DefaultsettingsCheckBox = uicheckbox(app.CustomFiguresTab);
             app.DefaultsettingsCheckBox.Text = 'Default settings';
-            app.DefaultsettingsCheckBox.Position = [93 280 105 22];
+            app.DefaultsettingsCheckBox.Position = [93 281 105 22];
             app.DefaultsettingsCheckBox.Value = true;
 
             % Create Tree

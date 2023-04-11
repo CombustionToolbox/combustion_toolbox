@@ -10,7 +10,7 @@ function self = gui_create_temp_app(app, event, FLAG_COMPUTE_FROM_PHI)
     %     self (struct): Struct containing the properties of the mixture and the databases
 
     % Initialize self (fast: transfer DB)
-    self = App('fast', app.DB_master, app.DB);
+    self = App('fast', app.DB_master, app.DB, app.S.LS);
     % Get reactant species
     self = gui_get_reactants(app, event, self, FLAG_COMPUTE_FROM_PHI);
     % Compute properties of the mixture

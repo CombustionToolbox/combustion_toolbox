@@ -1,5 +1,5 @@
 % -------------------------------------------------------------------------
-% COMBUSTION TOOLBOX @v0.9.99g
+% COMBUSTION TOOLBOX @v1.0.0
 % A MATLAB-GUI based open-source tool for solving gaseous combustion problems
 %
 % Type of problems:
@@ -13,68 +13,40 @@
 %   * SHOCK_R ------------> Planar reflected shock wave
 %   * SHOCK_OBLIQUE ------> Oblique incident shock wave
 %   * SHOCK_OBLIQUE_R ----> Oblique incident and reflected states
-%   * SHOCK_POLAR --------> Shock polar curves
-%   * SHOCK_POLAR_R ------> Shock polar curves for incident and reflected states
+%   * SHOCK_POLAR --------> Shock polar diagrams
+%   * SHOCK_POLAR_R ------> Shock polar diagrams for incident and reflected states
 %   * SHOCK_IDEAL_GAS ----> Planar incident shock wave for a fixed adiabatic index
 %   * DET ----------------> Chapman-Jouguet Detonation
 %   * DET_R --------------> Reflected Chapman-Jouguet Detonation
 %   * DET_OBLIQUE --------> Oblique Detonation
-%   * DET_POLAR ----------> Detonation polar curves
+%   * DET_POLAR ----------> Detonation polar diagrams
 %   * DET_OVERDRIVEN -----> Over-driven Detonation    
 %   * DET_OVERDRIVEN_R ---> Over-driven reflected Detonation
 %   * DET_UNDERDRIVEN ----> Under-driven Detonation
 %   * DET_UNDERDRIVEN_R --> Under-driven reflected Detonation
 %   * ROCKET -------------> Propellant rocket performance   
 %
-% SEE THE EXAMPLES OR WIKI TO KNOW HOW TO START USING COMBUSTION TOOLBOX
+% SEE THE EXAMPLES OR WEBSITE TO KNOW HOW TO START USING THE COMBUSTION TOOLBOX
 %
 % WEBSITE: https://combustion-toolbox-website.readthedocs.io/ 
-%          or type "run website_CT"
+%          or type in the promt "website_CT".
 %
-% LIST OF TUTORIAL SCRIPTS:
-%   * Example_TP
-%   * Example_HP
-%   * Example_HP_COMPLETE_INCOMPLETE
-%   * Example_HP_PRESSURE
-%   * Example_HP_PROPELLANTS
-%   * Example_HP_MIXTEMP
-%   * Example_SP
-%   * Example_TV
-%   * Example_EV
-%   * Example_SV
-%   * Example_SV_FROZEN
-%   * Example_SHOCK_I
-%   * Example_SHOCK_I_IONIZATION
-%   * Example_SHOCK_R
-%   * Example_SHOCK_OBLIQUE_BETA
-%   * Example_SHOCK_OBLIQUE_THETA
-%   * Example_SHOCK_OBLIQUE_R
-%   * Example_SHOCK_POLAR
-%   * Example_SHOCK_POLAR_R
-%   * Example_DET
-%   * Example_DET_R
-%   * Example_DET_OVERDRIVEN
-%   * Example_DET_OVERDRIVEN_R
-%   * Example_DET_UNDERDRIVEN
-%   * Example_DET_UNDERDRIVEN_R
-%   * Example_DET_OVERDRIVEN_AND_UNDERDRIVEN
-%   * Example_DET_OBLIQUE_BETA
-%   * Example_DET_OBLIQUE_THETA
-%   * Example_DET_POLAR
-%   * Example_ROCKET_IAC
-%   * Example_ROCKET_FAC
-%   * Example_live_ZELDOVICH_MECHANISM
+% Please to send feedback or inquiries type in the promt "uifeedback".
 %
-% Please to send feedback or inquiries using the command "run uifeedback"
-% Thank you for testing Combustion Toolbox!
+% Thank you for using the Combustion Toolbox!
+%
+% Citing:
+%     Cuadra, A., Huete, C., & Vera, M. (2023). Combustion Toolbox: A
+%     MATLAB-GUI based open-source tool for solving gaseous combustion
+%     problems. (v1.0.0). Zenodo. https://doi.org/10.5281/zenodo.5554911.
 %
 % @author: Alberto Cuadra Lara
 %          PhD Candidate - Group Fluid Mechanics
 %          Universidad Carlos III de Madrid
 %                  
-% Last update Apr 07 2023
+% Last update Apr 11 2023
 % -------------------------------------------------------------------------
-help combustion_toolbox_contents.m
+help CONTENTS.m
 
 % Set path
 INSTALL();

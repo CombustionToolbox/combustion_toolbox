@@ -1,7 +1,7 @@
 function gui_ReactantsValueChanged(app, event)
     % Update values of the UITable items with:
-    % - a given predefined set of reactants
-    % - the new species added in the finder
+    %   * a given predefined set of reactants
+    %   * the new species added in the finder
     try
         % Initialize self (fast: transfer DB)
         self = App('fast', app.DB_master, app.DB);
@@ -14,6 +14,10 @@ function gui_ReactantsValueChanged(app, event)
         end
         % Set reactant species
         self = gui_set_reactants(app, event, self);
+        % Complete initialization process
+        species = [self.PD.S_Fuel, self.PD.S_Oxidizer];
+        self.S.LS = species;
+        self = complete_initialize(self, species);
         % Compute properties of the mixture
         self = gui_compute_propReactants(app, self);
         % Update UITable classes

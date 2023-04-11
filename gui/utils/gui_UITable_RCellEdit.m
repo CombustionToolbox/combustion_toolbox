@@ -3,7 +3,7 @@ function gui_UITable_RCellEdit(app, event)
     
     try
         % Initialize self (fast: transfer DB)
-        self = App('fast', app.DB_master, app.DB);
+        self = App('fast', app.DB_master, app.DB, app.S.LS);
         % Get reactant species
         self = gui_get_reactants(app, event, self);
         % Compute properties of the mixture

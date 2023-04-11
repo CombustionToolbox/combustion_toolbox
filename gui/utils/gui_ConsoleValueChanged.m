@@ -10,7 +10,7 @@ function gui_ConsoleValueChanged(app, event)
                 run('uiabout.mlapp');
                 output = 'Running uiabout...';
             case 'clear'
-                ClearButtonPushed(app, event);
+                public_ClearButtonPushed(app, event);
                 output = ' ';
             case {'docs', 'documentation'}
                 docs_CT;
@@ -42,6 +42,7 @@ function gui_ConsoleValueChanged(app, event)
                 pause(0.1);
                 output = evalc(app.Console.Value{1,1});
         end
+        
     catch ME
         type = 'Error';
         output = sprintf('%s in function %s() at line %d.\nIdentifier: %s\nMessage: %s', ...

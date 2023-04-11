@@ -38,7 +38,7 @@ function ax = set_fixed_figure(fixed_number, config)
     % Generate a figure with a defined object identifier (fixed_number)
     fig = figure(fixed_number);
     ax = gca;
-    set(fig, 'position', config.position);
+    set(fig, 'units', 'normalized', 'innerposition', config.innerposition, 'outerposition', config.outerposition);
     set(ax, 'LineWidth', config.linewidth, 'FontSize', config.fontsize - 2, 'BoxStyle', 'full');
     grid(ax, config.grid); box(ax, config.box); hold(ax, config.hold); ax.Layer = 'Top';
     set(ax, 'TickLabelInterpreter', 'latex');
@@ -65,15 +65,15 @@ function ax = plot_shock_polar_pressure(mix1, mix2, config, mix2_case, mix0)
     end
 
     plot(ax, xaxis + [- flip(mix2.polar.theta), mix2.polar.theta], [flip(mix2.polar.p), mix2.polar.p] / p1, 'k', 'LineWidth', config.linewidth);
-    %     plot(ax, mix2.theta_max, mix2.polar.p(mix2.ind_max), 'kd', 'LineWidth', config.linewidth, 'MarkerFaceColor', 'auto');
-    %     plot(ax, mix2.theta_max, mix2.polar.p(mix2.ind_max), 'kd', 'LineWidth', config.linewidth, 'MarkerFaceColor', 'auto');
-    %     plot(ax, mix2.polar.theta(mix2.ind_sonic), mix2.polar.p(mix2.ind_sonic), 'ks', 'LineWidth', config.linewidth, 'MarkerFaceColor', 'auto');
+    % plot(ax, mix2.theta_max, mix2.polar.p(mix2.ind_max), 'kd', 'LineWidth', config.linewidth, 'MarkerFaceColor', 'auto');
+    % plot(ax, -mix2.theta_max, mix2.polar.p(mix2.ind_max), 'kd', 'LineWidth', config.linewidth, 'MarkerFaceColor', 'auto');
+    % plot(ax, mix2.polar.theta(mix2.ind_sonic), mix2.polar.p(mix2.ind_sonic), 'ks', 'LineWidth', config.linewidth, 'MarkerFaceColor', 'auto');
     text(ax, xaxis, max(mix2.polar.p), strcat(Mach_label, sprintf('%.2g', M1), '$'), 'VerticalAlignment', 'bottom', 'HorizontalAlignment', 'center', 'FontSize', config.fontsize - 4, 'Interpreter', 'latex');
-    %     text(ax, mix2.theta_max, str2.polar.p2(str2.ind_max), 'detachment point \rightarrow m', 'HorizontalAlignment', 'right', 'FontSize', config.fontsize-6)
-    %     text(ax, mix2.theta_sonic, str2.polar.p2(str2.ind_sonic), 'sonic point \rightarrow s', 'HorizontalAlignment', 'right', 'FontSize', config.fontsize-6)
+    % text(ax, mix2.theta_max, str2.polar.p2(str2.ind_max), 'detachment point \rightarrow m', 'HorizontalAlignment', 'right', 'FontSize', config.fontsize-6)
+    % text(ax, mix2.theta_sonic, str2.polar.p2(str2.ind_sonic), 'sonic point \rightarrow s', 'HorizontalAlignment', 'right', 'FontSize', config.fontsize-6)
     xlabel(ax, 'Deflection angle [deg]', 'FontSize', config.fontsize, 'Interpreter', 'latex');
     ylabel(ax, '$p/p_1$', 'FontSize', config.fontsize, 'Interpreter', 'latex');
-    %     ylim(ax, [1, max(str2.polar.p2)]);
+    % ylim(ax, [1, max(str2.polar.p2)]);
 end
 
 function ax = plot_shock_polar_wave(mix1, mix2, config)
@@ -82,10 +82,10 @@ function ax = plot_shock_polar_wave(mix1, mix2, config)
 
     M1 = velocity_relative(mix1) / soundspeed(mix1);
     plot(ax, mix2.polar.theta, mix2.polar.beta, 'k', 'LineWidth', config.linewidth);
-    %     plot(ax, mix2.theta_max, mix2.polar.beta(str2.ind_max), 'kd', 'LineWidth', config.linewidth, 'MarkerFaceColor', 'auto');
-    %     plot(ax, str2.polar.theta(str2.ind_sonic), mix2.polar.beta(str2.ind_sonic), 'ks', 'LineWidth', config.linewidth, 'MarkerFaceColor', 'auto');
-    %     text(ax, mix2.theta_max, mix2.polar.beta(str2.ind_max),
-    %     strcat('$\mathcal{M}_1 = ', sprintf('%.2g', M1), '$'), 'VerticalAlignment', 'middle', 'HorizontalAlignment', 'left', 'FontSize', config.fontsize-6, 'Interpreter', 'latex');
+    % plot(ax, mix2.theta_max, mix2.polar.beta(str2.ind_max), 'kd', 'LineWidth', config.linewidth, 'MarkerFaceColor', 'auto');
+    % plot(ax, str2.polar.theta(str2.ind_sonic), mix2.polar.beta(str2.ind_sonic), 'ks', 'LineWidth', config.linewidth, 'MarkerFaceColor', 'auto');
+    % text(ax, mix2.theta_max, mix2.polar.beta(str2.ind_max),
+    % strcat('$\mathcal{M}_1 = ', sprintf('%.2g', M1), '$'), 'VerticalAlignment', 'middle', 'HorizontalAlignment', 'left', 'FontSize', config.fontsize-6, 'Interpreter', 'latex');
     xlabel(ax, 'Deflection angle [deg]', 'FontSize', config.fontsize, 'Interpreter', 'latex');
     ylabel(ax, 'Wave angle [deg]', 'FontSize', config.fontsize, 'Interpreter', 'latex');
     %     xlim(ax, [0, mix2.theta_max]);

@@ -1,5 +1,12 @@
 function [release, date] = get_combustion_toolbox_version()
     % Get Combustion Toolbox version
-    release = 'v0.9.99g';
-    date = '14 Mar 2023';
+    %
+    % Returns:
+    %     Tuple containing
+    %
+    %     * release (char): Release version
+    %     * date (char): Release date
+
+    release = 'v1.0.0';
+    date = '11 Apr 2023';
 end

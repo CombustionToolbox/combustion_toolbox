@@ -73,7 +73,7 @@ function self = Miscellaneous()
     % * Flags
     self.FLAG_INITIALIZE = false;                    % Flag indicating self variable is not fully initialized
     self.FLAG_FIRST = true;                          % Flag indicating first calculation
-    self.FLAG_FOI = true;                            % Flag indicating that the reactant mixture has been checked
+    self.FLAG_FOI = true;                            % Flag indicating that the reactant mixture has to be checked
     self.FLAG_ADDED_SPECIES = false;                 % Flag indicating that there are added reactants species, because were not considered as products -> to recompute stochiometric matrix
     self.FLAG_N_Fuel = true;                         % Flag indicating that the number of moles of the fuel species are defined
     self.FLAG_N_Oxidizer = true;                     % Flag indicating that the number of moles of the oxidant species are defined

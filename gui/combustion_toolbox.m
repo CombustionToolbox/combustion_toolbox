@@ -37,6 +37,9 @@ classdef combustion_toolbox < matlab.apps.AppBase
         Calculate                       matlab.ui.control.Button
         Clear                           matlab.ui.control.Button
         AdditionalconstraintsPanel      matlab.ui.container.Panel
+        PP5                             matlab.ui.control.EditField
+        text_RP5                        matlab.ui.control.Label
+        PR5                             matlab.ui.control.EditField
         text_P2                         matlab.ui.control.Label
         PP3                             matlab.ui.control.EditField
         PP4                             matlab.ui.control.EditField
@@ -969,6 +972,46 @@ classdef combustion_toolbox < matlab.apps.AppBase
         function UIFigureCloseRequest(app, event)
             delete(app)
         end
+
+        % Value changing function: PR4
+        function PR4ValueChanging(app, event)
+            % Only for oblique/polar detonations
+            if ~any(contains(app.ProblemType.Value, 'DET_OBLIQUE', 'IgnoreCase', true) | contains(app.ProblemType.Value, 'DET_POLAR', 'IgnoreCase', true))
+                return
+            end
+
+            app.PP4.Value = '';
+        end
+
+        % Value changing function: PP4
+        function PP4ValueChanging(app, event)
+            % Only for oblique/polar detonations
+            if ~any(contains(app.ProblemType.Value, 'DET_OBLIQUE', 'IgnoreCase', true) | contains(app.ProblemType.Value, 'DET_POLAR', 'IgnoreCase', true))
+                return
+            end
+
+            app.PR4.Value = '';
+        end
+
+        % Value changing function: PR5
+        function PR5ValueChanging(app, event)
+            % Only for oblique/polar shocks
+            if ~any(contains(app.ProblemType.Value, 'SHOCK_OBLIQUE', 'IgnoreCase', true) | contains(app.ProblemType.Value, 'SHOCK_POLAR', 'IgnoreCase', true))
+                return
+            end
+
+            app.PP5.Value = '';
+        end
+
+        % Value changing function: PP5
+        function PP5ValueChanging(app, event)
+            % Only for oblique/polar shocks
+            if ~any(contains(app.ProblemType.Value, 'SHOCK_OBLIQUE', 'IgnoreCase', true) | contains(app.ProblemType.Value, 'SHOCK_POLAR', 'IgnoreCase', true))
+                return
+            end
+
+            app.PR5.Value = '';
+        end
     end
 
     % Component initialization
@@ -1237,7 +1280,7 @@ classdef combustion_toolbox < matlab.apps.AppBase
             app.DefinestateofreactantsandproductsPanel.BackgroundColor = [0.9098 0.9098 0.8902];
             app.DefinestateofreactantsandproductsPanel.FontName = 'Arial';
             app.DefinestateofreactantsandproductsPanel.FontWeight = 'bold';
-            app.DefinestateofreactantsandproductsPanel.Position = [9 131 551 115];
+            app.DefinestateofreactantsandproductsPanel.Position = [9 134 551 115];
 
             % Create PP2
             app.PP2 = uieditfield(app.DefinestateofreactantsandproductsPanel, 'text');
@@ -1265,7 +1308,6 @@ classdef combustion_toolbox < matlab.apps.AppBase
             % Create text_RP1
             app.text_RP1 = uilabel(app.DefinestateofreactantsandproductsPanel);
             app.text_RP1.HorizontalAlignment = 'center';
-            app.text_RP1.VerticalAlignment = 'top';
             app.text_RP1.Position = [161 39 176 19];
             app.text_RP1.Text = 'Temperature [K]';
 
@@ -1296,14 +1338,12 @@ classdef combustion_toolbox < matlab.apps.AppBase
             % Create text_RP2
             app.text_RP2 = uilabel(app.DefinestateofreactantsandproductsPanel);
             app.text_RP2.HorizontalAlignment = 'center';
-            app.text_RP2.VerticalAlignment = 'top';
             app.text_RP2.Position = [161 13 176 19];
             app.text_RP2.Text = 'Pressure [bar]';
 
             % Create text_RP1_2
             app.text_RP1_2 = uilabel(app.DefinestateofreactantsandproductsPanel);
             app.text_RP1_2.HorizontalAlignment = 'center';
-            app.text_RP1_2.VerticalAlignment = 'top';
             app.text_RP1_2.Visible = 'off';
             app.text_RP1_2.Position = [447 39 102 19];
             app.text_RP1_2.Text = 'Area ratio A_c/A_t';
@@ -1311,9 +1351,8 @@ classdef combustion_toolbox < matlab.apps.AppBase
             % Create text_RP2_2
             app.text_RP2_2 = uilabel(app.DefinestateofreactantsandproductsPanel);
             app.text_RP2_2.HorizontalAlignment = 'center';
-            app.text_RP2_2.VerticalAlignment = 'top';
             app.text_RP2_2.Visible = 'off';
-            app.text_RP2_2.Position = [448 10 102 22];
+            app.text_RP2_2.Position = [447 13 102 19];
             app.text_RP2_2.Text = 'Mass flux [kg/s]';
 
             % Create AdditionalconstraintsPanel
@@ -1325,14 +1364,14 @@ classdef combustion_toolbox < matlab.apps.AppBase
             app.AdditionalconstraintsPanel.BackgroundColor = [0.9098 0.9098 0.8902];
             app.AdditionalconstraintsPanel.FontName = 'Arial';
             app.AdditionalconstraintsPanel.FontWeight = 'bold';
-            app.AdditionalconstraintsPanel.Position = [9 6 551 115];
+            app.AdditionalconstraintsPanel.Position = [9 1 551 133];
 
             % Create text_R2
             app.text_R2 = uilabel(app.AdditionalconstraintsPanel);
             app.text_R2.HorizontalAlignment = 'center';
             app.text_R2.VerticalAlignment = 'top';
             app.text_R2.FontWeight = 'bold';
-            app.text_R2.Position = [60 66 91 19];
+            app.text_R2.Position = [60 84 91 19];
             app.text_R2.Text = 'Reactants';
 
             % Create text_RP
@@ -1340,7 +1379,7 @@ classdef combustion_toolbox < matlab.apps.AppBase
             app.text_RP.HorizontalAlignment = 'center';
             app.text_RP.VerticalAlignment = 'top';
             app.text_RP.FontWeight = 'bold';
-            app.text_RP.Position = [154 66 190 19];
+            app.text_RP.Position = [154 84 190 19];
             app.text_RP.Text = 'Products';
 
             % Create PR3
@@ -1349,36 +1388,36 @@ classdef combustion_toolbox < matlab.apps.AppBase
             app.PR3.ValueChangingFcn = createCallbackFcn(app, @PR3ValueChanging, true);
             app.PR3.HorizontalAlignment = 'center';
             app.PR3.FontWeight = 'bold';
-            app.PR3.Position = [60 41 91 19];
+            app.PR3.Position = [60 59 91 19];
             app.PR3.Value = '500';
 
             % Create text_RP3
             app.text_RP3 = uilabel(app.AdditionalconstraintsPanel);
             app.text_RP3.HorizontalAlignment = 'center';
-            app.text_RP3.VerticalAlignment = 'top';
-            app.text_RP3.Position = [154 38 190 22];
+            app.text_RP3.Position = [154 59 190 19];
             app.text_RP3.Text = 'Constant Enthalpy: hP = hR';
 
             % Create PR4
             app.PR4 = uieditfield(app.AdditionalconstraintsPanel, 'text');
             app.PR4.ValueChangedFcn = createCallbackFcn(app, @PR4ValueChanged, true);
+            app.PR4.ValueChangingFcn = createCallbackFcn(app, @PR4ValueChanging, true);
             app.PR4.HorizontalAlignment = 'center';
             app.PR4.FontWeight = 'bold';
-            app.PR4.Position = [60 15 91 19];
+            app.PR4.Position = [60 33 91 19];
             app.PR4.Value = '1';
 
             % Create text_RP4
             app.text_RP4 = uilabel(app.AdditionalconstraintsPanel);
             app.text_RP4.HorizontalAlignment = 'center';
-            app.text_RP4.VerticalAlignment = 'top';
-            app.text_RP4.Position = [154 15 190 19];
+            app.text_RP4.Position = [154 33 190 19];
             app.text_RP4.Text = 'Pressure [bar]';
 
             % Create PP4
             app.PP4 = uieditfield(app.AdditionalconstraintsPanel, 'text');
+            app.PP4.ValueChangingFcn = createCallbackFcn(app, @PP4ValueChanging, true);
             app.PP4.HorizontalAlignment = 'center';
             app.PP4.FontWeight = 'bold';
-            app.PP4.Position = [347 15 91 19];
+            app.PP4.Position = [347 33 91 19];
             app.PP4.Value = '1';
 
             % Create PP3
@@ -1386,7 +1425,7 @@ classdef combustion_toolbox < matlab.apps.AppBase
             app.PP3.ValueChangingFcn = createCallbackFcn(app, @PP3ValueChanging, true);
             app.PP3.HorizontalAlignment = 'center';
             app.PP3.FontWeight = 'bold';
-            app.PP3.Position = [347 41 91 19];
+            app.PP3.Position = [347 59 91 19];
             app.PP3.Value = '2500';
 
             % Create text_P2
@@ -1394,19 +1433,41 @@ classdef combustion_toolbox < matlab.apps.AppBase
             app.text_P2.HorizontalAlignment = 'center';
             app.text_P2.VerticalAlignment = 'top';
             app.text_P2.FontWeight = 'bold';
-            app.text_P2.Position = [347 66 91 19];
+            app.text_P2.Position = [347 84 91 19];
             app.text_P2.Text = 'Products';
+
+            % Create PR5
+            app.PR5 = uieditfield(app.AdditionalconstraintsPanel, 'text');
+            app.PR5.ValueChangingFcn = createCallbackFcn(app, @PR5ValueChanging, true);
+            app.PR5.HorizontalAlignment = 'center';
+            app.PR5.FontWeight = 'bold';
+            app.PR5.Position = [60 7 91 19];
+            app.PR5.Value = '1';
+
+            % Create text_RP5
+            app.text_RP5 = uilabel(app.AdditionalconstraintsPanel);
+            app.text_RP5.HorizontalAlignment = 'center';
+            app.text_RP5.Position = [172 7 155 19];
+            app.text_RP5.Text = 'Wave/Deflection angle [deg]';
+
+            % Create PP5
+            app.PP5 = uieditfield(app.AdditionalconstraintsPanel, 'text');
+            app.PP5.ValueChangingFcn = createCallbackFcn(app, @PP5ValueChanging, true);
+            app.PP5.HorizontalAlignment = 'center';
+            app.PP5.FontWeight = 'bold';
+            app.PP5.Position = [347 7 91 19];
+            app.PP5.Value = '1';
 
             % Create Clear
             app.Clear = uibutton(app.InputsTab, 'push');
             app.Clear.ButtonPushedFcn = createCallbackFcn(app, @ClearButtonPushed, true);
-            app.Clear.Position = [482 14 70 25];
+            app.Clear.Position = [484 14 70 25];
             app.Clear.Text = 'Clear';
 
             % Create Calculate
             app.Calculate = uibutton(app.InputsTab, 'push');
             app.Calculate.ButtonPushedFcn = createCallbackFcn(app, @CalculateButtonPushed, true);
-            app.Calculate.Position = [482 46 70 25];
+            app.Calculate.Position = [484 46 70 25];
             app.Calculate.Text = 'Calculate';
 
             % Create SelectProblemTypePanel
@@ -1421,8 +1482,8 @@ classdef combustion_toolbox < matlab.apps.AppBase
 
             % Create ProblemType
             app.ProblemType = uidropdown(app.SelectProblemTypePanel);
-            app.ProblemType.Items = {'TP:  Equilibrium composition at defined T and P', 'HP: Adiabatic T and composition at constant P', 'SP:  Isentropic compression/expansion to a specified P', 'TV: Equilibrium composition at defined T and constant V', 'EV: Adiabatic T and composition at constant V', 'SV: Isentropic compresion/expansion to a specified V', 'SHOCK_I: Planar incident shock wave', 'SHOCK_R: Planar reflected shock wave', 'SHOCK_OBLIQUE: Oblique incident shock wave', 'SHOCK_OBLIQUE_R: Oblique reflected shock wave', 'SHOCK_POLAR: Polar shocks', 'SHOCK_POLAR_R: Polar shocks (regular reflections)', 'DET: Chapman-Jouguet Detonation', 'DET_OVERDRIVEN: Overdriven detonation', 'DET_UNDERDRIVEN: Underdriven detonation', 'DET_R: Reflected Chapman-Jouguet detonation', 'DET_OVERDRIVEN_R: Overdriven reflected detonation', 'DET_UNDERDRIVEN_R: Underdriven reflected detonation', 'DET_OBLIQUE: Oblique incident detonation', 'DET_OBLIQUE_R: Oblique reflected detonation', 'DET_POLAR: Polar detonations', 'ROCKET: Rocket propellant  performance'};
-            app.ProblemType.ItemsData = {'TP', 'HP', 'SP', 'TV', 'EV', 'SV', 'SHOCK_I', 'SHOCK_R', 'SHOCK_OBLIQUE', 'SHOCK_OBLIQUE_R', 'SHOCK_POLAR', 'SHOCK_POLAR_R', 'DET', 'DET_OVERDRIVEN', 'DET_UNDERDRIVEN', 'DET_R', 'DET_OVERDRIVEN_R', 'DET_UNDERDRIVEN_R', 'DET_OBLIQUE', 'DET_OBLIQUE_R', 'DET_POLAR', 'ROCKET'};
+            app.ProblemType.Items = {'TP:  Equilibrium composition at defined T and P', 'HP: Adiabatic T and composition at constant P', 'SP:  Isentropic compression/expansion to a specified P', 'TV: Equilibrium composition at defined T and constant V', 'EV: Adiabatic T and composition at constant V', 'SV: Isentropic compresion/expansion to a specified V', 'SHOCK_I: Planar incident shock wave', 'SHOCK_R: Planar reflected shock wave', 'SHOCK_OBLIQUE: Oblique incident shock wave', 'SHOCK_OBLIQUE_R: Oblique reflected shock wave', 'SHOCK_POLAR: Polar shocks', 'SHOCK_POLAR_R: Polar shocks (regular reflections)', 'DET: Chapman-Jouguet Detonation', 'DET_OVERDRIVEN: Overdriven detonation', 'DET_UNDERDRIVEN: Underdriven detonation', 'DET_R: Reflected Chapman-Jouguet detonation', 'DET_OVERDRIVEN_R: Overdriven reflected detonation', 'DET_UNDERDRIVEN_R: Underdriven reflected detonation', 'DET_OBLIQUE: Oblique incident detonation', 'DET_POLAR: Polar detonations', 'ROCKET: Rocket propellant  performance'};
+            app.ProblemType.ItemsData = {'TP', 'HP', 'SP', 'TV', 'EV', 'SV', 'SHOCK_I', 'SHOCK_R', 'SHOCK_OBLIQUE', 'SHOCK_OBLIQUE_R', 'SHOCK_POLAR', 'SHOCK_POLAR_R', 'DET', 'DET_OVERDRIVEN', 'DET_UNDERDRIVEN', 'DET_R', 'DET_OVERDRIVEN_R', 'DET_UNDERDRIVEN_R', 'DET_OBLIQUE', 'DET_POLAR', 'ROCKET'};
             app.ProblemType.ValueChangedFcn = createCallbackFcn(app, @ProblemTypeValueChanged, true);
             app.ProblemType.Position = [10 18 403 25];
             app.ProblemType.Value = 'TP';
@@ -2066,7 +2127,7 @@ classdef combustion_toolbox < matlab.apps.AppBase
             app.text_Aratio = uilabel(app.Panel_parameters);
             app.text_Aratio.HorizontalAlignment = 'center';
             app.text_Aratio.Visible = 'off';
-            app.text_Aratio.Position = [129 74 136 19];
+            app.text_Aratio.Position = [129 75 136 19];
             app.text_Aratio.Text = 'Area ratio A/A_t [-]';
 
             % Create text_Aratio_2
@@ -2075,27 +2136,27 @@ classdef combustion_toolbox < matlab.apps.AppBase
             app.text_Aratio_2.Editable = 'off';
             app.text_Aratio_2.HorizontalAlignment = 'center';
             app.text_Aratio_2.Visible = 'off';
-            app.text_Aratio_2.Position = [294 74 91 19];
+            app.text_Aratio_2.Position = [293 75 91 19];
 
             % Create text_Cstar
             app.text_Cstar = uilabel(app.Panel_parameters);
             app.text_Cstar.HorizontalAlignment = 'center';
             app.text_Cstar.Visible = 'off';
-            app.text_Cstar.Position = [137 49 120 19];
+            app.text_Cstar.Position = [137 51 120 19];
             app.text_Cstar.Text = 'Charac. velocity [m/s]';
 
             % Create text_Ivac
             app.text_Ivac = uilabel(app.Panel_parameters);
             app.text_Ivac.HorizontalAlignment = 'center';
             app.text_Ivac.Visible = 'off';
-            app.text_Ivac.Position = [132 25 130 19];
+            app.text_Ivac.Position = [132 26 130 19];
             app.text_Ivac.Text = 'Specific impulse vac [s]';
 
             % Create text_Isp
             app.text_Isp = uilabel(app.Panel_parameters);
             app.text_Isp.HorizontalAlignment = 'center';
             app.text_Isp.Visible = 'off';
-            app.text_Isp.Position = [143 0 108 19];
+            app.text_Isp.Position = [143 1 108 19];
             app.text_Isp.Text = 'Specific impulse [s]';
 
             % Create Panel_extra_3
@@ -2504,7 +2565,7 @@ classdef combustion_toolbox < matlab.apps.AppBase
             app.text_Cstar_2.Editable = 'off';
             app.text_Cstar_2.HorizontalAlignment = 'center';
             app.text_Cstar_2.Visible = 'off';
-            app.text_Cstar_2.Position = [293 51 91 19];
+            app.text_Cstar_2.Position = [293 50 91 19];
 
             % Create text_Ivac_2
             app.text_Ivac_2 = uieditfield(app.Panel_parameters, 'numeric');
@@ -2526,21 +2587,21 @@ classdef combustion_toolbox < matlab.apps.AppBase
             app.text_beta_min = uilabel(app.Panel_parameters);
             app.text_beta_min.HorizontalAlignment = 'center';
             app.text_beta_min.Visible = 'off';
-            app.text_beta_min.Position = [129 71 136 22];
+            app.text_beta_min.Position = [129 75 136 19];
             app.text_beta_min.Text = 'Min wave angle [deg]';
 
             % Create text_beta
             app.text_beta = uilabel(app.Panel_parameters);
             app.text_beta.HorizontalAlignment = 'center';
             app.text_beta.Visible = 'off';
-            app.text_beta.Position = [137 49 120 19];
+            app.text_beta.Position = [137 51 120 19];
             app.text_beta.Text = 'Wave angle [deg]';
 
             % Create text_theta
             app.text_theta = uilabel(app.Panel_parameters);
             app.text_theta.HorizontalAlignment = 'center';
             app.text_theta.Visible = 'off';
-            app.text_theta.Position = [132 25 130 19];
+            app.text_theta.Position = [132 26 130 19];
             app.text_theta.Text = 'Deflection angle [deg]';
 
             % Create text_beta_min_2
@@ -2549,7 +2610,7 @@ classdef combustion_toolbox < matlab.apps.AppBase
             app.text_beta_min_2.Editable = 'off';
             app.text_beta_min_2.HorizontalAlignment = 'center';
             app.text_beta_min_2.Visible = 'off';
-            app.text_beta_min_2.Position = [294 74 91 19];
+            app.text_beta_min_2.Position = [293 75 91 19];
 
             % Create text_beta_2
             app.text_beta_2 = uieditfield(app.Panel_parameters, 'numeric');
@@ -2557,7 +2618,7 @@ classdef combustion_toolbox < matlab.apps.AppBase
             app.text_beta_2.Editable = 'off';
             app.text_beta_2.HorizontalAlignment = 'center';
             app.text_beta_2.Visible = 'off';
-            app.text_beta_2.Position = [293 51 91 19];
+            app.text_beta_2.Position = [293 50 91 19];
 
             % Create text_theta_2
             app.text_theta_2 = uieditfield(app.Panel_parameters, 'numeric');

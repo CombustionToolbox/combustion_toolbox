@@ -25,6 +25,7 @@ function self = run_CT(varargin)
     FLAG_FROZEN = false;
     FLAG_FAST = true;
     FLAG_RESULTS = false;
+    vP_vR = [];
     Aratio_c = [];
     Aratio = [];
     % GET INPUTS
@@ -49,6 +50,8 @@ function self = run_CT(varargin)
                 Pressure_mix2 = varargin{i + 1};
             case {'equivalenceratio', 'phi'}
                 EquivalenceRatio = varargin{i + 1};
+            case {'vp_vr'}
+                vP_vR = varargin{i + 1};
             case {'velocity', 'u1'}
                 Velocity = varargin{i + 1};
             case {'fuel', 's_fuel'}
@@ -124,6 +127,10 @@ function self = run_CT(varargin)
 
     if FLAG_PHI
         self = set_prop(self, 'phi', EquivalenceRatio);
+    end
+    
+    if ~isempty(vP_vR)
+        self = set_prop(self, 'vP_vR', vP_vR);
     end
 
     if ~isempty(Aratio_c)

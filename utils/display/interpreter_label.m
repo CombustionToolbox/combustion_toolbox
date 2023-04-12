@@ -159,6 +159,10 @@ function [property_name, property_latex, property_unit] = property_names(propert
             property_name = 'Post-shock velocity';
             property_latex = 'u_{\rm postshock}';
             property_unit = '[m/s]';
+        case 'm'
+            property_name = 'Mach number';
+            property_latex = '\mathcal{M}';
+            property_unit = '';
         case 'm1'
             property_name = 'Pre-shock Mach number';
             property_latex = '\mathcal{M}_1';

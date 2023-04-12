@@ -36,7 +36,8 @@ function gui_ProblemTypeValueChanged(app)
             % Update input items
             app.PP1.Visible = 'off'; app.PP2.Visible = 'on';
             app.PR3.Visible = 'off'; app.PR4.Visible = 'off';
-            app.PP3.Visible = 'off'; app.PP4.Visible = 'off'; 
+            app.PP3.Visible = 'off'; app.PP4.Visible = 'off';
+            app.PR5.Visible = 'off'; app.PP5.Visible = 'off';
             app.text_P1.Visible = 'on';
             % Visible flags
             app.FLAG_IAC.Visible = 'off';
@@ -44,9 +45,11 @@ function gui_ProblemTypeValueChanged(app)
             app.AdditionalconstraintsPanel.Visible = 'on';
             app.AdditionalconstraintsPanel.Title = 'Additional constraints';
             app.text_RP3.Text = 'Constant Enthalpy: hP = hR';
-            app.text_RP.Visible = 'on'; app.text_R2.Visible = 'off'; app.text_P2.Visible = 'off';
+            app.text_RP.Visible = 'on'; app.text_RP.Text = 'Products';
+            app.text_R2.Visible = 'off'; app.text_P2.Visible = 'off';
             app.text_R2.Text = 'Reactants'; app.text_P2.Text = 'Products';
             app.text_RP4.Visible = 'off';
+            app.text_RP5.Visible = 'off';
             % Set default input values
             app.PR1.Value = '300';
             app.PR2.Value = '1';
@@ -66,16 +69,19 @@ function gui_ProblemTypeValueChanged(app)
             app.PP1.Visible = 'off'; app.PP2.Visible = 'on';
             app.PR3.Visible = 'off'; app.PR4.Visible = 'off';
             app.PP3.Visible = 'off'; app.PP4.Visible = 'off';
+            app.PR5.Visible = 'off'; app.PP5.Visible = 'off';
             app.text_P1.Visible = 'on';
             % Visible flags
             app.FLAG_IAC.Visible = 'off';
             % Update Additional constraints panel
             app.AdditionalconstraintsPanel.Visible = 'on';
             app.AdditionalconstraintsPanel.Title = 'Additional constraints';
-            app.text_RP.Visible = 'on'; app.text_R2.Visible = 'off'; app.text_P2.Visible = 'off';
+            app.text_RP.Visible = 'on'; app.text_RP.Text = 'Products';
+            app.text_R2.Visible = 'off'; app.text_P2.Visible = 'off';
             app.text_R2.Text = 'Reactants'; app.text_P2.Text = 'Products';
             app.text_RP3.Text = 'Constant Entropy: SP = SR';
-            app.text_RP4.Visible = 'off'; 
+            app.text_RP4.Visible = 'off';
+            app.text_RP5.Visible = 'off';
             % Set default input values
             app.PR1.Value = '300';
             app.PR2.Value = '1';
@@ -94,17 +100,20 @@ function gui_ProblemTypeValueChanged(app)
             % Update input items
             app.PP1.Visible = 'on'; app.PP2.Visible = 'off'; 
             app.PR3.Visible = 'off'; app.PR4.Visible = 'off';
-            app.PP3.Visible = 'off'; app.PP4.Visible = 'off'; 
+            app.PP3.Visible = 'off'; app.PP4.Visible = 'off';
+            app.PR5.Visible = 'off'; app.PP5.Visible = 'off';
             app.text_P1.Visible = 'on';
             % Visible flags
             app.FLAG_IAC.Visible = 'off';
             % Update Additional constraints panel
             app.AdditionalconstraintsPanel.Visible = 'on';
             app.AdditionalconstraintsPanel.Title = 'Additional constraints';
-            app.text_RP.Visible = 'on'; app.text_R2.Visible = 'off'; app.text_P2.Visible = 'off';
+            app.text_RP.Visible = 'on'; app.text_RP.Text = 'Products';
+            app.text_R2.Visible = 'off'; app.text_P2.Visible = 'off';
             app.text_R2.Text = 'Reactants'; app.text_P2.Text = 'Products';
             app.text_RP3.Text = 'Constant Volume: vP = vR';
-            app.text_RP4.Visible = 'off'; 
+            app.text_RP4.Visible = 'off';
+            app.text_RP5.Visible = 'off';
             % Set default input values
             app.PR1.Value = '300';
             app.PR2.Value = '1';
@@ -124,17 +133,20 @@ function gui_ProblemTypeValueChanged(app)
             % Update input items
             app.PP1.Visible = 'off'; app.PP2.Visible = 'off'; 
             app.PR3.Visible = 'off'; app.PR4.Visible = 'off';
-            app.PP3.Visible = 'off'; app.PP4.Visible = 'off'; 
+            app.PP3.Visible = 'off'; app.PP4.Visible = 'off';
+            app.PR5.Visible = 'off'; app.PP5.Visible = 'off'; 
             app.text_P1.Visible = 'on';
             % Visible flags
             app.FLAG_IAC.Visible = 'off';
             % Update Additional constraints panel
             app.AdditionalconstraintsPanel.Visible = 'on';
             app.AdditionalconstraintsPanel.Title = 'Additional constraints';
-            app.text_RP.Visible = 'on'; app.text_R2.Visible = 'off'; app.text_P2.Visible = 'off';
+            app.text_RP.Visible = 'on'; app.text_RP.Text = 'Products';
+            app.text_R2.Visible = 'off'; app.text_P2.Visible = 'off';
             app.text_R2.Text = 'Reactants'; app.text_P2.Text = 'Products';
             app.text_RP3.Text = 'Constant Internal energy: eP = eR';
             app.text_RP4.Visible = 'on'; app.text_RP4.Text = 'Constant Volume: vP = vR';
+            app.text_RP5.Visible = 'off';
             % Set default input values
             app.PR1.Value = '1000';
             app.PR2.Value = '1';
@@ -153,21 +165,25 @@ function gui_ProblemTypeValueChanged(app)
             % Update input items
             app.PP1.Visible = 'off'; app.PP2.Visible = 'off'; 
             app.PR3.Visible = 'off'; app.PR4.Visible = 'off';
-            app.PP3.Visible = 'off'; app.PP4.Visible = 'on'; 
+            app.PP3.Visible = 'off'; app.PP4.Visible = 'on';
+            app.PR5.Visible = 'off'; app.PP5.Visible = 'off';
             app.text_P1.Visible = 'on';
             % Visible flags
             app.FLAG_IAC.Visible = 'off';
             % Update Additional constraints panel
             app.AdditionalconstraintsPanel.Visible = 'on';
             app.AdditionalconstraintsPanel.Title = 'Additional constraints';
-            app.text_RP.Visible = 'on'; app.text_R2.Visible = 'off'; app.text_P2.Visible = 'off';
+            app.text_RP.Visible = 'on'; app.text_RP.Text = 'Products';
+            app.text_R2.Visible = 'off'; app.text_P2.Visible = 'off';
             app.text_R2.Text = 'Reactants'; app.text_P2.Text = 'Products';
             app.text_RP3.Text = 'Constant Entropy: SP = SR';
             app.text_RP4.Visible = 'on'; app.text_RP4.Text = 'Volume Products/Reactants';
+            app.text_RP5.Visible = 'off';
             % Set default input values
             app.PR1.Value = '300';
             app.PR2.Value = '1';
             app.PP2.Value = app.PR2.Value;
+            app.PP4.Value = '2';
             % Set invisible shock/detonation items
             gui_visible_shocks(app, false);
             % Set invisible oblique shock/detontions items
@@ -182,17 +198,20 @@ function gui_ProblemTypeValueChanged(app)
             % Update input items
             app.PP1.Visible = 'off'; app.PP2.Visible = 'off';
             app.PR3.Visible = 'on'; app.PR4.Visible = 'on';
-            app.PP3.Visible = 'off'; app.PP4.Visible = 'off'; 
+            app.PP3.Visible = 'off'; app.PP4.Visible = 'off';
+            app.PR5.Visible = 'off'; app.PP5.Visible = 'off';
             app.text_P1.Visible = 'on';
             % Visible flags
             app.FLAG_IAC.Visible = 'off';
             % Update Additional constraints panel
             app.AdditionalconstraintsPanel.Visible = 'on';
             app.AdditionalconstraintsPanel.Title = 'Additional constraints';
-            app.text_RP.Visible ='off'; app.text_R2.Visible = 'on'; app.text_P2.Visible = 'off';
+            app.text_RP.Visible ='off'; app.text_RP.Text = 'Products';
+            app.text_R2.Visible = 'on'; app.text_P2.Visible = 'off';
             app.text_R2.Text = 'Reactants'; app.text_P2.Text = 'Products';
             app.text_RP3.Text = 'Shock velocity [m/s]'; 
-            app.text_RP4.Visible = 'on'; app.text_RP4.Text = 'Mach number [-]'; 
+            app.text_RP4.Visible = 'on'; app.text_RP4.Text = 'Mach number [-]';
+            app.text_RP5.Visible = 'off'; 
             % Set default input values
             app.PR1.Value = '300';
             app.PR2.Value = '1';
@@ -212,23 +231,130 @@ function gui_ProblemTypeValueChanged(app)
             % Update input items
             app.PP1.Visible = 'off'; app.PP2.Visible = 'off';
             app.PR3.Visible = 'on'; app.PR4.Visible = 'on';
-            app.PP3.Visible = 'off'; app.PP4.Visible = 'off'; 
+            app.PP3.Visible = 'off'; app.PP4.Visible = 'off';
+            app.PR5.Visible = 'off'; app.PP5.Visible = 'off';
             app.text_P1.Visible = 'on';
             % Visible flags
             app.FLAG_IAC.Visible = 'off';
             % Update Additional constraints panel
             app.AdditionalconstraintsPanel.Visible = 'on';
             app.AdditionalconstraintsPanel.Title = 'Additional constraints';
-            app.text_RP.Visible ='off'; app.text_R2.Visible = 'on'; app.text_P2.Visible = 'off';
+            app.text_RP.Visible ='off'; app.text_RP.Text = 'Products';
+            app.text_R2.Visible = 'on'; app.text_P2.Visible = 'off';
             app.text_R2.Text = 'Reactants'; app.text_P2.Text = 'Products';
             app.text_RP3.Text = 'Shock velocity [m/s]'; 
             app.text_RP4.Visible = 'on'; app.text_RP4.Text = 'Mach number [-]';
+            app.text_RP5.Visible = 'off'; 
             % Set default input values
             app.PR1.Value = '300';
             app.PR2.Value = '1';
             app.PR4.Value = '2';
             gui_compute_mach_or_velocity(app, 'Mach');
             % Set visible shocks/detonation items
+            gui_visible_shocks(app, true);
+            % Set invisible oblique shock/detontions items
+            gui_visible_oblique(app, false);
+            % Set invisible rocket items
+            gui_visible_rocket(app, false);
+        case {'SHOCK_OBLIQUE'}
+            % Visible flags
+            app.FLAG_IAC.Visible = 'off';
+            app.FLAG_IAC.Value = true;
+            gui_FLAG_IACValueChanged(app);
+            % Update input items
+            app.PP1.Visible = 'off'; app.PP2.Visible = 'off';
+            app.PR3.Visible = 'on'; app.PR4.Visible = 'on';
+            app.PP3.Visible = 'off'; app.PP4.Visible = 'off';
+            app.PR5.Visible = 'on'; app.PP5.Visible = 'on';
+            app.text_P1.Visible = 'on';
+            % Visible flags
+            app.FLAG_IAC.Visible = 'off';
+            % Update Additional constraints panel
+            app.AdditionalconstraintsPanel.Visible = 'on';
+            app.AdditionalconstraintsPanel.Title = 'Additional constraints';
+            app.text_RP.Visible ='off'; app.text_RP.Text = 'Products';
+            app.text_R2.Visible = 'on'; app.text_P2.Visible = 'off';
+            app.text_R2.Text = 'Reactants'; app.text_P2.Text = 'Products';
+            app.text_RP3.Text = 'Shock velocity [m/s]'; 
+            app.text_RP4.Visible = 'on'; app.text_RP4.Text = 'Mach number [-]';
+            app.text_RP5.Visible = 'on';
+            app.text_RP5.Text = 'Wave/Deflection angle [deg]';
+            % Set default input values
+            app.PR1.Value = '300';
+            app.PR2.Value = '1';
+            app.PR4.Value = '5';
+            gui_compute_mach_or_velocity(app, 'Mach');
+            app.PR5.Value = '40';
+            app.PP5.Value = '';
+            % Set visible shock/detonation items
+            gui_visible_shocks(app, true);
+            % Set visible oblique shock/detontions items
+            gui_visible_oblique(app, true);
+            % Set invisible rocket items
+            gui_visible_rocket(app, false);
+        case 'SHOCK_POLAR'
+            % Visible flags
+            app.FLAG_IAC.Visible = 'off';
+            app.FLAG_IAC.Value = true;
+            gui_FLAG_IACValueChanged(app);
+            % Update input items
+            app.PP1.Visible = 'off'; app.PP2.Visible = 'off';
+            app.PR3.Visible = 'on'; app.PR4.Visible = 'on';
+            app.PP3.Visible = 'off'; app.PP4.Visible = 'off';
+            app.PR5.Visible = 'off'; app.PP5.Visible = 'off';
+            app.text_P1.Visible = 'on';
+            % Visible flags
+            app.FLAG_IAC.Visible = 'off';
+            % Update Additional constraints panel
+            app.AdditionalconstraintsPanel.Visible = 'on';
+            app.AdditionalconstraintsPanel.Title = 'Additional constraints';
+            app.text_RP.Visible ='off'; app.text_RP.Text = 'Products';
+            app.text_R2.Visible = 'on'; app.text_P2.Visible = 'off';
+            app.text_R2.Text = 'Reactants'; app.text_P2.Text = 'Products';
+            app.text_RP3.Text = 'Shock velocity [m/s]'; 
+            app.text_RP4.Visible = 'on'; app.text_RP4.Text = 'Mach number [-]';
+            app.text_RP5.Visible = 'off'; 
+            % Set default input values
+            app.PR1.Value = '300';
+            app.PR2.Value = '1';
+            app.PR4.Value = '2';
+            gui_compute_mach_or_velocity(app, 'Mach');
+            % Set visible shock/detonation items
+            gui_visible_shocks(app, true);
+            % Set invisible oblique shock/detontions items
+            gui_visible_oblique(app, false);
+            % Set invisible rocket items
+            gui_visible_rocket(app, false);
+        case 'SHOCK_POLAR_R'
+            % Visible flags
+            app.FLAG_IAC.Visible = 'off';
+            app.FLAG_IAC.Value = true;
+            gui_FLAG_IACValueChanged(app);
+            % Update input items
+            app.PP1.Visible = 'off'; app.PP2.Visible = 'off';
+            app.PR3.Visible = 'on'; app.PR4.Visible = 'on';
+            app.PP3.Visible = 'off'; app.PP4.Visible = 'off';
+            app.PR5.Visible = 'on'; app.PP5.Visible = 'off';
+            app.text_P1.Visible = 'on';
+            % Visible flags
+            app.FLAG_IAC.Visible = 'off';
+            % Update Additional constraints panel
+            app.AdditionalconstraintsPanel.Visible = 'on';
+            app.AdditionalconstraintsPanel.Title = 'Additional constraints';
+            app.text_RP.Visible ='off'; app.text_RP.Text = 'Products';
+            app.text_R2.Visible = 'on'; app.text_P2.Visible = 'off';
+            app.text_R2.Text = 'Reactants'; app.text_P2.Text = 'Products';
+            app.text_RP3.Text = 'Shock velocity [m/s]'; 
+            app.text_RP4.Visible = 'on'; app.text_RP4.Text = 'Mach number [-]';
+            app.text_RP5.Visible = 'on';
+            app.text_RP5.Text = 'Deflection angle [deg]';
+            % Set default input values
+            app.PR1.Value = '226.65';
+            app.PR2.Value = '0.0117';
+            app.PR4.Value = '20';
+            gui_compute_mach_or_velocity(app, 'Mach');
+            app.PR5.Value = '35';
+            % Set visible shock/detonation items
             gui_visible_shocks(app, true);
             % Set invisible oblique shock/detontions items
             gui_visible_oblique(app, false);
@@ -242,7 +368,8 @@ function gui_ProblemTypeValueChanged(app)
             % Update input items
             app.PP1.Visible = 'off'; app.PP2.Visible = 'off';
             app.PR3.Visible = 'off'; app.PR4.Visible = 'off';
-            app.PP3.Visible = 'off'; app.PP4.Visible = 'off'; 
+            app.PP3.Visible = 'off'; app.PP4.Visible = 'off';
+            app.PR5.Visible = 'off'; app.PP5.Visible = 'off';
             app.text_P1.Visible = 'on';
             % Visible flags
             app.FLAG_IAC.Visible = 'off';
@@ -261,6 +388,7 @@ function gui_ProblemTypeValueChanged(app)
             app.FLAG_IAC.Visible = 'off';
             app.FLAG_IAC.Value = true;
             gui_FLAG_IACValueChanged(app);
+            app.PR5.Visible = 'off'; app.PP5.Visible = 'off';
             % Update input items
             app.PP1.Visible = 'off'; app.PP2.Visible = 'off';
             app.PR3.Visible = 'on'; app.PR4.Visible = 'off';
@@ -271,7 +399,8 @@ function gui_ProblemTypeValueChanged(app)
             % Update Additional constraints panel
             app.AdditionalconstraintsPanel.Visible = 'on';
             app.AdditionalconstraintsPanel.Title = 'Additional constraints';
-            app.text_RP.Visible ='off'; app.text_R2.Visible = 'on'; app.text_P2.Visible = 'off';
+            app.text_RP.Visible ='off'; app.text_RP.Text = 'Products';
+            app.text_R2.Visible = 'on'; app.text_P2.Visible = 'off';
             app.text_R2.Text = 'Reactants'; app.text_P2.Text = 'Products';
             if contains(app.ProblemType.Value, 'OVER')
                 app.text_RP3.Text = 'Overdriven parameter [-]';
@@ -279,6 +408,7 @@ function gui_ProblemTypeValueChanged(app)
                 app.text_RP3.Text = 'Underdriven parameter [-]';
             end
             app.text_RP4.Visible = 'off'; 
+            app.text_RP5.Visible = 'off'; 
             % Set default input values
             app.PR1.Value = '300';
             app.PR2.Value = '1';
@@ -297,6 +427,42 @@ function gui_ProblemTypeValueChanged(app)
             % Update input items
             app.PP1.Visible = 'off'; app.PP2.Visible = 'off';
             app.PR3.Visible = 'on'; app.PR4.Visible = 'on';
+            app.PP3.Visible = 'off'; app.PP4.Visible = 'on';
+            app.PR5.Visible = 'off'; app.PP5.Visible = 'off';
+            app.text_P1.Visible = 'on';
+            % Visible flags
+            app.FLAG_IAC.Visible = 'off';
+            % Update Additional constraints panel
+            app.AdditionalconstraintsPanel.Visible = 'on';
+            app.AdditionalconstraintsPanel.Title = 'Additional constraints';
+            app.text_RP.Visible ='on'; app.text_RP.Text = 'Reactants';
+            app.text_R2.Visible = 'off'; app.text_P2.Visible = 'off';
+            app.text_R2.Text = 'Reactants'; app.text_P2.Text = 'Products';
+            app.text_RP3.Text = 'Driven parameter [-]';
+            app.text_RP4.Text = 'Wave/Deflection angle [deg]';
+            app.text_RP4.Visible = 'on';
+            app.text_RP5.Visible = 'off';
+            % Set default input values
+            app.PR1.Value = '300';
+            app.PR2.Value = '1';
+            app.PR3.Value = '2';
+            app.PR4.Value = '60';
+            app.PP4.Value = '';
+            % Set visible shock/detonation items
+            gui_visible_shocks(app, true);
+            % Set visible oblique shock/detontions items
+            gui_visible_oblique(app, true);
+            % Set invisible rocket items
+            gui_visible_rocket(app, false);
+        case {'DET_POLAR'}
+            % Visible flags
+            app.FLAG_IAC.Visible = 'off';
+            app.FLAG_IAC.Value = true;
+            gui_FLAG_IACValueChanged(app);
+            app.PR5.Visible = 'off'; app.PP5.Visible = 'off';
+            % Update input items
+            app.PP1.Visible = 'off'; app.PP2.Visible = 'off';
+            app.PR3.Visible = 'on'; app.PR4.Visible = 'off';
             app.PP3.Visible = 'off'; app.PP4.Visible = 'off';
             app.text_P1.Visible = 'on';
             % Visible flags
@@ -304,20 +470,20 @@ function gui_ProblemTypeValueChanged(app)
             % Update Additional constraints panel
             app.AdditionalconstraintsPanel.Visible = 'on';
             app.AdditionalconstraintsPanel.Title = 'Additional constraints';
-            app.text_RP.Visible ='off'; app.text_R2.Visible = 'on'; app.text_P2.Visible = 'off';
+            app.text_RP.Visible ='off'; app.text_RP.Text = 'Products';
+            app.text_R2.Visible = 'on'; app.text_P2.Visible = 'off';
             app.text_R2.Text = 'Reactants'; app.text_P2.Text = 'Products';
-            app.text_RP3.Text = 'Driven parameter [-]';
-            app.text_RP4.Text = 'Wave angle [deg]';
-            app.text_RP4.Visible = 'on'; 
+            app.text_RP3.Text = 'Overdriven parameter [-]';
+            app.text_RP4.Visible = 'off'; 
+            app.text_RP5.Visible = 'off'; 
             % Set default input values
             app.PR1.Value = '300';
             app.PR2.Value = '1';
             app.PR3.Value = '2';
-            app.PR4.Value = '60';
             % Set visible shock/detonation items
             gui_visible_shocks(app, true);
-            % Set visible oblique shock/detontions items
-            gui_visible_oblique(app, true);
+            % Set invisible oblique shock/detontions items
+            gui_visible_oblique(app, false);
             % Set invisible rocket items
             gui_visible_rocket(app, false);
         case {'ROCKET'}
@@ -328,15 +494,18 @@ function gui_ProblemTypeValueChanged(app)
             % Update input items
             app.PP1.Visible = 'off'; app.PP2.Visible = 'off';
             app.PR3.Visible = 'on'; app.PR4.Visible = 'off';
-            app.PP3.Visible = 'on'; app.PP4.Visible = 'off'; 
+            app.PP3.Visible = 'on'; app.PP4.Visible = 'off';
+            app.PR5.Visible = 'off'; app.PP5.Visible = 'off';
             app.text_P1.Visible = 'off';
             % Update Additional constraints panel
             app.AdditionalconstraintsPanel.Visible = 'on';
             app.AdditionalconstraintsPanel.Title = 'Optional parameters';
             app.text_RP3.Text = 'Area ratios A/A_throat';
-            app.text_RP.Visible = 'off'; app.text_R2.Visible = 'on'; app.text_P2.Visible = 'on';
+            app.text_RP.Visible = 'off'; app.text_RP.Text = 'Products';
+            app.text_R2.Visible = 'on'; app.text_P2.Visible = 'on';
             app.text_R2.Text = 'Subsonic'; app.text_P2.Text = 'Supersonic';
             app.text_RP4.Visible = 'off';
+            app.text_RP5.Visible = 'off'; 
             % Set default input values
             app.PR1.Value = '300';
             app.PR2.Value = '1';
@@ -348,7 +517,7 @@ function gui_ProblemTypeValueChanged(app)
             gui_visible_oblique(app, false);
             % Set visible rocket items
             gui_visible_rocket(app, true);
-         case {'SHOCK_OBLIQUE', 'SHOCK_OBLIQUE_R', 'SHOCK_POLAR', 'SHOCK_POLAR_R', 'DET_OBLIQUE_R', 'DET_POLAR', 'DET_POLAR_R'}
+         case {'SHOCK_OBLIQUE_R', 'DET_OBLIQUE_R', 'DET_POLAR_R'}
             uialert(app.UIFigure, 'Problem not included yet. Sorry for the inconvinience.', 'Error')
     end
 end

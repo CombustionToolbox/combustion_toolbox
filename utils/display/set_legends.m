@@ -13,7 +13,8 @@ function set_legends(ax, legend_name, varargin)
     % Default values
     Misc = Miscellaneous();
     config = Misc.config;
-    FLAG_OBJECTS = true;
+    FLAG_OBJECTS = false;
+    
     % Unpack inputs
     for i = 1:2:nargin-2
         switch lower(varargin{i})

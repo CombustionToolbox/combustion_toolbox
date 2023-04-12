@@ -90,12 +90,7 @@ end
 
 function pP = set_pressure(self, mix1, TP, N)
     % Compute pressure of product mixture
-    if strcmpi(self.PD.ProblemType, 'SV')
-        pP = mix1.p * self.PD.EOS.pressure(self, N / mix1.N, TP / mix1.T, self.PD.vP_vR.value, self.S.LS, mix1.Xi);
-    else
-        pP = self.PD.EOS.pressure(self, N, TP, mix1.v, self.S.LS, mix1.Xi) * 1e-5;
-    end
-
+    pP = self.PD.EOS.pressure(self, N, TP, mix1.v, self.S.LS, mix1.Xi) * 1e-5;
 end
 
 function [N, dNi_T, dN_T, dNi_p, dN_p, ind, STOP, STOP_ions] = select_equilibrium(self, pP, TP, mix1, guess_moles)

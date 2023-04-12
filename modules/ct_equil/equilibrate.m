@@ -30,6 +30,8 @@ function mix2 = equilibrate(self, mix1, pP, varargin)
     attr_name = get_attr_name(self);
     % compute initial guess
     [guess, guess_moles] = get_guess(self, mix1, pP, attr_name, mix2);
+    % If the problem type is SV, the product's volume is based on the given v_P/v_R ratio
+    mix1 = set_volume_SV(self, mix1);
     % root finding: find the value x that satisfies f(x) = mix2.xx(x) - mix1.xx = 0
     [T, STOP, guess_moles] = root_finding(self, mix1, pP, attr_name, guess, guess_moles);
     % compute properties
@@ -125,4 +127,13 @@ function value = get_phi(mix1)
         value = [];
     end
 
+end
+
+function mix = set_volume_SV(self, mix)
+    % If the problem type is SV, the product's volume is based on the given v_P/v_R ratio
+    if ~strcmpi(self.PD.ProblemType, 'SV')
+        return
+    end
+
+    mix.v = mix.v * self.PD.vP_vR.value;
 end

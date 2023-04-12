@@ -64,7 +64,7 @@ function ax = plot_shock_polar_pressure(mix1, mix2, config, mix2_case, mix0)
         plot(ax, [0, 0], y_lim, '-.k', 'LineWidth', config.linewidth)
     end
 
-    plot(ax, xaxis + [- flip(mix2.polar.theta), mix2.polar.theta], [flip(mix2.polar.p), mix2.polar.p] / p1, 'k', 'LineWidth', config.linewidth);
+    plot(ax, xaxis + [- flip(mix2.polar.theta), mix2.polar.theta], [flip(mix2.polar.p), mix2.polar.p] / p1, 'k', 'LineWidth', config.linewidth, 'LineStyle', config.linestyle);
     % plot(ax, mix2.theta_max, mix2.polar.p(mix2.ind_max), 'kd', 'LineWidth', config.linewidth, 'MarkerFaceColor', 'auto');
     % plot(ax, -mix2.theta_max, mix2.polar.p(mix2.ind_max), 'kd', 'LineWidth', config.linewidth, 'MarkerFaceColor', 'auto');
     % plot(ax, mix2.polar.theta(mix2.ind_sonic), mix2.polar.p(mix2.ind_sonic), 'ks', 'LineWidth', config.linewidth, 'MarkerFaceColor', 'auto');
@@ -81,7 +81,7 @@ function ax = plot_shock_polar_wave(mix1, mix2, config)
     ax = set_fixed_figure(2, config);
 
     M1 = velocity_relative(mix1) / soundspeed(mix1);
-    plot(ax, mix2.polar.theta, mix2.polar.beta, 'k', 'LineWidth', config.linewidth);
+    plot(ax, mix2.polar.theta, mix2.polar.beta, 'k', 'LineWidth', config.linewidth, 'LineStyle', config.linestyle);
     % plot(ax, mix2.theta_max, mix2.polar.beta(str2.ind_max), 'kd', 'LineWidth', config.linewidth, 'MarkerFaceColor', 'auto');
     % plot(ax, str2.polar.theta(str2.ind_sonic), mix2.polar.beta(str2.ind_sonic), 'ks', 'LineWidth', config.linewidth, 'MarkerFaceColor', 'auto');
     % text(ax, mix2.theta_max, mix2.polar.beta(str2.ind_max),
@@ -96,7 +96,7 @@ function ax = plot_shock_polar_velocities(mix1, mix2, config)
     % Plot velocity components
     ax = set_fixed_figure(3, config);
 
-    plot(ax, mix2.polar.ux, mix2.polar.uy, 'k', 'LineWidth', config.linewidth);
+    plot(ax, mix2.polar.ux, mix2.polar.uy, 'k', 'LineWidth', config.linewidth, 'LineStyle', config.linestyle);
     xlabel(ax, '$u_{2x}$ [m/s]', 'FontSize', config.fontsize, 'Interpreter', 'latex');
     ylabel(ax, '$u_{2y}$ [m/s]', 'FontSize', config.fontsize, 'Interpreter', 'latex');
     %     ylim(ax, [0, max(mix2.polar.uy)]);

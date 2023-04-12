@@ -272,8 +272,8 @@ function gui_ProblemTypeValueChanged(app)
             % Update Additional constraints panel
             app.AdditionalconstraintsPanel.Visible = 'on';
             app.AdditionalconstraintsPanel.Title = 'Additional constraints';
-            app.text_RP.Visible ='off'; app.text_RP.Text = 'Products';
-            app.text_R2.Visible = 'on'; app.text_P2.Visible = 'off';
+            app.text_RP.Visible ='on'; app.text_RP.Text = 'Reactants';
+            app.text_R2.Visible = 'off'; app.text_P2.Visible = 'off';
             app.text_R2.Text = 'Reactants'; app.text_P2.Text = 'Products';
             app.text_RP3.Text = 'Shock velocity [m/s]'; 
             app.text_RP4.Visible = 'on'; app.text_RP4.Text = 'Mach number [-]';
@@ -334,26 +334,27 @@ function gui_ProblemTypeValueChanged(app)
             app.PP1.Visible = 'off'; app.PP2.Visible = 'off';
             app.PR3.Visible = 'on'; app.PR4.Visible = 'on';
             app.PP3.Visible = 'off'; app.PP4.Visible = 'off';
-            app.PR5.Visible = 'on'; app.PP5.Visible = 'off';
+            app.PR5.Visible = 'on'; app.PP5.Visible = 'on';
             app.text_P1.Visible = 'on';
             % Visible flags
             app.FLAG_IAC.Visible = 'off';
             % Update Additional constraints panel
             app.AdditionalconstraintsPanel.Visible = 'on';
             app.AdditionalconstraintsPanel.Title = 'Additional constraints';
-            app.text_RP.Visible ='off'; app.text_RP.Text = 'Products';
-            app.text_R2.Visible = 'on'; app.text_P2.Visible = 'off';
+            app.text_RP.Visible ='on'; app.text_RP.Text = 'Reactants';
+            app.text_R2.Visible = 'off'; app.text_P2.Visible = 'off';
             app.text_R2.Text = 'Reactants'; app.text_P2.Text = 'Products';
             app.text_RP3.Text = 'Shock velocity [m/s]'; 
             app.text_RP4.Visible = 'on'; app.text_RP4.Text = 'Mach number [-]';
             app.text_RP5.Visible = 'on';
-            app.text_RP5.Text = 'Deflection angle [deg]';
+            app.text_RP5.Text = 'Wave/Deflection angle [deg]';
             % Set default input values
             app.PR1.Value = '226.65';
             app.PR2.Value = '0.0117';
             app.PR4.Value = '20';
             gui_compute_mach_or_velocity(app, 'Mach');
-            app.PR5.Value = '35';
+            app.PR5.Value = '';
+            app.PP5.Value = '35';
             % Set visible shock/detonation items
             gui_visible_shocks(app, true);
             % Set invisible oblique shock/detontions items

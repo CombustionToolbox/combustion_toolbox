@@ -20,6 +20,7 @@ classdef unit_test < matlab.unittest.TestCase
 
     properties (TestParameter)
         temperature = {200, 300, 400, 500, 600, 700, 800, 900, 1000, 1100, 1200, 1300, 1400, 1500, 1600, 1700, 1800};
+        density = {4.5418, 2.2709, 1.5139, 1.1355};
         equivalence_ratio = {0.5, 1, 2, 4};
         velocity_preshock = {505, 3140, 7830, 11862};
         velocity_preshock_R = {505, 3140, 5169, 5617, 6103, 6632, 7206, 7830};
@@ -62,6 +63,12 @@ classdef unit_test < matlab.unittest.TestCase
 
         function test_EV_CEA_1(testCase, equivalence_ratio)
             [act_max_rel_error_moles, act_max_rel_error_prop] = run_test_EV_CEA_1(equivalence_ratio, testCase.DB, testCase.DB_master);
+            verifyLessThanOrEqual(testCase, act_max_rel_error_moles, testCase.max_rel_error);
+            verifyLessThanOrEqual(testCase, act_max_rel_error_prop, testCase.max_rel_error);
+        end
+
+        function test_SV_CEA_1(testCase, density)
+            [act_max_rel_error_moles, act_max_rel_error_prop] = run_test_SV_CEA_1(density, testCase.DB, testCase.DB_master);
             verifyLessThanOrEqual(testCase, act_max_rel_error_moles, testCase.max_rel_error);
             verifyLessThanOrEqual(testCase, act_max_rel_error_prop, testCase.max_rel_error);
         end

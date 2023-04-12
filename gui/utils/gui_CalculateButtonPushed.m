@@ -175,7 +175,7 @@ function self = get_input_constrains(obj, self)
             self = set_prop(self, 'vP_vR', obj.PP4.Value);
         case {'SHOCK_I', 'SHOCK_R', 'SHOCK_POLAR'} % * SHOCK_I, SHOCK_R, and SHOCK_POLAR
             self = set_prop(self, 'u1', obj.PR3.Value);
-        case {'SHOCK_OBLIQUE', 'SHOCK_OBLIQUE_R'} % * DET_OBLIQUE and DET_OBLIQUE_R
+        case {'SHOCK_OBLIQUE', 'SHOCK_OBLIQUE_R', 'SHOCK_POLAR_R'} % * SHOCK_OBLIQUE, SHOCK_OBLIQUE_R, and SHOCK_POLAR
             self = set_prop(self, 'u1', obj.PR3.Value);
 
             if ~isempty(obj.PR5.Value)
@@ -184,9 +184,6 @@ function self = get_input_constrains(obj, self)
                 self = set_prop(self, 'theta', obj.PP5.Value);
             end
 
-        case {'SHOCK_POLAR_R'} % * SHOCK_POLAR_R
-            self = set_prop(self, 'u1', obj.PR3.Value);
-            self = set_prop(self, 'theta', obj.PR5.Value);
         case {'DET', 'DET_R'} % * DET and DET_R
             % No additional constrains
         case {'DET_OVERDRIVEN', 'DET_OVERDRIVEN_R', 'DET_UNDERDRIVEN', 'DET_UNDERDRIVEN_R', 'DET_POLAR'} % * DET_OVERDRIVEN, DET_UNERDRIVEN, and DET_POLAR

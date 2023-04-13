@@ -7,11 +7,15 @@ function mainfigure = plot_properties_validation(results1, results2, varsname_x,
     % Default values
     nfrec = 1;
     config = results1.Misc.config;
+    
+    % Check plot type (with or without validation)
+    FLAG_PLOT_VALIDATION = ~isempty(results2);
 
     % Create main figure
     mainfigure = figure;
     % set(mainfigure, 'position', config.position);
     set(mainfigure, 'units', 'normalized', 'innerposition', config.innerposition, 'outerposition', config.outerposition);
+    
     tiledlayout(mainfigure, 'flow');
 
     % Loop
@@ -47,7 +51,11 @@ function mainfigure = plot_properties_validation(results1, results2, varsname_x,
         z = 1;
 
         plot(ax, results1.(varname_x), results1.(varname_y), 'LineWidth', config.linewidth, 'color', colorbw(k, :), 'LineStyle', LINE_STYLES{z});
-        plot(ax, results2.(varname_x)(1:nfrec:end), results2.(varname_y)(1:nfrec:end), SYMBOL_STYLES{z}, 'LineWidth', config.linewidth, 'color', colorbw(k, :), 'MarkerFaceColor', 'white');
+
+        if FLAG_PLOT_VALIDATION
+            plot(ax, results2.(varname_x)(1:nfrec:end), results2.(varname_y)(1:nfrec:end), SYMBOL_STYLES{z}, 'LineWidth', config.linewidth, 'color', colorbw(k, :), 'MarkerFaceColor', 'white');
+        end
+
     end
 
 end

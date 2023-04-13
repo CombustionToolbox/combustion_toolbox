@@ -19,9 +19,9 @@ function [mix1, mix2_1, mix2_2] = det_oblique_theta(self, mix1, drive_factor, th
     % Returns:
     %     Tuple containing
     %
-    %     * mix1 (struct): Properties of the mixture in the pre-shock state
-    %     * mix2_1 (struct): Properties of the mixture in the post-shock state - weak detonation
-    %     * mix2_2 (struct): Properties of the mixture in the post-shock state - strong detonation
+    %     * mix1 (struct): Properties of the mixture in the pre-detonation state
+    %     * mix2_1 (struct): Properties of the mixture in the post-detonation state - weak detonation
+    %     * mix2_2 (struct): Properties of the mixture in the post-detonation state - strong detonation
     %
     % Examples:
     %     * [mix1, mix2_1, mix2_2] = det_oblique_theta(self, self.PS.strR{1}, 2, 30)

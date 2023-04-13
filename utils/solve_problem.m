@@ -342,7 +342,7 @@ function self = select_problem(self, i)
                     beta = self.PD.beta.value;
                 end
 
-                [self.PS.strR{i}, self.PS.strP{i}] = det_oblique_beta(self, self.PS.strR{i}, drive_factor, beta);
+                [self.PS.strR{i}, self.PS.str2{i}, self.PS.strP{i}] = det_oblique_beta(self, self.PS.strR{i}, drive_factor, beta);
             end
 
         case {'DET_POLAR'}

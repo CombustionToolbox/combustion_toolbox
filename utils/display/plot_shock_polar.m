@@ -48,7 +48,7 @@ end
 
 function ax = plot_shock_polar_pressure(mix1, mix2, config, mix2_case, mix0)
     % Plot (pressure, deflection) - shock polar
-    ax = set_fixed_figure(1, config);
+    ax = set_fixed_figure(config.id_polar1, config);
 
     M1 = velocity_relative(mix1) / soundspeed(mix1);
     p1 = pressure(mix1);
@@ -78,7 +78,7 @@ end
 
 function ax = plot_shock_polar_wave(mix1, mix2, config)
     % Plot (wave angle, deflection) - shock polar
-    ax = set_fixed_figure(2, config);
+    ax = set_fixed_figure(config.id_polar2, config);
 
     M1 = velocity_relative(mix1) / soundspeed(mix1);
     plot(ax, mix2.polar.theta, mix2.polar.beta, 'k', 'LineWidth', config.linewidth, 'LineStyle', config.linestyle);
@@ -94,7 +94,7 @@ end
 
 function ax = plot_shock_polar_velocities(mix1, mix2, config)
     % Plot velocity components
-    ax = set_fixed_figure(3, config);
+    ax = set_fixed_figure(config.id_polar3, config);
 
     plot(ax, mix2.polar.ux, mix2.polar.uy, 'k', 'LineWidth', config.linewidth, 'LineStyle', config.linestyle);
     xlabel(ax, '$u_{2x}$ [m/s]', 'FontSize', config.fontsize, 'Interpreter', 'latex');

@@ -1,6 +1,10 @@
 function [ax, dline] = plot_figure(x_field, x_var, y_field, y_var, varargin)
     % Plot figure with customizable settings
     %
+    % Note:
+    %     The 'interpreter_label.m' routine considers that the properties
+    %     are in mass basis. This will be fixed in a future patch.
+    %
     % Args:
     %     x_field (char): Field name for the x-axis data
     %     x_var (cell): Cell array containing the x-axis data
@@ -32,6 +36,7 @@ function [ax, dline] = plot_figure(x_field, x_var, y_field, y_var, varargin)
     %     * dline (object): Handle of the plotted line
 
     % Default settings
+    FLAG_BASIS = false;
     FLAG_COLOR_NEW = false;
     Misc = Miscellaneous();
     config = Misc.config;
@@ -85,7 +90,13 @@ function [ax, dline] = plot_figure(x_field, x_var, y_field, y_var, varargin)
                 if ~isfloat(config.colorline)
                     FLAG_COLOR_NEW = true;
                 end
+            case 'basis'
+                basis = varargin{i + 1};
 
+                if ~isempty(basis)
+                    FLAG_BASIS = true;
+                end
+                
         end
 
     end
@@ -93,6 +104,12 @@ function [ax, dline] = plot_figure(x_field, x_var, y_field, y_var, varargin)
     % Create figure (if necessary)
     if isempty(ax)
         ax = set_figure(config);
+    end
+    
+    % Check if property has to be divided by the basis (kg or mol)
+    if FLAG_BASIS
+        y_basis = cell2vector(y_var, basis);
+        y = y ./ y_basis;
     end
 
     % Plot

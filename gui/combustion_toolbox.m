@@ -352,10 +352,10 @@ classdef combustion_toolbox < matlab.apps.AppBase
 
         function public_FLAG_IACValueChanged(app)
             if ~app.FLAG_IAC.Value
-                app.text_P1.Text = 'FAC (only one option)';
+                app.text_P1.Text = 'FAC';
                 app.text_P1.Visible = 'on';
-                app.text_RP1_2.Visible = 'on'; app.text_RP2_2.Visible = 'on';
-                app.PP1.Visible = 'on'; app.PP2.Visible = 'on';
+                app.text_RP1_2.Visible = 'on'; app.text_RP2_2.Visible = 'off';
+                app.PP1.Visible = 'on'; app.PP2.Visible = 'off';
                 app.PP1.Value = ''; app.PP2.Value = '';
                 app.Panel_extra_5.Visible = 'on';
                 app.text_Products.Text = 'Injector';

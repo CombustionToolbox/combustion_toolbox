@@ -29,16 +29,19 @@ N_Oxidizer = [78.084, 20.9476, 0.9365, 0.0319] ./ 20.9476;
 Mach_number = 1.75:0.1:20.5;
 z = [0, 15000, 30000];
 
+% Default
+FLAG_FROZEN = false;
+FLAG_TCHEM_FROZEN = false;
+
 % Calculations
 for i = 3:-1:1
 
     switch i
         case 1
             LS = 'Air_ions';
-            FLAG_TCHEM_FROZEN = false;
         case 2
             LS = {'N2', 'O2', 'Ar', 'CO2'};
-            FLAG_TCHEM_FROZEN = false;
+            FLAG_FROZEN = true;
         case 3
             LS = {'N2', 'O2', 'Ar', 'CO2'};
             FLAG_TCHEM_FROZEN = true;
@@ -48,6 +51,7 @@ for i = 3:-1:1
         % Initialize
         self = App(LS);
         % Initial conditions
+        self.TN.FLAG_FROZEN = FLAG_FROZEN;
         self.TN.FLAG_TCHEM_FROZEN = FLAG_TCHEM_FROZEN;
         [~, ~, TR, pR] = atmos(z(j));
         pR = convert_Pa_to_bar(pR);

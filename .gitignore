@@ -1,6 +1,9 @@
 # Created by https://www.toptal.com/developers/gitignore/api/matlab
 # Edit at https://www.toptal.com/developers/gitignore?templates=matlab
 
+### Files ###
+CHECKLIST.md
+
 ### MATLAB ###
 # Windows default autosave extension
 *.asv

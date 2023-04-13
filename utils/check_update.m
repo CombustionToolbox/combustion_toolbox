@@ -22,42 +22,42 @@ function [FLAG_UPDATE, message] = check_update(varargin)
     fig = unpack(varargin{:});
 
     % Initialization
-    FLAG_UPDATE = true;
+    FLAG_UPDATE = false;
 
     % Get current version of CT
-    [tag_1, date_1] = get_combustion_toolbox_version();
+    [tag_current, date_current] = get_combustion_toolbox_version();
 
     % Get latest version of CT on Github
-    [tag_2, git_data] = get_latest_version_github(user, repo_name);
-    date_2 = git_data.published_at(1:end - 1);
+    [tag_repo, git_data] = get_latest_version_github(user, repo_name);
+    date_repo = git_data.published_at(1:end - 1);
 
     % Convert tag to id
-    tag_id_1 = get_tag_id(tag_1);
-    tag_id_2 = get_tag_id(tag_2);
+    tag_id_current = get_tag_id(tag_current);
+    tag_id_repo = get_tag_id(tag_repo);
 
     % Compare versions
-    l_1 = length(tag_id_1);
-    l_2 = length(tag_id_2);
-    N = min(l_1, l_2);
+    l_current = length(tag_id_current);
+    l_report = length(tag_id_repo);
+    N = min(l_current, l_report);
     i = 0;
     
     % Format date
-    date_1 = datetime(date_1, 'Format', 'dd MMM yyyy');
-    date_2 = datetime(date_2, 'Format', 'uuuu-MM-dd''T''HH:mmXXX', 'TimeZone', 'UTC');
-    date_2.Format = 'dd MMM yyyy';
+    date_current = datetime(date_current, 'Format', 'dd MMM yyyy');
+    date_repo = datetime(date_repo, 'Format', 'uuuu-MM-dd''T''HH:mmXXX', 'TimeZone', 'UTC');
+    date_repo.Format = 'dd MMM yyyy';
 
     % Check latest version
-    while FLAG_UPDATE && i < N
+    while ~FLAG_UPDATE && i < N
         i = i + 1;
 
-        if tag_id_1(i) > tag_id_2(i)
-            FLAG_UPDATE = false;
+        if tag_id_current(i) < tag_id_repo(i)
+            FLAG_UPDATE = true;
         end
 
     end
 
     % Get display message
-    [message, title, icon] = get_message(tag_1, tag_2, date_2, FLAG_UPDATE);
+    [message, title, icon] = get_message(tag_current, tag_repo, date_repo, FLAG_UPDATE);
 
     % Display modal dialog
     if isa(fig, 'matlab.ui.Figure')

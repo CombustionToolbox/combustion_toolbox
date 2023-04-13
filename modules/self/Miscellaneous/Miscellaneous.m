@@ -34,6 +34,8 @@ function self = Miscellaneous()
     % * Timer
     self.timer_0 = [];
     self.timer_loop = [];
+    % * Report
+    self.report_type = 'complete';                   % Type of report (short, complete)
     % * Plot
     self.config.position = get_monitor_positions(2); % Default figure position [pixels]
     self.config.innerposition = [0.05 0.05 0.9 0.9]; % Set figure inner position [normalized]
@@ -70,6 +72,9 @@ function self = Miscellaneous()
     self.config.orange = [212, 85, 0]/255;           % Default colorline
     self.config.brown = [200, 190, 183]/255;         % Default colorline
     self.config.brown2 = [72, 55, 55]/255;           % Default colorline
+    self.config.id_polar1 = 1001;                    % Axes id for pressure-deflection polar diagrams
+    self.config.id_polar2 = 1002;                    % Axes id for wave-deflection polar diagrams
+    self.config.id_polar3 = 1003;                    % Axes id for velocity polar diagrams
     % * Flags
     self.FLAG_INITIALIZE = false;                    % Flag indicating self variable is not fully initialized
     self.FLAG_FIRST = true;                          % Flag indicating first calculation
@@ -88,6 +93,7 @@ function self = Miscellaneous()
     self.FLAGS_PROP.TP = false;                      % Flag several values of Temperature Products (TP)
     self.FLAGS_PROP.pR = false;                      % Flag several values of Pressure Reactant (pR)
     self.FLAGS_PROP.pP = false;                      % Flag several values of Pressure Products (pP)
+    self.FLAGS_PROP.u1 = false;                      % Flag several values of pre-shock velocity (u1)
     self.FLAGS_PROP.Aratio = false;                  % Flag several values of Area ratio (Aratio)
     self.FLAGS_PROP.Aratio_c = false;                % Flag several values of Area ratio combustor (Aratio_c)
     self.FLAG_LENGTH_LOOP = false;                   % Flag indicating parametric study

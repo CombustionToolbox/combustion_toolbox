@@ -81,6 +81,9 @@ function [ax, fig] = plot_molar_fractions(self, x_var, x_field, y_field, varargi
     if contains(self.PD.ProblemType, 'polar', 'IgnoreCase', true)
         mix1.(x_field) = cell2vector(x_var.polar, x_field);
         mix1.(y_field) = cell2vector(y_var.polar, y_field);
+    elseif ~(iscell(x_var) && iscell(y_var))
+        mix1.(x_field) = x_var;
+        mix1.(y_field) = y_var;
     else
         mix1.(x_field) = cell2vector(x_var, x_field);
         mix1.(y_field) = cell2vector(y_var, y_field);

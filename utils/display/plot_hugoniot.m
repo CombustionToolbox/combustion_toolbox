@@ -41,5 +41,5 @@ function ax = plot_hugoniot(self, mix1, mix2, varargin)
     P = p2 ./ p1;
     
     % Plot
-    ax = plot_figure('$R^{-1}$', 1 ./ R, '$P$', P, 'ax', ax);
+    ax = plot_figure('$R^{-1}$', 1 ./ R, '$P$', P, 'ax', ax, 'color', 'auto');
 end

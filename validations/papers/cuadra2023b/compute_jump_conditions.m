@@ -29,6 +29,9 @@ function [R, P, T, M1, M2, Gammas] = compute_jump_conditions(varargin)
     %      * [R, P, T, M1, M2, Gammas] = compute_jump_conditions('z', 0)
     %      * [R, P, T, M1, M2, Gammas] = compute_jump_conditions('T', 300, 'p', 1.01325)
     %
+    % Note: 
+    %      This script may use "Standard Atmosphere Functions" - FileExchange [3]
+    %
     % References:
     %     [1] Huete, C., Cuadra, A., Vera, M., & Urzay, J. (2021). Thermochemical
     %         effects on hypersonic shock waves interacting with weak turbulence.
@@ -37,6 +40,8 @@ function [R, P, T, M1, M2, Gammas] = compute_jump_conditions(varargin)
     %     [2] Cuadra, A., Vera, M., Di Renzo, M., & Huete, C. (2023). Linear Theory
     %         of Hypersonic Shocks Interacting with Turbulence in Air. In 2023 AIAA
     %         SciTech Forum, National Harbor, USA. DOI: 10.2514/6.2023-0075.
+    %
+    %     [3] https://in.mathworks.com/matlabcentral/fileexchange/28135-standard-atmosphere-functions?requestedDomain=
 
     % Default values
     T = 300;              % Temperature of the reactants [K]

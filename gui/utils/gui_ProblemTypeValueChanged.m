@@ -148,7 +148,7 @@ function gui_ProblemTypeValueChanged(app)
             app.text_RP4.Visible = 'on'; app.text_RP4.Text = 'Constant Volume: vP = vR';
             app.text_RP5.Visible = 'off';
             % Set default input values
-            app.PR1.Value = '1000';
+            app.PR1.Value = '300';
             app.PR2.Value = '1';
             app.PP2.Value = app.PR2.Value;
             % Set invisible shock/detonation items

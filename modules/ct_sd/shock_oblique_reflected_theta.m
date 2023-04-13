@@ -24,9 +24,13 @@ function [mix1, mix2, mix5_1, mix5_2] = shock_oblique_reflected_theta(self, mix1
     %     * mix2 (struct): Properties of the mixture in the post-shock state of the incident shock
     %     * mix5_1 (struct): Properties of the mixture in the post-shock state of the reflected shock - weak shock
     %     * mix5_2 (struct): Properties of the mixture in the post-shock state of the reflected shock - strong shock
+    %
+    % Examples:
+    %     * [mix1, mix2, mix5_1, mix5_2] = shock_oblique_reflected_theta(self, mix1, u2, theta, mix2)
+    %     * [mix1, mix2, mix5_1, mix5_2] = shock_oblique_reflected_theta(self, mix1, u2, theta, mix2, mix5_1, mix5_2)
 
     % Unpack input data
-    [self, mix1, mix2, mix5] = unpack(self, mix1, u2, theta, mix2, varargin);
+    [self, mix1, mix2, mix5_1, mix5_2] = unpack(self, mix1, u2, theta, mix2, varargin);
 
     % Definitions
     a2 = soundspeed(mix2); % [m/s]
@@ -44,16 +48,16 @@ function [mix1, mix2, mix5_1, mix5_2] = shock_oblique_reflected_theta(self, mix1
     if theta > theta_max_reflected
         error(['There is not Regular Reflection (RR) solution for the given conditions:\n' ...
                 '   * incident velocity [m/s] %.2f\n' ...
-            '   * wave angle [deg]        %.2f\n'], mix1.u, mix2.beta);
+                '   * wave angle [deg]        %.2f\n'], mix1.u, mix2.beta);
     end
 
     % Solve first branch  (weak shock)
     beta_guess = 0.5 * (beta_min + beta_max); % [rad]
-    mix5_1 = solve_shock_oblique(mix5);
+    mix5_1 = solve_shock_oblique(mix5_1);
 
     % Solve second branch (strong shock)
     beta_guess = beta_max * 0.95; % [rad]
-    mix5_2 = solve_shock_oblique(mix5);
+    mix5_2 = solve_shock_oblique(mix5_2);
 
     % NESTED FUNCTIONS
     function mix5 = solve_shock_oblique(mix5)
@@ -99,16 +103,18 @@ function [mix1, mix2, mix5_1, mix5_2] = shock_oblique_reflected_theta(self, mix1
 end
 
 % SUB-PASS FUNCTIONS
-function [self, mix1, mix2, mix5] = unpack(self, mix1, u2, theta, mix2, x)
+function [self, mix1, mix2, mix5_1, mix5_2] = unpack(self, mix1, u2, theta, mix2, x)
     % Unpack input data
     mix2.u = u2; % velocity preshock [m/s] - laboratory fixed
     mix2.v_shock = u2; % velocity preshock [m/s] - shock fixed
     mix2.theta = theta; % deflection angle  [deg]
 
     if length(x) > 5
-        mix5 = x{6};
+        mix5_1 = x{6};
+        mix5_2 = x{7};
     else
-        mix5 = [];
+        mix5_1 = [];
+        mix5_2 = [];
     end
 
 end

@@ -1,6 +1,10 @@
 function value = interpreter_label(property, varargin)
     % Interpreter label for properties - returns property name
     %
+    % Note:
+    %     The 'interpreter_label.m' routine considers that the properties
+    %     are in mass basis. This will be fixed in a future patch.
+    %
     % Args:
     %     property (char): Property name
     %
@@ -264,7 +268,7 @@ function [property_name, property_latex, property_unit] = property_names(propert
             property_latex = 'u_1/u_{\rm cj}';
             property_unit = '';
         case 'drive_factor'
-            property_name = 'Drive factor';
+            property_name = 'Overdriven factor';
             property_latex = 'u_1/u_{\rm cj}';
             property_unit = '';
         case 'of'

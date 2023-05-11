@@ -4,18 +4,18 @@ function DB_master = generate_DB_master(varargin)
     %
     % Optional Args:
     %     FLAG_REDUCED_DB (bool): Flag indicating reduced database (default: false)
-    %     thermoFile (char): File name of NASA's thermodynamic database (default: thermo.inp)
+    %     thermoFile (char): File name of NASA's thermodynamic database (default: thermo_CT.inp)
     %
     % Returns:
     %     DB_master (struct): Database with the thermodynamic data of the chemical species
     %
     % Examples:
     %     * DB_master = generate_DB_master(false)
-    %     * DB_master = generate_DB_master(false, 'thermo.inp')
+    %     * DB_master = generate_DB_master(false, 'thermo_CT.inp')
     
     % Default
     FLAG_REDUCED_DB = false;
-    thermoFile = 'thermo.inp';
+    thermoFile = 'thermo_CT.inp';
 
     % Unpack
     if nargin > 0, FLAG_REDUCED_DB = varargin{1}; end
@@ -46,7 +46,7 @@ function DB_master = get_DB_master(thermoFile)
     clc
 
     switch thermoFile
-        case 'thermo.inp'
+        case 'thermo_CT.inp'
             msg = 'Loading NASA database ... ';
         otherwise
             msg = 'Loading an unkown database ... ';

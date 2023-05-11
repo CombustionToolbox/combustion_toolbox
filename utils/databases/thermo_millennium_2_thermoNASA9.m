@@ -1,12 +1,12 @@
-function thermo_millenium_2_thermoNASA9(filename)
+function thermo_millennium_2_thermoNASA9(filename)
     % Read Extended Third Millennium Thermodynamic Database of New NASA
     % Polynomials with Active Thermochemical Tables update and write a new
     % file compatible with thermo NASA 9 format
     %
     % Args:
-    %     filename (char): Filename of the thermo_millenium data
+    %     filename (char): Filename of the thermo_millennium data
 
-    new_filename = 'thermo_millenium_2_thermoNASA9.inp';
+    new_filename = 'thermo_millennium_2_thermoNASA9.inp';
     fid = fopen(filename, 'r');
     fid_new = fopen(strcat('databases/', new_filename), 'w');
     tline = 1;

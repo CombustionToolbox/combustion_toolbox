@@ -277,6 +277,9 @@ classdef uielements < matlab.apps.AppBase
             if FLAG_LOG
                 app.Misc.config.xscale = 'log';
                 app.Misc.config.yscale = 'log';
+            else
+                app.Misc.config.xscale = 'linear';
+                app.Misc.config.yscale = 'linear';
             end
 
             % Initialize figure

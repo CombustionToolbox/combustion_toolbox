@@ -225,10 +225,10 @@ end
 
 % SUB-PASS FUNCTIONS
 function [species, LS] = get_display_species(self)
-    LS = self.Misc.LS_original;
+    LS = self.S.LS;
 
     if isempty(self.Misc.display_species)
-        species = LS;
+        species = self.Misc.LS_original;
     else
         species = self.Misc.display_species;
     end

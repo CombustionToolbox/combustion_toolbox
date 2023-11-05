@@ -5,7 +5,7 @@
 CHECKLIST.md
 
 # OSX
-.DS_Store
+*.DS_Store
 
 ### MATLAB ###
 # Windows default autosave extension

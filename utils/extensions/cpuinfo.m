@@ -1,5 +1,5 @@
 function info = cpuinfo()
-% CPUINFO  read CPU configuration
+%   CPUINFO  read CPU configuration
 %
 %   info = CPUINFO() returns a structure containing various bits of
 %   information about the CPU and operating system as provided by /proc/cpu
@@ -11,8 +11,9 @@ function info = cpuinfo()
 %     * Operating system name & version
 %
 %   See also: COMPUTER, ISUNIX, ISMAC
+
 %   Author: Ben Tordoff
-%   Copyright 2011-2021 The MathWorks, Inc.
+%   Copyright 2011-2023 The MathWorks, Inc.
 
 if isunix
     if ismac
@@ -23,11 +24,14 @@ if isunix
 else
     info = cpuInfoWindows();
 end
+
+
 %-------------------------------------------------------------------------%
 function info = cpuInfoWindows()
 sysInfo = callWMIC( 'CPU', {'Name','MaxClockSpeed','L2CacheSize','NumberOfCores'} );
 osInfo = callWMIC( 'OS', {'Caption'} );
 computerInfo = callWMIC( 'ComputerSystem', {'Name','TotalPhysicalMemory'} );
+
 info = struct( ...
     'CPUName', sysInfo.Name, ...
     'Clock', [sysInfo.MaxClockSpeed,' MHz'], ...
@@ -38,9 +42,11 @@ info = struct( ...
     'OSType', 'Windows', ...
     'OSVersion', osInfo.Caption, ...
     'Hostname', computerInfo.Name );
+
 %-------------------------------------------------------------------------%
 function info = callWMIC( alias, field )
 % Call the MS-DOS WMIC (Windows Management) command
+
 % We move to a temporary folder since WMIC needs write access to the local
 % folder
 olddir = pwd();
@@ -66,6 +72,7 @@ for ff=1:numel( fields )
         fields{ff} = strtrim( fields{ff}(1:idx-1) );
     end
 end
+
 % Remove any duplicates (only occurs for dual-socket PC's and we will
 % assume that all sockets have the same processors in them).
 numResults = sum( strcmpi( fields, fields{1} ) );
@@ -80,27 +87,44 @@ if numResults>1
     [fields,idx] = unique(fields,'first');
     values = values(idx);
 end
+
 % Convert to a structure
 info = cell2struct( values, fields );
+
 % If looking at CPUs, return the count too
 if strcmpi(alias, 'CPU')
     info.NumCPUs = numResults;
 end
+
 %-------------------------------------------------------------------------%
 function info = cpuInfoMac()
 machdep = callSysCtl( 'machdep.cpu' );
 hw = callSysCtl( 'hw' );
 kern = callSysCtl( 'kern.hostname' );
+
+% Apple Silicon (even if emulating Intel) no longer reports cache size and
+% reports frequency differently.
+if strcmp(computer,'MACA64') || ~isfield(machdep, 'cache')
+    % Apple Silicon Mac
+    maxFreq = 'N/A';
+    cacheBytes = str2double(hw.l1dcachesize); % L1 data cache
+else
+    % Intel Mac
+    maxFreq = [num2str(str2double(hw.cpufrequency_max)/1e6),' MHz'];
+    cacheBytes = str2double(machdep.cache.size)*1024; % convert from kB
+end
+
 info = struct( ...
     'CPUName', machdep.brand_string, ...
-    'Clock', [num2str(str2double(hw.cpufrequency_max)/1e6),' MHz'], ...
-    'Cache', str2double(machdep.cache.size)*1024, ... % convert from kB
+    'Clock', maxFreq, ...
+    'Cache', cacheBytes, ...
     'TotalMemory', str2double(hw.memsize), ...
     'NumCPUs', 1, ... % No multi-socket Macs that I'm aware of!
     'TotalCores', str2double( machdep.core_count ), ...
-    'OSType', 'Mac OS/X', ...
-    'OSVersion', getOSXVersion(), ...
+    'OSType', getMacOSType(), ...
+    'OSVersion', getMacOSVersion(), ...
     'Hostname', kern.kern.hostname );
+
 %-------------------------------------------------------------------------%
 function info = callSysCtl( namespace )
 [~, infostr] = system( sprintf( 'sysctl -a %s', namespace ) );
@@ -115,33 +139,49 @@ for ii=1:numel( infostr )
     if isempty( colonIdx ) || colonIdx==1 || colonIdx==length(infostr{ii})
         continue
     end
-    prefix = infostr{ii}(1:colonIdx-1);
+    % Take care over nested structs
+    name = infostr{ii}(1:colonIdx-1);
     value = strtrim(infostr{ii}(colonIdx+1:end));
-    while ismember( '.', prefix )
-        dotIndex = find( prefix=='.', 1, 'last' );
-        suffix = prefix(dotIndex+1:end);
-        prefix = prefix(1:dotIndex-1);
-        value = struct( suffix, value );
+    if ismember( '.', name )
+        % Nested struct. Split the name.
+        dotIndex = find( name=='.', 1, 'first' );
+        name1 = name(1:dotIndex-1);
+        name2 = name(dotIndex+1:end);
+        % If we still have nested names, flatten using _.
+        name2 = strrep(name2, '.', '_');
+        info.(name1).(name2) = value;
+    else
+        % top-level property
+        info.(name) = value;
     end
-    info.(prefix) = value;
-    
 end
+
 %-------------------------------------------------------------------------%
-function vernum = getOSXVersion()
+function vernum = getMacOSVersion()
 % Extract the OS version number from the system software version output.
-[~, ver] = system('sw_vers');
-vernum = regexp(ver, 'ProductVersion:\s([1234567890.]*)', 'tokens', 'once');
-vernum = strtrim(vernum{1});
+[~, vernum] = system('sw_vers -productVersion');
+vernum = strtrim(vernum);
+
+%-------------------------------------------------------------------------%
+function type = getMacOSType()
+% Extract the OS type from the system software version output.
+[~, type] = system('sw_vers -productName');
+type = strtrim(type);
+
 %-------------------------------------------------------------------------%
 function info = cpuInfoUnix()
 txt = readLinuxInfo('/proc/cpuinfo');
 cpuinfo = parseLinuxCPUInfoText( txt );
+
 txt = readLinuxInfo('/proc/version');
 osinfo = parseLinuxOSInfoText( txt );
+
 txt = readLinuxInfo('/proc/meminfo');
 meminfo = parseLinuxMemInfoText( txt );
+
 txt = readLinuxInfo('/proc/sys/kernel/hostname');
 hostInfo = parseLinuxHostInfoText( txt );
+
 % Merge the structures
 info = cell2struct( [ ...
     struct2cell( cpuinfo )
@@ -154,6 +194,7 @@ info = cell2struct( [ ...
     fieldnames( osinfo )
     fieldnames( hostInfo )
     ] );
+
 %-------------------------------------------------------------------------%
 function info = parseLinuxCPUInfoText( txt )
 % Now parse the fields
@@ -185,7 +226,7 @@ for ii=1:numel( txt )
     if isempty( fieldName ) || isempty( fieldValue )
         continue;
     end
-    
+
     % Is it one of the fields we're interested in?
     idx = find( strcmpi( lookup(:,1), fieldName ) );
     if ~isempty( idx )
@@ -193,15 +234,19 @@ for ii=1:numel( txt )
         info.(newName) = fieldValue;
     end
 end
+
 % Convert clock speed
 info.Clock = [info.Clock, ' MHz'];
+
 % Convert cache size
 info.Cache = parseMemoryValue(info.Cache);
+
 % The number of CPUs is the highest processor ID (+1 since zero-based)
 info.NumCPUs = str2double(info.NumCPUs) + 1;
 % Convert num cores
 info.TotalCores = info.NumCPUs * str2double(info.CoresPerCPU);
 info = rmfield(info, 'CoresPerCPU');
+
 %-------------------------------------------------------------------------%
 function info = parseLinuxOSInfoText( txt )
 info = struct( ...
@@ -211,12 +256,15 @@ info = struct( ...
 % bracket.
 b = extractBetween(txt{1}, 'Linux version ', ' (');
 info.OSVersion = b{1};
+
 %-------------------------------------------------------------------------%
 function info = parseLinuxMemInfoText( txt )
 info = struct('TotalMemory', parseMemoryValue(txt, 'MemTotal'));
+
 %-------------------------------------------------------------------------%
 function info = parseLinuxHostInfoText( txt )
 info = struct( 'Hostname', txt{1} );
+
 %-------------------------------------------------------------------------%
 function bytes = parseMemoryValue(txt, fieldname)
 if nargin>1
@@ -236,12 +284,15 @@ else
     end
     bytes = str2double(txt(txt>='0' & txt<='9')) * bytesMultiplier;
 end
+
 %-------------------------------------------------------------------------%
 function txt = readLinuxInfo(file)
+
 fid = fopen( file, 'rt' );
 if fid<0
     error( 'cpuinfo:BadProcFile', 'Could not open %s for reading', file );
 end
 cleanup = onCleanup( @() fclose( fid ) );
+
 txt = textscan( fid, '%s', 'Delimiter', '\n' );
 txt = txt{1};

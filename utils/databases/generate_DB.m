@@ -1,33 +1,45 @@
-function DB = generate_DB(DB_master)
+function DB = generate_DB(DB_master, varargin)
     % Generate Database (DB) with thermochemical interpolation curves for
     % the species contained in DB_master
     %
     % Args:
     %     DB_master (struct): Database with the thermodynamic data of the chemical species
     %
+    % Optional Args:
+    %     LS (cell): List of species to be included in DB
+    %
     % Returns:
     %     DB (struct): Database with custom thermodynamic polynomials functions generated from NASAs 9 polynomials fits
     %
-    % Example:
-    %     DB = generate_DB(DB_master)
+    % Examples:
+    %     * DB = generate_DB(DB_master)
+    %     * DB = generate_DB(DB_master, {'CO2', 'H2O', 'O2', 'N2'})
+    
+    % Default
+    LS = fieldnames(DB_master);
+
+    % Check initial inputs
+    if nargin > 1
+        assert(iscell(varargin{1}), 'List of species must be a cell.');
+            
+        LS = varargin{1};
+    end
 
     % Load database
-    if exist('DB.mat', 'file')
+    if exist('DB.mat', 'file') && nargin == 1
         fprintf('NASA database with thermo loaded from main path ... ')
         load('DB.mat', 'DB');
     else
-        DB = get_DB(DB_master);
+        DB = get_DB(DB_master, LS);
     end
 
     fprintf('OK!\n');
 end
 
 % SUB-PASS FUNCTIONS
-function DB = get_DB(DB_master)
+function DB = get_DB(DB_master, LS)
     % Generate Database (DB) with thermochemical interpolation curves for
     % the species contained in DB_master
-
-    LS = fieldnames(DB_master);
 
     fprintf('Generating NASA database with thermo ... ')
 

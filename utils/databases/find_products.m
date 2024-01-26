@@ -19,9 +19,9 @@ function [LS, ind_elements_DB] = find_products(self, species, varargin)
     %
     % Examples:
     %     * [LS, ind_elements_DB] = find_products(self, {'O2', 'N', 'eminus'})
-    %     * [LS, ind_elements_DB] = find_products(self, {'O2', 'CO', 'N'}, DB, 'flag_burcat', true)
-    %     * [LS, ind_elements_DB] = find_products(self, {'O2', 'CO', 'N'}, DB, 'flag_burcat', true, 'flag_ion', true)
-    %     * [LS, ind_elements_DB] = find_products(self, {'O2', 'CO', 'N'}, DB, 'flag_burcat', true, 'flag_ion', true, 'ind', ind_elements_DB)
+    %     * [LS, ind_elements_DB] = find_products(self, {'O2', 'CO', 'N'}, 'flag_burcat', true)
+    %     * [LS, ind_elements_DB] = find_products(self, {'O2', 'CO', 'N'}, 'flag_burcat', true, 'flag_ion', true)
+    %     * [LS, ind_elements_DB] = find_products(self, {'O2', 'CO', 'N'}, 'flag_burcat', true, 'flag_ion', true, 'ind', ind_elements_DB)
     
     % Definitions
     MAX_ELEMENTS = 5;

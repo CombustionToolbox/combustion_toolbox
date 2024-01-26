@@ -1162,7 +1162,6 @@ classdef combustion_toolbox < matlab.apps.AppBase
             % Create UITable_R
             app.UITable_R = uitable(app.DefinereactantsandspeciestobeconsideredPanel);
             app.UITable_R.ColumnName = {'Species'; 'Nº moles'; 'Mole fraction'; 'Type'; 'Temperature [K]'};
-            app.UITable_R.ColumnWidth = {'auto', 100, 105, 65, 120};
             app.UITable_R.RowName = {};
             app.UITable_R.ColumnSortable = true;
             app.UITable_R.ColumnEditable = [true true false true true];

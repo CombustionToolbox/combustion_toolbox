@@ -7,6 +7,6 @@ function [release, date] = get_combustion_toolbox_version()
     %     * release (char): Release version
     %     * date (char): Release date
 
-    release = 'v1.0.3';
-    date = '18 May 2024';
+    release = 'v1.0.4';
+    date = '26 Jan 2024';
 end

@@ -107,6 +107,11 @@ classdef uipreferences < matlab.apps.AppBase
             fill_combustion_toolbox_node(app);
             % Expand uitree
             expand(app.tree);
+            % Update width_amplification (only macOS)
+            if ismac
+                app.width_amplification = 0.91;
+            end
+            
         end
         
         % Selection changed function: Tree

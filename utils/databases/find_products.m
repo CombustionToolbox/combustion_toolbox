@@ -34,9 +34,10 @@ function [LS, ind_elements_DB] = find_products(self, species, varargin)
     [elements, ~] = set_elements(); % Elements list
     
     % Initialization
-    FLAG_IND = false; % Flag indicating that ind_elements_DB is an input
-    LS = [];          % Initialize list of products
-    
+    FLAG_IND = false;     % Flag indicating that ind_elements_DB is an input
+    LS = [];              % Initialize list of products
+    LS_DB = self.S.LS_DB; % Get list of species in the database
+
     % Unpack
     for i = 1:2:nargin-2
         switch lower(varargin{i})
@@ -57,23 +58,36 @@ function [LS, ind_elements_DB] = find_products(self, species, varargin)
     if FLAG_ION
         species{end + 1} = 'eminus';
     end
-    
-    % If FLAG_BURCAT == true, then include the species from Third millenium database
+
+    % If FLAG_BURCAT == false, then remove the species from Third millenium database (Burcat)
     if ~FLAG_BURCAT
-        self.S.LS_DB = find_species_LS(self.S.LS_DB, {}, 'any', {'_M'}, 'all');
+        LS_DB = find_species_LS(LS_DB, {}, 'any', {'_M'}, 'all');
+        
+        % If ind_elements_DB is given, now have to been recalculated
+        if FLAG_IND
+            FLAG_IND = false;
+        end
+
     end
-    
+
     % If FLAG_CONDENSED == true, then include condensed species
     if ~FLAG_CONDENSED
-        FLAG_REMOVE = false(length(self.S.LS_DB), 1);
-        for i = 1:length(self.S.LS_DB)
-            if self.DB.(self.S.LS_DB{i}).phase == 1
+        NS = length(LS_DB);
+        FLAG_REMOVE = false(NS, 1);
+        for i = 1:NS
+            if self.DB.(LS_DB{i}).phase == 1
                 FLAG_REMOVE(i) = true;
             end
 
         end
 
-        self.S.LS_DB(FLAG_REMOVE) = [];
+        LS_DB(FLAG_REMOVE) = [];
+
+        % If ind_elements_DB is given, now have to been recalculated
+        if FLAG_IND
+            FLAG_IND = false;
+        end
+
     end
 
     % Get element indeces of the reactants
@@ -82,9 +96,9 @@ function [LS, ind_elements_DB] = find_products(self, species, varargin)
     % Get element indeces of each species in the database
     if ~FLAG_IND
         % Remove incompatible species
-        self.S.LS_DB(find_ind(self.S.LS_DB, 'Air')) = [];
+        LS_DB(find_ind(LS_DB, 'Air')) = [];
         % Get element indeces of each species in the database
-        ind_elements_DB = get_ind_elements(self.S.LS_DB, self.DB, elements, MAX_ELEMENTS);
+        ind_elements_DB = get_ind_elements(LS_DB, self.DB, elements, MAX_ELEMENTS);
     end
     
     % Remove common vectors
@@ -99,7 +113,7 @@ function [LS, ind_elements_DB] = find_products(self, species, varargin)
     % Get list of products
     for i = length(ind_elements_R(:, 1)):-1:1
         ind_species = all(ind_elements_DB - ind_elements_R(i, :) == 0, 2);
-        LS = [LS, self.S.LS_DB(ind_species)'];
+        LS = [LS, LS_DB(ind_species)'];
     end
 
 end

@@ -5,6 +5,11 @@ classdef uielements < matlab.apps.AppBase
         UIElements             matlab.ui.Figure
         Panel_All              matlab.ui.container.Panel
         GridLayout             matlab.ui.container.GridLayout
+        Panel_6                matlab.ui.container.Panel
+        GridLayout4            matlab.ui.container.GridLayout
+        condensed              matlab.ui.control.CheckBox
+        burcat                 matlab.ui.control.CheckBox
+        ionized                matlab.ui.control.CheckBox
         Panel_Close            matlab.ui.container.Panel
         Close                  matlab.ui.control.Button
         Panel_Export           matlab.ui.container.Panel
@@ -320,6 +325,21 @@ classdef uielements < matlab.apps.AppBase
             legend(ax, dline, species_label, 'FontSize', app.Misc.config.fontsize - 4, 'Location', 'best', 'interpreter', 'latex')
         end
 
+        
+        function find_species(app)
+            % Search species with the elements selected
+            if app.NE
+                try
+                    LS = find_products(app, app.LE_selected, 'ind', app.S.ind_elements_DB);
+                catch
+                    LS = {};
+                end
+
+                app.listbox_LS_DB.Items = LS;
+            end
+
+        end
+
     end
 
     methods
@@ -356,6 +376,10 @@ classdef uielements < matlab.apps.AppBase
             % Default size for plots
             app.Misc.config.innerposition = [0.2, 0.15, 0.7, 0.7];
             app.Misc.config.outerposition = [0.2, 0.15, 0.7, 0.7];
+            % Set default values
+            app.burcat.Value = app.S.FLAG_BURCAT;
+            app.ionized.Value = app.S.FLAG_ION;
+            app.condensed.Value = app.S.FLAG_CONDENSED;
         end
 
         % Image clicked function: element_1, element_10, element_11, 
@@ -380,16 +404,9 @@ classdef uielements < matlab.apps.AppBase
                 end
 
             end
-            % Search species with the elements selected
-            if app.NE
-                try
-                    LS = find_products(app, app.LE_selected, 'flag', true, 'ind', app.S.ind_elements_DB);
-                catch
-                    LS = {};
-                end
 
-                app.listbox_LS_DB.Items = LS;
-            end
+            % Search species with the elements selected
+            find_species(app);
         end
 
         % Button pushed function: AddButton1
@@ -523,6 +540,30 @@ classdef uielements < matlab.apps.AppBase
         function listbox_LSClicked(app, event)
             % Get last click | true == listbox_LS_DB, false = listbox_LS
             app.FLAG_LAST_CLICK = false;
+        end
+
+        % Value changed function: ionized
+        function ionizedValueChanged(app, event)
+            % Consider ionized species
+            app.S.FLAG_ION = app.ionized.Value;
+            % Search species
+            find_species(app);
+        end
+
+        % Value changed function: condensed
+        function condensedValueChanged(app, event)
+            % Consider condensed species
+            app.S.FLAG_CONDENSED = app.condensed.Value;
+            % Search species
+            find_species(app);
+        end
+
+        % Value changed function: burcat
+        function burcatValueChanged(app, event)
+            % Consider species from the Third Millenium database (Burcat)
+            app.S.FLAG_BURCAT = app.burcat.Value;
+            % Search species
+            find_species(app);
         end
     end
 
@@ -1465,6 +1506,45 @@ classdef uielements < matlab.apps.AppBase
             app.Close.IconAlignment = 'center';
             app.Close.Position = [1 2 69 25];
             app.Close.Text = 'Close';
+
+            % Create Panel_6
+            app.Panel_6 = uipanel(app.GridLayout);
+            app.Panel_6.BorderType = 'none';
+            app.Panel_6.BackgroundColor = [0.9098 0.9098 0.8902];
+            app.Panel_6.Layout.Row = [2 3];
+            app.Panel_6.Layout.Column = 3;
+
+            % Create GridLayout4
+            app.GridLayout4 = uigridlayout(app.Panel_6);
+            app.GridLayout4.ColumnWidth = {84};
+            app.GridLayout4.RowHeight = {22, 22, 22, '1x'};
+            app.GridLayout4.RowSpacing = 1;
+            app.GridLayout4.Padding = [0 10 0 10];
+            app.GridLayout4.BackgroundColor = [0.9098 0.9098 0.8902];
+
+            % Create ionized
+            app.ionized = uicheckbox(app.GridLayout4);
+            app.ionized.ValueChangedFcn = createCallbackFcn(app, @ionizedValueChanged, true);
+            app.ionized.Tooltip = {'Consider ionized species?'};
+            app.ionized.Text = 'Ionized';
+            app.ionized.Layout.Row = 1;
+            app.ionized.Layout.Column = 1;
+
+            % Create burcat
+            app.burcat = uicheckbox(app.GridLayout4);
+            app.burcat.ValueChangedFcn = createCallbackFcn(app, @burcatValueChanged, true);
+            app.burcat.Tooltip = {'Consider species from Third Millennium database (Burcat)?'};
+            app.burcat.Text = 'Burcat';
+            app.burcat.Layout.Row = 3;
+            app.burcat.Layout.Column = 1;
+
+            % Create condensed
+            app.condensed = uicheckbox(app.GridLayout4);
+            app.condensed.ValueChangedFcn = createCallbackFcn(app, @condensedValueChanged, true);
+            app.condensed.Tooltip = {'Consider condensed species?'};
+            app.condensed.Text = 'Conden.';
+            app.condensed.Layout.Row = 2;
+            app.condensed.Layout.Column = 1;
 
             % Create ContextMenu
             app.ContextMenu = uicontextmenu(app.UIElements);

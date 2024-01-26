@@ -10,6 +10,7 @@ function [LS, ind_elements_DB] = find_products(self, species, varargin)
     %     * ind_elements_DB (float): Matrix NS_DB x MAX_ELEMENTS with element indeces of the species contained in the database
     %     * FLAG_BURCAT (bool): Flag indicating to look for species also in Burcat's database
     %     * FLAG_ION (bool): Flag indicating to include ionized species
+    %     * FLAG_CONDENSED (bool): Flag indicating to include condensed species
     %
     % Returns:
     %     Tuple containing
@@ -21,12 +22,15 @@ function [LS, ind_elements_DB] = find_products(self, species, varargin)
     %     * [LS, ind_elements_DB] = find_products(self, {'O2', 'N', 'eminus'})
     %     * [LS, ind_elements_DB] = find_products(self, {'O2', 'CO', 'N'}, 'flag_burcat', true)
     %     * [LS, ind_elements_DB] = find_products(self, {'O2', 'CO', 'N'}, 'flag_burcat', true, 'flag_ion', true)
+    %     * [LS, ind_elements_DB] = find_products(self, {'O2', 'CO', 'N'}, 'flag_burcat', true, 'flag_ion', true, 'flag_condensed', true, 'ind', ind_elements_DB)
     %     * [LS, ind_elements_DB] = find_products(self, {'O2', 'CO', 'N'}, 'flag_burcat', true, 'flag_ion', true, 'ind', ind_elements_DB)
+    
     
     % Definitions
     MAX_ELEMENTS = 5;
     FLAG_BURCAT = self.S.FLAG_BURCAT; % Flag indicating to look for species also in Burcat's database
     FLAG_ION = self.S.FLAG_ION; % Flag indicating to consider ionized species
+    FLAG_CONDENSED = self.S.FLAG_CONDENSED; % Flag indicating to consider condensed species
     [elements, ~] = set_elements(); % Elements list
     
     % Initialization
@@ -43,6 +47,8 @@ function [LS, ind_elements_DB] = find_products(self, species, varargin)
                 FLAG_BURCAT = varargin{i + 1};
             case {'flag_ion', 'flag_ions'}
                 FLAG_ION = varargin{i + 1};
+            case {'flag_condensed'}
+                FLAG_CONDENSED = varargin{i + 1};
         end
         
     end
@@ -52,11 +58,24 @@ function [LS, ind_elements_DB] = find_products(self, species, varargin)
         species{end + 1} = 'eminus';
     end
     
-    % If FLAG_BURCAT == true, then remove the species from Third millenium database
+    % If FLAG_BURCAT == true, then include the species from Third millenium database
     if ~FLAG_BURCAT
         self.S.LS_DB = find_species_LS(self.S.LS_DB, {}, 'any', {'_M'}, 'all');
     end
     
+    % If FLAG_CONDENSED == true, then include condensed species
+    if ~FLAG_CONDENSED
+        FLAG_REMOVE = false(length(self.S.LS_DB), 1);
+        for i = 1:length(self.S.LS_DB)
+            if self.DB.(self.S.LS_DB{i}).phase == 1
+                FLAG_REMOVE(i) = true;
+            end
+
+        end
+
+        self.S.LS_DB(FLAG_REMOVE) = [];
+    end
+
     % Get element indeces of the reactants
     ind_elements_R = sort(get_ind_elements(species, self.DB, elements, MAX_ELEMENTS), 1);
 

@@ -55,4 +55,5 @@ function self = Species()
     self.FLAG_COMPLETE = false;
     self.FLAG_BURCAT = false; % Find all the combinations of species from the database (without BURCAT's DB) that can appear as products for the given list of reactants
     self.FLAG_ION = false; % Flag indicating to include ionized species in the automatic finder of species
+    self.FLAG_CONDENSED = true; % Flag indicating to include condensed species
 end

@@ -63,7 +63,7 @@ This project is also part of the PhD of [Alberto Cuadra-Lara](https://www.acuadr
 We have several examples of what the Combustion Toolbox can do. Here we show a preview of the GUI and some results obtained from the Combustion Toolbox.
 
 <p align="left">
-    <img src="https://github.com/AlbertoCuadra/combustion_toolbox_website/blob/main/docs/source/_static/img/cuadra2022/gui_1.svg" width="500">
+    <img src="https://github.com/AlbertoCuadra/combustion_toolbox_website/blob/main/docs/source/_static/img/cuadra2022/gui_1_labels.svg" width="500">
 </p>
 
 **Figure 1:** *Current state of the GUI*.
@@ -117,7 +117,7 @@ See also the list of [contributors](https://github.com/AlbertoCuadra/combustion_
     author = "Cuadra, A and Huete, C and Vera, M",
     title = "Combustion Toolbox: A MATLAB-GUI based open-source tool for solving gaseous combustion problems",
     year = 2023,
-    note = "Version 1.0.3",
+    note = "Version 1.0.4",
     doi = {https://doi.org/10.5281/zenodo.5554911}
 }
 ```

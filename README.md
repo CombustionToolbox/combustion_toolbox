@@ -48,13 +48,13 @@
 * The code `is in it’s transition to Python`
 * Export results in a spreadsheet
 * Export results as a .mat format
-* `Display predefined plots` (e.g., molar fraction vs equilence ratio)
+* `Display predefined plots` (e.g., molar fraction vs. equilence ratio)
 
 This project is also part of the PhD of [Alberto Cuadra-Lara](https://www.acuadralara.com/).
 
 ## Start here!
 
-* The [tutorial](https://combustion-toolbox-website.readthedocs.io/en/latest/tutorial.html) will help you get started using Combustion Toolbox on your pc.
+* The [tutorials](https://combustion-toolbox-website.readthedocs.io/en/latest/tutorial.html) will help you get started using the Combustion Toolbox on your pc.
 * See [examples](https://combustion-toolbox-website.readthedocs.io/en/latest/examples.html) of Combustion Toolbox applications.
 * Check the [documentation](https://combustion-toolbox-website.readthedocs.io/en/latest/) of almost every functions.
 
@@ -119,5 +119,16 @@ See also the list of [contributors](https://github.com/AlbertoCuadra/combustion_
     year = 2023,
     note = "Version 1.0.4",
     doi = {https://doi.org/10.5281/zenodo.5554911}
+}
+
+@phdthesis{cuadra2023_thesis,
+    title            = {Development of a wide-spectrum thermochemical code with application to planar reacting and non-reacting shocks},
+    author           = {Cuadra, A.},
+    year             = 2023,
+    month            = {May},
+    address          = {Madrid, Spain},
+    note             = {Available at \url{http://hdl.handle.net/10016/38179}},
+    school           = {Universidad Carlos III de Madrid},
+    type             = {PhD thesis}
 }
 ```

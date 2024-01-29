@@ -41,7 +41,7 @@ function [N0, dNi_T, dN_T, dNi_p, dN_p, STOP, STOP_ions] = equilibrium_helmholtz
     A0 = C.A0.value;
     R0TP = C.R0 * TP; % [J/mol]
     % Initialization
-    NatomE = mix1.NatomE_react';
+    NatomE = mix1.NatomE_react;
     max_NatomE = max(NatomE);
     NP = 0.1;
     SIZE = -log(TN.tolN);

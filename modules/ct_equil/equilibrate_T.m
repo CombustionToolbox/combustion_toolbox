@@ -48,7 +48,7 @@ function mix2 = equilibrate_T(self, mix1, pP, TP, varargin)
     % Compute property matrix of the species at chemical equilibrium
     % NOTE: If the ind variable is removed from the inputs, the set_species 
     % routine will completely fill the properties matrix
-    M0 = set_species(self, self.S.LS, N(:, 1), TP, ind);
+    M0 = set_species(self, self.S.LS, N(:, 1), TP, [ind, self.S.ind_frozen]);
     % Compute properties of final mixture
     mix2 = set_properties(self, mix1, M0, pP, TP, STOP, STOP_ions);
 end

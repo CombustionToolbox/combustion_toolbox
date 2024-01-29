@@ -1,5 +1,5 @@
 % -------------------------------------------------------------------------
-% COMBUSTION TOOLBOX @v1.0.4
+% COMBUSTION TOOLBOX @v1.0.5
 % A MATLAB-GUI based open-source tool for solving gaseous combustion problems
 %
 % Type of problems:

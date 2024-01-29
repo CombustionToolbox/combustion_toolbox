@@ -17,8 +17,8 @@ function mix = compute_properties(self, properties_matrix, p, T)
     % Definitions
     R0 = self.C.R0; % [J/(K mol)] Universal gas constant
     % Initialization
-    mix.error_moles = [];
-    mix.error_moles_ions = [];
+    mix.error_moles = 0;
+    mix.error_moles_ions = 0;
     % Inputs
     mix.p = p; % [bar]
     mix.T = T; % [K]

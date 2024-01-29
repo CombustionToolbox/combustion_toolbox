@@ -41,7 +41,7 @@ function [N0, dNi_T, dN_T, dNi_p, dN_p, ind, STOP, STOP_ions] = equilibrium_helm
     R0TP = self.C.R0 * TP; % [J/(mol)]
 
     % Initialization
-    NatomE = mix1.NatomE;
+    NatomE = mix1.NatomE_react;
     max_NatomE = max(NatomE);
     NP = 0.1;
     SIZE = -log(self.TN.tolN);

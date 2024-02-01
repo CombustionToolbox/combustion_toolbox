@@ -1,5 +1,5 @@
 function [self, LS] = list_species(varargin)
-    % Set list of species in the mixture (reactants and products)
+    % Set list of species in the mixture (products)
     %
     % Predefined list of species:
     %     * SOOT FORMATION (default)
@@ -17,9 +17,6 @@ function [self, LS] = list_species(varargin)
     %     * HC/O2/N2 PROPELLANTS
     %     * SI/HC/O2/N2 PROPELLANTS
     %
-    % Args:
-    %     empty (none): return default list of species (soot formation)
-    %
     % Optional Args:
     %     * self (struct): Data of the mixture, conditions, and databases
     %     * LS (cell): Name list species / list of species
@@ -31,6 +28,11 @@ function [self, LS] = list_species(varargin)
     %
     %     * self (struct): Data of the mixture, conditions, and databases
     %     * LS (cell): List of species
+    %
+    % Examples:
+    %     * LS = list_species('soot formation');
+    %     * [self, LS] = list_species(self, 'soot formation');
+    %     * [self, LS] = list_species(self, 'complete', 1.5, 2.5);
 
     % Unpack inputs
     [self, LS, FLAG] = unpack(varargin{:});

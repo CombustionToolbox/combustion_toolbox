@@ -2,7 +2,7 @@
 % EXAMPLE: ROCKET Propellants considering an Infinite-Area-Chamber (IAC)
 %
 % Compute rocket propellant performance considering an Infinite-Area-Chamber
-% for lean to rich LH2-LOX mixtures at 101.325 bar, a set of 24 species
+% for lean to rich LH2-LOX mixtures at 101.325 bar, a set of 11 species
 % considered, a set of equivalence ratios phi contained in (2, 5) [-], and
 % an exit area ratio A_exit/A_throat = 3 
 %   

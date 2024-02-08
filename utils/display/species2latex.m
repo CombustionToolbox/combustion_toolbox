@@ -76,19 +76,20 @@ function speciesLatex = species2latex(species, varargin)
     % Check suffix
     index = regexp(speciesLatex, '_[a-zA-Z]');
     speciesLatex(index) = '';
-
-    % Check long numbers
-    speciesLatex = strrep(speciesLatex, '}_{', '');
-
+    
     % Joining the Burcat subscript with the previous subscript
-    [ind_start, ind_end] = regexp(speciesLatex, '(?=_{)(.*?)(?=})', 'once');
-    FLAG_DOUBLE_SUBSCRIPTS = contains(speciesLatex, '_{\rm M}') && ind_start && ind_end;
+    [~, ind_end] = regexp(speciesLatex, '(?=_{)(.*?)(?=})');
+    FLAG_DOUBLE_SUBSCRIPTS = contains(speciesLatex, '_{\rm M}') & length(ind_end) > 1;
 
     if FLAG_DOUBLE_SUBSCRIPTS
         % Remove _M subscript
         speciesLatex = strrep(speciesLatex, '_{\rm M}', '');
         % Join _M subscript with the first one
-        speciesLatex = [speciesLatex(1:ind_end), ', \rm{M}', speciesLatex(ind_end+1:end)];
+        speciesLatex = [speciesLatex(1:ind_end(end-1)), ', \rm{M}', speciesLatex(ind_end(end-1) + 1:end)];
+        % Check concatenate $$
+        speciesLatex = strrep(speciesLatex, '$$', '');
     end
-    
+
+    % Check long numbers
+    speciesLatex = strrep(speciesLatex, '}_{', '');
 end

@@ -54,7 +54,7 @@ This project is also part of the PhD of [Alberto Cuadra-Lara](https://www.acuadr
 
 ## Start here!
 
-* The [tutorials](https://combustion-toolbox-website.readthedocs.io/en/latest/tutorial.html) will help you get started using the Combustion Toolbox on your pc.
+* The [tutorials](https://combustion-toolbox-website.readthedocs.io/en/latest/tutorials.html) will help you get started using the Combustion Toolbox on your pc.
 * See [examples](https://combustion-toolbox-website.readthedocs.io/en/latest/examples.html) of Combustion Toolbox applications.
 * Check the [documentation](https://combustion-toolbox-website.readthedocs.io/en/latest/) of almost every functions.
 

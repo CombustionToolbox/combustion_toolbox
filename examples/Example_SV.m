@@ -2,11 +2,11 @@
 % EXAMPLE: SV
 % Compute Isentropic compression/expansion and equilibrium composition at 
 % a defined set of volume ratios (0.5, 2) for a lean CH4-air mixture at
-% 700 K and 10 bar, a set of 26 species considered, and a equivalence
+% 700 K and 10 bar, a set of 24 species considered, and a equivalence
 % ratio phi 0.5 [-]
 %   
-% Soot formation == {'CO2','CO','H2O','H2','O2','N2','He','Ar','Cbgrb',...
-%                    'C2','C2H4','CH','CH','CH3','CH4','CN','H',...
+% Soot formation == {'CO2','CO','H2O','H2','O2','N2','Ar','Cbgrb',...
+%                    'C2','C2H4','CH','CH3','CH4','CN','H',...
 %                    'HCN','HCO','N','NH','NH2','NH3','NO','O','OH'}
 %   
 % See wiki or list_species() for more predefined sets of species

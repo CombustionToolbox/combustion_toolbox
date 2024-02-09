@@ -3,11 +3,11 @@
 %
 % Compute adiabatic temperature and equilibrium composition at constant
 % pressure (e.g., 1.01325 bar) for lean to rich CH4-air mixtures at
-% standard conditions, a set of 26 species considered and a set of
+% standard conditions, a set of 24 species considered and a set of
 % equivalence ratios phi contained in (0.5, 5) [-]
 %   
-% Soot formation == {'CO2','CO','H2O','H2','O2','N2','He','Ar','Cbgrb',...
-%                    'C2','C2H4','CH','CH','CH3','CH4','CN','H',...
+% Soot formation == {'CO2','CO','H2O','H2','O2','N2','Ar','Cbgrb',...
+%                    'C2','C2H4','CH','CH3','CH4','CN','H',...
 %                    'HCN','HCO','N','NH','NH2','NH3','NO','O','OH'}
 %   
 % See wiki or list_species() for more predefined sets of species

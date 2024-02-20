@@ -1,5 +1,5 @@
 function value = humidity_specific(T, p, humidity_relative)
-    % Get the specific humidity of air [kg_w/kg_da] at a given temperature and pressure
+    % Get the specific humidity of air [kg_w/kg_da] at a given temperature, pressure, and relative humidity
     %
     % Args:
     %     T (float): Temperature [K]
@@ -7,7 +7,7 @@ function value = humidity_specific(T, p, humidity_relative)
     %     humidity_relative (float): Relative humidity [%]
     %
     % Returns:
-    %     value (float): Specific humidity of air [kg_w/kg_da] at a given temperature and pressure
+    %     value (float): Specific humidity of air [kg_w/kg_da]
 
     % Constants
     A = [-5.8002206e3, 1.3914993e0, -4.8640239e-2, 4.1764768e-5, -1.4452093e-8, 6.5459673e0];

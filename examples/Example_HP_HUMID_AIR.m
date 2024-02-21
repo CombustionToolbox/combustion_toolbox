@@ -53,7 +53,7 @@ for j = length(humidity_relative):-1:1
     % Get specific humidity
     W = humidity_specific(T, p, humidity_relative(j));
     % Get moles H2O
-    nH20 = W * n_air * (mm_air / mm_H2O);
+    n_H20 = W * n_air * (mm_air / mm_H2O);
     % Solve problem
     for i = length(T):-1:1
         % Initialization
@@ -62,7 +62,7 @@ for j = length(humidity_relative):-1:1
         self = set_prop(self, 'TR', T(i), 'pR', p, 'phi', phi);
         self.PD.S_Fuel     = {'CH4'};
         self.PD.S_Oxidizer = {'N2', 'O2', 'H2O'};
-        self.PD.N_Oxidizer = phi_t ./ phi .* [79/21, 1, nH20(i)];
+        self.PD.N_Oxidizer = phi_t ./ phi .* [79/21, 1, n_H20(i)];
         % self.PD.ratio_oxidizers_O2 = [79, 21, nH20(i) * 21] / 21;
         % Set additional inputs (depends of the problem selected)
         self = set_prop(self, 'pP', self.PD.pR.value);

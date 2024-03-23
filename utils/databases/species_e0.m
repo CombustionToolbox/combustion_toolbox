@@ -15,10 +15,13 @@ function e0 = species_e0(species, T, DB)
     
     % Specific value
     moles = 1;
-    % Universal gas constant
-    R0 = 8.31446261815324; % [J/(K mol)]. 
+
+    % Universal gas constant [J/(K mol)]
+    R0 = 8.31446261815324;
+
     % Enthalpy [J/mol]
     h0 = species_h0(species, T, DB) * 1e3;
+    
     % Internal energy [kJ/mol]
-    e0 = (h0 - moles * R0 * T)/ 1000; % [kJ/mol]
+    e0 = (h0 - moles * R0 * T)/ 1000;
 end

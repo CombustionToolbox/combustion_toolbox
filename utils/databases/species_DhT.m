@@ -13,10 +13,26 @@ function DhT = species_DhT(species, T, DB)
     % Example:
     %     DhT = species_DhT('H2O', 300, DB)
 
-    try
-        DhT = DB.(species).DhTcurve(T) / 1000;
-    catch
-        DhT = 0; % cryogenic species
+    persistent cachedSpecies;
+    persistent cachedDHTcurves;
+    
+    if isempty(cachedSpecies)
+        cachedSpecies = {};
+        cachedDHTcurves = {};
     end
-
+    
+    % Check if species data is already cached
+    idx = find(strcmp(cachedSpecies, species), 1);
+    if isempty(idx)
+        % Load species data and cache it
+        DhTcurve = DB.(species).DhTcurve;
+        cachedSpecies{end+1} = species;
+        cachedDHTcurves{end+1} = DhTcurve;
+    else
+        % Retrieve cached data
+        DhTcurve = cachedDHTcurves{idx};
+    end
+    
+    % Compute thermal enthalpy [kJ/mol]
+    DhT = DhTcurve(T) / 1000;
 end

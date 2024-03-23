@@ -12,11 +12,27 @@ function h0 = species_h0(species, T, DB)
     %
     % Example:
     %     h0 = species_h0('H2O', 300, DB)
-
-    try
-        h0 = DB.(species).h0curve(T) / 1000;
-    catch
-        h0 = DB.(species).h0 / 1000; % cryogenic species
+    
+    persistent cachedSpecies;
+    persistent cachedH0curves;
+    
+    if isempty(cachedSpecies)
+        cachedSpecies = {};
+        cachedH0curves = {};
     end
-
+    
+    % Check if species data is already cached
+    idx = find(strcmp(cachedSpecies, species), 1);
+    if isempty(idx)
+        % Load species data and cache it
+        h0curve = DB.(species).h0curve;
+        cachedSpecies{end+1} = species;
+        cachedH0curves{end+1} = h0curve;
+    else
+        % Retrieve cached data
+        h0curve = cachedH0curves{idx};
+    end
+    
+    % Compute enthalpy [kJ/mol]
+    h0 = h0curve(T) / 1000;
 end

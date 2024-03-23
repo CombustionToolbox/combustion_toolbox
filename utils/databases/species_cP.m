@@ -14,10 +14,26 @@ function cP = species_cP(species, T, DB)
     % Example:
     %     cP = species_cP('H2O', 300, DB)
 
-    try
-        cP = DB.(species).cPcurve(T);
-    catch
-        cP = 0; % cryogenic species
+    persistent cachedSpecies;
+    persistent cachedCPcurves;
+    
+    if isempty(cachedSpecies)
+        cachedSpecies = {};
+        cachedCPcurves = {};
     end
-
+    
+    % Check if species data is already cached
+    idx = find(strcmp(cachedSpecies, species), 1);
+    if isempty(idx)
+        % Load species data and cache it
+        cPcurve = DB.(species).cPcurve;
+        cachedSpecies{end+1} = species;
+        cachedCPcurves{end+1} = cPcurve;
+    else
+        % Retrieve cached data
+        cPcurve = cachedCPcurves{idx};
+    end
+    
+    % Compute specific heat at constant pressure [J/(mol-K)]
+    cP = cPcurve(T);
 end

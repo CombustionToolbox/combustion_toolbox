@@ -1,9 +1,9 @@
-function [ind, NS] = check_temperature_range(self, T, ind, NS, FLAG)
+function [index, NS] = check_temperature_range(system, T, index, NS, FLAG)
     % Remove species indeces out of the temperature range if FLAG = true,
     % e.g., linear extrapolation of the polynomial fits is not allowed.
     %
     % Args:
-    %     self (struct): Data of the mixture, conditions, and databases
+    %     system (ChemicalSystem): 
     %     T (float): Temperature
     %     ind (float): Vector with the species indeces
     %     NS (float): Number of species
@@ -22,9 +22,9 @@ function [ind, NS] = check_temperature_range(self, T, ind, NS, FLAG)
     
     % Remove species outside the bounds
     for i = NS:-1:1
-        species = self.S.LS{ind(i)};
-        if T < self.DB.(species).T(1) || T > self.DB.(species).T(end)
-            ind(i) = [];
+        species = system.listSpecies{index(i)};
+        if T < system.species.(species).T(1) || T > system.species.(species).T(end)
+            index(i) = [];
             NS = NS - 1;
         end
 

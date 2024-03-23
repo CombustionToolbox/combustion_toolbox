@@ -1,4 +1,4 @@
-function print_mixture(self, varargin)
+function print_mixture(varargin)
     % Print properties and composition of the given mixtures in the command
     % window
     %
@@ -12,24 +12,35 @@ function print_mixture(self, varargin)
     %     * mixN (struct): Struct with the properties of the mixture
     %
     % Examples:
-    %     * print_mixture(self, mix1)
-    %     * print_mixture(self, mix1, mix2)
-    %     * print_mixture(self, mix1, mix2, mix3)
-    %     * print_mixture(self, mix1, mix2, mix3, mix4)
+    %     * print_mixture(mix1)
+    %     * print_mixture(mix1, mix2)
+    %     * print_mixture(mix1, mix2, mix3)
+    %     * print_mixture(mix1, mix2, mix3, mix4)
+    
+    % Temporal
+    mintol_display = 1e-14; % (will be moved to Miscellaneous)
+    composition_units = 'molar fraction'; % Possible values: mol, molar fraction or mass fraction
+    problemType = '';
 
-    % Definitions
-    Nmixtures = nargin - 1;
     % Unpack cell with mixtures
     mix = varargin;
+
+    % Definitions
+    numberMixtures = nargin;
+    listSpecies = mix{1}.chemicalSystem.listSpecies;
+
     % Start
     fprintf('************************************************************************************************************\n');
+
     % Print header
-    header_composition = print_header(self.PD.ProblemType, Nmixtures, mix);
+    header_composition = print_header(problemType, numberMixtures, mix);
+
     % Print properties
-    print_properties(self.PD.ProblemType, Nmixtures, mix);
+    print_properties(problemType, numberMixtures, mix);
+
     % Print composition
-    for i = 1:nargin - 1
-        print_composition(mix{i}, self.S.LS, self.C.composition_units, header_composition{i}, self.C.mintol_display);
+    for i = 1:numberMixtures
+        print_composition(mix{i}, listSpecies, composition_units, header_composition{i}, mintol_display);
     end
 
     % End
@@ -37,12 +48,12 @@ function print_mixture(self, varargin)
 end
 
 % SUB-PASS FUNCTIONS
-function value = get_properties(property, Nmixtures, mix)
+function value = get_properties(property, numberMixtures, mix)
     % Get properties of the given mixtures
     %
     % Args:
     %     property (function/char): Function/char to get the property
-    %     Nmixtures (float): Number of mixtures
+    %     numberMixtures (float): Number of mixtures
     %     mix (cell): Cell with the properties of the N mixtures
     %
     % Returns:
@@ -57,7 +68,7 @@ function value = get_properties(property, Nmixtures, mix)
         return
     end
 
-    for i = Nmixtures:-1:1
+    for i = numberMixtures:-1:1
         value(i) = property(mix{i});
     end
 
@@ -77,65 +88,65 @@ function line = set_string_value(Nmixtures)
     line = [repmat(line_body, 1, Nmixtures - 1), line_end];
 end
 
-function print_properties(ProblemType, Nmixtures, mix)
+function print_properties(ProblemType, numberMixtures, mix)
     % Print properties of the mixture in the command window
     %
     % Args:
     %     ProblemType (char): Type of problem
-    %     Nmixtures (float): Number of mixtures
+    %     numberMixtures (float): Number of mixtures
     %     mix (cell): Cell with the properties of the N mixtures
 
     % Definitions
-    string_value = set_string_value(Nmixtures);
-    string_value_2 = set_string_value(Nmixtures - 1);
+    string_value = set_string_value(numberMixtures);
+    string_value_2 = set_string_value(numberMixtures - 1);
     
     % Print properties
-    fprintf(['T [K]          |', string_value], get_properties(@temperature, Nmixtures, mix));
-    fprintf(['p [bar]        |', string_value], get_properties(@pressure, Nmixtures, mix));
-    fprintf(['r [kg/m3]      |', string_value], get_properties(@density, Nmixtures, mix));
-    fprintf(['h [kJ/kg]      |', string_value], get_properties(@enthalpy_mass, Nmixtures, mix));
-    fprintf(['e [kJ/kg]      |', string_value], get_properties(@intEnergy_mass, Nmixtures, mix));
-    fprintf(['g [kJ/kg]      |', string_value], get_properties(@gibbs_mass, Nmixtures, mix));
-    fprintf(['s [kJ/(kg-K)]  |', string_value], get_properties(@entropy_mass, Nmixtures, mix));
-    fprintf(['W [g/mol]      |', string_value], get_properties(@MolecularWeight, Nmixtures, mix));
+    fprintf(['T [K]          |', string_value], get_properties(@temperature, numberMixtures, mix));
+    fprintf(['p [bar]        |', string_value], get_properties(@pressure, numberMixtures, mix));
+    fprintf(['r [kg/m3]      |', string_value], get_properties(@density, numberMixtures, mix));
+    fprintf(['h [kJ/kg]      |', string_value], get_properties(@enthalpy_mass, numberMixtures, mix));
+    fprintf(['e [kJ/kg]      |', string_value], get_properties(@intEnergy_mass, numberMixtures, mix));
+    fprintf(['g [kJ/kg]      |', string_value], get_properties(@gibbs_mass, numberMixtures, mix));
+    fprintf(['s [kJ/(kg-K)]  |', string_value], get_properties(@entropy_mass, numberMixtures, mix));
+    fprintf(['W [g/mol]      |', string_value], get_properties(@MolecularWeight, numberMixtures, mix));
 
-    if Nmixtures > 1
-        fprintf(['(dlV/dlp)T [-] |                 |', string_value_2], get_properties('dVdp_T', Nmixtures - 1, mix(2:end)));
-        fprintf(['(dlV/dlT)p [-] |                 |', string_value_2], get_properties('dVdT_p', Nmixtures - 1, mix(2:end)));
+    if numberMixtures > 1
+        fprintf(['(dlV/dlp)T [-] |                 |', string_value_2], get_properties('dVdp_T', numberMixtures - 1, mix(2:end)));
+        fprintf(['(dlV/dlT)p [-] |                 |', string_value_2], get_properties('dVdT_p', numberMixtures - 1, mix(2:end)));
     end
 
-    fprintf(['cp [kJ/(kg-K)] |', string_value], get_properties(@cp_mass, Nmixtures, mix));
-    fprintf(['gamma [-]      |', string_value], get_properties(@adiabaticIndex, Nmixtures, mix));
-    fprintf(['gamma_s [-]    |', string_value], get_properties(@adiabaticIndex_sound, Nmixtures, mix));
-    fprintf(['sound vel [m/s]|', string_value], get_properties(@soundspeed, Nmixtures, mix));
+    fprintf(['cp [kJ/(kg-K)] |', string_value], get_properties(@cp_mass, numberMixtures, mix));
+    fprintf(['gamma [-]      |', string_value], get_properties(@adiabaticIndex, numberMixtures, mix));
+    fprintf(['gamma_s [-]    |', string_value], get_properties(@adiabaticIndex_sound, numberMixtures, mix));
+    fprintf(['sound vel [m/s]|', string_value], get_properties(@soundspeed, numberMixtures, mix));
 
     if contains(ProblemType, 'SHOCK') || contains(ProblemType, 'DET')
-        fprintf(['u [m/s]        |', string_value], [get_properties(@velocity_relative, 1, mix(1)), get_properties('v_shock', Nmixtures - 1, mix(2:end))]);
-        fprintf(['Mach number [-]|', string_value], [get_properties(@velocity_relative, 1, mix(1)), get_properties('v_shock', Nmixtures - 1, mix(2:end))] ./ get_properties(@soundspeed, Nmixtures, mix));
+        fprintf(['u [m/s]        |', string_value], [get_properties(@velocity_relative, 1, mix(1)), get_properties('v_shock', numberMixtures - 1, mix(2:end))]);
+        fprintf(['Mach number [-]|', string_value], [get_properties(@velocity_relative, 1, mix(1)), get_properties('v_shock', numberMixtures - 1, mix(2:end))] ./ get_properties(@soundspeed, numberMixtures, mix));
     end
 
     if contains(ProblemType, '_OBLIQUE') || contains(ProblemType, '_POLAR')
         fprintf('------------------------------------------------------------------------------------------------------------\n');
         fprintf('PARAMETERS\n');
-        fprintf(['min wave  [deg]|                 |', string_value_2], get_properties('beta_min', Nmixtures - 1, mix(2:end)));
-        fprintf(['wave angle[deg]|                 |', string_value_2], get_properties('beta', Nmixtures - 1, mix(2:end)));
-        fprintf(['deflection[deg]|                 |', string_value_2], get_properties('theta', Nmixtures - 1, mix(2:end)));
+        fprintf(['min wave  [deg]|                 |', string_value_2], get_properties('beta_min', numberMixtures - 1, mix(2:end)));
+        fprintf(['wave angle[deg]|                 |', string_value_2], get_properties('beta', numberMixtures - 1, mix(2:end)));
+        fprintf(['deflection[deg]|                 |', string_value_2], get_properties('theta', numberMixtures - 1, mix(2:end)));
 
         if contains(ProblemType, '_POLAR')
-            fprintf(['max def.  [deg]|                 |', string_value_2], get_properties('theta_max', Nmixtures - 1, mix(2:end)));
-            fprintf(['sonic def.[deg]|                 |', string_value_2], get_properties('theta_sonic', Nmixtures - 1, mix(2:end)));
+            fprintf(['max def.  [deg]|                 |', string_value_2], get_properties('theta_max', numberMixtures - 1, mix(2:end)));
+            fprintf(['sonic def.[deg]|                 |', string_value_2], get_properties('theta_sonic', numberMixtures - 1, mix(2:end)));
         end
 
     elseif contains(ProblemType, 'ROCKET')
-        string_value_3 = set_string_value(Nmixtures - 2);
+        string_value_3 = set_string_value(numberMixtures - 2);
 
         fprintf('------------------------------------------------------------------------------------------------------------\n');
         fprintf('PERFORMANCE PARAMETERS\n');
-        fprintf(['A/At [-]       |                 |                 |', string_value_3], get_properties('Aratio', Nmixtures - 2, mix(3:end)));
-        fprintf(['CSTAR [m/s]    |                 |                 |', string_value_3], get_properties('cstar', Nmixtures - 2, mix(3:end)));
-        fprintf(['CF [-]         |                 |                 |', string_value_3], get_properties('cf', Nmixtures - 2, mix(3:end)));
-        fprintf(['Ivac [s]       |                 |                 |', string_value_3], get_properties('I_vac', Nmixtures - 2, mix(3:end)));
-        fprintf(['Isp  [s]       |                 |                 |', string_value_3], get_properties('I_sp', Nmixtures - 2, mix(3:end)));
+        fprintf(['A/At [-]       |                 |                 |', string_value_3], get_properties('Aratio', numberMixtures - 2, mix(3:end)));
+        fprintf(['CSTAR [m/s]    |                 |                 |', string_value_3], get_properties('cstar', numberMixtures - 2, mix(3:end)));
+        fprintf(['CF [-]         |                 |                 |', string_value_3], get_properties('cf', numberMixtures - 2, mix(3:end)));
+        fprintf(['Ivac [s]       |                 |                 |', string_value_3], get_properties('I_vac', numberMixtures - 2, mix(3:end)));
+        fprintf(['Isp  [s]       |                 |                 |', string_value_3], get_properties('I_sp', numberMixtures - 2, mix(3:end)));
     end
 
     fprintf('------------------------------------------------------------------------------------------------------------\n');
@@ -185,39 +196,42 @@ function print_composition(mix, LS, units, header, mintol_display)
     fprintf('------------------------------------------------------------------------------------------------------------\n');
 end
 
-function header_composition = print_header(ProblemType, Nmixtures, mix)
+function header_composition = print_header(problemType, numberMixtures, mix)
     % Print header in the command window
     %
     % Args:
-    %     ProblemType (char): Type of the problem
-    %     Nmixtures (float): Number of mixtures
+    %     problemType (char): Type of the problem
+    %     numberMixtures (float): Number of mixtures
     %     mix (cell): Cell with the properties of the N mixtures
     %
     % Returns:
     %     header_composition (cell): Cell with the header indicating the type/state of the mixture
+    
+    if problemType
+        fprintf('------------------------------------------------------------------------------------------------------------\n');
+        fprintf('Problem type: %s  | phi = %4.4f\n', problemType, mix{1}.equivalenceRatio);
+    end
 
     fprintf('------------------------------------------------------------------------------------------------------------\n');
-    fprintf('Problem type: %s  | phi = %4.4f\n', ProblemType, equivalenceRatio(mix{1}));
-    fprintf('------------------------------------------------------------------------------------------------------------\n');
 
-    if contains(ProblemType, '_OBLIQUE') || contains(ProblemType, '_POLAR')
+    if contains(problemType, '_OBLIQUE') || contains(problemType, '_POLAR')
 
-        if Nmixtures == 2
+        if numberMixtures == 2
             header_composition = {'STATE 1               ', 'STATE 2               '};
             fprintf('               |     STATE 1     |     STATE 2\n');
-        elseif Nmixtures == 3
+        elseif numberMixtures == 3
             header_composition = {'STATE 1               ', 'STATE 2-W             ', 'STATE 2-S             '};
             fprintf('               |     STATE 1     |     STATE 2-W   |     STATE 2-S\n');
-        elseif Nmixtures == 4
+        elseif numberMixtures == 4
             header_composition = {'STATE 1               ', 'STATE 2               ', 'STATE 3-W             ', 'STATE 3-S             '};
             fprintf('               |     STATE 1     |     STATE 2     |     STATE 3-W   |     STATE 3-S\n');
         end
 
-    elseif contains(ProblemType, '_R')
+    elseif contains(problemType, '_R')
         header_body = '     STATE %d     |';
         header_end = '     STATE %d\n';
-        header = [repmat(header_body, 1, Nmixtures - 1), header_end];
-        value = 1:Nmixtures;
+        header = [repmat(header_body, 1, numberMixtures - 1), header_end];
+        value = 1:numberMixtures;
         fprintf(['               |', header], value);
 
         header_composition = {'STATE 1               ', ...
@@ -228,45 +242,45 @@ function header_composition = print_header(ProblemType, Nmixtures, mix)
                               'STATE 6               ', ...
                               'STATE 7               ', ...
                               'STATE 8               '};
-    elseif contains(ProblemType, 'ROCKET')
+    elseif contains(problemType, 'ROCKET')
 
-        if Nmixtures == 3
+        if numberMixtures == 3
             header_composition = {'INLET CHAMBER         ', ...
                                   'OUTLET CHAMBER        ', ...
                                   'THROAT                '};
             fprintf('               |  INLET CHAMBER  | OUTLET CHAMBER  |      THROAT \n');
-        elseif Nmixtures > 3
+        elseif numberMixtures > 3
 
-            if Nmixtures > 4
+            if numberMixtures > 4
                 header_exit_prop_last = '|      EXIT\n';
             else
                 header_exit_prop_last = [];
             end
 
             if mix{3}.Aratio == 1
-                header_exit = repmat({'EXIT                  '}, 1, Nmixtures - 3);
+                header_exit = repmat({'EXIT                  '}, 1, numberMixtures - 3);
                 header_composition = {'INLET CHAMBER         ', ...
                                       'OUTLET CHAMBER        ', ...
                                       'THROAT                ', ...
                                     header_exit{1:end}};
 
-                if Nmixtures > 4
-                    header_exit_prop = [repmat({'|      EXIT       |'}, 1, Nmixtures - 5), header_exit_prop_last];
+                if numberMixtures > 4
+                    header_exit_prop = [repmat({'|      EXIT       |'}, 1, numberMixtures - 5), header_exit_prop_last];
                     fprintf(['               |  INLET CHAMBER  | OUTLET CHAMBER  |     THROAT      ', header_exit_prop{1:end}]);
                 else
                     fprintf('               |  INLET CHAMBER  | OUTLET CHAMBER  |     THROAT      |      EXIT\n');
                 end
 
             else
-                header_exit = repmat({'EXIT                  '}, 1, Nmixtures - 4);
+                header_exit = repmat({'EXIT                  '}, 1, numberMixtures - 4);
                 header_composition = {'INLET CHAMBER         ', ...
                                       'INJECTOR              ', ...
                                       'OUTLET CHAMBER        ', ...
                                       'THROAT                ', ...
                                     header_exit{1:end}};
 
-                if Nmixtures > 4
-                    header_exit_prop = [repmat({'|      EXIT       |'}, 1, Nmixtures - 5), header_exit_prop_last];
+                if numberMixtures > 4
+                    header_exit_prop = [repmat({'|      EXIT       |'}, 1, numberMixtures - 5), header_exit_prop_last];
                     fprintf(['               |  INLET CHAMBER  |     INJECTOR    | OUTLET CHAMBER  |     THROAT      ', header_exit_prop{1:end}]);
                 else
                     fprintf('               |  INLET CHAMBER  |     INJECTOR    | OUTLET CHAMBER  |     THROAT \n');
@@ -276,13 +290,25 @@ function header_composition = print_header(ProblemType, Nmixtures, mix)
 
         end
 
-    elseif Nmixtures == 2
+    elseif problemType & numberMixtures == 2
         header_composition = {'REACTANTS             ', ...
                         'PRODUCTS              '};
         fprintf('               |    REACTANTS    |      PRODUCTS\n');
-    elseif Nmixtures == 1
-        header_composition = {'MIXTURE               '};
-        fprintf('               |     MIXTURE\n');
+    else
+        header_body = '    MIXTURE %d    |';
+        header_end = '    MIXTURE %d\n';
+        header = [repmat(header_body, 1, numberMixtures - 1), header_end];
+        value = 1:numberMixtures;
+        fprintf(['               |', header], value);
+
+        header_composition = {'MIXTURE 1             ', ...
+                              'MIXTURE 2             ', ...
+                              'MIXTURE 3             ', ...
+                              'MIXTURE 4             ', ...
+                              'MIXTURE 5             ', ...
+                              'MIXTURE 6             ', ...
+                              'MIXTURE 7             ', ...
+                              'MIXTURE 8             '};
     end
 
 end

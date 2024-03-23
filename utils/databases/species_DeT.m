@@ -13,10 +13,26 @@ function DeT = species_DeT(species, T, DB)
     % Example:
     %     DeT = species_DeT('H2O', 300, DB)
 
-    try
-        DeT = DB.(species).DeTcurve(T) / 1000;
-    catch
-        DeT = 0; % cryogenic species
+    persistent cachedSpecies;
+    persistent cachedDETcurves;
+    
+    if isempty(cachedSpecies)
+        cachedSpecies = {};
+        cachedDETcurves = {};
     end
-
+    
+    % Check if species data is already cached
+    idx = find(strcmp(cachedSpecies, species), 1);
+    if isempty(idx)
+        % Load species data and cache it
+        DeTcurve = DB.(species).DeTcurve;
+        cachedSpecies{end+1} = species;
+        cachedDETcurves{end+1} = DeTcurve;
+    else
+        % Retrieve cached data
+        DeTcurve = cachedDETcurves{idx};
+    end
+    
+    % Compute thermal internal energy [kJ/mol]
+    DeT = DeTcurve(T) / 1000;
 end

@@ -1,4 +1,4 @@
-function cP = species_cP(species, T, DB)
+function cp = species_cP(species, T, DB)
     % Compute specific heat at constant pressure [J/(mol-K)] of the species
     % at the given temperature [K] using piecewise cubic Hermite
     % interpolating polynomials and linear extrapolation
@@ -14,10 +14,26 @@ function cP = species_cP(species, T, DB)
     % Example:
     %     cP = species_cP('H2O', 300, DB)
 
-    try
-        cP = DB.(species).cPcurve(T);
-    catch
-        cP = 0; % cryogenic species
+    persistent cachedSpecies;
+    persistent cachedCPcurves;
+    
+    if isempty(cachedSpecies)
+        cachedSpecies = {};
+        cachedCPcurves = {};
     end
-
+    
+    % Check if species data is already cached
+    idx = find(strcmp(cachedSpecies, species), 1);
+    if isempty(idx)
+        % Load species data and cache it
+        cpcurve = DB.(species).cpcurve;
+        cachedSpecies{end+1} = species;
+        cachedCPcurves{end+1} = cpcurve;
+    else
+        % Retrieve cached data
+        cpcurve = cachedCPcurves{idx};
+    end
+    
+    % Compute specific heat at constant pressure [J/(mol-K)]
+    cp = cpcurve(T);
 end

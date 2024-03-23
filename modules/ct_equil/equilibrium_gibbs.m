@@ -1,4 +1,4 @@
-function [N0, dNi_T, dN_T, dNi_p, dN_p, ind, STOP, STOP_ions] = equilibrium_gibbs(self, pP, TP, mix1, guess_moles)
+function [N0, dNi_T, dN_T, dNi_p, dN_p, index, STOP, STOP_ions, h0] = equilibrium_gibbs(obj, system, pP, TP, mix, guess_moles)
     % Obtain equilibrium composition [moles] for the given temperature [K] and pressure [bar].
     % The code stems from the minimization of the free energy of the system by using Lagrange
     % multipliers combined with a Newton-Raphson method, upon condition that initial gas
@@ -11,7 +11,8 @@ function [N0, dNi_T, dN_T, dNi_p, dN_p, ind, STOP, STOP_ions] = equilibrium_gibb
     % B. J. (1994). NASA reference publication, 1311.
     %
     % Args:
-    %     self (struct): Data of the mixture, conditions, and databases
+    %     obj (EquilibriumSolver):
+    %     system (ChemicalSystem):
     %     pP (float): Pressure [bar]
     %     TP (float): Temperature [K]
     %     mix1 (struct): Properties of the initial mixture
@@ -34,55 +35,58 @@ function [N0, dNi_T, dN_T, dNi_p, dN_p, ind, STOP, STOP_ions] = equilibrium_gibb
 
     % Generalized Gibbs minimization method (reduced)
     
+    % Constants
+    R0 = 8.31446261815324; % [J/(K mol)]. Universal gas constant
+
     % Definitions
-    N0 = self.C.N0.value;  % Composition matrix [n_i, FLAG_CONDENSED_i]
-    A0 = self.C.A0.value;  % Stoichiometric matrix [a_ij]
-    R0TP = self.C.R0 * TP; % [J/(mol)]
+    N0 = system.molesPhaseMatrix;      % Composition matrix [n_i, FLAG_CONDENSED_i]
+    A0 = system.stoichiometricMatrix;  % Stoichiometric matrix [a_ij]
+    R0TP = R0 * TP;                    % [J/(mol)]
     
     % Initialization
-    NatomE = mix1.NatomE_react;
+    NatomE = mix.natomElementsReact;
     max_NatomE = max(NatomE);
     NP = 0.1;
-    SIZE = -log(self.TN.tolN);
+    SIZE = -log(obj.tolMoles);
     FLAG_CONDENSED = false;
 
     % Set moles from guess_moles (if it was given) to 1e-6 to avoid singular matrix
-    guess_moles(guess_moles < self.TN.tolN_guess) = self.TN.tolN_guess;
+    guess_moles(guess_moles < obj.tolMolesGuess) = obj.tolMolesGuess;
     
     % Find indeces of the species/elements that we have to remove from the stoichiometric matrix A0
-    % for the sum of elements whose value is <= tolN
-    [A0, ind_remove_species, self.E.ind_E, NatomE] = remove_elements(NatomE, A0, self.E.ind_E, self.TN.tolN);
+    % for the sum of elements whose value is <= tolMoles
+    [A0, indexRemoveSpecies, ind_E, NatomE] = remove_elements(NatomE, A0, system.ind_E, obj.tolMoles);
     
     % List of indices with nonzero values
-    [ind, ind_nswt, ind_swt, ind_ions, ind_elem, NE, NG, NS] = temp_values(self.S, NatomE);
+    [index, indexGas, indexCondensed, indexIons, indexElements, NE, NG, NS] = temp_values(system, NatomE);
     
     % Update temp values
-    if ~isempty(ind_remove_species)
-        [ind, ind_swt, ind_nswt, ind_ions, NG, NS] = update_temp(N0, ind_remove_species, ind_swt, ind_nswt, ind_ions, NP, SIZE);
+    if ~isempty(indexRemoveSpecies)
+        [index, indexCondensed, indexGas, indexIons, NG, NS] = update_temp(N0, indexRemoveSpecies, indexCondensed, indexGas, indexIons, NP, SIZE);
     end
     
     % Remove condensed species with temperature out of bounds
-    ind_swt = check_temperature_range(self, TP, ind_swt, NS - NG, false);
+    indexCondensed = check_temperature_range(system, TP, indexCondensed, NS - NG, false);
 
     % Remove gas species with temperature out of bounds
-    [ind_nswt, NG] = check_temperature_range(self, TP, ind_nswt, NG, self.TN.FLAG_EXTRAPOLATE);
+    [indexGas, NG] = check_temperature_range(obj, TP, indexGas, NG, obj.FLAG_EXTRAPOLATE);
 
     % First, compute chemical equilibrium with only gaseous species
-    ind_nswt_0 = ind_nswt;
-    ind_swt_0 = ind_swt;
-    ind_swt = [];
-    ind = [ind_nswt, ind_swt];
-    NS = length(ind);
+    indexGas_0 = indexGas;
+    indexCondensed_0 = indexCondensed;
+    indexCondensed = [];
+    index = [indexGas, indexCondensed];
+    NS = length(index);
     
     % Initialize vectors g0 (molar Gibbs energy) and h0 (molar enthalpy) with zeros
     g0 = N0(:, 1);
     h0 = N0(:, 1);
 
     % Initialize composition matrix N0 [mol, FLAG_CONDENSED]    
-    [N0, NP] = initialize_moles(N0, NP, ind_nswt, NG, guess_moles);
+    [N0, NP] = initialize_moles(N0, NP, indexGas, NG, guess_moles);
     
     % Molar Gibbs energy [J/mol]
-    g0([ind_nswt_0, ind_swt_0]) = set_g0(self.S.LS([ind_nswt_0, ind_swt_0]), TP, self.DB);
+    g0([indexGas_0, indexCondensed_0]) = set_g0(system.listSpecies([indexGas_0, indexCondensed_0]), TP, system.species);
     
     % Dimensionless chemical potential
     muRT = g0/R0TP;
@@ -98,18 +102,22 @@ function [N0, dNi_T, dN_T, dNi_p, dN_p, ind, STOP, STOP_ions] = equilibrium_gibb
     x = equilibrium_loop_condensed(x);
     
     % Update matrix J (jacobian) to compute the thermodynamic derivatives
-    J = update_matrix_J(A0_T(ind_elem, :), J22, N0, NP, ind_nswt, ind_swt, NE);
+    J = update_matrix_J(A0_T(indexElements, :), J22, N0, NP, indexGas, indexCondensed, NE);
     J(end, end) = 0;
 
     % Molar enthalpy [J/mol]
-    h0(ind) = set_h0(self.S.LS(ind), TP, self.DB);
-
+    % if mix.FLAG_REACTION
+    %     h0 = system.propertiesMatrix(:, system.ind_hi) * 1e3;
+    % else
+        h0(index) = set_h0(system.listSpecies(index), TP, system.species);
+    %end
+    
     % Dimensionless enthalpy
     H0RT = h0 / R0TP;
 
     % Compute thermodynamic derivates
-    [dNi_T, dN_T] = equilibrium_dT(J, N0, A0, NE, ind_nswt, ind_swt, ind_elem, H0RT);
-    [dNi_p, dN_p] = equilibrium_dp(J, N0, A0, NE, ind_nswt, ind_swt, ind_elem);
+    [dNi_T, dN_T] = equilibrium_dT(J, N0, A0, NE, indexGas, indexCondensed, indexElements, H0RT);
+    [dNi_p, dN_p] = equilibrium_dp(J, N0, A0, NE, indexGas, indexCondensed, indexElements);
 
     % NESTED FUNCTION
     function x = equilibrium_loop
@@ -117,20 +125,20 @@ function [N0, dNi_T, dN_T, dNi_p, dN_p, ind, STOP, STOP_ions] = equilibrium_gibb
 
         % Initialization
         it = 0; counter_errors = 0;
-        itMax = self.TN.itMax_gibbs;
+        itMax = obj.itMaxGibbs;
         STOP = 1.0;
         
         % Calculations
-        while STOP > self.TN.tol_gibbs && it < itMax
+        while STOP > obj.tolGibbs && it < itMax
             it = it + 1;
             % Chemical potential
-            muRT(ind_nswt) =  g0(ind_nswt) / R0TP + log(N0(ind_nswt, 1) / NP) + log(pP);
+            muRT(indexGas) =  g0(indexGas) / R0TP + log(N0(indexGas, 1) / NP) + log(pP);
             
             % Construction of matrix J
-            J = update_matrix_J(A0_T, J22, N0, NP, ind_nswt, ind_swt, NE);
+            J = update_matrix_J(A0_T, J22, N0, NP, indexGas, indexCondensed, NE);
             
             % Construction of vector b      
-            b = update_vector_b(A0, N0, NP, NatomE, self.E.ind_E, ind, ind_nswt, ind_swt, ind_ions, muRT);
+            b = update_vector_b(A0, N0, NP, NatomE, indexElements, index, indexGas, indexCondensed, indexIons, muRT);
             
             % Solve of the linear system J*x = b
             x = J\b;
@@ -139,14 +147,14 @@ function [N0, dNi_T, dN_T, dNi_p, dN_p, ind, STOP, STOP_ions] = equilibrium_gibb
             if any(isnan(x) | isinf(x))
                 
                 % Update temp indeces
-                ind_nswt = ind_nswt_0;
+                indexGas = indexGas_0;
 
                 if FLAG_CONDENSED
-                    ind_swt = ind_swt_0;
+                    indexCondensed = indexCondensed_0;
                 end
 
                 % Reset removed species to 1e-6 to try the avoid singular matrix
-                N0( N0([ind_nswt, ind_swt], 1) < self.TN.tolN, 1) = 1e-6;
+                N0( N0([indexGas, indexCondensed], 1) < obj.tolMoles, 1) = 1e-6;
 
                 if counter_errors > 2
                     x = NaN;
@@ -163,24 +171,24 @@ function [N0, dNi_T, dN_T, dNi_p, dN_p, ind, STOP, STOP_ions] = equilibrium_gibb
             Delta_ln_NP = x(end);
             
             % Compute correction moles of gases
-            Delta_ln_nj = update_Delta_ln_nj(A0, pi_i, Delta_ln_NP, muRT, ind_nswt);
+            Delta_ln_nj = update_Delta_ln_nj(A0, pi_i, Delta_ln_NP, muRT, indexGas);
             
             % Calculate correction factor
-            delta = relax_factor(NP, N0(ind, 1), [Delta_ln_nj; Delta_nj], Delta_ln_NP, NG);
+            delta = relax_factor(NP, N0(index, 1), [Delta_ln_nj; Delta_nj], Delta_ln_NP, NG);
 
             % Apply correction
-            N0(ind_nswt, 1) = N0(ind_nswt, 1) .* exp(delta * Delta_ln_nj);
-            N0(ind_swt, 1) = N0(ind_swt, 1) + delta * Delta_nj;
+            N0(indexGas, 1) = N0(indexGas, 1) .* exp(delta * Delta_ln_nj);
+            N0(indexCondensed, 1) = N0(indexCondensed, 1) + delta * Delta_nj;
             NP = NP * exp(delta * Delta_ln_NP);
 
             % Compute STOP criteria
-            STOP = compute_STOP(NP, Delta_ln_NP, N0(ind, 1), [Delta_ln_nj; Delta_nj], NG, A0(ind, :), NatomE, max_NatomE, self.TN.tolE);
+            STOP = compute_STOP(NP, Delta_ln_NP, N0(index, 1), [Delta_ln_nj; Delta_nj], NG, A0(index, :), NatomE, max_NatomE, obj.tolE);
             
             % Check for negative condensed species
-            FLAG_NEGATIVE = N0(ind_swt, 1) < 0;
+            FLAG_NEGATIVE = N0(indexCondensed, 1) < 0;
 
             % Update temp values in order to remove species with moles < tolerance
-            [ind, ind_swt, ind_nswt, ind_ions, NG, NS, N0] = update_temp(N0, ind, ind_swt, ind_nswt, ind_ions, NP, SIZE);
+            [index, indexCondensed, indexGas, indexIons, NG, NS, N0] = update_temp(N0, index, indexCondensed, indexGas, indexIons, NP, SIZE);
             
             % Update J22 matrix
             if sum(FLAG_NEGATIVE)
@@ -192,7 +200,7 @@ function [N0, dNi_T, dN_T, dNi_p, dN_p, ind, STOP, STOP_ions] = equilibrium_gibb
         end
 
         % Check convergence of charge balance (ionized species)
-        [N0, STOP_ions, FLAG_ION] = check_convergence_ions(N0, A0, self.E.ind_E, ind_nswt, ind_ions, self.TN.tolN, self.TN.tol_pi_e, self.TN.itMax_ions);
+        [N0, STOP_ions, FLAG_ION] = check_convergence_ions(N0, A0, system.ind_E, indexGas, indexIons, obj.tolMoles, obj.tolMultiplierIons, obj.itMaxIons);
         
         % Additional checks in case there are ions in the mixture
         if ~FLAG_ION
@@ -200,21 +208,21 @@ function [N0, dNi_T, dN_T, dNi_p, dN_p, ind, STOP, STOP_ions] = equilibrium_gibb
         end
         
         % Check that there is at least one species with n_i > tolerance 
-        if any(N0(ind_ions) > self.TN.tolN)
+        if any(N0(indexIons) > obj.tolMoles)
             return
         end
         
         % Remove ionized species that do not satisfy n_i > tolerance
-        [ind, ind_swt, ind_nswt, ind_ions, NG, NS] = update_temp(N0, ind, ind_swt, ind_nswt, ind_ions, NP, SIZE);
+        [index, indexCondensed, indexGas, indexIons, NG, NS] = update_temp(N0, index, indexCondensed, indexGas, indexIons, NP, SIZE);
         
         % If none of the ionized species satisfy n_i > tolerance, remove
         % electron "element" from the stoichiometric matrix
-        if ~isempty(ind_ions)
+        if ~isempty(indexIons)
             return
         end
         
         % Remove element E from matrix
-        ind_elem(self.E.ind_E) = [];
+        indexElements(system.ind_E) = [];
         NE = NE - 1;
 
         % Debug
@@ -225,38 +233,38 @@ function [N0, dNi_T, dN_T, dNi_p, dN_p, ind, STOP, STOP_ions] = equilibrium_gibb
         % Calculate composition at chemical equilibrium with condensed
         % species
 
-        if isempty(ind_swt_0)
+        if isempty(indexCondensed_0)
             return
         end
 
         % Set list with indeces of the condensed species to be checked
-        ind_swt_check = ind_swt_0;
+        indexCondensed_check = indexCondensed_0;
 
         % Get molecular weight species [kg/mol]
-        W = set_prop_DB(self.S.LS(ind_swt_check), 'mm', self.DB) * 1e-3;
+        W = set_prop_DB(system.listSpecies(indexCondensed_check), 'W', system.species) * 1e-3;
 
         % Initialization
         j = 0;
-        while ind_swt_check
+        while indexCondensed_check
             j = j + 1;
             % Check condensed species
-            [ind_swt_add, FLAG_CONDENSED] = check_condensed_species(A0, x(1:NE), W, ind_swt_check, muRT);
+            [indexCondensed_add, FLAG_CONDENSED] = check_condensed_species(A0, x(1:NE), W, indexCondensed_check, muRT);
             
             if ~FLAG_CONDENSED
                 break
             end
 
             % Update indeces
-            ind_swt_check(ind_swt_check == ind_swt_add) = [];
-            ind_swt = [ind_swt, ind_swt_add];
-            ind = [ind_nswt, ind_swt];
-            ind_swt_0 = ind_swt;
+            indexCondensed_check(indexCondensed_check == indexCondensed_add) = [];
+            indexCondensed = [indexCondensed, indexCondensed_add];
+            index = [indexGas, indexCondensed];
+            indexCondensed_0 = indexCondensed;
 
             % Initialization
             STOP = 1;
 
             % Update lenght
-            NS = length(ind);
+            NS = length(index);
 
             % Update J matrix
             J22 = zeros(NS - NG + 1);
@@ -270,14 +278,14 @@ function [N0, dNi_T, dN_T, dNi_p, dN_p, ind, STOP, STOP_ions] = equilibrium_gibb
             % Update solution vector
             if ~isnan(x0(1))
                 x = x0;
-                ind_nswt_0 = ind_nswt;
+                indexGas_0 = indexGas;
                 continue
             end
 
             % Singular matrix: remove last added condensed species
-            ind_nswt = ind_nswt_0;
+            indexGas = indexGas_0;
             N0 = N0_backup;
-            [~, ind_swt, ind_nswt, ind_ions, NG, NS] = update_temp(N0, ind_swt(end), ind_swt, ind_nswt, ind_ions, NP, SIZE);
+            [~, indexCondensed, indexGas, indexIons, NG, NS] = update_temp(N0, indexCondensed(end), indexCondensed, indexGas, indexIons, NP, SIZE);
         end
 
     end
@@ -285,58 +293,58 @@ function [N0, dNi_T, dN_T, dNi_p, dN_p, ind, STOP, STOP_ions] = equilibrium_gibb
 end
 
 % SUB-PASS FUNCTIONS
-function [N0, NP] = initialize_moles(N0, NP, ind_nswt, NG, guess_moles)
+function [N0, NP] = initialize_moles(N0, NP, indexGas, NG, guess_moles)
     % Initialize composition from a previous calculation or using an
     % uniform distribution [mol]
 
     if isempty(guess_moles)
-        N0(ind_nswt, 1) = NP/NG;
+        N0(indexGas, 1) = NP/NG;
     else
-        N0(ind_nswt, 1) = guess_moles(ind_nswt);
-        NP = sum(guess_moles(ind_nswt));
+        N0(indexGas, 1) = guess_moles(indexGas);
+        NP = sum(guess_moles(indexGas));
     end
 
 end
 
-function [ind_swt, FLAG_CONDENSED] = check_condensed_species(A0, pi_i, W, ind_swt, muRT)
+function [indexCondensed, FLAG_CONDENSED] = check_condensed_species(A0, pi_i, W, indexCondensed, muRT)
     % Check condensed species
     
     % Initialization
     FLAG_CONDENSED = false;
     % Get length condensed species
-    NC = length(ind_swt);
+    NC = length(indexCondensed);
 
     for i = NC:-1:1
         % Only check if there were atoms of the species in the initial
         % mixture
-        if ~sum(A0(ind_swt(i), :))
+        if ~sum(A0(indexCondensed(i), :))
             continue
         end
 
         % Calculate dLdnj of the condensed species
-        dL_dn(i) = (muRT(ind_swt(i)) - dot(pi_i, A0(ind_swt(i), :))) / W(i);
+        dL_dn(i) = (muRT(indexCondensed(i)) - dot(pi_i, A0(indexCondensed(i), :))) / W(i);
     end
     
     FLAG = dL_dn < 0;
     % Check if any condensed species have to be considered
     if ~sum(FLAG)
-        ind_swt = [];
+        indexCondensed = [];
         return
     end
 
     % Get index of the condensed species to be added to the system
     [~, temp] = min(dL_dn);
-    ind_swt = ind_swt(temp);
+    indexCondensed = indexCondensed(temp);
     % Update flag
     FLAG_CONDENSED = true;
 end
 
-function ind_remove_species = find_remove_species(A0, FLAG_REMOVE_ELEMENTS)
+function indexRemoveSpecies = findIndexRemoveSpecies(A0, FLAG_REMOVE_ELEMENTS)
     % Get flag of species to be removed from stoichiometrix matrix A0
-    ind_remove_species = find(sum(A0(:, FLAG_REMOVE_ELEMENTS) > 0, 2) > 0);
+    indexRemoveSpecies = find(sum(A0(:, FLAG_REMOVE_ELEMENTS) > 0, 2) > 0);
 end
 
-function [A0, ind_remove_species, ind_E, NatomE] = remove_elements(NatomE, A0, ind_E, tol)
+function [A0, indexRemoveSpecies, ind_E, NatomE] = remove_elements(NatomE, A0, ind_E, tol)
     % Find zero sum elements
 
     % Define temporal fictitious value if there are ionized species
@@ -345,67 +353,67 @@ function [A0, ind_remove_species, ind_E, NatomE] = remove_elements(NatomE, A0, i
 
     % Get flag of elements to be removed from stoichiometrix matrix
     FLAG_REMOVE_ELEMENTS = temp_NatomE' <= tol;
-
+    
     % Get the species to be removed from stoichiometrix matrix
-    ind_remove_species = find_remove_species(A0, FLAG_REMOVE_ELEMENTS);
+    indexRemoveSpecies = findIndexRemoveSpecies(A0, FLAG_REMOVE_ELEMENTS);
 
     % Update stoichiometrix matrix
     A0(:, FLAG_REMOVE_ELEMENTS) = [];
 
     % Set number of atoms
     NatomE(FLAG_REMOVE_ELEMENTS) = [];
-
+    
     % Check position "element" electron
     if ind_E
         ind_E = ind_E - sum(FLAG_REMOVE_ELEMENTS(1:ind_E-1));
     end
 end
 
-function [ind, ind_nswt, ind_swt, ind_ions, ind_elem, NE, NG, NS] = temp_values(S, NatomE)
+function [index, indexGas, indexCondensed, indexIons, indexElements, NE, NG, NS] = temp_values(system, NatomE)
     % List of indices with nonzero values and lengths
-    ind_elem = 1:length(NatomE);
-    ind_nswt = S.ind_nswt;
-    ind_swt = S.ind_swt;
-    ind_ions = S.ind_nswt(S.ind_ions);
-    ind_cryogenic = S.ind_cryogenic;
-    ind = [ind_nswt, ind_swt];
-    [ind, ind_swt] = check_cryogenic(ind, ind_swt, ind_cryogenic);
+    indexElements = 1:length(NatomE);
+    indexGas = system.indexGas;
+    indexCondensed = system.indexCondensed;
+    indexIons = system.indexGas(system.indexIons);
+    indexCryogenic = system.indexCryogenic;
+    index = [indexGas, indexCondensed];
+    [index, indexCondensed] = check_cryogenic(index, indexCondensed, indexCryogenic);
 
     % Update lengths
     NE = length(NatomE);
-    NG = length(ind_nswt);
-    NS = length(ind);
+    NG = length(indexGas);
+    NS = length(index);
 end
 
-function [ind_swt, ind_nswt, ind_ions, n] = remove_item(n, ind, ind_swt, ind_nswt, ind_ions, NP, SIZE)
+function [indexCondensed, indexGas, indexIons, n] = remove_item(n, ind, indexCondensed, indexGas, indexIons, NP, SIZE)
     % Remove species from the computed indeces list of gaseous and condensed
     % species and append the indeces of species that we have to remove
     for i=1:length(n)
         if n(i) / NP < exp(-SIZE)
             n(i) = 0;
-            ind_swt(ind_swt==ind(i)) = [];
-            ind_nswt(ind_nswt==ind(i)) = [];
-            ind_ions(ind_ions==ind(i)) = [];
+            indexCondensed(indexCondensed==ind(i)) = [];
+            indexGas(indexGas==ind(i)) = [];
+            indexIons(indexIons==ind(i)) = [];
         end
         
     end
 
 end
 
-function [ind, ind_swt, ind_nswt, ind_ions, NG, NS, N0] = update_temp(N0, ind, ind_swt, ind_nswt, ind_ions, NP, SIZE)
+function [ind, indexCondensed, indexGas, indexIons, NG, NS, N0] = update_temp(N0, ind, indexCondensed, indexGas, indexIons, NP, SIZE)
     % Update temp items
-    [ind_swt, ind_nswt, ind_ions, n] = remove_item(N0(ind, 1), ind, ind_swt, ind_nswt, ind_ions, NP, SIZE);
+    [indexCondensed, indexGas, indexIons, n] = remove_item(N0(ind, 1), ind, indexCondensed, indexGas, indexIons, NP, SIZE);
     N0(ind, 1) = n;
-    ind = [ind_nswt, ind_swt];
-    NG = length(ind_nswt);
+    ind = [indexGas, indexCondensed];
+    NG = length(indexGas);
     NS = length(ind);
 end
 
-function [ind, ind_swt] = check_cryogenic(ind, ind_swt, ind_cryogenic)
+function [ind, indexCondensed] = check_cryogenic(ind, indexCondensed, ind_cryogenic)
     % Remove cryogenic species from calculations
     for i = 1:length(ind_cryogenic)
         ind(ind == ind_cryogenic(i)) = [];
-        ind_swt(ind_swt == ind_cryogenic(i)) = [];
+        indexCondensed(indexCondensed == ind_cryogenic(i)) = [];
     end
 
 end
@@ -430,58 +438,58 @@ function STOP = compute_STOP(NP, deltaNP, N0, deltaN0, NG, A0, NatomE, max_Natom
     STOP = max(max(max(deltaN1), deltaN2), deltab);
 end
 
-function J11 = update_matrix_J11(A0_T, N0, ind_nswt, NE)
+function J11 = update_matrix_J11(A0_T, N0, indexGas, NE)
     % Compute submatrix J11
     for k = NE:-1:1
-        J11(:, k) = sum(A0_T(k, ind_nswt) .* A0_T(:, ind_nswt) .* N0(ind_nswt), 2);
+        J11(:, k) = sum(A0_T(k, indexGas) .* A0_T(:, indexGas) .* N0(indexGas), 2);
     end
 end
 
-function J12 = update_matrix_J12(A0_T, N0, ind_nswt, ind_swt)
+function J12 = update_matrix_J12(A0_T, N0, indexGas, indexCondensed)
     % Compute submatrix J12
-    J12_1 = A0_T(:, ind_swt);
-    J12_2 = sum(A0_T(:, ind_nswt) .* N0(ind_nswt), 2);
+    J12_1 = A0_T(:, indexCondensed);
+    J12_2 = sum(A0_T(:, indexGas) .* N0(indexGas), 2);
     J12 = [J12_1, J12_2];
 end
 
-function J22 = update_matrix_J22(J22, N0, NP, ind_nswt)
+function J22 = update_matrix_J22(J22, N0, NP, indexGas)
     % Compute submatrix J22
-    J22(end, end) = sum(N0(ind_nswt, 1)) - NP;
+    J22(end, end) = sum(N0(indexGas, 1)) - NP;
 end
 
-function J = update_matrix_J(A0_T, J22, N0, NP, ind_nswt, ind_swt, NE)
+function J = update_matrix_J(A0_T, J22, N0, NP, indexGas, indexCondensed, NE)
     % Compute matrix J
-    J11 = update_matrix_J11(A0_T, N0, ind_nswt, NE);
-    J12 = update_matrix_J12(A0_T, N0, ind_nswt, ind_swt);
-    J22 = update_matrix_J22(J22, N0, NP, ind_nswt);
+    J11 = update_matrix_J11(A0_T, N0, indexGas, NE);
+    J12 = update_matrix_J12(A0_T, N0, indexGas, indexCondensed);
+    J22 = update_matrix_J22(J22, N0, NP, indexGas);
     J = [J11, J12; J12', J22];
 end
 
-function b = update_vector_b(A0, N0, NP, NatomE, ind_E, ind, ind_nswt, ind_swt, ind_ions, muRT) 
+function b = update_vector_b(A0, N0, NP, NatomE, indexElements, ind, indexGas, indexCondensed, indexIons, muRT) 
     % Compute vector b
     bi = N0(ind, 1)' * A0(ind, :);
 
-    if any(ind_ions)
-        bi(ind_E) = NatomE(ind_E);
+    if any(indexIons)
+        bi(indexElements) = NatomE(indexElements);
     end
 
-    NP_0 = NP + sum(N0(ind_nswt, 1) .* muRT(ind_nswt) - N0(ind_nswt, 1));
-    b = [(NatomE - bi + sum(A0(ind_nswt, :) .* N0(ind_nswt, 1) .* muRT(ind_nswt)))'; muRT(ind_swt); NP_0];
+    NP_0 = NP + sum(N0(indexGas, 1) .* muRT(indexGas) - N0(indexGas, 1));
+    b = [(NatomE - bi + sum(A0(indexGas, :) .* N0(indexGas, 1) .* muRT(indexGas)))'; muRT(indexCondensed); NP_0];
 end
 
-function Delta_ln_nj = update_Delta_ln_nj(A0, pi_i, Delta_NP, muRT, ind_nswt)
+function Delta_ln_nj = update_Delta_ln_nj(A0, pi_i, Delta_NP, muRT, indexGas)
     % Compute correction moles of gases
-    Delta_ln_nj = sum(A0(ind_nswt, :)' .* pi_i, 1)' + Delta_NP - muRT(ind_nswt);
+    Delta_ln_nj = sum(A0(indexGas, :)' .* pi_i, 1)' + Delta_NP - muRT(indexGas);
 end
 
-function [N0, STOP, FLAG_ION] = check_convergence_ions(N0, A0, ind_E, ind_nswt, ind_ions, TOL, TOL_pi, itMax)
+function [N0, STOP, FLAG_ION] = check_convergence_ions(N0, A0, ind_E, indexGas, indexIons, TOL, TOL_pi, itMax)
     % Check convergence of ionized species
     
     % Initialization
     STOP = 0;
 
     % Check if there are ionized species
-    if ~any(ind_ions)
+    if ~any(indexIons)
         FLAG_ION = false;
         return
     end
@@ -490,33 +498,33 @@ function [N0, STOP, FLAG_ION] = check_convergence_ions(N0, A0, ind_E, ind_nswt, 
     FLAG_ION = true;
 
     % Get error in the electro-neutrality of the mixture
-    [delta_ions, ~] = ions_factor(N0, A0, ind_E, ind_nswt, ind_ions);
+    [delta_ions, ~] = ions_factor(N0, A0, ind_E, indexGas, indexIons);
     
     % Reestimate composition of ionized species
     if abs(delta_ions) > TOL_pi
-        [N0, STOP] = recompute_ions(N0, A0, ind_E, ind_nswt, ind_ions, delta_ions, TOL, TOL_pi, itMax);
+        [N0, STOP] = recompute_ions(N0, A0, ind_E, indexGas, indexIons, delta_ions, TOL, TOL_pi, itMax);
     end
     
 end
 
-function [N0, STOP] = recompute_ions(N0, A0, ind_E, ind_nswt, ind_ions, delta_ions, TOL, TOL_pi, itMax)
+function [N0, STOP] = recompute_ions(N0, A0, ind_E, indexGas, indexIons, delta_ions, TOL, TOL_pi, itMax)
     % Reestimate composition of ionized species
     
     % Initialization
-    A0_ions = A0(ind_ions, ind_E);
+    A0_ions = A0(indexIons, ind_E);
     STOP = 1;
     it = 0;
     % Reestimate composition of ionized species
     while STOP > TOL_pi && it < itMax
         it = it + 1;
         % Apply correction
-        N0(ind_ions, 1) = N0(ind_ions, 1) .* exp(A0_ions * delta_ions);
+        N0(indexIons, 1) = N0(indexIons, 1) .* exp(A0_ions * delta_ions);
         % Compute correction of the Lagrangian multiplier for ions divided by RT
-        [delta_ions, ~] = ions_factor(N0, A0, ind_E, ind_nswt, ind_ions);
+        [delta_ions, ~] = ions_factor(N0, A0, ind_E, indexGas, indexIons);
         STOP = abs(delta_ions);
     end   
     
-    Xi_ions = N0(ind_ions, 1) / sum(N0(:, 1));
+    Xi_ions = N0(indexIons, 1) / sum(N0(:, 1));
 
     % Set error to zero if molar fraction of ionized species are below
     % tolerance
@@ -526,16 +534,16 @@ function [N0, STOP] = recompute_ions(N0, A0, ind_E, ind_nswt, ind_ions, delta_io
 
 end
 
-function [delta, deltaN3] = ions_factor(N0, A0, ind_E, ind_nswt, ind_ions)
+function [delta, deltaN3] = ions_factor(N0, A0, ind_E, indexGas, indexIons)
     % Compute relaxation factor for ionized species
     
-    if ~any(ind_ions)
+    if ~any(indexIons)
         delta = [];
         deltaN3 = 0;
         return
     end
 
-    delta = -sum(A0(ind_nswt, ind_E) .* N0(ind_nswt, 1))/ ...
-             sum(A0(ind_nswt, ind_E).^2 .* N0(ind_nswt, 1));
-    deltaN3 = abs(sum(N0(ind_nswt, 1) .* A0(ind_nswt, ind_E)));
+    delta = -sum(A0(indexGas, ind_E) .* N0(indexGas, 1))/ ...
+             sum(A0(indexGas, ind_E).^2 .* N0(indexGas, 1));
+    deltaN3 = abs(sum(N0(indexGas, 1) .* A0(indexGas, ind_E)));
 end

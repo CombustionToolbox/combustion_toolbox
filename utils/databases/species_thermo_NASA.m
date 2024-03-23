@@ -1,4 +1,4 @@
-function [cP, cV, h0, DhT, e0, DeT, s0, g0] = species_thermo_NASA(species, temperature, DB)
+function [cp, cv, h0, DhT, e0, DeT, s0, g0] = species_thermo_NASA(species, temperature, DB)
     % Compute thermodynamic function using NASA's 9 polynomials
     %
     % Args:
@@ -42,12 +42,12 @@ function [cP, cV, h0, DhT, e0, DeT, s0, g0] = species_thermo_NASA(species, tempe
             % Compute interval temperature
             tInterval = compute_interval_NASA(species, T, DB, tRange, ctTInt);
             % Compute thermodynamic function
-            cP(i) = R0 * (sum(a{tInterval} .* T.^tExponents{tInterval}));
+            cp(i) = R0 * (sum(a{tInterval} .* T.^tExponents{tInterval}));
             h0(i) = R0 * T * (sum(a{tInterval} .* T.^tExponents{tInterval} .* [-1 log(T) 1 1/2 1/3 1/4 1/5 0]) + b{tInterval}(1) / T);
             s0(i) = R0 * (sum(a{tInterval} .* T.^tExponents{tInterval} .* [-1/2 -1 log(T) 1 1/2 1/3 1/4 0]) + b{tInterval}(2));
             ef0 = hf0 - Delta_n * R0 * Tref;
             e0(i) = (ef0 + (h0(i) - hf0) - (1 - swtCondensed) * R0 * (T - Tref));
-            cV(i) = cP(i) - R0;
+            cv(i) = cp(i) - R0;
             DhT(i) = h0(i) - hf0;
             DeT(i) = e0(i) - ef0;
             % If the species is only a reactant determine it's reference temperature
@@ -56,8 +56,8 @@ function [cP, cV, h0, DhT, e0, DeT, s0, g0] = species_thermo_NASA(species, tempe
             % points instead of 298.15 K
         else
             Tref = tRange(1);
-            cP = 0;
-            cV = 0;
+            cp = 0;
+            cv = 0;
             h0(i) = hf0;
             e0(i) = hf0 - Delta_n * R0 * Tref;
             g0(i) = DB.(species).Hf0;

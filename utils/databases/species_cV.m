@@ -14,10 +14,9 @@ function cV = species_cV(species, T, DB)
     % Example:
     %     cV = species_cV('H2O', 300, DB)
 
-    try
-        cV = DB.(species).cPcurve(T) - 8.31446261815324;
-    catch
-        cV = 0; % cryogenic species
-    end
+    % Universal gas constant [J/(mol-K)]
+    R0 = 8.31446261815324; 
 
+    % Compute specific heat at constant volume [J/(mol-K)]
+    cV = species_cP(species, T, DB) - R0;
 end

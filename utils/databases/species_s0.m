@@ -13,10 +13,26 @@ function s0 = species_s0(species, T, DB)
     % Example:
     %     s0 = species_s0('H2O', 300, DB)
 
-    try
-        s0 = DB.(species).s0curve(T) / 1000;
-    catch
-        s0 = 0; % cryogenic species
+    persistent cachedSpecies;
+    persistent cachedS0curves;
+    
+    if isempty(cachedSpecies)
+        cachedSpecies = {};
+        cachedS0curves = {};
     end
-
+    
+    % Check if species data is already cached
+    idx = find(strcmp(cachedSpecies, species), 1);
+    if isempty(idx)
+        % Load species data and cache it
+        s0curve = DB.(species).s0curve;
+        cachedSpecies{end+1} = species;
+        cachedS0curves{end+1} = s0curve;
+    else
+        % Retrieve cached data
+        s0curve = cachedS0curves{idx};
+    end
+    
+    % Compute entropy [kJ/(mol-K)]
+    s0 = s0curve(T) / 1000;
 end

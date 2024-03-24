@@ -392,7 +392,7 @@ classdef Database
         
         end
 
-        function elementsTemperatureReference = set_elements_temperature_reference()
+        function elementsTemperatureReference = setElementsTemperatureReference()
         
             elementsTemperatureReference = {
                         'Ar [200-20000]';
@@ -672,7 +672,7 @@ classdef Database
             % Set elements and elementsTemperatureReference lists
             [elements, ~] = set_elements(); % Sets elements list
             elementMatrix = set_element_matrix(formula, elements); % Sets elementMatrix
-            elementsTemperatureReference = obj.set_elements_temperature_reference(); % Sets elementsTemperatureReference list
+            elementsTemperatureReference = obj.setElementsTemperatureReference(); % Sets elementsTemperatureReference list
         
             % In order to compute the internal energy of formation from the enthalpy of
             % formation of a given species, we must determine the change in moles of
@@ -705,7 +705,7 @@ classdef Database
                 end
         
                 % Get temperature interval
-                Tinterval = get_interval(species, T, DB);
+                Tinterval = obj.get_interval(species, T, DB);
                 % Compute the thermochemical data at the specified temperature using
                 % the polynomial coefficients in the selected temperature interval. All
                 % magnitudes are computed in a per mole basis
@@ -866,52 +866,76 @@ classdef Database
                     T1 = sscanf(TentativeRefElm(n1 + 1:n2 - 1), '%f');
                     T2 = sscanf(TentativeRefElm(n2 + 1:n3 - 1), '%f');
             
-                    if (T1 <= T) && (T <= T2)
-                        % Detect location of open parenthesis
-                        n_open_parenthesis = strfind(TentativeRefElm(1:n1 - 2), '(');
-                        % Detect location of '2'
-                        n_two = strfind(TentativeRefElm(1:n1 - 2), '2');
-                        % If thera are no '2's or parenthesis, the Species is essentially a noble gas
-                        if isempty(n_open_parenthesis) && isempty(n_two)
-                            % 1
-                            if strcmp(TentativeRefElm(1:n1 - 2), species)
-                                FLAG_RE = true;
-                                REname = TentativeRefElm(1:n1 - 2);
-                            end
-            
+                    if (T < T1) && (T > T2)
+                        continue
+                    end
+
+                    % Detect location of open parenthesis
+                    n_open_parenthesis = strfind(TentativeRefElm(1:n1 - 2), '(');
+                    % Detect location of '2'
+                    n_two = strfind(TentativeRefElm(1:n1 - 2), '2');
+                    % If thera are no '2's or parenthesis, the Species is essentially a noble gas
+                    if isempty(n_open_parenthesis) && isempty(n_two)
+                        % 1
+                        if strcmp(TentativeRefElm(1:n1 - 2), species)
+                            FLAG_RE = true;
+                            REname = TentativeRefElm(1:n1 - 2);
                         end
-            
-                        % If there are '2's the species may be in the reference state or
-                        % not (e.g. O2 is, but O is not)
-                        if ~isempty(n_two)
-                            % 2
-                            if strcmp(TentativeRefElm(1:n_two), species)
-                                FLAG_RE = true;
-                                REname = TentativeRefElm(1:n_two);
-                            end
-            
-                            if strcmp(TentativeRefElm(1:n_two - 1), species)
-                                REname = TentativeRefElm(1:n_two);
-                            end
-            
+        
+                    end
+        
+                    % If there are '2's the species may be in the reference state or
+                    % not (e.g. O2 is, but O is not)
+                    if ~isempty(n_two)
+                        % 2
+                        if strcmp(TentativeRefElm(1:n_two), species)
+                            FLAG_RE = true;
+                            REname = TentativeRefElm(1:n_two);
                         end
-            
-                        % If there are opening parenthesis, the species is in condensed phase
-                        if ~isempty(n_open_parenthesis)
-                            % 3
-                            if strcmp(TentativeRefElm(1:n_open_parenthesis - 1), species)
-                                FLAG_RE = true;
-                                REname = TentativeRefElm(1:n1 - 2);
-                            end
-            
+        
+                        if strcmp(TentativeRefElm(1:n_two - 1), species)
+                            REname = TentativeRefElm(1:n_two);
                         end
-            
+        
+                    end
+        
+                    % If there are opening parenthesis, the species is in condensed phase
+                    if ~isempty(n_open_parenthesis)
+                        % 3
+                        if strcmp(TentativeRefElm(1:n_open_parenthesis - 1), species)
+                            FLAG_RE = true;
+                            REname = TentativeRefElm(1:n1 - 2);
+                        end
+        
                     end
             
                 end
             
             end
 
+        end
+
+        function Tinterval = get_interval(species, T, DB)
+            % Get interval of the NASA's polynomials from the Database (DB) for the
+            % given species and temperature [K].
+            %
+            % Args:
+            %     species (char): Chemical species
+            %     T (float): Temperature [K]
+            %     DB (struct): Database with custom thermodynamic polynomials functions generated from NASAs 9 polynomials fits
+            %
+            % Returns:
+            %     Tinterval (float): Index of the interval of temperatures
+        
+            for i = 1:DB.(species).Tintervals
+        
+                if (T >= DB.(species).Trange{i}(1)) && (T <= DB.(species).Trange{i}(2))
+                    break
+                end
+        
+            end
+        
+            Tinterval = i;
         end
 
     end

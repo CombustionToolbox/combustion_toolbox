@@ -1,4 +1,4 @@
-classdef ChemicalSystem
+classdef ChemicalSystem < handle
 
     properties
         species                % Struct with class Species
@@ -36,13 +36,13 @@ classdef ChemicalSystem
         ind_hi    = 6 % Index enthalpy
         ind_cpi   = 7 % Index specific heat at constant pressure
         ind_si    = 8 % Index entropy
-        numberProperties = 8 % Number of properties in propertiesMatrix
+        numProperties = 8 % Number of properties in propertiesMatrix
     end
 
     properties (Dependent)
-        numberSpecies
-        numberSpeciesGas
-        numberElements
+        numSpecies
+        numSpeciesGas
+        numElements
         indexElements
         indexSpecies
         ind_C
@@ -92,15 +92,15 @@ classdef ChemicalSystem
             obj.listSpeciesOriginal = obj.listSpecies;
         end
 
-        function value = get.numberSpecies(obj)
+        function value = get.numSpecies(obj)
             value = length(obj.listSpecies);
         end
 
-        function value = get.numberSpeciesGas(obj)
+        function value = get.numSpeciesGas(obj)
             value = length(obj.indexGas);
         end
 
-        function value = get.numberElements(obj)
+        function value = get.numElements(obj)
             value = length(obj.listElements);
         end
 
@@ -137,12 +137,12 @@ classdef ChemicalSystem
         end
 
         function value = get.indexElements(obj)
-            value = 1:1:obj.numberElements;
+            value = 1:1:obj.numElements;
         end
 
         function obj = get_species(obj, database)
             
-            for i = obj.numberSpecies:-1:1
+            for i = obj.numSpecies:-1:1
                 obj.species.(obj.listSpecies{i}) = database.species.(obj.listSpecies{i});
             end
 
@@ -498,7 +498,7 @@ classdef ChemicalSystem
             %     self (struct): Data of the mixture, conditions, and databases
             
             % Initialization
-            obj.indexReact = 1:obj.numberSpecies;
+            obj.indexReact = 1:obj.numSpecies;
         
             % All species react
             if isempty(speciesFrozen)
@@ -546,7 +546,7 @@ classdef ChemicalSystem
         
             L_formula = [];
         
-            for k = obj.numberSpecies:-1:1
+            for k = obj.numSpecies:-1:1
                 L_E1 = []; L_E2 = [];
                 formula = LS_formula{k};
         
@@ -596,9 +596,9 @@ classdef ChemicalSystem
             %     self (struct): Data of the mixture, conditions, and databases
         
             % Preallocate arrays
-            obj.indexGas = zeros(1, obj.numberSpecies);
-            obj.indexCondensed = zeros(1, obj.numberSpecies);
-            obj.indexCryogenic = zeros(1, obj.numberSpecies);
+            obj.indexGas = zeros(1, obj.numSpecies);
+            obj.indexCondensed = zeros(1, obj.numSpecies);
+            obj.indexCryogenic = zeros(1, obj.numSpecies);
             
             % Initialization
             gasCount = 0;
@@ -606,7 +606,7 @@ classdef ChemicalSystem
             cryogenicCount = 0;
         
             % Get indices
-            for index = 1:obj.numberSpecies
+            for index = 1:obj.numSpecies
                 species = obj.listSpecies{index};
         
                 if ~obj.species.(species).phase
@@ -647,23 +647,23 @@ classdef ChemicalSystem
         end
 
         function obj = set_stoichiometricMatrix(obj)
-            % Set the stoichiometric matrix
+            % Set stoichiometric matrix
 
             % Preallocate the stoichiometric matrix
-            A0 = zeros(obj.numberSpecies, obj.numberElements);
+            A0 = zeros(obj.numSpecies, obj.numElements);
             
-            % Set the stoichiometric matrix
-            for i = 1:obj.numberSpecies
+            % Set stoichiometric matrix
+            for i = 1:obj.numSpecies
                 obj.species.(obj.listSpecies{i}).elementMatrix = set_element_matrix(obj.species.(obj.listSpecies{i}).formula, obj.listElements);
                 A0(i, obj.species.(obj.listSpecies{i}).elementMatrix(1, :)) = obj.species.(obj.listSpecies{i}).elementMatrix(2, :);
             end
 
-            % Set the stoichiometric matrix
+            % Set stoichiometric matrix
             obj.stoichiometricMatrix = A0;
         end
 
         function obj = set_propertiesMatrix_initialize(obj)
-            % Initialize the properties matrix
+            % Initialize properties matrix
             %
             % Args:
             %     self (struct):  Data of the mixture, conditions, and databases
@@ -672,13 +672,13 @@ classdef ChemicalSystem
             %     self (struct):  Data of the mixture, conditions, and databases
             
             % Preallocation
-            M0 = zeros(obj.numberSpecies, obj.numberProperties);
+            M0 = zeros(obj.numSpecies, obj.numProperties);
 
             % Get index species
             index = obj.indexSpecies;
 
             % Fill properties matrix
-            for i = obj.numberSpecies:-1:1
+            for i = obj.numSpecies:-1:1
                 M0(index(i), obj.ind_W) = obj.species.(obj.listSpecies{i}).W; % [g/mol]
                 M0(index(i), obj.ind_hfi) = obj.species.(obj.listSpecies{i}).hf / 1000; % [kJ/mol]
                 M0(index(i), obj.ind_efi) = obj.species.(obj.listSpecies{i}).ef / 1000; % [kJ/mol]
@@ -688,7 +688,7 @@ classdef ChemicalSystem
             % Initialize molesPhaseMatrix [moles, phase]
             obj.molesPhaseMatrix = M0(:, [obj.ind_ni, obj.ind_phase]);
             
-            % Set the properties matrix
+            % Set properties matrix
             obj.propertiesMatrix = M0;
         end
 

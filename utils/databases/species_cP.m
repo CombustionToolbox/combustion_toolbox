@@ -9,11 +9,11 @@ function cp = species_cP(species, T, DB)
     %     DB (struct): Database with custom thermodynamic polynomials functions generated from NASAs 9 polynomials fits
     %
     % Returns:
-    %     cP (float): Specific heat at constant pressure in molar basis [J/(mol-K)]
+    %     cp (float): Specific heat at constant pressure in molar basis [J/(mol-K)]
     %
     % Example:
-    %     cP = species_cP('H2O', 300, DB)
-
+    %     cp = species_cP('H2O', 300, DB)
+    
     persistent cachedSpecies;
     persistent cachedCPcurves;
     

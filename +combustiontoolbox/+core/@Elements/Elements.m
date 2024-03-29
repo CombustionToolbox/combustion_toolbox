@@ -31,9 +31,9 @@ classdef Elements < handle
 
         function obj = setIndexStableElements(obj)
             % The only elements that are stable as diatomic gases are elements
-            % 1 (H), 8 (N), 9 (O), 10 (F), and 18 (Cl). The remaining elements that
-            % are stable as (monoatomic) gases are the noble gases He (3), Ne (11),
-            % Ar (19), Kr (37), Xe (55), and Rn (87), which do not form any compound.
+            % 1 (H), 9 (N), 10 (O), 11 (F), and 19 (Cl). The remaining elements that
+            % are stable as (monoatomic) gases are the noble gases He (4), Ne (12),
+            % Ar (20), Kr (38), Xe (56), and Rn (88), which do not form any compound.
             
             % Import packages
             import combustiontoolbox.utils.findIndex

@@ -1,4 +1,4 @@
-function [N0, dNi_T, dN_T, dNi_p, dN_p, index, STOP, STOP_ions, h0] = equilibrium_gibbs(obj, system, pP, TP, mix, guess_moles)
+function [N0, dNi_T, dN_T, dNi_p, dN_p, STOP, STOP_ions, h0] = equilibrium_gibbs(obj, system, pP, TP, mix, guess_moles)
     % Obtain equilibrium composition [moles] for the given temperature [K] and pressure [bar].
     % The code stems from the minimization of the free energy of the system by using Lagrange
     % multipliers combined with a Newton-Raphson method, upon condition that initial gas
@@ -31,12 +31,12 @@ function [N0, dNi_T, dN_T, dNi_p, dN_p, index, STOP, STOP_ions, h0] = equilibriu
     %
     % Examples:
     %     * N0 = equilibrium_gibbs(self, 1.01325, 3000, self.PS.strR{1}, [])
-    %     * [N0, dNi_T, dN_T, dNi_p, dN_p, ind, STOP, STOP_ions] = equilibrium_gibbs(self, 1.01325, 3000, self.PS.strR{1}, [])
+    %     * [N0, dNi_T, dN_T, dNi_p, dN_p, STOP, STOP_ions] = equilibrium_gibbs(self, 1.01325, 3000, self.PS.strR{1}, [])
 
     % Generalized Gibbs minimization method (reduced)
     
     % Constants
-    R0 = 8.31446261815324; % [J/(K mol)]. Universal gas constant
+    R0 = combustiontoolbox.common.Constants.R0; % Universal gas constant [J/(K mol)]
 
     % Definitions
     N0 = system.molesPhaseMatrix;      % Composition matrix [n_i, FLAG_CONDENSED_i]

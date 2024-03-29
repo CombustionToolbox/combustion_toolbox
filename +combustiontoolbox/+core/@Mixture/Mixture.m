@@ -1,4 +1,4 @@
-classdef Mixture
+classdef Mixture < handle & matlab.mixin.Copyable
 
     % properties
     %     T (1,1) double {mustBeNumeric, mustBeNonnegative}
@@ -70,6 +70,10 @@ classdef Mixture
         dVdT_p
         dVdp_T
         equivalenceRatio
+        stoichiometricMoles % Theoretical moles of the oxidizer of reference for a stoichiometric combustion
+        percentageFuel
+        fuelOxidizerMassRatio
+        oxidizerFuelMassRatio
         natomElements
         natomElementsReact
         errorMoles
@@ -86,6 +90,7 @@ classdef Mixture
         listSpeciesFuel
         listSpeciesOxidizer
         listSpeciesInert
+        ratioOxidizer % Ratio oxidizer relative to the oxidizer of reference
         molesFuel
         molesOxidizer
         molesInert
@@ -112,9 +117,14 @@ classdef Mixture
         dN_T
         dNi_p
         dN_p
+        chemicalSystemProducts
+        FLAG_FUEL = false
+        FLAG_OXIDIZER = false
+        FLAG_INERT = false
         FLAG_REACTION = false
+        fuel
     end
-
+    
     methods
 
         function obj = Mixture(chemicalSystem, varargin)
@@ -136,12 +146,6 @@ classdef Mixture
             % Assign properties matrix
             obj.chemicalSystem = ip.Results.chemicalSystem;
 
-            % Get indexListSpeciesOriginal
-            obj.chemicalSystem.indexListSpeciesOriginal = find_ind(obj.chemicalSystem.listSpecies, obj.chemicalSystem.listSpeciesOriginal);
-            
-            % Get indexReact
-            obj.chemicalSystem = obj.chemicalSystem.set_react_index(obj.listSpeciesInert);
-
             % Compute thermodynamic properties
             % obj = obj.compute_properties(obj.chemicalSystem, ip.Results.T, ip.Results.p);
         end
@@ -162,7 +166,7 @@ classdef Mixture
             obj.T = T;
 
             % Assign values to the propertiesMatrix
-            obj.chemicalSystem = obj.chemicalSystem.set_propertiesMatrix(obj.listSpecies, obj.quantity, obj.T);
+            obj.chemicalSystem.set_propertiesMatrix(obj.listSpecies, obj.quantity, obj.T);
             
             % Check if initial state is defined (temperature, pressure, and composition)
             if ~sum(obj.quantity) || ~obj.p
@@ -170,7 +174,10 @@ classdef Mixture
             end
             
             % Compute thermodynamic properties
-            obj = obj.compute_properties(obj.chemicalSystem, T, obj.p);
+            obj.compute_properties(obj.chemicalSystem, T, obj.p);
+
+            % Compute equivalence ratio, percentage Fuel, and Oxidizer/Fuel ratio
+            obj.computeEquivalenceRatio();
         end
 
         function obj = setPressure(obj, p, varargin)
@@ -189,7 +196,7 @@ classdef Mixture
             obj.p = p;
 
             % Assign values to the propertiesMatrix
-            obj.chemicalSystem = obj.chemicalSystem.set_propertiesMatrix(obj.listSpecies, obj.quantity, obj.T);
+            obj.chemicalSystem.set_propertiesMatrix(obj.listSpecies, obj.quantity, obj.T);
 
             % Check if initial state is defined (temperature, pressure, and composition)
             if ~sum(obj.quantity) || ~obj.T
@@ -197,12 +204,18 @@ classdef Mixture
             end
 
             % Compute thermodynamic properties
-            obj = obj.compute_properties(obj.chemicalSystem, obj.T, p);
+            obj.compute_properties(obj.chemicalSystem, obj.T, p);
+
+            % Compute equivalence ratio, percentage Fuel, and Oxidizer/Fuel ratio
+            obj.computeEquivalenceRatio();
         end
 
         function obj = set(obj, listSpecies, varargin)
             % 
             
+            % Import packages
+            import combustiontoolbox.utils.findIndex
+
             % Definitions
             quantityDefault = 1;
             unitsDefault = 'mol';
@@ -216,12 +229,15 @@ classdef Mixture
                     case 'fuel'
                         obj.listSpeciesFuel = [obj.listSpeciesFuel, listSpecies];
                         obj.molesFuel = [obj.molesFuel, quantity];
+                        obj.FLAG_FUEL = true;
                     case 'oxidizer'
                         obj.listSpeciesOxidizer = [obj.listSpeciesOxidizer, listSpecies];
                         obj.molesOxidizer = [obj.molesOxidizer, quantity];
+                        obj.FLAG_OXIDIZER = true;
                     case 'inert'
                         obj.listSpeciesInert = [obj.listSpeciesInert, listSpecies];
                         obj.molesInert = [obj.molesInert, quantity];
+                        obj.FLAG_INERT = true;
                 end
 
             elseif nargin > 2
@@ -231,9 +247,62 @@ classdef Mixture
             % Update local listSpecies and local quantity
             obj.listSpecies = [obj.listSpecies, listSpecies];
             obj.quantity = [obj.quantity, quantity];
-
+            
+            % Check if species are contained in the chemical system
+            obj.chemicalSystem.checkSpecies(listSpecies);
+            
+            % Get indexReact
+            obj.chemicalSystem.set_react_index(obj.listSpeciesInert);
+            
             % Assign values to the propertiesMatrix
-            obj.chemicalSystem = obj.chemicalSystem.set_propertiesMatrix(listSpecies, quantity, obj.T);
+            obj.chemicalSystem.set_propertiesMatrix(listSpecies, quantity, obj.T);
+            
+            % Get indexProducts
+            obj.chemicalSystem.indexProducts = findIndex(obj.chemicalSystem.listSpecies, obj.chemicalSystem.listProducts);
+            
+            % Get system containing only the list of products
+            obj.chemicalSystemProducts = getSystemProducts(obj.chemicalSystem);
+
+            % Check if initial state is defined (temperature, pressure, and composition)
+            if ~obj.T || ~obj.p
+                return
+            end
+
+            % Compute thermodynamic properties
+            obj.compute_properties(obj.chemicalSystem, obj.T, obj.p);
+            
+            % Compute percentage Fuel, Oxidizer/Fuel ratio and equivalence ratio
+            obj.compute_ratios_fuel_oxidizer(obj.chemicalSystem.propertiesMatrixFuel, obj.chemicalSystem.propertiesMatrixOxidizer);
+        end
+
+        function obj = setEquivalenceRatio(obj, value)
+            % 
+            obj.equivalenceRatio = value;
+            
+            % Check if initial state is defined (temperature, pressure, and composition)
+            if ~obj.T || ~obj.p || ~obj.FLAG_FUEL || ~obj.FLAG_OXIDIZER
+                return
+            end
+
+            % Get oxidizer of reference
+            obj.chemicalSystem.getOxidizerReference(obj.listSpeciesOxidizer);
+            
+            % Computation of theoretical stoichiometricMoles
+            obj.defineF();
+            
+            % Define moles Oxidizer 
+            if isempty(obj.ratioOxidizer), obj.ratioOxidizer = obj.molesOxidizer; end
+            obj.molesOxidizer = obj.stoichiometricMoles / obj.equivalenceRatio .* obj.ratioOxidizer;
+            
+            % Define oxidizer propertiesMatrix
+            obj.defineO();
+
+            % Update listSpecies and quantity
+            % obj.listSpecies = [obj.listSpeciesFuel, obj.listSpeciesOxidizer, obj.listSpeciesInert];
+            obj.quantity = [obj.molesFuel, obj.molesOxidizer, obj.molesInert];
+            
+            % Assign values to the propertiesMatrix
+            obj.chemicalSystem.set_propertiesMatrix(obj.listSpeciesOxidizer, obj.molesOxidizer, obj.T);
             
             % Check if initial state is defined (temperature, pressure, and composition)
             if ~obj.T || ~obj.p
@@ -241,10 +310,59 @@ classdef Mixture
             end
 
             % Compute thermodynamic properties
-            obj = obj.compute_properties(obj.chemicalSystem, obj.T, obj.p);
-
+            obj.compute_properties(obj.chemicalSystem, obj.T, obj.p);
+            
+            % Compute percentage Fuel, Oxidizer/Fuel ratio and equivalence ratio
+            obj.compute_ratios_fuel_oxidizer(obj.chemicalSystem.propertiesMatrixFuel, obj.chemicalSystem.propertiesMatrixOxidizer);
         end
+
+        function obj = computeEquivalenceRatio(obj)
+            
+            % Check if initial state is defined (temperature, pressure, and composition)
+            if ~obj.T || ~obj.p || ~obj.FLAG_FUEL || ~obj.FLAG_OXIDIZER
+                return
+            end
+
+            % Get oxidizer of reference
+            % obj.chemicalSystem = 
+            obj.chemicalSystem.getOxidizerReference(obj.listSpeciesOxidizer);
+            
+            % Computation of theoretical stoichiometricMoles
+            obj.defineF();
+            
+            % Define oxidizer propertiesMatrix
+            obj.defineO();
+            
+            % Compute percentage Fuel, Oxidizer/Fuel ratio and equivalence ratio
+            obj.compute_ratios_fuel_oxidizer(obj.chemicalSystem.propertiesMatrixFuel, obj.chemicalSystem.propertiesMatrixOxidizer);
+        end
+
+        function obj = compute_ratios_fuel_oxidizer(obj, propertiesMatrixFuel, propertiesMatrixOxidizer)
+            % Compute percentage Fuel, Oxidizer/Fuel ratio and equivalence ratio
+            if obj.FLAG_FUEL || obj.FLAG_OXIDIZER
+                mass_fuel = obj.getMass(obj.chemicalSystem, propertiesMatrixFuel);
+                mass_oxidizer = obj.getMass(obj.chemicalSystem, propertiesMatrixOxidizer);
+                mass_mixture = obj.mi;
+                obj.percentageFuel = mass_fuel / mass_mixture * 100;
+                obj.oxidizerFuelMassRatio = mass_oxidizer / mass_fuel;
+                obj.fuelOxidizerMassRatio = 1 / obj.oxidizerFuelMassRatio;
+                FO_moles = sum(propertiesMatrixFuel(:, obj.chemicalSystem.ind_ni)) / sum(propertiesMatrixOxidizer(obj.chemicalSystem.oxidizerReferenceIndex, obj.chemicalSystem.ind_ni));
+                FO_moles_st = abs(sum(propertiesMatrixFuel(:, obj.chemicalSystem.ind_ni)) / (obj.fuel.x + obj.fuel.x2 + obj.fuel.x3 + obj.fuel.y / 4 - obj.fuel.z / 2) * (0.5 * obj.chemicalSystem.oxidizerReferenceAtomsO));
+                obj.equivalenceRatio = FO_moles / FO_moles_st;
+            elseif obj.FLAG_FUEL
+                obj.percentageFuel = 100;
+                obj.fuelOxidizerMassRatio = inf;
+                obj.oxidizerFuelMassRatio = 0;
+                obj.equivalenceRatio = '-';
+            else
+                obj.percentageFuel = 0;
+                obj.fuelOxidizerMassRatio = 0;
+                obj.oxidizerFuelMassRatio = inf;
+                obj.equivalenceRatio = '-';
+            end
         
+        end
+
         function obj = set_prop(obj, varargin)
             % Assign property values to the respective variables
             %
@@ -269,7 +387,6 @@ classdef Mixture
         
         end
         
-        % SUB-PASS FUNCTIONS
         function obj = set_prop_common(obj, name, value)
             % Assign property values to the given variable name
         
@@ -301,6 +418,20 @@ classdef Mixture
         end
         
     end
+    
+    methods(Access = protected)
+      
+      function objCopy = copyElement(obj)
+         % Override copyElement method:
+
+         % Make a shallow copy of all four properties
+         objCopy = copyElement@matlab.mixin.Copyable(obj);
+
+         % Make a deep copy of the DeepCp object
+         objCopy.chemicalSystem = obj.chemicalSystem.copy();
+      end
+      
+    end
 
     methods (Access = private)
 
@@ -319,9 +450,9 @@ classdef Mixture
             %
             % Example:
             %     mix = compute_properties(mix, system, T, p)
-        
+            
             % Definitions
-            R0 = 8.31446261815324; % [J/(K mol)]. Universal gas constant
+            R0 = combustiontoolbox.common.Constants.R0; % Universal gas constant [J/(K mol)]
             propertiesMatrix = system.propertiesMatrix; % Properties matrix
 
             % Initialization
@@ -456,6 +587,94 @@ classdef Mixture
             Ds = -R0 * sum(Dsi) * 1e-3;
         end
 
+        function obj = defineF(obj)
+            % Set Fuel of the mixture
+            %
+            % Args:
+            %     obj (Mixture):
+            %
+            % Returns:
+            %     obj (Mixture):
+
+            if obj.FLAG_FUEL
+                % Create a copy of chemicalSystem
+                system = obj.chemicalSystem.copy();
+                % Set temperature-dependent matrix properties to zero
+                system.clean();
+                % Fill properties matrix with only fuel species
+                system.set_propertiesMatrix(obj.listSpeciesFuel, obj.molesFuel, obj.T);
+                % Compute thermodynamic properties 
+                mixFuel = obj.copy().compute_properties(system, obj.T, obj.p);
+                % Assign values elements C, H, O, N, S, and Si
+                obj.assign_values_elements(mixFuel.natomElements);
+                % Compute theoretical moles of the oxidizer of reference for a stoichiometric combustion
+                obj.stoichiometricMoles = abs(obj.fuel.x + obj.fuel.x2 + ...
+                                              obj.fuel.x3 + obj.fuel.y / 4 + ...
+                                              - obj.fuel.z / 2) / (0.5 * system.oxidizerReferenceAtomsO);
+                % Assign propertiesMatrixFuel
+                obj.chemicalSystem.propertiesMatrixFuel = system.propertiesMatrix;
+            else
+                obj.fuel.x = 0;
+                obj.fuel.x2 = 0;
+                obj.fuel.x3 = 0;
+                obj.fuel.y = 0;
+                obj.fuel.z = 0;
+                obj.fuel.w = 0;
+                obj.stoichiometricMoles = 1;
+                % obj.FLAG_FUEL = false;
+            end
+
+        end
+
+        function obj = defineO(obj)
+            % Set Fuel of the mixture
+            %
+            % Args:
+            %     obj (Mixture):
+            %
+            % Returns:
+            %     obj (Mixture):
+
+            if isempty(obj.listSpeciesOxidizer)
+                return
+            end
+
+            % Create a copy of chemicalSystem
+            system = obj.chemicalSystem.copy();
+            % Set temperature-dependent matrix properties to zero
+            system.clean();
+            % Fill properties matrix with only oxidizer species
+            system.set_propertiesMatrix(obj.listSpeciesOxidizer, obj.molesOxidizer, obj.T);
+            % Assign propertiesMatrixOxidizer
+            obj.chemicalSystem.propertiesMatrixOxidizer = system.propertiesMatrix;
+        end
+
+        function obj = assign_values_elements(obj, natomElementsFuel)
+            % Assign values for C, H, O, N, S, and Si elements
+        
+            if isempty(obj.chemicalSystem.ind_C), obj.fuel.x = 0; else, obj.fuel.x = natomElementsFuel(obj.chemicalSystem.ind_C); end
+            if isempty(obj.chemicalSystem.ind_H), obj.fuel.y = 0; else, obj.fuel.y = natomElementsFuel(obj.chemicalSystem.ind_H); end
+            if isempty(obj.chemicalSystem.ind_O), obj.fuel.z = 0; else, obj.fuel.z = natomElementsFuel(obj.chemicalSystem.ind_O); end
+            if isempty(obj.chemicalSystem.ind_N), obj.fuel.w = 0; else, obj.fuel.w = natomElementsFuel(obj.chemicalSystem.ind_N); end
+            if isempty(obj.chemicalSystem.ind_S), obj.fuel.x2 = 0; else, obj.fuel.x2 = natomElementsFuel(obj.chemicalSystem.ind_S); end
+            if isempty(obj.chemicalSystem.ind_Si), obj.fuel.x3 = 0; else, obj.fuel.x3 = natomElementsFuel(obj.chemicalSystem.ind_Si); end
+        end
+
+    end
+    
+    methods (Access = private, Static)
+
+        function mass = getMass(system, propertiesMatrix)
+            % Compute mass mixture [kg]
+        
+            % Compute total number of moles [mol]
+            N = sum(propertiesMatrix(:, system.ind_ni));
+            % Compute mean molecular weight [g/mol]
+            W = dot(propertiesMatrix(:, system.ind_ni), propertiesMatrix(:, system.ind_W)) / N;
+            % Compute mass of the mixture [kg]
+            mass = W * N * 1e-3;
+        end
+    
     end
 
     methods (Hidden)
@@ -468,11 +687,10 @@ classdef Mixture
             obj.quantity = quantity;
 
             % Assign values to the propertiesMatrix
-            obj.chemicalSystem = obj.chemicalSystem.set_propertiesMatrix(listSpecies, quantity, obj.T, index, h0);
+            obj.chemicalSystem.set_propertiesMatrix(listSpecies, quantity, obj.T, index, h0);
 
             % Compute thermodynamic properties
-            obj = obj.compute_properties(obj.chemicalSystem, obj.T, obj.p);
-
+            obj.compute_properties(obj.chemicalSystem, obj.T, obj.p);
         end
 
     end

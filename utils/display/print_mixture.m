@@ -161,7 +161,7 @@ function print_composition(mix, LS, units, header, mintol_display)
     %     units (char): Units of the composition
     %     header (char): Header of the composition
     %     mintol_display (double): Minimum value to be displayed
-
+    
     switch lower(units)
         case 'mol'
             variable = moles(mix);
@@ -209,7 +209,10 @@ function header_composition = print_header(problemType, numberMixtures, mix)
     
     if problemType
         fprintf('------------------------------------------------------------------------------------------------------------\n');
-        fprintf('Problem type: %s  | phi = %4.4f\n', problemType, mix{1}.equivalenceRatio);
+        fprintf('Problem type: %s  | Equivalence ratio = %4.4f\n', problemType, mix{1}.equivalenceRatio);
+    elseif ~isempty(mix{1}.equivalenceRatio)
+        fprintf('------------------------------------------------------------------------------------------------------------\n');
+        fprintf('Equivalence ratio = %4.4f\n', mix{1}.equivalenceRatio);
     end
 
     fprintf('------------------------------------------------------------------------------------------------------------\n');

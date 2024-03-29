@@ -1,4 +1,4 @@
-classdef ChemicalSystem < handle
+classdef ChemicalSystem < handle & matlab.mixin.Copyable
 
     properties
         species                % Struct with class Species
@@ -11,7 +11,6 @@ classdef ChemicalSystem < handle
         indexGas               % Indeces gaseous species
         indexCondensed         % Indeces condensed species
         indexCryogenic         % Indeces cryogenic liquified species
-        indexOxidizerReference % Indeces reference oxidizer (default: O2)
         indexIons              % Indeces ionized species in species
         indexReact             % Indeces react species
         indexFrozen            % Indeces inert/frozen species
@@ -55,11 +54,21 @@ classdef ChemicalSystem < handle
     end
 
     properties (Hidden)
-        listSpeciesOriginal
-        indexListSpeciesOriginal
+        propertiesMatrixFuel
+        propertiesMatrixOxidizer
+        listProducts
+        indexProducts
+        oxidizerReferenceIndex
+        oxidizerReferenceAtomsO
+    end
+    
+    properties (Access = private, Hidden)
+        listSpeciesFormula
+        database
     end
 
     methods
+        
         function obj = ChemicalSystem(database, listSpecies, varargin)
 
             % Parse inputs
@@ -67,29 +76,103 @@ classdef ChemicalSystem < handle
             addRequired(ip, 'database'); % , @(x) isa(x, 'combustiontoolbox.databases.NasaDatabase') || isa(x, 'combustiontoolbox.databases.BurcatDatabase')
             addRequired(ip, 'listSpecies'); % , @(x) ischar(x) || iscell(x)
             parse(ip, database, listSpecies, varargin{:});
+            
+            % Assign memory reference of the database
+            obj.database = database;
 
             % Set list species
             % Now this should also set the species from the database to the struct property species
-            [obj, ~, LS_formula] = obj.list_species(database, ip.Results.listSpecies);
+            [obj, ~, obj.listSpeciesFormula] = obj.list_species(database, ip.Results.listSpecies);
             
             % Set species
             obj = obj.get_species(database);
 
             % Set contained elements
-            obj = obj.contained_elements(LS_formula);
+            obj = obj.containedElements();
             
             % Sort species: first gaseous species, secondly condensed species
             obj = obj.list_phase_species();
 
             % Set stoichiometric matrix
-            obj = obj.set_stoichiometricMatrix();
+            obj = obj.setStoichiometricMatrix();
 
             % Initialize the properties matrix
-            obj = obj.set_propertiesMatrix_initialize();
+            obj = obj.setPropertiesMatrixInitialize();
 
             % Assign listSpecies with the species to be considered in the
             % chemical transformation
-            obj.listSpeciesOriginal = obj.listSpecies;
+            obj.listProducts = obj.listSpecies;
+        end
+        
+        function system = getSystemProducts(obj)
+            % Set List of Species to List of Products
+            
+            % Check if all species are considered as possible products
+            FLAG_SAME = all(obj.indexProducts == obj.indexSpecies);
+            
+            % Copy memory reference to the chemical system
+            if FLAG_SAME
+                system = obj;
+                return
+            end
+
+            % Copy chemical system
+            system = obj.copy();
+
+            % Remove ionized species if TP is below T_ions
+            % if any(system.indexIons) && temperature < temperatureIons
+            %     system.indexListProducts(system.indexIons) = [];
+            %     system.indexElements = [];
+            % end
+            
+            % Initialization
+            system.indexGas = []; system.indexCondensed = [];
+            system.indexCryogenic = []; system.indexIons = [];
+            % Set list of species for calculations
+            system.listSpecies = system.listSpecies(system.indexListProducts);
+            % Establish cataloged list of species according to the state of the phase
+            system = system.list_phase_species();
+            % Update stoichiometric matrix
+            system.stoichiometricMatrix = system.stoichiometricMatrix(system.indexListProducts, :);
+            % Update property matrix
+            system.propertiesMatrix = system.propertiesMatrix(system.indexListProducts, :);
+            % Update compostion matrix
+            system.molesPhaseMatrix = system.molesPhaseMatrix(system.indexListProducts, :);
+        end
+
+        function obj = checkSpecies(obj, species)
+            %
+            
+            % Initialization
+            FLAG_ADDED_SPECIES = false;
+
+            % Check if species is defined in the chemical system
+            for i = 1:length(species)
+
+                if ~strcmp(obj.listSpecies, species(i))
+                    obj.species.(species{i}) = obj.database.species.(species{i});
+                    obj.listSpecies = [obj.listSpecies, species(i)];
+                    obj.listSpeciesFormula = [obj.listSpeciesFormula, obj.species.(species{i}).formula];
+                    FLAG_ADDED_SPECIES = true;
+                end
+
+            end
+
+            if ~FLAG_ADDED_SPECIES
+                return
+            end
+
+            % Set contained elements
+            obj = obj.containedElements();
+            
+            % Sort species: first gaseous species, secondly condensed species
+            obj = obj.list_phase_species();
+
+            % Set stoichiometric matrix
+            obj = obj.setStoichiometricMatrix();
+
+            % Initialize the properties matrix
+            obj = obj.setPropertiesMatrixInitialize();
         end
 
         function value = get.numSpecies(obj)
@@ -169,17 +252,17 @@ classdef ChemicalSystem < handle
             
             % Fill properties matrix
             if nargin < 5
-                obj.propertiesMatrix = obj.fill_properties_matrix(obj, obj.propertiesMatrix, species, moles, T);
+                obj.propertiesMatrix = obj.fillPropertiesMatrix(obj, obj.propertiesMatrix, species, moles, T);
                 return
             elseif nargin < 6
                 index = varargin{1};
-                obj.propertiesMatrix = obj.fill_properties_matrix_fast(obj, obj.propertiesMatrix, species(index), moles, T, index);
+                obj.propertiesMatrix = obj.fillPropertiesMatrixFast(obj, obj.propertiesMatrix, species(index), moles, T, index);
                 return
             end
     
             index = varargin{1};
             h0 = varargin{2};
-            obj.propertiesMatrix = obj.fill_properties_matrix_fast_h0(obj, obj.propertiesMatrix, species(index), moles, T, index, h0);
+            obj.propertiesMatrix = obj.fillPropertiesMatrixFastH0(obj, obj.propertiesMatrix, species(index), moles, T, index, h0);
         end
 
         function obj = clean(obj)
@@ -187,7 +270,12 @@ classdef ChemicalSystem < handle
             obj.propertiesMatrix(:, 5:end) = 0;
         end
 
-        function [obj, LS, LS_formula] = list_species(obj, database, varargin)
+        function obj = cleanMoles(obj)
+            % Set temperature-dependent matrix properties to zero
+            obj.propertiesMatrix(:, obj.ind_ni) = 0;
+        end
+
+        function [obj, LS, listSpeciesFormula] = list_species(obj, database, varargin)
             % Set list of species in the mixture (products)
             %
             % Predefined list of species:
@@ -399,17 +487,17 @@ classdef ChemicalSystem < handle
                 return
             end
         
-            LS_formula = get_formula(obj.listSpecies, database);
+            listSpeciesFormula = get_formula(obj.listSpecies, database);
         
-            if any(get_index_ions(obj.listSpecies))
+            if any(obj.getIndexIons(obj.listSpecies))
                 obj.FLAG_ION = true;
             end
 
             % SUB-PASS FUNCTIONS
-            function LS_formula = get_formula(listSpecies, database)
+            function listSpeciesFormula = get_formula(listSpecies, database)
                 % Get chemical formula from the database (DB)
                 for i = length(listSpecies):-1:1
-                    LS_formula{i} = database.species.(listSpecies{i}).formula;
+                    listSpeciesFormula{i} = database.species.(listSpecies{i}).formula;
                 end
             
             end
@@ -465,8 +553,8 @@ classdef ChemicalSystem < handle
                 LS = obj.LS_soot;
             end
         
-            obj.indexListSpeciesOriginal = find_ind(obj.listSpecies, LS);
-            obj = obj.reorganize_index_phase_species();
+            obj.indexProducts = findIndex(obj.listSpecies, LS);
+            obj = obj.reorganizeIndexPhaseSpecies();
         end
 
         function obj = list_phase_species(obj)
@@ -481,10 +569,10 @@ classdef ChemicalSystem < handle
             % Returns:
             %     self (struct): Data of the mixture, conditions, and databases
         
-            obj = obj.get_index_phase_species();
+            obj = obj.getIndexPhaseSpecies();
             obj.listSpecies = obj.listSpecies([obj.indexGas, obj.indexCondensed]);
             % Reorginize index of gaseous, condensed and cryogenic species
-            obj = obj.reorganize_index_phase_species();
+            obj = obj.reorganizeIndexPhaseSpecies();
         end
 
         function obj = set_react_index(obj, speciesFrozen)
@@ -507,7 +595,7 @@ classdef ChemicalSystem < handle
             end
             
             % Get index frozen species
-            index = find_ind(obj.listSpecies, speciesFrozen);
+            index = findIndex(obj.listSpecies, speciesFrozen);
             % Set index frozen species
             obj.indexFrozen = index;
 
@@ -531,24 +619,71 @@ classdef ChemicalSystem < handle
         
         end
 
+        function obj = getOxidizerReference(obj, listOxidizer)
+            % Get oxidizer of reference for computations with the equivalence ratio
+            %
+            % Args:
+            %     obj (ChemicalSystem): 
+            %     listOxidizer (cell):
+            %
+            % Returns:
+            %     obj (ChemicalSystem):     
+            
+            % Import packages
+            import combustiontoolbox.utils.findIndex
+
+            % Check if there are oxidizers in the mixtures
+            if isempty(listOxidizer)
+                obj.oxidizerReferenceIndex = [];
+                obj.oxidizerReferenceAtomsO = NaN;
+                return
+            end
+        
+            % If O2 or O2(L) are included as oxidizers these species will be
+            % selected as reference oxidizers in this order. Otherwise, the first
+            % oxidizer with oxygen as element will be selected.
+            if any(ismember(listOxidizer, 'O2'))
+                obj.oxidizerReferenceIndex = findIndex(obj.listSpecies, 'O2');
+                obj.oxidizerReferenceAtomsO = 2;
+            elseif any(ismember(listOxidizer, 'O2bLb'))
+                obj.oxidizerReferenceIndex = findIndex(obj.listSpecies, 'O2bLb');
+                obj.oxidizerReferenceAtomsO = 2;
+            else
+                % Get first oxidizer with oxygen as element
+                temp_ind = find(contains(listOxidizer, 'O'), 1);
+                species = listOxidizer{temp_ind};
+                % Find index of reference oxidizer
+                obj.oxidizerReferenceIndex = findIndex(obj.listSpecies, species);
+                % Find position oxygen element
+                temp_ind_O = find(listOxidizer{temp_ind} == 'O');
+                % Get position numbers and letters
+                [temp_ind_1, temp_ind_2] = regexp(species, '\w\d*');
+                % Find position oxygen element in the temp variable index
+                temp_ind = find(temp_ind_1 == temp_ind_O);
+                % Set number of elements of oxygen in the reference oxidizer
+                obj.oxidizerReferenceAtomsO = sscanf(species(temp_ind_1(temp_ind) + 1:temp_ind_2(temp_ind)), '%f');
+            end
+
+        end
+
     end
 
     methods (Access = private)
         
-        function obj = contained_elements(obj, LS_formula)
+        function obj = containedElements(obj)
             % Obtain containted elements from the given set of species (reactants and products)
             %
             % Args:
-            %     self (struct): Data of the mixture, conditions, and databases
+            %     obj (ChemicalSystem): 
             %
             % Returns:
-            %     self (struct): Data of the mixture, conditions, and databases
+            %     obj (ChemicalSystem): 
         
             L_formula = [];
         
             for k = obj.numSpecies:-1:1
                 L_E1 = []; L_E2 = [];
-                formula = LS_formula{k};
+                formula = obj.listSpeciesFormula{k};
         
                 [idx0, idxf] = regexp(formula, "[A-Z]{2,}");
         
@@ -574,11 +709,11 @@ classdef ChemicalSystem < handle
             obj.listElements = unique(L_formula);
         end
 
-        function index = get_index_ions(species)
+        function index = getIndexIons(obj, species)
             % Get index of ions for the given list of species
             %
             % Args:
-            %     species (str): List of species
+            %     species (cell): List of species
             %
             % Returns:
             %     index (float): Index of ions
@@ -586,7 +721,7 @@ classdef ChemicalSystem < handle
             index = (contains(species, 'minus') | contains(species, 'plus')) & ~contains(species, 'cyclominus');
         end
         
-        function obj = get_index_phase_species(obj)
+        function obj = getIndexPhaseSpecies(obj)
             % Get index of gaseous, condensed and cryogenic species
             %
             % Args:
@@ -629,10 +764,10 @@ classdef ChemicalSystem < handle
             obj.indexCryogenic = obj.indexCryogenic(1:cryogenicCount);
         
             % Get index of ions
-            obj.indexIons = get_index_ions(obj.listSpecies);
+            obj.indexIons = obj.getIndexIons(obj.listSpecies);
         end        
 
-        function obj = reorganize_index_phase_species(obj)
+        function obj = reorganizeIndexPhaseSpecies(obj)
             % Reorginize index of gaseous, condensed and cryogenic species
             %
             % Args:
@@ -643,10 +778,10 @@ classdef ChemicalSystem < handle
             %     self (struct): Data of the mixture, conditions, and databases
         
             obj.indexGas = []; obj.indexCondensed = []; obj.indexCryogenic = [];
-            obj = obj.get_index_phase_species();
+            obj = obj.getIndexPhaseSpecies();
         end
 
-        function obj = set_stoichiometricMatrix(obj)
+        function obj = setStoichiometricMatrix(obj)
             % Set stoichiometric matrix
 
             % Preallocate the stoichiometric matrix
@@ -654,7 +789,7 @@ classdef ChemicalSystem < handle
             
             % Set stoichiometric matrix
             for i = 1:obj.numSpecies
-                obj.species.(obj.listSpecies{i}).elementMatrix = set_element_matrix(obj.species.(obj.listSpecies{i}).formula, obj.listElements);
+                obj.species.(obj.listSpecies{i}).elementMatrix = obj.species.(obj.listSpecies{i}).getElementMatrix(obj.listElements);
                 A0(i, obj.species.(obj.listSpecies{i}).elementMatrix(1, :)) = obj.species.(obj.listSpecies{i}).elementMatrix(2, :);
             end
 
@@ -662,7 +797,7 @@ classdef ChemicalSystem < handle
             obj.stoichiometricMatrix = A0;
         end
 
-        function obj = set_propertiesMatrix_initialize(obj)
+        function obj = setPropertiesMatrixInitialize(obj)
             % Initialize properties matrix
             %
             % Args:
@@ -696,9 +831,14 @@ classdef ChemicalSystem < handle
 
     methods (Access = private, Static)
         
-        function propertiesMatrix = fill_properties_matrix(obj, propertiesMatrix, species, moles, T)
+        function propertiesMatrix = fillPropertiesMatrix(obj, propertiesMatrix, species, moles, T)
+            %
+            
+            % Import packages
+            import combustiontoolbox.utils.findIndex
+
             % Get index species
-            index = find_ind(obj.listSpecies, species);
+            index = findIndex(obj.listSpecies, species);
 
             % Fill properties matrix
             propertiesMatrix(index, obj.ind_ni) = moles; % [mol]
@@ -711,7 +851,7 @@ classdef ChemicalSystem < handle
 
         end
             
-        function propertiesMatrix = fill_properties_matrix_fast(obj, propertiesMatrix, species, moles, T, index)
+        function propertiesMatrix = fillPropertiesMatrixFast(obj, propertiesMatrix, species, moles, T, index)
             % Fill properties matrix
             propertiesMatrix(index, obj.ind_ni) = moles(index); % [mol]
             
@@ -729,7 +869,7 @@ classdef ChemicalSystem < handle
 
         end
 
-        function propertiesMatrix = fill_properties_matrix_fast_h0(obj, propertiesMatrix, species, moles, T, index, h0)
+        function propertiesMatrix = fillPropertiesMatrixFastH0(obj, propertiesMatrix, species, moles, T, index, h0)
             % Fill properties matrix
             propertiesMatrix(index, obj.ind_ni) = moles(index); % [mol]
             propertiesMatrix(index, obj.ind_hi) = h0(index); % [kJ/mol]

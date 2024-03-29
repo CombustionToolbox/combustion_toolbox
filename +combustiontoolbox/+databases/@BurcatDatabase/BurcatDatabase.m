@@ -1,4 +1,4 @@
-classdef BurcatDatabase < combustiontoolbox.databases.Database
+classdef BurcatDatabase < combustiontoolbox.databases.Database & handle
     
     methods (Access = public)
         
@@ -12,6 +12,7 @@ classdef BurcatDatabase < combustiontoolbox.databases.Database
     end
 
     methods (Access = public, Static)
+
         function thermoMillennium_2_thermoNASA9(filenameInput, varargin)
             % Read Extended Third Millennium Thermodynamic Database of New NASA
             % Polynomials with Active Thermochemical Tables update and write a new

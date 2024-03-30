@@ -22,7 +22,7 @@ function ind_elements = get_ind_elements(LS, DB, elements, MAX_ELEMENTS)
     % Get indeces
     for i = NS:-1:1
         species = LS{i};
-        temp = set_element_matrix(DB.(species).txFormula, elements);
+        temp = DB.(species).getElementMatrix(elements);
         ind_elements(i, 1:length(temp(1, :))) = temp(1, :);
     end
     

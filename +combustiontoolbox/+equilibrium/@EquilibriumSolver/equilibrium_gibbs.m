@@ -1,4 +1,4 @@
-function [N0, dNi_T, dN_T, dNi_p, dN_p, STOP, STOP_ions, h0] = equilibrium_gibbs(obj, system, pP, TP, mix, guess_moles)
+function [N0, dNi_T, dN_T, dNi_p, dN_p, index, STOP, STOP_ions, h0] = equilibrium_gibbs(obj, system, pP, TP, mix, guess_moles)
     % Obtain equilibrium composition [moles] for the given temperature [K] and pressure [bar].
     % The code stems from the minimization of the free energy of the system by using Lagrange
     % multipliers combined with a Newton-Raphson method, upon condition that initial gas
@@ -26,7 +26,7 @@ function [N0, dNi_T, dN_T, dNi_p, dN_p, STOP, STOP_ions, h0] = equilibrium_gibbs
     %     * dN_T (float): Thermodynamic derivative of the moles of the mixture respect to temperature
     %     * dNi_p (float): Thermodynamic derivative of the moles of the species respect to pressure
     %     * dN_p (float): Thermodynamic derivative of the moles of the mixture respect to pressure
-    %     * ind (float): List of chemical species indices
+    %     * index (float): List of chemical species indices
     %     * STOP (float): Relative error in moles of species [-]
     %
     % Examples:
@@ -106,18 +106,14 @@ function [N0, dNi_T, dN_T, dNi_p, dN_p, STOP, STOP_ions, h0] = equilibrium_gibbs
     J(end, end) = 0;
 
     % Molar enthalpy [J/mol]
-    % if mix.FLAG_REACTION
-    %     h0 = system.propertiesMatrix(:, system.ind_hi) * 1e3;
-    % else
-        h0(index) = set_h0(system.listSpecies(index), TP, system.species);
-    %end
+    h0(index) = set_h0(system.listSpecies(index), TP, system.species);
     
     % Dimensionless enthalpy
     H0RT = h0 / R0TP;
 
     % Compute thermodynamic derivates
-    [dNi_T, dN_T] = equilibrium_dT(J, N0, A0, NE, indexGas, indexCondensed, indexElements, H0RT);
-    [dNi_p, dN_p] = equilibrium_dp(J, N0, A0, NE, indexGas, indexCondensed, indexElements);
+    [dNi_T, dN_T] = obj.equilibrium_dT(J, N0, A0, NE, indexGas, indexCondensed, indexElements, H0RT);
+    [dNi_p, dN_p] = obj.equilibrium_dp(J, N0, A0, NE, indexGas, indexCondensed, indexElements);
 
     % NESTED FUNCTION
     function x = equilibrium_loop
@@ -200,7 +196,7 @@ function [N0, dNi_T, dN_T, dNi_p, dN_p, STOP, STOP_ions, h0] = equilibrium_gibbs
         end
 
         % Check convergence of charge balance (ionized species)
-        [N0, STOP_ions, FLAG_ION] = check_convergence_ions(N0, A0, system.ind_E, indexGas, indexIons, obj.tolMoles, obj.tolMultiplierIons, obj.itMaxIons);
+        [N0, STOP_ions, FLAG_ION] = check_convergence_ions(N0, A0, ind_E, indexGas, indexIons, obj.tolMoles, obj.tolMultiplierIons, obj.itMaxIons);
         
         % Additional checks in case there are ions in the mixture
         if ~FLAG_ION
@@ -222,7 +218,7 @@ function [N0, dNi_T, dN_T, dNi_p, dN_p, STOP, STOP_ions, h0] = equilibrium_gibbs
         end
         
         % Remove element E from matrix
-        indexElements(system.ind_E) = [];
+        indexElements(ind_E) = [];
         NE = NE - 1;
 
         % Debug

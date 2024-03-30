@@ -214,35 +214,29 @@ classdef EquilibriumSolver < handle
             N_mix0 = moles(mix); % Get moles of inert species
             system = mix.chemicalSystem;
             systemProducts = mix.chemicalSystemProducts;
-            index = system.indexSpecies;
-            indexProducts = system.indexProducts;
             % Unpack
             guess_moles = unpack(varargin);
             % Check flag
             if ~obj.FLAG_FAST, guess_moles = []; end
             % Compute number of moles
-            [N, dNi_T, dN_T, dNi_p, dN_p, STOP, STOP_ions, h0] = select_equilibrium(obj, systemProducts, T, mix, guess_moles);
+            [N, dNi_T, dN_T, dNi_p, dN_p, indexProducts, STOP, STOP_ions, h0] = select_equilibrium(obj, systemProducts, T, mix, guess_moles);
             % Reshape composition matrix N, and partial composition partial derivatives 
-            N = reshape_vector(system, index, indexProducts, N);
-            dNi_T = reshape_vector(system, index, indexProducts, dNi_T);
-            dNi_p = reshape_vector(system, index, indexProducts, dNi_p);
+            N = reshape_vector(system, system.indexProducts, systemProducts.indexSpecies, N);
+            dNi_T = reshape_vector(system, system.indexProducts, systemProducts.indexSpecies, dNi_T);
+            dNi_p = reshape_vector(system, system.indexProducts, systemProducts.indexSpecies, dNi_p);
+            h0 = reshape_vector(system, system.indexProducts, systemProducts.indexSpecies, h0);
+            h0(system.indexFrozen) = set_h0(system.listSpecies(system.indexFrozen), T, system.species) * 1e-3; 
             N(system.indexFrozen) = N_mix0(system.indexFrozen);
-            % Compute property matrix of the species at chemical equilibrium
-            % NOTE: If the ind variable is removed from the inputs, the set_species 
-            % routine will completely fill the properties matrix
-            % M0 = set_species(obj, system.listSpecies, N(:, 1), TP, [index, system.indexFrozen]);
-            
-            system.clean;
+            % Assign values
             mix.T = T;
             mix.dNi_T = dNi_T; mix.dN_T = dN_T;
             mix.dNi_p = dNi_p; mix.dN_p = dN_p;
             mix.FLAG_REACTION = true;
             mix.errorMoles = STOP;
             mix.errorMolesIons = STOP_ions;
-            mix.set_fast(system.listSpecies, N(:, 1)', [index, system.indexFrozen], h0);
-
-            % Compute properties of final mixture
-            % mix = set_properties(obj, mix, system, TP, STOP, STOP_ions);
+            % Compute property matrix of the species at chemical equilibrium
+            system.clean;
+            mix.set_fast(system.listSpecies, N', [indexProducts, system.indexFrozen], h0);
 
             % SUB-PASS FUNCTIONS
             function guess_moles = unpack(value)
@@ -260,12 +254,13 @@ classdef EquilibriumSolver < handle
                 pP = self.PD.EOS.pressure(self, N, TP, mix1.v, system.LS, mix1.Xi) * 1e-5;
             end
             
-            function [N, dNi_T, dN_T, dNi_p, dN_p, STOP, STOP_ions, h0] = select_equilibrium(obj, system, T, mix, guess_moles)
+            function [N, dNi_T, dN_T, dNi_p, dN_p, indexProducts, STOP, STOP_ions, h0] = select_equilibrium(obj, system, T, mix, guess_moles)
                 % Select equilibrium: TP: Gibbs; TV: Helmholtz
+                
                 if strfind(obj.problemType, 'P') == 2
-                    [N, dNi_T, dN_T, dNi_p, dN_p, STOP, STOP_ions, h0] = equilibrium_gibbs(obj, system, mix.p, T, mix, guess_moles);
+                    [N, dNi_T, dN_T, dNi_p, dN_p, indexProducts, STOP, STOP_ions, h0] = obj.equilibrium_gibbs(system, mix.p, T, mix, guess_moles);
                 else
-                    [N, dNi_T, dN_T, dNi_p, dN_p, STOP, STOP_ions] = equilibrium_helmholtz(obj, system, mix.v, T, mix, guess_moles);
+                    [N, dNi_T, dN_T, dNi_p, dN_p, indexProducts, STOP, STOP_ions] = equilibrium_helmholtz(obj, system, mix.v, T, mix, guess_moles);
                 end
 
                 h0 = h0 * 1e-3; % [kJ/mol]
@@ -294,9 +289,16 @@ classdef EquilibriumSolver < handle
         end
 
     end
+    
+    methods (Access = private, Static)
 
+        [dNi_T, dN_T] = equilibrium_dT(J, N0, A0, NE, indexGas, indexCondensed, indexElements, H0RT);
+        [dNi_p, dN_p] = equilibrium_dp(J, N0, A0, NE, indexGas, indexCondensed, indexElements);
+    end
     methods (Access = private)
         
+        [N, dNi_T, dN_T, dNi_p, dN_p, indexProducts, STOP, STOP_ions, h0] = equilibrium_gibbs(obj, system, p, T, mix, guess_moles)
+
         function [x, STOP, guess_moles] = newton(obj, mix1, mix2, field, x0, guess_moles)
             % Find the temperature [K] (root) for the set chemical transformation at equilibrium using the second-order Newton-Raphson method
             %
@@ -350,7 +352,7 @@ classdef EquilibriumSolver < handle
                 x0 = obj.regula_guess(mix1, mix2, field);
                 [x, STOP] = obj.nsteff(mix1, mix2, field, x0, []);
             else
-                print_error_root(it, obj.itMax, x, STOP);
+                obj.print_error_root(it, x, STOP);
             end
             
         end
@@ -470,6 +472,26 @@ classdef EquilibriumSolver < handle
             catch
                 gpoint = NaN;
                 gpoint_relative = NaN;
+            end
+
+        end
+
+        function print_error_root(obj, it, T, STOP)
+            % Print error of the method if the number of iterations is greater than maximum iterations allowed
+            %
+            % Args:
+            %     it (float):    Number of iterations executed in the method
+            %     itMax (float): Maximum nNumber of iterations allowed in the method
+            %     T (float):     Temperature [K]
+            %     STOP (float):  Relative error [-]
+        
+            if it == obj.itMax
+                fprintf('***********************************************************\n')
+                fprintf('Root algorithm not converged \n')
+                fprintf('   Error       =  %8.2f [%%]  \n', STOP*100)
+                fprintf('   Temperature =  %8.2f [K]  \n', T)
+                fprintf('   Iterations  =  %8.d [it] \n', it)
+                fprintf('***********************************************************\n')
             end
 
         end

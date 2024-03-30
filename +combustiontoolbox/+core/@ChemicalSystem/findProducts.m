@@ -1,10 +1,10 @@
-function [LS, ind_elements_DB] = find_products(self, species, varargin)
+function [LS, ind_elements_DB] = findProducts(obj, listSpecies, varargin)
     % Find all the combinations of species from DB that can appear as
     % products for the given list of reactants
     %
     % Args:
-    %     self (struct): Data of the mixture, conditions, and databases
-    %     species (cell): List of reactants
+    %     obj (Database): Database
+    %     listSpecies (cell): List of reactants
     %
     % Optional Name-Value Pairs Args:
     %     * ind_elements_DB (float): Matrix NS_DB x MAX_ELEMENTS with element indeces of the species contained in the database
@@ -25,18 +25,18 @@ function [LS, ind_elements_DB] = find_products(self, species, varargin)
     %     * [LS, ind_elements_DB] = find_products(self, {'O2', 'CO', 'N'}, 'flag_burcat', true, 'flag_ion', true, 'flag_condensed', true, 'ind', ind_elements_DB)
     %     * [LS, ind_elements_DB] = find_products(self, {'O2', 'CO', 'N'}, 'flag_burcat', true, 'flag_ion', true, 'ind', ind_elements_DB)
     
-    
+    import combustiontoolbox.utils.findIndex
     % Definitions
     MAX_ELEMENTS = 5;
-    FLAG_BURCAT = self.S.FLAG_BURCAT; % Flag indicating to look for species also in Burcat's database
-    FLAG_ION = self.S.FLAG_ION; % Flag indicating to consider ionized species
-    FLAG_CONDENSED = self.S.FLAG_CONDENSED; % Flag indicating to consider condensed species
-    [elements, ~] = set_elements(); % Elements list
+    FLAG_BURCAT = obj.FLAG_BURCAT; % Flag indicating to look for species also in Burcat's database
+    FLAG_ION = obj.FLAG_ION; % Flag indicating to consider ionized species
+    FLAG_CONDENSED = obj.FLAG_CONDENSED; % Flag indicating to consider condensed species
+    elements = combustiontoolbox.core.Elements().getElements(); % Elements list
     
     % Initialization
     FLAG_IND = false;     % Flag indicating that ind_elements_DB is an input
     LS = [];              % Initialize list of products
-    LS_DB = self.S.LS_DB; % Get list of species in the database
+    LS_DB = obj.database.listSpecies; % Get list of species in the database
 
     % Unpack
     for i = 1:2:nargin-2
@@ -56,7 +56,7 @@ function [LS, ind_elements_DB] = find_products(self, species, varargin)
     
     % If FLAG_ION == true, then find ionized species
     if FLAG_ION
-        species{end + 1} = 'eminus';
+        listSpecies{end + 1} = 'eminus';
     end
 
     % If FLAG_BURCAT == false, then remove the species from Third millenium database (Burcat)
@@ -91,14 +91,14 @@ function [LS, ind_elements_DB] = find_products(self, species, varargin)
     end
 
     % Get element indeces of the reactants
-    ind_elements_R = sort(get_ind_elements(species, self.DB, elements, MAX_ELEMENTS), 1);
+    ind_elements_R = sort(get_ind_elements(listSpecies, obj.database.species, elements, MAX_ELEMENTS), 1);
 
     % Get element indeces of each species in the database
     if ~FLAG_IND
         % Remove incompatible species
-        LS_DB(find_ind(LS_DB, 'Air')) = [];
+        LS_DB(findIndex(LS_DB, 'Air')) = [];
         % Get element indeces of each species in the database
-        ind_elements_DB = get_ind_elements(LS_DB, self.DB, elements, MAX_ELEMENTS);
+        ind_elements_DB = get_ind_elements(LS_DB, obj.database.species, elements, MAX_ELEMENTS);
     end
     
     % Remove common vectors

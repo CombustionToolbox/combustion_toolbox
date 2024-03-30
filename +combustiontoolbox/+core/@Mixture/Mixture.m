@@ -259,7 +259,7 @@ classdef Mixture < handle & matlab.mixin.Copyable
             
             % Get indexProducts
             obj.chemicalSystem.indexProducts = findIndex(obj.chemicalSystem.listSpecies, obj.chemicalSystem.listProducts);
-            
+
             % Get system containing only the list of products
             obj.chemicalSystemProducts = getSystemProducts(obj.chemicalSystem);
 
@@ -412,9 +412,9 @@ classdef Mixture < handle & matlab.mixin.Copyable
             obj.(name).value = value;
         end
 
-        function print(obj)
+        function print(obj, varargin)
             % 
-            print_mixture(obj);
+            print_mixture(obj, varargin{:});
         end
         
     end

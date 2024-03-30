@@ -108,7 +108,7 @@ classdef ChemicalSystem < handle & matlab.mixin.Copyable
             % Set List of Species to List of Products
             
             % Check if all species are considered as possible products
-            FLAG_SAME = all(obj.indexProducts == obj.indexSpecies);
+            FLAG_SAME = all(ismember(obj.indexSpecies, obj.indexProducts));
             
             % Copy memory reference to the chemical system
             if FLAG_SAME
@@ -129,15 +129,15 @@ classdef ChemicalSystem < handle & matlab.mixin.Copyable
             system.indexGas = []; system.indexCondensed = [];
             system.indexCryogenic = []; system.indexIons = [];
             % Set list of species for calculations
-            system.listSpecies = system.listSpecies(system.indexListProducts);
+            system.listSpecies = system.listSpecies(system.indexProducts);
             % Establish cataloged list of species according to the state of the phase
             system = system.list_phase_species();
             % Update stoichiometric matrix
-            system.stoichiometricMatrix = system.stoichiometricMatrix(system.indexListProducts, :);
+            system.stoichiometricMatrix = system.stoichiometricMatrix(system.indexProducts, :);
             % Update property matrix
-            system.propertiesMatrix = system.propertiesMatrix(system.indexListProducts, :);
+            system.propertiesMatrix = system.propertiesMatrix(system.indexProducts, :);
             % Update compostion matrix
-            system.molesPhaseMatrix = system.molesPhaseMatrix(system.indexListProducts, :);
+            system.molesPhaseMatrix = system.molesPhaseMatrix(system.indexProducts, :);
         end
 
         function obj = checkSpecies(obj, species)
@@ -585,6 +585,9 @@ classdef ChemicalSystem < handle & matlab.mixin.Copyable
             % Returns:
             %     self (struct): Data of the mixture, conditions, and databases
             
+            % Import packages
+            import combustiontoolbox.utils.findIndex
+
             % Initialization
             obj.indexReact = 1:obj.numSpecies;
         
@@ -599,19 +602,15 @@ classdef ChemicalSystem < handle & matlab.mixin.Copyable
             % Set index frozen species
             obj.indexFrozen = index;
 
-
-            % TEMP
-            return
-            
             % Get length initial species
-            N_reactants = length([self.PD.S_Fuel, self.PD.S_Oxidizer, self.PD.S_Inert]);
+            % N_reactants = length([self.PD.S_Fuel, self.PD.S_Oxidizer, self.PD.S_Inert]);
             % Get length frozen species
             N_frozen = length(index);
             % Check if all the species of the reactants are frozen
-            if N_frozen == N_reactants
-                self.PD.FLAG_FROZEN = true;
-                return
-            end
+            % if N_frozen == N_reactants
+            %     self.PD.FLAG_FROZEN = true;
+            %     return
+            % end
             
             for i = 1:N_frozen
                 obj.indexReact(obj.indexReact == index(i)) = [];

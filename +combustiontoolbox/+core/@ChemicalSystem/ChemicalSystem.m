@@ -69,6 +69,8 @@ classdef ChemicalSystem < handle & matlab.mixin.Copyable
 
     methods
         
+        [LS, ind_elements_DB] = findProducts(obj, listSpecies, varargin)
+
         function obj = ChemicalSystem(database, listSpecies, varargin)
 
             % Parse inputs
@@ -81,7 +83,6 @@ classdef ChemicalSystem < handle & matlab.mixin.Copyable
             obj.database = database;
 
             % Set list species
-            % Now this should also set the species from the database to the struct property species
             [obj, ~, obj.listSpeciesFormula] = obj.list_species(database, ip.Results.listSpecies);
             
             % Set species

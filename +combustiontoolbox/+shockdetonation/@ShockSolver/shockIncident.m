@@ -23,14 +23,15 @@ function [mix1, mix2] = shockIncident(obj, mix1, u1, varargin)
     %     * [mix1, mix2] = shock_incident(obj, mix1, u1, mix2)
 
     % Unpack input data
-    [mix1, mix2, guess_moles] = unpack(mix1, u1, varargin);
+    [mix1, mix2, guess_moles] = unpack(mix1, u1, varargin{:});
 
     if obj.equilibriumSolver.FLAG_TCHEM_FROZEN
         STOP = 0;
         [~, p2p1, T2T1, ~, ~] = shock_ideal_gas(mix1.gamma, u1 / mix1.sound);
         T2 = T2T1 * mix1.T;
         p2 = p2p1 * convert_bar_to_Pa(mix1.p);
-        mix2 = save_state(obj, mix1, T2, p2, STOP);
+        mix2.p = p2; mix2.T = T2;
+        mix2 = save_state(mix1, mix2, STOP);
         return
     end
 
@@ -54,7 +55,7 @@ function [mix1, mix2] = shockIncident(obj, mix1, u1, varargin)
     print_convergence(STOP, obj.tol_shocks, T2);
     
     % Save state
-    mix2 = save_state(obj.equilibriumSolver, mix1, T2, p2, STOP);
+    mix2 = save_state(mix1, mix2, STOP);
 
     % NESTED-FUNCTIONS
     function [T2, p2, STOP] = solve_shock_incident(FLAG_FAST)
@@ -68,7 +69,7 @@ function [mix1, mix2] = shockIncident(obj, mix1, u1, varargin)
         while STOP > obj.tol_shocks && it < itMax
             it = it + 1;
             % Construction of the Jacobian matrix and vector b
-            [J, b, guess_moles] = update_system(obj.equilibriumSolver, mix1, p2, T2, R0, guess_moles, FLAG_FAST);
+            [J, b, guess_moles] = update_system(obj.equilibriumSolver, mix1, mix2, p2, T2, R0, guess_moles, FLAG_FAST);
             % Solve of the linear system J*x = b
             x = J \ b;
             % Calculate correction factor
@@ -100,34 +101,34 @@ function [mix1, mix2] = shockIncident(obj, mix1, u1, varargin)
 end
 
 % SUB-PASS FUNCTIONS
-function [mix1, mix2, guess_moles] = unpack(mix1, u1, x)
+function [mix1, mix2, guess_moles] = unpack(mix1, u1, varargin)
     % Unpack input data
     mix1.u = u1; % velocity pre-shock [m/s] - laboratory fixed
     mix1.v_shock = u1; % velocity pre-shock [m/s] - shock fixed
 
-    try
-        mix2 = x{1};
+    if nargin > 2
+        mix2 = varargin{1};
         guess_moles = mix2.Xi * mix2.N;
-    catch
-        mix2 = [];
-        guess_moles = [];
+        return
     end
 
+    mix2 = mix1.copy();
+    guess_moles = [];
 end
 
 function [p2, T2, p2p1, T2T1] = get_guess(obj, mix1, mix2)
 
-    if isempty(mix2)
+    if mix1.u == mix2.u
         M1 = mix1.u / mix1.sound;
         p2p1 = (2 * mix1.gamma * M1^2 - mix1.gamma + 1) / (mix1.gamma + 1);
         T2T1 = p2p1 * (2 / M1^2 + mix1.gamma - 1) / (mix1.gamma + 1);
 
         if M1 > obj.Mach_thermo
-            % Initialize mix2 and set pressure
-            mix2 = mix1.copy().setPressure(p2p1 * mix1.p);
-
             % Estimate post-shock state considering h2 = h1 + u1^2 / 2
             mix2.h = (enthalpy_mass(mix1) * 1e3 + velocity_relative(mix1)^2/2) * mass(mix1) * 1e-3; % [kJ]
+
+            % Initialize mix2 and set pressure
+            mix2.p = p2p1 * mix1.p;
             
             % Solve chemical transformation
             obj.equilibriumSolver.problemType = 'HP';
@@ -150,7 +151,7 @@ function [p2, T2, p2p1, T2T1] = get_guess(obj, mix1, mix2)
     
 end
 
-function [J, b, guess_moles] = update_system(equilibriumSolver, mix1, p2, T2, R0, guess_moles, FLAG_FAST)
+function [J, b, guess_moles] = update_system(equilibriumSolver, mix1, mix2, p2, T2, R0, guess_moles, FLAG_FAST)
     % Update Jacobian matrix and vector b
     r1 = mix1.rho;
     p1 = convert_bar_to_Pa(mix1.p); % [Pa]
@@ -158,12 +159,16 @@ function [J, b, guess_moles] = update_system(equilibriumSolver, mix1, p2, T2, R0
     u1 = mix1.u;
     W1 = mix1.W * 1e-3; % [kg/mol]
     h1 = mix1.h / mix1.mi * 1e3; % [J/kg]
-    % Calculate state given T & p
-    [mix2, r2, dVdT_p, dVdp_T] = state(equilibriumSolver, mix1, T2, p2, guess_moles);
+    
+    % Set pressure and temperature of mix2
+    mix2.p = convert_Pa_to_bar(p2); mix2.T = T2;
 
+    % Calculate state given T & p
+    [mix2, r2, dVdT_p, dVdp_T] = state(equilibriumSolver, mix2, guess_moles);
+    
     W2 = mix2.W * 1e-3;
     h2 = mix2.h / mix2.mi * 1e3; % [J/kg]
-    cP2 = mix2.cp / mix2.mi; % [J/(K-kg)]
+    cp2 = mix2.cp / mix2.mi; % [J/(K-kg)]
 
     alpha = (W1 * u1^2) / (R0 * T1);
     J1 = -r1 / r2 * alpha * dVdp_T - p2 / p1;
@@ -171,7 +176,7 @@ function [J, b, guess_moles] = update_system(equilibriumSolver, mix1, p2, T2, R0
     b1 = p2 / p1 - 1 + alpha * (r1 / r2 - 1);
 
     J3 = -u1^2 / R0 * (r1 / r2)^2 * dVdp_T + T2 / W2 * (dVdT_p - 1);
-    J4 = -u1^2 / R0 * (r1 / r2)^2 * dVdT_p - T2 * cP2 / R0;
+    J4 = -u1^2 / R0 * (r1 / r2)^2 * dVdT_p - T2 * cp2 / R0;
     b2 = (h2 - h1) / R0 - u1^2 / (2 * R0) * (1 - (r1 / r2)^2);
 
     J = [J1 J2; J3 J4];
@@ -184,13 +189,10 @@ function [J, b, guess_moles] = update_system(equilibriumSolver, mix1, p2, T2, R0
 
 end
 
-function [mix2, r2, dVdT_p, dVdp_T] = state(equilibriumSolver, mix1, T, p, guess_moles)
-    % Calculate frozen state given T & p
+function [mix2, r2, dVdT_p, dVdp_T] = state(equilibriumSolver, mix2, guess_moles)
+    % Calculate state given T & p
     equilibriumSolver.problemType = 'TP';
-    p = convert_Pa_to_bar(p); % [bar]
-    mix2 = mix1.copy();
-    mix2.p = p;
-    equilibrate_T(equilibriumSolver, mix2, T, guess_moles);
+    equilibrate_T(equilibriumSolver, mix2, mix2.T, guess_moles);
     r2 = mix2.rho;
     dVdT_p = mix2.dVdT_p;
     dVdp_T = mix2.dVdp_T;
@@ -220,8 +222,7 @@ function STOP = compute_STOP(x)
     STOP = max(abs(x));
 end
 
-function mix2 = save_state(equilibriumSolver, mix1, T2, p2, STOP)
-    mix2 = state(equilibriumSolver, mix1, T2, p2, []);
+function mix2 = save_state(mix1, mix2, STOP)
     mix2.v_shock = mix1.u * mix1.rho / mix2.rho;
     mix2.u = mix1.u - mix2.v_shock; % velocity postshock [m/s] - laboratory fixed
     mix2.errorProblem = STOP;

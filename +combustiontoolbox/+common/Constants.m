@@ -1,4 +1,4 @@
-classdef Constants
+classdef Constants < handle
     % Initialize struct with constants data
     %
     % Attributes:

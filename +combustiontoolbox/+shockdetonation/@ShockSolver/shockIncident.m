@@ -107,7 +107,7 @@ function [mix1, mix2, guess_moles] = unpack(mix1, u1, varargin)
     mix1.v_shock = u1; % velocity pre-shock [m/s] - shock fixed
 
     if nargin > 2
-        mix2 = varargin{1};
+        mix2 = varargin{1}.copy();
         guess_moles = mix2.Xi * mix2.N;
         return
     end

@@ -35,7 +35,7 @@ classdef (Abstract) Database < handle
     end
 
     methods (Access = public)
-        
+
         function obj = Database(varargin)
             % Constructor
             
@@ -124,7 +124,7 @@ classdef (Abstract) Database < handle
         end
 
     end
-    
+
     methods (Access = protected)
 
         function obj = generate_id(obj)

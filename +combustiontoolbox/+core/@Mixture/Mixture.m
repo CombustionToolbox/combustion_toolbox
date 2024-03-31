@@ -81,8 +81,9 @@ classdef Mixture < handle & matlab.mixin.Copyable
         errorProblem
         chemicalSystem
         equationOfState
-        rangeName
-        rangeValue
+        % Properties from shock and detonation module (CT-SD)
+        u
+        v_shock
     end
 
     properties (Access = private)

@@ -5,6 +5,10 @@
 
 function data = read_CEA(filename)
     % READ DATA FROM CEA AS TXT EXTENSION
+    
+    % Import packages
+    import combustiontoolbox.databases.NasaDatabase
+    
     % fid=fopen('test_soot_acetylene.txt','r');
     fid = fopen(filename, 'r');
 
@@ -181,7 +185,7 @@ function data = read_CEA(filename)
 
             while ~contains(tline, 'THERMODYNAMIC PROPERTIES FITTED TO 20000.K')
                 if isempty(tline), break, end
-                [sp1, sp2] = regexp(FullName2name(tline), '(?![*,-])\S\w*\s');
+                [sp1, sp2] = regexp(NasaDatabase.fullname2name(tline), '(?![*,-])\S\w*\s');
                 [mole, ~] = regexp(tline, '\s\d');
                 idx = regexp(tline, '-');
 
@@ -190,7 +194,7 @@ function data = read_CEA(filename)
                     if contains(tline, 'C(gr)')
                         data.X(k, 1).mole{j, 1} = 'Cbgrb';
                     else
-                        data.X(k, 1).mole{j, 1} = FullName2name(tline(sp1:sp2 - 1));
+                        data.X(k, 1).mole{j, 1} = NasaDatabase.fullname2name(tline(sp1:sp2 - 1));
                     end
 
                     try
@@ -214,13 +218,13 @@ function data = read_CEA(filename)
 
             while ~contains(tline, 'THERMODYNAMIC PROPERTIES FITTED TO 20000.K')
                 if isempty(tline), break, end
-                [sp1, sp2] = regexp(FullName2name(tline), '(?![*,-])\S\w*\s');
+                [sp1, sp2] = regexp(NasaDatabase.fullname2name(tline), '(?![*,-])\S\w*\s');
                 [mole, ~] = regexp(tline, '\s\d');
 
                 if contains(tline, 'C(gr)')
                     data.X(i, :).mole{j, 1} = 'Cbgrb';
                 else
-                    data.X(i, :).mole{j, 1} = FullName2name(tline(sp1:sp2 - 1));
+                    data.X(i, :).mole{j, 1} = NasaDatabase.fullname2name(tline(sp1:sp2 - 1));
                 end
 
                 tline = strrep(tline, ' -', '0-');

@@ -33,11 +33,14 @@ classdef ShockSolver < handle
             obj.equilibriumSolver = p.Results.equilibriumSolver;
         end
 
-        function [mix1, mix2] = solve(obj, mix1, u1, varargin)
+        function [mix1, mix2] = solve(obj, mix1, type, value, varargin)
             % Obtain chemical equilibrium composition and thermodynamic properties
+
+            u1 = obj.getVelocity(mix1, type, value);
+
             switch obj.problemType
                 case 'SHOCK_I'
-                    if nargin > 3
+                    if nargin > 4
                         [mix1, mix2] = obj.shockIncident(mix1, u1, varargin{1});
                         return
                     end
@@ -52,6 +55,21 @@ classdef ShockSolver < handle
     methods (Access = private)
         
         [mix1, mix2] = shockIncident(obj, mix1, varargin)
+
+    end
+
+    methods (Access = private, Static)
+        
+        function u1 = getVelocity(mix, type, value)
+
+            switch lower(type)
+                case 'u1'
+                    u1 = value;
+                case {'mach', 'm', 'm1'}
+                    u1 = value * mix.sound;
+            end
+
+        end
 
     end
 

@@ -80,6 +80,7 @@ classdef Mixture < handle & matlab.mixin.Copyable
         errorMolesIons
         errorProblem
         chemicalSystem
+        equationOfState
         rangeName
         rangeValue
     end
@@ -95,9 +96,6 @@ classdef Mixture < handle & matlab.mixin.Copyable
         molesOxidizer
         molesInert
         FLAGS_PROP
-        pressureEOS = @eos_ideal_p; % Equation of State to compute pressure [Pa]
-        volumeEOS = @eos_ideal;     % Equation of State to compute molar volume [m3/mol]
-        chemicalPotentialImpEOS = @mu_imp_ideal; % Compute non ideal contribution of the chemical potential (depends of the Equation of State) [J/mol]
     end
 
     % properties (Hidden)
@@ -135,13 +133,18 @@ classdef Mixture < handle & matlab.mixin.Copyable
             % Definitions
             defaultTemperature = 300; % [K]
             defaultPressure = 1;      % [bar]
+            defaultEoS = 'idealGas';
 
             % Parse inputs
             ip = inputParser;
             addRequired(ip, 'chemicalSystem'); % @(x) isa(x, 'combustiontoolbox.core.ChemicalSystem ')
             addOptional(ip, 'T', defaultTemperature, @(x) isnumeric(x) && x >= 0);
             addOptional(ip, 'p', defaultPressure, @(x) isnumeric(x) && x >= 0);
+            addOptional(ip, 'eos', defaultEoS);
             parse(ip, chemicalSystem, varargin{:});
+            
+            % Assign Equation of State
+            obj.equationOfState = combustiontoolbox.core.EquationState(ip.Results.eos);
 
             % Assign properties matrix
             obj.chemicalSystem = ip.Results.chemicalSystem;
@@ -501,7 +504,7 @@ classdef Mixture < handle & matlab.mixin.Copyable
             obj.natomElementsReact = sum(propertiesMatrix(system.indexReact, system.ind_ni) .* system.stoichiometricMatrix(system.indexReact, :), 1);
 
             % Compute volume [m3]
-            obj.v = obj.volumeEOS(T, convert_bar_to_Pa(p), obj.chemicalSystem.listSpecies, obj.Xi) * N_gas;
+            obj.v = obj.equationOfState.getVolume(T, convert_bar_to_Pa(p), obj.chemicalSystem.listSpecies, obj.Xi) * N_gas;
 
             % Compute density [kg/m3]
             obj.rho = obj.mi / obj.v;

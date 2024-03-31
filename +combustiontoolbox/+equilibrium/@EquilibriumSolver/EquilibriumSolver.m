@@ -15,7 +15,7 @@ classdef EquilibriumSolver < handle
         % * Chemical equilibrium HP, EV, SP, SV (CT-EQUIL module)
         tol0 = 1e-3                % Tolerance of the root finding algorithm
         itMax = 30                 % Max number of iterations - root finding method
-        root_method = @newton      % Root finding method [newton (2nd order), steff (2nd order), or nsteff (3rd order)]
+        rootMethod = @newton       % Root finding method [newton (2nd order), steff (2nd order), or nsteff (3rd order)]
         root_T0_l = 1000           % First temperature guess [K] left branch - root finding method
         root_T0_r = 3000           % First temperature guess [K] right branch - root finding method
         root_T0   = 3000           % Temperature guess [K] if it's outside previous range - root finding method
@@ -90,7 +90,7 @@ classdef EquilibriumSolver < handle
             % If the problem type is SV, the product's volume is based on the given v_P/v_R ratio
             mix2 = set_volume_SV(obj, mix2);
             % Root finding: find the value x that satisfies f(x) = mix2.xx(x) - mix1.xx = 0
-            [T, STOP, guess_moles] = root_finding(obj, mix1, mix2, attr_name, guess, guess_moles);
+            [T, STOP, guess_moles] = rootFinding(obj, mix1, mix2, attr_name, guess, guess_moles);
             % Compute properties
             obj.equilibrate_T(mix2, T, guess_moles);
             % Check convergence in case the problemType is TP (defined Temperature and Pressure)
@@ -121,14 +121,12 @@ classdef EquilibriumSolver < handle
                 if any(strcmpi(obj.problemType, {'TP', 'TV'}))
                     % guess = get_transformation(obj, 'TP');
                     guess = mix2.T;
-
-                    % if mix.FLAG_REACTION
-                    %     guess_moles = mix.Xi * mix.N;
-                    % else
-                    %     guess_moles = [];
-                    % end
-
                     guess_moles = [];
+
+                    % if ~isempty(mix_guess)
+                    %     guess_moles = mix_guess.Xi * mix_guess.N;
+                    % end
+                    
                     return
                 end
 
@@ -136,16 +134,16 @@ classdef EquilibriumSolver < handle
                     guess = mix_guess.T;
                     guess_moles = mix_guess.Xi * mix_guess.N;
                 else
-                    guess = obj.regula_guess(mix1, mix2, attr_name);
+                    guess = obj.regulaGuess(mix1, mix2, attr_name);
                     guess_moles = [];
                 end
 
             end
 
-            function [x, STOP, guess_moles] = root_finding(obj, mix1, mix2, attr_name, x0, guess_moles)
+            function [x, STOP, guess_moles] = rootFinding(obj, mix1, mix2, attr_name, x0, guess_moles)
                 % Calculate the temperature value that satisfied the problem conditions
-                % using the @root_method
-                [x, STOP, guess_moles] = obj.root_method(obj, mix1, mix2, attr_name, x0, guess_moles);
+                % using the @rootMethod
+                [x, STOP, guess_moles] = obj.rootMethod(obj, mix1, mix2, attr_name, x0, guess_moles);
             end
 
             function print_convergence(STOP, TOL, STOP_ions, TOL_ions, ProblemType)
@@ -219,26 +217,11 @@ classdef EquilibriumSolver < handle
             % Check flag
             if ~obj.FLAG_FAST, guess_moles = []; end
             % Compute number of moles
-            [N, dNi_T, dN_T, dNi_p, dN_p, indexProducts, STOP, STOP_ions, h0] = select_equilibrium(obj, systemProducts, T, mix, guess_moles);
-            % Reshape composition matrix N, and partial composition partial derivatives 
-            N = reshape_vector(system, system.indexProducts, systemProducts.indexSpecies, N);
-            dNi_T = reshape_vector(system, system.indexProducts, systemProducts.indexSpecies, dNi_T);
-            dNi_p = reshape_vector(system, system.indexProducts, systemProducts.indexSpecies, dNi_p);
-            h0 = reshape_vector(system, system.indexProducts, systemProducts.indexSpecies, h0);
-            h0(system.indexFrozen) = set_h0(system.listSpecies(system.indexFrozen), T, system.species) * 1e-3; 
-            N(system.indexFrozen) = N_mix0(system.indexFrozen);
-            % Assign values
-            mix.T = T;
-            mix.dNi_T = dNi_T; mix.dN_T = dN_T;
-            mix.dNi_p = dNi_p; mix.dN_p = dN_p;
-            mix.FLAG_REACTION = true;
-            mix.errorMoles = STOP;
-            mix.errorMolesIons = STOP_ions;
+            [N, dNi_T, dN_T, dNi_p, dN_p, indexProducts, STOP, STOP_ions, h0] = selectEquilibrium(obj, systemProducts, T, mix, guess_moles);
             % Compute property matrix of the species at chemical equilibrium
-            system.clean;
-            mix.set_fast(system.listSpecies, N', [indexProducts, system.indexFrozen], h0);
+            mix = setProperties(mix);
 
-            % SUB-PASS FUNCTIONS
+            % NESTED FUNCTIONS
             function guess_moles = unpack(value)
                 % Unpack inputs
                 if isempty(value)
@@ -249,38 +232,56 @@ classdef EquilibriumSolver < handle
             
             end
             
-            function pP = set_pressure(self, mix1, TP, N)
-                % Compute pressure of product mixture
-                pP = self.PD.EOS.pressure(self, N, TP, mix1.v, system.LS, mix1.Xi) * 1e-5;
+            function pP = computePressure(mix, T, molesGas)
+                % Compute pressure of product mixture [bar]
+                pP = mix.equationOfState.getPressure(molesGas, T, mix.v, system.listSpecies, mix.Xi) * 1e-5;
             end
             
-            function [N, dNi_T, dN_T, dNi_p, dN_p, indexProducts, STOP, STOP_ions, h0] = select_equilibrium(obj, system, T, mix, guess_moles)
+            function [N, dNi_T, dN_T, dNi_p, dN_p, indexProducts, STOP, STOP_ions, h0] = selectEquilibrium(obj, system, T, mix, guess_moles)
                 % Select equilibrium: TP: Gibbs; TV: Helmholtz
                 
                 if strfind(obj.problemType, 'P') == 2
-                    [N, dNi_T, dN_T, dNi_p, dN_p, indexProducts, STOP, STOP_ions, h0] = obj.equilibrium_gibbs(system, mix.p, T, mix, guess_moles);
+                    [N, dNi_T, dN_T, dNi_p, dN_p, indexProducts, STOP, STOP_ions, h0] = obj.equilibriumGibbs(system, mix.p, T, mix, guess_moles);
                 else
-                    [N, dNi_T, dN_T, dNi_p, dN_p, indexProducts, STOP, STOP_ions] = equilibrium_helmholtz(obj, system, mix.v, T, mix, guess_moles);
+                    [N, dNi_T, dN_T, dNi_p, dN_p, indexProducts, STOP, STOP_ions, h0] = equilibriumHelmholtz(obj, system, mix.v, T, mix, guess_moles);
                 end
 
                 h0 = h0 * 1e-3; % [kJ/mol]
             end
             
-            function mix2 = set_properties(obj, mix1, M0, pP, TP, STOP, STOP_ions)
+            function mix = setProperties(mix)
                 % Compute properties of final mixture
-                if strfind(obj.problemType, 'P') == 2
-                    mix2 = compute_properties(obj, M0, pP, TP);
-                else
-                    NP = sum(M0(:, obj.C.M0.ind_ni) .* (1 - M0(:, obj.C.M0.ind_phase)));
-                    pP = set_pressure(obj, mix1, TP, NP);
-                    mix2 = compute_properties(obj, M0, pP, TP);
+                
+                % Reshape composition matrix N, and partial composition partial derivatives 
+                N = reshapeVector(system, system.indexProducts, systemProducts.indexSpecies, N);
+                dNi_T = reshapeVector(system, system.indexProducts, systemProducts.indexSpecies, dNi_T);
+                dNi_p = reshapeVector(system, system.indexProducts, systemProducts.indexSpecies, dNi_p);
+                h0 = reshapeVector(system, system.indexProducts, systemProducts.indexSpecies, h0);
+                % h0(system.indexFrozen) = set_h0(system.listSpecies(system.indexFrozen), T, system.species) * 1e-3; 
+                N(system.indexFrozen) = N_mix0(system.indexFrozen);
+
+                % Assign values
+                mix.T = T;
+                mix.dNi_T = dNi_T; mix.dN_T = dN_T;
+                mix.dNi_p = dNi_p; mix.dN_p = dN_p;
+                mix.FLAG_REACTION = true;
+                mix.errorMoles = STOP;
+                mix.errorMolesIons = STOP_ions;
+
+                % Clean system
+                system.clean;
+                
+                % Check if problemType is at constant volume
+                if strfind(obj.problemType, 'V') == 2
+                    molesGas = sum(N .* (1 - mix.phase));
+                    mix.p = computePressure(mix, T, molesGas);
                 end
-            
-                mix2.error_moles = STOP;
-                mix2.error_moles_ions = STOP_ions;
+                
+                % Compute properties of final mixture
+                mix.set_fast(system.listSpecies, N', [indexProducts, system.indexFrozen], h0);
             end
             
-            function vector = reshape_vector(system, index, ind_modified, vector_modified)
+            function vector = reshapeVector(system, index, ind_modified, vector_modified)
                 % Reshape vector containing all the species
                 vector = system.molesPhaseMatrix(:, 1);
                 vector(index, 1) = vector_modified(ind_modified, 1);
@@ -291,13 +292,26 @@ classdef EquilibriumSolver < handle
     end
     
     methods (Access = private, Static)
+        [dNi_T, dN_T, dNi_p, dN_p] = equilibriumDerivatives(J, N0, A0, NE, indexGas, indexCondensed, indexElements, H0RT);
 
-        [dNi_T, dN_T] = equilibrium_dT(J, N0, A0, NE, indexGas, indexCondensed, indexElements, H0RT);
-        [dNi_p, dN_p] = equilibrium_dp(J, N0, A0, NE, indexGas, indexCondensed, indexElements);
+        function point = getPoint(x_vector, f_vector)
+            % Get point using the regula falsi method
+            %
+            % Args:
+            %     x_vector (float): Guess temperature [K]
+            %     f_vector (struct): evaluated functions [kJ] (HP, EV) or [kJ/K] (SP, SV)
+            % Returns:
+            %     point (float): Point of the function [K]
+        
+            point = (f_vector(2) * x_vector(1) - f_vector(1) * x_vector(2)) / (f_vector(2) - f_vector(1));
+        end
+
     end
+
     methods (Access = private)
         
-        [N, dNi_T, dN_T, dNi_p, dN_p, indexProducts, STOP, STOP_ions, h0] = equilibrium_gibbs(obj, system, p, T, mix, guess_moles)
+        [N, dNi_T, dN_T, dNi_p, dN_p, indexProducts, STOP, STOP_ions, h0] = equilibriumGibbs(obj, system, p, T, mix, guess_moles)
+        [N, dNi_T, dN_T, dNi_p, dN_p, indexProducts, STOP, STOP_ions, h0] = equilibriumHelmholtz(obj, system, vP, T, mix, guess_moles)
 
         function [x, STOP, guess_moles] = newton(obj, mix1, mix2, field, x0, guess_moles)
             % Find the temperature [K] (root) for the set chemical transformation at equilibrium using the second-order Newton-Raphson method
@@ -333,7 +347,7 @@ classdef EquilibriumSolver < handle
                 it = it + 1;
                 % Get the residual of f, its derivative with temperature, and the
                 % relative value of the residual
-                [f0, fprime0, frel, guess_moles] = obj.get_ratio_newton(mix1, mix2, field, x0, guess_moles);
+                [f0, fprime0, frel, guess_moles] = obj.getRatioNewton(mix1, mix2, field, x0, guess_moles);
                 % Compute solution
                 x = abs(x0 - f0 / fprime0);
                 % Compute stop criteria
@@ -349,15 +363,15 @@ classdef EquilibriumSolver < handle
             if STOP > obj.tol0
                 fprintf('\n***********************************************************\n')
                 fprintf('Newton method not converged\nCalling Newton-Steffensen root finding algorithm\n')
-                x0 = obj.regula_guess(mix1, mix2, field);
+                x0 = obj.regulaGuess(mix1, mix2, field);
                 [x, STOP] = obj.nsteff(mix1, mix2, field, x0, []);
             else
-                obj.print_error_root(it, x, STOP);
+                obj.printError(it, x, STOP);
             end
             
         end
         
-        function [f, fprime, frel, guess_moles] = get_ratio_newton(obj, mix1, mix2, field, x, guess_moles)
+        function [f, fprime, frel, guess_moles] = getRatioNewton(obj, mix1, mix2, field, x, guess_moles)
                 % Get the residual of f, its derivative with temperature, and the
                 % relative value of the residual
                 
@@ -370,14 +384,14 @@ classdef EquilibriumSolver < handle
                 % Calculate residual of f = 0
                 f = mix2.(field) - mix1.(field);
                 % Calculate partial derivative of f with temperature
-                fprime = obj.get_partial_derivative(mix2);
+                fprime = obj.getPartialDerivative(mix2);
                 % Get relative value of the residual
                 frel = abs(f / mix2.(field));
                 % Update guess moles
                 guess_moles = mix2.N * mix2.Xi;
         end
 
-        function value = get_partial_derivative(obj, mix)
+        function value = getPartialDerivative(obj, mix)
             % Get value of the partial derivative for the set problem type [kJ/K] (HP, EV) or [kJ/K^2] (SP, SV)
             %
             % Args:
@@ -400,7 +414,7 @@ classdef EquilibriumSolver < handle
             value = value * 1e-3; % [kJ/K] (HP, EV) or [kJ/K^2] (SP, SV)
         end
 
-        function x0 = regula_guess(obj, mix1, mix2, field)
+        function x0 = regulaGuess(obj, mix1, mix2, field)
             % Find a estimate of the temperature for the set chemical equilibrium
             % transformation using the regula falsi method
             %
@@ -421,12 +435,12 @@ classdef EquilibriumSolver < handle
             x_r = obj.root_T0_r;
             
             % Compute f(x) = f2(x) - f1 at the branch limits
-            g_l = obj.get_gpoint(mix1, mix2, field, x_l, guess_moles);
-            g_r = obj.get_gpoint(mix1, mix2, field, x_r, guess_moles);
+            g_l = obj.getGpoint(mix1, mix2, field, x_l, guess_moles);
+            g_r = obj.getGpoint(mix1, mix2, field, x_r, guess_moles);
             
             % Update estimate based on the region
             if g_l * g_r < 0
-                x0 = get_point([x_l, x_r], [g_l, g_r]);
+                x0 = obj.getPoint([x_l, x_r], [g_l, g_r]);
             elseif g_l * g_r > 0 && abs(g_l) < abs(g_r)
                 x0 = x_l - 50;
             elseif g_l * g_r > 0 || (isnan(g_l) && isnan(g_r))
@@ -441,7 +455,7 @@ classdef EquilibriumSolver < handle
         
         end
 
-        function [gpoint, gpoint_relative] = get_gpoint(obj, mix1, mix2, field, x0, guess_moles)
+        function [gpoint, gpoint_relative] = getGpoint(obj, mix1, mix2, field, x0, guess_moles)
             % Get fixed point of a function based on the chemical transformation
             %
             % Args:
@@ -476,7 +490,7 @@ classdef EquilibriumSolver < handle
 
         end
 
-        function print_error_root(obj, it, T, STOP)
+        function printError(obj, it, T, STOP)
             % Print error of the method if the number of iterations is greater than maximum iterations allowed
             %
             % Args:

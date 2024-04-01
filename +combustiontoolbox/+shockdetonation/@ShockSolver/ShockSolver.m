@@ -26,7 +26,7 @@ classdef ShockSolver < handle
 
             % Parse input arguments
             p = inputParser;
-            addOptional(p, 'problemType', defaultProblemType, @(x) ischar(x) && any(strcmpi(x, {'SHOCK_I', 'SHOCK_R', 'SHOCK_OBLIQUE', 'SHOCK_POLAR', 'SHOCK_POLAR_LIMITRR'})));
+            addOptional(p, 'problemType', defaultProblemType, @(x) ischar(x) && any(strcmpi(x, {'SHOCK_I', 'SHOCK_R', 'SHOCK_OBLIQUE', 'SHOCK_POLAR', 'SHOCK_POLAR_R', 'SHOCK_POLAR_LIMITRR'})));
             addOptional(p, 'equilibriumSolver', defaultEquilibriumSolver);
             addOptional(p, 'FLAG_RESULTS', obj.FLAG_RESULTS, @(x) islogical(x));
             parse(p, varargin{:});
@@ -142,7 +142,7 @@ classdef ShockSolver < handle
                         % Set output
                         varargout = {mix1, mix2, mix3};
                     end
-
+                
                 case 'SHOCK_POLAR'
                     % Solve problem
                     [mix1, mix2] = obj.shockPolar(mix1, u1);
@@ -158,6 +158,25 @@ classdef ShockSolver < handle
 
                     % Set output
                     varargout = {mix1, mix2};
+
+                case 'SHOCK_POLAR_R'
+                    % Solve problem
+                    [mix1, mix2] = obj.shockPolar(mix1, u1);
+                    [~, mix2_1] = obj.shockObliqueTheta(mix1, u1, theta);
+                    [~, mix3] = obj.shockPolar(mix2_1, mix2_1.u);
+                    [~, mix3_1, mix3_2] = obj.shockObliqueTheta(mix2_1, mix2_1.u, theta);
+                
+                    % Set problemType
+                    mix1.problemType = obj.problemType;
+                    mix2.problemType = obj.problemType;
+
+                    % Print results
+                    if obj.FLAG_RESULTS
+                        print(mix1, mix2, mix2_1, mix3, mix3_1, mix3_2);
+                    end
+
+                    % Set output
+                    varargout = {mix1, mix2, mix2_1, mix3, mix3_1, mix3_2};
 
                 case 'SHOCK_POLAR_LIMITRR'
                     % Solve problem
@@ -202,9 +221,9 @@ classdef ShockSolver < handle
             FLAG_THETA = ~isempty(mix1Array(1).theta);
 
             if FLAG_BETA & ~FLAG_THETA
-                problem = 'SHOCK_OBLIQUE_BETA';
+                problem = [problem, '_BETA'];
             elseif ~FLAG_BETA & FLAG_THETA
-                problem = 'SHOCK_OBLIQUE_THETA';
+                problem = [problem, '_THETA'];
             end
 
             % Calculations
@@ -232,6 +251,40 @@ classdef ShockSolver < handle
 
                     % Set output
                     varargout = {mix1Array, mix2Array, mix3Array};
+
+                case {'SHOCK_POLAR_R_BETA'}
+                    % Initialization
+                    mix3Array = mix1Array;
+                    mix4Array = mix1Array;
+                    mix5Array = mix1Array;
+                    
+                    % Calculations
+                    [mix1Array(n), mix2Array(n), mix3Array(n), mix4Array(n), mix5Array(n)] = obj.solve(mix1Array(n));
+                    
+                    for i = n-1:-1:1
+                        [mix1Array(i), mix2Array(i), mix3Array(i), mix4Array(i), mix5Array(i)] = obj.solve(mix1Array(i), mix2Array(i + 1), mix3Array(i + 1), mix4Array(i + 1), mix5Array(i + 1));
+                    end
+
+                    % Set output
+                    varargout = {mix1Array, mix2Array, mix3Array, mix4Array, mix5Array};
+
+                case {'SHOCK_POLAR_R_THETA'}
+                    % Initialization
+                    mix3Array = mix1Array;
+                    mix4Array = mix1Array;
+                    mix5Array = mix1Array;
+                    mix6Array = mix1Array;
+
+                    % Calculations
+                    [mix1Array(n), mix2Array(n), mix3Array(n), mix4Array(n), mix5Array(n), mix6Array(n)] = obj.solve(mix1Array(n));
+                    
+                    for i = n-1:-1:1
+                        [mix1Array(i), mix2Array(i), mix3Array(i), mix4Array(i), mix5Array(i), mix6Array(i)] = obj.solve(mix1Array(i), mix2Array(i + 1), mix3Array(i + 1), mix4Array(i + 1), mix5Array(i + 1), mix6Array(i + 1));
+                    end
+
+                    % Set output
+                    varargout = {mix1Array, mix2Array, mix3Array, mix4Array, mix5Array, mix6Array};
+
                 case {'SHOCK_POLAR_LIMITRR'}
                     % Initialization
                     mix3Array = mix1Array;

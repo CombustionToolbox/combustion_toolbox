@@ -85,6 +85,7 @@ classdef Mixture < handle & matlab.mixin.Copyable
         u        % Velocity relative to the shock front [m/s]
         uShock   % Velocity in the shock tube [m/s]
         uNormal  % Normal component of u [m/s]
+        mach     % Mach number [-]
         beta     % Wave angle [deg]
         theta    % Deflection angle [deg]
         betaMin  % Minimum wave angle [deg]
@@ -505,7 +506,7 @@ classdef Mixture < handle & matlab.mixin.Copyable
                         case {'velocity', 'u', 'u1'}
                             objArray(j).u = values{i}(j);
                         case {'mach', 'm1'}
-                            aux = values{i}(j);
+                            obj.mach = values{i}(j);
                             FLAG_MACH = true;
                         case {'wave angle', 'waveangle', 'wave', 'beta'}
                             objArray(j).beta = values{i}(j);
@@ -522,7 +523,7 @@ classdef Mixture < handle & matlab.mixin.Copyable
 
                 % Additional inputs
                 if FLAG_MACH
-                    objArray(j).u = aux * objArray(j).sound;
+                    objArray(j).u = obj.mach * objArray(j).sound;
                 end
 
             end

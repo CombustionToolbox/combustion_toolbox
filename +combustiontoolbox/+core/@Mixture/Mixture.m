@@ -82,15 +82,20 @@ classdef Mixture < handle & matlab.mixin.Copyable
         chemicalSystem        % Chemical system object
         equationOfState       % Equation of State object
         % Properties from shock and detonation module (CT-SD)
-        u        % Velocity relative to the shock front [m/s]
-        uShock   % Velocity in the shock tube [m/s]
-        uNormal  % Normal component of u [m/s]
-        mach     % Mach number [-]
-        beta     % Wave angle [deg]
-        theta    % Deflection angle [deg]
-        betaMin  % Minimum wave angle [deg]
-        betaMax  % Maximum wave angle [deg]
-        thetaMax % Maximum deflection angle [deg]
+        u          % Velocity relative to the shock front [m/s]
+        uShock     % Velocity in the shock tube [m/s]
+        uNormal    % Normal component of u [m/s]
+        mach       % Mach number [-]
+        beta       % Wave angle [deg]
+        theta      % Deflection angle [deg]
+        betaMin    % Minimum wave angle [deg]
+        betaMax    % Maximum wave angle [deg]
+        thetaMax   % Maximum deflection angle [deg]
+        betaSonic  % Wave angle at the sonic point [deg]
+        thetaSonic % Deflection angle at the sonic point [deg]
+        indexMax   % Index of the maximum deflection angle
+        indexSonic % Index of the sonic point
+        polar      % Properties of the polar solution
     end
 
     properties (Access = private)

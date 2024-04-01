@@ -1,8 +1,8 @@
-function [ax, fig] = plot_molar_fractions(self, x_var, x_field, y_field, varargin)
+function [ax, fig] = plot_molar_fractions(obj, x_var, x_field, y_field, varargin)
     % Plot molar fractions againts any variable
     %
     % Args:
-    %     self (struct): Data of the mixture, conditions, and databases
+    %     obj (Mixture): Data of the mixture, conditions, and databases
     %     x_var (cell): Properties of the mixture for all the cases
     %     x_field (char): Field name for the x-axis data
     %     y_field (char): Field name for the y-axis data
@@ -33,17 +33,25 @@ function [ax, fig] = plot_molar_fractions(self, x_var, x_field, y_field, varargi
     %     * [ax, fig] = plot_molar_fractions(self, mix1, 'phi', 'Xi', 'y_var', mix2)
     %     * [ax, fig] = plot_molar_fractions(self, mix1, 'phi', 'Xi', 'y_var', mix2, 'validation', results_CEA)
     %     * [ax, fig] = plot_molar_fractions(self, mix1, 'phi', 'Xi', 'y_var', mix2, 'validation', results_CEA, 'display_species', display_species)
+    
+    % Import packages
+    import combustiontoolbox.utils.findIndex
+
+    % Temporal
+    config = Miscellaneous().config;
+    mintol_display = 1e-14;
+    display_species = {};
 
     % Default values
     ax = [];
     results2 = [];
     nfrec = 1;
-    config = self.Misc.config;
+    % config = self.Misc.config;
     config.labelx = interpreter_label(x_field, config.label_type);
     config.labely = interpreter_label(y_field, config.label_type);
-    mintol_display = self.C.mintol_display;
+    % mintol_display = self.C.mintol_display;
     config.yscale = 'log';
-    [species, LS] = get_display_species(self);
+    [species, listSpecies] = get_display_species(obj, display_species);
     y_var = x_var;
 
     % Unpack
@@ -78,22 +86,32 @@ function [ax, fig] = plot_molar_fractions(self, x_var, x_field, y_field, varargi
 
     % Read data
     FLAG_Y_AXIS = strcmpi(y_field, 'Xi');
-    if contains(self.PD.ProblemType, 'polar', 'IgnoreCase', true)
-        mix1.(x_field) = cell2vector(x_var.polar, x_field);
-        mix1.(y_field) = cell2vector(y_var.polar, y_field);
-    elseif ~(iscell(x_var) && iscell(y_var))
+    % if contains(self.PD.ProblemType, 'polar', 'IgnoreCase', true)
+    %     mix1.(x_field) = cell2vector(x_var.polar, x_field);
+    %     mix1.(y_field) = cell2vector(y_var.polar, y_field);
+    % elseif ~(iscell(x_var) && iscell(y_var))
+    %     mix1.(x_field) = x_var;
+    %     mix1.(y_field) = y_var;
+    % else
+    %     mix1.(x_field) = cell2vector(x_var, x_field);
+    %     mix1.(y_field) = cell2vector(y_var, y_field);
+    % end
+    if isfloat(x_var) && isfloat(y_var)
         mix1.(x_field) = x_var;
         mix1.(y_field) = y_var;
+    elseif ~(iscell(x_var) && iscell(y_var))
+        mix1.(x_field) = [x_var.(x_field)];
+        mix1.(y_field) = [y_var.(y_field)];
     else
         mix1.(x_field) = cell2vector(x_var, x_field);
         mix1.(y_field) = cell2vector(y_var, y_field);
     end
     
     % Get index species
-    index_species_CT = find_ind(LS, species);
+    index_species_CT = findIndex(listSpecies, species);
 
     % Remove species that do not appear
-    [species, index_species_CT] = clean_display_species(mix1.Xi, LS, index_species_CT);
+    [species, index_species_CT] = clean_display_species(mix1.Xi, listSpecies, index_species_CT);
 
     % Set figure
     if isempty(ax)
@@ -220,17 +238,17 @@ function [ax, fig] = plot_molar_fractions(self, x_var, x_field, y_field, varargi
     legend(h, legendname, 'FontSize', config.fontsize - 6, 'Location', 'northeastoutside', 'interpreter', 'latex');
     
     % Set title
-    title(get_title(self), 'Interpreter', 'latex', 'FontSize', config.fontsize + 4);
+    % title(get_title(self), 'Interpreter', 'latex', 'FontSize', config.fontsize + 4);
 end
 
 % SUB-PASS FUNCTIONS
-function [species, LS] = get_display_species(self)
-    LS = self.S.LS;
+function [species, LS] = get_display_species(obj, display_species)
+    LS = obj.chemicalSystem.listSpecies;
 
-    if isempty(self.Misc.display_species)
-        species = self.Misc.LS_original;
+    if isempty(display_species)
+        species = obj.chemicalSystem.listProducts;
     else
-        species = self.Misc.display_species;
+        species = display_species;
     end
 
 end

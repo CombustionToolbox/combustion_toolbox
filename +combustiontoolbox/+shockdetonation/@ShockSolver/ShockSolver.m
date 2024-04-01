@@ -26,7 +26,7 @@ classdef ShockSolver < handle
 
             % Parse input arguments
             p = inputParser;
-            addOptional(p, 'problemType', defaultProblemType, @(x) ischar(x) && any(strcmpi(x, {'SHOCK_I', 'SHOCK_R', 'SHOCK_OBLIQUE'})));
+            addOptional(p, 'problemType', defaultProblemType, @(x) ischar(x) && any(strcmpi(x, {'SHOCK_I', 'SHOCK_R', 'SHOCK_OBLIQUE', 'SHOCK_POLAR'})));
             addOptional(p, 'equilibriumSolver', defaultEquilibriumSolver);
             addOptional(p, 'FLAG_RESULTS', obj.FLAG_RESULTS, @(x) islogical(x));
             parse(p, varargin{:});
@@ -142,7 +142,22 @@ classdef ShockSolver < handle
                         % Set output
                         varargout = {mix1, mix2, mix3};
                     end
+
+                case 'SHOCK_POLAR'
+                    % Solve problem
+                    [mix1, mix2] = obj.shockPolar(mix1, u1);
                     
+                    % Set problemType
+                    mix1.problemType = obj.problemType;
+                    mix2.problemType = obj.problemType;
+
+                    % Print results
+                    if obj.FLAG_RESULTS
+                        print(mix1, mix2);
+                    end
+
+                    % Set output
+                    varargout = {mix1, mix2};
                     
             end
 
@@ -173,7 +188,7 @@ classdef ShockSolver < handle
 
             % Calculations
             switch upper(problem)
-                case {'SHOCK_I', 'SHOCK_OBLIQUE_BETA'}
+                case {'SHOCK_I', 'SHOCK_OBLIQUE_BETA', 'SHOCK_POLAR'}
                     [mix1Array(n), mix2Array(n)] = obj.solve(mix1Array(n));
                     
                     for i = n-1:-1:1
@@ -208,21 +223,7 @@ classdef ShockSolver < handle
         [mix1, mix2, mix5] = shockReflected(obj, mix1, mix2, varargin)
         [mix1, mix2] = shockObliqueBeta(obj, mix1, varargin)
         [mix1, mix2_1, mix2_2] = shockObliqueTheta(obj, mix1, u1, theta, varargin);
-
-    end
-
-    methods (Access = private, Static)
-        
-        function u1 = getVelocity(mix, type, value)
-
-            switch lower(type)
-                case 'u1'
-                    u1 = value;
-                case {'mach', 'm', 'm1'}
-                    u1 = value * mix.sound;
-            end
-
-        end
+        [mix1, mix2] = shockPolar(obj, mix1, u1)
 
     end
 

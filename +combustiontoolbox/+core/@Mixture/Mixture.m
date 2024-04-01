@@ -85,7 +85,7 @@ classdef Mixture < handle & matlab.mixin.Copyable
         u        % Velocity relative to the shock front [m/s]
         uShock   % Velocity in the shock tube [m/s]
         uNormal  % Normal component of u [m/s]
-        beta     % Shock wave angle [deg]
+        beta     % Wave angle [deg]
         theta    % Deflection angle [deg]
         betaMax  % Maximum shock wave angle [deg]
         thetaMax % Maximum deflection angle [deg]
@@ -444,7 +444,7 @@ classdef Mixture < handle & matlab.mixin.Copyable
             %     * value (float): Value of the property
             %
             % Returns:
-            %     objArray (cell): Array of Mixture objects with the computed properties
+            %     objArray (Mixture): Array of Mixture objects with the computed properties
             %
             % Note:
             %     * Use this method after setting the initial composition of the mixture
@@ -454,7 +454,10 @@ classdef Mixture < handle & matlab.mixin.Copyable
             %     * mixArray = setProperties(mix, 'equivalenceRatio', value, 'temperature', value)
             %     * mixArray = setProperties(mix, 'equivalenceRatio', value, 'temperature', value, 'pressure', value)
             %     * mixArray = setProperties(mix, 'phi', value, 'T', value, 'p', value)
-
+            
+            % Initialization
+            FLAG_MACH = false;
+            
             % Assign value to the property
             properties = {property, varargin{1:2:end}};
             values = {value, varargin{2:2:end}};
@@ -494,6 +497,10 @@ classdef Mixture < handle & matlab.mixin.Copyable
                             objArray(j).p = values{i}(j);
                         case {'equivalenceratio', 'phi'}
                             objArray(j).equivalenceRatio = values{i}(j);
+                        case {'velocity', 'u', 'u1'}
+                            objArray(j).u = values{i}(j);
+                        case {'mach', 'm1'}
+                            FLAG_MACH = true;
                         otherwise
                             error('Property not found');
                     end
@@ -502,6 +509,12 @@ classdef Mixture < handle & matlab.mixin.Copyable
 
                 % Compute state
                 objArray(j).setTemperature(objArray(j).T);
+
+                % Additional inputs
+                if FLAG_MACH
+                    objArray(j).u = values{i}(j) * objArray(j).sound;
+                end
+
             end
 
         end

@@ -5,7 +5,7 @@ function [mix1, mix2] = shockIncident(obj, mix1, u1, varargin)
     % B. J. (1994). NASA reference publication, 1311.
     %
     % Args:
-    %     obj (ShockSolver): 
+    %     obj (ShockSolver): ShockSolver object
     %     mix1 (Mixture):    Properties of the mixture in the pre-shock state
     %     u1 (float):        Pre-shock velocity [m/s]
     %
@@ -19,8 +19,8 @@ function [mix1, mix2] = shockIncident(obj, mix1, u1, varargin)
     %     * mix2 (Mixture): Properties of the mixture in the post-shock state
     %
     % Examples:
-    %     * [mix1, mix2] = shock_incident(obj, mix1, u1)
-    %     * [mix1, mix2] = shock_incident(obj, mix1, u1, mix2)
+    %     * [mix1, mix2] = shockIncident(ShockSolver(), mix1, u1)
+    %     * [mix1, mix2] = shockIncident(ShockSolver(), mix1, u1, mix2)
 
     % Unpack input data
     [mix1, mix2, guess_moles] = unpack(mix1, u1, varargin{:});
@@ -67,6 +67,7 @@ function [mix1, mix2] = shockIncident(obj, mix1, u1, varargin)
         if ~FLAG_FAST, guess_moles = []; end
         % Loop
         while STOP > obj.tol_shocks && it < itMax
+            % Update iteration
             it = it + 1;
             % Construction of the Jacobian matrix and vector b
             [J, b, guess_moles] = update_system(obj.equilibriumSolver, mix1, mix2, p2, T2, R0, guess_moles, FLAG_FAST);

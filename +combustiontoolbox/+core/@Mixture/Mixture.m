@@ -41,49 +41,54 @@ classdef Mixture < handle & matlab.mixin.Copyable
     % end
 
     properties
-        T (1,1)
-        p (1,1)
-        N
-        hf
-        ef
-        h
-        e
-        g
-        s
-        cp
-        cv
-        gamma
-        gamma_s
-        sound
-        s0
-        DhT
-        DeT
-        Ds
-        rho
-        v
-        W
-        MW
-        mi
-        Xi 
-        Yi 
-        phase
-        dVdT_p
-        dVdp_T
-        equivalenceRatio
-        stoichiometricMoles % Theoretical moles of the oxidizer of reference for a stoichiometric combustion
-        percentageFuel
-        fuelOxidizerMassRatio
-        oxidizerFuelMassRatio
-        natomElements
-        natomElementsReact
-        errorMoles
-        errorMolesIons
-        errorProblem
-        chemicalSystem
-        equationOfState
+        T (1,1) % Temperature [K]
+        p (1,1) % Pressure [bar]
+        N       % Total number of moles [mol]
+        hf      % Enthalpy of formation [kJ]
+        ef      % Internal energy of formation [kJ]
+        h       % Enthalpy [kJ]
+        e       % Internal energy [kJ]
+        g       % Gibbs energy [kJ] 
+        s       % Entropy [kJ/K]
+        cp      % Specific heat at constant pressure [J/K]
+        cv      % Specific heat at constant volume [J/K]
+        gamma   % Adiabatic index [-]
+        gamma_s % Adiabatic index [-]
+        sound   % Speed of sound [m/s]
+        s0      % Entropy (frozen) [kJ/K]
+        DhT     % Thermal enthalpy [kJ]
+        DeT     % Thermal internal energy [kJ]
+        Ds      % Entropy of mixing [kJ/K]
+        rho     % Density [kg/m3]
+        v       % Volume [m3]
+        W       % Molecular weight [g/mol]
+        MW      % Mean molecular weight [g/mol]
+        mi      % Mass mixture [kg]
+        Xi      % Molar fractions [-]
+        Yi      % Mass fractions [-]
+        phase   % Phase vector [-]
+        dVdT_p  % Derivative of volume with respect to temperature at constant pressure [-]
+        dVdp_T  % Derivative of volume with respect to pressure at constant temperature [-]
+        equivalenceRatio      % Equivalence ratio [-]
+        stoichiometricMoles   % Theoretical moles of the oxidizer of reference for a stoichiometric combustion
+        percentageFuel        % Percentage of fuel in the mixture [%]
+        fuelOxidizerMassRatio % Mass ratio of oxidizer to fuel [-]
+        oxidizerFuelMassRatio % Mass ratio of fuel to oxidizer [-]
+        natomElements         % Vector atoms of each element [-]
+        natomElementsReact    % Vector atoms of each element without frozen species [-]
+        errorMoles            % Relative error in the moles calculation [-]
+        errorMolesIons        % Relative error in the moles of ions calculation [-]
+        errorProblem          % Relative error in the problem [-]
+        chemicalSystem        % Chemical system object
+        equationOfState       % Equation of State object
         % Properties from shock and detonation module (CT-SD)
-        u
-        v_shock
+        u        % Velocity relative to the shock front [m/s]
+        uShock   % Velocity in the shock tube [m/s]
+        uNormal  % Normal component of u [m/s]
+        beta     % Shock wave angle [deg]
+        theta    % Deflection angle [deg]
+        betaMax  % Maximum shock wave angle [deg]
+        thetaMax % Maximum deflection angle [deg]
     end
 
     properties (Access = private)
@@ -150,9 +155,6 @@ classdef Mixture < handle & matlab.mixin.Copyable
 
             % Assign properties matrix
             obj.chemicalSystem = ip.Results.chemicalSystem;
-
-            % Compute thermodynamic properties
-            % obj = obj.compute_properties(obj.chemicalSystem, ip.Results.T, ip.Results.p);
         end
 
         function obj = setTemperature(obj, T, varargin)

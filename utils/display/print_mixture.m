@@ -60,7 +60,7 @@ function value = get_properties(property, numberMixtures, mix)
     %
     % Examples:
     %     * get_properties(@temperature, 1, mix)
-    %     * get_properties('v_shock', 1, mix)
+    %     * get_properties('uShock', 1, mix)
 
     if ischar(property)
         value = cell2vector(mix, property);
@@ -120,8 +120,8 @@ function print_properties(ProblemType, numberMixtures, mix)
     fprintf(['sound vel [m/s]|', string_value], get_properties(@soundspeed, numberMixtures, mix));
 
     if contains(ProblemType, 'SHOCK') || contains(ProblemType, 'DET')
-        fprintf(['u [m/s]        |', string_value], [get_properties(@velocity_relative, 1, mix(1)), get_properties('v_shock', numberMixtures - 1, mix(2:end))]);
-        fprintf(['Mach number [-]|', string_value], [get_properties(@velocity_relative, 1, mix(1)), get_properties('v_shock', numberMixtures - 1, mix(2:end))] ./ get_properties(@soundspeed, numberMixtures, mix));
+        fprintf(['u [m/s]        |', string_value], [get_properties(@velocity_relative, 1, mix(1)), get_properties('uShock', numberMixtures - 1, mix(2:end))]);
+        fprintf(['Mach number [-]|', string_value], [get_properties(@velocity_relative, 1, mix(1)), get_properties('uShock', numberMixtures - 1, mix(2:end))] ./ get_properties(@soundspeed, numberMixtures, mix));
     end
 
     if contains(ProblemType, '_OBLIQUE') || contains(ProblemType, '_POLAR')

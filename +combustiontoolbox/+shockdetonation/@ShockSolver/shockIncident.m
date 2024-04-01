@@ -107,14 +107,14 @@ function [mix1, mix2, guess_moles] = unpack(mix1, u1, varargin)
     mix1.u = u1; % velocity pre-shock [m/s] - laboratory fixed
     mix1.uShock = u1; % velocity pre-shock [m/s] - shock fixed
 
-    if nargin > 2
+    try
         mix2 = varargin{1}.copy();
         guess_moles = mix2.Xi * mix2.N;
-        return
+    catch
+        mix2 = mix1.copy();
+        guess_moles = [];
     end
-
-    mix2 = mix1.copy();
-    guess_moles = [];
+    
 end
 
 function [p2, T2, p2p1, T2T1] = get_guess(obj, mix1, mix2)

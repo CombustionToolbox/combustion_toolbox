@@ -26,7 +26,7 @@ classdef ShockSolver < handle
 
             % Parse input arguments
             p = inputParser;
-            addOptional(p, 'problemType', defaultProblemType, @(x) ischar(x) && any(strcmpi(x, {'SHOCK_I', 'SHOCK_R', 'SHOCK_OBLIQUE', 'SHOCK_POLAR'})));
+            addOptional(p, 'problemType', defaultProblemType, @(x) ischar(x) && any(strcmpi(x, {'SHOCK_I', 'SHOCK_R', 'SHOCK_OBLIQUE', 'SHOCK_POLAR', 'SHOCK_POLAR_LIMITRR'})));
             addOptional(p, 'equilibriumSolver', defaultEquilibriumSolver);
             addOptional(p, 'FLAG_RESULTS', obj.FLAG_RESULTS, @(x) islogical(x));
             parse(p, varargin{:});
@@ -158,6 +158,27 @@ classdef ShockSolver < handle
 
                     % Set output
                     varargout = {mix1, mix2};
+
+                case 'SHOCK_POLAR_LIMITRR'
+                    % Solve problem
+                    [mix1, mix2, mix2_1, mix3] = obj.shockPolarLimitRR(mix1, u1);
+                    
+                    % Set problemType
+                    mix1.problemType = obj.problemType;
+                    mix2.problemType = obj.problemType;
+                    mix2_1.problemType = obj.problemType;
+                    mix3.problemType = obj.problemType;
+                    
+                    % Assing values
+                    obj.setMixtureShockPolar(mix2_1, mix2);
+
+                    % Print results
+                    if obj.FLAG_RESULTS
+                        print(mix1, mix2, mix2_1, mix3);
+                    end
+
+                    % Set output
+                    varargout = {mix1, mix2, mix2_1, mix3};
                     
             end
 
@@ -211,6 +232,20 @@ classdef ShockSolver < handle
 
                     % Set output
                     varargout = {mix1Array, mix2Array, mix3Array};
+                case {'SHOCK_POLAR_LIMITRR'}
+                    % Initialization
+                    mix3Array = mix1Array;
+                    mix4Array = mix1Array;
+                    
+                    % Calculations
+                    [mix1Array(n), mix2Array(n), mix3Array(n), mix4Array(n)] = obj.solve(mix1Array(n));
+                    
+                    for i = n-1:-1:1
+                        [mix1Array(i), mix2Array(i), mix3Array(i), mix4Array(i)] = obj.solve(mix1Array(i), mix2Array(i + 1), mix3Array(i + 1), mix4Array(i + 1));
+                    end
+
+                    % Set output
+                    varargout = {mix1Array, mix2Array, mix3Array, mix4Array};
             end
 
         end
@@ -222,8 +257,21 @@ classdef ShockSolver < handle
         [mix1, mix2] = shockIncident(obj, mix1, varargin)
         [mix1, mix2, mix5] = shockReflected(obj, mix1, mix2, varargin)
         [mix1, mix2] = shockObliqueBeta(obj, mix1, varargin)
-        [mix1, mix2_1, mix2_2] = shockObliqueTheta(obj, mix1, u1, theta, varargin);
+        [mix1, mix2_1, mix2_2] = shockObliqueTheta(obj, mix1, u1, theta, varargin)
         [mix1, mix2] = shockPolar(obj, mix1, u1)
+        [mix1, mix2, mix2_1, mix3] = shockPolarLimitRR(obj, mix1, u1)
+
+    end
+
+    methods (Access = private, Static)
+
+        function mix = setMixtureShockPolar(mix, mixPolar)
+            % Assign values from the polar curves
+            mix.thetaMax = mixPolar.thetaMax;
+            mix.betaMax = mixPolar.betaMax;
+            mix.thetaSonic = mixPolar.thetaSonic;
+            mix.betaSonic = mixPolar.betaSonic;
+        end
 
     end
 

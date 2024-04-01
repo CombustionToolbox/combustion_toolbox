@@ -40,14 +40,15 @@ classdef ShockSolver < handle
             obj.equilibriumSolver.FLAG_RESULTS = false;
         end
 
-        function varargout = solve(obj, mix1, property, value, varargin)
+        function varargout = solve(obj, mix1, varargin)
             % Obtain chemical equilibrium composition and thermodynamic properties
-
-            u1 = obj.getVelocity(mix1, property, value);
+            
+            % Definitions
+            u1 = mix1.u;
 
             switch upper(obj.problemType)
                 case 'SHOCK_I'
-                    if nargin > 4
+                    if nargin > 2
                         [mix1, mix2] = obj.shockIncident(mix1, u1, varargin{1});
                     else
                         [mix1, mix2] = obj.shockIncident(mix1, u1);
@@ -66,7 +67,7 @@ classdef ShockSolver < handle
                     varargout = {mix1, mix2};
 
                 case 'SHOCK_R'
-                    if nargin > 4
+                    if nargin > 2
                         % Calculate post-shock state (2)
                         [mix1, mix2] = obj.shockIncident(mix1, u1, varargin{1});
                         % Calculate post-shock state (5)
@@ -94,29 +95,39 @@ classdef ShockSolver < handle
 
         end
 
-        function varargout = solveArray(obj, mix1, property, value, varargin)
+        function varargout = solveArray(obj, mix1Array, varargin)
             % Obtain chemical equilibrium composition and thermodynamic properties
+            %
+            %
+            %
             
             % Definitions
-            n = length(value);
+            n = length(mix1Array);
             
+            % Initialization
+            mix2Array = mix1Array;
+
             % Calculations
             switch upper(obj.problemType)
                 case {'SHOCK_I'}
-                    [mix1Array{n}, mix2Array{n}] = obj.solve(mix1, property, value(n));
+                    [mix1Array(n), mix2Array(n)] = obj.solve(mix1Array(n));
                     
                     for i = n-1:-1:1
-                        [mix1Array{i}, mix2Array{i}] = obj.solve(mix1, property, value(i), mix2Array{i + 1});
+                        [mix1Array(i), mix2Array(i)] = obj.solve(mix1Array(i), mix2Array(i + 1));
                     end
 
                     % Set output
                     varargout = {mix1Array, mix2Array};
 
                 case {'SHOCK_R'}
-                    [mix1Array{n}, mix2Array{n}, mix3Array{n}] = obj.solve(mix1, property, value(n));
+                    % Initialization
+                    mix3Array = mix1Array;
+                    
+                    % Calculations
+                    [mix1Array(n), mix2Array(n), mix3Array(n)] = obj.solve(mix1Array);
                     
                     for i = n-1:-1:1
-                        [mix1Array{i}, mix2Array{i}, mix3Array{i}] = obj.solve(mix1, property, value(i), mix2Array{i + 1}, mix3Array{i + 1});
+                        [mix1Array(i), mix2Array(i), mix3Array(i)] = obj.solve(mix1Array, mix2Array(i + 1), mix3Array(i + 1));
                     end
 
                     % Set output

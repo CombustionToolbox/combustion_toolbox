@@ -97,12 +97,15 @@ classdef ShockSolver < handle
                 case 'SHOCK_OBLIQUE'
                     
                     if isempty(mix1.theta)
+                        
+                        % The initialization using the previous solution is prone to convergence issues.
+                        % if nargin > 3
+                        %     [mix1, mix2] = obj.shockObliqueBeta(mix1, u1, beta, varargin{1});
+                        % else
+                        %     [mix1, mix2] = obj.shockObliqueBeta(mix1, u1, beta);
+                        % end
 
-                        if nargin > 2
-                            [mix1, mix2] = obj.shockObliqueBeta(mix1, u1, beta, varargin{1});
-                        else
-                            [mix1, mix2] = obj.shockObliqueBeta(mix1, u1, beta);
-                        end
+                        [mix1, mix2] = obj.shockObliqueBeta(mix1, u1, beta);
 
                         % Set problemType
                         mix1.problemType = obj.problemType;
@@ -116,13 +119,16 @@ classdef ShockSolver < handle
                         % Set output
                         varargout = {mix1, mix2};
                     else
-
-                        if nargin > 2
-                            [mix1, mix2, mix3] = obj.shockObliqueTheta(mix1, u1, theta, varargin{1});
-                        else
-                            [mix1, mix2, mix3] = obj.shockObliqueTheta(mix1, u1, theta);
-                        end
-
+                        
+                        % The initialization using the previous solution is prone to convergence issues.
+                        % if nargin > 3
+                        %     [mix1, mix2, mix3] = obj.shockObliqueTheta(mix1, u1, theta, varargin{:});
+                        % else
+                        %     [mix1, mix2, mix3] = obj.shockObliqueTheta(mix1, u1, theta);
+                        % end
+                        
+                        [mix1, mix2, mix3] = obj.shockObliqueTheta(mix1, u1, theta);
+                        
                         % Set problemType
                         mix1.problemType = obj.problemType;
                         mix2.problemType = obj.problemType;
@@ -156,8 +162,8 @@ classdef ShockSolver < handle
             mix2Array = mix1Array;
             
             % Check conditions
-            FLAG_BETA = ~isempty(mix1Array.beta);
-            FLAG_THETA = ~isempty(mix1Array.theta);
+            FLAG_BETA = ~isempty(mix1Array(1).beta);
+            FLAG_THETA = ~isempty(mix1Array(1).theta);
 
             if FLAG_BETA & ~FLAG_THETA
                 problem = 'SHOCK_OBLIQUE_BETA';
@@ -202,7 +208,7 @@ classdef ShockSolver < handle
         [mix1, mix2, mix5] = shockReflected(obj, mix1, mix2, varargin)
         [mix1, mix2] = shockObliqueBeta(obj, mix1, varargin)
         [mix1, mix2_1, mix2_2] = shockObliqueTheta(obj, mix1, u1, theta, varargin);
-        
+
     end
 
     methods (Access = private, Static)

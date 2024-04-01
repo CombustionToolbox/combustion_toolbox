@@ -25,6 +25,8 @@ classdef EquilibriumSolver < handle
         FLAG_TCHEM_FROZEN = false; % Flag to consider a thermochemically frozen gas (calorically perfect gas)
         FLAG_FROZEN = false;       % Flag to consider a calorically imperfect gas with frozen chemistry
         FLAG_EOS = false;          % Flag to use non-ideal Equation of States (EoS)
+        % Miscellaneous
+        FLAG_RESULTS = true        % Flag to print results
     end
 
     methods
@@ -36,20 +38,45 @@ classdef EquilibriumSolver < handle
             % Parse input arguments
             p = inputParser;
             addOptional(p, 'problemType', defaultProblemType, @(x) ischar(x) && any(strcmpi(x, {'TP', 'TV', 'HP', 'EV', 'SP', 'SV'})));
+            addOptional(p, 'FLAG_RESULTS', obj.FLAG_RESULTS, @(x) islogical(x));
             parse(p, varargin{:});
 
             % Set properties
             obj.problemType = upper(p.Results.problemType);
+            obj.FLAG_RESULTS = p.Results.FLAG_RESULTS;
         end
 
         function mix = solve(obj, mix, varargin)
             % Obtain chemical equilibrium composition and thermodynamic properties
             if nargin > 2
                 obj.equilibrate(mix, varargin{1});
-                return
+            else
+                obj.equilibrate(mix);
             end
             
-            obj.equilibrate(mix);
+            % Set problemType
+            mix.problemType = obj.problemType;
+            
+            % Print results
+            if obj.FLAG_RESULTS
+                print(mix);
+            end
+
+        end
+
+        function mixArray = solveArray(obj, mix, property, value)
+            % Obtain chemical equilibrium composition and thermodynamic properties for an array of values
+            
+            % Definitions
+            n = length(value);
+            
+            % Calculations
+            mixArray{n} = obj.solve(mix, property, value(n));
+            
+            for i = n-1:-1:1
+                mixArray = obj.solve(mix1, property, value(i), mixArray{i + 1});
+            end
+
         end
 
         function mix2 = equilibrate(obj, mix2, varargin)
@@ -60,11 +87,10 @@ classdef EquilibriumSolver < handle
             %     mix (Mixture): Mixture considering a thermochemical frozen gas
             %
             % Returns:
-            %     mix (struct): Mixture at chemical equilibrium for the given thermochemical transformation
+            %     mix (Mixture): Mixture at chemical equilibrium for the given thermochemical transformation
             %
             % Example:
-            %     * obj = EquilibriumSolver();
-            %     * mix = obj.equilibrate('TP', mix)
+            %     * mix = equilibrate(EquilibriumSolver(), 'TP', mix)
             
             % Initialization
             mix1 = mix2.copy();
@@ -219,7 +245,7 @@ classdef EquilibriumSolver < handle
             % Compute number of moles
             [N, dNi_T, dN_T, dNi_p, dN_p, indexProducts, STOP, STOP_ions, h0] = selectEquilibrium(obj, systemProducts, T, mix, guess_moles);
             % Compute property matrix of the species at chemical equilibrium
-            mix = setProperties(mix);
+            mix = setMixture(mix);
 
             % NESTED FUNCTIONS
             function guess_moles = unpack(value)
@@ -249,7 +275,7 @@ classdef EquilibriumSolver < handle
                 h0 = h0 * 1e-3; % [kJ/mol]
             end
             
-            function mix = setProperties(mix)
+            function mix = setMixture(mix)
                 % Compute properties of final mixture
                 
                 % Reshape composition matrix N, and partial composition partial derivatives 

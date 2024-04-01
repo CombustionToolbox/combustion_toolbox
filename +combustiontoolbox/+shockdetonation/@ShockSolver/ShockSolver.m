@@ -124,10 +124,10 @@ classdef ShockSolver < handle
                     mix3Array = mix1Array;
                     
                     % Calculations
-                    [mix1Array(n), mix2Array(n), mix3Array(n)] = obj.solve(mix1Array);
+                    [mix1Array(n), mix2Array(n), mix3Array(n)] = obj.solve(mix1Array(n));
                     
                     for i = n-1:-1:1
-                        [mix1Array(i), mix2Array(i), mix3Array(i)] = obj.solve(mix1Array, mix2Array(i + 1), mix3Array(i + 1));
+                        [mix1Array(i), mix2Array(i), mix3Array(i)] = obj.solve(mix1Array(i), mix2Array(i + 1), mix3Array(i + 1));
                     end
 
                     % Set output

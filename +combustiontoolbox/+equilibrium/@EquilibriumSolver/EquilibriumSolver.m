@@ -64,17 +64,17 @@ classdef EquilibriumSolver < handle
 
         end
 
-        function mixArray = solveArray(obj, mix, property, value)
+        function mixArray = solveArray(obj, mixArray, varargin)
             % Obtain chemical equilibrium composition and thermodynamic properties for an array of values
             
             % Definitions
-            n = length(value);
-            
+            n = length(mixArray);
+
             % Calculations
-            mixArray{n} = obj.solve(mix, property, value(n));
+            obj.solve(mixArray(n));
             
             for i = n-1:-1:1
-                mixArray = obj.solve(mix1, property, value(i), mixArray{i + 1});
+                obj.solve(mixArray(i), mixArray(i + 1));
             end
 
         end

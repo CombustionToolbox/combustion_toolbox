@@ -1,15 +1,14 @@
-function print_mixture(varargin)
+function print_mixture(mix, varargin)
     % Print properties and composition of the given mixtures in the command
     % window
     %
     % Args:
-    %     self (struct): Data of the mixture, conditions, and databases
+    %     mix1 (Mixture): Mixture object with the properties of the mixture
     %
     % Optional Args:
-    %     * mix1 (struct): Struct with the properties of the mixture
-    %     * mix2 (struct): Struct with the properties of the mixture
-    %     * mixi (struct): Struct with the properties of the mixture
-    %     * mixN (struct): Struct with the properties of the mixture
+    %     * mix2 (Mixture): Mixture object with the properties of the mixture
+    %     * mixi (Mixture): Mixture object with the properties of the mixture
+    %     * mixN (Mixture): Mixture object with the properties of the mixture
     %
     % Examples:
     %     * print_mixture(mix1)
@@ -20,26 +19,26 @@ function print_mixture(varargin)
     % Temporal
     mintol_display = 1e-14; % (will be moved to Miscellaneous)
     composition_units = 'molar fraction'; % Possible values: mol, molar fraction or mass fraction
-    problemType = '';
-
+    
     % Unpack cell with mixtures
-    mix = varargin;
+    mix = [{mix}, varargin(:)];
 
     % Definitions
-    numberMixtures = nargin;
+    numMixtures = nargin;
     listSpecies = mix{1}.chemicalSystem.listSpecies;
+    problemType = mix{end}.problemType;
 
     % Start
     fprintf('************************************************************************************************************\n');
 
     % Print header
-    header_composition = print_header(problemType, numberMixtures, mix);
+    header_composition = print_header(problemType, numMixtures, mix);
 
     % Print properties
-    print_properties(problemType, numberMixtures, mix);
+    print_properties(problemType, numMixtures, mix);
 
     % Print composition
-    for i = 1:numberMixtures
+    for i = 1:numMixtures
         print_composition(mix{i}, listSpecies, composition_units, header_composition{i}, mintol_display);
     end
 

@@ -21,7 +21,7 @@ function print_mixture(mix, varargin)
     composition_units = 'molar fraction'; % Possible values: mol, molar fraction or mass fraction
     
     % Unpack cell with mixtures
-    mix = [{mix}, varargin(:)];
+    mix = [{mix}, varargin(:)'];
 
     % Definitions
     numMixtures = nargin;

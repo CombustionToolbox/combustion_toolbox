@@ -127,13 +127,13 @@ function print_properties(ProblemType, numberMixtures, mix)
     if contains(ProblemType, '_OBLIQUE') || contains(ProblemType, '_POLAR')
         fprintf('------------------------------------------------------------------------------------------------------------\n');
         fprintf('PARAMETERS\n');
-        fprintf(['min wave  [deg]|                 |', string_value_2], get_properties('beta_min', numberMixtures - 1, mix(2:end)));
+        fprintf(['min wave  [deg]|                 |', string_value_2], get_properties('betaMin', numberMixtures - 1, mix(2:end)));
         fprintf(['wave angle[deg]|                 |', string_value_2], get_properties('beta', numberMixtures - 1, mix(2:end)));
         fprintf(['deflection[deg]|                 |', string_value_2], get_properties('theta', numberMixtures - 1, mix(2:end)));
 
         if contains(ProblemType, '_POLAR')
-            fprintf(['max def.  [deg]|                 |', string_value_2], get_properties('theta_max', numberMixtures - 1, mix(2:end)));
-            fprintf(['sonic def.[deg]|                 |', string_value_2], get_properties('theta_sonic', numberMixtures - 1, mix(2:end)));
+            fprintf(['max def.  [deg]|                 |', string_value_2], get_properties('thetaMax', numberMixtures - 1, mix(2:end)));
+            fprintf(['sonic def.[deg]|                 |', string_value_2], get_properties('thetaSonic', numberMixtures - 1, mix(2:end)));
         end
 
     elseif contains(ProblemType, 'ROCKET')
@@ -206,10 +206,15 @@ function header_composition = print_header(problemType, numberMixtures, mix)
     % Returns:
     %     header_composition (cell): Cell with the header indicating the type/state of the mixture
     
-    if problemType
+    FLAG_PHI = ~isempty(mix{1}.equivalenceRatio);
+
+    if problemType & FLAG_PHI
         fprintf('------------------------------------------------------------------------------------------------------------\n');
         fprintf('Problem type: %s  | Equivalence ratio = %4.4f\n', problemType, mix{1}.equivalenceRatio);
-    elseif ~isempty(mix{1}.equivalenceRatio)
+    elseif problemType & ~FLAG_PHI
+        fprintf('------------------------------------------------------------------------------------------------------------\n');
+        fprintf('Problem type: %s\n', problemType);
+    elseif FLAG_PHI
         fprintf('------------------------------------------------------------------------------------------------------------\n');
         fprintf('Equivalence ratio = %4.4f\n', mix{1}.equivalenceRatio);
     end

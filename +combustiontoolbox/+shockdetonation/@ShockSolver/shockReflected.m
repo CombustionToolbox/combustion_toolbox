@@ -24,7 +24,7 @@ function [mix1, mix2, mix5] = shockReflected(obj, mix1, mix2, varargin)
     %     * [mix1, mix2, mix5] = shockReflected(ShockSolver(), mix1, u1, mix2, mix5)
 
     % Unpack input data
-    [mix5, guess_moles] = unpack(mix2, varargin);
+    [mix5, guess_moles] = unpack(mix2, varargin{:});
 
     % Definitions
     FLAG_FAST = obj.equilibriumSolver.FLAG_FAST;

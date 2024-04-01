@@ -122,6 +122,7 @@ classdef Mixture < handle & matlab.mixin.Copyable
         FLAG_INERT = false
         FLAG_REACTION = false
         fuel
+        problemType
     end
     
     methods
@@ -177,6 +178,12 @@ classdef Mixture < handle & matlab.mixin.Copyable
                 return
             end
             
+            % Set equivalence ratio and compute thermodynamic properties
+            if ~isempty(obj.equivalenceRatio)
+                setEquivalenceRatio(obj, obj.equivalenceRatio);
+                return
+            end
+
             % Compute thermodynamic properties
             obj.compute_properties(obj.chemicalSystem, T, obj.p);
 
@@ -204,6 +211,12 @@ classdef Mixture < handle & matlab.mixin.Copyable
 
             % Check if initial state is defined (temperature, pressure, and composition)
             if ~sum(obj.quantity) || ~obj.T
+                return
+            end
+            
+            % Set equivalence ratio and compute thermodynamic properties
+            if ~isempty(obj.equivalenceRatio)
+                setEquivalenceRatio(obj, obj.equivalenceRatio);
                 return
             end
 
@@ -416,9 +429,84 @@ classdef Mixture < handle & matlab.mixin.Copyable
             obj.(name).value = value;
         end
 
+        function objArray = setProperties(obj, property, value, varargin)
+            % Obtain properties at equilibrium for the given thermochemical transformation
+            %
+            % Args:
+            %     obj (Mixture): Mixture Object
+            %     property (char): Property to be set
+            %     value (float): Value of the property
+            %
+            % Optional Args (key-value pairs):
+            %     * property (char): Property to be set
+            %     * value (float): Value of the property
+            %
+            % Returns:
+            %     objArray (cell): Array of Mixture objects with the computed properties
+            %
+            % Note:
+            %     * Use this method after setting the initial composition of the mixture
+            %
+            % Examples:
+            %     * mixArray = setProperties(mix, 'equivalenceRatio', value)
+            %     * mixArray = setProperties(mix, 'equivalenceRatio', value, 'temperature', value)
+            %     * mixArray = setProperties(mix, 'equivalenceRatio', value, 'temperature', value, 'pressure', value)
+            %     * mixArray = setProperties(mix, 'phi', value, 'T', value, 'p', value)
+
+            % Assign value to the property
+            properties = {property, varargin{1:2:end}};
+            values = {value, varargin{2:2:end}};
+            
+            % Definitions
+            numProperties = length(properties);
+
+            % Check vectors
+            FLAG_VECTOR = cellfun(@(x) numel(x) > 1, values);
+            
+            % Create vectors same size
+            FLAG_VECTOR_FIRST = find(FLAG_VECTOR, 1);
+            aux = ones(size(values{FLAG_VECTOR_FIRST}));
+
+            for i = find(~FLAG_VECTOR)
+                values(i) = {values{i} * aux};
+            end
+
+            % Get number of cases
+            numCases = length(values{FLAG_VECTOR_FIRST});
+            
+            % Initialization
+            objArray = obj.empty(0, numCases);
+
+            % Set properties
+            for j = 1:numCases
+                % Create a copy of the mixture
+                objArray(j) = obj.copy();
+
+                % Set property
+                for i = 1:numProperties
+
+                    switch lower(properties{i})
+                        case {'temperature', 't'}
+                            objArray(j).T = values{i}(j);
+                        case {'pressure', 'p'}
+                            objArray(j).p = values{i}(j);
+                        case {'equivalenceratio', 'phi'}
+                            objArray(j).equivalenceRatio = values{i}(j);
+                        otherwise
+                            error('Property not found');
+                    end
+
+                end
+
+                % Compute state
+                objArray(j).setTemperature(objArray(j).T);
+            end
+
+        end
+
         function print(obj, varargin)
             % 
-            print_mixture(obj, varargin{:});
+            combustiontoolbox.utils.display.print_mixture(obj, varargin{:});
         end
         
     end

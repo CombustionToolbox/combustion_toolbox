@@ -84,14 +84,14 @@ end
 % NESTED FUNCTIONS
 function [mix5, guess_moles] = unpack(mix2, varargin)
     % Unpack input data
-    if nargin > 2
+    try
         mix5 = varargin{1}.copy();
         guess_moles = mix5.Xi * mix5.N;
-        return
+    catch
+        mix5 = mix2.copy();
+        guess_moles = [];
     end
     
-    mix5 = mix2.copy();
-    guess_moles = [];
 end
 
 function [p5, T5, p5p2, T5T2] = get_guess(mix2, mix5)

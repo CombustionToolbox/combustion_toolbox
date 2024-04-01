@@ -26,7 +26,7 @@ classdef ShockSolver < handle
 
             % Parse input arguments
             p = inputParser;
-            addOptional(p, 'problemType', defaultProblemType, @(x) ischar(x) && any(strcmpi(x, {'SHOCK_I', 'SHOCK_R'})));
+            addOptional(p, 'problemType', defaultProblemType, @(x) ischar(x) && any(strcmpi(x, {'SHOCK_I', 'SHOCK_R', 'SHOCK_OBLIQUE'})));
             addOptional(p, 'equilibriumSolver', defaultEquilibriumSolver);
             addOptional(p, 'FLAG_RESULTS', obj.FLAG_RESULTS, @(x) islogical(x));
             parse(p, varargin{:});
@@ -45,6 +45,8 @@ classdef ShockSolver < handle
             
             % Definitions
             u1 = mix1.u;
+            beta = mix1.beta;
+            theta = mix1.theta;
 
             switch upper(obj.problemType)
                 case 'SHOCK_I'
@@ -91,6 +93,51 @@ classdef ShockSolver < handle
 
                     % Set output
                     varargout = {mix1, mix2, mix3};
+
+                case 'SHOCK_OBLIQUE'
+                    
+                    if isempty(mix1.theta)
+
+                        if nargin > 2
+                            [mix1, mix2] = obj.shockObliqueBeta(mix1, u1, beta, varargin{1});
+                        else
+                            [mix1, mix2] = obj.shockObliqueBeta(mix1, u1, beta);
+                        end
+
+                        % Set problemType
+                        mix1.problemType = obj.problemType;
+                        mix2.problemType = obj.problemType;
+    
+                        % Print results
+                        if obj.FLAG_RESULTS
+                            print(mix1, mix2);
+                        end
+    
+                        % Set output
+                        varargout = {mix1, mix2};
+                    else
+
+                        if nargin > 2
+                            [mix1, mix2, mix3] = obj.shockObliqueTheta(mix1, u1, theta, varargin{1});
+                        else
+                            [mix1, mix2, mix3] = obj.shockObliqueTheta(mix1, u1, theta);
+                        end
+
+                        % Set problemType
+                        mix1.problemType = obj.problemType;
+                        mix2.problemType = obj.problemType;
+                        mix3.problemType = obj.problemType;
+    
+                        % Print results
+                        if obj.FLAG_RESULTS
+                            print(mix1, mix2, mix3);
+                        end
+    
+                        % Set output
+                        varargout = {mix1, mix2, mix3};
+                    end
+                    
+                    
             end
 
         end
@@ -103,13 +150,24 @@ classdef ShockSolver < handle
             
             % Definitions
             n = length(mix1Array);
-            
+            problem = obj.problemType;
+
             % Initialization
             mix2Array = mix1Array;
+            
+            % Check conditions
+            FLAG_BETA = ~isempty(mix1Array.beta);
+            FLAG_THETA = ~isempty(mix1Array.theta);
+
+            if FLAG_BETA & ~FLAG_THETA
+                problem = 'SHOCK_OBLIQUE_BETA';
+            elseif ~FLAG_BETA & FLAG_THETA
+                problem = 'SHOCK_OBLIQUE_THETA';
+            end
 
             % Calculations
-            switch upper(obj.problemType)
-                case {'SHOCK_I'}
+            switch upper(problem)
+                case {'SHOCK_I', 'SHOCK_OBLIQUE_BETA'}
                     [mix1Array(n), mix2Array(n)] = obj.solve(mix1Array(n));
                     
                     for i = n-1:-1:1
@@ -119,7 +177,7 @@ classdef ShockSolver < handle
                     % Set output
                     varargout = {mix1Array, mix2Array};
 
-                case {'SHOCK_R'}
+                case {'SHOCK_R', 'SHOCK_OBLIQUE_THETA'}
                     % Initialization
                     mix3Array = mix1Array;
                     
@@ -142,6 +200,7 @@ classdef ShockSolver < handle
         
         [mix1, mix2] = shockIncident(obj, mix1, varargin)
         [mix1, mix2, mix5] = shockReflected(obj, mix1, mix2, varargin)
+        [mix1, mix2] = shockObliqueBeta(obj, mix1, varargin)
 
     end
 

@@ -41,24 +41,24 @@ function [mix1, mix2] = shockIncident(obj, mix1, u1, varargin)
 
     % Solve shock incident
     try
-        [T2, p2, STOP] = solve_shock_incident(FLAG_FAST);
+        [T2, p2, STOP, it] = solve_shock_incident(FLAG_FAST);
         assert(STOP < obj.tol_shocks);
     catch
         % If solution has not converged, repeat without composition estimate
         fprintf('Recalculating: %.2f [m/s]\n', u1);
         guess_moles = [];
         FLAG_FAST = false;
-        [T2, p2, STOP] = solve_shock_incident(FLAG_FAST);
+        [T2, p2, STOP, it] = solve_shock_incident(FLAG_FAST);
     end
 
     % Check convergence
-    print_convergence(STOP, obj.tol_shocks, T2);
+    combustiontoolbox.utils.printConvergence(it, obj.it_shocks, T2, STOP, obj.tol_shocks);
     
     % Save state
     mix2 = save_state(mix1, mix2, STOP);
 
     % NESTED-FUNCTIONS
-    function [T2, p2, STOP] = solve_shock_incident(FLAG_FAST)
+    function [T2, p2, STOP, it] = solve_shock_incident(FLAG_FAST)
         % Miscellaneous
         it = 0; itMax = obj.it_shocks; STOP = 1;
         % Initial estimates of p2/p1 and T2/T1
@@ -227,19 +227,4 @@ function mix2 = save_state(mix1, mix2, STOP)
     mix2.uShock = mix1.u * mix1.rho / mix2.rho;
     mix2.u = mix1.u - mix2.uShock; % velocity postshock [m/s] - laboratory fixed
     mix2.errorProblem = STOP;
-end
-
-function print_convergence(STOP, TOL, T)
-
-    if STOP > TOL
-        fprintf('***********************************************************\n')
-        fprintf('Convergence error: %1.2e\n', STOP);
-    end
-
-    if T > 2e4
-        fprintf('***********************************************************\n')
-        fprintf('Validity of the results compromise: T = %d K\n', round(T))
-        fprintf('Thermodynamic properties fitted to 20000 K\n');
-    end
-
 end

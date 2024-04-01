@@ -87,7 +87,8 @@ classdef Mixture < handle & matlab.mixin.Copyable
         uNormal  % Normal component of u [m/s]
         beta     % Wave angle [deg]
         theta    % Deflection angle [deg]
-        betaMax  % Maximum shock wave angle [deg]
+        betaMin  % Minimum wave angle [deg]
+        betaMax  % Maximum wave angle [deg]
         thetaMax % Maximum deflection angle [deg]
     end
 
@@ -468,12 +469,16 @@ classdef Mixture < handle & matlab.mixin.Copyable
             % Check vectors
             FLAG_VECTOR = cellfun(@(x) numel(x) > 1, values);
             
-            % Create vectors same size
-            FLAG_VECTOR_FIRST = find(FLAG_VECTOR, 1);
-            aux = ones(size(values{FLAG_VECTOR_FIRST}));
-
-            for i = find(~FLAG_VECTOR)
-                values(i) = {values{i} * aux};
+            if sum(FLAG_VECTOR)
+                % Create vectors same size
+                FLAG_VECTOR_FIRST = find(FLAG_VECTOR, 1);
+                aux = ones(size(values{FLAG_VECTOR_FIRST}));
+    
+                for i = find(~FLAG_VECTOR)
+                    values(i) = {values{i} * aux};
+                end
+            else
+                FLAG_VECTOR_FIRST = 1;
             end
 
             % Get number of cases
@@ -500,7 +505,12 @@ classdef Mixture < handle & matlab.mixin.Copyable
                         case {'velocity', 'u', 'u1'}
                             objArray(j).u = values{i}(j);
                         case {'mach', 'm1'}
+                            aux = values{i}(j);
                             FLAG_MACH = true;
+                        case {'wave angle', 'waveangle', 'wave', 'beta'}
+                            objArray(j).beta = values{i}(j);
+                        case {'deflection angle', 'deflectionangle', 'deflection', 'theta'}
+                            objArray(j).theta = values{i}(j);
                         otherwise
                             error('Property not found');
                     end
@@ -512,7 +522,7 @@ classdef Mixture < handle & matlab.mixin.Copyable
 
                 % Additional inputs
                 if FLAG_MACH
-                    objArray(j).u = values{i}(j) * objArray(j).sound;
+                    objArray(j).u = aux * objArray(j).sound;
                 end
 
             end

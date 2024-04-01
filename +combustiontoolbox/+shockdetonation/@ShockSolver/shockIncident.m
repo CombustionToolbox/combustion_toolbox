@@ -105,7 +105,7 @@ end
 function [mix1, mix2, guess_moles] = unpack(mix1, u1, varargin)
     % Unpack input data
     mix1.u = u1; % velocity pre-shock [m/s] - laboratory fixed
-    mix1.v_shock = u1; % velocity pre-shock [m/s] - shock fixed
+    mix1.uShock = u1; % velocity pre-shock [m/s] - shock fixed
 
     if nargin > 2
         mix2 = varargin{1}.copy();
@@ -224,8 +224,8 @@ function STOP = compute_STOP(x)
 end
 
 function mix2 = save_state(mix1, mix2, STOP)
-    mix2.v_shock = mix1.u * mix1.rho / mix2.rho;
-    mix2.u = mix1.u - mix2.v_shock; % velocity postshock [m/s] - laboratory fixed
+    mix2.uShock = mix1.u * mix1.rho / mix2.rho;
+    mix2.u = mix1.u - mix2.uShock; % velocity postshock [m/s] - laboratory fixed
     mix2.errorProblem = STOP;
 end
 

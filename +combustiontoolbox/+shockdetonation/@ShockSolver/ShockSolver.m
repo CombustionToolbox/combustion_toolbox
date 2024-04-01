@@ -70,12 +70,12 @@ classdef ShockSolver < handle
                         % Calculate post-shock state (2)
                         [mix1, mix2] = obj.shockIncident(mix1, u1, varargin{1});
                         % Calculate post-shock state (5)
-                        [mix1, mix2, mix3] = obj.shockReflected(mix1, u1, mix2, varargin{2});
+                        [mix1, mix2, mix3] = obj.shockReflected(mix1, mix2, varargin{2});
                     else
                         % Calculate post-shock state (2)
                         [mix1, mix2] = obj.shockIncident(mix1, u1);
                         % Calculate post-shock state (5)
-                        [mix1, mix2, mix3] = obj.shockReflected(mix1, u1, mix2);
+                        [mix1, mix2, mix3] = obj.shockReflected(mix1, mix2);
                     end
 
                     % Set problemType
@@ -130,6 +130,7 @@ classdef ShockSolver < handle
     methods (Access = private)
         
         [mix1, mix2] = shockIncident(obj, mix1, varargin)
+        [mix1, mix2, mix5] = shockReflected(obj, mix1, mix2, varargin)
 
     end
 

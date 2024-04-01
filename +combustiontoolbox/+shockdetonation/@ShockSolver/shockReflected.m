@@ -1,4 +1,4 @@
-function [mix1, mix2, mix5] = shockReflected(obj, mix1, u1, mix2, varargin)
+function [mix1, mix2, mix5] = shockReflected(obj, mix1, mix2, varargin)
     % Compute pre-shock and post-shock states of a planar reflected shock wave
     %
     % This method is based on the method outlined in Gordon, S., & McBride,
@@ -7,7 +7,6 @@ function [mix1, mix2, mix5] = shockReflected(obj, mix1, u1, mix2, varargin)
     % Args:
     %     obj (ShockSolver): ShockSolver object
     %     mix1 (Mixture):    Properties of the mixture in the pre-shock state
-    %     u1 (float):        Pre-shock velocity [m/s]
     %     mix2 (Mixture):    Properties of the mixture at the post-shock state of the incident shock
     %
     % Optional Args:
@@ -37,7 +36,7 @@ function [mix1, mix2, mix5] = shockReflected(obj, mix1, u1, mix2, varargin)
         assert(STOP < obj.tol_shocks);
     catch
         % If solution has not converged, repeat without composition estimate
-        fprintf('Recalculating: %.2f [m/s]\n', u1);
+        fprintf('Recalculating: %.2f [m/s]\n', mix1.u1);
         guess_moles = [];
         FLAG_FAST = false;
         [T5, p5, STOP] = solve_shock_reflected(FLAG_FAST);

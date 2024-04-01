@@ -201,7 +201,8 @@ classdef ShockSolver < handle
         [mix1, mix2] = shockIncident(obj, mix1, varargin)
         [mix1, mix2, mix5] = shockReflected(obj, mix1, mix2, varargin)
         [mix1, mix2] = shockObliqueBeta(obj, mix1, varargin)
-
+        [mix1, mix2_1, mix2_2] = shockObliqueTheta(obj, mix1, u1, theta, varargin);
+        
     end
 
     methods (Access = private, Static)

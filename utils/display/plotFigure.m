@@ -1,4 +1,4 @@
-function [ax, dline] = plot_figure(x_field, x_var, y_field, y_var, varargin)
+function [ax, dline] = plotFigure(x_field, x_var, y_field, y_var, varargin)
     % Plot figure with customizable settings
     %
     % Note:

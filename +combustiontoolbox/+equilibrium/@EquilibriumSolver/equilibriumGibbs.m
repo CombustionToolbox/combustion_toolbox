@@ -134,7 +134,7 @@ function [N, dNi_T, dN_T, dNi_p, dN_p, index, STOP, STOP_ions, h0] = equilibrium
             J = update_matrix_J(A0_T, J22, N, NP, indexGas, indexCondensed, NE);
             
             % Construction of vector b      
-            b = update_vector_b(A0, N, NP, NatomE, indexElements, index, indexGas, indexCondensed, indexIons, muRT);
+            b = update_vector_b(A0, N, NP, NatomE, ind_E, index, indexGas, indexCondensed, indexIons, muRT);
             
             % Solve of the linear system J*x = b
             x = J\b;
@@ -463,12 +463,12 @@ function J = update_matrix_J(A0_T, J22, N, NP, indexGas, indexCondensed, NE)
     J = [J11, J12; J12', J22];
 end
 
-function b = update_vector_b(A0, N, NP, NatomE, indexElements, index, indexGas, indexCondensed, indexIons, muRT) 
+function b = update_vector_b(A0, N, NP, NatomE, ind_E, index, indexGas, indexCondensed, indexIons, muRT) 
     % Compute vector b
     bi = N(index, 1)' * A0(index, :);
 
     if any(indexIons)
-        bi(indexElements) = NatomE(indexElements);
+        bi(ind_E) = NatomE(ind_E);
     end
 
     NP_0 = NP + sum(N(indexGas, 1) .* muRT(indexGas) - N(indexGas, 1));

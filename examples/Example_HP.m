@@ -13,10 +13,10 @@
 % See wiki or list_species() for more predefined sets of species
 %
 % @author: Alberto Cuadra Lara
-%          PhD Candidate - Group Fluid Mechanics
+%          Postdoctoral researcher - Group Fluid Mechanics
 %          Universidad Carlos III de Madrid
 %                 
-% Last update July 22 2022
+% Last update April 02 2024
 % -------------------------------------------------------------------------
 
 % Import packages

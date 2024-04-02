@@ -258,16 +258,17 @@ classdef EquilibriumSolver < handle
             
             end
             
-            function pP = computePressure(mix, T, molesGas)
-                % Compute pressure of product mixture [bar]
-                pP = mix.equationOfState.getPressure(molesGas, T, mix.v, system.listSpecies, mix.Xi) * 1e-5;
+            function pP = computePressure(mix, T, moles, index)
+                % Compute pressure [bar] of product mixture
+                vMolar = vSpecific2vMolar(mix, mix.vSpecific, moles, index);
+                pP = mix.equationOfState.getPressure(T, vMolar, system.listSpecies, mix.Xi) * 1e-5;
             end
             
             function [N, dNi_T, dN_T, dNi_p, dN_p, indexProducts, STOP, STOP_ions, h0] = selectEquilibrium(obj, system, T, mix, guess_moles)
                 % Select equilibrium: TP: Gibbs; TV: Helmholtz
                 
                 if strfind(obj.problemType, 'P') == 2
-                    [N, dNi_T, dN_T, dNi_p, dN_p, indexProducts, STOP, STOP_ions, h0] = obj.equilibriumGibbs(system, mix.p, T, mix, guess_moles);
+                    [N, dNi_T, dN_T, dNi_p, dN_p, indexProducts, STOP, STOP_ions, h0] = equilibriumGibbs(obj, system, mix.p, T, mix, guess_moles);
                 else
                     [N, dNi_T, dN_T, dNi_p, dN_p, indexProducts, STOP, STOP_ions, h0] = equilibriumHelmholtz(obj, system, mix.v, T, mix, guess_moles);
                 end
@@ -299,8 +300,7 @@ classdef EquilibriumSolver < handle
                 
                 % Check if problemType is at constant volume
                 if strfind(obj.problemType, 'V') == 2
-                    molesGas = sum(N .* (1 - mix.phase));
-                    mix.p = computePressure(mix, T, molesGas);
+                    mix.p = computePressure(mix, T, N, system.indexProducts);
                 end
                 
                 % Compute properties of final mixture

@@ -2,7 +2,7 @@
 % EXAMPLE: SHOCK_OBLIQUE_BETA
 %
 % Compute pre-shock and post-shock state for a oblique incident shock wave
-% at standard conditions, a set of 51 species considered, a pre-shock mach 
+% at standard conditions, a set of 51 species considered, a pre-shock Mach 
 % number M1 = 10, and a set of wave angles beta = [20:1:85] [deg]
 %    
 % Air_ions == {'eminus', 'Ar', 'Arplus', 'C', 'Cplus', 'Cminus', ...

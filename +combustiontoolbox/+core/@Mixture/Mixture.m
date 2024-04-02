@@ -41,34 +41,35 @@ classdef Mixture < handle & matlab.mixin.Copyable
     % end
 
     properties
-        T (1,1) % Temperature [K]
-        p (1,1) % Pressure [bar]
-        N       % Total number of moles [mol]
-        hf      % Enthalpy of formation [kJ]
-        ef      % Internal energy of formation [kJ]
-        h       % Enthalpy [kJ]
-        e       % Internal energy [kJ]
-        g       % Gibbs energy [kJ] 
-        s       % Entropy [kJ/K]
-        cp      % Specific heat at constant pressure [J/K]
-        cv      % Specific heat at constant volume [J/K]
-        gamma   % Adiabatic index [-]
-        gamma_s % Adiabatic index [-]
-        sound   % Speed of sound [m/s]
-        s0      % Entropy (frozen) [kJ/K]
-        DhT     % Thermal enthalpy [kJ]
-        DeT     % Thermal internal energy [kJ]
-        Ds      % Entropy of mixing [kJ/K]
-        rho     % Density [kg/m3]
-        v       % Volume [m3]
-        W       % Molecular weight [g/mol]
-        MW      % Mean molecular weight [g/mol]
-        mi      % Mass mixture [kg]
-        Xi      % Molar fractions [-]
-        Yi      % Mass fractions [-]
-        phase   % Phase vector [-]
-        dVdT_p  % Derivative of volume with respect to temperature at constant pressure [-]
-        dVdp_T  % Derivative of volume with respect to pressure at constant temperature [-]
+        T (1,1)               % Temperature [K]
+        p (1,1)               % Pressure [bar]
+        N                     % Total number of moles [mol]
+        hf                    % Enthalpy of formation [kJ]
+        ef                    % Internal energy of formation [kJ]
+        h                     % Enthalpy [kJ]
+        e                     % Internal energy [kJ]
+        g                     % Gibbs energy [kJ] 
+        s                     % Entropy [kJ/K]
+        cp                    % Specific heat at constant pressure [J/K]
+        cv                    % Specific heat at constant volume [J/K]
+        gamma                 % Adiabatic index [-]
+        gamma_s               % Adiabatic index [-]
+        sound                 % Speed of sound [m/s]
+        s0                    % Entropy (frozen) [kJ/K]
+        DhT                   % Thermal enthalpy [kJ]
+        DeT                   % Thermal internal energy [kJ]
+        Ds                    % Entropy of mixing [kJ/K]
+        rho                   % Density [kg/m3]
+        v                     % Volume [m3]
+        vSpecific             % Specific volume [m3/kg]
+        W                     % Molecular weight [g/mol]
+        MW                    % Mean molecular weight [g/mol]
+        mi                    % Mass mixture [kg]
+        Xi                    % Molar fractions [-]
+        Yi                    % Mass fractions [-]
+        phase                 % Phase vector [-]
+        dVdT_p                % Derivative of volume with respect to temperature at constant pressure [-]
+        dVdp_T                % Derivative of volume with respect to pressure at constant temperature [-]
         equivalenceRatio      % Equivalence ratio [-]
         stoichiometricMoles   % Theoretical moles of the oxidizer of reference for a stoichiometric combustion
         percentageFuel        % Percentage of fuel in the mixture [%]
@@ -82,20 +83,20 @@ classdef Mixture < handle & matlab.mixin.Copyable
         chemicalSystem        % Chemical system object
         equationOfState       % Equation of State object
         % Properties from shock and detonation module (CT-SD)
-        u          % Velocity relative to the shock front [m/s]
-        uShock     % Velocity in the shock tube [m/s]
-        uNormal    % Normal component of u [m/s]
-        mach       % Mach number [-]
-        beta       % Wave angle [deg]
-        theta      % Deflection angle [deg]
-        betaMin    % Minimum wave angle [deg]
-        betaMax    % Maximum wave angle [deg]
-        thetaMax   % Maximum deflection angle [deg]
-        betaSonic  % Wave angle at the sonic point [deg]
-        thetaSonic % Deflection angle at the sonic point [deg]
-        indexMax   % Index of the maximum deflection angle
-        indexSonic % Index of the sonic point
-        polar      % Properties of the polar solution
+        u                     % Velocity relative to the shock front [m/s]
+        uShock                % Velocity in the shock tube [m/s]
+        uNormal               % Normal component of u [m/s]
+        mach                  % Mach number [-]
+        beta                  % Wave angle [deg]
+        theta                 % Deflection angle [deg]
+        betaMin               % Minimum wave angle [deg]
+        betaMax               % Maximum wave angle [deg]
+        thetaMax              % Maximum deflection angle [deg]
+        betaSonic             % Wave angle at the sonic point [deg]
+        thetaSonic            % Deflection angle at the sonic point [deg]
+        indexMax              % Index of the maximum deflection angle
+        indexSonic            % Index of the sonic point
+        polar                 % Properties of the polar solution
     end
 
     properties (Access = private)
@@ -178,12 +179,9 @@ classdef Mixture < handle & matlab.mixin.Copyable
             
             % Assign temperature
             obj.T = T;
-
-            % Assign values to the propertiesMatrix
-            obj.chemicalSystem.set_propertiesMatrix(obj.listSpecies, obj.quantity, obj.T);
             
             % Check if initial state is defined (temperature, pressure, and composition)
-            if ~sum(obj.quantity) || ~obj.p
+            if ~sum(obj.quantity) || (~obj.p && ~obj.vSpecific)
                 return
             end
             
@@ -192,6 +190,15 @@ classdef Mixture < handle & matlab.mixin.Copyable
                 setEquivalenceRatio(obj, obj.equivalenceRatio);
                 return
             end
+            
+            % Compute pressure if required
+            if obj.vSpecific
+                vMolar = vSpecific2vMolar(obj, obj.vSpecific, obj.quantity);
+                obj.p = convert_Pa_to_bar(obj.equationOfState.getPressure(obj.T, vMolar, obj.chemicalSystem.listSpecies, obj.quantity / sum(obj.quantity)));
+            end
+
+            % Assign values to the propertiesMatrix
+            obj.chemicalSystem.set_propertiesMatrix(obj.listSpecies, obj.quantity, obj.T);
 
             % Compute thermodynamic properties
             obj.compute_properties(obj.chemicalSystem, T, obj.p);
@@ -208,15 +215,12 @@ classdef Mixture < handle & matlab.mixin.Copyable
 
             % Parse inputs
             ip = inputParser;
-            addRequired(ip, 'T', @(x) isnumeric(x) && x >= 0);
+            addRequired(ip, 'p', @(x) isnumeric(x) && x >= 0);
             addOptional(ip, 'units', defaultUnits, @(x) ischar(x));
             parse(ip, p, varargin{:});
             
             % Assign pressure
             obj.p = p;
-
-            % Assign values to the propertiesMatrix
-            obj.chemicalSystem.set_propertiesMatrix(obj.listSpecies, obj.quantity, obj.T);
 
             % Check if initial state is defined (temperature, pressure, and composition)
             if ~sum(obj.quantity) || ~obj.T
@@ -231,6 +235,46 @@ classdef Mixture < handle & matlab.mixin.Copyable
 
             % Compute thermodynamic properties
             obj.compute_properties(obj.chemicalSystem, obj.T, p);
+
+            % Compute equivalence ratio, percentage Fuel, and Oxidizer/Fuel ratio
+            obj.computeEquivalenceRatio();
+        end
+
+        function obj = setVolume(obj, vSpecific, varargin)
+            % Compute thermodynamic properties at pressure p [K]
+            
+            % Definitions
+            defaultUnits = 'm3/kg';
+
+            % Parse inputs
+            ip = inputParser;
+            addRequired(ip, 'vSpecific', @(x) isnumeric(x) && x >= 0);
+            addOptional(ip, 'units', defaultUnits, @(x) ischar(x));
+            parse(ip, vSpecific, varargin{:});
+            
+            % Assign specific volume
+            obj.vSpecific = vSpecific;
+
+            % Check if initial state is defined (temperature, pressure, and composition)
+            if ~sum(obj.quantity) || ~obj.T
+                return
+            end
+            
+            % Compute pressure
+            vMolar = vSpecific2vMolar(obj, obj.vSpecific, obj.quantity);
+            obj.p = convert_Pa_to_bar(obj.equationOfState.getPressure(obj.T, vMolar, obj.chemicalSystem.listSpecies, obj.quantity / sum(obj.quantity)));
+
+            % Set equivalence ratio and compute thermodynamic properties
+            if ~isempty(obj.equivalenceRatio)
+                setEquivalenceRatio(obj, obj.equivalenceRatio);
+                return
+            end
+
+            % Assign values to the propertiesMatrix
+            obj.chemicalSystem.set_propertiesMatrix(obj.listSpecies, obj.quantity, obj.T);
+
+            % Compute thermodynamic properties
+            obj.compute_properties(obj.chemicalSystem, obj.T, obj.p);
 
             % Compute equivalence ratio, percentage Fuel, and Oxidizer/Fuel ratio
             obj.computeEquivalenceRatio();
@@ -288,9 +332,21 @@ classdef Mixture < handle & matlab.mixin.Copyable
 
             % Get system containing only the list of products
             obj.chemicalSystemProducts = getSystemProducts(obj.chemicalSystem);
-
+            
             % Check if initial state is defined (temperature, pressure, and composition)
-            if ~obj.T || ~obj.p
+            if ~obj.T || (~obj.p && ~obj.vSpecific)
+                return
+            end
+
+            % Compute pressure if required
+            if obj.vSpecific
+                vMolar = vSpecific2vMolar(obj, obj.vSpecific, obj.quantity);
+                obj.p = convert_Pa_to_bar(obj.equationOfState.getPressure(obj.T, vMolar, obj.chemicalSystem.listSpecies, obj.quantity / sum(obj.quantity)));
+            end
+
+            % Set equivalence ratio and compute thermodynamic properties
+            if ~isempty(obj.equivalenceRatio)
+                setEquivalenceRatio(obj, obj.equivalenceRatio);
                 return
             end
 
@@ -306,7 +362,7 @@ classdef Mixture < handle & matlab.mixin.Copyable
             obj.equivalenceRatio = value;
             
             % Check if initial state is defined (temperature, pressure, and composition)
-            if ~obj.T || ~obj.p || ~obj.FLAG_FUEL || ~obj.FLAG_OXIDIZER
+            if ~obj.T || (~obj.p && ~obj.vSpecific) || ~obj.FLAG_FUEL || ~obj.FLAG_OXIDIZER
                 return
             end
 
@@ -324,15 +380,16 @@ classdef Mixture < handle & matlab.mixin.Copyable
             obj.defineO();
 
             % Update listSpecies and quantity
-            % obj.listSpecies = [obj.listSpeciesFuel, obj.listSpeciesOxidizer, obj.listSpeciesInert];
+            obj.listSpecies = [obj.listSpeciesFuel, obj.listSpeciesOxidizer, obj.listSpeciesInert];
             obj.quantity = [obj.molesFuel, obj.molesOxidizer, obj.molesInert];
             
             % Assign values to the propertiesMatrix
             obj.chemicalSystem.set_propertiesMatrix(obj.listSpeciesOxidizer, obj.molesOxidizer, obj.T);
-            
-            % Check if initial state is defined (temperature, pressure, and composition)
-            if ~obj.T || ~obj.p
-                return
+
+            % Compute pressure if required
+            if obj.vSpecific
+                vMolar = vSpecific2vMolar(obj, obj.vSpecific, obj.quantity);
+                obj.p = convert_Pa_to_bar(obj.equationOfState.getPressure(obj.T, vMolar, obj.chemicalSystem.listSpecies, obj.quantity / sum(obj.quantity)));
             end
 
             % Compute thermodynamic properties
@@ -345,12 +402,11 @@ classdef Mixture < handle & matlab.mixin.Copyable
         function obj = computeEquivalenceRatio(obj)
             
             % Check if initial state is defined (temperature, pressure, and composition)
-            if ~obj.T || ~obj.p || ~obj.FLAG_FUEL || ~obj.FLAG_OXIDIZER
+            if ~obj.T || (~obj.p && ~obj.vSpecific) || ~obj.FLAG_FUEL || ~obj.FLAG_OXIDIZER
                 return
             end
 
             % Get oxidizer of reference
-            % obj.chemicalSystem = 
             obj.chemicalSystem.getOxidizerReference(obj.listSpeciesOxidizer);
             
             % Computation of theoretical stoichiometricMoles
@@ -365,7 +421,7 @@ classdef Mixture < handle & matlab.mixin.Copyable
 
         function obj = compute_ratios_fuel_oxidizer(obj, propertiesMatrixFuel, propertiesMatrixOxidizer)
             % Compute percentage Fuel, Oxidizer/Fuel ratio and equivalence ratio
-            if obj.FLAG_FUEL || obj.FLAG_OXIDIZER
+            if obj.FLAG_FUEL && obj.FLAG_OXIDIZER
                 mass_fuel = obj.getMass(obj.chemicalSystem, propertiesMatrixFuel);
                 mass_oxidizer = obj.getMass(obj.chemicalSystem, propertiesMatrixOxidizer);
                 mass_mixture = obj.mi;
@@ -506,6 +562,8 @@ classdef Mixture < handle & matlab.mixin.Copyable
                             objArray(j).T = values{i}(j);
                         case {'pressure', 'p'}
                             objArray(j).p = values{i}(j);
+                        case {'volume', 'vspecific', 'v'}
+                            objArray(j).vSpecific = values{i}(j);
                         case {'equivalenceratio', 'phi'}
                             objArray(j).equivalenceRatio = values{i}(j);
                         case {'velocity', 'u', 'u1'}
@@ -535,6 +593,23 @@ classdef Mixture < handle & matlab.mixin.Copyable
 
         end
 
+        function vMolar = vSpecific2vMolar(obj, vSpecific, moles, varargin)
+            % Compute molar volume [m3/mol] from specific volume [m3/kg]
+            
+            % Get index specie
+            if nargin == 3
+                index = combustiontoolbox.utils.findIndex(obj.chemicalSystem.listSpecies, obj.listSpecies);
+            else
+                index = varargin{1};
+            end
+
+            % Compute Mean Molecular Weight [g/mol]
+            MW = computeMeanMolecularWeight(obj, moles, index);
+
+            % Compute specific volume [m3/mol]
+            vMolar = vSpecific * MW * 1e-3;
+        end
+
         function print(obj, varargin)
             % 
             combustiontoolbox.utils.display.print_mixture(obj, varargin{:});
@@ -558,7 +633,7 @@ classdef Mixture < handle & matlab.mixin.Copyable
 
     methods (Access = private)
 
-        function obj = compute_properties(obj, system, T, p)
+        function obj = compute_properties(obj, system, temperature, pressure)
             % Compute properties from the given chemicalSystem at pressure p [bar]
             % and temperature T [K]
             %
@@ -583,8 +658,8 @@ classdef Mixture < handle & matlab.mixin.Copyable
             obj.errorMolesIons = 0;
 
             % Inputs
-            obj.T = T; % [K]
-            obj.p = p; % [bar]
+            obj.T = temperature; % [K]
+            obj.p = pressure; % [bar]
 
             % Unpack propertiesMatrix
             Ni = propertiesMatrix(:, system.ind_ni); % [mol]
@@ -622,15 +697,18 @@ classdef Mixture < handle & matlab.mixin.Copyable
 
             % Compute vector atoms of each element without frozen species
             obj.natomElementsReact = sum(propertiesMatrix(system.indexReact, system.ind_ni) .* system.stoichiometricMatrix(system.indexReact, :), 1);
+            
+            % Compute specific volume [m3/kg]
+            obj.vSpecific = obj.equationOfState.getVolume(temperature, convert_bar_to_Pa(pressure), obj.chemicalSystem.listSpecies, obj.Xi) / (obj.MW * 1e-3);
 
             % Compute volume [m3]
-            obj.v = obj.equationOfState.getVolume(T, convert_bar_to_Pa(p), obj.chemicalSystem.listSpecies, obj.Xi) * N_gas;
+            obj.v = obj.vSpecific * obj.mi;
 
             % Compute density [kg/m3]
             obj.rho = obj.mi / obj.v;
 
             % Compute internal energy [kJ]
-            obj.e = obj.h - N_gas * R0 * T * 1e-3;
+            obj.e = obj.h - N_gas * R0 * temperature * 1e-3;
 
             % Compute thermal internal energy [kJ]
             obj.DeT = obj.e - obj.ef;
@@ -654,7 +732,7 @@ classdef Mixture < handle & matlab.mixin.Copyable
             obj.gamma = obj.cp / obj.cv;
             
             % Compute sound velocity [m/s]
-            obj.sound = sqrt(obj.gamma * convert_bar_to_Pa(p) / obj.rho);
+            obj.sound = sqrt(obj.gamma * convert_bar_to_Pa(pressure) / obj.rho);
             
             % Correction of: cP, cv, gamma, and speed of sound as consequence of the
             % chemical reaction
@@ -665,13 +743,13 @@ classdef Mixture < handle & matlab.mixin.Copyable
                 if ~any(isnan(obj.dNi_T)) && ~any(isinf(obj.dNi_T))
                     delta = ~obj.phase;
                     h0_j = propertiesMatrix(:, system.ind_hi) * 1e3; % [J/mol]
-                    obj.cp_r = sum(h0_j / T .* (1 + delta .* (Ni - 1)) .* obj.dNi_T, 'omitnan'); % [J/K]
+                    obj.cp_r = sum(h0_j / temperature .* (1 + delta .* (Ni - 1)) .* obj.dNi_T, 'omitnan'); % [J/K]
                     obj.cp_f = obj.cp;
                     obj.cp = obj.cp_f + obj.cp_r; % [J/K]
                     obj.cv = obj.cp + (N_gas * R0 * obj.dVdT_p^2) / obj.dVdp_T; % [J/K]
                     obj.gamma = obj.cp / obj.cv; % [-]
                     obj.gamma_s =- obj.gamma / obj.dVdp_T; % [-]
-                    obj.sound = sqrt(obj.gamma_s * convert_bar_to_Pa(p) / obj.rho); % [m/s]
+                    obj.sound = sqrt(obj.gamma_s * convert_bar_to_Pa(pressure) / obj.rho); % [m/s]
 
                     return
                 end
@@ -685,6 +763,11 @@ classdef Mixture < handle & matlab.mixin.Copyable
             obj.dVdp_T = -1;         % [-]
             obj.gamma_s = obj.gamma; % [-]
         
+        end
+
+        function MW = computeMeanMolecularWeight(obj, moles, index)
+            % Compute Mean Molecular Weight [g/mol]
+            MW = dot(moles, obj.chemicalSystem.propertiesMatrix(index, obj.chemicalSystem.ind_W)) / sum(moles);
         end
 
         function Ds = compute_entropy_mixing(obj, Ni, N_gas, R0, FLAG_NONZERO)

@@ -197,7 +197,8 @@ classdef EquilibriumSolver < handle
                     return
                 end
 
-                mix.v = mix.v * obj.PD.vP_vR.value;
+                %mix.v = mix.v * obj.PD.vP_vR.value;
+                fprintf('\nto be clarified\n')
             end
 
         end
@@ -206,7 +207,7 @@ classdef EquilibriumSolver < handle
             % Obtain equilibrium properties and composition for the given temperature [K] and pressure [bar]
             %
             % Args:
-            %     obj (EquilibriumSolver): 
+            %     obj (EquilibriumSolver): Object of the class EquilibriumSolver
             %     mix (Mixture): Properties of the initial mixture
             %     T (float): Temperature [K]
             %
@@ -343,9 +344,9 @@ classdef EquilibriumSolver < handle
             % Find the temperature [K] (root) for the set chemical transformation at equilibrium using the second-order Newton-Raphson method
             %
             % Args:
-            %     self (struct): Data of the mixture, conditions, and databases
-            %     mix1 (struct): Properties of the initial mixture
-            %     mix2 (struct): Properties of the final mixture
+            %     obj (EquilibriumSolver): Object of the class EquilibriumSolver
+            %     mix1 (Mixture): Properties of the initial mixture
+            %     mix2 (Mixture): Properties of the final mixture
             %     pP (float): Pressure [bar]
             %     field (str): Fieldname in Problem Description (PD)
             %     x0 (float): Guess temperature [K]
@@ -440,6 +441,65 @@ classdef EquilibriumSolver < handle
             value = value * 1e-3; % [kJ/K] (HP, EV) or [kJ/K^2] (SP, SV)
         end
 
+        function [x, STOP, guess_moles] = nsteff(obj, mix1, mix2, field, x0, guess_moles)
+            % Find the temperature [K] (root) for the set chemical transformation at equilibrium using the third-order Newton-Steffensen method
+            %
+            % Args:
+            %     obj (EquilibriumSolver): Object of the class EquilibriumSolver
+            %     mix1 (Mixture): Properties of the initial mixture
+            %     mix2 (Mixture): Properties of the final mixture
+            %     field (str): Fieldname in Problem Description (PD)
+            %     x0 (float): Guess temperature [K]
+            %     guess_moles (float): Guess moles final mixture
+            %
+            % Returns:
+            %     Tuple containing
+            %
+            %     * x (float): Temperature at equilibrium [K]
+            %     * STOP (float): Relative error [-] 
+            %     * guess_moles (struct): Guess moles final mixture
+        
+            if any(strcmpi(obj.problemType, {'TP', 'TV'}))
+                x = x0;
+                STOP = 0;
+                return
+            end
+        
+            it = 0; STOP = 1.0;
+            while STOP > obj.tol0 && it < obj.itMax
+                % Update iteration number
+                it = it + 1;
+                % Get the residual of f, its derivative with temperature, and the
+                % relative value of the residual
+                [f0, fprime0, frel, guess_moles] = getRatioNewton(obj, mix1, mix2, field, x0, guess_moles);
+                % Compute pseudo-solution
+                x = abs(x0 - f0 / fprime0);
+                % Re-estimation of first derivative
+                f0_2 = getRatioNewton(obj, mix1, mix2, field, x, guess_moles);
+                % Compute solution
+                x = abs(x0 - f0^2 / (fprime0 * (f0 - f0_2)));
+                % Compute stop criteria
+                STOP = max(abs((x - x0) / x), frel);
+                % Update solution
+                x0 = x;
+                % Debug       
+                % aux_x(it) = x;
+                % aux_STOP(it) = STOP;
+            end
+
+            % debug_plot_error(it, aux_STOP);
+
+            if STOP > obj.tol0
+                fprintf('\n***********************************************************\n')
+                fprintf('Newton method not converged\nCalling Steffensen-Aitken root finding algorithm\n')
+                x0 = regula_guess(obj, mix1, pP, field);
+                [x, STOP] = steff(obj, mix1, pP, field, x0, []);
+            else
+                obj.printError(it, x, STOP);
+            end
+    
+        end
+
         function x0 = regulaGuess(obj, mix1, mix2, field)
             % Find a estimate of the temperature for the set chemical equilibrium
             % transformation using the regula falsi method
@@ -485,9 +545,9 @@ classdef EquilibriumSolver < handle
             % Get fixed point of a function based on the chemical transformation
             %
             % Args:
-            %     self (struct):  Data of the mixture, conditions, and databases
-            %     mix1 (struct):  Properties of the initial mixture
-            %     mix2 (struct):  Properties of the final mixture
+            %     obj (EquilibriumSolver): Object of the class EquilibriumSolver
+            %     mix1 (Mixture): Properties of the initial mixture
+            %     mix2 (Mixture): Properties of the final mixture
             %     field (str):    Fieldname in Problem Description (PD)
             %     x0 (float):     Guess temperature [K]
             %
@@ -520,8 +580,8 @@ classdef EquilibriumSolver < handle
             % Print error of the method if the number of iterations is greater than maximum iterations allowed
             %
             % Args:
+            %     obj (EquilibriumSolver): Object of the class EquilibriumSolver
             %     it (float):    Number of iterations executed in the method
-            %     itMax (float): Maximum nNumber of iterations allowed in the method
             %     T (float):     Temperature [K]
             %     STOP (float):  Relative error [-]
         

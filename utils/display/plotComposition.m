@@ -1,4 +1,4 @@
-function [ax, fig] = plot_molar_fractions(obj, x_var, x_field, y_field, varargin)
+function [ax, fig] = plotComposition(obj, x_var, x_field, y_field, varargin)
     % Plot molar fractions againts any variable
     %
     % Args:
@@ -11,7 +11,7 @@ function [ax, fig] = plot_molar_fractions(obj, x_var, x_field, y_field, varargin
     %     * validation (struct): Struct that contains validations with (x_field, y_field)
     %     * nfrec (float): Frequency points to plot validations
     %     * mintol (float): Minimum limit i-axis with the composition of the mixture
-    %     * display_species (cell): List of species to plot
+    %     * displaySpecies (cell): List of species to plot
     %     * y_var (cell): Get y-axis data from a different mixture
     %     * config (struct): Struct with the configuration for plots
     %     * axis_x (char): Set x-axis limits
@@ -32,7 +32,7 @@ function [ax, fig] = plot_molar_fractions(obj, x_var, x_field, y_field, varargin
     %     * [ax, fig] = plot_molar_fractions(self, mix1, 'phi', 'Xi')
     %     * [ax, fig] = plot_molar_fractions(self, mix1, 'phi', 'Xi', 'y_var', mix2)
     %     * [ax, fig] = plot_molar_fractions(self, mix1, 'phi', 'Xi', 'y_var', mix2, 'validation', results_CEA)
-    %     * [ax, fig] = plot_molar_fractions(self, mix1, 'phi', 'Xi', 'y_var', mix2, 'validation', results_CEA, 'display_species', display_species)
+    %     * [ax, fig] = plot_molar_fractions(self, mix1, 'phi', 'Xi', 'y_var', mix2, 'validation', results_CEA, 'displaySpecies', displaySpecies)
     
     % Import packages
     import combustiontoolbox.utils.findIndex
@@ -40,7 +40,7 @@ function [ax, fig] = plot_molar_fractions(obj, x_var, x_field, y_field, varargin
     % Temporal
     config = Miscellaneous().config;
     mintol_display = 1e-14;
-    display_species = {};
+    displaySpecies = {};
 
     % Default values
     ax = [];
@@ -51,7 +51,7 @@ function [ax, fig] = plot_molar_fractions(obj, x_var, x_field, y_field, varargin
     config.labely = interpreter_label(y_field, config.label_type);
     % mintol_display = self.C.mintol_display;
     config.yscale = 'log';
-    [species, listSpecies] = get_display_species(obj, display_species);
+    [species, listSpecies] = get_displaySpecies(obj, displaySpecies);
     y_var = x_var;
 
     % Unpack
@@ -64,7 +64,7 @@ function [ax, fig] = plot_molar_fractions(obj, x_var, x_field, y_field, varargin
                 nfrec = varargin{i + 1};
             case {'mintol', 'mintol_display', 'toln'}
                 mintol_display = varargin{i + 1};
-            case {'ls', 'species', 'display_species', 'display species'}
+            case {'ls', 'species', 'displayspecies', 'display species'}
                 species = varargin{i + 1};
             case {'y', 'y_var', 'yvar', 'y var', 'y_data', 'ydata', 'y data'}
                 y_var = varargin{i + 1};
@@ -111,7 +111,7 @@ function [ax, fig] = plot_molar_fractions(obj, x_var, x_field, y_field, varargin
     index_species_CT = findIndex(listSpecies, species);
 
     % Remove species that do not appear
-    [species, index_species_CT] = clean_display_species(mix1.Xi, listSpecies, index_species_CT);
+    [species, index_species_CT] = clean_displaySpecies(mix1.Xi, listSpecies, index_species_CT);
 
     % Set figure
     if isempty(ax)
@@ -242,18 +242,18 @@ function [ax, fig] = plot_molar_fractions(obj, x_var, x_field, y_field, varargin
 end
 
 % SUB-PASS FUNCTIONS
-function [species, LS] = get_display_species(obj, display_species)
+function [species, LS] = get_displaySpecies(obj, displaySpecies)
     LS = obj.chemicalSystem.listSpecies;
 
-    if isempty(display_species)
+    if isempty(displaySpecies)
         species = obj.chemicalSystem.listProducts;
     else
-        species = display_species;
+        species = displaySpecies;
     end
 
 end
 
-function [species, index_pass] = clean_display_species(molar_fractions, species, index_species)
+function [species, index_pass] = clean_displaySpecies(molar_fractions, species, index_species)
     % Remove species that do not appear
 
     % Checks

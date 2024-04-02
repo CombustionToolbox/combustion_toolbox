@@ -13,10 +13,10 @@
 %     162(12), 4514-4522.
 %
 % @author: Alberto Cuadra Lara
-%          PhD Candidate - Group Fluid Mechanics
+%          Postdoctoral researcher - Group Fluid Mechanics
 %          Universidad Carlos III de Madrid
-%                  
-% Last update Jan 17 2023
+%                 
+% Last update April 02 2024
 % -------------------------------------------------------------------------
 
 % Import packages

@@ -2,9 +2,8 @@
 % EXAMPLE: SHOCK_OBLIQUE_THETA
 %
 % Compute pre-shock and post-shock state for a oblique incident shock wave
-% at standard conditions, a set of 51 species considered, a initial 
-% shock front velocities M1 = 10 [m/s], and a set of deflection angle 
-% theta = [5:1:40] [deg]
+% at standard conditions, a set of 51 species considered, a pre-shock Mach
+% number M1 = 10, and a set of deflection angle theta = [5:1:40] [deg]
 %    
 % Air_ions == {'eminus', 'Ar', 'Arplus', 'C', 'Cplus', 'Cminus', ...
 %              'CN', 'CNplus', 'CNminus', 'CNN', 'CO', 'COplus', ...

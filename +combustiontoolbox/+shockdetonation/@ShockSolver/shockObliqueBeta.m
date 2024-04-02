@@ -21,7 +21,6 @@ function [mix1, mix2] = shockObliqueBeta(obj, mix1, u1, beta, varargin)
     %     * [mix1, mix2] = shockObliqueBeta(ShockSolver(), mix1, u1, beta)
     %     * [mix1, mix2] = shockObliqueBeta(ShockSolver(), mix1, u1, beta, mix2)
 
-
     % Unpack input data
     mix1 = unpack(mix1, u1, beta);
 

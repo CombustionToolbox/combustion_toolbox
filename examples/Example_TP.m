@@ -45,3 +45,6 @@ solver = EquilibriumSolver('problemType', 'TP');
 
 % Solve problem
 solver.solveArray(mixArray);
+
+% Plot molar fractions
+plotComposition(mixArray(1), mixArray, 'equivalenceRatio', 'Xi', 'mintol', 1e-14);

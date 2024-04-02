@@ -1,4 +1,4 @@
-function [cp, cv, h0, DhT, e0, DeT, s0, g0] = species_thermo_NASA(species, temperature, DB)
+function [cp0, cv0, h0, DhT, e0, DeT, s0, g0] = species_thermo_NASA(species, temperature, DB)
     % Compute thermodynamic function using NASA's 9 polynomials
     %
     % Args:
@@ -26,15 +26,15 @@ function [cp, cv, h0, DhT, e0, DeT, s0, g0] = species_thermo_NASA(species, tempe
     hf0 = DB.(species).hf; % [J/mol];
     Tref = 298.15; % [K]
     % Unpack NASA's polynomials coefficients
-    [a, b, tRange, tExponents, ctTInt, txFormula, swtCondensed] = unpack_NASA_coefficients(species, DB);
+    [a, b, tRange, tExponents, ctTInt, txFormula, phase] = unpack_NASA_coefficients(species, DB);
     % Get elements
     elements = set_elements();
     % Get element matrix of the species
     element_matrix = set_element_matrix(txFormula, elements);
     % Compute change in moles of gases during the formation reaction of a
     % mole of that species starting from the elements in their reference state
-    Delta_n = compute_change_moles_gas_reaction(element_matrix, swtCondensed);
-    % Compute specific enthalpy [kJ/mol]
+    Delta_n = compute_change_moles_gas_reaction(element_matrix, phase);
+    % Compute thermodynamic properties
     for i = length(temperature):-1:1
         T = temperature(i);
 
@@ -42,12 +42,12 @@ function [cp, cv, h0, DhT, e0, DeT, s0, g0] = species_thermo_NASA(species, tempe
             % Compute interval temperature
             tInterval = compute_interval_NASA(species, T, DB, tRange, ctTInt);
             % Compute thermodynamic function
-            cp(i) = R0 * (sum(a{tInterval} .* T.^tExponents{tInterval}));
+            cp0(i) = R0 * (sum(a{tInterval} .* T.^tExponents{tInterval}));
             h0(i) = R0 * T * (sum(a{tInterval} .* T.^tExponents{tInterval} .* [-1 log(T) 1 1/2 1/3 1/4 1/5 0]) + b{tInterval}(1) / T);
             s0(i) = R0 * (sum(a{tInterval} .* T.^tExponents{tInterval} .* [-1/2 -1 log(T) 1 1/2 1/3 1/4 0]) + b{tInterval}(2));
             ef0 = hf0 - Delta_n * R0 * Tref;
-            e0(i) = (ef0 + (h0(i) - hf0) - (1 - swtCondensed) * R0 * (T - Tref));
-            cv(i) = cp(i) - R0;
+            e0(i) = (ef0 + (h0(i) - hf0) - (1 - phase) * R0 * (T - Tref));
+            cv0(i) = cp0(i) - R0;
             DhT(i) = h0(i) - hf0;
             DeT(i) = e0(i) - ef0;
             % If the species is only a reactant determine it's reference temperature
@@ -56,8 +56,8 @@ function [cp, cv, h0, DhT, e0, DeT, s0, g0] = species_thermo_NASA(species, tempe
             % points instead of 298.15 K
         else
             Tref = tRange(1);
-            cp = 0;
-            cv = 0;
+            cp0 = 0;
+            cv0 = 0;
             h0(i) = hf0;
             e0(i) = hf0 - Delta_n * R0 * Tref;
             g0(i) = DB.(species).Hf0;
@@ -76,3 +76,13 @@ function [cp, cv, h0, DhT, e0, DeT, s0, g0] = species_thermo_NASA(species, tempe
     g0 = g0 * 1e-3; % [kJ/mol]
     s0 = s0 * 1e-3; % [kJ/(mol-K)]
 end
+
+for i = 1:DB.(species).Tintervals
+        
+    if (T >= DB.(species).Trange{i}(1)) && (T <= DB.(species).Trange{i}(2))
+        break
+    end
+
+end
+
+Tinterval = i;

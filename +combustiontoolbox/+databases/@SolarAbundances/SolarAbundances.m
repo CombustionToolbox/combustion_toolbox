@@ -36,7 +36,7 @@ classdef SolarAbundances
             [obj.logAbundances, obj.elements] = obj.read_abundances(ip.Results.filename);
             
             % Get index of the reference element
-            obj.indexElementRefence = find_ind(obj.elements, obj.elementRefence);
+            obj.indexElementRefence = combustiontoolbox.utils.findIndex(obj.elements, obj.elementRefence);
         end
 
         function moles = abundances2moles(obj, elements, varargin)
@@ -57,7 +57,10 @@ classdef SolarAbundances
             % Examples:
             %     * moles = SolarAbundances.abundances2moles({'H', 'He', 'C', 'N', 'O', 'Ne', 'Ar', 'S', 'Cl', 'Fe'})
             %     * moles = SolarAbundances.abundances2moles({'H', 'He', 'C', 'N', 'O', 'Ne', 'Ar', 'S', 'Cl', 'Fe'}, 10)
-        
+            
+            % Import packages
+            import combustiontoolbox.utils.findIndex
+
             % Unpack
             metallicity = unpack(varargin);
 
@@ -67,8 +70,8 @@ classdef SolarAbundances
 
             % Recompute with metallicity. NOTE: H and He do not change their abundances
             if nargin > 2
-                index_H = find_ind(elementsDB, 'H');
-                index_He = find_ind(elementsDB, 'He');
+                index_H = findIndex(elementsDB, 'H');
+                index_He = findIndex(elementsDB, 'He');
                 index_change = 1:1:length(elementsDB);
                 index_change([index_H, index_He]) = [];
                 logAbundances(index_change) = logAbundances(index_change) + log10(metallicity);
@@ -76,7 +79,7 @@ classdef SolarAbundances
         
             % Reorganize abundances as the given element cell
             for i = length(elements):-1:1
-                index(i) = find_ind(elementsDB, elements{i});
+                index(i) = findIndex(elementsDB, elements{i});
             end
         
             % Compute moles relative to H of the remaining elements in the mixture

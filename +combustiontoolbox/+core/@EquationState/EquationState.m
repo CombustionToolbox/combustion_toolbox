@@ -24,49 +24,48 @@ classdef EquationState < handle
             end
         end
 
-        function pressure = getPressure(obj, molesGas, temperature, volume, varargin)
-            % Compute pressure [Pa] using the equation of state specified by the user            
-            pressure = obj.pressureFunction(molesGas, temperature, volume, varargin{:});
+        function pressure = getPressure(obj, temperature, molarVolume, varargin)
+            % Compute pressure [Pa] using the defined equation of state
+            pressure = obj.pressureFunction(temperature, molarVolume, varargin{:});
         end
 
-        function volume = getVolume(obj, molesGas, temperature, pressure, varargin)
-            % Compute molar volume [m3/mol] using the equation of state specified by the user
-            volume = obj.volumeFunction(molesGas, temperature, pressure, varargin{:});
+        function volume = getVolume(obj, temperature, pressure, varargin)
+            % Compute molar volume [m3/mol] using the defined equation of state
+            volume = obj.volumeFunction(temperature, pressure, varargin{:});
         end
 
     end
 
     methods (Access = private, Static)
         
-        function p = getPressureIdeal(n, T, v, varargin)
+        function pressure = getPressureIdeal(temperature, molarVolume, varargin)
             % Compute pressure considering ideal Equation of State (EoS)
             %
             % Args:
-            %     n (float): Number of moles of the mixture in gaseous phase [mol]
-            %     T (float): Temperature of the mixture [K]
-            %     v (float): Volume of the mixture [m3]
+            %     temperature (float): Temperature of the mixture [K]
+            %     molarVolume (float): Molar volume of the mixture [m3/mol]
             % 
             % Returns:
-            %     p (float): Pressure of the mixture [Pa]
+            %     pressure (float): Pressure of the mixture [Pa]
             
             R0 = combustiontoolbox.common.Constants.R0; % Universal gas constant [J/(K mol)]
         
-            p = (n .* R0 .* T) ./ v;
+            pressure = (R0 .* temperature) ./ molarVolume;
         end
 
-        function V = getVolumeIdeal(T, p, varargin)
+        function molarVolume = getVolumeIdeal(temperature, pressure, varargin)
             % Compute molar volume considering ideal Equation of State (EoS)
             %
             % Args:
-            %     T (float): Temperature of the mixture [K]
-            %     p (float): Pressure of the mixture [Pa]
+            %     temperature (float): Temperature of the mixture [K]
+            %     molarVolume (float): Pressure of the mixture [Pa]
             % 
             % Returns:
             %     V (float): Molar volume of the mixture [m3/mol]
             
             R0 = combustiontoolbox.common.Constants.R0; % Universal gas constant [J/(K mol)]
             
-            V = R0 * T ./ p;
+            molarVolume = R0 * temperature ./ pressure;
         end
 
     end

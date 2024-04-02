@@ -36,7 +36,8 @@ function [ax, fig] = plotComposition(obj, x_var, x_field, y_field, varargin)
     
     % Import packages
     import combustiontoolbox.utils.findIndex
-
+    import combustiontoolbox.utils.display.species2latex
+    
     % Temporal
     config = Miscellaneous().config;
     mintol_display = 1e-14;

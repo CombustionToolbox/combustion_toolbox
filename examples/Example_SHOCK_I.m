@@ -3,7 +3,7 @@
 %
 % Compute pre-shock and post-shock state for a planar incident shock wave
 % at standard conditions, a set of 16 species considered and a set of
-% initial shock front velocities (u1) contained in (sound velocity, 20000) [m/s]
+% pre-shock Mach numbers (M1) contained in (1, 40)
 %    
 % Air == {'O2','N2','O','O3','N','NO','NO2','NO3','N2O','N2O3','N2O4',...
 %         'N3','C','CO','CO2','Ar'}

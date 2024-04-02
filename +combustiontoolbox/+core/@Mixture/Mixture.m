@@ -569,7 +569,7 @@ classdef Mixture < handle & matlab.mixin.Copyable
                         case {'velocity', 'u', 'u1'}
                             objArray(j).u = values{i}(j);
                         case {'mach', 'm1'}
-                            obj.mach = values{i}(j);
+                            objArray(j).mach = values{i}(j);
                             FLAG_MACH = true;
                         case {'wave angle', 'waveangle', 'wave', 'beta'}
                             objArray(j).beta = values{i}(j);
@@ -586,7 +586,7 @@ classdef Mixture < handle & matlab.mixin.Copyable
 
                 % Additional inputs
                 if FLAG_MACH
-                    objArray(j).u = obj.mach * objArray(j).sound;
+                    objArray(j).u = objArray(j).mach * objArray(j).sound;
                 end
 
             end

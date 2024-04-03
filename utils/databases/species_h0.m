@@ -22,15 +22,15 @@ function h0 = species_h0(species, T, DB)
     end
     
     % Check if species data is already cached
-    idx = find(strcmp(cachedSpecies, species), 1);
-    if isempty(idx)
+    index = find(strcmp(cachedSpecies, species), 1);
+    if isempty(index)
         % Load species data and cache it
         h0curve = DB.(species).h0curve;
         cachedSpecies{end+1} = species;
         cachedH0curves{end+1} = h0curve;
     else
         % Retrieve cached data
-        h0curve = cachedH0curves{idx};
+        h0curve = cachedH0curves{index};
     end
     
     % Compute enthalpy [kJ/mol]

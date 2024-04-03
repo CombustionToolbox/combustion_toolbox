@@ -22,15 +22,15 @@ function s0 = species_s0(species, T, DB)
     end
     
     % Check if species data is already cached
-    idx = find(strcmp(cachedSpecies, species), 1);
-    if isempty(idx)
+    index = find(strcmp(cachedSpecies, species), 1);
+    if isempty(index)
         % Load species data and cache it
         s0curve = DB.(species).s0curve;
         cachedSpecies{end+1} = species;
         cachedS0curves{end+1} = s0curve;
     else
         % Retrieve cached data
-        s0curve = cachedS0curves{idx};
+        s0curve = cachedS0curves{index};
     end
     
     % Compute entropy [kJ/(mol-K)]

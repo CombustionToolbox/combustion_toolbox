@@ -23,15 +23,15 @@ function cp = species_cP(species, T, DB)
     end
     
     % Check if species data is already cached
-    idx = find(strcmp(cachedSpecies, species), 1);
-    if isempty(idx)
+    index = find(strcmp(cachedSpecies, species), 1);
+    if isempty(index)
         % Load species data and cache it
         cpcurve = DB.(species).cpcurve;
         cachedSpecies{end+1} = species;
         cachedCPcurves{end+1} = cpcurve;
     else
         % Retrieve cached data
-        cpcurve = cachedCPcurves{idx};
+        cpcurve = cachedCPcurves{index};
     end
     
     % Compute specific heat at constant pressure [J/(mol-K)]

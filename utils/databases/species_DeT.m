@@ -22,15 +22,15 @@ function DeT = species_DeT(species, T, DB)
     end
     
     % Check if species data is already cached
-    idx = find(strcmp(cachedSpecies, species), 1);
-    if isempty(idx)
+    index = find(strcmp(cachedSpecies, species), 1);
+    if isempty(index)
         % Load species data and cache it
         DeTcurve = DB.(species).DeTcurve;
         cachedSpecies{end+1} = species;
         cachedDETcurves{end+1} = DeTcurve;
     else
         % Retrieve cached data
-        DeTcurve = cachedDETcurves{idx};
+        DeTcurve = cachedDETcurves{index};
     end
     
     % Compute thermal internal energy [kJ/mol]

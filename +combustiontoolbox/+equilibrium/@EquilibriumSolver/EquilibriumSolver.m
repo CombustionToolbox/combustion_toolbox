@@ -333,6 +333,19 @@ classdef EquilibriumSolver < handle
             point = (f_vector(2) * x_vector(1) - f_vector(1) * x_vector(2)) / (f_vector(2) - f_vector(1));
         end
 
+        function point = getPointAitken(x0, g_vector)
+            % Get fixed point of a function based on the chemical transformation using the Aitken acceleration method
+            %
+            % Args:
+            %     x0 (float): Guess temperature [K]
+            %     g_vector (struct): Fixed points of the function [kJ] (HP, EV) or [kJ/K] (SP, SV)
+            %
+            % Returns:
+            %     point (float): Point of the function [K]
+            
+            point = x0 - (g_vector(1) - x0)^2 / (g_vector(2) - 2*g_vector(1) + x0);   
+        end
+
     end
 
     methods (Access = private)
@@ -492,12 +505,57 @@ classdef EquilibriumSolver < handle
             if STOP > obj.tol0
                 fprintf('\n***********************************************************\n')
                 fprintf('Newton method not converged\nCalling Steffensen-Aitken root finding algorithm\n')
-                x0 = regula_guess(obj, mix1, pP, field);
-                [x, STOP] = steff(obj, mix1, pP, field, x0, []);
+                x0 = obj.regulaGuess(mix1, mix2, field);
+                [x, STOP] = obj.steff(mix1, mix2, field, x0, []);
             else
                 obj.printError(it, x, STOP);
             end
     
+        end
+
+        function [x, STOP, guess_moles] = steff(obj, mix1, mix2, field, x0, guess_moles)
+            % Find the temperature [K] (root) for the set chemical transformation at equilibrium using the Steffenson-Aitken method
+            %
+            % Args:
+            %     obj (EquilibriumSolver): Object of the class EquilibriumSolver
+            %     mix1 (Mixture): Properties of the initial mixture
+            %     mix2 (Mixture): Properties of the final mixture
+            %     field (str): Fieldname in Problem Description (PD)
+            %     x0 (float): Guess temperature [K]
+            %     guess_moles (float): Guess moles final mixture
+            %
+            % Returns:
+            %     Tuple containing
+            %
+            %     * x (float): Temperature at equilibrium [K]
+            %     * STOP (float): Relative error [-] 
+            %     * guess_moles (float): Guess moles final mixture
+        
+            if any(strcmpi(obj.problemType, {'TP', 'TV'}))
+                x = x0;
+                STOP = 0;
+                return
+            end
+        
+            it = 0; STOP = 1.0;
+            
+            while STOP > obj.tol0 && it < obj.itMax
+                it = it + 1;
+                [g, g_rel]= getGpoint(obj, mix1, mix2, field, x0, guess_moles);
+                fx = abs(g - x0);
+                g_aux  = getGpoint(obj, mix1, mix2, field, fx, guess_moles);
+                fx2 = abs(g_aux - fx);
+                if abs(fx2 - 2*fx + x0) > obj.tol0
+                    x = obj.getPointAitken(x0, [fx, fx2]);
+                else
+                    x = fx;
+                end
+        
+                STOP = max(abs((x - fx) / x), abs(g_rel));
+                x0 = x;
+            end
+        
+            obj.printError(it, x, STOP);
         end
 
         function x0 = regulaGuess(obj, mix1, mix2, field)

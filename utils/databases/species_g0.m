@@ -1,4 +1,4 @@
-function g0 = species_g0(species, T, DB)
+function g0 = species_g0(species, T, DB, varargin)
     % Compute Gibbs energy [kJ/mol] of the species at the given temperature [K]
     % using piecewise cubic Hermite interpolating polynomials and linear extrapolation
     %
@@ -22,15 +22,15 @@ function g0 = species_g0(species, T, DB)
     end
     
     % Check if species data is already cached
-    idx = find(strcmp(cachedSpecies, species), 1);
-    if isempty(idx)
+    index = find(strcmp(cachedSpecies, species), 1);
+    if isempty(index)
         % Load species data and cache it
         g0curve = DB.(species).g0curve;
         cachedSpecies{end+1} = species;
         cachedG0curves{end+1} = g0curve;
     else
         % Retrieve cached data
-        g0curve = cachedG0curves{idx};
+        g0curve = cachedG0curves{index};
     end
     
     % Compute Gibbs energy [kJ/mol]

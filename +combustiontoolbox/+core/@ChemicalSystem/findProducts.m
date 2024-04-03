@@ -3,7 +3,7 @@ function [LS, ind_elements_DB] = findProducts(obj, listSpecies, varargin)
     % products for the given list of reactants
     %
     % Args:
-    %     obj (Database): Database
+    %     obj (ChemicalSystem): 
     %     listSpecies (cell): List of reactants
     %
     % Optional Name-Value Pairs Args:
@@ -19,13 +19,15 @@ function [LS, ind_elements_DB] = findProducts(obj, listSpecies, varargin)
     %     * ind_elements_DB (float): Matrix NS_DB x MAX_ELEMENTS with element indeces of the species contained in the database
     %
     % Examples:
-    %     * [LS, ind_elements_DB] = find_products(self, {'O2', 'N', 'eminus'})
-    %     * [LS, ind_elements_DB] = find_products(self, {'O2', 'CO', 'N'}, 'flag_burcat', true)
-    %     * [LS, ind_elements_DB] = find_products(self, {'O2', 'CO', 'N'}, 'flag_burcat', true, 'flag_ion', true)
-    %     * [LS, ind_elements_DB] = find_products(self, {'O2', 'CO', 'N'}, 'flag_burcat', true, 'flag_ion', true, 'flag_condensed', true, 'ind', ind_elements_DB)
-    %     * [LS, ind_elements_DB] = find_products(self, {'O2', 'CO', 'N'}, 'flag_burcat', true, 'flag_ion', true, 'ind', ind_elements_DB)
+    %     * [LS, ind_elements_DB] = findProducts(ChemicalSystem(DB), {'O2', 'N', 'eminus'})
+    %     * [LS, ind_elements_DB] = findProducts(ChemicalSystem(DB), {'O2', 'CO', 'N'}, 'flag_burcat', true)
+    %     * [LS, ind_elements_DB] = findProducts(ChemicalSystem(DB), {'O2', 'CO', 'N'}, 'flag_burcat', true, 'flag_ion', true)
+    %     * [LS, ind_elements_DB] = findProducts(ChemicalSystem(DB), {'O2', 'CO', 'N'}, 'flag_burcat', true, 'flag_ion', true, 'flag_condensed', true, 'ind', ind_elements_DB)
+    %     * [LS, ind_elements_DB] = findProducts(ChemicalSystem(DB), {'O2', 'CO', 'N'}, 'flag_burcat', true, 'flag_ion', true, 'ind', ind_elements_DB)
     
+    % Import packages
     import combustiontoolbox.utils.findIndex
+
     % Definitions
     MAX_ELEMENTS = 5;
     FLAG_BURCAT = obj.FLAG_BURCAT; % Flag indicating to look for species also in Burcat's database

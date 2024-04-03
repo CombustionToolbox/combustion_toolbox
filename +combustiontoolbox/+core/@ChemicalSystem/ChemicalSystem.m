@@ -65,6 +65,7 @@ classdef ChemicalSystem < handle & matlab.mixin.Copyable
     properties (Access = private, Hidden)
         listSpeciesFormula
         database
+        FLAG_INITIALIZE = true
     end
 
     methods
@@ -72,22 +73,45 @@ classdef ChemicalSystem < handle & matlab.mixin.Copyable
         [LS, ind_elements_DB] = findProducts(obj, listSpecies, varargin)
         [obj, LS, listSpeciesFormula] = list_species(obj, database, varargin)
         
-        function obj = ChemicalSystem(database, listSpecies, varargin)
+        function obj = ChemicalSystem(database, varargin)
+            % Constructor
+
+            % Definitions
+            defaultListSpecies = [];
+            
+            % Check additional inputs
+            if nargin > 1
+                varargin = [{'listSpecies'}, varargin(:)'];
+            end
 
             % Parse inputs
             ip = inputParser;
             addRequired(ip, 'database'); % , @(x) isa(x, 'combustiontoolbox.databases.NasaDatabase') || isa(x, 'combustiontoolbox.databases.BurcatDatabase')
-            addRequired(ip, 'listSpecies'); % , @(x) ischar(x) || iscell(x)
-            parse(ip, database, listSpecies, varargin{:});
+            addParameter(ip, 'listSpecies', defaultListSpecies); % , @(x) ischar(x) || iscell(x)
+            parse(ip, database, varargin{:});
             
-            % Assign memory reference of the database
+            % Assign properties
             obj.database = database;
+            obj.listSpecies = ip.Results.listSpecies;
+
+            % Check if listSpecies is defined
+            if isempty(obj.listSpecies)
+                obj.FLAG_INITIALIZE = false;
+                return
+            end
+            
+            % Initialize chemical system
+            obj = initialization(obj);
+        end
+
+        function obj = initialization(obj)
+            % Initialize chemical system
 
             % Set list species
-            [obj, ~, obj.listSpeciesFormula] = obj.list_species(database, ip.Results.listSpecies);
+            [obj, ~, obj.listSpeciesFormula] = obj.list_species(obj.database, obj.listSpecies);
             
             % Set species
-            obj = obj.get_species(database);
+            obj = obj.get_species(obj.database);
 
             % Set contained elements
             obj = obj.containedElements();
@@ -99,7 +123,6 @@ classdef ChemicalSystem < handle & matlab.mixin.Copyable
             obj = obj.setStoichiometricMatrix();
 
             % Initialize the properties matrix
-            obj.propertiesMatrix = zeros(obj.numSpecies, obj.numProperties);
             obj = obj.setPropertiesMatrixInitialize();
 
             % Assign listSpecies with the species to be considered in the
@@ -148,6 +171,27 @@ classdef ChemicalSystem < handle & matlab.mixin.Copyable
             
             % Initialization
             FLAG_ADDED_SPECIES = false;
+
+            % Check if chemical system is initialized
+            if ~obj.FLAG_INITIALIZE
+
+                for i = 1:length(species)
+
+                    if ~strcmp(obj.listSpecies, species(i))
+                        obj.species.(species{i}) = obj.database.species.(species{i});
+                        obj.listSpecies = [obj.listSpecies, species(i)];
+                    end
+    
+                end
+
+                % Include all possible combinations in the database as
+                % products
+                obj.listSpecies = unique([obj.listSpecies, findProducts(obj, obj.listSpecies)], 'stable');
+                
+                % Initialize chemical system
+                initialization(obj);
+                return
+            end
 
             % Check if species is defined in the chemical system
             for i = 1:length(species)
@@ -547,7 +591,11 @@ classdef ChemicalSystem < handle & matlab.mixin.Copyable
             %     self (struct):  Data of the mixture, conditions, and databases
             
             % Definitions
-            M0 = obj.propertiesMatrix;
+            if isempty(obj.propertiesMatrix)
+                M0 = zeros(obj.numSpecies, obj.numProperties);
+            else
+                M0 = obj.propertiesMatrix;
+            end
 
             % Get index species
             index = obj.indexSpecies;

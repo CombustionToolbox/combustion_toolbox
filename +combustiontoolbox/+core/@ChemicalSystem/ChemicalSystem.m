@@ -99,6 +99,7 @@ classdef ChemicalSystem < handle & matlab.mixin.Copyable
             obj = obj.setStoichiometricMatrix();
 
             % Initialize the properties matrix
+            obj.propertiesMatrix = zeros(obj.numSpecies, obj.numProperties);
             obj = obj.setPropertiesMatrixInitialize();
 
             % Assign listSpecies with the species to be considered in the
@@ -545,8 +546,8 @@ classdef ChemicalSystem < handle & matlab.mixin.Copyable
             % Returns:
             %     self (struct):  Data of the mixture, conditions, and databases
             
-            % Preallocation
-            M0 = zeros(obj.numSpecies, obj.numProperties);
+            % Definitions
+            M0 = obj.propertiesMatrix;
 
             % Get index species
             index = obj.indexSpecies;

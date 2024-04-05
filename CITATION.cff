@@ -9,6 +9,7 @@ version: 1.0.5
 doi: 10.5281/zenodo.5554911
 date-released: 2024-01-29
 url: "https://combustion-toolbox-website.readthedocs.io"
+repository-code: "https://github.com/CombustionToolbox/combustion_toolbox"
 abstract:
     "
     [Website](https://combustion-toolbox-website.readthedocs.io)

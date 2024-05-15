@@ -2,7 +2,7 @@ function self = run_CT(varargin)
     % A generalized function to run Combustion Toolbox for a given set of
     % inputs. Otherwise, it will run the predefined case.
     
-    cd('../../');
+    % cd('../../');
 
     % DEFAULT VALUES
     DB = [];
@@ -129,32 +129,19 @@ function self = run_CT(varargin)
     % set(mix1, S_Inert, 'inert', N_Inert);
     
     % Define the thermodynamic state
-    setTemperature(mix1, Temp_mix1, 'K');
-    setPressure(mix1, Pressure_mix1, 'bar');
+    mix1Array = setProperties(mix1, 'temperature', Temp_mix1 * ones(size(Temp_mix2)), 'pressure', Pressure_mix1);
     
     % Select solver
     switch upper(problemType)
-        case {'TP', 'HP', 'SP'}
+        case {'TP', 'HP', 'SP', 'TV', 'EV', 'SV'}
             solver = combustiontoolbox.equilibrium.EquilibriumSolver('problemType', problemType);
     end
     
     % Solve chemical transformation at equilibrium
     % tic
     numCases = length(Temp_mix2);
-    mix1cell{numCases} = mix1;
-    mix2cell{numCases} = mix1cell{numCases}.copy().setTemperature(Temp_mix2(numCases), 'K');
-    solver.solve(mix2cell{numCases});
-    % print(mix1cell{numCases}, mix2cell{numCases});
-    
-    for i = numCases - 1:-1:1
-        mix1cell{i} = mix1cell{i}.copy();
-        mix2cell{i} = mix1cell{i}.copy().setTemperature(Temp_mix2(i), 'K');
-        solver.solve(mix2cell{i}, mix2cell{i + 1});
-        if ~mod(i, nfrec) || i == 1
-            print(mix1cell{i}, mix2cell{i});
-        end
-    
-    end
+    mix2Array = setProperties(mix1, 'temperature', Temp_mix2, 'pressure', Pressure_mix2);
+    solver.solveArray(mix2Array);
 
 
     % % TUNNING PROPERTIES
@@ -202,19 +189,19 @@ function self = run_CT(varargin)
     % SET PROPERTIES AS CEA
     for i = numCases:-1:1
         % Mix 1
-        self.PS.strR{i}.h = enthalpy_mass(mix1cell{i});
-        self.PS.strR{i}.e = intEnergy_mass(mix1cell{i});
-        self.PS.strR{i}.g = gibbs_mass(mix1cell{i});
-        self.PS.strR{i}.S = entropy_mass(mix1cell{i});
-        self.PS.strR{i}.cP = cp_mass(mix1cell{i});
-        self.PS.strR{i}.cV = mix1cell{i}.cp / mix1cell{i}.gamma_s;
+        self.PS.strR{i}.h = enthalpy_mass(mix1Array(i));
+        self.PS.strR{i}.e = intEnergy_mass(mix1Array(i));
+        self.PS.strR{i}.g = gibbs_mass(mix1Array(i));
+        self.PS.strR{i}.S = entropy_mass(mix1Array(i));
+        self.PS.strR{i}.cP = cp_mass(mix1Array(i));
+        self.PS.strR{i}.cV = mix1Array(i).cp / mix1Array(i).gamma_s;
         % Mix 2
-        self.PS.strP{i}.h = enthalpy_mass(mix2cell{i});
-        self.PS.strP{i}.e = intEnergy_mass(mix2cell{i});
-        self.PS.strP{i}.g = gibbs_mass(mix2cell{i});
-        self.PS.strP{i}.S = entropy_mass(mix2cell{i});
-        self.PS.strP{i}.cP = cp_mass(mix2cell{i});
-        self.PS.strP{i}.cV = mix2cell{i}.cp / mix2cell{i}.gamma_s;
+        self.PS.strP{i}.h = enthalpy_mass(mix2Array(i));
+        self.PS.strP{i}.e = intEnergy_mass(mix2Array(i));
+        self.PS.strP{i}.g = gibbs_mass(mix2Array(i));
+        self.PS.strP{i}.S = entropy_mass(mix2Array(i));
+        self.PS.strP{i}.cP = cp_mass(mix2Array(i));
+        self.PS.strP{i}.cV = mix2Array(i).cp / mix2Array(i).gamma_s;
 
         % if contains(problemType, '_R')
         %     self.PS.strP{i}.u = self.PS.strR{i}.u;

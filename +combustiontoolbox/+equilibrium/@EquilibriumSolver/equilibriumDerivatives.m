@@ -54,6 +54,7 @@ function [dNi_T, dN_T] = equilibrium_dT(J, N0, A0, NE, indexGas, indexCondensed,
     %     [dNi_T, dN_T] = equilibrium_dT(J, N0, A0, NE, ind, indexGas, indexCondensed, indexElements, H0RT)
 
     % Definitions
+    opts.SYM = true; % Options linsolve method: real symmetric
     A0 = A0(:, indexElements);
 
     % Initialization
@@ -63,7 +64,7 @@ function [dNi_T, dN_T] = equilibrium_dT(J, N0, A0, NE, indexGas, indexCondensed,
     b = update_vector_b(A0, N0, indexGas, indexCondensed, H0RT);
 
     % Solve of the linear system J*x = b
-    x = J \ b;
+    x = linsolve(J, b, opts);
 
     % Extract solution
     dpii_T = x(1:NE);
@@ -105,6 +106,7 @@ function [dNi_p, dN_p] = equilibrium_dp(J, N0, A0, NE, indexGas, indexCondensed,
     %     [dNi_p, dN_p] = equilibrium_dp(J, N0, A0, NE, ind, ind_nswt, ind_swt, ind_elem)
 
     % Definitions
+    opts.SYM = true; % Options linsolve method: real symmetric
     A0 = A0(:, indexElements);
 
     % Initialization
@@ -114,7 +116,7 @@ function [dNi_p, dN_p] = equilibrium_dp(J, N0, A0, NE, indexGas, indexCondensed,
     b = update_vector_b(J, N0, indexGas);
 
     % Solve of the linear system J*x = b
-    x = J \ b;
+    x = linsolve(J, b, opts);
 
     % Extract solution
     dpii_p = x(1:NE);

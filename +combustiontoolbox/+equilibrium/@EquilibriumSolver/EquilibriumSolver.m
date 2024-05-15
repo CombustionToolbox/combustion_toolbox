@@ -38,11 +38,13 @@ classdef EquilibriumSolver < handle
             % Parse input arguments
             p = inputParser;
             addOptional(p, 'problemType', defaultProblemType, @(x) ischar(x) && any(strcmpi(x, {'TP', 'TV', 'HP', 'EV', 'SP', 'SV'})));
+            addOptional(p, 'tolMoles', obj.tolMoles);
             addOptional(p, 'FLAG_RESULTS', obj.FLAG_RESULTS, @(x) islogical(x));
             parse(p, varargin{:});
 
             % Set properties
             obj.problemType = upper(p.Results.problemType);
+            obj.tolMoles = p.Results.tolMoles;
             obj.FLAG_RESULTS = p.Results.FLAG_RESULTS;
         end
 

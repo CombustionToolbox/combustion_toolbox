@@ -64,7 +64,7 @@ function N = getSimplex(N, A0, muRT, b0, index, indexIons, NG)
 
     % Merge solutions
     N(index, 1) = (1 - alpha) * Nmajor +  alpha * Nminor(index);
-    N(index(N(index, 1) == 0), 1) =  alpha * Nmin;
+    N(index(N(index, 1) == 0), 1) = alpha * Nmin;
 
     % Check
     % NmajorCheck = combustiontoolbox.utils.optimization.simplexCheck(A0, b0, muRT);

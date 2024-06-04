@@ -14,7 +14,7 @@ function mixArray = run_validation_TP_TEA_4(varargin)
     %          Postdoctoral researcher - Group Fluid Mechanics
     %          Universidad Carlos III de Madrid
     %                 
-    % Last update June 04 2024
+    % Last update Jun 04 2024
     
     % Import packages
     import combustiontoolbox.databases.SolarAbundances

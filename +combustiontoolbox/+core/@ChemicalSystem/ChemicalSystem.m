@@ -26,7 +26,6 @@ classdef ChemicalSystem < handle & matlab.mixin.Copyable
     end
 
     properties (Access = public, Constant = true)
-        defaultListSpecies = 'Soot formation'
         ind_hfi   = 1 % Index enthalpy of formation
         ind_efi   = 2 % Index internal energy of formation
         ind_W     = 3 % Index molecular weight
@@ -88,11 +87,13 @@ classdef ChemicalSystem < handle & matlab.mixin.Copyable
             ip = inputParser;
             addRequired(ip, 'database'); % , @(x) isa(x, 'combustiontoolbox.databases.NasaDatabase') || isa(x, 'combustiontoolbox.databases.BurcatDatabase')
             addParameter(ip, 'listSpecies', defaultListSpecies); % , @(x) ischar(x) || iscell(x)
+            addParameter(ip, 'FLAG_BURCAT', obj.FLAG_BURCAT)
             parse(ip, database, varargin{:});
             
             % Assign properties
             obj.database = database;
             obj.listSpecies = ip.Results.listSpecies;
+            obj.FLAG_BURCAT = ip.Results.FLAG_BURCAT;
 
             % Check if listSpecies is defined
             if isempty(obj.listSpecies)

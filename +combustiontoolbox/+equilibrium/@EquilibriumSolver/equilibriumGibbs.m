@@ -14,8 +14,8 @@ function [N, dNi_T, dN_T, dNi_p, dN_p, index, STOP, STOP_ions, h0] = equilibrium
     % calculations. Advances in Water Resources, 96, 405-422.
     %
     % Args:
-    %     obj (EquilibriumSolver):
-    %     system (ChemicalSystem):
+    %     obj (EquilibriumSolver): Equilibrium solver object
+    %     system (ChemicalSystem): Chemical system object
     %     p (float): Pressure [bar]
     %     T (float): Temperature [K]
     %     mix1 (struct): Properties of the initial mixture
@@ -47,7 +47,8 @@ function [N, dNi_T, dN_T, dNi_p, dN_p, index, STOP, STOP_ions, h0] = equilibrium
     N = system.molesPhaseMatrix;       % Composition matrix [moles_i, phase_i]
     A0 = system.stoichiometricMatrix;  % Stoichiometric matrix [a_ij]
     RT = R0 * T;                       % [J/(mol)]
-    tau0RT = 1e-25 / RT;
+    delta0 = 0.9999;
+    tau0RT = obj.tolMoles;
     opts.SYM = true; % Options linsolve method: real symmetric
     
     % Initialization
@@ -56,6 +57,7 @@ function [N, dNi_T, dN_T, dNi_p, dN_p, index, STOP, STOP_ions, h0] = equilibrium
     NP = 0.1;
     SIZE = -log(obj.tolMoles);
     FLAG_CONDENSED = false;
+    STOP_ions = 0;
 
     % Set moles from guess_moles (if it was given) to 1e-6 to avoid singular matrix
     guess_moles(guess_moles < obj.tolMolesGuess) = obj.tolMolesGuess;
@@ -81,6 +83,7 @@ function [N, dNi_T, dN_T, dNi_p, dN_p, index, STOP, STOP_ions, h0] = equilibrium
     % First, compute chemical equilibrium with only gaseous species
     indexGas_0 = indexGas;
     indexCondensed_0 = indexCondensed;
+    index0 = [indexGas_0, indexCondensed_0];
     indexCondensed = [];
     index = [indexGas, indexCondensed];
     NS = length(index);
@@ -89,9 +92,6 @@ function [N, dNi_T, dN_T, dNi_p, dN_p, index, STOP, STOP_ions, h0] = equilibrium
     g0 = N(:, 1);
     h0 = N(:, 1);
 
-    % Initialize composition matrix N [mol, FLAG_CONDENSED]    
-    [N, NP] = initialize_moles(N, NP, indexGas, NG, guess_moles);
-    
     % Molar Gibbs energy [J/mol]
     g0([indexGas_0, indexCondensed_0]) = set_g0(system.listSpecies([indexGas_0, indexCondensed_0]), T, system.species);
     
@@ -101,6 +101,9 @@ function [N, dNi_T, dN_T, dNi_p, dN_p, index, STOP, STOP_ions, h0] = equilibrium
     % Construction of part of matrix J
     J22 = zeros(NS - NG + 1);
     A0_T = A0';
+
+    % Initialize composition matrix N [mol, FLAG_CONDENSED]
+    [N, NP] = obj.equilibriumGuess(N, NP, A0_T(indexElements, index0), muRT(index0), NatomE, index0, indexGas_0, indexIons, NG, guess_moles);
 
     % Initialization 
     psi_j = system.molesPhaseMatrix(:, 1);
@@ -155,7 +158,7 @@ function [N, dNi_T, dN_T, dNi_p, dN_p, index, STOP, STOP_ions, h0] = equilibrium
             b = update_vector_b(A0, N(:, 1), NP, NatomE, ind_E, index, indexGas, indexCondensed, indexIons, muRT, tauRT, psi_j);
 
             % Solve the linear system J*x = b
-            x = linsolve(J, b, opts);
+            [x, ~] = linsolve(J, b, opts);
             
             % Check singular matrix
             if any(isnan(x) | isinf(x))
@@ -170,7 +173,7 @@ function [N, dNi_T, dN_T, dNi_p, dN_p, index, STOP, STOP_ions, h0] = equilibrium
 
                 % Reset removed species to 1e-6 to try the avoid singular matrix
                 N( N(index, 1) < obj.tolMoles, 1) = 1e-6;
-                psi_j = tauRT ./ N(indexCondensed, 1);
+                psi_j(indexCondensed) = tauRT ./ N(indexCondensed, 1);
 
                 if counter_errors > 2
                     x = NaN;
@@ -198,21 +201,20 @@ function [N, dNi_T, dN_T, dNi_p, dN_p, index, STOP, STOP_ions, h0] = equilibrium
 
             % Apply correction condensed species
             if NS - NG > 0
-                delta0 = 0.9999;
-
-                delta_j = delta_j0 * delta; 
+                delta_j = delta_j0;
                 FLAG_DELTA = N(indexCondensed, 1) + Delta_nj < 0;
                 delta_j(FLAG_DELTA) = -delta0 * N(indexCondensed(FLAG_DELTA), 1) ./ Delta_nj(FLAG_DELTA);
-                N(indexCondensed, 1) = N(indexCondensed, 1) + delta_j .* Delta_nj; % N(indexCondensed, 1) + min(delta_j) * Delta_nj
-                
-                delta_j = delta_j0 * delta;
+                N(indexCondensed, 1) = N(indexCondensed, 1) + min(delta_j) .* Delta_nj;
+
+                delta_j = delta_j0;
                 Delta_psi_j = (tauRT - psi_j(indexCondensed) .* Delta_nj) ./ N(indexCondensed, 1) - psi_j(indexCondensed);
                 FLAG_DELTA = psi_j(indexCondensed) + Delta_psi_j < 0;
                 delta_j(FLAG_DELTA) = -delta0 * psi_j(indexCondensed(FLAG_DELTA)) ./ Delta_psi_j(FLAG_DELTA);
-                psi_j(indexCondensed) = psi_j(indexCondensed) + delta_j .* Delta_psi_j; % psi_j + min(delta_j) * Delta_psi_j;
+                psi_j(indexCondensed) = psi_j(indexCondensed) + min(delta_j) .* Delta_psi_j;
                 
-                FLAG_UNSTABLE = (N(indexCondensed, 1) / NP < exp(-SIZE)) | (psi_j(indexCondensed) > 1e-2);
-                N(indexCondensed(FLAG_UNSTABLE), 1) = -1;
+                Omega_pi = exp(-psi_j(indexCondensed));
+                FLAG_UNSTABLE = (N(indexCondensed, 1) / NP < exp(-SIZE)) | (abs(log10(Omega_pi)) > 1e-2);
+                N(indexCondensed(FLAG_UNSTABLE), 1) = 0;
             end
 
             % Compute STOP criteria
@@ -279,14 +281,19 @@ function [N, dNi_T, dN_T, dNi_p, dN_p, index, STOP, STOP_ions, h0] = equilibrium
         % Set list with indeces of the condensed species to be checked
         indexCondensed_check = indexCondensed_0;
 
-        % Get molecular weight species [kg/mol]
+        % Get molecular weight species [g/mol]
         W = system.molesPhaseMatrix(:, 1);
-        W(indexCondensed_check) = set_prop_DB(system.listSpecies(indexCondensed_check), 'W', system.species) * 1e-3; % * 1e-3;
+        W(indexCondensed_check) = set_prop_DB(system.listSpecies(indexCondensed_check), 'W', system.species);
 
         % Definitions
         NC_max = NE - 1;
-        FLAG_ALL = false;
+        FLAG_ALL = false;  % Include all the condensed species at once
+        FLAG_ONE = true;   % Include only the condensed species that satisfies the vapour pressure test and gives the most negative value of dL_dnj
+        FLAG_RULE = false; % Include only up to NC_max condensed species that satisfies the vapour pressure test with and gives the most negative values of dL_dnj
         
+        % Check if there are non initialized condensed species
+        N(indexCondensed_0(N(indexCondensed_0, 1) == 0), 1) = 1e-3;
+
         % Initialization
         j = 0;
         while indexCondensed_check
@@ -298,7 +305,7 @@ function [N, dNi_T, dN_T, dNi_p, dN_p, index, STOP, STOP_ions, h0] = equilibrium
             end
 
             % Check condensed species
-            [indexCondensed_add, FLAG_CONDENSED] = check_condensed_species(A0, x(1:NE), W(indexCondensed_check), indexCondensed_check, muRT, NC_max);
+            [indexCondensed_add, FLAG_CONDENSED, dL_dnj] = check_condensed_species(A0, x(1:NE), W(indexCondensed_check), indexCondensed_check, muRT, NC_max, FLAG_ONE, FLAG_RULE);
             
             if ~FLAG_CONDENSED
                 break
@@ -311,8 +318,12 @@ function [N, dNi_T, dN_T, dNi_p, dN_p, index, STOP, STOP_ions, h0] = equilibrium
                 indexCondensed = indexCondensed_check;
                 indexCondensed_check = [];
             else
-                % indexCondensed_check(indexCondensed_check == indexCondensed_add) = [];
-                indexCondensed_check(ismember(indexCondensed_check, indexCondensed_add)) = [];
+                if FLAG_ONE
+                    indexCondensed_check(indexCondensed_check == indexCondensed_add) = [];
+                else
+                    indexCondensed_check(ismember(indexCondensed_check, indexCondensed_add)) = [];
+                end
+                
                 indexCondensed = [indexCondensed, indexCondensed_add];
             end
 
@@ -331,14 +342,23 @@ function [N, dNi_T, dN_T, dNi_p, dN_p, index, STOP, STOP_ions, h0] = equilibrium
 
             % Save backup
             N_backup = N;
-
-            % Initialize condensed composition and Lagrange multiplier vector psi
-            N(indexCondensed_add, 1) = sqrt(tauRT);
-            psi_j(indexCondensed_add) = N(indexCondensed_add, 1);
             
+            % Initialize Lagrange multiplier vector psi
+            psi_j(indexCondensed_add) = tauRT ./ N(indexCondensed_add, 1);
+            
+            % aux1 = N(indexCondensed_add, 1);
             % Compute chemical equilibrium considering condensed species
             x0 = equilibrium_loop;
 
+            % Debug
+            % aux2 = N(indexCondensed_add, 1);
+            % fprintf('\n                 n0              n\n');
+            % for k = 1:NC_add
+            %     fprintf('%10s       %1.3e       %1.3e\n', system.listSpecies{indexCondensed_add(k)}, aux1(k),  aux2(k));
+            % end
+            
+            FLAG_ONE = false;
+            
             % Update solution vector
             if ~isnan(x0(1))
                 x = x0;
@@ -361,20 +381,7 @@ function [N, dNi_T, dN_T, dNi_p, dN_p, index, STOP, STOP_ions, h0] = equilibrium
 end
 
 % SUB-PASS FUNCTIONS
-function [N, NP] = initialize_moles(N, NP, indexGas, NG, guess_moles)
-    % Initialize composition from a previous calculation or using an
-    % uniform distribution [mol]
-
-    if isempty(guess_moles)
-        N(indexGas, 1) = NP/NG;
-    else
-        N(indexGas, 1) = guess_moles(indexGas);
-        NP = sum(guess_moles(indexGas));
-    end
-
-end
-
-function [indexCondensed, FLAG_CONDENSED] = check_condensed_species(A0, pi_i, W, indexCondensed, muRT, NC_max)
+function [indexCondensed, FLAG_CONDENSED, dL_dnj] = check_condensed_species(A0, pi_i, W, indexCondensed, muRT, NC_max, FLAG_ONE, FLAG_RULE)
     % Check condensed species
     
     % Initialization
@@ -391,11 +398,11 @@ function [indexCondensed, FLAG_CONDENSED] = check_condensed_species(A0, pi_i, W,
         end
 
         % Calculate dLdnj of the condensed species
-        dL_dn(i) = (muRT(indexCondensed(i)) - dot(pi_i, A0(indexCondensed(i), :))) / W(i); % / W(i);
+        dL_dnj(i) = (muRT(indexCondensed(i)) - dot(pi_i, A0(indexCondensed(i), :))) / W(i); % / W(i);
     end
     
     % Get condensed species that may appear at chemical equilibrium
-    FLAG = dL_dn < 0;
+    FLAG = dL_dnj < 0;
 
     % Check if any condensed species have to be considered
     if ~sum(FLAG)
@@ -405,12 +412,15 @@ function [indexCondensed, FLAG_CONDENSED] = check_condensed_species(A0, pi_i, W,
 
     % Get index of the condensed species to be added to the system
     indexCondensed = indexCondensed(FLAG);
-    dL_dn = dL_dn(FLAG);
+    dL_dnj = dL_dnj(FLAG);
     
-    % Gibbs phase rule
-    if NC > NC_max
-        [~, indexSort] = sort(dL_dn);
-        indexCondensed = indexCondensed(indexSort(1:NC_max));
+    % Testing
+    if FLAG_RULE
+        [~, temp] = sort(dL_dnj);
+        indexCondensed = indexCondensed(temp(1:NC_max));
+    elseif FLAG_ONE
+        [~, temp] = min(dL_dnj);
+        indexCondensed = indexCondensed(temp);
     end
 
     % Update flag
@@ -514,7 +524,7 @@ function STOP = compute_STOP(NP, deltaNP, N, deltaN, NG, A0, NatomE, max_NatomE,
     deltaN2 = NP * abs(deltaNP) / NPi;
     deltab = abs(NatomE - sum(N .* A0, 1)) / max_NatomE;
     deltab = max(deltab(NatomE > tolE));
-    STOP = max(max(max(deltaN1), deltaN2), deltab);
+    STOP = max([deltaN1; deltaN2; deltab]);
 end
 
 function J11 = update_matrix_J11(A0_T, N, indexGas, NE)

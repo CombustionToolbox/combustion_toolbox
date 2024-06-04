@@ -288,12 +288,9 @@ function [N, dNi_T, dN_T, dNi_p, dN_p, index, STOP, STOP_ions, h0] = equilibrium
         % Definitions
         NC_max = NE - 1;
         FLAG_ALL = false;  % Include all the condensed species at once
-        FLAG_ONE = true;   % Include only the condensed species that satisfies the vapour pressure test and gives the most negative value of dL_dnj
+        FLAG_ONE = false;   % Include only the condensed species that satisfies the vapour pressure test and gives the most negative value of dL_dnj
         FLAG_RULE = false; % Include only up to NC_max condensed species that satisfies the vapour pressure test with and gives the most negative values of dL_dnj
         
-        % Check if there are non initialized condensed species
-        N(indexCondensed_0(N(indexCondensed_0, 1) == 0), 1) = 1e-3;
-
         % Initialization
         j = 0;
         while indexCondensed_check
@@ -305,7 +302,7 @@ function [N, dNi_T, dN_T, dNi_p, dN_p, index, STOP, STOP_ions, h0] = equilibrium
             end
 
             % Check condensed species
-            [indexCondensed_add, FLAG_CONDENSED, dL_dnj] = check_condensed_species(A0, x(1:NE), W(indexCondensed_check), indexCondensed_check, muRT, NC_max, FLAG_ONE, FLAG_RULE);
+            [indexCondensed_add, FLAG_CONDENSED, ~] = check_condensed_species(A0, x(1:NE), W(indexCondensed_check), indexCondensed_check, muRT, NC_max, FLAG_ONE, FLAG_RULE);
             
             if ~FLAG_CONDENSED
                 break
@@ -327,9 +324,7 @@ function [N, dNi_T, dN_T, dNi_p, dN_p, index, STOP, STOP_ions, h0] = equilibrium
                 indexCondensed = [indexCondensed, indexCondensed_add];
             end
 
-            % indexCondensed_check = [];
             index = [indexGas, indexCondensed];
-            indexCondensed_0 = indexCondensed;
 
             % Initialization
             STOP = 1;
@@ -343,6 +338,9 @@ function [N, dNi_T, dN_T, dNi_p, dN_p, index, STOP, STOP_ions, h0] = equilibrium
             % Save backup
             N_backup = N;
             
+            % Check if there are non initialized condensed species
+            N(indexCondensed_add(N(indexCondensed_add, 1) == 0), 1) = 1e-3;
+
             % Initialize Lagrange multiplier vector psi
             psi_j(indexCondensed_add) = tauRT ./ N(indexCondensed_add, 1);
             
@@ -356,8 +354,6 @@ function [N, dNi_T, dN_T, dNi_p, dN_p, index, STOP, STOP_ions, h0] = equilibrium
             % for k = 1:NC_add
             %     fprintf('%10s       %1.3e       %1.3e\n', system.listSpecies{indexCondensed_add(k)}, aux1(k),  aux2(k));
             % end
-            
-            FLAG_ONE = false;
             
             % Update solution vector
             if ~isnan(x0(1))
@@ -376,6 +372,14 @@ function [N, dNi_T, dN_T, dNi_p, dN_p, index, STOP, STOP_ions, h0] = equilibrium
             indexCondensed_check = indexCondensed;
         end
 
+        % Check if there were species not considered
+        [~, FLAG_CONDENSED, dL_dnj] = check_condensed_species(A0, x(1:NE), W(indexCondensed_0), indexCondensed_0, muRT, NC_max, FLAG_ONE, FLAG_RULE);
+        
+        % Recompute if there are condensed species that may appear at chemical equilibrium
+        if FLAG_CONDENSED && any(abs(dL_dnj) > 1e-4)
+            x = equilibrium_loop_condensed(x);
+        end
+        
     end
 
 end

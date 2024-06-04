@@ -321,6 +321,7 @@ classdef EquilibriumSolver < handle
     end
     
     methods (Access = private, Static)
+        [N, NP] = equilibriumGuess(N, NP, A0, muRT, b0, index, indexGas, indexIons, NG, guess_moles);
         [dNi_T, dN_T, dNi_p, dN_p] = equilibriumDerivatives(J, N0, A0, NE, indexGas, indexCondensed, indexElements, H0RT);
 
         function point = getPoint(x_vector, f_vector)
@@ -353,7 +354,7 @@ classdef EquilibriumSolver < handle
     methods (Access = private)
         
         [N, dNi_T, dN_T, dNi_p, dN_p, indexProducts, STOP, STOP_ions, h0] = equilibriumGibbs(obj, system, p, T, mix, guess_moles)
-        [N, dNi_T, dN_T, dNi_p, dN_p, indexProducts, STOP, STOP_ions, h0] = equilibriumHelmholtz(obj, system, vP, T, mix, guess_moles)
+        [N, dNi_T, dN_T, dNi_p, dN_p, indexProducts, STOP, STOP_ions, h0] = equilibriumHelmholtz(obj, system, v, T, mix, guess_moles)
 
         function [x, STOP, guess_moles] = newton(obj, mix1, mix2, field, x0, guess_moles)
             % Find the temperature [K] (root) for the set chemical transformation at equilibrium using the second-order Newton-Raphson method

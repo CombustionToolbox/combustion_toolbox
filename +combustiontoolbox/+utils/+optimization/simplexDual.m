@@ -37,8 +37,5 @@ function [x, x_min] = simplexDual(A, b)
     x(end) = [];
 
     % Check
-    % xCheck = combustiontoolbox.utils.optimization.simplexDualCheck(A_eq, b_eq, c, A_ineq, b_ineq);
-    % options = optimoptions('linprog', 'Algorithm', 'dual-simplex', 'Display', 'off');
-    % [x2, fval, exitflag, output] = linprog(c, A_ineq, b_ineq, A_eq, b_eq, zeros(n+1, 1), [], options);
-    % [x2, fval, exitflag, output] = linprog(c, A_ineq, b_ineq, A_eq, b_eq, [], [], options);
+    % [x, x_min] = combustiontoolbox.utils.optimization.simplexDualCheck(A_eq, b_eq, c, A_ineq, b_ineq);
 end

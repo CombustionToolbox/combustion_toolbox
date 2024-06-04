@@ -15,6 +15,7 @@ classdef (Abstract) Database < handle
 
     properties (Hidden)
         id
+        FLAG_BENCHMARK = false
     end
 
     properties (Dependent)
@@ -62,6 +63,7 @@ classdef (Abstract) Database < handle
             addParameter(ip, 'pointsTemperature', defaultPointsTemperature, @isnumeric);
             addParameter(ip, 'temperatureReference', defaultTemperatureReference, @(x) isnumeric(x) && isscalar(x) && (x >= 0));
             addParameter(ip, 'thermoFile', defaultThermoFile);
+            addParameter(ip, 'FLAG_BENCHMARK', obj.FLAG_BENCHMARK);
             parse(ip, varargin{:});
             
             % Set properties
@@ -80,6 +82,11 @@ classdef (Abstract) Database < handle
             obj = obj.generate_id();
 
             % Check if database is in cached and the id matches
+            if ip.Results.FLAG_BENCHMARK
+                obj = obj.load();
+                return
+            end
+
             persistent cachedDatabase;
             
             if ~isempty(cachedDatabase) && isequal(cachedDatabase.id, obj.id)

@@ -49,7 +49,8 @@ function tab = simplexMethod(A, b, c)
     [m, n] = size(A);
     tab = [A b; c' 0];
     rows_to_update0 = true(1, m + 1);
-
+    tol = 1e-12;
+    
     % Initialization
     min_val = -1; % If min_val >= 0 we have found the optimal solution
     it = 0;
@@ -63,7 +64,7 @@ function tab = simplexMethod(A, b, c)
         % Find the pivot row using the minimum ratio test
         pivot_col_vals = tab(1:m, pivot_col);
         ratios = tab(1:m, end) ./ pivot_col_vals;
-        ratios(pivot_col_vals <= 0) = Inf;
+        ratios(pivot_col_vals <= tol) = Inf;
         [min_ratio, pivot_row] = min(ratios);
 
         % Check unbounded problem
@@ -100,11 +101,8 @@ function x = getSolution(tab, m, n)
     % Initialization
     x = zeros(n, 1);
 
-    % Find the indices of the basic variables
-    indexBasic = find(tab(end, 1:n) == 0);
-
-    % Filter out indices that do not correspond to basic variables
-    indexBasic = indexBasic(sum(FLAG(:, indexBasic)) == 1);
+    % Get the indices of the basic variables
+    indexBasic = find(sum(FLAG) == 1 & sum(tab(1:m, 1:n) == 1));
 
     % Assign values to the basic variables in the solution vector
     x(indexBasic) = FLAG(:, indexBasic)' * tab(1:m, end);

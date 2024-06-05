@@ -61,7 +61,7 @@ classdef Mixture < handle & matlab.mixin.Copyable
         Ds                    % Entropy of mixing [kJ/K]
         rho                   % Density [kg/m3]
         v                     % Volume [m3]
-        vSpecific             % Specific volume [m3/kg]
+        vSpecific (1,1)       % Specific volume [m3/kg]
         W                     % Molecular weight [g/mol]
         MW                    % Mean molecular weight [g/mol]
         mi                    % Mass mixture [kg]
@@ -97,6 +97,13 @@ classdef Mixture < handle & matlab.mixin.Copyable
         indexMax              % Index of the maximum deflection angle
         indexSonic            % Index of the sonic point
         polar                 % Properties of the polar solution
+        % Properties from rocket module (CT-ROCKET)
+        areaRatio
+        areaRatioChamber
+        cstar
+        cf
+        I_sp
+        I_vac
     end
 
     properties (Access = private)
@@ -324,9 +331,6 @@ classdef Mixture < handle & matlab.mixin.Copyable
             % Get indexReact
             obj.chemicalSystem.set_react_index(obj.listSpeciesInert);
             
-            % Assign values to the propertiesMatrix
-            obj.chemicalSystem.set_propertiesMatrix(listSpecies, quantity, obj.T);
-            
             % Get indexProducts
             obj.chemicalSystem.indexProducts = findIndex(obj.chemicalSystem.listSpecies, obj.chemicalSystem.listProducts);
 
@@ -349,6 +353,9 @@ classdef Mixture < handle & matlab.mixin.Copyable
                 setEquivalenceRatio(obj, obj.equivalenceRatio);
                 return
             end
+            
+            % Assign values to the propertiesMatrix
+            obj.chemicalSystem.set_propertiesMatrix(listSpecies, quantity, obj.T);
 
             % Compute thermodynamic properties
             obj.compute_properties(obj.chemicalSystem, obj.T, obj.p);
@@ -365,7 +372,7 @@ classdef Mixture < handle & matlab.mixin.Copyable
             if ~obj.T || (~obj.p && ~obj.vSpecific) || ~obj.FLAG_FUEL || ~obj.FLAG_OXIDIZER
                 return
             end
-
+            
             % Get oxidizer of reference
             obj.chemicalSystem.getOxidizerReference(obj.listSpeciesOxidizer);
             
@@ -384,7 +391,7 @@ classdef Mixture < handle & matlab.mixin.Copyable
             obj.quantity = [obj.molesFuel, obj.molesOxidizer, obj.molesInert];
             
             % Assign values to the propertiesMatrix
-            obj.chemicalSystem.set_propertiesMatrix(obj.listSpeciesOxidizer, obj.molesOxidizer, obj.T);
+            obj.chemicalSystem.set_propertiesMatrix(obj.listSpecies, obj.quantity, obj.T);
 
             % Compute pressure if required
             if obj.vSpecific
@@ -632,6 +639,19 @@ classdef Mixture < handle & matlab.mixin.Copyable
     end
 
     methods (Access = private)
+
+        % function obj = plus(obj, obj2)
+        %     % Merge two mixtures (operator overloading)
+
+        %     % Define a common chemical system
+            
+        %     % Merge chemical composition
+
+        %     % Compute common temperature and pressure
+            
+        %     % Compute properties of the mixture
+
+        % end
 
         function obj = compute_properties(obj, system, temperature, pressure)
             % Compute properties from the given chemicalSystem at pressure p [bar]

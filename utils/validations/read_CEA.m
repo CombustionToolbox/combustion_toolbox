@@ -27,7 +27,7 @@ function data = read_CEA(filename)
 
         if contains(tline, 'PHI,EQ.RATIO=')
             k = strfind(tline, 'PHI,EQ.RATIO=');
-            data.phi(i) = sscanf(tline(k + 13:end), '%f');
+            data.equivalenceRatio(i) = sscanf(tline(k + 13:end), '%f');
         end
 
         if contains(tline, 'THROAT')

@@ -66,7 +66,7 @@ function data = data_CEA(filename, varargin)
             end
 
             % EQUIVALENCE RATIO
-            mix.phi = data_nasa.phi; % [-]
+            mix.equivalenceRatio = data_nasa.equivalenceRatio; % [-]
             % MOLAR FRACTION SPECIES
             if nargin > 1
                 species = varargin{1};
@@ -117,7 +117,7 @@ function data = data_CEA(filename, varargin)
             mix1.u_preshock = mix1.u; % [m/s]
             mix1.W = data_nasa.W1; % [g/mol]
             % EQUIVALENCE RATIO
-            mix1.phi = data_nasa.phi; % [-]
+            mix1.equivalenceRatio = data_nasa.equivalenceRatio; % [-]
 
             % PROPERTIES MIX 2
             mix2.p = data_nasa.P2; % [bar]
@@ -150,7 +150,7 @@ function data = data_CEA(filename, varargin)
             mix2.dVdp_T = data_nasa.dVdp_T; % [-]
             mix2.dVdT_p = data_nasa.dVdT_p; % [-]
             % EQUIVALENCE RATIO
-            mix2.phi = data_nasa.phi; % [-]
+            mix2.equivalenceRatio = data_nasa.equivalenceRatio; % [-]
             % MOLAR FRACTION SPECIES MIX 2
             if nargin > 1
                 species = varargin{1};

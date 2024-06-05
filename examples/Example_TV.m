@@ -2,9 +2,9 @@
 % EXAMPLE: TV
 %
 % Compute equilibrium composition at defined temperature (e.g., 3000 K) and
-% defined specific volume for lean to rich CH4-air mixtures at standard
-% conditions, a set of 24 species considered and a set of equivalence
-% ratios (phi) contained in (0.5, 5) [-]
+% defined specific volume (1 m3/kg) for lean to rich CH4-air mixtures at
+% standard conditions, a set of 24 species considered and a set of
+% equivalence ratios (phi) contained in (0.5, 5) [-]
 %   
 % Soot formation == {'CO2','CO','H2O','H2','O2','N2','Ar','Cbgrb',...
 %                    'C2','C2H4','CH','CH3','CH4','CN','H',...

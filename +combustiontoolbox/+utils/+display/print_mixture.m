@@ -27,6 +27,9 @@ function print_mixture(mix, varargin)
     numMixtures = nargin;
     listSpecies = mix{1}.chemicalSystem.listSpecies;
     problemType = mix{end}.problemType;
+    
+    % Check if problemType is specified
+    if isempty(problemType), problemType = ''; end
 
     % Start
     fprintf('************************************************************************************************************\n');
@@ -108,12 +111,8 @@ function print_properties(ProblemType, numberMixtures, mix)
     fprintf(['g [kJ/kg]      |', string_value], get_properties(@gibbs_mass, numberMixtures, mix));
     fprintf(['s [kJ/(kg-K)]  |', string_value], get_properties(@entropy_mass, numberMixtures, mix));
     fprintf(['W [g/mol]      |', string_value], get_properties(@MolecularWeight, numberMixtures, mix));
-
-    if numberMixtures > 1
-        fprintf(['(dlV/dlp)T [-] |                 |', string_value_2], get_properties('dVdp_T', numberMixtures - 1, mix(2:end)));
-        fprintf(['(dlV/dlT)p [-] |                 |', string_value_2], get_properties('dVdT_p', numberMixtures - 1, mix(2:end)));
-    end
-
+    fprintf(['(dlV/dlp)T [-] |', string_value_2], get_properties('dVdp_T', numberMixtures, mix));
+    fprintf(['(dlV/dlT)p [-] |', string_value_2], get_properties('dVdT_p', numberMixtures, mix));
     fprintf(['cp [kJ/(kg-K)] |', string_value], get_properties(@cp_mass, numberMixtures, mix));
     fprintf(['gamma [-]      |', string_value], get_properties(@adiabaticIndex, numberMixtures, mix));
     fprintf(['gamma_s [-]    |', string_value], get_properties(@adiabaticIndex_sound, numberMixtures, mix));

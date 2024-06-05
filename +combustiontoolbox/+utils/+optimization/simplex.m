@@ -97,12 +97,13 @@ function x = getSolution(tab, m, n)
     
     % Definitions
     FLAG = tab(1:m, 1:n) ~= 0;
-
+    tol = 1e-12;
+    
     % Initialization
     x = zeros(n, 1);
 
     % Get the indices of the basic variables
-    indexBasic = find(sum(FLAG) == 1 & sum(tab(1:m, 1:n) == 1));
+    indexBasic = find(sum(FLAG) == 1 & sum(tab(1:m, 1:n) == 1) & tab(end, 1:n) < tol);
 
     % Assign values to the basic variables in the solution vector
     x(indexBasic) = FLAG(:, indexBasic)' * tab(1:m, end);

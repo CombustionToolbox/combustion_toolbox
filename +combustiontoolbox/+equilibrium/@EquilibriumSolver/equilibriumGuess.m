@@ -55,7 +55,7 @@ function N = getSimplex(N, A0, muRT, b0, index, indexIons, NG)
 
     % Get major species
     Nmajor = combustiontoolbox.utils.optimization.simplex(A0, b0', muRT);
-    
+
     % Remove ionized species from Nmajor
     Nmajor(indexIons) = 0;
 

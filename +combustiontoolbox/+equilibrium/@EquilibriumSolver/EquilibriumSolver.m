@@ -20,13 +20,15 @@ classdef EquilibriumSolver < handle
         root_T0_r = 3000           % First temperature guess [K] right branch - root finding method
         root_T0   = 3000           % Temperature guess [K] if it's outside previous range - root finding method
         % * Flags
-        FLAG_EXTRAPOLATE = true;   % Flag indicating linear extrapolation of the polynomials fits
-        FLAG_FAST = true;          % Flag indicating use guess composition of the previous computation
-        FLAG_TCHEM_FROZEN = false; % Flag to consider a thermochemically frozen gas (calorically perfect gas)
-        FLAG_FROZEN = false;       % Flag to consider a calorically imperfect gas with frozen chemistry
-        FLAG_EOS = false;          % Flag to use non-ideal Equation of States (EoS)
-        % Miscellaneous
+        FLAG_EXTRAPOLATE = true    % Flag indicating linear extrapolation of the polynomials fits
+        FLAG_FAST = true           % Flag indicating use guess composition of the previous computation
+        FLAG_TCHEM_FROZEN = false  % Flag to consider a thermochemically frozen gas (calorically perfect gas)
+        FLAG_FROZEN = false        % Flag to consider a calorically imperfect gas with frozen chemistry
+        FLAG_EOS = false           % Flag to use non-ideal Equation of States (EoS)
         FLAG_RESULTS = true        % Flag to print results
+        FLAG_TIME = true           % Flag to print elapsed time
+        % * Miscellaneous
+        time
     end
 
     methods
@@ -71,6 +73,9 @@ classdef EquilibriumSolver < handle
             
             % Definitions
             n = length(mixArray);
+            
+            % Timer
+            obj.time = tic;
 
             % Calculations
             obj.solve(mixArray(n));
@@ -79,6 +84,11 @@ classdef EquilibriumSolver < handle
                 obj.solve(mixArray(i), mixArray(i + 1));
             end
 
+            % Timer
+            obj.time = toc(obj.time);
+
+            % Print elapsed time
+            printTime(obj);
         end
 
         function mix2 = equilibrate(obj, mix2, varargin)
@@ -316,6 +326,15 @@ classdef EquilibriumSolver < handle
                 vector(index, 1) = vector_modified(ind_modified, 1);
             end
             
+        end
+
+        function printTime(obj)
+            % Print execution time
+            %
+            % Args:
+            %     obj (EquilibriumSolver): Object of the class EquilibriumSolver
+
+            fprintf('\nElapsed time is %.5f seconds\n', obj.time)
         end
 
     end
@@ -646,15 +665,16 @@ classdef EquilibriumSolver < handle
             %     T (float):     Temperature [K]
             %     STOP (float):  Relative error [-]
         
-            if it == obj.itMax
-                fprintf('***********************************************************\n')
-                fprintf('Root algorithm not converged \n')
-                fprintf('   Error       =  %8.2f [%%]  \n', STOP*100)
-                fprintf('   Temperature =  %8.2f [K]  \n', T)
-                fprintf('   Iterations  =  %8.d [it] \n', it)
-                fprintf('***********************************************************\n')
+            if it < obj.itMax
+                return
             end
 
+            fprintf('***********************************************************\n')
+            fprintf('Root algorithm not converged \n')
+            fprintf('   Error       =  %8.2f [%%]  \n', STOP*100)
+            fprintf('   Temperature =  %8.2f [K]  \n', T)
+            fprintf('   Iterations  =  %8.d [it] \n', it)
+            fprintf('***********************************************************\n')
         end
     
     end

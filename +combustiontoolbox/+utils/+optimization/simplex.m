@@ -56,7 +56,8 @@ function tab = simplexMethod(A, b, c)
     it = 0;
     
     % Loop
-    while min_val < 0 
+    while min_val < 0
+        % Update iteration number
         it = it + 1;
         % Find the pivot column (most negative value in the last row)
         [min_val, pivot_col] = min(tab(end, 1:n)); 

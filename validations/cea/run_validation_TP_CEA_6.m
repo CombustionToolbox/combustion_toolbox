@@ -12,7 +12,7 @@ function mixArray = run_validation_TP_CEA_6(varargin)
     % [1] Scoggins, J. B., & Magin, T. E. (2015). Gibbs function continuation
     %     for linearly constrained multiphase equilibria. Combustion and Flame,
     %     162(12), 4514-4522.
-    
+  
     % Import packages
     import combustiontoolbox.databases.NasaDatabase
     import combustiontoolbox.core.*

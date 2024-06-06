@@ -40,7 +40,7 @@ function data = data_CEA(filename, varargin)
             if isfield(data_nasa, 'dVdp_T')
                 mix.dVdp_T = data_nasa.dVdp_T(:, end - l)'; % [-]
                 mix.dVdT_p = data_nasa.dVdT_p(:, end - l)'; % [-]
-                mix.cv = mix.cp / (- mix.dVdp_T * mix.gamma_s); % [kJ/kg-K]
+                mix.cv = mix.cp ./ (- mix.dVdp_T .* mix.gamma_s); % [kJ/kg-K]
             end
 
             if isfield(data_nasa, 'rho2rho1')

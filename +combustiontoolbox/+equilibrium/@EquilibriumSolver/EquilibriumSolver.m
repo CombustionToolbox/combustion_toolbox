@@ -340,8 +340,95 @@ classdef EquilibriumSolver < handle
     end
     
     methods (Access = private, Static)
-        [N, NP] = equilibriumGuess(N, NP, A0, muRT, b0, index, indexGas, indexIons, NG, guess_moles);
-        [dNi_T, dN_T, dNi_p, dN_p] = equilibriumDerivatives(J, N0, A0, NE, indexGas, indexCondensed, indexElements, H0RT);
+        [N, NP] = equilibriumGuess(N, NP, A0, muRT, b0, index, indexGas, indexIons, NG, guess_moles)
+        [dNi_T, dN_T, dNi_p, dN_p] = equilibriumDerivatives(J, N0, A0, NE, indexGas, indexCondensed, indexElements, H0RT)
+        [indexCondensed, FLAG_CONDENSED, dL_dnj] = equilibriumCheckCondensed(A0, pi_i, W, indexCondensed, muRT, NC_max, FLAG_ONE, FLAG_RULE)
+
+        function [A0, indexRemoveSpecies, ind_E, NatomE] = removeElements(NatomE, A0, ind_E, tol)
+            % Find zero sum elements
+        
+            % Define temporal fictitious value if there are ionized species
+            temp_NatomE = NatomE;
+            temp_NatomE(ind_E) = 1;
+        
+            % Get flag of elements to be removed from stoichiometrix matrix
+            FLAG_REMOVE_ELEMENTS = temp_NatomE' <= tol;
+            
+            % Get the species to be removed from stoichiometrix matrix
+            indexRemoveSpecies = find(sum(A0(:, FLAG_REMOVE_ELEMENTS) > 0, 2) > 0);
+        
+            % Update stoichiometrix matrix
+            A0(:, FLAG_REMOVE_ELEMENTS) = [];
+        
+            % Set number of atoms
+            NatomE(FLAG_REMOVE_ELEMENTS) = [];
+            
+            % Check position "element" electron
+            if ind_E
+                ind_E = ind_E - sum(FLAG_REMOVE_ELEMENTS(1:ind_E-1));
+            end
+    
+        end
+
+        function [index, indexGas, indexCondensed, indexIons, indexElements, NE, NG, NS] = tempValues(system, NatomE)
+            % List of indices with nonzero values and lengths
+            indexElements = 1:length(NatomE);
+            indexGas = system.indexGas;
+            indexCondensed = system.indexCondensed;
+            indexIons = system.indexGas(system.indexIons);
+            indexCryogenic = system.indexCryogenic;
+            index = [indexGas, indexCondensed];
+
+            % Remove cryogenic species from calculations
+            for i = 1:length(indexCryogenic)
+                index(index == indexCryogenic(i)) = [];
+                indexCondensed(indexCondensed == indexCryogenic(i)) = [];
+            end
+        
+            % Update lengths
+            NE = length(NatomE);
+            NG = length(indexGas);
+            NS = length(index);
+        end
+        
+        function [index, indexCondensed, indexGas, indexIons, NG, NS, N] = updateTemp(N, index, indexCondensed, indexGas, indexIons, NP, NG, NS, SIZE)
+            % Update temp items
+
+            % Get species to be removed
+            FLAG_REMOVE = N(index, 1) / NP < exp(-SIZE);
+
+            % Check if there are species to be removed
+            if ~sum(FLAG_REMOVE)
+                return
+            end
+            
+            % Set to zero the moles of the species to be removed
+            N(index(FLAG_REMOVE), 1) = 0;
+
+            % Get the index of the species to be removed from index list
+            indexRemove = find(FLAG_REMOVE)';
+            
+            % Update index list
+            for i = indexRemove
+                indexGas(indexGas == index(i)) = [];
+                indexCondensed(indexCondensed == index(i)) = [];
+                indexIons(indexIons == index(i)) = [];
+            end
+
+            % Update index list and lengths
+            index = [indexGas, indexCondensed];
+            NG = length(indexGas);
+            NS = length(index);
+        end
+
+        function delta = relaxFactor(NP, ni, eta, Delta_ln_NP, NG)
+            % Compute relaxation factor
+            FLAG = eta(1:NG) > 0;
+            FLAG_MINOR = ni(1:NG) / NP <= 1e-8 & FLAG;
+            delta1 = 2./max(5*abs(Delta_ln_NP), abs(eta(FLAG)));
+            delta2 = min(abs((-log(ni(FLAG_MINOR)/NP) - 9.2103404) ./ (eta(FLAG_MINOR) - Delta_ln_NP)));
+            delta = min([1; delta1; delta2]);
+        end
 
         function point = getPoint(x_vector, f_vector)
             % Get point using the regula falsi method

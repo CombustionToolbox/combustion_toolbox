@@ -28,11 +28,11 @@ function [ax, fig] = plotComposition(obj, x_var, x_field, y_field, varargin)
     %     * ax (object): Handle of the axes
     %     * fig (object): Handle of the figure
     %
-    % Examples:
-    %     * [ax, fig] = plot_molar_fractions(self, mix1, 'phi', 'Xi')
-    %     * [ax, fig] = plot_molar_fractions(self, mix1, 'phi', 'Xi', 'y_var', mix2)
-    %     * [ax, fig] = plot_molar_fractions(self, mix1, 'phi', 'Xi', 'y_var', mix2, 'validation', results_CEA)
-    %     * [ax, fig] = plot_molar_fractions(self, mix1, 'phi', 'Xi', 'y_var', mix2, 'validation', results_CEA, 'displaySpecies', displaySpecies)
+    % Examples:mixArray1, 'u', 'Xi', 'mintol', 1e-14, 'y_var', mixArray2
+    %     * [ax, fig] = plotComposition(mixArray(1), mixArray, 'equivalenceRatio', 'Xi')
+    %     * [ax, fig] = plotComposition(mixArray(1), mixArray, 'equivalenceRatio', 'Xi', 'y_var', mixArray2)
+    %     * [ax, fig] = plotComposition(mixArray(1), mixArray, 'equivalenceRatio', 'Xi', 'y_var', mixArray2, 'validation', resultsCEA)
+    %     * [ax, fig] = plotComposition(mixArray(1), mixArray, 'equivalenceRatio', 'Xi', 'y_var', mixArray2, 'validation', resultsCEA, 'displaySpecies', displaySpecies)
     
     % Import packages
     import combustiontoolbox.utils.findIndex
@@ -47,6 +47,7 @@ function [ax, fig] = plotComposition(obj, x_var, x_field, y_field, varargin)
     ax = [];
     results2 = [];
     nfrec = 1;
+    FLAG_PLOT_VALIDATION = false;
     % config = self.Misc.config;
     config.labelx = interpreter_label(x_field, config.label_type);
     config.labely = interpreter_label(y_field, config.label_type);
@@ -61,6 +62,7 @@ function [ax, fig] = plotComposition(obj, x_var, x_field, y_field, varargin)
         switch lower(varargin{i})
             case {'validation', 'results'}
                 results2 = varargin{i + 1};
+                FLAG_PLOT_VALIDATION = true;
             case {'nfrec'}
                 nfrec = varargin{i + 1};
             case {'mintol', 'mintol_display', 'toln'}
@@ -172,7 +174,7 @@ function [ax, fig] = plotComposition(obj, x_var, x_field, y_field, varargin)
     end
 
     % Plot validations
-    if ~isempty(results2)
+    if FLAG_PLOT_VALIDATION
 
         if iscell(results2)
             mix2.(x_field) = cell2vector(results2, x_field);

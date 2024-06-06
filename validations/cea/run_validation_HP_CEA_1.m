@@ -1,4 +1,4 @@
-function mixArray = run_validation_HP_CEA_1(varargin)
+function run_validation_HP_CEA_1(varargin)
     % Run test validation_HP_CEA_1:
     % Contrasted with: NASA's Chemical Equilibrium with Applications software
     % Problem type: Adiabatic T and composition at constant p
@@ -67,9 +67,9 @@ function mixArray = run_validation_HP_CEA_1(varargin)
     fig2 = plotProperties(repmat({'equivalenceRatio'}, 1, 9), mixArray, {'T', 'rho', 'h', 'e', 'g', 'cp', 's', 'gamma_s', 'sound'}, mixArray, 'basis', {[], [], 'mi', 'mi', 'mi', 'mi', 'mi', [], []}, 'validation', resultsCEA);
 
     % Save plots
-    folderpath = strcat(pwd,'\validations\figures\');
+    folderpath = fullfile(pwd, 'validations', 'figures');
     stack_trace = dbstack;
     filename = stack_trace.name;
-    saveas(fig1, strcat(folderpath, filename, '_molar'), 'svg');
-    saveas(fig2, strcat(folderpath, filename, '_properties'), 'svg');
+    saveas(fig1, fullfile(folderpath, strcat(filename, '_molar')), 'svg');
+    saveas(fig2, fullfile(folderpath, strcat(filename, '_properties')), 'svg');
 end

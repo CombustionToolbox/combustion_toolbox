@@ -1,5 +1,5 @@
-function mixArray = run_validation_TP_TEA_4(varargin)
-    % VALIDATION: TP_TEA_3
+function run_validation_TP_TEA_4(varargin)
+    % VALIDATION: TP_TEA_4
     %
     % Compute equilibrium composition at defined temperature and pressure.
     % Reproduce Fig.6 (b) "Thermochemical equilibrium vertical distributions
@@ -14,7 +14,7 @@ function mixArray = run_validation_TP_TEA_4(varargin)
     %          Postdoctoral researcher - Group Fluid Mechanics
     %          Universidad Carlos III de Madrid
     %                 
-    % Last update Jun 04 2024
+    % Last update Jun 06 2024
     
     % Import packages
     import combustiontoolbox.databases.SolarAbundances
@@ -22,6 +22,9 @@ function mixArray = run_validation_TP_TEA_4(varargin)
     import combustiontoolbox.core.*
     import combustiontoolbox.equilibrium.*
     
+    % Benchmark?
+    FLAG_BENCHMARK = false;
+
     % Inputs
     load Validation_TP_TEA_4 Pressure Temp results_TEA
 
@@ -63,19 +66,16 @@ function mixArray = run_validation_TP_TEA_4(varargin)
     % Solve problem
     solver.solveArray(mixArray);
     
-    % Plot molar fractions
-    % plotComposition(mixArray(1), mixArray, 'Xi', 'p', 'displaySpecies', displaySpecies, 'mintol', 1e-21, 'nfrec', 3, 'ydir', 'reverse', 'xscale', 'log', 'validation', results_TEA);
+    if FLAG_BENCHMARK
+        return
+    end
 
-    % problems_solved = length(results_CT.PD.range);
-    % % Display validation (plot)
-    % % * Molar fractions
-    % [~, fig1] = plot_molar_fractions(results_CT, results_CT.PS.strP, ...
-    %     'Xi', 'p', 'validation', results_TEA, 'nfrec', 3,...
-    %     'ydir', 'reverse', 'xscale', 'log', 'mintol', mintol,...
-    %     'display_species', display_species);
-    % % Save plots
-    % folderpath = strcat(pwd,'\Validations\Figures\');
-    % stack_trace = dbstack;
-    % filename = stack_trace.name;
-    % saveas(fig1, strcat(folderpath, filename, '_molar'), 'svg');
+    % Plot molar fractions
+    fig1 = plotComposition(mixArray(1), mixArray, 'Xi', 'p', 'displaySpecies', displaySpecies, 'mintol', 1e-21, 'nfrec', 3, 'ydir', 'reverse', 'xscale', 'log', 'validation', results_TEA);
+
+    % Save plots
+    folderpath = strcat(pwd,'\validations\figures\');
+    stack_trace = dbstack;
+    filename = stack_trace.name;
+    saveas(fig1, strcat(folderpath, filename, '_molar'), 'svg');
 end

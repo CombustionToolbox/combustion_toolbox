@@ -374,6 +374,7 @@ classdef EquilibriumSolver < handle
         
         [N, dNi_T, dN_T, dNi_p, dN_p, indexProducts, STOP, STOP_ions, h0] = equilibriumGibbs(obj, system, p, T, mix, guess_moles)
         [N, dNi_T, dN_T, dNi_p, dN_p, indexProducts, STOP, STOP_ions, h0] = equilibriumHelmholtz(obj, system, v, T, mix, guess_moles)
+        [N, STOP_ions, FLAG_ION] = equilibriumCheckIons(obj, N, A0, ind_E, indexGas, indexIons)
 
         function [x, STOP, guess_moles] = newton(obj, mix1, mix2, field, x0, guess_moles)
             % Find the temperature [K] (root) for the set chemical transformation at equilibrium using the second-order Newton-Raphson method

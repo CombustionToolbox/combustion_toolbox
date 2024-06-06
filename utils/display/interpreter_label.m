@@ -67,7 +67,7 @@ end
 function [property_name, property_latex, property_unit] = property_names(property, type)
 
     switch lower(property)
-        case 'phi'
+        case {'phi', 'equivalenceratio'}
             property_name = 'Equivalance ratio';
             property_latex = '\phi';
             property_unit = '';

@@ -40,6 +40,7 @@ function data = data_CEA(filename, varargin)
             if isfield(data_nasa, 'dVdp_T')
                 mix.dVdp_T = data_nasa.dVdp_T(:, end - l)'; % [-]
                 mix.dVdT_p = data_nasa.dVdT_p(:, end - l)'; % [-]
+                mix.cv = mix.cp / (- mix.dVdp_T * mix.gamma_s); % [kJ/kg-K]
             end
 
             if isfield(data_nasa, 'rho2rho1')
@@ -135,7 +136,7 @@ function data = data_CEA(filename, varargin)
             mix2.cp = data_nasa.cp2; % [kJ/kg-K]
             mix2.gamma_s = data_nasa.gamma_s2; % [-]
             mix2.sound = data_nasa.sound2; % [m/s]
-            mix2.cv = data_nasa.cp2 ./ mix2.gamma_s; % [kJ/kg-K]
+            mix2.cv = mix2.cp ./ (-mix2.gamma_s .* data_nasa.dVdp_T); % [kJ/kg-K]
             mix2.DhT = data_nasa.cp2 .* (data_nasa.T2 - 298.15); % [kJ/kg]
             mix2.u = data_nasa.u2; % [m/s]
             mix2.u_preshock = mix1.u; % [m/s]

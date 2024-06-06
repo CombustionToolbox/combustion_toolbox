@@ -74,8 +74,8 @@ function run_validation_TP_TEA_4(varargin)
     fig1 = plotComposition(mixArray(1), mixArray, 'Xi', 'p', 'displaySpecies', displaySpecies, 'mintol', 1e-21, 'nfrec', 3, 'ydir', 'reverse', 'xscale', 'log', 'validation', results_TEA);
 
     % Save plots
-    folderpath = strcat(pwd,'\validations\figures\');
+    folderpath = fullfile(pwd, 'validations', 'figures');
     stack_trace = dbstack;
     filename = stack_trace.name;
-    saveas(fig1, strcat(folderpath, filename, '_molar'), 'svg');
+    saveas(fig1, fullfile(folderpath, strcat(filename, '_molar')), 'svg');
 end

@@ -155,7 +155,7 @@ function [N, dNi_T, dN_T, dNi_p, dN_p, index, STOP, STOP_ions, h0] = equilibrium
             J = update_matrix_J(A0_T, J22, N(:, 1), NP, indexGas, indexCondensed, NE, NS - NG, psi_j);
             
             % Construction of vector b      
-            b = update_vector_b(A0, N(:, 1), NP, NatomE, ind_E, index, indexGas, indexCondensed, indexIons, muRT, tauRT, psi_j);
+            b = update_vector_b(A0, N(:, 1), NP, NatomE, ind_E, index, indexGas, indexCondensed, indexIons, muRT, tauRT);
 
             % Solve the linear system J*x = b
             [x, ~] = linsolve(J, b, opts);
@@ -238,7 +238,7 @@ function [N, dNi_T, dN_T, dNi_p, dN_p, index, STOP, STOP_ions, h0] = equilibrium
         % totalIterations = totalIterations + it;
         
         % Check convergence of charge balance (ionized species)
-        [N, STOP_ions, FLAG_ION] = check_convergence_ions(N, A0, ind_E, indexGas, indexIons, obj.tolMoles, obj.tolMultiplierIons, obj.itMaxIons);
+        [N, STOP_ions, FLAG_ION] = equilibriumCheckIons(obj, N, A0, ind_E, indexGas, indexIons);
         
         % Additional checks in case there are ions in the mixture
         if ~FLAG_ION
@@ -559,7 +559,7 @@ function J = update_matrix_J(A0_T, J22, N, NP, indexGas, indexCondensed, NE, NC,
     J = [J11, J12; J12', J22];
 end
 
-function b = update_vector_b(A0, N, NP, NatomE, ind_E, index, indexGas, indexCondensed, indexIons, muRT, tauRT, psi_j) 
+function b = update_vector_b(A0, N, NP, NatomE, ind_E, index, indexGas, indexCondensed, indexIons, muRT, tauRT) 
     % Compute vector b
     bi = N(index)' * A0(index, :);
 
@@ -577,70 +577,4 @@ end
 function Delta_ln_nj = update_Delta_ln_nj(A0, pi_i, Delta_NP, muRT, indexGas)
     % Compute correction moles of gases
     Delta_ln_nj = sum(A0(indexGas, :)' .* pi_i, 1)' + Delta_NP - muRT(indexGas);
-end
-
-function [N, STOP, FLAG_ION] = check_convergence_ions(N, A0, ind_E, indexGas, indexIons, TOL, TOL_pi, itMax)
-    % Check convergence of ionized species
-    
-    % Initialization
-    STOP = 0;
-
-    % Check if there are ionized species
-    if ~any(indexIons)
-        FLAG_ION = false;
-        return
-    end
-    
-    % Update FLAG_ION
-    FLAG_ION = true;
-
-    % Get error in the electro-neutrality of the mixture
-    [delta_ions, ~] = ions_factor(N, A0, ind_E, indexGas, indexIons);
-    
-    % Reestimate composition of ionized species
-    if abs(delta_ions) > TOL_pi
-        [N, STOP] = recompute_ions(N, A0, ind_E, indexGas, indexIons, delta_ions, TOL, TOL_pi, itMax);
-    end
-    
-end
-
-function [N, STOP] = recompute_ions(N, A0, ind_E, indexGas, indexIons, delta_ions, TOL, TOL_pi, itMax)
-    % Reestimate composition of ionized species
-    
-    % Initialization
-    A0_ions = A0(indexIons, ind_E);
-    STOP = 1;
-    it = 0;
-    % Reestimate composition of ionized species
-    while STOP > TOL_pi && it < itMax
-        it = it + 1;
-        % Apply correction
-        N(indexIons, 1) = N(indexIons, 1) .* exp(A0_ions * delta_ions);
-        % Compute correction of the Lagrangian multiplier for ions divided by RT
-        [delta_ions, ~] = ions_factor(N, A0, ind_E, indexGas, indexIons);
-        STOP = abs(delta_ions);
-    end   
-    
-    Xi_ions = N(indexIons, 1) / sum(N(:, 1));
-
-    % Set error to zero if molar fraction of ionized species are below
-    % tolerance
-    if ~any(Xi_ions > TOL)
-        STOP = 0;
-    end
-
-end
-
-function [delta, deltaN3] = ions_factor(N, A0, ind_E, indexGas, indexIons)
-    % Compute relaxation factor for ionized species
-    
-    if ~any(indexIons)
-        delta = [];
-        deltaN3 = 0;
-        return
-    end
-
-    delta = -sum(A0(indexGas, ind_E) .* N(indexGas, 1))/ ...
-             sum(A0(indexGas, ind_E).^2 .* N(indexGas, 1));
-    deltaN3 = abs(sum(N(indexGas, 1) .* A0(indexGas, ind_E)));
 end

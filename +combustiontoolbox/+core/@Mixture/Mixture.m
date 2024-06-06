@@ -692,7 +692,7 @@ classdef Mixture < handle & matlab.mixin.Copyable
             obj.phase = propertiesMatrix(:, system.ind_phase); % [bool]
 
             % Compute total composition of gas species [mol]
-            N_gas = sum(Ni(obj.phase == 0));
+            N_gas = sum(Ni(~obj.phase));
 
             % Compute molar fractions [-]
             obj.Xi = Ni / obj.N;
@@ -722,7 +722,7 @@ classdef Mixture < handle & matlab.mixin.Copyable
             obj.vSpecific = obj.equationOfState.getVolume(temperature, convert_bar_to_Pa(pressure), obj.chemicalSystem.listSpecies, obj.Xi) / (obj.MW * 1e-3);
 
             % Compute volume [m3]
-            obj.v = obj.vSpecific * obj.mi;
+            obj.v = obj.vSpecific * obj.mi * N_gas / obj.N;
 
             % Compute density [kg/m3]
             obj.rho = obj.mi / obj.v;
@@ -768,13 +768,13 @@ classdef Mixture < handle & matlab.mixin.Copyable
                     obj.cp = obj.cp_f + obj.cp_r; % [J/K]
                     obj.cv = obj.cp + (N_gas * R0 * obj.dVdT_p^2) / obj.dVdp_T; % [J/K]
                     obj.gamma = obj.cp / obj.cv; % [-]
-                    obj.gamma_s =- obj.gamma / obj.dVdp_T; % [-]
+                    obj.gamma_s = -obj.gamma / obj.dVdp_T; % [-]
                     obj.sound = sqrt(obj.gamma_s * convert_bar_to_Pa(pressure) / obj.rho); % [m/s]
 
                     return
                 end
 
-                obj.gamma_s =- 1 / obj.dVdp_T; % [-]
+                obj.gamma_s = -1 / obj.dVdp_T; % [-]
                 
                 return
             end

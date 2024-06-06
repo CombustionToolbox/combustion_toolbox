@@ -1,11 +1,11 @@
-function mixArray = run_validation_TP_CEA_6(varargin)
+function run_validation_TP_CEA_6(varargin)
     % Run test validation_TP_CEA_6:
     % Contrasted with: NASA's Chemical Equilibrium with Applications software
     % Problem type: Equilibrium composition at defined T and p
     % Temperature [K]   = 2000:50:5000;
     % Pressure    [bar] = 1.01325;
     % Initial mixture: Si + 9 C6H5OH_phenol
-    % List of species considered: All (see routine find_products)
+    % List of species considered: All (see method findProducts from ChemicalSystem class)
     %
     % This example is obtained from [1]
     % 
@@ -51,11 +51,27 @@ function mixArray = run_validation_TP_CEA_6(varargin)
         return
     end
 
+    % Prepare data
+    for i = 1:length(mixArray)
+        mixArray(i).cp = mixArray(i).cp * 1e-3; % [kJ/K];
+        mixArray(i).cv = mixArray(i).cv * 1e-3; % [kJ/K];
+    end
+
     % Load results CEA 
     prefixDataName = 'C6H5OH_phenol_and_Si';
     filename = {strcat(prefixDataName, '_TP1.out')};
     resultsCEA = data_CEA(filename, displaySpecies);
 
     % Plot molar fractions
-    plotComposition(mixArray(1), mixArray, 'T', 'Xi', 'displaySpecies', displaySpecies, 'mintol', 1e-3, 'validation', resultsCEA);
+    fig1 = plotComposition(mixArray(1), mixArray, 'T', 'Xi', 'displaySpecies', displaySpecies, 'mintol', 1e-3, 'validation', resultsCEA);
+
+    % Properties mixture
+    fig2 = plotProperties(repmat({'T'}, 1, 10), mixArray, {'rho', 'h', 'e', 'g', 's', 'cp', 'cv', 'gamma_s', 'dVdp_T', 'dVdT_p'}, mixArray, 'basis', {[], 'mi', 'mi', 'mi', 'mi', 'mi', 'mi', [], [], []}, 'validation', resultsCEA);
+
+    % Save plots
+    folderpath = fullfile(pwd, 'validations', 'figures');
+    stack_trace = dbstack;
+    filename = stack_trace.name;
+    saveas(fig1, fullfile(folderpath, strcat(filename, '_molar')), 'svg');
+    saveas(fig2, fullfile(folderpath, strcat(filename, '_properties')), 'svg');
 end

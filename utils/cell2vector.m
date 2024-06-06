@@ -21,6 +21,11 @@ function vector = cell2vector(value, varargin)
     end
 
     try
+        
+        if isobject(value)
+            vector = [value.(field)];
+            return
+        end
 
         if ~iscell(value) && ~isstruct(value)
             vector = value;

@@ -11,7 +11,6 @@ classdef Constants < handle
     %     * R0 = Constants.R0
     %     * g = Constants.G
     %     * release = Constants.release
-
     
     properties (Constant)
         R0      = 8.31446261815324 % Universal gas constant [J/(K mol)]

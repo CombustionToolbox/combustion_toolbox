@@ -28,6 +28,7 @@
 import combustiontoolbox.databases.NasaDatabase
 import combustiontoolbox.core.*
 import combustiontoolbox.shockdetonation.*
+import combustiontoolbox.utils.display.*
 
 % Get Nasa database
 DB = NasaDatabase();

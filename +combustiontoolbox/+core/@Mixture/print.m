@@ -1,4 +1,4 @@
-function print_mixture(mix, varargin)
+function print(mix, varargin)
     % Print properties and composition of the given mixtures in the command
     % window
     %
@@ -11,10 +11,10 @@ function print_mixture(mix, varargin)
     %     * mixN (Mixture): Mixture object with the properties of the mixture
     %
     % Examples:
-    %     * print_mixture(mix1)
-    %     * print_mixture(mix1, mix2)
-    %     * print_mixture(mix1, mix2, mix3)
-    %     * print_mixture(mix1, mix2, mix3, mix4)
+    %     * printMixture(mix1)
+    %     * printMixture(mix1, mix2)
+    %     * printMixture(mix1, mix2, mix3)
+    %     * printMixture(mix1, mix2, mix3, mix4)
     
     % Temporal
     mintol_display = 1e-14; % (will be moved to Miscellaneous)

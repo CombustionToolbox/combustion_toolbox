@@ -2,7 +2,7 @@ function [ax, dline] = plotFigure(x_field, x_var, y_field, y_var, varargin)
     % Plot figure with customizable settings
     %
     % Note:
-    %     The 'interpreter_label.m' routine considers that the properties
+    %     The 'interpreterLabel.m' routine considers that the properties
     %     are in mass basis. This will be fixed in a future patch.
     %
     % Args:
@@ -34,14 +34,17 @@ function [ax, dline] = plotFigure(x_field, x_var, y_field, y_var, varargin)
     %     
     %     * ax (object): Handle of the axes
     %     * dline (object): Handle of the plotted line
+    
+    % Import packages
+    import combustiontoolbox.utils.display.interpreterLabel
 
     % Default settings
     FLAG_BASIS = false;
     FLAG_COLOR_NEW = false;
     Misc = Miscellaneous();
     config = Misc.config;
-    config.labelx = interpreter_label(x_field, config.label_type);
-    config.labely = interpreter_label(y_field, config.label_type);
+    config.labelx = interpreterLabel(x_field, config.label_type);
+    config.labely = interpreterLabel(y_field, config.label_type);
     ax = [];
 
     % Get x and y values
@@ -54,8 +57,8 @@ function [ax, dline] = plotFigure(x_field, x_var, y_field, y_var, varargin)
         switch lower(varargin{i})
             case 'config'
                 config = varargin{i + 1};
-                config.labelx = interpreter_label(x_field, config.label_type);
-                config.labely = interpreter_label(y_field, config.label_type);
+                config.labelx = interpreterLabel(x_field, config.label_type);
+                config.labely = interpreterLabel(y_field, config.label_type);
             case {'leg', 'legend'}
                 config.legend_name = varargin{i + 1};
             case {'legend_location'}

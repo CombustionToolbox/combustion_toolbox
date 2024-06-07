@@ -1,4 +1,4 @@
-function [obj, LS, listSpeciesFormula] = list_species(obj, database, varargin)
+function [obj, listSpecies, listSpeciesFormula] = setListSpecies(obj, database, varargin)
     % Set list of species in the mixture (products)
     %
     % Predefined list of species:
@@ -17,30 +17,34 @@ function [obj, LS, listSpeciesFormula] = list_species(obj, database, varargin)
     %     * HC/O2/N2 PROPELLANTS
     %     * SI/HC/O2/N2 PROPELLANTS
     %
+    % Args:
+    %     obj (ChemicalSystem): Chemical system object
+    %     database (Database): Object inhereted from Database superclass
+    %
     % Optional Args:
-    %     * self (struct): Data of the mixture, conditions, and databases
-    %     * LS (cell): Name list species / list of species
+    %     * listSpecies (cell): Name list species / list of species
     %     * phi (float): Equivalence ratio
     %     * phi_c (float): Equivalence ratio in which theoretically appears soot
     %
     % Returns:
     %     Tuple containing
     %
-    %     * self (struct): Data of the mixture, conditions, and databases
-    %     * LS (cell): List of species
+    %     * obj (ChemicalSystem): Chemical system object
+    %     * listSpecies (cell): List of species
+    %     * listSpeciesFormula (cell): List with chemical formula of species
     %
     % Examples:
-    %     * LS = list_species('soot formation');
-    %     * [self, LS] = list_species(self, 'soot formation');
-    %     * [self, LS] = list_species(self, 'complete', 1.5, 2.5);
+    %     * listSpecies = setListSpecies(system, system.database, 'soot formation');
+    %     * [self, listSpecies] = setListSpecies(system, system.database, 'soot formation');
+    %     * [self, listSpecies] = setListSpecies(system, system.database, 'complete', 1.5, 2.5);
 
     % Unpack inputs
-    [obj, LS, FLAG] = unpack(obj, varargin{:});
+    [obj, listSpecies, FLAG] = unpack(obj, varargin{:});
 
-    % Set ListSpecies (LS)
-    if ~isempty(LS)
+    % Set ListSpecies (listSpecies)
+    if ~isempty(listSpecies)
 
-        switch upper(LS)
+        switch upper(listSpecies)
             case {'COMPLETE', 'COMPLETE REACTION'}
                 obj.FLAG_COMPLETE = true;
 
@@ -192,10 +196,10 @@ function [obj, LS, listSpeciesFormula] = list_species(obj, database, varargin)
                              'SibLb', 'SiO2bLb', 'Si2'};
             otherwise
 
-                if iscell(LS)
-                    obj.listSpecies = LS;
+                if iscell(listSpecies)
+                    obj.listSpecies = listSpecies;
                 else
-                    obj.listSpecies = {LS};
+                    obj.listSpecies = {listSpecies};
                 end
 
         end
@@ -203,7 +207,7 @@ function [obj, LS, listSpeciesFormula] = list_species(obj, database, varargin)
     end
 
     obj.listSpecies = unique(obj.listSpecies, 'stable');
-    LS = obj.listSpecies;
+    listSpecies = obj.listSpecies;
 
     if FLAG
         obj = obj.listSpecies;
@@ -225,35 +229,35 @@ function [obj, LS, listSpeciesFormula] = list_species(obj, database, varargin)
     
     end
     
-    function [obj, LS] = unpack_LS(obj, variable)
-        % Unpack list of species (LS)
-        LS = [];
+    function [obj, listSpecies] = unpack_LS(obj, variable)
+        % Unpack list of species (listSpecies)
+        listSpecies = [];
     
         if iscell(variable)
             obj.listSpecies = variable;
         else
-            LS = variable;
+            listSpecies = variable;
         end
     
     end
     
-    function [obj, LS, FLAG] = unpack(obj, varargin)
+    function [obj, listSpecies, FLAG] = unpack(obj, varargin)
         
         % Unpack
         if nargin < 2
-            FLAG = true; % Return variable "LS"
+            FLAG = true; % Return variable
     
             if ~iscell(varargin{1}) && ~ischar(varargin{1})
-                FLAG = false; % Return variable "self"
+                FLAG = false; % Return variable "obj"
                 obj = varargin{1};
                 return
             end
     
-            [obj, LS] = unpack_LS(obj, varargin{1});
+            [obj, listSpecies] = unpack_LS(obj, varargin{1});
     
         else
-            FLAG = false; % Return variable "self"
-            [obj, LS] = unpack_LS(obj, varargin{1});
+            FLAG = false; % Return variable "obj"
+            [obj, listSpecies] = unpack_LS(obj, varargin{1});
         end
     
     end

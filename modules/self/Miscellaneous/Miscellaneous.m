@@ -28,6 +28,9 @@ function self = Miscellaneous()
     % Returns:
     %     self (struct): Struct with miscellaneous data
     
+    % Import packages
+    import combustiontoolbox.utils.getMonitorPositions
+
     % Description
     self.description = 'Miscellaneous'; 
     % Variables
@@ -37,7 +40,7 @@ function self = Miscellaneous()
     % * Report
     self.report_type = 'complete';                   % Type of report (short, complete)
     % * Plot
-    self.config.position = get_monitor_positions(2); % Default figure position [pixels]
+    self.config.position = getMonitorPositions(2);   % Default figure position [pixels]
     self.config.innerposition = [0.05 0.05 0.9 0.9]; % Set figure inner position [normalized]
     self.config.outerposition = [0.05 0.05 0.9 0.9]; % Set figure outer position [normalized]
     self.config.linestyle = '-';                     % Set line style for plots

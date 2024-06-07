@@ -147,7 +147,7 @@ classdef Mixture < handle & matlab.mixin.Copyable
     end
     
     methods
-
+        
         function obj = Mixture(chemicalSystem, varargin)
             % The chemical system has the database, we only need the properties matrix to perform all the calculations
             % Now to be compatible with all the capabilities of the previous version, we will have to be able to add a
@@ -620,12 +620,9 @@ classdef Mixture < handle & matlab.mixin.Copyable
             % Compute specific volume [m3/mol]
             vMolar = vSpecific * MW * 1e-3 * sum(moles) / sum(molesGas);
         end
-
-        function print(obj, varargin)
-            % 
-            combustiontoolbox.utils.display.print_mixture(obj, varargin{:});
-        end
         
+        % Add print method
+        print(mix, varargin)
     end
     
     methods(Access = protected)

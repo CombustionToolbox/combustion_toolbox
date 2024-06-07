@@ -70,7 +70,7 @@ classdef ChemicalSystem < handle & matlab.mixin.Copyable
     methods
         
         [LS, ind_elements_DB] = findProducts(obj, listSpecies, varargin)
-        [obj, LS, listSpeciesFormula] = list_species(obj, database, varargin)
+        [obj, LS, listSpeciesFormula] = setListSpecies(obj, database, varargin)
         
         function obj = ChemicalSystem(database, varargin)
             % Constructor
@@ -109,7 +109,7 @@ classdef ChemicalSystem < handle & matlab.mixin.Copyable
             % Initialize chemical system
 
             % Set list species
-            [obj, ~, obj.listSpeciesFormula] = obj.list_species(obj.database, obj.listSpecies);
+            [obj, ~, obj.listSpeciesFormula] = obj.setListSpecies(obj.database, obj.listSpecies);
             
             % Set species
             obj = obj.get_species(obj.database);

@@ -194,7 +194,7 @@ function data = read_CEA(filename)
                     if contains(tline, 'C(gr)')
                         data.X(k, 1).mole{j, 1} = 'Cbgrb';
                     else
-                        data.X(k, 1).mole{j, 1} = NasaDatabase.fullname2name(tline(sp1:sp2 - 1));
+                        data.X(k, 1).mole{j, 1} = NasaDatabase.fullname2name(tline(sp1(1):sp2(1) - 1));
                     end
 
                     try

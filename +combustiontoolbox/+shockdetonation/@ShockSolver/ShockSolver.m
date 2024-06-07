@@ -41,7 +41,7 @@ classdef ShockSolver < handle
         end
 
         function varargout = solve(obj, mix1, varargin)
-            % Obtain chemical equilibrium composition and thermodynamic properties
+            % Solve shock waves problems
             
             % Definitions
             u1 = mix1.u;
@@ -204,7 +204,7 @@ classdef ShockSolver < handle
         end
 
         function varargout = solveArray(obj, mix1Array, varargin)
-            % Obtain chemical equilibrium composition and thermodynamic properties
+            % Solve a set of shock waves problems
             %
             %
             %
@@ -304,9 +304,45 @@ classdef ShockSolver < handle
         end
 
     end
+    
+    methods (Access = public, Static)
+
+        function Gammas = computeGammas(u2, rho2, p2)
+            % Compute slope of the Hugoniot curve
+            %
+            % Args:
+            %     obj (obj): 
+            %     u2 (float): Post-shock velocity [m/s]
+            %     rho2 (float): Post-shock density [kg/m3]
+            %     p2 (float): Post-shock pressure [bar]
+            %
+            % Returns:
+            %     Gammas (float): Slope of the Hugoniot curve [-]
+            
+            p2 = convert_bar_to_Pa(p2);
+            
+            Gammas =  u2(1:end-1).^2 .* combustiontoolbox.utils.math.computeFirstDerivative(rho2, p2);
+        end
+
+        function Gammas = computeGammasFrozen(M1, R, P)
+            % Compute slope of the Hugoniot curve for thermochemically frozen air
+            %
+            % Args:
+            %     M1 (float): Pre-shock Mach number [-]
+            %     R (float): Density ratio [-]
+            %     P (float): Pressure ratio [-]
+            %
+            % Returns:
+            %     Gammas (float): Slope of the Hugoniot curve [-]
+        
+            Gammas =  7/5 * (M1(1:end-1).^2 ./ R(1:end-1).^2) .* combustiontoolbox.utils.math.computeFirstDerivative(P, R).^(-1);
+        end
+
+    end
 
     methods (Access = private)
         
+        [R, P, T, Gammas, M1] = shockIncidentIdeal(obj, gamma, M1)
         [mix1, mix2] = shockIncident(obj, mix1, varargin)
         [mix1, mix2, mix5] = shockReflected(obj, mix1, mix2, varargin)
         [mix1, mix2] = shockObliqueBeta(obj, mix1, varargin)

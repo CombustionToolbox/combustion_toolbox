@@ -1,4 +1,4 @@
-function [FLAG_UPDATE, message] = check_update(varargin)
+function [FLAG_UPDATE, message] = checkUpdate(varargin)
     % Check if there is a new release of the Combustion Toolbox
     %
     % Optional Args:
@@ -15,7 +15,7 @@ function [FLAG_UPDATE, message] = check_update(varargin)
     %    * [FLAG_UPDATE, message] = check_update(UIFigure);
 
     % Definitions
-    user = 'AlbertoCuadra';
+    user = 'CombustionToolbox';
     repo_name = 'combustion_toolbox';
 
     % Unpack additional inputs
@@ -25,7 +25,8 @@ function [FLAG_UPDATE, message] = check_update(varargin)
     FLAG_UPDATE = false;
 
     % Get current version of CT
-    [tag_current, date_current] = get_combustion_toolbox_version();
+    tag_current = combustiontoolbox.common.Constants.release;
+    date_current = combustiontoolbox.common.Constants.date;
 
     % Get latest version of CT on Github
     [tag_repo, git_data] = get_latest_version_github(user, repo_name);

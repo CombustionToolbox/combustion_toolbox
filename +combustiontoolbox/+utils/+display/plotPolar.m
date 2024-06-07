@@ -1,34 +1,50 @@
-function [ax1, ax2, ax3] = plot_shock_polar(varargin)
-    % Routine to obtain shock polar plots
+function [ax1, ax2, ax3] = plotPolar(mixArray1, mixArray2, varargin)
+    % Routine to obtain shock polar plots, namely:
     %
     %   * Plot (pressure, deflection)
     %   * Plot (wave angle, deflection)
-    %   * Plot velocity components
+    %   * Plot (velocity_x velocity_y)
+    %
+    % Args:
+    %     mixArray1 (Mixture): Mixture object with the pre-shock state
+    %     mixArray2 (Mixture): Mixture object with the post-shock state
+    %
+    % Optional Args:
+    %     * mix2_case (Mixture): Mixture object with the post-shock state (case 2)
+    %     * mix0 (Mixture): Mixture object with the post-shock state (case 0)
+    %
+    % Returns:
+    %     Tuple containing
+    %     
+    %     * ax1 (object): Handle of the axes with (pressure, deflection) 
+    %     * ax2 (object): Handle of the axes with (wave angle, deflection)
+    %     * ax3 (object): Handle of the axes with (velocity_x velocity_y)
+    %
+    % Examples:
+    %     * [ax1, ax2, ax3] = plotPolar(mixArray1, mixArray2)
+    %     * [ax1, ax2, ax3] = plotPolar(mixArray1, mixArray2, mix2_case, mix0)
 
-    self = varargin{1};
-    mix1 = varargin{2};
-    mix2 = varargin{3};
-
-    if nargin > 3
+    if nargin > 2
         mix2_case = varargin{4};
         mix0 = varargin{5};
     else
-        mix2_case = cell(1, length(mix1));
-        mix0 = cell(1, length(mix1));
+        mix2_case = zeros(size(mixArray1));
+        mix0 = mix2_case;
     end
 
-    % Abbreviations
-    config = self.Misc.config;
     % Definitions
-    N = length(mix1);
+    Misc = Miscellaneous();
+    config = Misc.config;
+    N = length(mixArray1);
+    
     % Plots
     for i = N:-1:1
-        % Plot (pressure, deflection) - shock polar
-        ax1 = plot_shock_polar_pressure(mix1{i}, mix2{i}, config, mix2_case{i}, mix0{i});
-        % Plot (wave angle, deflection) - shock polar
-        ax2 = plot_shock_polar_wave(mix1{i}, mix2{i}, config);
-        % Plot velocity components
-        ax3 = plot_shock_polar_velocities(mix1{i}, mix2{i}, config);
+        % Plot (pressure, deflection)
+        ax1 = plot_shock_polar_pressure(mixArray1(i), mixArray2(i), config, mix2_case(i), mix0(i));
+        % Plot (wave angle, deflection)
+        ax2 = plot_shock_polar_wave(mixArray1(i), mixArray2(i), config);
+        % Plot (velocity_x velocity_y)
+        ax3 = plot_shock_polar_velocities(mixArray1(i), mixArray2(i), config);
     end
 
 end
@@ -50,13 +66,13 @@ function ax = plot_shock_polar_pressure(mix1, mix2, config, mix2_case, mix0)
     % Plot (pressure, deflection) - shock polar
     ax = set_fixed_figure(config.id_polar1, config);
 
-    M1 = velocity_relative(mix1) / soundspeed(mix1);
+    M1 = mix1.mach;
     p1 = pressure(mix1);
     Mach_label = '$\mathcal{M}_1 = ';
     xaxis = 0;
 
-    if ~isempty(mix2_case)
-        M1 = velocity_relative(mix2_case) / soundspeed(mix2_case);
+    if isobject(mix2_case)
+        M1 = mix2_case.mach;
         p1 = mix0.p;
         Mach_label = '$\mathcal{M}_2 = ';
         xaxis = mix2_case.theta;
@@ -68,7 +84,7 @@ function ax = plot_shock_polar_pressure(mix1, mix2, config, mix2_case, mix0)
     % plot(ax, mix2.theta_max, mix2.polar.p(mix2.ind_max), 'kd', 'LineWidth', config.linewidth, 'MarkerFaceColor', 'auto');
     % plot(ax, -mix2.theta_max, mix2.polar.p(mix2.ind_max), 'kd', 'LineWidth', config.linewidth, 'MarkerFaceColor', 'auto');
     % plot(ax, mix2.polar.theta(mix2.ind_sonic), mix2.polar.p(mix2.ind_sonic), 'ks', 'LineWidth', config.linewidth, 'MarkerFaceColor', 'auto');
-    text(ax, xaxis, max(mix2.polar.p), strcat(Mach_label, sprintf('%.2g', M1), '$'), 'VerticalAlignment', 'bottom', 'HorizontalAlignment', 'center', 'FontSize', config.fontsize - 4, 'Interpreter', 'latex');
+    text(ax, xaxis, max(mix2.polar.p), sprintf('%s%.2g$', Mach_label, M1), 'VerticalAlignment', 'bottom', 'HorizontalAlignment', 'center', 'FontSize', config.fontsize - 4, 'Interpreter', 'latex');
     % text(ax, mix2.theta_max, str2.polar.p2(str2.ind_max), 'detachment point \rightarrow m', 'HorizontalAlignment', 'right', 'FontSize', config.fontsize-6)
     % text(ax, mix2.theta_sonic, str2.polar.p2(str2.ind_sonic), 'sonic point \rightarrow s', 'HorizontalAlignment', 'right', 'FontSize', config.fontsize-6)
     xlabel(ax, 'Deflection angle [deg]', 'FontSize', config.fontsize, 'Interpreter', 'latex');

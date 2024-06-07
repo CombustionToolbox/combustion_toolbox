@@ -1,4 +1,4 @@
- function mixArray2 = run_validation_SHOCK_IONIZATION_CEA_1()
+ function run_validation_SHOCK_IONIZATION_CEA_1
     % Run test validation_SHOCK_IONIZATION_CEA_1:
     % Contrasted with: NASA's Chemical Equilibrium with Applications software
     % Problem type: Planar incident shock wave
@@ -12,14 +12,18 @@
     import combustiontoolbox.databases.NasaDatabase
     import combustiontoolbox.core.*
     import combustiontoolbox.shockdetonation.*
-    
+    import combustiontoolbox.utils.display.*
+
     % Benchmark?
     FLAG_BENCHMARK = false;
 
     % Definitions
-    filename = {'airNASA_incident_shocks_ionization1.out', 'airNASA_incident_shocks_ionization2.out',...
-                'airNASA_incident_shocks_ionization3.out', 'airNASA_incident_shocks_ionization4.out',...
-                'airNASA_incident_shocks_ionization5.out', 'airNASA_incident_shocks_ionization6.out'};
+    prefixDataName = 'airNASA_incident_shocks_ionization';
+
+    for i = 6:-1:1
+        filename{i} = sprintf('%s%d.out', prefixDataName, i);
+    end
+
     listSpecies = 'AIR_IONS';
     displaySpecies = {'eminus','Ar','Arplus','C','Cplus','Cminus','CN','CNplus','CNminus',...
                       'CNN','CO','COplus','CO2','CO2plus',...
@@ -60,7 +64,7 @@
     end
 
     % Load results CEA 
-    resultsCEA = data_CEA(filename, displaySpecies, find_ind(list_species(listSpecies), displaySpecies));
+    resultsCEA = data_CEA(filename, displaySpecies);
     
     % Plot molar fractions
     plotComposition(mixArray2(1), mixArray1, 'u', 'Xi', 'mintol', 1e-14, 'y_var', mixArray2);

@@ -16,7 +16,7 @@ function INSTALL(varargin)
     %
     % Notes:
     %     The code is available in:
-    %     * GitHub - https://github.com/AlbertoCuadra/combustion_toolbox
+    %     * GitHub - https://github.com/CombustionToolbox/combustion_toolbox
     %     * MATLAB File Exchange - https://in.mathworks.com/matlabcentral/fileexchange/101088-combustion-toolbox
     %     * Zenodo - https://doi.org/10.5281/zenodo.5554911
     %
@@ -24,7 +24,7 @@ function INSTALL(varargin)
     %          or type "run website_CT"
     %
     % @author: Alberto Cuadra Lara
-    %          PhD Candidate - Group Fluid Mechanics
+    %          Postdoctoral researcher - Group Fluid Mechanics
     %          Universidad Carlos III de Madrid
     
     % Default
@@ -115,6 +115,13 @@ function INSTALL(varargin)
         % Add all subfolders to the MATLAB path
         for i = length(subfolders):-1:1
             dir_subfolders = fullfile(subfolders(i).folder, subfolders(i).name);
+
+            % Check if the subfolder is a package folder
+            if startsWith(subfolders(i).name, '+')
+                f_path(subfolders(i).folder); % Add parent directory
+                continue
+            end
+
             genpath_subfolders = genpath(dir_subfolders);
             f_path(genpath_subfolders);
         end

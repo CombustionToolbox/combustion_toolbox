@@ -1,4 +1,4 @@
-function position = get_monitor_positions(varargin)
+function position = getMonitorPositions(varargin)
     % Routine that gets the position in pixels of the monitor(s) connected
     % to the device using Java (default) or MATLAB's routines. If no monitor
     % is specified, the position of the main monitor is returned.
@@ -50,7 +50,7 @@ function position = get_monitor_positions(varargin)
     
     % Get the position of the monitor using MATLAB's routines
     catch
-        position = get_monitor_positions_MATLAB(varargin{:});
+        position = getMonitorPositionsMATLAB(varargin{:});
     end
 
 end

@@ -2,7 +2,7 @@ function [main_ax, main_figure] = plotProperties(x_field, x_var, y_field, y_var,
     % Plot figure with customizable settings
     %
     % Note:
-    %     The 'interpreter_label.m' routine considers that the properties
+    %     The 'interpreterLabel.m' routine considers that the properties
     %     are in mass basis. This will be fixed in a future patch.
     %
     % Args:
@@ -31,6 +31,9 @@ function [main_ax, main_figure] = plotProperties(x_field, x_var, y_field, y_var,
     %
     % Returns:
     %     mainfigure (obj): Figure object
+    
+    % Import packages
+    import combustiontoolbox.utils.display.*
 
     % Default settings
     nfrec = 1;
@@ -39,8 +42,8 @@ function [main_ax, main_figure] = plotProperties(x_field, x_var, y_field, y_var,
     main_ax = [];
     Misc = Miscellaneous();
     config = Misc.config;
-    config.labelx = interpreter_label(x_field, config.label_type);
-    config.labely = interpreter_label(y_field, config.label_type);
+    config.labelx = interpreterLabel(x_field, config.label_type);
+    config.labely = interpreterLabel(y_field, config.label_type);
 
     % Definitions
     colorPalette = config.colorlines(3, :);
@@ -63,8 +66,8 @@ function [main_ax, main_figure] = plotProperties(x_field, x_var, y_field, y_var,
                 FLAG_PLOT_VALIDATION = true;
             case 'config'
                 config = varargin{i + 1};
-                config.labelx = interpreter_label(x_field, config.label_type);
-                config.labely = interpreter_label(y_field, config.label_type);
+                config.labelx = interpreterLabel(x_field, config.label_type);
+                config.labely = interpreterLabel(y_field, config.label_type);
             case {'leg', 'legend'}
                 config.legend_name = varargin{i + 1};
             case {'legend_location'}

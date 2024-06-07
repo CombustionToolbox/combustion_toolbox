@@ -37,6 +37,7 @@ function [ax, fig] = plotComposition(obj, x_var, x_field, y_field, varargin)
     % Import packages
     import combustiontoolbox.utils.findIndex
     import combustiontoolbox.utils.display.species2latex
+    import combustiontoolbox.utils.display.interpreterLabel
     
     % Temporal
     config = Miscellaneous().config;
@@ -49,8 +50,8 @@ function [ax, fig] = plotComposition(obj, x_var, x_field, y_field, varargin)
     nfrec = 1;
     FLAG_PLOT_VALIDATION = false;
     % config = self.Misc.config;
-    config.labelx = interpreter_label(x_field, config.label_type);
-    config.labely = interpreter_label(y_field, config.label_type);
+    config.labelx = interpreterLabel(x_field, config.label_type);
+    config.labely = interpreterLabel(y_field, config.label_type);
     % mintol_display = self.C.mintol_display;
     config.yscale = 'log';
     [species, listSpecies] = get_displaySpecies(obj, displaySpecies);
@@ -145,7 +146,7 @@ function [ax, fig] = plotComposition(obj, x_var, x_field, y_field, varargin)
     LINE_STYLES = {'-', '--', ':', '-.'};
     SYMBOL_STYLES = {'d', 'o', 's', '<'};
     NUM_STYLES = length(LINE_STYLES);
-    colorbw = brewermap(NUM_COLORS, config.colorpalette);
+    colorbw = combustiontoolbox.utils.extensions.brewermap(NUM_COLORS, config.colorpalette);
 
     % Plot main results
     k = 1;

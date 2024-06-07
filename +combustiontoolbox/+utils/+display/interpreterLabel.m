@@ -1,4 +1,4 @@
-function value = interpreter_label(property, varargin)
+function value = interpreterLabel(property, varargin)
     % Interpreter label for properties - returns property name
     %
     % Note:
@@ -163,7 +163,7 @@ function [property_name, property_latex, property_unit] = property_names(propert
             property_name = 'Post-shock velocity';
             property_latex = 'u_{\rm postshock}';
             property_unit = '[m/s]';
-        case 'm'
+        case {'m', 'mach'}
             property_name = 'Mach number';
             property_latex = '\mathcal{M}';
             property_unit = '';

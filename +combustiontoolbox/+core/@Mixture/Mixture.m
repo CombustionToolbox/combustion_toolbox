@@ -108,6 +108,7 @@ classdef Mixture < handle & matlab.mixin.Copyable
 
     properties (Access = private)
         quantity
+        indexGas
         listSpecies
         listSpeciesFuel
         listSpeciesOxidizer
@@ -200,7 +201,7 @@ classdef Mixture < handle & matlab.mixin.Copyable
             
             % Compute pressure if required
             if obj.vSpecific
-                vMolar = vSpecific2vMolar(obj, obj.vSpecific, obj.quantity);
+                vMolar = vSpecific2vMolar(obj, obj.vSpecific, obj.quantity, obj.quantity(obj.indexGas));
                 obj.p = convert_Pa_to_bar(obj.equationOfState.getPressure(obj.T, vMolar, obj.chemicalSystem.listSpecies, obj.quantity / sum(obj.quantity)));
             end
 
@@ -268,7 +269,7 @@ classdef Mixture < handle & matlab.mixin.Copyable
             end
             
             % Compute pressure
-            vMolar = vSpecific2vMolar(obj, obj.vSpecific, obj.quantity);
+            vMolar = vSpecific2vMolar(obj, obj.vSpecific, obj.quantity, obj.quantity(obj.indexGas));
             obj.p = convert_Pa_to_bar(obj.equationOfState.getPressure(obj.T, vMolar, obj.chemicalSystem.listSpecies, obj.quantity / sum(obj.quantity)));
 
             % Set equivalence ratio and compute thermodynamic properties
@@ -337,6 +338,9 @@ classdef Mixture < handle & matlab.mixin.Copyable
             % Get system containing only the list of products
             obj.chemicalSystemProducts = getSystemProducts(obj.chemicalSystem);
             
+            % Check phase added species
+            obj.indexGas = find(ismember(obj.listSpecies, obj.chemicalSystem.listSpecies(obj.chemicalSystem.indexGas)));
+
             % Check if initial state is defined (temperature, pressure, and composition)
             if ~obj.T || (~obj.p && ~obj.vSpecific)
                 return
@@ -344,7 +348,7 @@ classdef Mixture < handle & matlab.mixin.Copyable
 
             % Compute pressure if required
             if obj.vSpecific
-                vMolar = vSpecific2vMolar(obj, obj.vSpecific, obj.quantity);
+                vMolar = vSpecific2vMolar(obj, obj.vSpecific, obj.quantity, obj.quantity(obj.indexGas));
                 obj.p = convert_Pa_to_bar(obj.equationOfState.getPressure(obj.T, vMolar, obj.chemicalSystem.listSpecies, obj.quantity / sum(obj.quantity)));
             end
 
@@ -395,7 +399,7 @@ classdef Mixture < handle & matlab.mixin.Copyable
 
             % Compute pressure if required
             if obj.vSpecific
-                vMolar = vSpecific2vMolar(obj, obj.vSpecific, obj.quantity);
+                vMolar = vSpecific2vMolar(obj, obj.vSpecific, obj.quantity, obj.quantity(obj.indexGas));
                 obj.p = convert_Pa_to_bar(obj.equationOfState.getPressure(obj.T, vMolar, obj.chemicalSystem.listSpecies, obj.quantity / sum(obj.quantity)));
             end
 
@@ -600,11 +604,11 @@ classdef Mixture < handle & matlab.mixin.Copyable
 
         end
 
-        function vMolar = vSpecific2vMolar(obj, vSpecific, moles, varargin)
+        function vMolar = vSpecific2vMolar(obj, vSpecific, moles, molesGas, varargin)
             % Compute molar volume [m3/mol] from specific volume [m3/kg]
             
             % Get index specie
-            if nargin == 3
+            if nargin == 4
                 index = combustiontoolbox.utils.findIndex(obj.chemicalSystem.listSpecies, obj.listSpecies);
             else
                 index = varargin{1};
@@ -614,7 +618,7 @@ classdef Mixture < handle & matlab.mixin.Copyable
             MW = computeMeanMolecularWeight(obj, moles, index);
 
             % Compute specific volume [m3/mol]
-            vMolar = vSpecific * MW * 1e-3;
+            vMolar = vSpecific * MW * 1e-3 * sum(moles) / sum(molesGas);
         end
 
         function print(obj, varargin)
@@ -718,14 +722,14 @@ classdef Mixture < handle & matlab.mixin.Copyable
             % Compute vector atoms of each element without frozen species
             obj.natomElementsReact = sum(propertiesMatrix(system.indexReact, system.ind_ni) .* system.stoichiometricMatrix(system.indexReact, :), 1);
             
-            % Compute specific volume [m3/kg]
-            obj.vSpecific = obj.equationOfState.getVolume(temperature, convert_bar_to_Pa(pressure), obj.chemicalSystem.listSpecies, obj.Xi) / (obj.MW * 1e-3);
-
             % Compute volume [m3]
-            obj.v = obj.vSpecific * obj.mi * N_gas / obj.N;
+            obj.v = obj.equationOfState.getVolume(temperature, convert_bar_to_Pa(pressure), obj.chemicalSystem.listSpecies, obj.Xi) * N_gas;
+
+            % Compute specific volume [m3/kg]
+            obj.vSpecific = obj.v / obj.mi;
 
             % Compute density [kg/m3]
-            obj.rho = obj.mi / obj.v;
+            obj.rho = 1 / obj.vSpecific;
 
             % Compute internal energy [kJ]
             obj.e = obj.h - N_gas * R0 * temperature * 1e-3;

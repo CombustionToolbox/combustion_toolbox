@@ -273,7 +273,7 @@ classdef EquilibriumSolver < handle
             
             function pP = computePressure(mix, T, moles, index)
                 % Compute pressure [bar] of product mixture
-                vMolar = vSpecific2vMolar(mix, mix.vSpecific, moles, index);
+                vMolar = vSpecific2vMolar(mix, mix.vSpecific, moles, sum(moles(system.indexGas)), index);
                 pP = mix.equationOfState.getPressure(T, vMolar, system.listSpecies, mix.Xi) * 1e-5;
             end
             
@@ -313,7 +313,7 @@ classdef EquilibriumSolver < handle
                 
                 % Check if problemType is at constant volume
                 if strfind(obj.problemType, 'V') == 2
-                    mix.p = computePressure(mix, T, N, system.indexProducts);
+                    mix.p = computePressure(mix, T, N, [system.indexGas, system.indexCondensed]);
                 end
                 
                 % Compute properties of final mixture

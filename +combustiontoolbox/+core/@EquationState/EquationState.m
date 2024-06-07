@@ -30,7 +30,7 @@ classdef EquationState < handle
         end
 
         function volume = getVolume(obj, temperature, pressure, varargin)
-            % Compute molar volume [m3/mol] using the defined equation of state
+            % Compute molar volume [m3/mol_gas] using the defined equation of state
             volume = obj.volumeFunction(temperature, pressure, varargin{:});
         end
 
@@ -43,7 +43,7 @@ classdef EquationState < handle
             %
             % Args:
             %     temperature (float): Temperature of the mixture [K]
-            %     molarVolume (float): Molar volume of the mixture [m3/mol]
+            %     molarVolume (float): Molar volume of the mixture [m3/mol_gas]
             % 
             % Returns:
             %     pressure (float): Pressure of the mixture [Pa]
@@ -58,10 +58,10 @@ classdef EquationState < handle
             %
             % Args:
             %     temperature (float): Temperature of the mixture [K]
-            %     molarVolume (float): Pressure of the mixture [Pa]
+            %     pressure (float): Pressure of the mixture [Pa]
             % 
             % Returns:
-            %     V (float): Molar volume of the mixture [m3/mol]
+            %     molarVolume (float): Molar volume of the mixture [m3/mol_gas]
             
             R0 = combustiontoolbox.common.Constants.R0; % Universal gas constant [J/(K mol)]
             

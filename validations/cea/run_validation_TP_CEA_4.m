@@ -12,6 +12,7 @@ function problems_solved = run_validation_TP_CEA_4
     import combustiontoolbox.databases.NasaDatabase
     import combustiontoolbox.core.*
     import combustiontoolbox.equilibrium.*
+    import combustiontoolbox.utils.display.*
     
     % Benchmark?
     FLAG_BENCHMARK = false;

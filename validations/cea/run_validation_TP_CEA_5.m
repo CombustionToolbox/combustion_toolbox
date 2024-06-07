@@ -12,6 +12,7 @@ function run_validation_TP_CEA_5
     import combustiontoolbox.databases.NasaDatabase
     import combustiontoolbox.core.*
     import combustiontoolbox.equilibrium.*
+    import combustiontoolbox.utils.display.*
     
     % Benchmark?
     FLAG_BENCHMARK = false;

@@ -1,4 +1,4 @@
-function dxdy = compute_first_derivative(x, y)
+function dxdy = computeFirstDerivative(x, y)
     % Compute first central derivate using a non-uniform grid
     %
     % Args:

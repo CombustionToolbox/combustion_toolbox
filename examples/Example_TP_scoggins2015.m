@@ -23,6 +23,7 @@
 import combustiontoolbox.databases.NasaDatabase
 import combustiontoolbox.core.*
 import combustiontoolbox.equilibrium.*
+import combustiontoolbox.utils.display.*
 
 % Definitions
 listSpecies = {'C','C2','C2H','C10H8_naphthale','C2H2_acetylene',...

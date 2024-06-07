@@ -26,6 +26,7 @@
 import combustiontoolbox.databases.NasaDatabase
 import combustiontoolbox.core.*
 import combustiontoolbox.equilibrium.*
+import combustiontoolbox.utils.display.*
 import combustiontoolbox.utils.findIndex
 
 % Get Nasa database

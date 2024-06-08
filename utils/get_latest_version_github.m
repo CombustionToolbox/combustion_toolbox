@@ -12,7 +12,7 @@ function [release, git_data] = get_latest_version_github(user, repo_name)
     %     * git_data (struct): Body data of the request
     %
     % Example:
-    %     [release, git_data] = get_latest_version_github('AlbertoCuadra', 'combustion_toolbox')
+    %     [release, git_data] = get_latest_version_github('CombustionToolbox', 'combustion_toolbox')
 
     % Define request
     git_api = 'https://api.github.com/repos/';

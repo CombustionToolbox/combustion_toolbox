@@ -109,10 +109,18 @@ function [ax, dline] = plotFigure(x_field, x_var, y_field, y_var, varargin)
         ax = set_figure(config);
     end
     
+    % change units if required
+    switch y_field
+        case {'cp', 'cv', 'hf', 'ef', 'h', 'e', 'g', 's'}
+            y = y * 1e-3; % [kJ ...]
+    end
+
     % Check if property has to be divided by the basis (kg or mol)
     if FLAG_BASIS
         y_basis = cell2vector(y_var, basis);
-        y = y ./ y_basis;
+
+        y = y ./ y_basis
+        
     end
 
     % Plot

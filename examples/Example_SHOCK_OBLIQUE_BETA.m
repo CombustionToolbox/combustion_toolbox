@@ -15,7 +15,8 @@
 %              'N2O5', 'N3', 'O', 'Oplus', 'Ominus', 'O2', 'O2plus', ...
 %              'O2minus', 'O3'}
 %   
-% See wiki or list_species() for more predefined sets of species
+% See wiki or setListspecies method from ChemicalSystem class for more
+% predefined sets of species
 %
 % @author: Alberto Cuadra Lara
 %          Postdoctoral researcher - Group Fluid Mechanics
@@ -54,8 +55,10 @@ solver = ShockSolver('problemType', 'SHOCK_OBLIQUE');
 % Plot Hugoniot curve
 plotFigure('\rho_1 / \rho_2', [mixArray1.rho] ./ [mixArray2.rho], 'p_2 / p_1', [mixArray2.p] ./ [mixArray1.p], 'xScale', 'log', 'yScale', 'log');
 
-% Plot post-shock temperature
-plotFigure('beta', [mixArray1.beta], 'T', [mixArray2.T]);
-
 % Plot molar fractions
 plotComposition(mixArray2(1), mixArray1, 'beta', 'Xi', 'mintol', 1e-3, 'y_var', mixArray2);
+
+% Plot properties
+properties = {'T', 'p', 'rho', 'h', 'e', 'g', 's', 'gamma_s'};
+propertiesBasis = {[], [], [], 'mi', 'mi', 'mi', 'mi', []};
+plotProperties(repmat({'beta'}, 1, length(properties)), mixArray2, properties, mixArray2, 'basis', propertiesBasis);

@@ -119,8 +119,7 @@ function [ax, dline] = plotFigure(x_field, x_var, y_field, y_var, varargin)
     if FLAG_BASIS
         y_basis = cell2vector(y_var, basis);
 
-        y = y ./ y_basis
-        
+        y = y ./ y_basis;
     end
 
     % Plot

@@ -4,8 +4,8 @@
 % Compute limit regular reflections at different altitudes considering a
 % thermochemical frozen gas, a chemically frozen gas, and dissociation,
 % ionization, vibrational excitation and electronic excitation. The
-% calculations are carried out for a set of initial shock front velocities
-% u1/a1 = [1.75:0.1:20]
+% calculations are carried out for a set of pre-shock Mach numbers 
+% M1 = [1.75:0.1:20]
 %    
 % Air_ions == {'eminus', 'Ar', 'Arplus', 'C', 'Cplus', 'Cminus', ...
 %              'CN', 'CNplus', 'CNminus', 'CNN', 'CO', 'COplus', ...
@@ -17,10 +17,11 @@
 %              'N2O5', 'N3', 'O', 'Oplus', 'Ominus', 'O2', 'O2plus', ...
 %              'O2minus', 'O3'}
 %   
-% See wiki or list_species() for more predefined sets of species
+% See wiki or setListspecies method from ChemicalSystem class for more
+% predefined sets of species
 %
 % @author: Alberto Cuadra Lara
-%          PhD Candidate - Group Fluid Mechanics
+%          Postdoctoral researcher - Group Fluid Mechanics
 %          Universidad Carlos III de Madrid
 %                 
 % Last update Dec 09 2022

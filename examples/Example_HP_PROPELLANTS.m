@@ -9,7 +9,8 @@
 % HYDROGEN_L == {'H','H2O','OH','H2','O','O3','O2','HO2','H2O2',...
 %                'H2bLb','O2bLb'}
 %   
-% See wiki or list_species() for more predefined sets of species
+% See wiki or setListspecies method from ChemicalSystem class for more
+% predefined sets of species
 %
 % @author: Alberto Cuadra Lara
 %          Postdoctoral researcher - Group Fluid Mechanics

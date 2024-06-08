@@ -15,7 +15,8 @@
 %              'N2O5', 'N3', 'O', 'Oplus', 'Ominus', 'O2', 'O2plus', ...
 %              'O2minus', 'O3'}
 %   
-% See wiki or list_species() for more predefined sets of species
+% See wiki or setListspecies method from ChemicalSystem class for more
+% predefined sets of species
 %
 % @author: Alberto Cuadra Lara
 %          Postdoctoral researcher - Group Fluid Mechanics

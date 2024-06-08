@@ -2,7 +2,7 @@
 % EQUILIBRIUM CHEMISTRY
 %
 % @author: Alberto Cuadra Lara
-%          PhD Candidate - Group Fluid Mechanics
+%          Postdoctoral researcher - Group Fluid Mechanics
 %          Universidad Carlos III de Madrid
 %                 
 % Last update Apr 10 2023

@@ -22,10 +22,11 @@
 %                'O','OCCN','OH','C3O2','C4N2','RP_1','H2bLb',...
 %                'O2bLb'}
 %   
-% See wiki or list_species() for more predefined sets of species
+% See wiki or setListspecies method from ChemicalSystem class for more
+% predefined sets of species
 %
 % @author: Alberto Cuadra Lara
-%          PhD Candidate - Group Fluid Mechanics
+%          Postdoctoral researcher - Group Fluid Mechanics
 %          Universidad Carlos III de Madrid
 %                 
 % Last update April 05 2022

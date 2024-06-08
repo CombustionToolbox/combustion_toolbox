@@ -8,7 +8,8 @@
 %   
 % LS == {'CO2', 'CO', 'H2O', 'H2', 'O2', 'N2', 'NO', 'OH', 'O', 'H'}
 %   
-% See wiki or list_species() for more predefined sets of species
+% See wiki or setListspecies method from ChemicalSystem class for more
+% predefined sets of species
 %
 % Results compared with [1]
 %

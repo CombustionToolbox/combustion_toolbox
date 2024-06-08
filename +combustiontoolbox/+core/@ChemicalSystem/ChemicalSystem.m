@@ -105,6 +105,11 @@ classdef ChemicalSystem < handle & matlab.mixin.Copyable
             obj = initialization(obj);
         end
 
+        function obj = plus(obj, obj2)
+            % Overload the plus operator to add propertiesMatrix of two ChemicalSystem objects
+            obj.propertiesMatrix(:, obj.ind_ni:obj.numProperties) = obj.propertiesMatrix(:, obj.ind_ni:obj.numProperties) + obj2.propertiesMatrix(:, obj.ind_ni:obj.numProperties);
+        end
+
         function obj = initialization(obj)
             % Initialize chemical system
 
@@ -292,11 +297,11 @@ classdef ChemicalSystem < handle & matlab.mixin.Copyable
             %     ind (float): Vector with the indexes of the species to fill the properties matrix   
             %
             % Returns:
-            %     properties_matrix (float): Properties matrix
+            %     obj (ChemicalSystem): 
             %
             % Examples:
-            %     obj = obj.set_species({'N2', 'O2'}, [3.76, 1], 300)
-            %     obj = obj.set_species({'N2', 'O2'}, [3.76, 1], 300, [1, 2])
+            %     obj = obj.set_propertiesMatrix({'N2', 'O2'}, [3.76, 1], 300)
+            %     obj = obj.set_propertiesMatrix({'N2', 'O2'}, [3.76, 1], 300, [1, 2])
             
             % Fill properties matrix
             if nargin < 5

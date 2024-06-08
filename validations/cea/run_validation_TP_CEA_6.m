@@ -52,12 +52,6 @@ function run_validation_TP_CEA_6(varargin)
         return
     end
 
-    % Prepare data
-    for i = 1:length(mixArray)
-        mixArray(i).cp = mixArray(i).cp * 1e-3; % [kJ/K];
-        mixArray(i).cv = mixArray(i).cv * 1e-3; % [kJ/K];
-    end
-
     % Load results CEA 
     prefixDataName = 'C6H5OH_phenol_and_Si';
     filename = {strcat(prefixDataName, '_TP1.out')};

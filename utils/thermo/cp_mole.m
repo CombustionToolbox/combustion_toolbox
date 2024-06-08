@@ -7,5 +7,5 @@ function value = cp_mole(mix)
     % Returns:
     %     value (float): Mole-basis specific heat at constant pressure [kJ/mol-K] of the mixture
 
-    value = mix.cP / mix.N;
+    value = mix.cp / mix.N * 1e-3;
 end

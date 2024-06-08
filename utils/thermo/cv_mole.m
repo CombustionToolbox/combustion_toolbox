@@ -7,5 +7,5 @@ function value = cv_mole(mix)
     % Returns:
     %     value (float): Mole-basis specific heat at constant volume [kJ/mol-K] of the mixture
 
-    value = mix.cV / mix.N;
+    value = mix.cv / mix.N * 1e-3;
 end

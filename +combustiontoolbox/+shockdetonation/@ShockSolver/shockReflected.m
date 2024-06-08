@@ -116,12 +116,12 @@ end
 
 function [J, b, guess_moles] = update_system(equilibriumSolver, mix2, mix5, p5, T5, R0, guess_moles, FLAG_FAST)
     % Update Jacobian matrix and vector b
-    r2 = mix2.rho;
+    r2 = mix2.rho; % [kg/m3]
     p2 = convert_bar_to_Pa(mix2.p); % [Pa]
-    T2 = mix2.T;
-    u2 = mix2.u;
-    W2 = mix2.W * 1e-3; % [kg/mol]
-    h2 = mix2.h / mix2.mi * 1e3; % [J/kg]
+    T2 = mix2.T; % [K]
+    u2 = mix2.u; % [m/s]
+    W2 = mix2.W; % [kg/mol]
+    h2 = mix2.h / mix2.mi; % [J/kg]
 
     % Set pressure and temperature of mix5
     mix5.p = convert_Pa_to_bar(p5); mix5.T = T5;
@@ -129,8 +129,8 @@ function [J, b, guess_moles] = update_system(equilibriumSolver, mix2, mix5, p5, 
     % Calculate state given T & p
     [mix5, r5, dVdT_p, dVdp_T] = state(equilibriumSolver, mix5, guess_moles);
 
-    W5 = mix5.W * 1e-3;
-    h5 = mix5.h / mix5.mi * 1e3; % [J/kg]
+    W5 = mix5.W; % [kg/mol]
+    h5 = mix5.h / mix5.mi; % [J/kg]
     cp5 = mix5.cp / mix5.mi; % [J/(K-kg)]
 
     alpha = (W2 * u2^2) / (R0 * T2);

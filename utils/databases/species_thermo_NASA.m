@@ -11,12 +11,12 @@ function [cp0, cv0, h0, DhT, e0, DeT, s0, g0] = species_thermo_NASA(species, tem
     %
     %     * cP  (float): Specific heat at constant pressure in molar basis [J/(mol-K)]
     %     * cV  (float): Specific heat at constant volume in molar basis   [J/(mol-K)]
-    %     * h0  (float): Enthalpy in molar basis [kJ/mol]
-    %     * DhT (float): Thermal enthalpy in molar basis [kJ/mol]
-    %     * e0  (float): Internal energy in molar basis [kJ/mol]
-    %     * DeT (float): Thermal internal energy in molar basis [kJ/mol]
+    %     * h0  (float): Enthalpy in molar basis [J/mol]
+    %     * DhT (float): Thermal enthalpy in molar basis [J/mol]
+    %     * e0  (float): Internal energy in molar basis [J/mol]
+    %     * DeT (float): Thermal internal energy in molar basis [J/mol]
     %     * s0  (float): Entropy in molar basis [J/(mol-K)]
-    %     * g0  (float): Gibbs energy in molar basis [kJ/mol]
+    %     * g0  (float): Gibbs energy in molar basis [J/mol]
     %
     % Example:
     %     [cP, cV, h0, DhT, e0, DeT, s0, g0] = species_thermo_NASA('H2O', 300:100:6000, DB)
@@ -69,20 +69,10 @@ function [cp0, cv0, h0, DhT, e0, DeT, s0, g0] = species_thermo_NASA(species, tem
     end
 
     % Change units
-    h0 = h0 * 1e-3; % [kJ/mol]
-    DhT = DhT * 1e-3; % [kJ/mol]
-    e0 = e0 * 1e-3; % [kJ/mol]
-    DeT = DeT * 1e-3; % [kJ/mol]
-    g0 = g0 * 1e-3; % [kJ/mol]
-    s0 = s0 * 1e-3; % [kJ/(mol-K)]
+    % h0 = h0 * 1e-3; % [kJ/mol]
+    % DhT = DhT * 1e-3; % [kJ/mol]
+    % e0 = e0 * 1e-3; % [kJ/mol]
+    % DeT = DeT * 1e-3; % [kJ/mol]
+    % g0 = g0 * 1e-3; % [kJ/mol]
+    % s0 = s0 * 1e-3; % [kJ/(mol-K)]
 end
-
-for i = 1:DB.(species).Tintervals
-        
-    if (T >= DB.(species).Trange{i}(1)) && (T <= DB.(species).Trange{i}(2))
-        break
-    end
-
-end
-
-Tinterval = i;

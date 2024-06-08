@@ -8,7 +8,8 @@
 % Air == {'O2','N2','O','O3','N','NO','NO2','NO3','N2O','N2O3','N2O4',...
 %         'N3','C','CO','CO2','Ar'}
 %    
-% See wiki or list_species() for more predefined sets of species
+% See wiki or setListspecies method from ChemicalSystem class for more
+% predefined sets of species
 %
 % @author: Alberto Cuadra Lara
 %          Postdoctoral researcher - Group Fluid Mechanics
@@ -50,8 +51,8 @@ ax1 = plotFigure('\rho_1 / \rho_2', [mixArray1.rho] ./ [mixArray2.rho], 'p_2 / p
 ax1 = plotFigure('\rho_1 / \rho_2', [mixArray1.rho] ./ [mixArray3.rho], 'p_2 / p_1', [mixArray3.p] ./ [mixArray1.p], 'xScale', 'log', 'yScale', 'log', 'color', 'auto', 'ax', ax1);
 
 % Plot post-shock temperature
-ax2 = plotFigure('u1', [mixArray1.u], 'T', [mixArray2.T], 'color', 'auto');
-ax2 = plotFigure('u1', [mixArray1.u], 'T', [mixArray3.T], 'color', 'auto', 'ax', ax2);
+ax2 = plotFigure('u1', [mixArray1.u], 'T', [mixArray2.T], 'color', [0 0 0], 'linestyle', '-');
+ax2 = plotFigure('u1', [mixArray1.u], 'T', [mixArray3.T], 'color', [0 0 0], 'linestyle', '--', 'ax', ax2);
 
 % Plot molar fractions
 plotComposition(mixArray3(1), mixArray1, 'u', 'Xi', 'mintol', 1e-3, 'y_var', mixArray3);

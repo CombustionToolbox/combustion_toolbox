@@ -12,6 +12,7 @@ classdef Units < handle
     end
 
     methods (Static)
+
         function value_out = convert(value_in, unit_in, unit_out)
             % Convert a value from one unit to another
             %
@@ -24,7 +25,7 @@ classdef Units < handle
             %     value_out: Value converted to the output unit
             %
             % Example:
-            %     convert(1, 'atm', 'bar')
+            %     Units.convert(1, 'atm', 'bar')
             
             % Import packages
             import combustiontoolbox.common.Units
@@ -41,6 +42,33 @@ classdef Units < handle
             % Convert the value
             value_out = value_in * conversion_factor;
         end
+
+        function moles = convertWeightPercentage2moles(listSpecies, weight_percentage, DB)
+            % Convert weight percentage (wt%) to moles
+            %
+            % Args:
+            %     listSpecies (cell): List of species
+            %     weight_percentage (float): Weight percentage of the species [%]
+            %     DB (struct): Database with custom thermodynamic polynomials functions generated from NASAs 9 polynomials fits
+            %
+            % Returns:
+            %     moles (float): Number of moles [mol]
+            %
+            % Example:
+            %     moles = Units.WeightPercentage2moles({'H2O', 'CO2'}, [50, 50], DB)
+        
+            % Check if value is a cell
+            if ~iscell(listSpecies)
+                listSpecies = {listSpecies};
+            end
+        
+            % Get molecular weight of the species
+            W = set_prop_DB(listSpecies, 'mm', DB);
+            
+            % Convert weight percentage (wt%) to moles
+            moles = weight_percentage ./ W;
+        end
+
     end
     
 end

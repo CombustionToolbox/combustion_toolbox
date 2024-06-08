@@ -434,7 +434,7 @@ classdef EquilibriumSolver < handle
             %
             % Args:
             %     x_vector (float): Guess temperature [K]
-            %     f_vector (struct): evaluated functions [kJ] (HP, EV) or [kJ/K] (SP, SV)
+            %     f_vector (struct): evaluated functions [J] (HP, EV) or [J/K] (SP, SV)
             % Returns:
             %     point (float): Point of the function [K]
         
@@ -446,7 +446,7 @@ classdef EquilibriumSolver < handle
             %
             % Args:
             %     x0 (float): Guess temperature [K]
-            %     g_vector (struct): Fixed points of the function [kJ] (HP, EV) or [kJ/K] (SP, SV)
+            %     g_vector (struct): Fixed points of the function [J] (HP, EV) or [J/K] (SP, SV)
             %
             % Returns:
             %     point (float): Point of the function [K]
@@ -541,14 +541,14 @@ classdef EquilibriumSolver < handle
         end
 
         function value = getPartialDerivative(obj, mix)
-            % Get value of the partial derivative for the set problem type [kJ/K] (HP, EV) or [kJ/K^2] (SP, SV)
+            % Get value of the partial derivative for the set problem type [J/K] (HP, EV) or [J/K^2] (SP, SV)
             %
             % Args:
             %     obj (EquilibriumSolver):
             %     mix (Mixture):
             %
             % Returns:
-            %     value (float): Value of the partial derivative for the set problem type [kJ/K] (HP, EV) or [kJ/K^2] (SP, SV)
+            %     value (float): Value of the partial derivative for the set problem type [J/K] (HP, EV) or [J/K^2] (SP, SV)
         
             if strcmpi(obj.problemType, 'HP')
                 value = mix.cp;
@@ -720,8 +720,8 @@ classdef EquilibriumSolver < handle
             % Returns:
             %     Tuple containing
             %
-            %     * gpoint (float): Fixed point of the function [kJ] (HP, EV) or [kJ/K] (SP, SV)
-            %     * gpoint_relative (float): Fixed relative point of the function [kJ] (HP, EV) or [kJ/K] (SP, SV)
+            %     * gpoint (float): Fixed point of the function [J] (HP, EV) or [J/K] (SP, SV)
+            %     * gpoint_relative (float): Fixed relative point of the function [J] (HP, EV) or [J/K] (SP, SV)
             
             try
                 % Compute TP problem

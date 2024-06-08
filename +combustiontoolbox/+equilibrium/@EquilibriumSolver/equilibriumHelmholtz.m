@@ -47,7 +47,7 @@ function [N, dNi_T, dN_T, dNi_p, dN_p, index, STOP, STOP_ions, h0] = equilibrium
     % CHECK: ERROR IN N(:, 2) FOR CONDENSED SPECIES.
     N = system.molesPhaseMatrix;       % Composition matrix [moles_i, phase_i]
     A0 = system.stoichiometricMatrix;  % Stoichiometric matrix [a_ij]
-    RT = R0 * T;                       % [J/(mol)]
+    RT = R0 * T;                       % [J/mol]
     delta0 = 0.9999;
     tau0RT = obj.tolMoles;
     opts.SYM = true; % Options linsolve method: real symmetric
@@ -277,7 +277,7 @@ function [N, dNi_T, dN_T, dNi_p, dN_p, index, STOP, STOP_ions, h0] = equilibrium
         % Set list with indeces of the condensed species to be checked
         indexCondensed_check = indexCondensed_0;
 
-        % Get molecular weight species [g/mol]
+        % Get molecular weight species [kg/mol]
         W = system.molesPhaseMatrix(:, 1);
         W(indexCondensed_check) = set_prop_DB(system.listSpecies(indexCondensed_check), 'W', system.species);
 

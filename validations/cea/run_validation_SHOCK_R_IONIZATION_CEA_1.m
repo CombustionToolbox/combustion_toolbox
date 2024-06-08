@@ -1,10 +1,10 @@
- function problems_solved = run_validation_SHOCK_R_IONIZATION_CEA_1
+ function run_validation_SHOCK_R_IONIZATION_CEA_1
     % Run test validation_SHOCK_R_IONIZATION_CEA_1:
     % Contrasted with: NASA's Chemical Equilibrium with Applications software
     % Problem type: Planar reflected shock wave
     % Temperature [K]   = 300
     % Pressure    [bar] = 1
-    % Incident velocity [m/s] = [~308, 7830]
+    % Incident velocity [m/s] = [~308, 8000]
     % Initial mixture: AIR (78.084% N2 + 20.9476% O2 + 0.9365% Ar + 0.0319% CO2)
     % List of species considered: list_species('Air_ions')
     
@@ -32,7 +32,7 @@
                        'NO3','NO3minus','N2','N2plus','N2minus','NCN','N2O','N2Oplus',...
                        'N2O3','N2O4','N2O5','N3','O','Oplus','Ominus','O2','O2plus',...
                        'O2minus','O3'};
-    u1 = logspace(2, 5, 500); u1 = u1(u1<7830); u1 = u1(u1>=357);
+    u1 = logspace(2, 5, 500); u1 = u1(u1<8000); u1 = u1(u1>=357);
     
     % Get Nasa database
     DB = NasaDatabase('FLAG_BENCHMARK', FLAG_BENCHMARK);

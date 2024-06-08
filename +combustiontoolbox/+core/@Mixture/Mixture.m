@@ -389,13 +389,20 @@ classdef Mixture < handle & matlab.mixin.Copyable
             
             % Define oxidizer propertiesMatrix
             obj.defineO();
+            
+            % Create temporal ChemicalSystems
+            temp2 = obj.chemicalSystem.copy;
+
+            % Assign values to the propertiesMatrix
+            obj.chemicalSystem = obj.chemicalSystem.set_propertiesMatrix(obj.listSpeciesFuel, obj.molesFuel, obj.T) + temp2.set_propertiesMatrix(obj.listSpeciesOxidizer, obj.molesOxidizer, obj.T);
+            
+            if ~isempty(obj.listSpeciesInert)
+                obj.chemicalSystem = obj.chemicalSystem + temp2.set_propertiesMatrix(obj.listSpeciesInert, obj.molesInert, obj.T);
+            end
 
             % Update listSpecies and quantity
             obj.listSpecies = [obj.listSpeciesFuel, obj.listSpeciesOxidizer, obj.listSpeciesInert];
             obj.quantity = [obj.molesFuel, obj.molesOxidizer, obj.molesInert];
-            
-            % Assign values to the propertiesMatrix
-            obj.chemicalSystem.set_propertiesMatrix(obj.listSpecies, obj.quantity, obj.T);
 
             % Compute pressure if required
             if obj.vSpecific

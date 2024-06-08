@@ -25,6 +25,7 @@
 import combustiontoolbox.databases.NasaDatabase
 import combustiontoolbox.core.*
 import combustiontoolbox.equilibrium.*
+import combustiontoolbox.utils.display.*
 
 % Get Nasa database
 DB = NasaDatabase();
@@ -36,7 +37,7 @@ system = ChemicalSystem(DB, 'soot formation');
 mix = Mixture(system);
 
 % Define chemical state
-set(mix, {'CH4', 'C2H6', 'CO2'}, 'fuel', [0.85, 0.1, 0.0035]);
+set(mix, {'CH4', 'C2H6', 'CO2'}, 'fuel', [0.85, 0.1, 0.05]);
 set(mix, {'N2', 'O2', 'Ar', 'CO2'}, 'oxidizer', [78.084, 20.9476, 0.9365, 0.0319] / 20.9476);
 
 % Define properties
@@ -49,7 +50,7 @@ solver = EquilibriumSolver('problemType', 'HP');
 solver.solveArray(mixArray);
 
 % Plot adiabatic flame temperature
-plotFigure('phi', [mixArray.equivalenceRatio], 'T', [mixArray.T]);
+plotFigure('equivalenceRatio', mixArray, 'T', mixArray);
 
 % Plot molar fractions
 plotComposition(mixArray(1), mixArray, 'equivalenceRatio', 'Xi', 'mintol', 1e-14);

@@ -44,7 +44,7 @@ function [ax1, ax2, ax3] = plotPolar(mixArray1, mixArray2, varargin)
         % Plot (wave angle, deflection)
         ax2 = plot_shock_polar_wave(mixArray1(i), mixArray2(i), config);
         % Plot (velocity_x velocity_y)
-        ax3 = plot_shock_polar_velocities(mixArray1(i), mixArray2(i), config);
+        ax3 = plot_shock_polar_velocities(mixArray2(i), config);
     end
 
 end
@@ -108,7 +108,7 @@ function ax = plot_shock_polar_wave(mix1, mix2, config)
     ylim(ax, [0, 90.001]);
 end
 
-function ax = plot_shock_polar_velocities(mix1, mix2, config)
+function ax = plot_shock_polar_velocities(mix2, config)
     % Plot velocity components
     ax = set_fixed_figure(config.id_polar3, config);
 

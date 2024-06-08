@@ -39,6 +39,7 @@ function [main_ax, main_figure] = plotProperties(x_field, x_var, y_field, y_var,
     nfrec = 1;
     FLAG_PLOT_VALIDATION = false;
     FLAG_BASIS = false;
+    FLAG_SAME = false;
     main_ax = [];
     Misc = Miscellaneous();
     config = Misc.config;
@@ -72,6 +73,8 @@ function [main_ax, main_figure] = plotProperties(x_field, x_var, y_field, y_var,
                 config.legend_name = varargin{i + 1};
             case {'legend_location'}
                 config.legend_location = varargin{i + 1};
+            case {'ax', 'axes'}
+                main_ax = varargin{i + 1};
             case 'linestyle'
                 config.linestyle = varargin{i + 1};
             case 'linewidth'
@@ -110,10 +113,11 @@ function [main_ax, main_figure] = plotProperties(x_field, x_var, y_field, y_var,
         main_ax = tiledlayout(main_figure, 'flow');
     else
         main_figure = gcf;
+        FLAG_SAME = true;
     end
 
     % Set common title
-    set_title(main_ax, config)
+    setTitle(main_ax, config)
     config.title = [];
     
     % Definitions
@@ -124,9 +128,15 @@ function [main_ax, main_figure] = plotProperties(x_field, x_var, y_field, y_var,
 
     % Plot properties
     for i = 1:N_properties
-        nexttile;
-        ax = gca;
-        set_figure(ax, config);
+        
+        if FLAG_SAME
+            nexttile(main_ax, i)
+            ax = gca;
+        else
+            nexttile;
+            ax = gca;
+            setFigure(ax, config);
+        end
 
         plotFigure(x_field{i}, x_var, y_field{i}, y_var, 'config', config, 'ax', ax, 'basis', basis{i}, 'color', 'color', colorPalette(selectColor, :));
 

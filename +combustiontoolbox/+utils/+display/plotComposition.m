@@ -36,8 +36,7 @@ function [ax, fig] = plotComposition(obj, x_var, x_field, y_field, varargin)
     
     % Import packages
     import combustiontoolbox.utils.findIndex
-    import combustiontoolbox.utils.display.species2latex
-    import combustiontoolbox.utils.display.interpreterLabel
+    import combustiontoolbox.utils.display.*
     
     % Temporal
     config = Miscellaneous().config;
@@ -119,7 +118,7 @@ function [ax, fig] = plotComposition(obj, x_var, x_field, y_field, varargin)
 
     % Set figure
     if isempty(ax)
-        [ax, ~, fig] = set_figure(config);
+        [ax, ~, fig] = setFigure(config);
     else
         fig = [];
     end

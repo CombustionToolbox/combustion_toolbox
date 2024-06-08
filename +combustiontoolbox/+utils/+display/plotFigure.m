@@ -36,8 +36,8 @@ function [ax, dline] = plotFigure(x_field, x_var, y_field, y_var, varargin)
     %     * dline (object): Handle of the plotted line
     
     % Import packages
-    import combustiontoolbox.utils.display.interpreterLabel
-
+    import combustiontoolbox.utils.display.*
+    
     % Default settings
     FLAG_BASIS = false;
     FLAG_COLOR_NEW = false;
@@ -106,7 +106,7 @@ function [ax, dline] = plotFigure(x_field, x_var, y_field, y_var, varargin)
 
     % Create figure (if necessary)
     if isempty(ax)
-        ax = set_figure(config);
+        ax = setFigure(config);
     end
     
     % change units if required

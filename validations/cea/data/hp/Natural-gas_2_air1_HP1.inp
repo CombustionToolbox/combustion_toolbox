@@ -1,0 +1,32 @@
+### CEA analysis performed on Sat 08-Jun-2024 13:11:19
+
+# Problem Type: "Assigned Enthalpy and Pressure"  
+
+prob case=test___________7274 hp     
+
+# Pressure (1 value):
+p,bar= 1
+
+# Equivalence based on Fuel/Oxid. wt ratio (Eq 9.19*) (26 values):
+phi= 0.5, 0.6, 0.7, 0.8, 0.9, 1, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 2, 2.1, 2.2, 2.3, 2.4, 2.5, 2.6, 2.7, 2.8, 2.9, 3
+
+# You selected the following fuels and oxidizers:
+reac
+fuel C2H6             mole= 10.5263  t,k= 300.000 
+fuel CH4              mole= 84.2105  t,k= 300.000 
+fuel CO2              mole=  5.2632  t,k= 300.000 
+oxid Air              mole=100.0000  t,k= 300.000 
+
+# You selected these options for output:
+# short version of output
+output short 
+# Proportions of any products will be expressed as Mole Fractions.
+# Heat will be expressed as siunits
+output siunits
+# Trace variable:
+output trace=1e-16
+
+# Input prepared by this script:/var/www/sites/cearun.grc.nasa.gov/cgi-bin/CEARUN/prepareInputFile.cgi
+
+### IMPORTANT:  The following line is the end of your CEA input file!
+end

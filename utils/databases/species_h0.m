@@ -1,5 +1,5 @@
 function h0 = species_h0(species, T, DB)
-    % Compute enthalpy [kJ/mol] of the species at the given temperature [K]
+    % Compute enthalpy [J/mol] of the species at the given temperature [K]
     % using piecewise cubic Hermite interpolating polynomials and linear extrapolation
     %
     % Args:
@@ -8,7 +8,7 @@ function h0 = species_h0(species, T, DB)
     %     DB (struct): Database with custom thermodynamic polynomials functions generated from NASAs 9 polynomials fits
     %
     % Returns:
-    %     h0 (float): Enthalpy in molar basis [kJ/mol]
+    %     h0 (float): Enthalpy in molar basis [J/mol]
     %
     % Example:
     %     h0 = species_h0('H2O', 300, DB)
@@ -33,6 +33,6 @@ function h0 = species_h0(species, T, DB)
         h0curve = cachedH0curves{index};
     end
     
-    % Compute enthalpy [kJ/mol]
-    h0 = h0curve(T) / 1000;
+    % Compute enthalpy [J/mol]
+    h0 = h0curve(T);
 end

@@ -44,26 +44,26 @@ classdef Mixture < handle & matlab.mixin.Copyable
         T (1,1)               % Temperature [K]
         p (1,1)               % Pressure [bar]
         N                     % Total number of moles [mol]
-        hf                    % Enthalpy of formation [kJ]
-        ef                    % Internal energy of formation [kJ]
-        h                     % Enthalpy [kJ]
-        e                     % Internal energy [kJ]
-        g                     % Gibbs energy [kJ] 
-        s                     % Entropy [kJ/K]
+        hf                    % Enthalpy of formation [J]
+        ef                    % Internal energy of formation [J]
+        h                     % Enthalpy [J]
+        e                     % Internal energy [J]
+        g                     % Gibbs energy [J] 
+        s                     % Entropy [J/K]
         cp                    % Specific heat at constant pressure [J/K]
         cv                    % Specific heat at constant volume [J/K]
         gamma                 % Adiabatic index [-]
         gamma_s               % Adiabatic index [-]
         sound                 % Speed of sound [m/s]
-        s0                    % Entropy (frozen) [kJ/K]
-        DhT                   % Thermal enthalpy [kJ]
-        DeT                   % Thermal internal energy [kJ]
-        Ds                    % Entropy of mixing [kJ/K]
+        s0                    % Entropy (frozen) [J/K]
+        DhT                   % Thermal enthalpy [J]
+        DeT                   % Thermal internal energy [J]
+        Ds                    % Entropy of mixing [J/K]
         rho                   % Density [kg/m3]
         v                     % Volume [m3]
         vSpecific (1,1)       % Specific volume [m3/kg]
-        W                     % Molecular weight [g/mol]
-        MW                    % Mean molecular weight [g/mol]
+        W                     % Molecular weight [kg/mol]
+        MW                    % Mean molecular weight [kg/mol]
         mi                    % Mass mixture [kg]
         Xi                    % Molar fractions [-]
         Yi                    % Mass fractions [-]
@@ -614,11 +614,11 @@ classdef Mixture < handle & matlab.mixin.Copyable
                 index = varargin{1};
             end
 
-            % Compute Mean Molecular Weight [g/mol]
+            % Compute Mean Molecular Weight [kg/mol]
             MW = computeMeanMolecularWeight(obj, moles, index);
 
             % Compute specific volume [m3/mol]
-            vMolar = vSpecific * MW * 1e-3 * sum(moles) / sum(molesGas);
+            vMolar = vSpecific * MW * sum(moles) / sum(molesGas);
         end
         
         % Add print method
@@ -685,11 +685,11 @@ classdef Mixture < handle & matlab.mixin.Copyable
             % Unpack propertiesMatrix
             Ni = propertiesMatrix(:, system.ind_ni); % [mol]
             obj.N = sum(propertiesMatrix(:, system.ind_ni)); % [mol]
-            obj.hf = dot(propertiesMatrix(:, system.ind_hfi), Ni); % [kJ]
-            obj.h = dot(propertiesMatrix(:, system.ind_hi), Ni); % [kJ]
-            obj.ef = dot(propertiesMatrix(:, system.ind_efi), Ni); % [kJ]
+            obj.hf = dot(propertiesMatrix(:, system.ind_hfi), Ni); % [J]
+            obj.h = dot(propertiesMatrix(:, system.ind_hi), Ni); % [J]
+            obj.ef = dot(propertiesMatrix(:, system.ind_efi), Ni); % [J]
             obj.cp = dot(propertiesMatrix(:, system.ind_cpi), Ni); % [J/K]
-            obj.s0 = dot(propertiesMatrix(:, system.ind_si), Ni); % [kJ/K]
+            obj.s0 = dot(propertiesMatrix(:, system.ind_si), Ni); % [J/K]
             obj.phase = propertiesMatrix(:, system.ind_phase); % [bool]
 
             % Compute total composition of gas species [mol]
@@ -698,17 +698,17 @@ classdef Mixture < handle & matlab.mixin.Copyable
             % Compute molar fractions [-]
             obj.Xi = Ni / obj.N;
 
-            % Compute molecular weight (gases) [g/mol]
+            % Compute molecular weight (gases) [kg/mol]
             obj.W = dot(Ni, propertiesMatrix(:, system.ind_W)) / N_gas;
 
-            % Compute mean molecular weight [g/mol]
+            % Compute mean molecular weight [kg/mol]
             obj.MW = dot(Ni, propertiesMatrix(:, system.ind_W)) / obj.N;
 
             % Compute mass mixture [kg]
-            obj.mi = obj.MW * obj.N * 1e-3; % [kg]
+            obj.mi = obj.MW * obj.N; % [kg]
 
             % Compute mass fractions [-]
-            obj.Yi = (Ni .* propertiesMatrix(:, system.ind_W) * 1e-3) ./ obj.mi;
+            obj.Yi = (Ni .* propertiesMatrix(:, system.ind_W)) ./ obj.mi;
 
             % Get non zero species
             FLAG_NONZERO = obj.Xi > 0;
@@ -728,22 +728,22 @@ classdef Mixture < handle & matlab.mixin.Copyable
             % Compute density [kg/m3]
             obj.rho = 1 / obj.vSpecific;
 
-            % Compute internal energy [kJ]
-            obj.e = obj.h - N_gas * R0 * temperature * 1e-3;
+            % Compute internal energy [J]
+            obj.e = obj.h - N_gas * R0 * temperature;
 
-            % Compute thermal internal energy [kJ]
+            % Compute thermal internal energy [J]
             obj.DeT = obj.e - obj.ef;
 
-            % Compute thermal enthalpy [kJ]
+            % Compute thermal enthalpy [J]
             obj.DhT = obj.h - obj.hf;
 
-            % Compute entropy of mixing [kJ/K]
+            % Compute entropy of mixing [J/K]
             obj.Ds = obj.compute_entropy_mixing(Ni, N_gas, R0, FLAG_NONZERO);
 
-            % Compute entropy [kJ/K]
+            % Compute entropy [J/K]
             obj.s = obj.s0 + obj.Ds;
 
-            % Compute Gibbs energy [kJ]
+            % Compute Gibbs energy [J]
             obj.g = obj.h - obj.T * obj.s;
 
             % Compute specific heat at constant volume [J/K]
@@ -763,7 +763,7 @@ classdef Mixture < handle & matlab.mixin.Copyable
         
                 if ~any(isnan(obj.dNi_T)) && ~any(isinf(obj.dNi_T))
                     delta = ~obj.phase;
-                    h0_j = propertiesMatrix(:, system.ind_hi) * 1e3; % [J/mol]
+                    h0_j = propertiesMatrix(:, system.ind_hi); % [J/mol]
                     obj.cp_r = sum(h0_j / temperature .* (1 + delta .* (Ni - 1)) .* obj.dNi_T, 'omitnan'); % [J/K]
                     obj.cp_f = obj.cp;
                     obj.cp = obj.cp_f + obj.cp_r; % [J/K]
@@ -787,12 +787,12 @@ classdef Mixture < handle & matlab.mixin.Copyable
         end
 
         function MW = computeMeanMolecularWeight(obj, moles, index)
-            % Compute Mean Molecular Weight [g/mol]
+            % Compute Mean Molecular Weight [kg/mol]
             MW = dot(moles, obj.chemicalSystem.propertiesMatrix(index, obj.chemicalSystem.ind_W)) / sum(moles);
         end
 
         function Ds = compute_entropy_mixing(obj, Ni, N_gas, R0, FLAG_NONZERO)
-            % Compute entropy of mixing [kJ/K]
+            % Compute entropy of mixing [J/K]
             %
             % Args:
             %     obj (Mixture): Mixture class
@@ -802,7 +802,7 @@ classdef Mixture < handle & matlab.mixin.Copyable
             %     FLAG_NONZERO (bool): Vector of nonzero species
             %
             % Returns:
-            %     DS (float): Entropy of mixing [kJ/K]
+            %     DS (float): Entropy of mixing [J/K]
             %
             % Note: 
             %     only nonzero for gaseous species
@@ -811,7 +811,7 @@ classdef Mixture < handle & matlab.mixin.Copyable
             %     Ds = compute_entropy_mixing(mix, Ni, N_gas, R0, FLAG_NONZERO)
         
             Dsi = Ni(FLAG_NONZERO) .* log(Ni(FLAG_NONZERO) / N_gas * obj.p) .* (1 - obj.phase(FLAG_NONZERO));
-            Ds = -R0 * sum(Dsi) * 1e-3;
+            Ds = -R0 * sum(Dsi);
         end
 
         function obj = defineF(obj)
@@ -896,10 +896,10 @@ classdef Mixture < handle & matlab.mixin.Copyable
         
             % Compute total number of moles [mol]
             N = sum(propertiesMatrix(:, system.ind_ni));
-            % Compute mean molecular weight [g/mol]
+            % Compute mean molecular weight [kg/mol]
             W = dot(propertiesMatrix(:, system.ind_ni), propertiesMatrix(:, system.ind_W)) / N;
             % Compute mass of the mixture [kg]
-            mass = W * N * 1e-3;
+            mass = W * N;
         end
     
     end

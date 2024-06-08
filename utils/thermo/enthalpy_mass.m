@@ -7,5 +7,5 @@ function value = enthalpy_mass(mix)
     % Returns:
     %     value (float): Mass-basis specific enthalpy [kJ/kg] of the mixture
 
-    value = mix.h / mix.mi;
+    value = mix.h / mix.mi * 1e-3;
 end

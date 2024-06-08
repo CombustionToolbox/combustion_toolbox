@@ -55,12 +55,7 @@ function run_validation_TV_CEA_2
     if FLAG_BENCHMARK
         return
     end
-
-    % Prepare data
-    for i = 1:length(mixArray)
-        mixArray(i).cp = mixArray(i).cp * 1e-3; % [kJ/K];
-    end
-
+    
     % Load results CEA 
     resultsCEA = data_CEA(filename, displaySpecies);
     

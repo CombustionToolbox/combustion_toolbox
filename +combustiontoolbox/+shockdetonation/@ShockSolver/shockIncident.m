@@ -126,7 +126,7 @@ function [p2, T2, p2p1, T2T1] = get_guess(obj, mix1, mix2)
 
         if M1 > obj.Mach_thermo
             % Estimate post-shock state considering h2 = h1 + u1^2 / 2
-            mix2.h = (enthalpy_mass(mix1) * 1e3 + velocity_relative(mix1)^2/2) * mass(mix1) * 1e-3; % [kJ]
+            mix2.h = (mix1.h + mix1.u^2/2) * mix1.mi; % [J]
 
             % Initialize mix2 and set pressure
             mix2.p = p2p1 * mix1.p;
@@ -154,12 +154,12 @@ end
 
 function [J, b, guess_moles] = update_system(equilibriumSolver, mix1, mix2, p2, T2, R0, guess_moles, FLAG_FAST)
     % Update Jacobian matrix and vector b
-    r1 = mix1.rho;
+    r1 = mix1.rho; % [kg/m3]
     p1 = convert_bar_to_Pa(mix1.p); % [Pa]
-    T1 = mix1.T;
-    u1 = mix1.u;
-    W1 = mix1.W * 1e-3; % [kg/mol]
-    h1 = mix1.h / mix1.mi * 1e3; % [J/kg]
+    T1 = mix1.T; % [K]
+    u1 = mix1.u; % [m/s]
+    W1 = mix1.W; % [kg/mol]
+    h1 = mix1.h / mix1.mi; % [J/kg]
     
     % Set pressure and temperature of mix2
     mix2.p = convert_Pa_to_bar(p2); mix2.T = T2;
@@ -167,8 +167,8 @@ function [J, b, guess_moles] = update_system(equilibriumSolver, mix1, mix2, p2, 
     % Calculate state given T & p
     [mix2, r2, dVdT_p, dVdp_T] = state(equilibriumSolver, mix2, guess_moles);
     
-    W2 = mix2.W * 1e-3;
-    h2 = mix2.h / mix2.mi * 1e3; % [J/kg]
+    W2 = mix2.W; % [kg/mol]
+    h2 = mix2.h / mix2.mi; % [J/kg]
     cp2 = mix2.cp / mix2.mi; % [J/(K-kg)]
 
     alpha = (W1 * u1^2) / (R0 * T1);

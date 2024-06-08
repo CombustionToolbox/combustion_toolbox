@@ -604,8 +604,8 @@ classdef ChemicalSystem < handle & matlab.mixin.Copyable
             % Fill properties matrix
             for i = obj.numSpecies:-1:1
                 M0(index(i), obj.ind_W) = obj.species.(obj.listSpecies{i}).W; % [g/mol]
-                M0(index(i), obj.ind_hfi) = obj.species.(obj.listSpecies{i}).hf / 1000; % [kJ/mol]
-                M0(index(i), obj.ind_efi) = obj.species.(obj.listSpecies{i}).ef / 1000; % [kJ/mol]
+                M0(index(i), obj.ind_hfi) = obj.species.(obj.listSpecies{i}).hf; % [J/mol]
+                M0(index(i), obj.ind_efi) = obj.species.(obj.listSpecies{i}).ef; % [J/mol]
                 M0(index(i), obj.ind_phase) = obj.species.(obj.listSpecies{i}).phase; % [bool]
             end
 
@@ -633,9 +633,9 @@ classdef ChemicalSystem < handle & matlab.mixin.Copyable
             propertiesMatrix(index, obj.ind_ni) = moles; % [mol]
 
             for i = length(moles):-1:1
-                propertiesMatrix(index(i), obj.ind_hi) = species_h0(species{i}, T, obj.species); % [kJ/mol]
+                propertiesMatrix(index(i), obj.ind_hi) = species_h0(species{i}, T, obj.species); % [J/mol]
                 propertiesMatrix(index(i), obj.ind_cpi) = species_cP(species{i}, T, obj.species); % [J/mol-K]
-                propertiesMatrix(index(i), obj.ind_si) = species_s0(species{i}, T, obj.species); % [kJ/mol-K]
+                propertiesMatrix(index(i), obj.ind_si) = species_s0(species{i}, T, obj.species); % [J/mol-K]
             end
 
         end
@@ -645,15 +645,15 @@ classdef ChemicalSystem < handle & matlab.mixin.Copyable
             propertiesMatrix(index, obj.ind_ni) = moles(index); % [mol]
             
             % for i = length(index):-1:1
-            %     propertiesMatrix(index(i), obj.ind_hi) = obj.species.(species{i}).get_h0(T); % [kJ/mol]
+            %     propertiesMatrix(index(i), obj.ind_hi) = obj.species.(species{i}).get_h0(T); % [J/mol]
             %     propertiesMatrix(index(i), obj.ind_cpi) = obj.species.(species{i}).get_cp(T); % [J/mol-K]
-            %     propertiesMatrix(index(i), obj.ind_si) = obj.species.(species{i}).get_s0(T); % [kJ/mol-K]
+            %     propertiesMatrix(index(i), obj.ind_si) = obj.species.(species{i}).get_s0(T); % [J/mol-K]
             % end
 
             for i = length(index):-1:1
-                propertiesMatrix(index(i), obj.ind_hi) = species_h0(species{i}, T, obj.species); % [kJ/mol]
+                propertiesMatrix(index(i), obj.ind_hi) = species_h0(species{i}, T, obj.species); % [J/mol]
                 propertiesMatrix(index(i), obj.ind_cpi) = species_cP(species{i}, T, obj.species); % [J/mol-K]
-                propertiesMatrix(index(i), obj.ind_si) = species_s0(species{i}, T, obj.species); % [kJ/mol-K]
+                propertiesMatrix(index(i), obj.ind_si) = species_s0(species{i}, T, obj.species); % [J/mol-K]
             end
 
         end
@@ -661,11 +661,11 @@ classdef ChemicalSystem < handle & matlab.mixin.Copyable
         function propertiesMatrix = fillPropertiesMatrixFastH0(obj, propertiesMatrix, species, moles, T, index, h0)
             % Fill properties matrix
             propertiesMatrix(index, obj.ind_ni) = moles(index); % [mol]
-            propertiesMatrix(index, obj.ind_hi) = h0(index); % [kJ/mol]
+            propertiesMatrix(index, obj.ind_hi) = h0(index); % [J/mol]
 
             for i = length(index):-1:1
                 propertiesMatrix(index(i), obj.ind_cpi) = species_cP(species{i}, T, obj.species); % [J/mol-K]
-                propertiesMatrix(index(i), obj.ind_si) = species_s0(species{i}, T, obj.species); % [kJ/mol-K]
+                propertiesMatrix(index(i), obj.ind_si) = species_s0(species{i}, T, obj.species); % [J/mol-K]
             end
 
         end

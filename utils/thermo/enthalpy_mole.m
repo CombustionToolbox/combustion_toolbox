@@ -7,5 +7,5 @@ function value = enthalpy_mole(mix)
     % Returns:
     %     value (float): Mole-basis specific enthalpy [kJ/mol] of the mixture
 
-    value = mix.h / mix.N * 1e3;
+    value = mix.h / mix.N * 1e-3;
 end

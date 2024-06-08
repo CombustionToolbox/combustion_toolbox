@@ -13,9 +13,6 @@ function e0 = species_e0(species, T, DB)
     % Example:
     %     e0 = species_e0('H2O', 300, DB)
     
-    % Specific value
-    moles = 1;
-
     % Universal gas constant [J/(K mol)]
     R0 = 8.31446261815324;
 
@@ -23,5 +20,5 @@ function e0 = species_e0(species, T, DB)
     h0 = species_h0(species, T, DB);
     
     % Internal energy [J/mol]
-    e0 = (h0 - moles * R0 * T);
+    e0 = h0 - R0 * T;
 end

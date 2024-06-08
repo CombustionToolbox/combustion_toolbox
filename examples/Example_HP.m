@@ -24,6 +24,7 @@
 import combustiontoolbox.databases.NasaDatabase
 import combustiontoolbox.core.*
 import combustiontoolbox.equilibrium.*
+import combustiontoolbox.utils.display.*
 
 % Get Nasa database
 DB = NasaDatabase();
@@ -48,7 +49,7 @@ solver = EquilibriumSolver('problemType', 'HP');
 solver.solveArray(mixArray);
 
 % Plot adiabatic flame temperature
-plotFigure('phi', [mixArray.equivalenceRatio], 'T', [mixArray.T]);
+plotFigure('equivalenceRatio', mixArray, 'T', mixArray);
 
 % Plot molar fractions
 plotComposition(mixArray(1), mixArray, 'equivalenceRatio', 'Xi', 'mintol', 1e-14);

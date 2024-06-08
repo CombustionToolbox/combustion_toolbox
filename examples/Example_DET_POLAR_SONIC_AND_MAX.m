@@ -10,10 +10,11 @@
 %              'HNO2','N','NH3','NO2','N2O','N2H4','N2O5','O','O3',...
 %              'HO2','NH2','H2O2','N3H','NH2NO2'}
 %   
-% See wiki or list_species() for more predefined sets of species
+% See wiki or setListspecies method from ChemicalSystem class for more
+% predefined sets of species
 %
 % @author: Alberto Cuadra Lara
-%          PhD Candidate - Group Fluid Mechanics
+%          Postdoctoral researcher - Group Fluid Mechanics
 %          Universidad Carlos III de Madrid
 %                 
 % Last update Oct 07 2022

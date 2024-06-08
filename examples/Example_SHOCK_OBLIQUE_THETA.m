@@ -63,3 +63,9 @@ ax2 = plotFigure('theta', [mixArray1.theta], 'T', [mixArray2_2.T], 'color', 'aut
 % Plot molar fractions
 plotComposition(mixArray2_1(1), mixArray1, 'theta', 'Xi', 'mintol', 1e-3, 'y_var', mixArray2_1);
 plotComposition(mixArray2_2(1), mixArray1, 'theta', 'Xi', 'mintol', 1e-3, 'y_var', mixArray2_2);
+
+% Plot properties
+properties = {'T', 'p', 'rho', 'h', 'e', 'g', 's', 'gamma_s'};
+propertiesBasis = {[], [], [], 'mi', 'mi', 'mi', 'mi', []};
+ax = plotProperties(repmat({'theta'}, 1, length(properties)), mixArray2_1, properties, mixArray2_1, 'basis', propertiesBasis, 'color', [0 0 0], 'linestyle', '-');
+ax = plotProperties(repmat({'theta'}, 1, length(properties)), mixArray2_2, properties, mixArray2_2, 'basis', propertiesBasis, 'color', [0 0 0], 'linestyle', '--', 'ax', ax);

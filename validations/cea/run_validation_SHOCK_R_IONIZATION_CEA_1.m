@@ -4,7 +4,7 @@
     % Problem type: Planar reflected shock wave
     % Temperature [K]   = 300
     % Pressure    [bar] = 1
-    % Incident velocity [m/s] = [~308, 8000]
+    % Incident velocity [m/s] = [~357, 8000]
     % Initial mixture: AIR (78.084% N2 + 20.9476% O2 + 0.9365% Ar + 0.0319% CO2)
     % List of species considered: list_species('Air_ions')
     
@@ -68,7 +68,7 @@
     resultsCEA = data_CEA(filename, displaySpecies);
     
     % Plot molar fractions
-    plotComposition(mixArray3(1), mixArray1, 'u', 'Xi', 'mintol', 1e-14, 'y_var', mixArray3);
+    fig1 = plotComposition(mixArray3(1), mixArray1, 'u', 'Xi', 'mintol', 1e-14, 'y_var', mixArray3);
 
     % Properties mixture 1
     fig2 = plotProperties(repmat({'u_preshock'}, 1, 8), [mixArray1.u], {'T', 'p', 'rho', 'h', 'e', 'g', 's', 'gamma_s'}, mixArray1, 'basis', {[], [], [], 'mi', 'mi', 'mi', 'mi', []}, 'validation', resultsCEA.mix1);
@@ -83,7 +83,7 @@
     folderpath = strcat(pwd,'\validations\figures\');
     stack_trace = dbstack;
     filename = stack_trace.name;
-    % saveas(fig1, strcat(folderpath, filename, '_molar'), 'svg');
+    saveas(fig1, strcat(folderpath, filename, '_molar'), 'svg');
     saveas(fig2, strcat(folderpath, filename, '_properties_1'), 'svg');
     saveas(fig3, strcat(folderpath, filename, '_properties_2'), 'svg');
     saveas(fig4, strcat(folderpath, filename, '_properties_3'), 'svg');

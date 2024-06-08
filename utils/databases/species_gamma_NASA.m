@@ -14,8 +14,8 @@ function gamma = species_gamma_NASA(species, T, DB)
     % Example:
     %     gamma = species_gamma_NASA('H2O', 300:100:6000, DB)
 
-    [cP, cV] = species_cP_NASA(species, T, DB);
-    gamma = cP / cV;
+    [cp, cv] = species_cP_NASA(species, T, DB);
+    gamma = cp / cv;
 
     assert(~isnan(gamma), 'Adibatic index equal NaN');
 end

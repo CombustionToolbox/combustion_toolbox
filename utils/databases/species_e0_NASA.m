@@ -1,5 +1,5 @@
 function [e0, DeT] = species_e0_NASA(species, temperature, DB)
-    % Compute internal energy and the thermal internal energy [kJ/mol] of
+    % Compute internal energy and the thermal internal energy [J/mol] of
     % the species at the given temperature [K] using NASA's 9 polynomials
     %
     % Args:
@@ -10,8 +10,8 @@ function [e0, DeT] = species_e0_NASA(species, temperature, DB)
     % Returns:
     %     Tuple containing
     %
-    %     * e0 (float): Internal energy in molar basis [kJ/mol]
-    %     * DeT (float): Thermal internal energy in molar basis [kJ/mol]
+    %     * e0 (float): Internal energy in molar basis [J/mol]
+    %     * DeT (float): Thermal internal energy in molar basis [J/mol]
     %
     % Example:
     %     [e0, DeT] = species_e0_NASA('H2O', 300:100:6000, DB)
@@ -29,7 +29,7 @@ function [e0, DeT] = species_e0_NASA(species, temperature, DB)
     % Compute change in moles of gases during the formation reaction of a
     % mole of that species starting from the elements in their reference state
     Delta_n = compute_change_moles_gas_reaction(element_matrix, swtCondensed);
-    % Compute specific enthalpy [kJ/mol]
+    % Compute specific enthalpy [J/mol]
     for i = length(temperature):-1:1
         T = temperature(i);
 
@@ -55,6 +55,6 @@ function [e0, DeT] = species_e0_NASA(species, temperature, DB)
     end
 
     % Change units [kJ/mol]
-    e0 = e0 * 1e-3;
-    DeT = DeT * 1e-3;
+    % e0 = e0 * 1e-3;
+    % DeT = DeT * 1e-3;
 end

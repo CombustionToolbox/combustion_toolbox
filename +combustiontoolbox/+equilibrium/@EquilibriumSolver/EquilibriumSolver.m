@@ -286,7 +286,6 @@ classdef EquilibriumSolver < handle
                     [N, dNi_T, dN_T, dNi_p, dN_p, indexProducts, STOP, STOP_ions, h0] = equilibriumHelmholtz(obj, system, mix.v, T, mix, guess_moles);
                 end
 
-                h0 = h0 * 1e-3; % [kJ/mol]
             end
             
             function mix = setMixture(mix)
@@ -297,7 +296,7 @@ classdef EquilibriumSolver < handle
                 dNi_T = reshapeVector(system, system.indexProducts, systemProducts.indexSpecies, dNi_T);
                 dNi_p = reshapeVector(system, system.indexProducts, systemProducts.indexSpecies, dNi_p);
                 h0 = reshapeVector(system, system.indexProducts, systemProducts.indexSpecies, h0);
-                % h0(system.indexFrozen) = set_h0(system.listSpecies(system.indexFrozen), T, system.species) * 1e-3; 
+                % h0(system.indexFrozen) = set_h0(system.listSpecies(system.indexFrozen), T, system.species); 
                 N(system.indexFrozen) = N_mix0(system.indexFrozen);
 
                 % Assign values
@@ -561,7 +560,6 @@ classdef EquilibriumSolver < handle
                 value = mix.cv / mix.T;
             end
         
-            value = value * 1e-3; % [kJ/K] (HP, EV) or [kJ/K^2] (SP, SV)
         end
 
         function [x, STOP, guess_moles] = nsteff(obj, mix1, mix2, field, x0, guess_moles)

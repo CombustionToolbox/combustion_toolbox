@@ -146,12 +146,12 @@ classdef NasaDatabase < combustiontoolbox.databases.Database & handle
             %
             %     * cp  (float): Specific heat at constant pressure in units basis [J/(units-K)]
             %     * cv  (float): Specific heat at constant volume in units basis   [J/(units-K)]
-            %     * h0  (float): Enthalpy in units basis [kJ/units]
-            %     * DhT (float): Thermal enthalpy in units basis [kJ/units]
-            %     * e0  (float): Internal energy in units basis [kJ/units]
-            %     * DeT (float): Thermal internal energy in units basis [kJ/units]
+            %     * h0  (float): Enthalpy in units basis [J/units]
+            %     * DhT (float): Thermal enthalpy in units basis [J/units]
+            %     * e0  (float): Internal energy in units basis [J/units]
+            %     * DeT (float): Thermal internal energy in units basis [J/units]
             %     * s0  (float): Entropy in units basis [J/(units-K)]
-            %     * g0  (float): Gibbs energy in units basis [kJ/units]
+            %     * g0  (float): Gibbs energy in units basis [J/units]
             %
             % Example:
             %     [cp, cv, h0, DhT, e0, DeT, s0, g0] = speciesThermoFull('H2O', 300:100:6000, DB)
@@ -256,7 +256,7 @@ classdef NasaDatabase < combustiontoolbox.databases.Database & handle
             %     * Tintervals (float): Number of intervals of temperatures
             %     * phase (float): 0 or 1 indicating gas or condensed phase, respectively
             %     * hf0 (float): Enthalpy of formation [J/mol]
-            %     * W (float): Molecular weight [g/mol]
+            %     * W (float): Molecular weight [kg/mol]
             %     * FLAG_REFERENCE (bool): Flag indicating species is a reference element/species
             %
             % Example:
@@ -339,7 +339,7 @@ classdef NasaDatabase < combustiontoolbox.databases.Database & handle
                 temp.refCode = tline(4:9);
                 temp.formula = tline(11:50);
                 temp.phase = str2double(tline(51:52));
-                temp.W = str2double(tline(53:65));
+                temp.W = str2double(tline(53:65)) * 1e-3; % [kg/mol]
                 temp.hf = str2double(tline(66:80));
         
                 if temp.Tintervals == 0
@@ -494,7 +494,7 @@ classdef NasaDatabase < combustiontoolbox.databases.Database & handle
             % SUB-PASS FUNCTIONS
             function value = molar2mass(value, W)
                 % Change molar units [mol] to mass units [kg]
-                value = value / W * 1e3;
+                value = value / W;
             end
 
         end

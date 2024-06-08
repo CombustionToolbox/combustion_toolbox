@@ -59,8 +59,7 @@
     
     % Prepare data
     for i = 1:length(mixArray2)
-        mixArray2(i).cp = mixArray2(i).cp * 1e-3; % [kJ/K];
-        mixArray2(i).cv = mixArray2(i).cv * 1e-3; % [kJ/K];
+        mixArray2(i).W = mixArray2(i).W * 1e3; % [g/mol]
     end
 
     % Load results CEA 

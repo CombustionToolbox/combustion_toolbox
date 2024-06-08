@@ -7,5 +7,5 @@ function value = intEnergy_mole(mix)
     % Returns:
     %     value (float): Mole-basis specific internal energy [kJ/mol] of the mixture
 
-    value = mix.e / mix.N * 1e3;
+    value = mix.e / mix.N * 1e-3;
 end

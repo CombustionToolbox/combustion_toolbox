@@ -7,5 +7,5 @@ function value = cv_mass(mix)
     % Returns:
     %     value (float): Mass-basis specific heat at constant volume [kJ/kg-K] of the mixture
 
-    value = mix.cV / mix.mi * 1e-3;
+    value = mix.cv / mix.mi * 1e-3;
 end

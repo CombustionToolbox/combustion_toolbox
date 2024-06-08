@@ -7,5 +7,5 @@ function value = intEnergy_mass(mix)
     % Returns:
     %     value (float): Mass-basis specific internal energy [kJ/kg] of the mixture
 
-    value = mix.e / mix.mi;
+    value = mix.e / mix.mi * 1e-3;
 end

@@ -6,7 +6,7 @@ classdef Species < handle
         refCode       % Reference date code
         comments      % Additional comments from database
         formula       % Chemical formula
-        W             % Molecular weight [g/mol]
+        W             % Molecular weight [kg/mol]
         hf            % Enthalpy of formation at Tref from its reference species in their standard state [J/mol]
         hftoh0        % Enthalpy of formation at Tref relative to molar enthalpy at 0 K for standard state [J/mol]
         ef            % Internal energy of formation [J/mol]

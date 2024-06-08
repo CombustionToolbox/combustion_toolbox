@@ -15,7 +15,7 @@ function e0 = set_e0(LS, T, DB)
 
     for i = length(LS):-1:1
         species = LS{i};
-        e0(i, 1) = species_DeT(species, T, DB) * 1e3 - DB.(species).ef;
+        e0(i, 1) = species_DeT(species, T, DB) - DB.(species).ef;
     end
 
 end

@@ -27,10 +27,11 @@ function update_properties(app, results, i)
     update_properties_common(app, mix2, '_2');
 
     if strcmpi(results(i).ProblemType, 'TP')
-        app.text_error_problem.Value = mix2.error_moles;
+        app.text_error_problem.Value = mix2.errorMoles;
     else
-        app.text_error_problem.Value = mix2.error_problem;
+        app.text_error_problem.Value = mix2.errorProblem;
     end
+
     if contains(results(i).ProblemType, 'SHOCK', 'IgnoreCase', true) || contains(results(i).ProblemType, 'DET', 'IgnoreCase', true) || contains(results(i).ProblemType, 'ROCKET', 'IgnoreCase', true)
         update_properties_velocities(app, mix1, '_1')
         update_properties_velocities(app, mix2, '_2')
@@ -194,17 +195,17 @@ function update_mixtures(app, results, i, FLAG_REACTANTS)
         species = results(i).UITable_R_Data(:, 1);
         type = results(i).UITable_R_Data(:, 4);
         temperature = results(i).UITable_R_Data(:, 5);
-        ind_species = find_ind(results(i).LS, species);
+        ind_species = combustiontoolbox.utils.findIndex(results(i).listSpecies, species);
         [N, Xi, ind_sort] = sort_mixture(results, 'mix1', i, ind_species);
         data = table2cell(table(species(ind_sort), Xi .* N, Xi, type(ind_sort), temperature(ind_sort)));
 
         app.UITable_R.Data = data;
         app.UITable_R2.Data = data(:, 1:3);
         % Update GUI: ListProducts
-        app.listbox_Products.Items = results(i).LS;
+        app.listbox_Products.Items = results(i).listSpecies;
     end
-    species = results(i).LS';
-    ind_species = find_ind(results(i).LS, species);
+    species = results(i).listSpecies';
+    ind_species = combustiontoolbox.utils.findIndex(results(i).listSpecies, species);
     [N, Xi, ind_sort] = sort_mixture(results, 'mix2', i, ind_species);
     data = table2cell(table(species(ind_sort), Xi .* N, Xi));
     app.UITable_P.Data = data;
@@ -218,13 +219,13 @@ end
 
 function update_equivalence_ratio(app, results, i)
     % Update GUI: equivalence ratio, O/F, and percentage Fuel
-    if strcmp(results(i).mix1.phi, '-')
-        app.edit_phi.Value = '-';
-    else
-        app.edit_phi.Value = sprintf('%.5g', results(i).mix1.phi); 
+    if isempty(results(i).mix1.equivalenceRatio)
+        return
     end
+
+    app.edit_phi.Value = sprintf('%.5g', round(results(i).mix1.equivalenceRatio, 5));
     app.edit_phi2.Value = app.edit_phi.Value;
     app.edit_phi3.Value = app.edit_phi.Value;
-    app.edit_OF.Value = 1/results(i).mix1.FO;
-    app.edit_F.Value = results(i).mix1.percentage_Fuel;
+    app.edit_OF.Value = results(i).mix1.oxidizerFuelMassRatio;
+    app.edit_F.Value = results(i).mix1.percentageFuel;
 end

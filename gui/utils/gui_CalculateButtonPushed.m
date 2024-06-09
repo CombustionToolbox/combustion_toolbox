@@ -9,43 +9,149 @@ function app = gui_CalculateButtonPushed(app, event)
     % Returns:
     %   app (object): Combustion Toolbox app object
     
+    % Definitions
+    propertyNameR1 = 'temperature';
+    propertyNameR2 = 'pressure';
+    equivalenceRatio = gui_get_prop(app.edit_phi.Value);
+    problemType = app.ProblemType.Value;
+    listSpecies = app.listbox_Products.Items;
+    FLAG_EQUIVALENCE_RATIO = ~isempty(equivalenceRatio);
+    FLAG_RESULTS = app.PrintresultsCheckBox.Value;
+
     try
         % Set lamp to Working color
         app.Lamp.Color = app.color_lamp_working;
-        % Get List of Species considered (reactants + products)
-        app = get_listSpecies_gui(app);
-        % Initialize variable self
-        self = App('fast', app.DB_master, app.DB, app.LS);
-        % Get Miscellaneous
-        self = get_miscellaneous_values(app, self);
-        % Set FLAG GUI
-        self.Misc.FLAG_GUI = true;
-        % Get Print results FLAG (debug mode)
-        self.Misc.FLAG_RESULTS = app.PrintresultsCheckBox.Value;
-        % Get tuning values and constants
-        self = get_tuning_values(app, self);
-        % Get initial conditions
-        self = get_input_constrains(app, self);
-        self = gui_get_reactants(app, event, self);
-        % Get display species
-        self = gui_get_display_species(app, self);
+        
+        % Get properties
+        propertyR1 = gui_get_prop(app.PR1.Value);
+        propertyR2 = gui_get_prop(app.PR2.Value);
+
+        switch problemType
+            case {'TP', 'TV'}
+                propertyP1 = gui_get_prop(app.PP1.Value);
+                propertyP2 = gui_get_prop(app.PP2.Value);
+            otherwise
+                propertyP1 = propertyR1;
+                propertyP2 = propertyR2;
+        end
+        
+
+        % Check problem type
+        if strcmpi(app.ProblemType.Value(2), 'V')
+            propertyNameR2 = 'volume';
+        end
+        
+        % Define chemical system
+        app.chemicalSystem = combustiontoolbox.core.ChemicalSystem(app.database, listSpecies);
+
+        % Temporal mixture
+        tempMixture = app.mixture.copy();
+        
+        % Initialize mixture
+        app.mixture = combustiontoolbox.core.Mixture(app.chemicalSystem);
+
+        % Define chemical state
+        if ~isempty(tempMixture.listSpeciesFuel)
+            set(app.mixture, tempMixture.listSpeciesFuel, 'fuel', tempMixture.molesFuel);
+        end
+
+        if ~isempty(tempMixture.listSpeciesOxidizer)
+            set(app.mixture, tempMixture.listSpeciesOxidizer, 'oxidizer', tempMixture.ratioOxidizer);
+        end
+
+        if ~isempty(tempMixture.listSpeciesInert)
+            set(app.mixture, tempMixture.listSpeciesInert, 'inert', tempMixture.molesInert);
+        end
+        
+        % Set ratioOxidizer
+        app.mixture.ratioOxidizer = tempMixture.ratioOxidizer;
+        
+        % Define mixArray
+        if FLAG_EQUIVALENCE_RATIO
+            mixArray1 = setProperties(app.mixture, propertyNameR1, propertyR1, propertyNameR2, propertyR2, 'equivalenceRatio', equivalenceRatio);
+            mixArray2 = setProperties(app.mixture, propertyNameR1, propertyP1, propertyNameR2, propertyP2, 'equivalenceRatio', equivalenceRatio);
+        else
+            mixArray1 = setProperties(app.mixture, propertyNameR1, propertyR1, propertyNameR2, propertyR2);
+            mixArray2 = setProperties(app.mixture, propertyNameR1, propertyP1, propertyNameR2, propertyP2);
+        end
+
         % Update GUI terminal
-        gui_update_terminal(app, self, 'start');
-        % Solve selected problem
-        self = solve_problem(self, self.PD.ProblemType);
+        gui_update_terminal(app, 'start');
+
+        % Select solver and solve problem
+        switch problemType
+            case {'TP', 'HP', 'SP', 'TV', 'EV', 'SV'}
+                % Select solver
+                solver = combustiontoolbox.equilibrium.EquilibriumSolver('problemType', problemType, 'FLAG_RESULTS', FLAG_RESULTS);
+                % Solve problem
+                solver.solveArray(mixArray2);
+            case {'SHOCK_I'}
+                solver = combustiontoolbox.shockdetonation.ShockSolver('problemType', problemType, 'FLAG_RESULTS', FLAG_RESULTS);
+            case {'DET'}
+                solver = combustiontoolbox.shockdetonation.DetonationSolver('problemType', problemType, 'FLAG_RESULTS', FLAG_RESULTS);
+            case {'ROCKET'}
+                solver = combustiontoolbox.shockdetonation.RocketSolver('problemType', problemType, 'FLAG_RESULTS', FLAG_RESULTS);
+            otherwise
+                error('Problem type %s is not found', problemType);
+        end
+
+        % Update GUI terminal
+        gui_update_terminal(app, 'finish', solver.time);
+
         % Save results
-        [results, app.temp_results] = save_results(app, self);
+        [results, app.temp_results] = save_results(app, problemType, mixArray1, mixArray2);
+        
         % Update GUI with the last results of the set
         gui_update_results(app, results);
-        % Update GUI custom figures tab
-        gui_update_custom_figures(app);
-        % Update GUI terminal
-        gui_update_terminal(app, self, 'finish')
+        
         % Display results (plots)
         switch lower(app.Report_type.Value)
             case {'auto'}
-                post_results(self);
+                solver.plot(mixArray2);
         end
+
+        % % Get List of Species considered (reactants + products)
+        % app = get_listSpecies_gui(app);
+        % 
+        % % Initialize variable self
+        % self = App('fast', app.DB_master, app.DB, app.LS);
+        % 
+        % % Get Miscellaneous
+        % self = get_miscellaneous_values(app, self);
+        % 
+        % % Get tuning values and constants
+        % self = get_tuning_values(app, self);
+        % 
+        % % Get initial conditions
+        % self = get_input_constrains(app, self);
+        % self = gui_get_reactants(app, event, self);
+        % 
+        % % Get display species
+        % self = gui_get_display_species(app, self);
+        % 
+        % % Update GUI terminal
+        % gui_update_terminal(app, self, 'start');
+        % 
+        % % Solve selected problem
+        % self = solve_problem(self, self.PD.ProblemType);
+        % 
+        % % Save results
+        % [results, app.temp_results] = save_results(app, self);
+        % 
+        % % Update GUI with the last results of the set
+        % gui_update_results(app, results);
+        % 
+        % % Update GUI custom figures tab
+        % gui_update_custom_figures(app);
+        % 
+        % % Update GUI terminal
+        % gui_update_terminal(app, self, 'finish')
+        % 
+        % % Display results (plots)
+        % switch lower(app.Report_type.Value)
+        %     case {'auto'}
+        %         post_results(self);
+        % end
 
         % Set lamp to Done color
         app.Lamp.Color = app.color_lamp_done;
@@ -62,6 +168,8 @@ function app = gui_CalculateButtonPushed(app, event)
 end
 
 % SUB-PASS FUNCTIONS
+
+
 function self = get_miscellaneous_values(obj, self)
     % Get miscellaneous properties from GUI and set into self
     self.Misc = obj.Misc;
@@ -81,6 +189,7 @@ function gui_update_results(obj, results)
     
     % Update GUI with the last result computed
     gui_write_results(obj, results, 1);
+    
     % Update UITree with all the results
     gui_add_nodes(obj.Node_Results, results)
 end
@@ -94,33 +203,49 @@ function obj = get_listSpecies_gui(obj)
 
 end
 
-function [results, temp_results] = save_results(obj, self)
+function [results, temp_results] = save_results(obj, problemType, mixArray1, mixArray2, varargin)
     % Save results
-    N = length(self.PS.strR);
     
-    if strcmpi(self.PD.ProblemType, 'ROCKET')
-        label_mix1 = 'strR';
-        if self.PD.FLAG_IAC
-            label_mix2 = 'mix2_c';
-            label_mix3 = 'mix3';
-            label_mix4 = 'strP';
-            label_mix5 = [];
+    % Definitions
+    numCases1 = length(mixArray1);
+    numCases2 = length(mixArray2);
+    numCases = max(numCases1, numCases2);
+
+    % % 
+    % if strcmpi(self.PD.ProblemType, 'ROCKET')
+    %     label_mix1 = 'strR';
+    %     if self.PD.FLAG_IAC
+    %         label_mix2 = 'mix2_c';
+    %         label_mix3 = 'mix3';
+    %         label_mix4 = 'strP';
+    %         label_mix5 = [];
+    %     else
+    %         label_mix2 = 'str2';
+    %         label_mix3 = 'mix2_c';
+    %         label_mix4 = 'mix3';
+    %         label_mix5 = 'strP';
+    %     end
+    % 
+    % else
+    %     label_mix1 = 'strR';
+    %     label_mix2 = 'strP';
+    % end
+
+    for i = numCases:-1:1
+        
+        if numCases1 > numCases2
+            results(i).mix1 = mixArray1(i);
+            results(i).mix2 = mixArray2;
+        elseif numCases1 < numCases2
+            results(i).mix1 = mixArray1;
+            results(i).mix2 = mixArray2(i);
         else
-            label_mix2 = 'str2';
-            label_mix3 = 'mix2_c';
-            label_mix4 = 'mix3';
-            label_mix5 = 'strP';
+            results(i).mix1 = mixArray1(i);
+            results(i).mix2 = mixArray2(i);
         end
 
-    else
-        label_mix1 = 'strR';
-        label_mix2 = 'strP';
-    end
+        results(i).ProblemType = problemType;
 
-    for i = N:-1:1
-        results(i).mix1 = self.PS.(label_mix1){i};
-        results(i).mix2 = self.PS.(label_mix2){i};
-        results(i).ProblemType = self.PD.ProblemType;
         if ischar(obj.Reactants.Value)
             results(i).Reactants = 'Custom';
         else
@@ -128,32 +253,34 @@ function [results, temp_results] = save_results(obj, self)
         end
 
         results(i).Products = obj.Products.Value;
+
         if isempty(results(i).Products)
             results(i).Products = 'Default';   
         end
 
-        results(i).LS = self.S.LS;
-        results(i).LS_products = obj.LS;
+        results(i).listSpecies = mixArray2(i).chemicalSystem.listSpecies;
+        results(i).listProducts = mixArray2(i).chemicalSystem.listProducts;
         results(i).UITable_R_Data = obj.UITable_R.Data;
     end
 
-    if strcmpi(self.PD.ProblemType, 'ROCKET')
-        try
-            label_mix = {label_mix3, label_mix4, label_mix5};
-            for mix = label_mix
-                for i = N:-1:1
-                    results(i).(mix{:}) = self.PS.(mix{:}){i};
-                end
+    % if strcmpi(self.PD.ProblemType, 'ROCKET')
+    %     try
+    %         label_mix = {label_mix3, label_mix4, label_mix5};
+    %         for mix = label_mix
+    %             for i = numCases:-1:1
+    %                 results(i).(mix{:}) = self.PS.(mix{:}){i};
+    %             end
+    % 
+    %         end
+    % 
+    %     catch
+    %         % Nothing to do
+    %     end
+    % 
+    % end
 
-            end
-
-        catch
-            % Nothing to do
-        end
-
-    end
     % Save temporally this parametric study
-    temp_results = self.PS;
+    temp_results = results(i);
 end
 
 function self = get_input_constrains(obj, self)

@@ -2,14 +2,17 @@ function gui_ProductsValueChanged(app)
     % Update List of species considered as Products
     try
         if isempty(app.Products.Value)
-            temp_app = list_species(app);
-            app.listbox_Products.Items = temp_app.S.LS;
 
-            % This will be included in the new release
-            % species = app.LS_reactants;
-            % temp_app = App('fast', app.DB_master, app.DB);
-            % LS = find_products(temp_app, species);
-            % app.listbox_Products.Items = LS;
+            if isempty(app.mixture.listSpecies)
+                app.listbox_Products.Items = [];
+                return
+            end
+            
+            % Get react species
+            listSpecies = [app.mixture.listSpeciesFuel, app.mixture.listSpeciesOxidizer];
+
+            % Get list of species that may appear at chemical equilibrium
+            app.listbox_Products.Items = findProducts(app.chemicalSystem, listSpecies, 'flag_ion', app.IonizedspeciesCheckBox.Value);
             return
         end
 
@@ -18,15 +21,17 @@ function gui_ProductsValueChanged(app)
             gui_edit_phiValueChanged(app, []); 
             return
         end
-    
-        try
-            temp_app = list_species(app, app.Products.Value);
-            temp_app.DB.(app.Products.Value);
-            app.listbox_Products.Items = unique([app.listbox_Products.Items, temp_app.S.LS], 'stable');
-        catch
-            temp_app = list_species(app, app.Products.Value);
-            app.listbox_Products.Items = temp_app.S.LS;
+        
+        FLAG_ADD = ~isempty(combustiontoolbox.utils.findIndex(app.database.listSpecies, app.Products.Value));
+
+        if FLAG_ADD
+            app.chemicalSystem.setListSpecies(app.database, app.Products.Value);
+            app.listbox_Products.Items = unique([app.listbox_Products.Items, app.chemicalSystem.listSpecies], 'stable');
+            return
         end
+
+        app.chemicalSystem.setListSpecies(app.database, app.Products.Value);
+        app.listbox_Products.Items = app.chemicalSystem.listSpecies;
 
     catch
         app.listbox_Products.Items = {};

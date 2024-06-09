@@ -242,7 +242,7 @@ classdef SplashScreen < matlab.mixin.SetGet
             p = obj.Frame.getContentPane();
             p.add( obj.Label );
             % Get position main monitor
-            obj.ScreenPosition = get_monitor_positions();
+            obj.ScreenPosition = combustiontoolbox.utils.display.getMonitorPositions();
             % Resize and reposition the window
             obj.Frame.setSize( obj.Icon.getIconWidth(), obj.Icon.getIconHeight() );
             x0 = obj.ScreenPosition(1) + (obj.ScreenPosition(3) - obj.Icon.getIconWidth())/2;

@@ -22,7 +22,7 @@ function [value, FLAG_ARRAY] = gui_get_prop(value, varargin)
         value = value(1):value(2):value(3);
     else
         FLAG_ARRAY = false;
-        value = sscanf(value,'%f');
+        value = sscanf(value, '%f');
     end
 
     if nargin == 1

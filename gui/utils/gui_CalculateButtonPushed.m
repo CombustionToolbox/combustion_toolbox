@@ -56,6 +56,10 @@ function app = gui_CalculateButtonPushed(app, event)
         end
 
         if ~isempty(tempMixture.listSpeciesOxidizer)
+            if isempty(tempMixture.ratioOxidizer)
+                tempMixture.ratioOxidizer = tempMixture.molesOxidizer;
+            end
+            
             set(app.mixture, tempMixture.listSpeciesOxidizer, 'oxidizer', tempMixture.ratioOxidizer);
         end
 

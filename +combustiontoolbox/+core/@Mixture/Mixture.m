@@ -107,17 +107,9 @@ classdef Mixture < handle & matlab.mixin.Copyable
     end
 
     properties (Access = private)
-        quantity
         indexGas
-        listSpecies
-        listSpeciesFuel
-        listSpeciesOxidizer
-        listSpeciesInert
-        ratioOxidizer % Ratio oxidizer relative to the oxidizer of reference
-        molesFuel
-        molesOxidizer
-        molesInert
         FLAGS_PROP
+        FLAG_VOLUME = false
     end
 
     % properties (Hidden)
@@ -137,13 +129,23 @@ classdef Mixture < handle & matlab.mixin.Copyable
         dN_T
         dNi_p
         dN_p
+        quantity
+        listSpecies
+        listSpeciesFuel
+        listSpeciesOxidizer
+        listSpeciesInert
+        molesFuel
+        molesOxidizer
+        molesInert
         chemicalSystemProducts
+        problemType
+        fuel
+        rangeName
+        ratioOxidizer % Ratio oxidizer relative to the oxidizer of reference
         FLAG_FUEL = false
         FLAG_OXIDIZER = false
         FLAG_INERT = false
         FLAG_REACTION = false
-        fuel
-        problemType
     end
     
     methods
@@ -200,7 +202,7 @@ classdef Mixture < handle & matlab.mixin.Copyable
             end
             
             % Compute pressure if required
-            if obj.vSpecific
+            if obj.vSpecific && obj.FLAG_VOLUME
                 vMolar = vSpecific2vMolar(obj, obj.vSpecific, obj.quantity, obj.quantity(obj.indexGas));
                 obj.p = convert_Pa_to_bar(obj.equationOfState.getPressure(obj.T, vMolar, obj.chemicalSystem.listSpecies, obj.quantity / sum(obj.quantity)));
             end
@@ -262,6 +264,7 @@ classdef Mixture < handle & matlab.mixin.Copyable
             
             % Assign specific volume
             obj.vSpecific = vSpecific;
+            obj.FLAG_VOLUME = true;
 
             % Check if initial state is defined (temperature, pressure, and composition)
             if ~sum(obj.quantity) || ~obj.T
@@ -311,6 +314,7 @@ classdef Mixture < handle & matlab.mixin.Copyable
                     case 'oxidizer'
                         obj.listSpeciesOxidizer = [obj.listSpeciesOxidizer, listSpecies];
                         obj.molesOxidizer = [obj.molesOxidizer, quantity];
+                        obj.ratioOxidizer = obj.molesOxidizer;
                         obj.FLAG_OXIDIZER = true;
                     case 'inert'
                         obj.listSpeciesInert = [obj.listSpeciesInert, listSpecies];
@@ -347,7 +351,7 @@ classdef Mixture < handle & matlab.mixin.Copyable
             end
 
             % Compute pressure if required
-            if obj.vSpecific
+            if obj.vSpecific && obj.FLAG_VOLUME
                 vMolar = vSpecific2vMolar(obj, obj.vSpecific, obj.quantity, obj.quantity(obj.indexGas));
                 obj.p = convert_Pa_to_bar(obj.equationOfState.getPressure(obj.T, vMolar, obj.chemicalSystem.listSpecies, obj.quantity / sum(obj.quantity)));
             end
@@ -405,7 +409,7 @@ classdef Mixture < handle & matlab.mixin.Copyable
             obj.quantity = [obj.molesFuel, obj.molesOxidizer, obj.molesInert];
 
             % Compute pressure if required
-            if obj.vSpecific
+            if obj.vSpecific && obj.FLAG_VOLUME
                 vMolar = vSpecific2vMolar(obj, obj.vSpecific, obj.quantity, obj.quantity(obj.indexGas));
                 obj.p = convert_Pa_to_bar(obj.equationOfState.getPressure(obj.T, vMolar, obj.chemicalSystem.listSpecies, obj.quantity / sum(obj.quantity)));
             end
@@ -557,6 +561,34 @@ classdef Mixture < handle & matlab.mixin.Copyable
                 for i = find(~FLAG_VECTOR)
                     values(i) = {values{i} * aux};
                 end
+                
+                % Define property parametric study
+                obj.rangeName = properties{FLAG_VECTOR_FIRST};
+                
+                % Check rangeName to match Mixture's property
+                if any(~strcmpi({'T', 'p', 'vspecific', 'phi', 'u', 'mach', 'beta', 'theta'}, obj.rangeName))
+
+                    switch lower(obj.rangeName)
+                        case {'temperature'}
+                            obj.rangeName = 'T';
+                        case {'pressure'}
+                            obj.rangeName = 'p';
+                        case {'volume', 'v'}
+                            obj.rangeName = 'vSpecific';
+                        case {'phi'}
+                            obj.rangeName = 'equivalenceRatio';
+                        case {'velocity', 'u1'}
+                            obj.rangeName = 'u';
+                        case {'m1'}
+                            obj.rangeName = 'mach';
+                        case {'wave angle', 'waveangle', 'wave'}
+                            obj.rangeName = 'beta';
+                        case {'deflection angle', 'deflectionangle', 'deflection'}
+                            obj.rangeName = 'theta';
+                    end
+
+                end
+
             else
                 FLAG_VECTOR_FIRST = 1;
             end
@@ -582,6 +614,7 @@ classdef Mixture < handle & matlab.mixin.Copyable
                             objArray(j).p = values{i}(j);
                         case {'volume', 'vspecific', 'v'}
                             objArray(j).vSpecific = values{i}(j);
+                            objArray(j).FLAG_VOLUME = true;
                         case {'equivalenceratio', 'phi'}
                             objArray(j).equivalenceRatio = values{i}(j);
                         case {'velocity', 'u', 'u1'}
@@ -727,7 +760,12 @@ classdef Mixture < handle & matlab.mixin.Copyable
             obj.natomElementsReact = sum(propertiesMatrix(system.indexReact, system.ind_ni) .* system.stoichiometricMatrix(system.indexReact, :), 1);
             
             % Compute volume [m3]
-            obj.v = obj.equationOfState.getVolume(temperature, convert_bar_to_Pa(pressure), obj.chemicalSystem.listSpecies, obj.Xi) * N_gas;
+            if N_gas
+                obj.v = obj.equationOfState.getVolume(temperature, convert_bar_to_Pa(pressure), obj.chemicalSystem.listSpecies, obj.Xi) * N_gas;
+            else
+                % Mixture with only have condensed species
+                obj.v = obj.vSpecific * obj.mi;
+            end
 
             % Compute specific volume [m3/kg]
             obj.vSpecific = obj.v / obj.mi;

@@ -34,7 +34,10 @@ function gui_edit_phiValueChanged(app, event)
 
         % Define properties
         app.mixture = setProperties(app.mixture, 'temperature', temperature, 'pressure', pressure, 'equivalenceRatio', equivalenceRatio);
-
+        
+        % Update temperature of the mixture (if needed)
+        updateTemperature(app);
+        
         % Update UITable classes
         gui_update_UITable_R(app);
         app.UITable_R2.Data = app.UITable_R.Data(:, 1:3); % (species, numer of moles, mole fractions)
@@ -75,6 +78,7 @@ function gui_edit_phiValueChanged(app, event)
     end
 end
 
+% SUB-PASS FUNCTIONS
 function check_ListProducts(app, equivalenceRatio)
     % Check list of products if we have a complete reaction
     if ~strcmpi(app.Products.Value, 'Complete Reaction')
@@ -84,4 +88,23 @@ function check_ListProducts(app, equivalenceRatio)
     % Update List of Products depending of the value of the equivalence ratio
     app.chemicalSystem.listSpecies(app.database, 'complete', equivalenceRatio);
     app.listbox_Products.Items = app.chemicalSystem.listSpecies;
+end
+
+function temperature = updateTemperature(app)
+    % Get temperature of the mixture (if needed)
+    
+    % Update table compostion
+    gui_update_UITable_R(app);
+    
+    % Compute temperature of the mixture
+    temperature = compute_temperature_mixture(app.ProblemType.Value, app.chemicalSystem.species, app.UITable_R.Data(:, 1), app.UITable_R.Data(:, 2), app.UITable_R.Data(:, 5));
+    
+    % Check if temperature remains constant
+    if temperature == app.mixture.T
+        return
+    end
+
+    % Update temperature
+    setTemperature(app.mixture, temperature);
+    app.PR1.Value = sprintf('%.4g', temperature);
 end

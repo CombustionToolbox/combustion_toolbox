@@ -531,6 +531,13 @@ function gui_ProblemTypeValueChanged(app)
          case {'SHOCK_OBLIQUE_R', 'DET_OBLIQUE_R', 'DET_POLAR_R'}
             uialert(app.UIFigure, 'Problem not included yet. Sorry for the inconvinience.', 'Error')
     end
+
+    % Update temperature 
+    if isempty(app.UITable_R.Data)
+        return
+    end
+    
+    app.UITable_R.Data(:, 5) = repmat({gui_get_prop(app.PR1.Value, 'first')}, size(app.UITable_R.Data(:, 5)));
 end
 
 % SUB-PASS FUNCTIONS

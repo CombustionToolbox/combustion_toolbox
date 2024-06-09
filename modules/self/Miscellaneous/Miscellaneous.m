@@ -29,7 +29,7 @@ function self = Miscellaneous()
     %     self (struct): Struct with miscellaneous data
     
     % Import packages
-    import combustiontoolbox.utils.getMonitorPositions
+    import combustiontoolbox.utils.display.getMonitorPositions
 
     % Description
     self.description = 'Miscellaneous'; 

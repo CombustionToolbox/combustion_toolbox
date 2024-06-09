@@ -322,7 +322,7 @@ function [N, dNi_T, dN_T, dNi_p, dN_p, index, STOP, STOP_ions, h0] = equilibrium
                     indexCondensed_check(ismember(indexCondensed_check, indexCondensed_add)) = [];
                 end
                 
-                indexCondensed = [indexCondensed, indexCondensed_add];
+                indexCondensed = unique([indexCondensed, indexCondensed_add]);
             end
 
             index = [indexGas, indexCondensed];

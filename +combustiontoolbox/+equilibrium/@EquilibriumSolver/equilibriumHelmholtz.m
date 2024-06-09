@@ -299,7 +299,7 @@ function [N, dNi_T, dN_T, dNi_p, dN_p, index, STOP, STOP_ions, h0] = equilibrium
             end
 
             % Check condensed species
-            [indexCondensed_add, FLAG_CONDENSED, ~] = obj.equilibriumCheckCondensed(A0, x(1:NE), W(indexCondensed_check), indexCondensed_check, muRT, NC_max, FLAG_ONE, FLAG_RULE);
+            [indexCondensed_add, FLAG_CONDENSED, ~] = obj.equilibriumCheckCondensed(A0(:, indexElements), x(1:NE), W(indexCondensed_check), indexCondensed_check, muRT, NC_max, FLAG_ONE, FLAG_RULE);
             
             if ~FLAG_CONDENSED
                 break
@@ -359,7 +359,7 @@ function [N, dNi_T, dN_T, dNi_p, dN_p, index, STOP, STOP_ions, h0] = equilibrium
         end
 
         % Check if there were species not considered
-        [~, FLAG_CONDENSED, dL_dnj] = obj.equilibriumCheckCondensed(A0, x(1:NE), W(indexCondensed_0), indexCondensed_0, muRT, NC_max, FLAG_ONE, FLAG_RULE);
+        [~, FLAG_CONDENSED, dL_dnj] = obj.equilibriumCheckCondensed(A0(:, indexElements), x(1:NE), W(indexCondensed_0), indexCondensed_0, muRT, NC_max, FLAG_ONE, FLAG_RULE);
 
         % Recompute if there are condensed species that may appear at chemical equilibrium
         if FLAG_CONDENSED && any(abs(dL_dnj) > 1e-4)

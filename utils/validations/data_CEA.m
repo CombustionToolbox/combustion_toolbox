@@ -1,5 +1,9 @@
 function data = data_CEA(filename, varargin)
-
+    % 
+    
+    % Import packages
+    import combustiontoolbox.utils.findIndex
+    
     if ischar(filename)
         Nfiles = 1;
         filename = {filename};
@@ -26,6 +30,7 @@ function data = data_CEA(filename, varargin)
             mix.p = data_nasa.P(:, end - l)'; % [bar]
             mix.T = data_nasa.T(:, end - l)'; % [K]
             mix.rho = data_nasa.rho(:, end - l)'; % [kg/m3]
+            mix.vSpecific = 1 ./ mix.rho; % [m3/kg]
             mix.h = data_nasa.H(:, end - l)'; % [kJ/kg]
             mix.e = data_nasa.U(:, end - l)'; % [kJ/kg]
             mix.s = data_nasa.S(:, end - l)'; % [kJ/kg-K]
@@ -74,7 +79,7 @@ function data = data_CEA(filename, varargin)
                 NS = length(species);
 
                 if ~isstruct(data_nasa.X)
-                    index = find_ind(data_nasa.LS, species);
+                    index = findIndex(data_nasa.LS, species);
                     mix.Xi = data_nasa.X(index, :);
                 else
                     mix.Xi = zeros(NS, length(data_nasa.X));
@@ -105,6 +110,7 @@ function data = data_CEA(filename, varargin)
             mix1.p = data_nasa.P1; % [bar]
             mix1.T = data_nasa.T1; % [K]
             mix1.rho = data_nasa.rho1; % [kg/m3]
+            mix1.vSpecific = 1 ./ mix1.rho; % [m3/kg]
             mix1.h = data_nasa.H1; % [kJ/kg]
             mix1.e = data_nasa.U1; % [kJ/kg]
             mix1.s = data_nasa.S1; % [kJ/kg-K]
@@ -129,6 +135,7 @@ function data = data_CEA(filename, varargin)
                 mix2.rho = mix2.rho(mix2.rho ~= 1);
             end
 
+            mix2.vSpecific = 1 ./ mix2.rho; % [m3/kg]
             mix2.h = data_nasa.H2; % [kJ/kg]
             mix2.e = data_nasa.U2; % [kJ/kg]
             mix2.s = data_nasa.S2; % [kJ/kg-K]

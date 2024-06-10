@@ -2,7 +2,7 @@ function run_validation_TV_CEA_2
     % Run test validation_TV_CEA_2:
     % Contrasted with: NASA's Chemical Equilibrium with Applications software
     % Problem type: Equilibrium composition at defined T and v
-    % Temperature [K]   = 1000;
+    % Temperature [K]   = 1200;
     % Specific volume [m3/kg] = 1;
     % Equivalence ratio [-] = 0.5:0.01:4
     % Initial mixture: Jet_AbLb + AIR (78.084% N2, 20.9476% O2, 0.9365% Ar, 0.0319% CO2)

@@ -1,17 +1,17 @@
-function LS = gui_value2list(app, value, LS, action)
-    % Add/remove (action) selected value to/from the list of species (LS)
+function listSpecies = gui_value2list(app, value, listSpecies, action)
+    % Add/remove (action) selected value to/from the list of species
     %
     % Args:
     %     app (object): Combustion Toolbox app object
     %     value (cell): Cell array of char containing the selected species
-    %     LS (cell): Cell array of char containing the list of species
+    %     listSpecies (cell): Cell array of char containing the list of species
     %     action (char): 'add' or 'remove'
     %
     % Returns:
-    %     LS (cell): Cell array of char containing the list of species after the action
+    %     listSpecies (cell): Cell array of char containing the list of species after the action
     %
     % Note:
-    %     If value is empty, the function returns LS without any change
+    %     If value is empty, the function returns listSpecies without any change
 
     if isempty(value)
         return
@@ -19,39 +19,47 @@ function LS = gui_value2list(app, value, LS, action)
 
     switch lower(action)
         case 'add'
-            LS = add_value(value, LS);
+            listSpecies = add_value(value, listSpecies);
         case 'remove'
-            LS = remove_value(value, LS);
+            listSpecies = remove_value(value, listSpecies);
     end
 
 end
 
 % SUB-PASS FUNCTIONS
-function LS = add_value(value, LS)
+function listSpecies = add_value(value, listSpecies)
     % Add value to LS
+    
+    % Definitions
+    n_pass = [];
 
     % Check if the value is already included in the list
-    n_pass = [];
     for n = length(value):-1:1
-        if ~any(strcmp(LS, value{n}))
+
+        if ~any(strcmp(listSpecies, value{n}))
             n_pass = [n_pass, n];
         end
+
     end
-    LS = [LS, value(n_pass)];
+
+    listSpecies = [listSpecies, value(n_pass)];
 end
 
-function LS = remove_value(value, LS)
+function listSpecies = remove_value(value, listSpecies)
     % Remove value from LS
+    
+    % Definitions
+    numSpecies = length(listSpecies);
+    n_pass = true(1, numSpecies);
 
     % Remove the species from the list
-    N = length(LS);
-    n_pass = true(1, N);
-    for n = N:-1:1
-        if any(strcmp(value, LS{n}))
+    for n = numSpecies:-1:1
+        
+        if any(strcmp(value, listSpecies{n}))
             n_pass(n) = false;
         end
 
     end
     
-    LS = LS(n_pass);
+    listSpecies = listSpecies(n_pass);
 end

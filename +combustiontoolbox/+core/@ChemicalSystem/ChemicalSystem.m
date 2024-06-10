@@ -88,13 +88,15 @@ classdef ChemicalSystem < handle & matlab.mixin.Copyable
             addRequired(ip, 'database'); % , @(x) isa(x, 'combustiontoolbox.databases.NasaDatabase') || isa(x, 'combustiontoolbox.databases.BurcatDatabase')
             addParameter(ip, 'listSpecies', defaultListSpecies); % , @(x) ischar(x) || iscell(x)
             addParameter(ip, 'FLAG_BURCAT', obj.FLAG_BURCAT)
+            addParameter(ip, 'FLAG_ION', obj.FLAG_ION)
             parse(ip, database, varargin{:});
             
             % Assign properties
             obj.database = database;
             obj.listSpecies = ip.Results.listSpecies;
             obj.FLAG_BURCAT = ip.Results.FLAG_BURCAT;
-
+            obj.FLAG_ION = ip.Results.FLAG_ION;
+            
             % Check if listSpecies is defined
             if isempty(obj.listSpecies)
                 obj.FLAG_INITIALIZE = false;

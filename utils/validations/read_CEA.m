@@ -149,6 +149,10 @@ function data = read_CEA(filename)
             num = regexp(tline, '\d'); data.W(i, :) = sscanf(tline(num(2):num(end)), '%f'); tline = fgetl(fid);
         end
 
+        % if contains(tline, 'MW, MOL WT')
+        %     num = regexp(tline, '\d'); data.MW(i, :) = sscanf(tline(num(2):num(end)), '%f'); tline = fgetl(fid);
+        % end
+
         if contains(tline, '(dLV/dLP)t')
             num = regexp(tline, '\d'); data.dVdp_T(i, :) = sscanf(tline(num(2) - 3:num(end)), '%f'); tline = fgetl(fid);
             num = regexp(tline, '\d'); data.dVdT_p(i, :) = sscanf(tline(num(2) - 3:num(end)), '%f'); tline = fgetl(fid);
@@ -224,7 +228,7 @@ function data = read_CEA(filename)
                 if contains(tline, 'C(gr)')
                     data.X(i, :).mole{j, 1} = 'Cbgrb';
                 else
-                    data.X(i, :).mole{j, 1} = NasaDatabase.fullname2name(tline(sp1:sp2 - 1));
+                    data.X(i, :).mole{j, 1} = NasaDatabase.fullname2name(tline(sp1(1):sp2(1) - 1));
                 end
 
                 tline = strrep(tline, ' -', '0-');

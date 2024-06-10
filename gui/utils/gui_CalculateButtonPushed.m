@@ -108,6 +108,9 @@ function app = gui_CalculateButtonPushed(app, event)
         % Update GUI with the last results of the set
         gui_update_results(app, results);
         
+        % Update GUI custom figures tab
+        gui_update_custom_figures(app);
+
         % Display results (plots)
         switch lower(app.Report_type.Value)
             case {'auto'}
@@ -284,7 +287,7 @@ function [results, temp_results] = save_results(obj, problemType, mixArray1, mix
     % end
 
     % Save temporally this parametric study
-    temp_results = results(i);
+    temp_results = results;
 end
 
 function self = get_input_constrains(obj, self)
@@ -372,23 +375,33 @@ function gui_update_custom_figures(obj)
         delete(obj.Mixtures.Children);
         delete(obj.Variable_x.Children);
         delete(obj.Variable_y.Children);
+
         % Add new nodes
         results = obj.temp_results;
-        fields = fieldnames(results);
-        FLAG_fields = contains(fields, 'str') | contains(fields, 'mix');
+        fields = fieldnames(results(1));
+        FLAG_fields =  contains(fields, 'mix');
         fields = fields(FLAG_fields);
-        % Mixtures
-        add_node(obj, 'Mixtures', fields);
-        % Variables x
-        try
-            fields = sort(fieldnames(obj.temp_results.strP{1}));
-        catch
-            fields = sort(fieldnames(obj.temp_results.mix3{1}));
+        
+        % Get propertiesName
+        propertiesName = sort(fieldnames(obj.temp_results(1).(fields{end})));
+
+        % Remove non-float properties 
+        numProperties = length(propertiesName);
+        FLAG_REMOVE = false(1, numProperties);
+        for i = 1:numProperties
+            temp = obj.temp_results(1).(fields{end}).(propertiesName{i});
+            if ~isfloat(temp) || isempty(temp)
+                FLAG_REMOVE(i) = true;
+            end
+
         end
 
-        add_node(obj, 'Variable_x', fields);
-        % Variables y
-        add_node(obj, 'Variable_y', fields);
+        propertiesName(FLAG_REMOVE) = [];
+
+        % Add nodes
+        add_node(obj, 'Mixtures', fields);
+        add_node(obj, 'Variable_x', propertiesName);
+        add_node(obj, 'Variable_y', propertiesName);
 
     catch ME
         % Print error

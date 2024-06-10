@@ -1,4 +1,4 @@
-function set_legends(ax, legend_name, varargin)
+function setLegends(ax, legend_name, varargin)
     % Set legend to the given axes
     %
     % Args:

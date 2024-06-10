@@ -42,7 +42,7 @@ function run_validation_EV_CEA_1
     
     % Define chemical state
     set(mix, {fuel}, 'fuel', 1);
-    set(mix, {'N2', 'O2'}, 'oxidizer', [79, 21] / 21);
+    set(mix, {'N2', 'O2', 'Ar', 'CO2'}, 'oxidizer', [78.084, 20.9476, 0.9365, 0.0319] / 20.9476);
     
     % Define properties
     mixArray = setProperties(mix, 'temperature', 300, 'volume', 1, 'equivalenceRatio', 0.5:0.01:4);

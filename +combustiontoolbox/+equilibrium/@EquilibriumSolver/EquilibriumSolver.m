@@ -4,11 +4,12 @@ classdef EquilibriumSolver < handle
     properties
         problemType                % Problem type [TP, TV, HP, EV, SP, SV]
         % * Chemical equilibrium TP, TV (CT-EQUIL module)
-        tolGibbs = 1e-5            % Tolerance of the Gibbs/Helmholtz minimization method
+        tolGibbs = 1e-6            % Tolerance of the Gibbs/Helmholtz minimization method
         tolE = 1e-6                % Tolerance of the mass balance
         tolMoles = 1e-14           % Tolerance of the composition of the mixture                       
         tolMolesGuess = 1e-6       % Tolerance of the molar composition of the mixture (guess)
         tolMultiplierIons = 1e-4   % Tolerance of the dimensionless Lagrangian multiplier - ions
+        tolTau = 1e-15             % Tolerance of the slack variables for condensed species
         itMaxGibbs = 70            % Max number of iterations - Gibbs/Helmholtz minimization method
         itMaxIons = 30             % Max number of iterations - charge balance (ions)
         temperatureIons = 0        % Minimum temperature [K] to consider ionized species
@@ -334,6 +335,37 @@ classdef EquilibriumSolver < handle
             %     obj (EquilibriumSolver): Object of the class EquilibriumSolver
 
             fprintf('\nElapsed time is %.5f seconds\n', obj.time)
+        end
+
+        function plot(obj, mixArray, varargin)
+            % Plot results 
+            
+            % Import packages
+            import combustiontoolbox.utils.display.plotComposition
+            import combustiontoolbox.utils.display.plotProperties
+            
+            % Check if is a scalar value
+            if isscalar(mixArray)
+                return
+            end
+            
+            % Plot molar fractions - mixArray
+            ax1 = plotComposition(mixArray(1), mixArray, mixArray(1).rangeName, 'Xi', 'mintol', 1e-14);
+        
+            % Plot properties - mixArray
+            ax2 = plotProperties(repmat({mixArray(1).rangeName}, 1, 9), mixArray, {'T', 'rho', 'h', 'e', 'g', 'cp', 's', 'gamma_s', 'sound'}, mixArray, 'basis', {[], [], 'mi', 'mi', 'mi', 'mi', 'mi', [], []});
+
+            for i = 1:nargin - 2
+                % Unpack input
+                mixArray = varargin{i};
+
+                % Plot molar fractions - mixArray_i
+                ax1 = plotComposition(mixArray(1), mixArray, mixArray(1).rangeName, 'Xi', 'mintol', 1e-14);
+            
+                % Plot properties - mixArray_i
+                ax2 = plotProperties(repmat({mixArray(1).rangeName}, 1, 9), mixArray, {'T', 'rho', 'h', 'e', 'g', 'cp', 's', 'gamma_s', 'sound'}, mixArray, 'basis', {[], [], 'mi', 'mi', 'mi', 'mi', 'mi', [], []}, 'ax', ax2);
+            end
+
         end
 
     end

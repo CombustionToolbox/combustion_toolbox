@@ -49,7 +49,7 @@ function [N, dNi_T, dN_T, dNi_p, dN_p, index, STOP, STOP_ions, h0] = equilibrium
     A0 = system.stoichiometricMatrix;  % Stoichiometric matrix [a_ij]
     RT = R0 * T;                       % [J/mol]
     delta0 = 0.9999;
-    tau0RT = obj.tolMoles;
+    tau0RT = obj.tolTau;
     opts.SYM = true; % Options linsolve method: real symmetric
     
     % Initialization

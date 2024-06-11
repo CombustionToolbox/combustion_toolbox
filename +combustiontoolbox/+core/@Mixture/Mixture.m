@@ -314,7 +314,7 @@ classdef Mixture < handle & matlab.mixin.Copyable
                     case 'oxidizer'
                         obj.listSpeciesOxidizer = [obj.listSpeciesOxidizer, listSpecies];
                         obj.molesOxidizer = [obj.molesOxidizer, quantity];
-                        obj.ratioOxidizer = obj.molesOxidizer;
+                        % obj.ratioOxidizer = obj.molesOxidizer;
                         obj.FLAG_OXIDIZER = true;
                     case 'inert'
                         obj.listSpeciesInert = [obj.listSpeciesInert, listSpecies];
@@ -790,31 +790,32 @@ classdef Mixture < handle & matlab.mixin.Copyable
 
             % Compute Gibbs energy [J]
             obj.g = obj.h - obj.T * obj.s;
-
-            % Compute specific heat at constant volume [J/K]
-            obj.cv = obj.cp - R0 * N_gas;
-
-            % Compute Adibatic index [-]
-            obj.gamma = obj.cp / obj.cv;
             
-            % Compute sound velocity [m/s]
-            obj.sound = sqrt(obj.gamma * convert_bar_to_Pa(pressure) / obj.rho);
-            
-            % Correction of: cP, cv, gamma, and speed of sound as consequence of the
-            % chemical reaction
-            if obj.FLAG_REACTION % isfield(self, 'dNi_T')
+            % Compute thermodynamic derivatives, cp, cv, gamma, and speed
+            % of sound considering chemical reaction
+            if obj.FLAG_REACTION
+                % Set thermodynamic derivatives
                 obj.dVdT_p = obj.dN_T + 1; % [-]
                 obj.dVdp_T = obj.dN_p - 1; % [-]
         
                 if ~any(isnan(obj.dNi_T)) && ~any(isinf(obj.dNi_T))
+                    % Definitions
                     delta = ~obj.phase;
                     h0_j = propertiesMatrix(:, system.ind_hi); % [J/mol]
-                    obj.cp_r = sum(h0_j / temperature .* (1 + delta .* (Ni - 1)) .* obj.dNi_T, 'omitnan'); % [J/K]
+
+                    % Compute specific heat at constant pressure [J/K]
+                    obj.cp_r = sum(h0_j / temperature .* (1 + delta .* (Ni - 1)) .* obj.dNi_T, 'omitnan');
                     obj.cp_f = obj.cp;
-                    obj.cp = obj.cp_f + obj.cp_r; % [J/K]
-                    obj.cv = obj.cp + (N_gas * R0 * obj.dVdT_p^2) / obj.dVdp_T; % [J/K]
-                    obj.gamma = obj.cp / obj.cv; % [-]
-                    obj.gamma_s = -obj.gamma / obj.dVdp_T; % [-]
+                    obj.cp = obj.cp_f + obj.cp_r;
+
+                    % Compute specific heat at constant volume [J/K]
+                    obj.cv = obj.cp + (N_gas * R0 * obj.dVdT_p^2) / obj.dVdp_T;
+
+                    % Compute Adibatic index [-]
+                    obj.gamma = obj.cp / obj.cv;
+                    obj.gamma_s = -obj.gamma / obj.dVdp_T;
+
+                    % Compute sound velocity [m/s]
                     obj.sound = sqrt(obj.gamma_s * convert_bar_to_Pa(pressure) / obj.rho); % [m/s]
 
                     return
@@ -825,10 +826,22 @@ classdef Mixture < handle & matlab.mixin.Copyable
                 return
             end
             
+            % Compute thermodynamic derivatives, cp, cv, gamma, and speed
+            % of sound considering frozen chemistry
+
+            % Compute specific heat at constant volume [J/K]
+            obj.cv = obj.cp - R0 * N_gas;
+
+            % Compute Adibatic index [-]
+            obj.gamma = obj.cp / obj.cv;
+            obj.gamma_s = obj.gamma;
+
+            % Compute sound velocity [m/s]
+            obj.sound = sqrt(obj.gamma * convert_bar_to_Pa(pressure) / obj.rho);
+            
+            % Set thermodynamic derivatives
             obj.dVdT_p = 1;          % [-]
             obj.dVdp_T = -1;         % [-]
-            obj.gamma_s = obj.gamma; % [-]
-        
         end
 
         function MW = computeMeanMolecularWeight(obj, moles, index)

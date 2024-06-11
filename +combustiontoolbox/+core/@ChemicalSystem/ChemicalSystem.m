@@ -86,7 +86,7 @@ classdef ChemicalSystem < handle & matlab.mixin.Copyable
             % Parse inputs
             ip = inputParser;
             addRequired(ip, 'database'); % , @(x) isa(x, 'combustiontoolbox.databases.NasaDatabase') || isa(x, 'combustiontoolbox.databases.BurcatDatabase')
-            addParameter(ip, 'listSpecies', defaultListSpecies); % , @(x) ischar(x) || iscell(x)
+            addOptional(ip, 'listSpecies', defaultListSpecies); % , @(x) ischar(x) || iscell(x)
             addParameter(ip, 'FLAG_BURCAT', obj.FLAG_BURCAT)
             addParameter(ip, 'FLAG_ION', obj.FLAG_ION)
             parse(ip, database, varargin{:});

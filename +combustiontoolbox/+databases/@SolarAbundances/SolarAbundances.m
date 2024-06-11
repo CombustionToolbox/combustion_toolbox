@@ -30,7 +30,11 @@ classdef SolarAbundances
             % Create input parser
             ip = inputParser;
             addOptional(ip, 'filename', defaultFilename, @ischar);
+            addParameter(ip, 'elementRefence', obj.elementRefence, @ischar);
             parse(ip, varargin{:});
+            
+            % Set properties
+            obj.elementRefence = ip.Results.elementRefence;
 
             % Read abundances from filename
             [obj.logAbundances, obj.elements] = obj.read_abundances(ip.Results.filename);

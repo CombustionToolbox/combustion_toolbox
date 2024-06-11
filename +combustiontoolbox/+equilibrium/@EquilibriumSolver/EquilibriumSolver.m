@@ -41,14 +41,54 @@ classdef EquilibriumSolver < handle
             % Parse input arguments
             p = inputParser;
             addOptional(p, 'problemType', defaultProblemType, @(x) ischar(x) && any(strcmpi(x, {'TP', 'TV', 'HP', 'EV', 'SP', 'SV'})));
-            addOptional(p, 'tolMoles', obj.tolMoles);
-            addOptional(p, 'FLAG_RESULTS', obj.FLAG_RESULTS, @(x) islogical(x));
+            addParameter(p, 'tolGibbs', obj.tolGibbs, @(x) isnumeric(x) && x > 0);
+            addParameter(p, 'tolE', obj.tolE, @(x) isnumeric(x) && x > 0);
+            addParameter(p, 'tolMoles', obj.tolMoles, @(x) isnumeric(x) && x > 0);
+            addParameter(p, 'tolMolesGuess', obj.tolMolesGuess, @(x) isnumeric(x) && x > 0);
+            addParameter(p, 'tolMultiplierIons', obj.tolMultiplierIons, @(x) isnumeric(x) && x > 0);
+            addParameter(p, 'tolTau', obj.tolTau, @(x) isnumeric(x) && x > 0);
+            addParameter(p, 'itMaxGibbs', obj.itMaxGibbs, @(x) isnumeric(x) && x > 0);
+            addParameter(p, 'itMaxIons', obj.itMaxIons, @(x) isnumeric(x) && x > 0);
+            addParameter(p, 'temperatureIons', obj.temperatureIons, @(x) isnumeric(x) && x >= 0);
+            addParameter(p, 'tol0', obj.tol0, @(x) isnumeric(x) && x > 0);
+            addParameter(p, 'itMax', obj.itMax, @(x) isnumeric(x) && x > 0);
+            addParameter(p, 'rootMethod', obj.rootMethod, @(method) ismember(method, {@newton, @steff, @nsteff}));
+            addParameter(p, 'root_T0_l', obj.root_T0_l, @(x) isnumeric(x) && x > 0);
+            addParameter(p, 'root_T0_r', obj.root_T0_r, @(x) isnumeric(x) && x > 0);
+            addParameter(p, 'root_T0', obj.root_T0, @(x) isnumeric(x) && x > 0);
+            addParameter(p, 'FLAG_EXTRAPOLATE', obj.FLAG_EXTRAPOLATE, @(x) islogical(x));
+            addParameter(p, 'FLAG_FAST', obj.FLAG_FAST, @(x) islogical(x));
+            addParameter(p, 'FLAG_TCHEM_FROZEN', obj.FLAG_TCHEM_FROZEN, @(x) islogical(x));
+            addParameter(p, 'FLAG_FROZEN', obj.FLAG_FROZEN, @(x) islogical(x));
+            addParameter(p, 'FLAG_EOS', obj.FLAG_EOS, @(x) islogical(x));
+            addParameter(p, 'FLAG_RESULTS', obj.FLAG_RESULTS, @(x) islogical(x));
+            addParameter(p, 'FLAG_TIME', obj.FLAG_TIME, @(x) islogical(x));
             parse(p, varargin{:});
 
             % Set properties
             obj.problemType = upper(p.Results.problemType);
+            obj.tolGibbs = p.Results.tolGibbs;
+            obj.tolE = p.Results.tolE;
             obj.tolMoles = p.Results.tolMoles;
+            obj.tolMolesGuess = p.Results.tolMolesGuess;
+            obj.tolMultiplierIons = p.Results.tolMultiplierIons;
+            obj.tolTau = p.Results.tolTau;
+            obj.itMaxGibbs = p.Results.itMaxGibbs;
+            obj.itMaxIons = p.Results.itMaxIons;
+            obj.temperatureIons = p.Results.temperatureIons;
+            obj.tol0 = p.Results.tol0;
+            obj.itMax = p.Results.itMax;
+            obj.rootMethod = p.Results.rootMethod;
+            obj.root_T0_l = p.Results.root_T0_l;
+            obj.root_T0_r = p.Results.root_T0_r;
+            obj.root_T0 = p.Results.root_T0;
+            obj.FLAG_EXTRAPOLATE = p.Results.FLAG_EXTRAPOLATE;
+            obj.FLAG_FAST = p.Results.FLAG_FAST;
+            obj.FLAG_TCHEM_FROZEN = p.Results.FLAG_TCHEM_FROZEN;
+            obj.FLAG_FROZEN = p.Results.FLAG_FROZEN;
+            obj.FLAG_EOS = p.Results.FLAG_EOS;
             obj.FLAG_RESULTS = p.Results.FLAG_RESULTS;
+            obj.FLAG_TIME = p.Results.FLAG_TIME;
         end
 
         function mix = solve(obj, mix, varargin)

@@ -13,8 +13,11 @@ classdef ShockSolver < handle
         tol_limitRR = 1e-4      % Tolerance to calculate the limit of regular reflections
         it_limitRR = 10         % Max number of iterations - limit of regular reflections
         it_guess_det = 5        % Max number of iterations - guess detonation
-        % Miscellaneous
+        % * Flags
         FLAG_RESULTS = true     % Flag to print results
+        FLAG_TIME = true        % Flag to print elapsed time
+        % * Miscellaneous
+        time
     end
 
     methods
@@ -38,6 +41,7 @@ classdef ShockSolver < handle
 
             % Miscellaneous
             obj.equilibriumSolver.FLAG_RESULTS = false;
+            obj.equilibriumSolver.FLAG_TIME = false;
         end
 
         function varargout = solve(obj, mix1, varargin)
@@ -169,10 +173,15 @@ classdef ShockSolver < handle
                     % Set problemType
                     mix1.problemType = obj.problemType;
                     mix2.problemType = obj.problemType;
+                    
+                    % Assing values
+                    obj.setMixtureShockPolar(mix2_1, mix2);
+                    obj.setMixtureShockPolar(mix3_1, mix3);
+                    obj.setMixtureShockPolar(mix3_2, mix3);
 
                     % Print results
                     if obj.FLAG_RESULTS
-                        print(mix1, mix2, mix2_1, mix3, mix3_1, mix3_2);
+                        print(mix1, mix2_1, mix3_1, mix3_2);
                     end
 
                     % Set output

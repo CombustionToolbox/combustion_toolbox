@@ -17,9 +17,10 @@ function [mix1, mix2] = shockPolar(obj, mix1, u1)
 
     % Unpack input data
     [mix1, mix2] = unpack(mix1, u1);
-
+    
     % Definitions
-    a1 = soundspeed(mix1);
+    temp_mix1 = mix1.copy;
+    a1 = mix1.sound;
     u1 = mix1.u;
 
     betaMin = asin(a1 / u1);
@@ -37,37 +38,38 @@ function [mix1, mix2] = shockPolar(obj, mix1, u1)
 
     % Loop
     for i = N:-1:2
-        [~, mix2] = shockIncident(obj, mix1, u1n(i), mix2);
-        a2(i) = soundspeed(mix2);
+        [~, mix2] = shockIncident(obj, temp_mix1, u1n(i), mix2);
+        a2(i) = mix2.sound;
         u2n(i) = mix2.uShock;
-        p2(i) = pressure(mix2);
+        p2(i) = mix2.p;
         theta(i) = beta(i) - atan(u2n(i) / ut(i));
         u2(i) = u2n(i) * csc(beta(i) - theta(i));
         Xi(:, i) = mix2.Xi;
 
         % Print results
         if obj.FLAG_RESULTS
-            mix1.problemType = 'SHOCK_OBLIQUE';
+            temp_mix1.problemType = 'SHOCK_OBLIQUE';
             mix2.problemType = 'SHOCK_OBLIQUE';
             mix2.beta = beta(i) * 180 / pi;    % [deg]
             mix2.theta = theta(i) * 180 / pi;  % [deg]
             mix2.betaMin = betaMin * 180 / pi; % [deg]
-            print(mix1, mix2);
+            print(temp_mix1, mix2);
         end
 
     end
 
     % Calculate last case (beta = betaMin), which corresponds with the sonic condition
     i = 1;
-    mix2 = mix1;
-    a2(i) = soundspeed(mix2);
+    mix2 = mix1.copy;
+    a2(i) = mix2.sound;
     u2n(i) = a2(i);
-    p2(i) = pressure(mix2);
+    p2(i) = mix2.p;
     theta(i) = beta(i) - atan(u2n(i) / ut(i));
     u2(i) = u2n(i) * csc(beta(i) - theta(i));
     Xi(:, i) = mix2.Xi;
     mix2.u = 0;
-    mix2.uShock = soundspeed(mix2);
+    mix2.mach = 0;
+    mix2.uShock = mix2.sound;
     mix2.dVdT_p = 1;
     mix2.dVdp_T = -1;
     mix2.errorMoles = 0; mix2.errorMolesIons = 0; mix2.errorProblem = 0;
@@ -97,7 +99,7 @@ function [mix1, mix2] = shockPolar(obj, mix1, u1)
     
     % Range values for the shock polar
     mix2.polar.p = p2; % [bar]
-    mix2.polar.Mach = M2; % [-]
+    mix2.polar.mach = M2; % [-]
     mix2.polar.u = u2; % [m/s]
     mix2.polar.uNormal = u2n; % [m/s]
     mix2.polar.ux = u2x; % [m/s]

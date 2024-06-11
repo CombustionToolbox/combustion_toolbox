@@ -817,7 +817,6 @@ classdef Mixture < handle & matlab.mixin.Copyable
 
                     % Compute sound velocity [m/s]
                     obj.sound = sqrt(obj.gamma_s * convert_bar_to_Pa(pressure) / obj.rho); % [m/s]
-
                     return
                 end
 

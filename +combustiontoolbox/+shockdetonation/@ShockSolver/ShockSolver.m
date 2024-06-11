@@ -4,15 +4,14 @@ classdef ShockSolver < handle
         problemType             % Problem type
         equilibriumSolver       % EquilibriumSolver
         % * Shocks and detonations (CT-SD module)
-        tol_shocks = 1e-5       % Tolerance of shocks/detonations kernel
-        it_shocks = 50          % Max number of iterations - shocks and detonations
-        Mach_thermo = 2         % Pre-shock Mach number above which T2_guess will be computed considering h2 = h1 + u1^2 / 2
-        tol_oblique = 1e-3      % Tolerance oblique shocks algorithm
-        it_oblique = 20         % Max number of iterations - oblique shocks
-        N_points_polar = 100    % Number of points to compute shock/detonation polar curves
-        tol_limitRR = 1e-4      % Tolerance to calculate the limit of regular reflections
-        it_limitRR = 10         % Max number of iterations - limit of regular reflections
-        it_guess_det = 5        % Max number of iterations - guess detonation
+        tolShocks = 1e-5        % Tolerance of shocks/detonations kernel
+        itShocks = 50           % Max number of iterations - shocks and detonations
+        machThermo = 2          % Pre-shock Mach number above which T2_guess will be computed considering h2 = h1 + u1^2 / 2
+        tolOblique = 1e-3       % Tolerance oblique shocks algorithm
+        itOblique = 20          % Max number of iterations - oblique shocks
+        numPointsPolar = 100    % Number of points to compute shock/detonation polar curves
+        tolLimitRR = 1e-4       % Tolerance to calculate the limit of regular reflections
+        itLimitRR = 10          % Max number of iterations - limit of regular reflections
         % * Flags
         FLAG_RESULTS = true     % Flag to print results
         FLAG_TIME = true        % Flag to print elapsed time
@@ -29,7 +28,7 @@ classdef ShockSolver < handle
 
             % Parse input arguments
             p = inputParser;
-            addOptional(p, 'problemType', defaultProblemType, @(x) ischar(x) && any(strcmpi(x, {'SHOCK_I', 'SHOCK_R', 'SHOCK_OBLIQUE', 'SHOCK_POLAR', 'SHOCK_POLAR_R', 'SHOCK_POLAR_LIMITRR'})));
+            addOptional(p, 'problemType', defaultProblemType, @(x) ischar(x) && any(strcmpi(x, {'SHOCK_I', 'SHOCK_R', 'SHOCK_OBLIQUE', 'SHOCK_OBLIQUE_R', 'SHOCK_POLAR', 'SHOCK_POLAR_R', 'SHOCK_POLAR_LIMITRR'})));
             addOptional(p, 'equilibriumSolver', defaultEquilibriumSolver);
             addOptional(p, 'FLAG_RESULTS', obj.FLAG_RESULTS, @(x) islogical(x));
             parse(p, varargin{:});
@@ -146,6 +145,33 @@ classdef ShockSolver < handle
                         % Set output
                         varargout = {mix1, mix2, mix3};
                     end
+
+                case 'SHOCK_OBLIQUE_R'
+                    
+                    if isempty(mix1.theta)
+                        % Compute incident shock
+                        [mix1, mix2] = obj.shockObliqueBeta(mix1, u1, beta);
+                    else
+                        % Compute incident shock
+                        [mix1, mix2, ~] = obj.shockObliqueTheta(mix1, u1, theta);
+                    end
+
+                    % Compute reflected shock
+                    [mix1, mix2, mix3_1, mix3_2] = obj.shockObliqueReflectedTheta(mix1, mix2.u, mix2.theta, mix2);
+
+                    % Set problemType
+                    mix1.problemType = obj.problemType;
+                    mix2.problemType = obj.problemType;
+                    mix3_1.problemType = obj.problemType;
+                    mix3_2.problemType = obj.problemType;
+
+                    % Print results
+                    if obj.FLAG_RESULTS
+                        print(mix1, mix2, mix3_1, mix3_2);
+                    end
+
+                    % Set output
+                    varargout = {mix1, mix2, mix3_1, mix3_2};
                 
                 case 'SHOCK_POLAR'
                     % Solve problem
@@ -293,7 +319,7 @@ classdef ShockSolver < handle
                     % Set output
                     varargout = {mix1Array, mix2Array, mix3Array, mix4Array, mix5Array, mix6Array};
 
-                case {'SHOCK_POLAR_LIMITRR'}
+                case {'SHOCK_OBLIQUE_R_BETA', 'SHOCK_OBLIQUE_R_THETA', 'SHOCK_POLAR_LIMITRR'}
                     % Initialization
                     mix3Array = mix1Array;
                     mix4Array = mix1Array;
@@ -355,6 +381,7 @@ classdef ShockSolver < handle
         [mix1, mix2, mix5] = shockReflected(obj, mix1, mix2, varargin)
         [mix1, mix2] = shockObliqueBeta(obj, mix1, varargin)
         [mix1, mix2_1, mix2_2] = shockObliqueTheta(obj, mix1, u1, theta, varargin)
+        [mix1, mix2, mix5_1, mix5_2] = shockObliqueReflectedTheta(obj, mix1, u2, theta, mix2, varargin)
         [mix1, mix2] = shockPolar(obj, mix1, u1)
         [mix1, mix2, mix2_1, mix3] = shockPolarLimitRR(obj, mix1, u1)
 

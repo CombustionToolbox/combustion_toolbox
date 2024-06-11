@@ -41,22 +41,22 @@ function [mix1, mix2_1, mix2_2] = shockObliqueTheta(obj, mix1, u1, theta, vararg
     m = 4;
     
     % Solve first branch  (weak shock)
-    beta_guess = 0.5 * (betaMin + betaMax); % [rad]
+    betaGuess = 0.5 * (betaMin + betaMax); % [rad]
     % beta_guess = compute_guess_beta(M1, mix1.gamma, theta, true);
     if nargin > 4
-        mix2_1 = solve_shock_oblique(mix1, beta_guess, varargin{1});
+        mix2_1 = solve_shock_oblique(mix1, betaGuess, varargin{1});
     else
-        mix2_1 = solve_shock_oblique(mix1, beta_guess);
+        mix2_1 = solve_shock_oblique(mix1, betaGuess);
     end
 
     % Solve second branch (strong shock)
     if nargout > 2
-        beta_guess = betaMax * 0.97; % [rad]
+        betaGuess = betaMax * 0.97; % [rad]
         % beta_guess = compute_guess_beta(M1, mix1.gamma, theta, false);
         if nargin > 4
-            mix2_2 = solve_shock_oblique(mix1, beta_guess, varargin{2});
+            mix2_2 = solve_shock_oblique(mix1, betaGuess, varargin{2});
         else
-            mix2_2 = solve_shock_oblique(mix1, beta_guess);
+            mix2_2 = solve_shock_oblique(mix1, betaGuess);
         end
 
     else
@@ -64,38 +64,38 @@ function [mix1, mix2_1, mix2_2] = shockObliqueTheta(obj, mix1, u1, theta, vararg
     end
     
     % NESTED FUNCTIONS
-    function mix2 = solve_shock_oblique(mix1, beta_guess, varargin)
+    function mix2 = solve_shock_oblique(mix1, betaGuess, varargin)
         % Obtain wave angle, pre-shock state and post-shock states for an oblique shock
-        STOP = 1; it = 0; itMax = obj.it_oblique;
+        STOP = 1; it = 0; itMax = obj.itOblique;
 
-        while STOP > obj.tol_oblique && it < itMax
+        while STOP > obj.tolOblique && it < itMax
             % Update iteration
             it = it + 1;
             % Compute incident normal velocity
-            u1n = u1 * sin(beta_guess); % [m/s]
+            u1n = u1 * sin(betaGuess); % [m/s]
             % Obtain post-shock state
             [~, mix2] = shockIncident(obj, mix1, u1n, varargin{:});
             u2n = mix2.uShock;
             % Compute f0 , df0, and d2f0
-            f0 = f0_beta(beta_guess, theta, u2n, u1);
-            df0 = df0_beta(beta_guess, u2n, u1);
+            f0 = f0_beta(betaGuess, theta, u2n, u1);
+            df0 = df0_beta(betaGuess, u2n, u1);
 
             % Apply correction
-            beta = beta_guess - f0 / df0;
+            beta = betaGuess - f0 / df0;
             df0_2 = df0_beta(beta, u2n, u1);
-            beta = beta_guess - 2 * f0 / (df0 + df0_2);
+            beta = betaGuess - 2 * f0 / (df0 + df0_2);
             % d2f0 = d2f0_beta(beta_guess, u2n, u1);
             % beta = beta_guess - (f0 * df0) / (df0^2 - m^-1 * f0 * d2f0);
             % Check value
             if beta < betaMin || beta > betaMax
-                beta = beta_guess - lambda * f0 / df0;
+                beta = betaGuess - lambda * f0 / df0;
                 % beta = beta_guess - lambda * (f0 * df0) / (df0^2 - 0.5 * f0 * d2f0);
             end
 
             % Compute error
-            STOP = max(abs(beta - beta_guess) / abs(beta), abs(f0));
+            STOP = max(abs(beta - betaGuess) / abs(beta), abs(f0));
             % Update guess
-            beta_guess = beta;
+            betaGuess = beta;
             % Debug
             % aux_lambda(it) = beta_guess * 180/pi;
             % aux_STOP(it) = STOP;
@@ -110,7 +110,7 @@ function [mix1, mix2_1, mix2_2] = shockObliqueTheta(obj, mix1, u1, theta, vararg
         %     error('There is not solution for the given deflection angle %.2g', mix1.theta);
         % end
         % Check convergence
-        combustiontoolbox.utils.printConvergence(it, obj.it_oblique, mix2.T, STOP, obj.tol_oblique);
+        combustiontoolbox.utils.printConvergence(it, obj.itOblique, mix2.T, STOP, obj.itOblique);
 
         % Save results
         mix2.beta = beta * 180 / pi; % [deg]

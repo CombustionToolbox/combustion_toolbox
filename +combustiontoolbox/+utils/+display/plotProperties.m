@@ -41,8 +41,7 @@ function [main_ax, main_figure] = plotProperties(x_field, x_var, y_field, y_var,
     FLAG_BASIS = false;
     FLAG_SAME = false;
     main_ax = [];
-    Misc = Miscellaneous();
-    config = Misc.config;
+    config = PlotConfig();
     config.labelx = interpreterLabel(x_field, config.label_type);
     config.labely = interpreterLabel(y_field, config.label_type);
 

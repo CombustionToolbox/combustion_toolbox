@@ -23,7 +23,11 @@ function [ax1, ax2, ax3] = plotPolar(mixArray1, mixArray2, varargin)
     % Examples:
     %     * [ax1, ax2, ax3] = plotPolar(mixArray1, mixArray2)
     %     * [ax1, ax2, ax3] = plotPolar(mixArray1, mixArray2, mix2_case, mix0)
-
+    
+    % Import packages
+    import combustiontoolbox.utils.display.PlotConfig
+    
+    % Unpack additional inputs
     if nargin > 2
         mix2_case = varargin{1};
         mix0 = varargin{2};
@@ -33,8 +37,7 @@ function [ax1, ax2, ax3] = plotPolar(mixArray1, mixArray2, varargin)
     end
 
     % Definitions
-    Misc = Miscellaneous();
-    config = Misc.config;
+    config = PlotConfig();
     N = length(mixArray1);
     
     % Plots

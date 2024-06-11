@@ -39,7 +39,7 @@ function [ax, fig] = plotComposition(obj, x_var, x_field, y_field, varargin)
     import combustiontoolbox.utils.display.*
     
     % Temporal
-    config = Miscellaneous().config;
+    config = PlotConfig();
     mintol_display = 1e-14;
     displaySpecies = {};
 

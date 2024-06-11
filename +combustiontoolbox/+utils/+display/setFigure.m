@@ -19,10 +19,12 @@ function [ax, config, fig] = setFigure(varargin)
     %     [ax, config, fig] = setFigure(ax, config);
     %
     % See also: plot_settings
+    
+    % Import packages
+    import combustiontoolbox.utils.display.PlotConfig
 
     % Default values
-    Misc = Miscellaneous();
-    config = Misc.config;
+    config = PlotConfig();
     ax = [];
     
     % Unpack input
@@ -30,9 +32,9 @@ function [ax, config, fig] = setFigure(varargin)
 
         for i = 1:nargin
 
-            if isobject(varargin{i})
+            if isa(varargin{i}, 'matlab.graphics.axis.Axes')
                 ax = varargin{i};
-            else
+            elseif isa(varargin{i}, 'combustiontoolbox.utils.display.PlotConfig')
                 config = varargin{i};
             end
 

@@ -4,6 +4,12 @@ function [indexCondensed, FLAG_CONDENSED, dL_dnj] = equilibriumCheckCondensed(A0
     % Initialization
     FLAG_CONDENSED = false;
 
+    % Checks
+    if isempty(indexCondensed)
+        dL_dnj = [];
+        return
+    end
+    
     % Get length condensed species
     NC = length(indexCondensed);
 

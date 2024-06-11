@@ -37,5 +37,4 @@ function [R, P, T, Gammas, M1] = shockIncidentIdeal(obj, gamma, M1)
     P = P(1:end-1);
     T = T(1:end-1);
     M1 = M1(1:end-1);
-
 end

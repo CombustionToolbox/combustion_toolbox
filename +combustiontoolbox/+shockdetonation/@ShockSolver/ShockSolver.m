@@ -207,7 +207,6 @@ classdef ShockSolver < handle
 
                     % Set output
                     varargout = {mix1, mix2, mix2_1, mix3};
-                    
             end
 
         end

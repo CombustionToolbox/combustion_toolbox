@@ -127,7 +127,7 @@ classdef EquilibriumSolver < handle
             % Compute initial guess
             [guess, guess_moles] = get_guess(obj, mix1, mix2, mix_guess, attr_name);
             % If the problem type is SV, the product's volume is based on the given v_P/v_R ratio
-            mix2 = set_volume_SV(obj, mix2);
+            % mix2 = set_volume_SV(obj, mix2);
             % Root finding: find the value x that satisfies f(x) = mix2.xx(x) - mix1.xx = 0
             [T, STOP, guess_moles] = rootFinding(obj, mix1, mix2, attr_name, guess, guess_moles);
             % Compute properties
@@ -333,8 +333,12 @@ classdef EquilibriumSolver < handle
             %
             % Args:
             %     obj (EquilibriumSolver): Object of the class EquilibriumSolver
+            
+            if ~obj.FLAG_TIME
+                return
+            end
 
-            fprintf('\nElapsed time is %.5f seconds\n', obj.time)
+            fprintf('\nElapsed time is %.5f seconds\n', obj.time);
         end
 
         function plot(obj, mixArray, varargin)

@@ -110,6 +110,11 @@ function [ax, fig] = plotComposition(obj, x_var, x_field, y_field, varargin)
         mix1.(y_field) = cell2vector(y_var, y_field);
     end
     
+    % Check lenghts
+    if length(mix1.(x_field)) < 2
+        return
+    end
+
     % Get index species
     index_species_CT = findIndex(listSpecies, species);
 

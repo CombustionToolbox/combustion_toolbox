@@ -57,3 +57,9 @@ solver = ShockSolver('problemType', 'SHOCK_POLAR_R');
 
 % Solve problem
 [mixArray1, mixArray2, mixArray2_1, mixArray3, mixArray3_1, mixArray3_2] = solver.solveArray(mixArray1);
+
+% Plot polars - incident
+plotPolar(mixArray1, mixArray2);
+
+% Plot polars - reflected
+plotPolar(mixArray2_1, mixArray3, mixArray2_1, mixArray1);

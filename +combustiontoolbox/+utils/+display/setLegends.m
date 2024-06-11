@@ -8,11 +8,12 @@ function setLegends(ax, legend_name, varargin)
     % Optional Name-Value Pairs Args:
     %     * config (struct): Struct containing the configuration parameters for the plots
     %     * obj (object): Handle to the plotted objects (e.g. lines, patches, etc.)
-
     
+    % Import packages
+    import combustiontoolbox.utils.display.PlotConfig
+
     % Default values
-    Misc = Miscellaneous();
-    config = Misc.config;
+    config = PlotConfig();
     FLAG_OBJECTS = false;
     
     % Unpack inputs

@@ -41,8 +41,7 @@ function [ax, dline] = plotFigure(x_field, x_var, y_field, y_var, varargin)
     % Default settings
     FLAG_BASIS = false;
     FLAG_COLOR_NEW = false;
-    Misc = Miscellaneous();
-    config = Misc.config;
+    config = PlotConfig;
     config.labelx = interpreterLabel(x_field, config.label_type);
     config.labely = interpreterLabel(y_field, config.label_type);
     ax = [];

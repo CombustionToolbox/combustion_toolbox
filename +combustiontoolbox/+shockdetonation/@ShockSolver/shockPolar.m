@@ -24,7 +24,7 @@ function [mix1, mix2] = shockPolar(obj, mix1, u1)
     u1 = mix1.u;
 
     betaMin = asin(a1 / u1);
-    beta = linspace(betaMin, pi / 2, obj.N_points_polar);
+    beta = linspace(betaMin, pi / 2, obj.numPointsPolar);
     u1n = u1 * sin(beta);
 
     % Compute as SDToolbox for comparison

@@ -25,7 +25,7 @@ function [mix1, mix2] = shockObliqueBeta(obj, mix1, u1, beta, varargin)
     mix1 = unpack(mix1, u1, beta);
 
     % Definitions
-    a1 = soundspeed(mix1); % [m/s]
+    a1 = mix1.sound; % [m/s]
     u1 = mix1.u; % [m/s]
     M1 = u1 / a1; % [-]
     beta = mix1.beta * pi / 180; % [rad]
@@ -56,6 +56,7 @@ function [mix1, mix2] = shockObliqueBeta(obj, mix1, u1, beta, varargin)
     mix2.betaMax = betaMax * 180 / pi; % [deg]
     mix2.sound = a2; % [m/s]
     mix2.u = u2; % [m/s]
+    mix2.mach = u2 / a2; % [m/s]
     mix2.uNormal = u2n; % [m/s]
     mix2.uShock = u2; % [m/s]
 end

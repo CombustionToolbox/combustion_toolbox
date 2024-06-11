@@ -25,8 +25,8 @@ function [ax1, ax2, ax3] = plotPolar(mixArray1, mixArray2, varargin)
     %     * [ax1, ax2, ax3] = plotPolar(mixArray1, mixArray2, mix2_case, mix0)
 
     if nargin > 2
-        mix2_case = varargin{4};
-        mix0 = varargin{5};
+        mix2_case = varargin{1};
+        mix0 = varargin{2};
     else
         mix2_case = zeros(size(mixArray1));
         mix0 = mix2_case;

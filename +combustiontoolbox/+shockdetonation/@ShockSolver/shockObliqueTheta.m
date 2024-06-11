@@ -31,7 +31,7 @@ function [mix1, mix2_1, mix2_2] = shockObliqueTheta(obj, mix1, u1, theta, vararg
     mix1 = unpack(mix1, u1, theta);
 
     % Definitions
-    a1 = soundspeed(mix1); % [m/s]
+    a1 = mix1.sound; % [m/s]
     u1 = mix1.u; % [m/s]
     M1 = u1 / a1; % [-]
     theta = mix1.theta * pi / 180; % [rad]
@@ -119,6 +119,7 @@ function [mix1, mix2_1, mix2_2] = shockObliqueTheta(obj, mix1, u1, theta, vararg
         mix2.betaMax = betaMax * 180 / pi; % [deg]
         mix2.sound = a2; % [m/s]
         mix2.u = u2; % [m/s]
+        mix2.mach = u2 / a2; % [m/s]
         mix2.uNormal = u2n; % [m/s]
         mix2.uShock = u2; % [m/s]
     end

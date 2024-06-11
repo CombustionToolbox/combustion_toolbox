@@ -30,13 +30,31 @@ classdef ShockSolver < handle
             p = inputParser;
             addOptional(p, 'problemType', defaultProblemType, @(x) ischar(x) && any(strcmpi(x, {'SHOCK_I', 'SHOCK_R', 'SHOCK_OBLIQUE', 'SHOCK_OBLIQUE_R', 'SHOCK_POLAR', 'SHOCK_POLAR_R', 'SHOCK_POLAR_LIMITRR'})));
             addOptional(p, 'equilibriumSolver', defaultEquilibriumSolver);
+            addOptional(p, 'tolShocks', obj.tolShocks, @(x) isnumeric(x) && x > 0);
+            addOptional(p, 'itShocks', obj.itShocks, @(x) isnumeric(x) && x > 0);
+            addOptional(p, 'machThermo', obj.machThermo, @(x) isnumeric(x) && x >= 1);
+            addOptional(p, 'tolOblique', obj.tolOblique, @(x) isnumeric(x) && x > 0);
+            addOptional(p, 'itOblique', obj.itOblique, @(x) isnumeric(x) && x > 0);
+            addOptional(p, 'numPointsPolar', obj.numPointsPolar, @(x) isnumeric(x) && x > 0);
+            addOptional(p, 'tolLimitRR', obj.tolLimitRR, @(x) isnumeric(x) && x > 0);
+            addOptional(p, 'itLimitRR', obj.itLimitRR, @(x) isnumeric(x) && x > 0);
             addOptional(p, 'FLAG_RESULTS', obj.FLAG_RESULTS, @(x) islogical(x));
+            addOptional(p, 'FLAG_TIME', obj.FLAG_TIME, @(x) islogical(x));
             parse(p, varargin{:});
 
             % Set properties
             obj.problemType = upper(p.Results.problemType);
             obj.equilibriumSolver = p.Results.equilibriumSolver;
+            obj.tolShocks = p.Results.tolShocks;
+            obj.itShocks = p.Results.itShocks;
+            obj.machThermo = p.Results.machThermo;
+            obj.tolOblique = p.Results.tolOblique;
+            obj.itOblique = p.Results.itOblique;
+            obj.numPointsPolar = p.Results.numPointsPolar;
+            obj.tolLimitRR = p.Results.tolLimitRR;
+            obj.itLimitRR = p.Results.itLimitRR;
             obj.FLAG_RESULTS = p.Results.FLAG_RESULTS;
+            obj.FLAG_TIME = p.Results.FLAG_TIME;
 
             % Miscellaneous
             obj.equilibriumSolver.FLAG_RESULTS = false;
@@ -246,7 +264,10 @@ classdef ShockSolver < handle
             % Definitions
             n = length(mix1Array);
             problem = obj.problemType;
-
+            
+            % Timer
+            obj.time = tic;
+            
             % Initialization
             mix2Array = mix1Array;
             
@@ -335,6 +356,24 @@ classdef ShockSolver < handle
                     varargout = {mix1Array, mix2Array, mix3Array, mix4Array};
             end
 
+            % Timer
+            obj.time = toc(obj.time);
+
+            % Print elapsed time
+            printTime(obj);
+        end
+
+        function printTime(obj)
+            % Print execution time
+            %
+            % Args:
+            %     obj (EquilibriumSolver): Object of the class EquilibriumSolver
+            
+            if ~obj.FLAG_TIME
+                return
+            end
+
+            fprintf('\nElapsed time is %.5f seconds\n', obj.time);
         end
 
     end

@@ -3,7 +3,7 @@
 %
 % Compute pre-shock and post-shock state for a planar incident shock wave
 % at standard conditions, a set of 16 species considered and a set of
-% pre-shock Mach numbers (M1) contained in (1, 40)
+% pre-shock velocities contained in (400, 12000)
 %    
 % Air == {'O2','N2','O','O3','N','NO','NO2','NO3','N2O','N2O3','N2O4',...
 %         'N3','C','CO','CO2','Ar'}
@@ -37,7 +37,7 @@ mix = Mixture(system);
 set(mix, {'N2', 'O2', 'Ar', 'CO2'}, [78.084, 20.9476, 0.9365, 0.0319] / 20.9476);
 
 % Define properties
-mixArray1 = setProperties(mix, 'temperature', 300, 'pressure', 1.01325, 'M1', 1:0.1:40);
+mixArray1 = setProperties(mix, 'temperature', 300, 'pressure', 1.01325, 'u1', 400:100:12000);
 
 % Initialize solver
 solver = ShockSolver('problemType', 'SHOCK_I');
@@ -49,7 +49,7 @@ solver = ShockSolver('problemType', 'SHOCK_I');
 plotFigure('\rho_1 / \rho_2', [mixArray1.rho] ./ [mixArray2.rho], 'p_2 / p_1', [mixArray2.p] ./ [mixArray1.p], 'xScale', 'log', 'yScale', 'log');
 
 % Plot post-shock temperature
-plotFigure('M1', [mixArray1.mach], 'T', [mixArray2.T]);
+plotFigure('u', mixArray1, 'T', mixArray1);
 
 % Plot molar fractions
-plotComposition(mixArray2(1), mixArray1, 'mach', 'Xi', 'mintol', 1e-3, 'y_var', mixArray2);
+plotComposition(mixArray2(1), mixArray1, 'u', 'Xi', 'mintol', 1e-3, 'y_var', mixArray2);

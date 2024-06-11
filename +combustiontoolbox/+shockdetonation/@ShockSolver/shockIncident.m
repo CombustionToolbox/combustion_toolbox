@@ -27,7 +27,7 @@ function [mix1, mix2] = shockIncident(obj, mix1, u1, varargin)
 
     if obj.equilibriumSolver.FLAG_TCHEM_FROZEN
         STOP = 0;
-        [~, p2p1, T2T1, ~, ~] = shock_ideal_gas(mix1.gamma, u1 / mix1.sound);
+        [~, p2p1, T2T1, ~, ~] = obj.shockIncidentIdeal(mix1.gamma, mix1.mach);
         T2 = T2T1 * mix1.T;
         p2 = p2p1 * convert_bar_to_Pa(mix1.p);
         mix2.p = p2; mix2.T = T2;
@@ -226,5 +226,6 @@ end
 function mix2 = save_state(mix1, mix2, STOP)
     mix2.uShock = mix1.u * mix1.rho / mix2.rho;
     mix2.u = mix1.u - mix2.uShock; % velocity postshock [m/s] - laboratory fixed
+    mix2.mach = mix2.u / mix2.sound;
     mix2.errorProblem = STOP;
 end

@@ -670,10 +670,10 @@ classdef Mixture < handle & matlab.mixin.Copyable
       function objCopy = copyElement(obj)
          % Override copyElement method:
 
-         % Make a shallow copy of all four properties
+         % Make a shallow copy of all properties
          objCopy = copyElement@matlab.mixin.Copyable(obj);
 
-         % Make a deep copy of the DeepCp object
+         % Make a deep copy of the ChemicalSystem object
          objCopy.chemicalSystem = obj.chemicalSystem.copy();
       end
       

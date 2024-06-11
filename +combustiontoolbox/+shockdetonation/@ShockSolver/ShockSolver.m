@@ -29,17 +29,17 @@ classdef ShockSolver < handle
             % Parse input arguments
             p = inputParser;
             addOptional(p, 'problemType', defaultProblemType, @(x) ischar(x) && any(strcmpi(x, {'SHOCK_I', 'SHOCK_R', 'SHOCK_OBLIQUE', 'SHOCK_OBLIQUE_R', 'SHOCK_POLAR', 'SHOCK_POLAR_R', 'SHOCK_POLAR_LIMITRR'})));
-            addOptional(p, 'equilibriumSolver', defaultEquilibriumSolver);
-            addOptional(p, 'tolShocks', obj.tolShocks, @(x) isnumeric(x) && x > 0);
-            addOptional(p, 'itShocks', obj.itShocks, @(x) isnumeric(x) && x > 0);
-            addOptional(p, 'machThermo', obj.machThermo, @(x) isnumeric(x) && x >= 1);
-            addOptional(p, 'tolOblique', obj.tolOblique, @(x) isnumeric(x) && x > 0);
-            addOptional(p, 'itOblique', obj.itOblique, @(x) isnumeric(x) && x > 0);
-            addOptional(p, 'numPointsPolar', obj.numPointsPolar, @(x) isnumeric(x) && x > 0);
-            addOptional(p, 'tolLimitRR', obj.tolLimitRR, @(x) isnumeric(x) && x > 0);
-            addOptional(p, 'itLimitRR', obj.itLimitRR, @(x) isnumeric(x) && x > 0);
-            addOptional(p, 'FLAG_RESULTS', obj.FLAG_RESULTS, @(x) islogical(x));
-            addOptional(p, 'FLAG_TIME', obj.FLAG_TIME, @(x) islogical(x));
+            addParameter(p, 'equilibriumSolver', defaultEquilibriumSolver);
+            addParameter(p, 'tolShocks', obj.tolShocks, @(x) isnumeric(x) && x > 0);
+            addParameter(p, 'itShocks', obj.itShocks, @(x) isnumeric(x) && x > 0);
+            addParameter(p, 'machThermo', obj.machThermo, @(x) isnumeric(x) && x >= 1);
+            addParameter(p, 'tolOblique', obj.tolOblique, @(x) isnumeric(x) && x > 0);
+            addParameter(p, 'itOblique', obj.itOblique, @(x) isnumeric(x) && x > 0);
+            addParameter(p, 'numPointsPolar', obj.numPointsPolar, @(x) isnumeric(x) && x > 0);
+            addParameter(p, 'tolLimitRR', obj.tolLimitRR, @(x) isnumeric(x) && x > 0);
+            addParameter(p, 'itLimitRR', obj.itLimitRR, @(x) isnumeric(x) && x > 0);
+            addParameter(p, 'FLAG_RESULTS', obj.FLAG_RESULTS, @(x) islogical(x));
+            addParameter(p, 'FLAG_TIME', obj.FLAG_TIME, @(x) islogical(x));
             parse(p, varargin{:});
 
             % Set properties
@@ -267,7 +267,7 @@ classdef ShockSolver < handle
             
             % Timer
             obj.time = tic;
-            
+
             % Initialization
             mix2Array = mix1Array;
             

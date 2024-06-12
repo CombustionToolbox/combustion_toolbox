@@ -602,7 +602,7 @@ classdef Mixture < handle & matlab.mixin.Copyable
             % Set properties
             for j = 1:numCases
                 % Create a copy of the mixture
-                objArray(j) = obj.copy();
+                objArray(j) = obj.copyDeep();
 
                 % Set property
                 for i = 1:numProperties
@@ -672,6 +672,13 @@ classdef Mixture < handle & matlab.mixin.Copyable
 
          % Make a shallow copy of all properties
          objCopy = copyElement@matlab.mixin.Copyable(obj);
+      end
+
+      function objCopy = copyDeep(obj)
+         % Make a deep copy of obj
+
+         % Make a shallow copy of all properties
+         objCopy = copyElement(obj);
 
          % Make a deep copy of the ChemicalSystem object
          objCopy.chemicalSystem = obj.chemicalSystem.copy();
@@ -888,7 +895,7 @@ classdef Mixture < handle & matlab.mixin.Copyable
                 % Fill properties matrix with only fuel species
                 system.set_propertiesMatrix(obj.listSpeciesFuel, obj.molesFuel, obj.T);
                 % Compute thermodynamic properties 
-                mixFuel = obj.copy().compute_properties(system, obj.T, obj.p);
+                mixFuel = obj.copyDeep().compute_properties(system, obj.T, obj.p);
                 % Assign values elements C, H, O, N, S, and Si
                 obj.assign_values_elements(mixFuel.natomElements);
                 % Compute theoretical moles of the oxidizer of reference for a stoichiometric combustion

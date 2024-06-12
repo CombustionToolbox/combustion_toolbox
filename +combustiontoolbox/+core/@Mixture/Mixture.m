@@ -824,6 +824,12 @@ classdef Mixture < handle & matlab.mixin.Copyable
 
                     % Compute sound velocity [m/s]
                     obj.sound = sqrt(obj.gamma_s * convert_bar_to_Pa(pressure) / obj.rho); % [m/s]
+
+                    % Compute Mach number
+                    if ~isempty(obj.u)
+                        obj.mach = obj.u / obj.sound;
+                    end
+
                     return
                 end
 
@@ -834,6 +840,10 @@ classdef Mixture < handle & matlab.mixin.Copyable
             
             % Compute thermodynamic derivatives, cp, cv, gamma, and speed
             % of sound considering frozen chemistry
+            
+            % Set thermodynamic derivatives
+            obj.dVdT_p = 1;          % [-]
+            obj.dVdp_T = -1;         % [-]
 
             % Compute specific heat at constant volume [J/K]
             obj.cv = obj.cp - R0 * N_gas;
@@ -845,9 +855,11 @@ classdef Mixture < handle & matlab.mixin.Copyable
             % Compute sound velocity [m/s]
             obj.sound = sqrt(obj.gamma * convert_bar_to_Pa(pressure) / obj.rho);
             
-            % Set thermodynamic derivatives
-            obj.dVdT_p = 1;          % [-]
-            obj.dVdp_T = -1;         % [-]
+            % Compute Mach number
+            if ~isempty(obj.u)
+                obj.mach = obj.u / obj.sound;
+            end
+
         end
 
         function MW = computeMeanMolecularWeight(obj, moles, index)

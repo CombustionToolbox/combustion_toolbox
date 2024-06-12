@@ -19,7 +19,6 @@ function [mix1, mix2] = shockPolar(obj, mix1, u1)
     [mix1, mix2] = unpack(mix1, u1);
     
     % Definitions
-    temp_mix1 = mix1.copy;
     a1 = mix1.sound;
     u1 = mix1.u;
 
@@ -38,7 +37,7 @@ function [mix1, mix2] = shockPolar(obj, mix1, u1)
 
     % Loop
     for i = N:-1:2
-        [~, mix2] = shockIncident(obj, temp_mix1, u1n(i), mix2);
+        [~, mix2] = shockIncident(obj, mix1, u1n(i), mix2);
         a2(i) = mix2.sound;
         u2n(i) = mix2.uShock;
         p2(i) = mix2.p;

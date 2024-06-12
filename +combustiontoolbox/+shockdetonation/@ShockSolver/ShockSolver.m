@@ -25,7 +25,9 @@ classdef ShockSolver < handle
             % Constructor
             defaultProblemType = 'SHOCK_I';
             defaultEquilibriumSolver = combustiontoolbox.equilibrium.EquilibriumSolver();
-
+            defaultFLAG_TCHEM_FROZEN = false;
+            defaultFLAG_FROZEN = false;
+            
             % Parse input arguments
             p = inputParser;
             addOptional(p, 'problemType', defaultProblemType, @(x) ischar(x) && any(strcmpi(x, {'SHOCK_I', 'SHOCK_R', 'SHOCK_OBLIQUE', 'SHOCK_OBLIQUE_R', 'SHOCK_POLAR', 'SHOCK_POLAR_R', 'SHOCK_POLAR_LIMITRR'})));
@@ -40,6 +42,8 @@ classdef ShockSolver < handle
             addParameter(p, 'itLimitRR', obj.itLimitRR, @(x) isnumeric(x) && x > 0);
             addParameter(p, 'FLAG_RESULTS', obj.FLAG_RESULTS, @(x) islogical(x));
             addParameter(p, 'FLAG_TIME', obj.FLAG_TIME, @(x) islogical(x));
+            addParameter(p, 'FLAG_TCHEM_FROZEN', defaultFLAG_TCHEM_FROZEN, @(x) islogical(x))
+            addParameter(p, 'FLAG_FROZEN', defaultFLAG_FROZEN, @(x) islogical(x))
             parse(p, varargin{:});
 
             % Set properties
@@ -56,6 +60,11 @@ classdef ShockSolver < handle
             obj.FLAG_RESULTS = p.Results.FLAG_RESULTS;
             obj.FLAG_TIME = p.Results.FLAG_TIME;
 
+            if sum(contains(p.UsingDefaults, 'equilibriumSolver'))
+                obj.equilibriumSolver.FLAG_TCHEM_FROZEN = p.Results.FLAG_TCHEM_FROZEN;
+                obj.equilibriumSolver.FLAG_FROZEN = p.Results.FLAG_FROZEN;
+            end
+            
             % Miscellaneous
             obj.equilibriumSolver.FLAG_RESULTS = false;
             obj.equilibriumSolver.FLAG_TIME = false;

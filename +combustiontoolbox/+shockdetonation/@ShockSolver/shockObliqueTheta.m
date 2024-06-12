@@ -40,13 +40,16 @@ function [mix1, mix2_1, mix2_2] = shockObliqueTheta(obj, mix1, u1, theta, vararg
     lambda = 0.7;
     m = 4;
     
+    % Create a temporal shallow copy of mix1 to avoid overwrite results
+    temp_mix1 = mix1.copy;
+
     % Solve first branch  (weak shock)
     betaGuess = 0.5 * (betaMin + betaMax); % [rad]
     % beta_guess = compute_guess_beta(M1, mix1.gamma, theta, true);
     if nargin > 4
-        mix2_1 = solve_shock_oblique(mix1, betaGuess, varargin{1});
+        mix2_1 = solve_shock_oblique(temp_mix1, betaGuess, varargin{1});
     else
-        mix2_1 = solve_shock_oblique(mix1, betaGuess);
+        mix2_1 = solve_shock_oblique(temp_mix1, betaGuess);
     end
 
     % Solve second branch (strong shock)
@@ -54,9 +57,9 @@ function [mix1, mix2_1, mix2_2] = shockObliqueTheta(obj, mix1, u1, theta, vararg
         betaGuess = betaMax * 0.97; % [rad]
         % beta_guess = compute_guess_beta(M1, mix1.gamma, theta, false);
         if nargin > 4
-            mix2_2 = solve_shock_oblique(mix1, betaGuess, varargin{2});
+            mix2_2 = solve_shock_oblique(temp_mix1, betaGuess, varargin{2});
         else
-            mix2_2 = solve_shock_oblique(mix1, betaGuess);
+            mix2_2 = solve_shock_oblique(temp_mix1, betaGuess);
         end
 
     else
@@ -84,12 +87,13 @@ function [mix1, mix2_1, mix2_2] = shockObliqueTheta(obj, mix1, u1, theta, vararg
             beta = betaGuess - f0 / df0;
             df0_2 = df0_beta(beta, u2n, u1);
             beta = betaGuess - 2 * f0 / (df0 + df0_2);
-            % d2f0 = d2f0_beta(beta_guess, u2n, u1);
-            % beta = beta_guess - (f0 * df0) / (df0^2 - m^-1 * f0 * d2f0);
+            % d2f0 = d2f0_beta(betaGuess, u2n, u1);
+            % beta = betaGuess - (f0 * df0) / (df0^2 - m^-1 * f0 * d2f0);
             % Check value
             if beta < betaMin || beta > betaMax
                 beta = betaGuess - lambda * f0 / df0;
-                % beta = beta_guess - lambda * (f0 * df0) / (df0^2 - 0.5 * f0 * d2f0);
+                beta = max(1.0001 * betaMin, 0.9999 * min(beta, betaMax));
+                % beta = betaGuess - lambda * (f0 * df0) / (df0^2 - 0.5 * f0 * d2f0);
             end
 
             % Compute error
@@ -97,7 +101,7 @@ function [mix1, mix2_1, mix2_2] = shockObliqueTheta(obj, mix1, u1, theta, vararg
             % Update guess
             betaGuess = beta;
             % Debug
-            % aux_lambda(it) = beta_guess * 180/pi;
+            % aux_lambda(it) = betaGuess * 180/pi;
             % aux_STOP(it) = STOP;
         end
 
@@ -129,8 +133,9 @@ end
 % SUB-PASS FUNCTIONS
 function [mix1, mix2_1, mix2_2] = unpack(mix1, u1, theta, varargin)
     % Unpack input data
-    mix1.u = u1; % velocity preshock [m/s] - laboratory fixed
-    mix1.uShock = u1; % velocity preshock [m/s] - shock fixed
+    mix1.u = u1; % pre-shock velocity [m/s] - laboratory fixed
+    mix1.uShock = u1; % pre-shock velocity [m/s] - shock fixed
+    mix1.mach = mix1.u / mix1.sound; % pre-shock Mach number [-]
     mix1.theta = theta; % deflection angle  [deg]
 
     if nargin > 3

@@ -49,6 +49,11 @@ function [ax, dline] = plotFigure(x_field, x_var, y_field, y_var, varargin)
     % Get x and y values
     x = cell2vector(x_var, x_field);
     y = cell2vector(y_var, y_field);
+    
+    % Check lenghts
+    if length(x) < 2
+        return
+    end
 
     % Check aditional inputs
     for i = 1:2:nargin - 5

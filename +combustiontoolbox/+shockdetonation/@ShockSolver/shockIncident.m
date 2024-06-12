@@ -28,9 +28,10 @@ function [mix1, mix2] = shockIncident(obj, mix1, u1, varargin)
     if obj.equilibriumSolver.FLAG_TCHEM_FROZEN
         STOP = 0;
         [~, p2p1, T2T1, ~, ~] = obj.shockIncidentIdeal(mix1.gamma, mix1.mach);
-        T2 = T2T1 * mix1.T;
-        p2 = p2p1 * convert_bar_to_Pa(mix1.p);
+        T2 = T2T1 * mix1.T; % [K]
+        p2 = p2p1 * mix1.p; % [bar]
         mix2.p = p2; mix2.T = T2;
+        mix2 = equilibrate_T_tchem(obj.equilibriumSolver, mix1, mix2, T2);
         mix2 = save_state(mix1, mix2, STOP);
         return
     end
@@ -41,14 +42,14 @@ function [mix1, mix2] = shockIncident(obj, mix1, u1, varargin)
 
     % Solve shock incident
     try
-        [T2, p2, STOP, it] = solve_shock_incident(FLAG_FAST);
+        [T2, p2, STOP, it] = solve_shock_incident(FLAG_FAST); % p2 [Pa]
         assert(STOP < obj.tolShocks);
     catch
         % If solution has not converged, repeat without composition estimate
         fprintf('Recalculating: %.2f [m/s]\n', u1);
         guess_moles = [];
         FLAG_FAST = false;
-        [T2, p2, STOP, it] = solve_shock_incident(FLAG_FAST);
+        [T2, p2, STOP, it] = solve_shock_incident(FLAG_FAST); % p2 [Pa]
     end
 
     % Check convergence
@@ -104,8 +105,9 @@ end
 % SUB-PASS FUNCTIONS
 function [mix1, mix2, guess_moles] = unpack(mix1, u1, varargin)
     % Unpack input data
-    mix1.u = u1; % velocity pre-shock [m/s] - laboratory fixed
-    mix1.uShock = u1; % velocity pre-shock [m/s] - shock fixed
+    mix1.u = u1; % pre-shock velocity [m/s] - laboratory fixed
+    mix1.uShock = u1; % pre-shock velocity [m/s] - shock fixed
+    mix1.mach = mix1.u / mix1.sound; % pre-shock Mach number [-]
 
     try
         mix2 = varargin{1}.copy();

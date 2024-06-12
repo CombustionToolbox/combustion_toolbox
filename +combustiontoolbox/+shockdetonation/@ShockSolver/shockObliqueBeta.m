@@ -39,10 +39,13 @@ function [mix1, mix2] = shockObliqueBeta(obj, mix1, u1, beta, varargin)
                'range of possible solutions [%.2g, %2.g]'], mix1.beta, ...
                betaMin * 180 / pi, betaMax * 180 / pi);
     end
+    
+    % Create a temporal shallow copy of mix1 to avoid overwrite results
+    temp_mix1 = mix1.copy;
 
     % Obtain deflection angle, pre-shock state and post-shock states for
     % an oblique shock
-    [~, mix2] = shockIncident(obj, mix1, u1n, varargin{:});
+    [~, mix2] = shockIncident(obj, temp_mix1, u1n, varargin{:});
 
     u2n = mix2.uShock;
     theta = beta - atan(u2n / (u1 .* cos(beta)));
@@ -64,7 +67,8 @@ end
 % SUB-PASS FUNCTIONS
 function mix1 = unpack(mix1, u1, beta)
     % Unpack input data
-    mix1.u = u1; % velocity preshock [m/s] - laboratory fixed
-    mix1.uShock = u1; % velocity preshock [m/s] - shock fixed
+    mix1.u = u1; % pre-shock velocity [m/s] - laboratory fixed
+    mix1.uShock = u1; % pre-shock velocity [m/s] - shock fixed
+    mix1.mach = mix1.u / mix1.sound; % pre-shock Mach number [-]
     mix1.beta = beta; % wave angle  [deg]
 end

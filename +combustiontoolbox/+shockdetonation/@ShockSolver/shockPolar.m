@@ -34,10 +34,13 @@ function [mix1, mix2] = shockPolar(obj, mix1, u1)
 
     N = length(u1n);
     ut = u1 .* cos(beta);
+    
+    % Create a temporal shallow copy of mix1 to avoid overwrite results
+    temp_mix1 = mix1.copy;
 
     % Loop
     for i = N:-1:2
-        [~, mix2] = shockIncident(obj, mix1, u1n(i), mix2);
+        [~, mix2] = shockIncident(obj, temp_mix1, u1n(i), mix2);
         a2(i) = mix2.sound;
         u2n(i) = mix2.uShock;
         p2(i) = mix2.p;
@@ -111,7 +114,8 @@ end
 % SUB-PASS FUNCTIONS
 function [mix1, mix2] = unpack(mix1, u1)
     % Unpack input data
-    mix1.u = u1; % velocity preshock [m/s] - laboratory fixed
-    mix1.uShock = u1; % velocity preshock [m/s] - shock fixed
+    mix1.u = u1; % pre-shock velocity [m/s] - laboratory fixed
+    mix1.uShock = u1; % pre-shock velocity [m/s] - shock fixed
+    mix1.mach = mix1.u / mix1.sound; % pre-shock Mach number [-]
     mix2 = [];
 end

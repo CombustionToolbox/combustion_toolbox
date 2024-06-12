@@ -49,7 +49,7 @@ solver = ShockSolver('problemType', 'SHOCK_I');
 plotFigure('\rho_1 / \rho_2', [mixArray1.rho] ./ [mixArray2.rho], 'p_2 / p_1', [mixArray2.p] ./ [mixArray1.p], 'xScale', 'log', 'yScale', 'log');
 
 % Plot post-shock temperature
-plotFigure('u', mixArray1, 'T', mixArray1);
+plotFigure('u', mixArray2, 'T', mixArray2);
 
 % Plot molar fractions
 plotComposition(mixArray2(1), mixArray1, 'u', 'Xi', 'mintol', 1e-3, 'y_var', mixArray2);

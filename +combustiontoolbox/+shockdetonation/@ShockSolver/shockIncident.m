@@ -165,7 +165,7 @@ function [J, b, guess_moles] = update_system(equilibriumSolver, mix1, mix2, p2, 
     mix2.p = convert_Pa_to_bar(p2); mix2.T = T2;
 
     % Calculate state given T & p
-    [mix2, r2, dVdT_p, dVdp_T] = state(equilibriumSolver, mix2, guess_moles);
+    [mix2, r2, dVdT_p, dVdp_T] = state(equilibriumSolver, mix1, mix2, guess_moles);
     
     W2 = mix2.W; % [kg/mol]
     h2 = mix2.h / mix2.mi; % [J/kg]
@@ -190,10 +190,10 @@ function [J, b, guess_moles] = update_system(equilibriumSolver, mix1, mix2, p2, 
 
 end
 
-function [mix2, r2, dVdT_p, dVdp_T] = state(equilibriumSolver, mix2, guess_moles)
+function [mix2, r2, dVdT_p, dVdp_T] = state(equilibriumSolver, mix1, mix2, guess_moles)
     % Calculate state given T & p
     equilibriumSolver.problemType = 'TP';
-    equilibrate_T(equilibriumSolver, mix2, mix2.T, guess_moles);
+    equilibriumSolver.equilibrate_T(mix1, mix2, mix2.T, guess_moles);
     r2 = mix2.rho;
     dVdT_p = mix2.dVdT_p;
     dVdp_T = mix2.dVdp_T;

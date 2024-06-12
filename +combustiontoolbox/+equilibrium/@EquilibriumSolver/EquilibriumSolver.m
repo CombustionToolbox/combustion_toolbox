@@ -171,7 +171,7 @@ classdef EquilibriumSolver < handle
             % Root finding: find the value x that satisfies f(x) = mix2.xx(x) - mix1.xx = 0
             [T, STOP, guess_moles] = rootFinding(obj, mix1, mix2, attr_name, guess, guess_moles);
             % Compute properties
-            obj.equilibrate_T(mix2, T, guess_moles);
+            obj.equilibrate_T(mix1, mix2, T, guess_moles);
             % Check convergence in case the problemType is TP (defined Temperature and Pressure)
             print_convergence(mix2.errorMoles, obj.tolGibbs, mix2.errorMolesIons, obj.tolMultiplierIons, obj.problemType)
             % Save error from root finding algorithm
@@ -256,22 +256,23 @@ classdef EquilibriumSolver < handle
 
         end
 
-        function mix = equilibrate_T(obj, mix, T, varargin)
+        function mix2 = equilibrate_T(obj, mix1, mix2, T, varargin)
             % Obtain equilibrium properties and composition for the given temperature [K] and pressure [bar]
             %
             % Args:
             %     obj (EquilibriumSolver): Object of the class EquilibriumSolver
-            %     mix (Mixture): Properties of the initial mixture
+            %     mix1 (Mixture): Properties of the initial mixture
+            %     mix2 (Mixture): Properties of the final mixture
             %     T (float): Temperature [K]
             %
             % Optional Args:
             %     guess_moles (float): Mixture composition [mol] of a previous computation
             %
             % Returns:
-            %     mix (Mixture): Properties of the final mixture
+            %     mix2 (Mixture): Properties of the final mixture
             %
             % Example:
-            %     mix = equilibrate(EquilibriumSolver, mix, 3000)
+            %     mix2 = equilibrate_T(EquilibriumSolver(), mix1, mix2, 3000)
             
             % Import packages
             import combustiontoolbox.utils.findIndex
@@ -287,19 +288,23 @@ classdef EquilibriumSolver < handle
                 % Computed by default when defining the mixture (Mixture)
                 return
             end
-            
+
             % Definitions
-            N_mix0 = moles(mix); % Get moles of inert species
-            system = mix.chemicalSystem;
-            systemProducts = mix.chemicalSystemProducts;
+            N_mix0 = moles(mix1); % Get moles of inert species
+            system = mix1.chemicalSystem;
+            systemProducts = mix1.chemicalSystemProducts;
+            
             % Unpack
             guess_moles = unpack(varargin);
+
             % Check flag
             if ~obj.FLAG_FAST, guess_moles = []; end
+
             % Compute number of moles
-            [N, dNi_T, dN_T, dNi_p, dN_p, indexProducts, STOP, STOP_ions, h0] = selectEquilibrium(obj, systemProducts, T, mix, guess_moles);
+            [N, dNi_T, dN_T, dNi_p, dN_p, indexProducts, STOP, STOP_ions, h0] = selectEquilibrium(obj, systemProducts, T, mix2, guess_moles);
+            
             % Compute property matrix of the species at chemical equilibrium
-            mix = setMixture(mix);
+            setMixture(mix2);
 
             % NESTED FUNCTIONS
             function guess_moles = unpack(value)
@@ -601,9 +606,9 @@ classdef EquilibriumSolver < handle
                 % relative value of the residual
                 
                 try
-                    obj.equilibrate_T(mix2, x, guess_moles);
+                    obj.equilibrate_T(mix1, mix2, x, guess_moles);
                 catch
-                    obj.equilibrate_T(mix2, x);
+                    obj.equilibrate_T(mix1, mix2, x);
                 end
             
                 % Calculate residual of f = 0
@@ -801,7 +806,7 @@ classdef EquilibriumSolver < handle
             
             try
                 % Compute TP problem
-                obj.equilibrate_T(mix2, x0, guess_moles);
+                obj.equilibrate_T(mix1, mix2, x0, guess_moles);
                 % Compute f(x) = f2(x) - f1 = 0
                 gpoint = (mix2.(field) - mix1.(field));
                 % Compute f(x) / f2(x)

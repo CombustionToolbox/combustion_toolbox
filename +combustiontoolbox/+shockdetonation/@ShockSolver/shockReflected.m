@@ -36,7 +36,7 @@ function [mix1, mix2, mix5] = shockReflected(obj, mix1, mix2, varargin)
         assert(STOP < obj.tolShocks);
     catch
         % If solution has not converged, repeat without composition estimate
-        fprintf('Recalculating: %.2f [m/s]\n', mix1.u1);
+        fprintf('Recalculating: %.2f [m/s]\n', mix1.u);
         guess_moles = [];
         FLAG_FAST = false;
         [T5, p5, STOP, it] = solve_shock_reflected(FLAG_FAST);
@@ -127,7 +127,7 @@ function [J, b, guess_moles] = update_system(equilibriumSolver, mix2, mix5, p5, 
     mix5.p = convert_Pa_to_bar(p5); mix5.T = T5;
 
     % Calculate state given T & p
-    [mix5, r5, dVdT_p, dVdp_T] = state(equilibriumSolver, mix5, guess_moles);
+    [mix5, r5, dVdT_p, dVdp_T] = state(equilibriumSolver, mix2, mix5, guess_moles);
 
     W5 = mix5.W; % [kg/mol]
     h5 = mix5.h / mix5.mi; % [J/kg]
@@ -152,10 +152,10 @@ function [J, b, guess_moles] = update_system(equilibriumSolver, mix2, mix5, p5, 
 
 end
 
-function [mix5, r5, dVdT_p, dVdp_T] = state(equilibriumSolver, mix5, guess_moles)
+function [mix5, r5, dVdT_p, dVdp_T] = state(equilibriumSolver, mix2, mix5, guess_moles)
     % Calculate state given T & p
     equilibriumSolver.problemType = 'TP';
-    equilibrate_T(equilibriumSolver, mix5, mix5.T, guess_moles);
+    equilibrate_T(equilibriumSolver, mix2, mix5, mix5.T, guess_moles);
     r5 = mix5.rho;
     dVdT_p = mix5.dVdT_p;
     dVdp_T = mix5.dVdp_T;

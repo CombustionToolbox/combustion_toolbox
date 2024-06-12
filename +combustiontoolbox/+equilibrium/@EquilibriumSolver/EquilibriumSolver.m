@@ -279,13 +279,16 @@ classdef EquilibriumSolver < handle
             
             % Check if calculations are for a thermochemical frozen gas (calorically perfect)
             if obj.FLAG_TCHEM_FROZEN
-                % TO BE IMPLEMENTED
+                obj.equilibrate_T_tchem(mix1, mix2, T);
                 return
             end
         
             % Check if calculations are for a calorically imperfect gas with frozen chemistry
             if obj.FLAG_FROZEN
                 % Computed by default when defining the mixture (Mixture)
+
+                % Update thermodynamic properties assuming a thermally perfect gas
+                setTemperature(mix2, T);
                 return
             end
 
@@ -369,6 +372,38 @@ classdef EquilibriumSolver < handle
                 % Reshape vector containing all the species
                 vector = system.molesPhaseMatrix(:, 1);
                 vector(index, 1) = vector_modified(ind_modified, 1);
+            end
+            
+        end
+
+        function mix2 = equilibrate_T_tchem(obj, mix1, mix2, T)
+            % Obtain equilibrium properties and composition for the given
+            % temperature [K] and pressure [bar] assuming a calorically perfect gas
+            %
+            % Args:
+            %     obj (EquilibriumSolver): Object of the class EquilibriumSolver
+            %     mix1 (Mixture): Properties of the initial mixture
+            %     mix2 (Mixture): Properties of the final mixture
+            %     T (float): Temperature [K]
+            %
+            % Returns:
+            %     mix2 (Mixture): Properties of the final mixture assuming a calorically perfect gas
+            %
+            % Example:
+            %     mix2 = equilibrate_T_tchem(EquilibriumSolver(), mix1, mix2, 3000)
+        
+            % Recompute properties of mix2
+            setTemperature(mix2, T);
+
+            % Change properties that remains thermochemically frozen
+            mix2.cp = mix1.cp;
+            mix2.cv = mix1.cv;
+            mix2.gamma = mix1.gamma;
+            mix2.gamma_s = mix1.gamma_s;
+            mix2.sound = sqrt(mix2.gamma * convert_bar_to_Pa(mix2.p) / mix2.rho);
+            
+            if ~isempty(mix2.u)
+                mix2.mach = mix2.u / mix2.sound;
             end
             
         end

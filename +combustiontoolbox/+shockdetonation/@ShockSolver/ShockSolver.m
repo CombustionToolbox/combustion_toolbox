@@ -246,7 +246,7 @@ classdef ShockSolver < handle
 
                     % Print results
                     if obj.FLAG_RESULTS
-                        print(mix1, mix2, mix2_1, mix3);
+                        print(mix1, mix2_1, mix3);
                     end
 
                     % Set output
@@ -257,9 +257,6 @@ classdef ShockSolver < handle
 
         function varargout = solveArray(obj, mix1Array, varargin)
             % Solve a set of shock waves problems
-            %
-            %
-            %
             
             % Definitions
             n = length(mix1Array);

@@ -115,7 +115,7 @@ function [self, mix1, mix2, mix5_1, mix5_2] = unpack(self, mix1, u2, theta, mix2
     % Unpack input data
     mix2.u = u2; % pre-shock velocity [m/s] - laboratory fixed
     mix2.uShock = u2; % pre-shock velocity [m/s] - shock fixed
-    mix2.mach = mix2.u / mix2.sound; % pre-shock Mach number [-]
+    mix2.mach = mix2.uShock / mix2.sound; % pre-shock Mach number [-]
     mix2.theta = theta; % deflection angle  [deg]
 
     if length(x) > 5

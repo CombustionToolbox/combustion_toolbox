@@ -6,8 +6,8 @@ function [mix1, mix2] = shockIncident(obj, mix1, u1, varargin)
     %
     % Args:
     %     obj (ShockSolver): ShockSolver object
-    %     mix1 (Mixture):    Properties of the mixture in the pre-shock state
-    %     u1 (float):        Pre-shock velocity [m/s]
+    %     mix1 (Mixture): Properties of the mixture in the pre-shock state
+    %     u1 (float): Pre-shock velocity [m/s]
     %
     % Optional Args:
     %     mix2 (Mixture): Properties of the mixture in the post-shock state (previous calculation)
@@ -228,6 +228,6 @@ end
 function mix2 = save_state(mix1, mix2, STOP)
     mix2.uShock = mix1.u * mix1.rho / mix2.rho;
     mix2.u = mix1.u - mix2.uShock; % velocity postshock [m/s] - laboratory fixed
-    mix2.mach = mix2.u / mix2.sound;
+    mix2.mach = mix2.uShock / mix2.sound;
     mix2.errorProblem = STOP;
 end

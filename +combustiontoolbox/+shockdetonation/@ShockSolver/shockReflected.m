@@ -188,6 +188,6 @@ end
 function mix5 = save_state(mix2, mix5, STOP)
     mix5.u = convert_bar_to_Pa(mix5.p - mix2.p) / (mix2.u * mix2.rho) - mix2.u;
     mix5.uShock = mix2.u * mix2.rho / mix5.rho;
-    mix5.mach = mix5.u / mix5.sound;
+    mix5.mach = mix5.uShock / mix5.sound;
     mix5.errorProblem = STOP;
 end

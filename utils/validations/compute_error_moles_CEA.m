@@ -28,7 +28,7 @@ function error_moles = compute_error_moles_CEA(resultsCT, resultsCEA, varname_x,
     %     moles_CEA = moles_CEA';
     % end
 
-    index_check = moles_CT > 10^floor(log10(tolMoles) + 2);
+    index_check = find(moles_CT > 10^floor(log10(tolMoles) + 2));
 
-    error_moles = max(abs((moles_CT(index_check) - moles_CEA(index_check)) ./ moles_CT(index_check)));
+    [error_moles, index] = max(abs((moles_CT(index_check) - moles_CEA(index_check)) ./ moles_CT(index_check)));
 end

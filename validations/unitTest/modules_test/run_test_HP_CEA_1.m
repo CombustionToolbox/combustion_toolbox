@@ -45,11 +45,11 @@ function [max_rel_error_moles, max_rel_error_prop] = run_test_HP_CEA_1(value, da
     solver.solveArray(mixArray);
     
     % Load results CEA 
-    results_CEA = data_CEA(filename, displaySpecies);
+    resultsCEA = data_CEA(filename, displaySpecies);
 
     % Compute error: molar fractions
-    max_rel_error_moles = compute_error_moles_CEA(mixArray, results_CEA, 'equivalenceRatio', value, 'Xi', displaySpecies, tolMoles);
+    max_rel_error_moles = compute_error_moles_CEA(mixArray, resultsCEA, 'equivalenceRatio', value, 'Xi', displaySpecies, tolMoles);
     
     % Compute error: properties mixture 2
-    max_rel_error_prop = compute_error_prop_CEA(mixArray, results_CEA, propertiesX, value, propertiesY, 'mix2');
+    max_rel_error_prop = compute_error_prop_CEA(mixArray, resultsCEA, propertiesX, value, propertiesY, 'mix2');
 end

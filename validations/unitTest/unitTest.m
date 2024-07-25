@@ -96,18 +96,18 @@ classdef unitTest < matlab.unittest.TestCase
             verifyLessThanOrEqual(testCase, act_max_rel_error_prop_mix2, testCase.max_rel_error);
         end
         
-        % function test_DET_CEA_1(testCase, equivalence_ratio)
-        %     [act_max_rel_error_moles, act_max_rel_error_prop] = run_test_DET_CEA_1(equivalence_ratio, testCase.database, testCase.database_master);
-        %     verifyLessThanOrEqual(testCase, act_max_rel_error_moles, testCase.max_rel_error);
-        %     verifyLessThanOrEqual(testCase, act_max_rel_error_prop, testCase.max_rel_error);
-        % end
-        % 
-        % % function test_DET_CEA_2(testCase, equivalence_ratio)
-        % %     [act_max_rel_error_moles, act_max_rel_error_prop] = run_test_DET_CEA_2(equivalence_ratio);
-        % %     verifyLessThanOrEqual(testCase, act_max_rel_error_moles, testCase.max_rel_error);
-        % %     verifyLessThanOrEqual(testCase, act_max_rel_error_prop, testCase.max_rel_error);
-        % % end
-        % 
+        function test_DET_CEA_1(testCase, equivalenceRatio)
+            [act_max_rel_error_moles, act_max_rel_error_prop] = run_test_DET_CEA_1(equivalenceRatio, testCase.database);
+            verifyLessThanOrEqual(testCase, act_max_rel_error_moles, testCase.max_rel_error);
+            verifyLessThanOrEqual(testCase, act_max_rel_error_prop, testCase.max_rel_error);
+        end
+
+        function test_DET_CEA_2(testCase, equivalenceRatio)
+            [act_max_rel_error_moles, act_max_rel_error_prop] = run_test_DET_CEA_2(equivalenceRatio, testCase.database);
+            verifyLessThanOrEqual(testCase, act_max_rel_error_moles, testCase.max_rel_error);
+            verifyLessThanOrEqual(testCase, act_max_rel_error_prop, testCase.max_rel_error);
+        end
+         
         % function test_ROCKET_CEA_1(testCase, equivalence_ratio)
         % 
         %     % CEA does not converge for phi = 4

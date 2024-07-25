@@ -21,17 +21,39 @@
 % Last update July 22 2022
 % -------------------------------------------------------------------------
 
-%% INITIALIZE
-self = App('Soot Formation');
-%% INITIAL CONDITIONS
-self = set_prop(self, 'TR', 300, 'pR', 1 * 1.01325, 'phi', 0.5:0.01:4);
-self.PD.S_Fuel     = {'CH4'};
-self.PD.S_Oxidizer = {'N2', 'O2', 'Ar', 'CO2'};
-self.PD.ratio_oxidizers_O2 = [78.084, 20.9476, 0.9365, 0.0319] ./ 20.9476;
-%% ADDITIONAL INPUTS (DEPENDS OF THE PROBLEM SELECTED)
-% No additional data required. The initial velocity is unique for CJ
-% condition
-%% SOLVE PROBLEM
-self = solve_problem(self, 'DET');
-%% DISPLAY RESULTS (PLOTS)
-post_results(self);
+% Import packages
+import combustiontoolbox.databases.NasaDatabase
+import combustiontoolbox.core.*
+import combustiontoolbox.shockdetonation.*
+import combustiontoolbox.utils.display.*
+
+% Get Nasa database
+DB = NasaDatabase();
+
+% Define chemical system
+system = ChemicalSystem(DB, 'soot formation');
+
+% Initialize mixture
+mix = Mixture(system);
+
+% Define chemical state
+set(mix, {'CH4'}, 'fuel', 1);
+set(mix, {'N2', 'O2', 'Ar', 'CO2'}, 'oxidizer', [78.084, 20.9476, 0.9365, 0.0319] / 20.9476);
+
+% Define properties
+mixArray1 = setProperties(mix, 'temperature', 300, 'pressure', 1.01325, 'equivalenceRatio', 0.5:0.01:4);
+
+% Initialize solver
+solver = DetonationSolver('problemType', 'DET');
+
+% Solve problem
+[mixArray1, mixArray2] = solver.solveArray(mixArray1);
+
+% Plot Hugoniot curve
+plotFigure('\rho_1 / \rho_2', [mixArray1.rho] ./ [mixArray2.rho], 'p_2 / p_1', [mixArray2.p] ./ [mixArray1.p], 'xScale', 'log', 'yScale', 'log');
+
+% Plot post-shock temperature
+plotFigure('equivalenceRatio', mixArray1, 'T', mixArray2);
+
+% Plot molar fractions
+plotComposition(mixArray2(1), mixArray1, 'equivalenceRatio', 'Xi', 'mintol', 1e-14, 'y_var', mixArray2);

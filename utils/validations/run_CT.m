@@ -36,8 +36,6 @@ function self = run_CT(varargin)
         switch lower(varargin{i})
             case {'db'}
                 DB = varargin{i + 1};
-            case {'db_master'}
-                DB_master = varargin{i + 1};
             case {'problemtype', 'problem'}
                 problemType = varargin{i + 1};
             case {'listspecies', 'species'}

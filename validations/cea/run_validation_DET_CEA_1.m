@@ -1,4 +1,4 @@
-function problems_solved = run_validation_DET_CEA_1
+function run_validation_DET_CEA_1
     % Run test validation_DET_CEA_1:
     % Contrasted with: NASA's Chemical Equilibrium with Applications software
     % Problem type: Chapman-Jouguet Detonation

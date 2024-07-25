@@ -71,6 +71,7 @@ classdef Mixture < handle & matlab.mixin.Copyable
         dVdT_p                % Derivative of volume with respect to temperature at constant pressure [-]
         dVdp_T                % Derivative of volume with respect to pressure at constant temperature [-]
         equivalenceRatio      % Equivalence ratio [-]
+        equivalenceRatioSoot  % Theoretical equivalence ratio at which soot may appear [-]
         stoichiometricMoles   % Theoretical moles of the oxidizer of reference for a stoichiometric combustion
         percentageFuel        % Percentage of fuel in the mixture [%]
         fuelOxidizerMassRatio % Mass ratio of oxidizer to fuel [-]
@@ -419,6 +420,12 @@ classdef Mixture < handle & matlab.mixin.Copyable
             
             % Compute percentage Fuel, Oxidizer/Fuel ratio and equivalence ratio
             obj.compute_ratios_fuel_oxidizer(obj.chemicalSystem.propertiesMatrixFuel, obj.chemicalSystem.propertiesMatrixOxidizer);
+
+            % Check complete combustion
+            check_complete_reaction(obj.chemicalSystem, obj.equivalenceRatio, obj.equivalenceRatioSoot);
+            
+            % Get system containing only the list of products
+            obj.chemicalSystemProducts = getSystemProducts(obj.chemicalSystem);
         end
 
         function obj = computeEquivalenceRatio(obj)
@@ -453,16 +460,36 @@ classdef Mixture < handle & matlab.mixin.Copyable
                 FO_moles = sum(propertiesMatrixFuel(:, obj.chemicalSystem.ind_ni)) / sum(propertiesMatrixOxidizer(obj.chemicalSystem.oxidizerReferenceIndex, obj.chemicalSystem.ind_ni));
                 FO_moles_st = abs(sum(propertiesMatrixFuel(:, obj.chemicalSystem.ind_ni)) / (obj.fuel.x + obj.fuel.x2 + obj.fuel.x3 + obj.fuel.y / 4 - obj.fuel.z / 2) * (0.5 * obj.chemicalSystem.oxidizerReferenceAtomsO));
                 obj.equivalenceRatio = FO_moles / FO_moles_st;
+                computeEquivalenceRatioSoot(obj); 
             elseif obj.FLAG_FUEL
                 obj.percentageFuel = 100;
                 obj.fuelOxidizerMassRatio = inf;
                 obj.oxidizerFuelMassRatio = 0;
                 obj.equivalenceRatio = '-';
+                obj.equivalenceRatioSoot = [];
             else
                 obj.percentageFuel = 0;
                 obj.fuelOxidizerMassRatio = 0;
                 obj.oxidizerFuelMassRatio = inf;
                 obj.equivalenceRatio = '-';
+                obj.equivalenceRatioSoot = [];
+            end
+        
+        end
+
+        function obj = computeEquivalenceRatioSoot(obj)
+            % Compute guess of equivalence ratio in which soot appears considering complete combustion
+            %
+            % Args:
+            %     obj (Mixture): 
+            %
+            % Returns:
+            %     equivalenceRatioSoot (float): Theoretical equivalence ratio at which soot appears [-]
+        
+            obj.equivalenceRatioSoot = 2 / (obj.fuel.x - obj.fuel.z) * (obj.fuel.x + obj.fuel.y / 4 - obj.fuel.z / 2);
+        
+            if obj.equivalenceRatioSoot <= 1e-5 || isnan(obj.equivalenceRatioSoot)
+                obj.equivalenceRatioSoot = inf;
             end
         
         end

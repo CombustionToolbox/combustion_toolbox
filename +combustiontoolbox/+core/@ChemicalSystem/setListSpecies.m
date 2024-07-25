@@ -45,7 +45,7 @@ function [obj, listSpecies, listSpeciesFormula] = setListSpecies(obj, database, 
     end
 
     % Get list of species
-    obj.listSpecies = getListSpecies(database, varargin{:});
+    [obj.listSpecies, obj.FLAG_COMPLETE] = getListSpecies(database, varargin{:});
     
     % Check that there are not repeated species
     obj.listSpecies = unique(obj.listSpecies, 'stable');
@@ -62,10 +62,16 @@ function [obj, listSpecies, listSpeciesFormula] = setListSpecies(obj, database, 
 end
 
 % SUB-PASS FUNCTIONS
-function listSpecies = getListSpecies(database, varargin)
+function [listSpecies, FLAG_COMPLETE] = getListSpecies(database, varargin)
     % Get list of species
+    
+    % Default values
+    FLAG_COMPLETE = false;
+
+    % Unpack additional inputs
     listSpecies = varargin{1};
 
+    % Check input
     if iscell(listSpecies)
         return
     elseif any(combustiontoolbox.utils.findIndex(database.listSpecies, listSpecies))
@@ -76,7 +82,7 @@ function listSpecies = getListSpecies(database, varargin)
     % Check default list of species
     switch upper(listSpecies)
         case {'COMPLETE', 'COMPLETE REACTION'}
-            obj.FLAG_COMPLETE = true;
+            FLAG_COMPLETE = true;
 
             if nargin > 2
                 phi = varargin{1, 2};

@@ -334,19 +334,23 @@ classdef ChemicalSystem < handle & matlab.mixin.Copyable
             % Check if the list of species corresponds to "complete_reaction"
             % If FLAG_COMPLETE is true, establish the list of species based on the
             % given equivalence ratio (phi)
+
+            % Import packages
+            import combustiontoolbox.utils.findIndex
+            
             if ~obj.FLAG_COMPLETE
                 return
             end
         
             if equivalenceRatio < 1
-                LS = obj.LS_lean;
+                listSpecies = obj.listSpeciesLean;
             elseif equivalenceRatio >= 1 && equivalenceRatio < equivalenceRatioSoot
-                LS = obj.LS_rich;
+                listSpecies = obj.listSpeciesRich;
             else
-                LS = obj.LS_soot;
+                listSpecies = obj.listSpeciesSoot;
             end
         
-            obj.indexProducts = findIndex(obj.listSpecies, LS);
+            obj.indexProducts = findIndex(obj.listSpecies, listSpecies);
             obj = obj.reorganizeIndexPhaseSpecies();
         end
 

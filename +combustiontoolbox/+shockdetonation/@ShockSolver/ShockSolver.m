@@ -20,6 +20,15 @@ classdef ShockSolver < handle
     end
 
     methods
+        
+        [mix1, mix2] = shockIncident(obj, mix1, varargin)
+        [mix1, mix2, mix5] = shockReflected(obj, mix1, mix2, varargin)
+        [mix1, mix2] = shockObliqueBeta(obj, mix1, varargin)
+        [mix1, mix2_1, mix2_2] = shockObliqueTheta(obj, mix1, u1, theta, varargin)
+        [mix1, mix2, mix5_1, mix5_2] = shockObliqueReflectedTheta(obj, mix1, u2, theta, mix2, varargin)
+        [mix1, mix2] = shockPolar(obj, mix1, u1)
+        [mix1, mix2, mix2_1, mix3] = shockPolarLimitRR(obj, mix1, u1)
+        [R, P, T, Gammas, beta, M1] = shockIncidentIdeal(obj, gamma, M1)
 
         function obj = ShockSolver(varargin)
             % Constructor
@@ -416,19 +425,6 @@ classdef ShockSolver < handle
         
             Gammas =  7/5 * (M1(1:end-1).^2 ./ R(1:end-1).^2) .* combustiontoolbox.utils.math.computeFirstDerivative(P, R).^(-1);
         end
-
-    end
-
-    methods (Access = private)
-        
-        [R, P, T, Gammas, M1] = shockIncidentIdeal(obj, gamma, M1)
-        [mix1, mix2] = shockIncident(obj, mix1, varargin)
-        [mix1, mix2, mix5] = shockReflected(obj, mix1, mix2, varargin)
-        [mix1, mix2] = shockObliqueBeta(obj, mix1, varargin)
-        [mix1, mix2_1, mix2_2] = shockObliqueTheta(obj, mix1, u1, theta, varargin)
-        [mix1, mix2, mix5_1, mix5_2] = shockObliqueReflectedTheta(obj, mix1, u2, theta, mix2, varargin)
-        [mix1, mix2] = shockPolar(obj, mix1, u1)
-        [mix1, mix2, mix2_1, mix3] = shockPolarLimitRR(obj, mix1, u1)
 
     end
 

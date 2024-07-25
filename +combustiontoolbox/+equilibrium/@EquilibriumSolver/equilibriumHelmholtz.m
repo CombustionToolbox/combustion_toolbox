@@ -336,7 +336,7 @@ function [N, dNi_T, dN_T, dNi_p, dN_p, index, STOP, STOP_ions, h0] = equilibrium
             N(indexCondensed_add(N(indexCondensed_add, 1) == 0), 1) = 1e-3;
 
             % Initialize Lagrange multiplier vector psi
-            psi_j(indexCondensed_add) = tauRT ./ N(indexCondensed_add, 1);
+            psi_j(indexCondensed_add) = 1e-15 ./ N(indexCondensed_add, 1);
 
             % Compute chemical equilibrium considering condensed species
             x0 = equilibrium_loop;

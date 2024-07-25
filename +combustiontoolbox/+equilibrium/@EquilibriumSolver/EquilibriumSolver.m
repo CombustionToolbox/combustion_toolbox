@@ -9,7 +9,7 @@ classdef EquilibriumSolver < handle
         tolMoles = 1e-14           % Tolerance of the composition of the mixture                       
         tolMolesGuess = 1e-6       % Tolerance of the molar composition of the mixture (guess)
         tolMultiplierIons = 1e-4   % Tolerance of the dimensionless Lagrangian multiplier - ions
-        tolTau = 1e-15             % Tolerance of the slack variables for condensed species
+        tolTau = 1e-25             % Tolerance of the slack variables for condensed species
         itMaxGibbs = 70            % Max number of iterations - Gibbs/Helmholtz minimization method
         itMaxIons = 30             % Max number of iterations - charge balance (ions)
         temperatureIons = 0        % Minimum temperature [K] to consider ionized species

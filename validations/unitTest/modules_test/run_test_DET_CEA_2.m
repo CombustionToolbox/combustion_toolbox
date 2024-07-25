@@ -13,14 +13,6 @@ function [max_rel_error_moles, max_rel_error_prop] = run_test_DET_CEA_2(value, d
     import combustiontoolbox.core.*
     import combustiontoolbox.shockdetonation.DetonationSolver
     import combustiontoolbox.utils.display.*
-    
-    % If equivalence ratio == 3.9, return directly. CEA does not converge
-    % for that value.
-    if value == 3.9
-        max_rel_error_moles = 0;
-        max_rel_error_prop = 0;
-        return
-    end
 
     % Definitions
     fuel = 'C2H2_acetylene';

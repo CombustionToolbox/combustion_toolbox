@@ -99,15 +99,7 @@ end
 function [p2, T2, p2p1, T2T1, STOP] = get_guess(obj, mix1, mix2)
 
     if mix1.T == mix2.T
-
-        % try
-        %     [p2p1, T2T1, ~, ~, Q, STOP] = det_compute_guess(obj, mix1, mix1.equivalenceRatio, 1);
-        %     % print_guess(T2T1, p2p1, mix1.T, mix1.p, Q)
-        % catch
-        %     [p2p1, T2T1, STOP] = det_compute_guess_CEA(obj, mix1);
-        % end
-
-        [p2p1, T2T1, STOP] = det_compute_guess_CEA(obj, mix1);
+        [p2p1, T2T1, STOP] = detonationGuess(obj, mix1);
 
         p2 = p2p1 * convert_bar_to_Pa(mix1.p); % [Pa]
         T2 = T2T1 * mix1.T; % [K]

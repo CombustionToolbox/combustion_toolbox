@@ -364,8 +364,11 @@ classdef EquilibriumSolver < handle
                     mix.p = computePressure(mix, T, N, [system.indexGas, system.indexCondensed]);
                 end
                 
+                % Get indexSpecies from indexProducts
+                indexSpecies = findIndex(system.listSpecies, systemProducts.listSpecies(indexProducts));
+
                 % Compute properties of final mixture
-                mix.set_fast(system.listSpecies, N', [indexProducts, system.indexFrozen], h0);
+                mix.set_fast(system.listSpecies, N', [indexSpecies, system.indexFrozen], h0);
             end
             
             function vector = reshapeVector(system, index, ind_modified, vector_modified)

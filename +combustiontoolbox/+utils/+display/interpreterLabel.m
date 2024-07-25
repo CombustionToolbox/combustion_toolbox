@@ -151,7 +151,7 @@ function [property_name, property_latex, property_unit] = property_names(propert
             property_name = 'Velocity';
             property_latex = 'u';
             property_unit = '[m/s]';
-        case 'v_shock'
+        case {'v_shock', 'ushock'}
             property_name = 'Shock velocity';
             property_latex = 'v_{\rm shock}';
             property_unit = '[m/s]';

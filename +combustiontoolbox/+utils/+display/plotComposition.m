@@ -67,7 +67,7 @@ function [ax, fig] = plotComposition(obj, x_var, x_field, y_field, varargin)
                 nfrec = varargin{i + 1};
             case {'mintol', 'mintol_display', 'toln'}
                 mintol_display = varargin{i + 1};
-            case {'ls', 'species', 'displayspecies', 'display species'}
+            case {'ls', 'species', 'displayspecies', 'display species', 'display_species'}
                 species = varargin{i + 1};
             case {'y', 'y_var', 'yvar', 'y var', 'y_data', 'ydata', 'y data'}
                 y_var = varargin{i + 1};

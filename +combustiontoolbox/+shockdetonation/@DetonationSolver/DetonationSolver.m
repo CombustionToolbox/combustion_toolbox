@@ -21,6 +21,16 @@ classdef DetonationSolver
     end
 
     methods
+        
+        [mix1, mix2] = detonationCJ(obj, mix1, varargin)
+        [P, T, STOP] = detonationGuess(obj, mix1)
+        [mix1, mix2] = detonationOverdriven(obj, mix1, driveFactor, varargin)
+        [mix1, mix2] = detonationUnderdriven(obj, mix1, driveFactor, varargin)
+        [mix1, mix2, mix5] = detonationReflected(obj, mix1, mix2, varargin)
+        [mix1, mix2] = detonationObliqueBeta(obj, mix1, varargin)
+        [mix1, mix2_1, mix2_2] = detonationObliqueTheta(obj, mix1, u1, theta, varargin)
+        [mix1, mix2] = detonationPolar(obj, mix1, u1)
+        [mix1, mix2, mix2_1, mix3] = detonationPolarLimitRR(obj, mix1, u1)
 
         function obj = DetonationSolver(varargin)
             % Constructor
@@ -31,7 +41,7 @@ classdef DetonationSolver
             
             % Parse input arguments
             p = inputParser;
-            addOptional(p, 'problemType', defaultProblemType, @(x) ischar(x) && any(strcmpi(x, {'DET', 'DET_R', 'DET_OBLIQUE', 'DET_OBLIQUE_R', 'DET_POLAR', 'DET_POLAR_R', 'DET_POLAR_LIMITRR'})));
+            addOptional(p, 'problemType', defaultProblemType, @(x) ischar(x) && any(strcmpi(x, {'DET', 'DET_R', 'DET_OVERDRIVEN', 'DET_UNDERDRIVEN', 'DET_OBLIQUE', 'DET_OBLIQUE_R', 'DET_POLAR', 'DET_POLAR_R', 'DET_POLAR_LIMITRR'})));
             addParameter(p, 'equilibriumSolver', defaultEquilibriumSolver);
             addParameter(p, 'tol0', obj.tol0, @(x) isnumeric(x) && x > 0);
             addParameter(p, 'itMax', obj.itMax, @(x) isnumeric(x) && x > 0);
@@ -75,6 +85,7 @@ classdef DetonationSolver
             % Solve detonations problems
             
             % Definitions
+            driveFactor = mix1.driveFactor;
             beta = mix1.beta;
             theta = mix1.theta;
 
@@ -123,6 +134,44 @@ classdef DetonationSolver
 
                     % Set output
                     varargout = {mix1, mix2, mix3};
+                
+                case 'DET_OVERDRIVEN'
+                    if nargin > 2
+                        [mix1, mix2] = obj.detonationOverdriven(mix1, driveFactor, varargin{1});
+                    else
+                        [mix1, mix2] = obj.detonationOverdriven(mix1, driveFactor);
+                    end
+                    
+                    % Set problemType
+                    mix1.problemType = obj.problemType;
+                    mix2.problemType = obj.problemType;
+    
+                    % Print results
+                    if obj.FLAG_RESULTS
+                        print(mix1, mix2);
+                    end
+    
+                    % Set output
+                    varargout = {mix1, mix2};
+
+                case 'DET_UNDERDRIVEN'
+                    if nargin > 2
+                        [mix1, mix2] = obj.detonationUnderdriven(mix1, driveFactor, varargin{1});
+                    else
+                        [mix1, mix2] = obj.detonationUnderdriven(mix1, driveFactor);
+                    end
+                    
+                    % Set problemType
+                    mix1.problemType = obj.problemType;
+                    mix2.problemType = obj.problemType;
+    
+                    % Print results
+                    if obj.FLAG_RESULTS
+                        print(mix1, mix2);
+                    end
+    
+                    % Set output
+                    varargout = {mix1, mix2};
 
                 case 'DET_OBLIQUE'
                     
@@ -241,7 +290,7 @@ classdef DetonationSolver
 
             % Calculations
             switch upper(problem)
-                case {'DET', 'DET_OBLIQUE_BETA', 'DET_POLAR'}
+                case {'DET', 'DET_OVERDRIVEN', 'DET_UNDERDRIVEN', 'DET_OBLIQUE_BETA', 'DET_POLAR'}
                     [mix1Array(n), mix2Array(n)] = obj.solve(mix1Array(n));
                     
                     for i = n-1:-1:1
@@ -315,17 +364,6 @@ classdef DetonationSolver
             end
 
         end
-
-    end
-
-    methods (Access = private)
-        
-        [mix1, mix2] = detonationCJ(obj, mix1, varargin)
-        [mix1, mix2, mix5] = detonationReflected(obj, mix1, mix2, varargin)
-        [mix1, mix2] = detonationObliqueBeta(obj, mix1, varargin)
-        [mix1, mix2_1, mix2_2] = detonationObliqueTheta(obj, mix1, u1, theta, varargin)
-        [mix1, mix2] = detonationPolar(obj, mix1, u1)
-        [mix1, mix2, mix2_1, mix3] = detonationPolarLimitRR(obj, mix1, u1)
 
     end
 

@@ -87,7 +87,9 @@ classdef Mixture < handle & matlab.mixin.Copyable
         u                     % Velocity relative to the shock front [m/s]
         uShock                % Velocity in the shock tube [m/s]
         uNormal               % Normal component of u [m/s]
+        cjSpeed               % Chapman-Jouguet speed
         mach                  % Mach number [-]
+        driveFactor           % Overdriven/Underdriven factor (detonations)
         beta                  % Wave angle [deg]
         theta                 % Deflection angle [deg]
         betaMin               % Minimum wave angle [deg]
@@ -612,6 +614,8 @@ classdef Mixture < handle & matlab.mixin.Copyable
                             obj.rangeName = 'beta';
                         case {'deflection angle', 'deflectionangle', 'deflection'}
                             obj.rangeName = 'theta';
+                        case {'drive_factor', 'drivefactor'}
+                            obj.rangeName = 'driveFactor';
                     end
 
                 end
@@ -653,6 +657,8 @@ classdef Mixture < handle & matlab.mixin.Copyable
                             objArray(j).beta = values{i}(j);
                         case {'deflection angle', 'deflectionangle', 'deflection', 'theta'}
                             objArray(j).theta = values{i}(j);
+                        case {'drive_factor', 'drivefactor'}
+                            objArray(j).driveFactor = values{i}(j);
                         otherwise
                             error('Property not found');
                     end

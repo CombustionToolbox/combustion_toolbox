@@ -35,7 +35,7 @@ import combustiontoolbox.utils.display.*
 DB = NasaDatabase();
 
 % Define chemical system
-system = ChemicalSystem(DB, 'air');
+system = ChemicalSystem(DB, 'air ions');
 
 % Initialize mixture
 mix = Mixture(system);

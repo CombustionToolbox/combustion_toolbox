@@ -47,12 +47,14 @@ solver = ShockSolver('problemType', 'SHOCK_R');
 [mixArray1, mixArray2, mixArray3] = solver.solveArray(mixArray1);
 
 % Plot Hugoniot curve
-ax1 = plotFigure('\rho_1 / \rho_2', [mixArray1.rho] ./ [mixArray2.rho], 'p_2 / p_1', [mixArray2.p] ./ [mixArray1.p], 'xScale', 'log', 'yScale', 'log', 'color', 'auto');
-ax1 = plotFigure('\rho_1 / \rho_2', [mixArray1.rho] ./ [mixArray3.rho], 'p_2 / p_1', [mixArray3.p] ./ [mixArray1.p], 'xScale', 'log', 'yScale', 'log', 'color', 'auto', 'ax', ax1);
+ax1 = plotFigure('\rho_1 / \rho_2', [mixArray1.rho] ./ [mixArray2.rho], 'p_2 / p_1', [mixArray2.p] ./ [mixArray1.p], 'xScale', 'log', 'yScale', 'log', 'linestyle', '-');
+ax1 = plotFigure('\rho_1 / \rho_2', [mixArray1.rho] ./ [mixArray3.rho], 'p_2 / p_1', [mixArray3.p] ./ [mixArray1.p], 'xScale', 'log', 'yScale', 'log', 'linestyle', '--', 'ax', ax1);
+legend(ax1, {'Incident', 'Reflected'}, 'Interpreter', 'latex', 'FontSize', ax1.FontSize);
 
 % Plot post-shock temperature
 ax2 = plotFigure('u1', [mixArray1.u], 'T', [mixArray2.T], 'color', [0 0 0], 'linestyle', '-');
 ax2 = plotFigure('u1', [mixArray1.u], 'T', [mixArray3.T], 'color', [0 0 0], 'linestyle', '--', 'ax', ax2);
+legend(ax2, {'Incident', 'Reflected'}, 'Interpreter', 'latex', 'FontSize', ax2.FontSize);
 
 % Plot molar fractions
 plotComposition(mixArray3(1), mixArray1, 'u', 'Xi', 'mintol', 1e-3, 'y_var', mixArray3);

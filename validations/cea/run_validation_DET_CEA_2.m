@@ -6,7 +6,7 @@ function run_validation_DET_CEA_2
     % Pressure    [bar] = 1;
     % Equivalence ratio [-] = 0.5:0.01:4
     % Initial mixture: C2H2_acetylene + O2
-    % List of species considered: list_species('Soot Formation Extended')
+    % List of species considered: All possible products
     
     % Import packages
     import combustiontoolbox.databases.NasaDatabase
@@ -25,7 +25,6 @@ function run_validation_DET_CEA_2
         filename{i} = sprintf('%s%d.out', prefixDataName, i);
     end
 
-    listSpecies = 'Soot Formation Extended';
     displaySpecies = {'CO2', 'CO', 'H2O', 'H2', 'O2', 'H','OH','O',...
                       'CH4','C2H4','CH3','HCO','CH','Cbgrb'};
     
@@ -33,7 +32,7 @@ function run_validation_DET_CEA_2
     DB = NasaDatabase('FLAG_BENCHMARK', FLAG_BENCHMARK);
     
     % Define chemical system
-    system = ChemicalSystem(DB, listSpecies);
+    system = ChemicalSystem(DB);
     
     % Initialize mixture
     mix = Mixture(system);

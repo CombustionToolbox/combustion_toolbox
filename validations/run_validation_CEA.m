@@ -28,7 +28,7 @@ function run_validation_CEA
     run_validation_SHOCK_R_IONIZATION_CEA_1;
 
     % % DET:
-    % run_validation_DET_CEA_1;
+    run_validation_DET_CEA_1;
     % run_validation_DET_CEA_2;
     % run_validation_DET_CEA_3;
     % run_validation_DET_CEA_4;

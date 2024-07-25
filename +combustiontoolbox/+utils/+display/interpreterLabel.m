@@ -221,11 +221,11 @@ function [property_name, property_latex, property_unit] = property_names(propert
             property_unit = '[kJ/kg]';
         case 'xi'
             property_name = 'Molar fractions';
-            property_latex = 'X_i';
+            property_latex = 'X_j';
             property_unit = '';
         case 'yi'
             property_name = 'Mass fractions';
-            property_latex = 'Y_i';
+            property_latex = 'Y_j';
             property_unit = '';
         case {'v_p/v_r', 'v_v', 'vp_vr'}
             property_name = 'Volume ratio';
@@ -267,7 +267,7 @@ function [property_name, property_latex, property_unit] = property_names(propert
             property_name = 'Underdriven ratio';
             property_latex = 'u_1/u_{\rm cj}';
             property_unit = '';
-        case 'drive_factor'
+        case {'drive_factor', 'drivefactor'}
             property_name = 'Overdriven factor';
             property_latex = 'u_1/u_{\rm cj}';
             property_unit = '';

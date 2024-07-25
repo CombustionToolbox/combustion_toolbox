@@ -23,7 +23,8 @@
 % Note: This example uses the Standard Atmosphere Functions package [1]
 %
 % [1] Sky Sartorius (2024). Standard Atmosphere Functions. Available at
-%  https://github.com/sky-s/standard-atmosphere, GitHub. Retrieved June 12, 2024.
+%     https://github.com/sky-s/standard-atmosphere, GitHub.
+%     Retrieved June 12, 2024.
 %
 % @author: Alberto Cuadra Lara
 %          Postdoctoral researcher - Group Fluid Mechanics

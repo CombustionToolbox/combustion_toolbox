@@ -55,6 +55,7 @@ classdef DetonationSolver
             addParameter(p, 'FLAG_TIME', obj.FLAG_TIME, @(x) islogical(x));
             addParameter(p, 'FLAG_TCHEM_FROZEN', defaultFLAG_TCHEM_FROZEN, @(x) islogical(x))
             addParameter(p, 'FLAG_FROZEN', defaultFLAG_FROZEN, @(x) islogical(x))
+            addParameter(p, 'tolMoles', defaultEquilibriumSolver.tolMoles, @(x) isnumeric(x) && x > 0);
             parse(p, varargin{:});
 
             % Set properties
@@ -74,6 +75,7 @@ classdef DetonationSolver
             if sum(contains(p.UsingDefaults, 'equilibriumSolver'))
                 obj.equilibriumSolver.FLAG_TCHEM_FROZEN = p.Results.FLAG_TCHEM_FROZEN;
                 obj.equilibriumSolver.FLAG_FROZEN = p.Results.FLAG_FROZEN;
+                obj.equilibriumSolver.tolMoles = p.Results.tolMoles;
             end
             
             % Miscellaneous

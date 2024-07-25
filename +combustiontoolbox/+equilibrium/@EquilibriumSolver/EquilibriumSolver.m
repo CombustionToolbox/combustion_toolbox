@@ -294,8 +294,8 @@ classdef EquilibriumSolver < handle
 
             % Definitions
             N_mix0 = moles(mix1); % Get moles of inert species
-            system = mix1.chemicalSystem;
-            systemProducts = mix1.chemicalSystemProducts;
+            system = mix2.chemicalSystem;
+            systemProducts = mix2.chemicalSystemProducts;
             
             % Unpack
             guess_moles = unpack(varargin);
@@ -304,7 +304,7 @@ classdef EquilibriumSolver < handle
             if ~obj.FLAG_FAST, guess_moles = []; end
 
             % Compute number of moles
-            [N, dNi_T, dN_T, dNi_p, dN_p, indexProducts, STOP, STOP_ions, h0] = selectEquilibrium(obj, systemProducts, T, mix2, guess_moles);
+            [N, dNi_T, dN_T, dNi_p, dN_p, indexProducts, STOP, STOP_ions, h0] = selectEquilibrium(obj, systemProducts, T, mix1, mix2, guess_moles);
             
             % Compute property matrix of the species at chemical equilibrium
             setMixture(mix2);
@@ -326,13 +326,13 @@ classdef EquilibriumSolver < handle
                 pP = mix.equationOfState.getPressure(T, vMolar, system.listSpecies, mix.Xi) * 1e-5;
             end
             
-            function [N, dNi_T, dN_T, dNi_p, dN_p, indexProducts, STOP, STOP_ions, h0] = selectEquilibrium(obj, system, T, mix, guess_moles)
+            function [N, dNi_T, dN_T, dNi_p, dN_p, indexProducts, STOP, STOP_ions, h0] = selectEquilibrium(obj, system, T, mix1, mix2, guess_moles)
                 % Select equilibrium: TP: Gibbs; TV: Helmholtz
                 
                 if strfind(obj.problemType, 'P') == 2
-                    [N, dNi_T, dN_T, dNi_p, dN_p, indexProducts, STOP, STOP_ions, h0] = equilibriumGibbs(obj, system, mix.p, T, mix, guess_moles);
+                    [N, dNi_T, dN_T, dNi_p, dN_p, indexProducts, STOP, STOP_ions, h0] = equilibriumGibbs(obj, system, mix2.p, T, mix1, guess_moles);
                 else
-                    [N, dNi_T, dN_T, dNi_p, dN_p, indexProducts, STOP, STOP_ions, h0] = equilibriumHelmholtz(obj, system, mix.v, T, mix, guess_moles);
+                    [N, dNi_T, dN_T, dNi_p, dN_p, indexProducts, STOP, STOP_ions, h0] = equilibriumHelmholtz(obj, system, mix2.v, T, mix1, guess_moles);
                 end
 
             end
@@ -356,7 +356,7 @@ classdef EquilibriumSolver < handle
                 mix.errorMoles = STOP;
                 mix.errorMolesIons = STOP_ions;
 
-                % Clean system
+                % Clean chemical system
                 system.clean;
                 
                 % Check if problemType is at constant volume

@@ -23,17 +23,17 @@ function run_validation_CEA
     % EV:
     run_validation_EV_CEA_1;
 
-    % % SHOCKS:
+    % SHOCKS:
     run_validation_SHOCK_IONIZATION_CEA_1;
     run_validation_SHOCK_R_IONIZATION_CEA_1;
 
-    % % DET:
+    % DET:
     run_validation_DET_CEA_1;
-    % run_validation_DET_CEA_2;
-    % run_validation_DET_CEA_3;
-    % run_validation_DET_CEA_4;
-    % 
-    % % ROCKET:
+    run_validation_DET_CEA_2;
+    run_validation_DET_CEA_3;
+    run_validation_DET_CEA_4;
+     
+    % ROCKET:
     % run_validation_ROCKET_CEA_17;
     % run_validation_ROCKET_CEA_18;
     % run_validation_ROCKET_CEA_20;

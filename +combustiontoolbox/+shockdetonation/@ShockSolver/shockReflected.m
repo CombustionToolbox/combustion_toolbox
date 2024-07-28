@@ -6,8 +6,8 @@ function [mix1, mix2, mix5] = shockReflected(obj, mix1, mix2, varargin)
     %
     % Args:
     %     obj (ShockSolver): ShockSolver object
-    %     mix1 (Mixture):    Properties of the mixture in the pre-shock state
-    %     mix2 (Mixture):    Properties of the mixture at the post-shock state of the incident shock
+    %     mix1 (Mixture): Properties of the mixture in the pre-shock state
+    %     mix2 (Mixture): Properties of the mixture at the post-shock state of the incident shock
     %
     % Optional Args:
     %     mix5 (Mixture): Properties of the mixture in the post-shock state of the reflected shock (previous calculation)
@@ -20,8 +20,8 @@ function [mix1, mix2, mix5] = shockReflected(obj, mix1, mix2, varargin)
     %     * mix5 (Mixture): Properties of the mixture in the post-shock state of the reflected shock
     %
     % Examples:
-    %     * [mix1, mix2, mix5] = shockReflected(ShockSolver(), mix1, u1, mix2)
-    %     * [mix1, mix2, mix5] = shockReflected(ShockSolver(), mix1, u1, mix2, mix5)
+    %     * [mix1, mix2, mix5] = shockReflected(ShockSolver(), mix1, mix2)
+    %     * [mix1, mix2, mix5] = shockReflected(ShockSolver(), mix1, mix2, mix5)
 
     % Unpack input data
     [mix5, guess_moles] = unpack(mix2, varargin{:});

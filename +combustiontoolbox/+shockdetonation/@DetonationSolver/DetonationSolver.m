@@ -22,13 +22,13 @@ classdef DetonationSolver < handle
 
     methods
         
-        [mix1, mix2] = detonationCJ(obj, mix1, varargin)
         [P, T, STOP] = detonationGuess(obj, mix1)
+        [mix1, mix2] = detonationCJ(obj, mix1, varargin)
         [mix1, mix2] = detonationOverdriven(obj, mix1, driveFactor, varargin)
         [mix1, mix2] = detonationUnderdriven(obj, mix1, driveFactor, varargin)
         [mix1, mix2, mix5] = detonationReflected(obj, mix1, mix2, varargin)
-        [mix1, mix2] = detonationObliqueBeta(obj, mix1, varargin)
-        [mix1, mix2_1, mix2_2] = detonationObliqueTheta(obj, mix1, u1, theta, varargin)
+        [mix1, mix2_1, mix2_2] = detonationObliqueBeta(obj, mix1, driveFactor, varargin)
+        [mix1, mix2_1, mix2_2] = detonationObliqueTheta(obj, mix1, driveFactor, theta, varargin)
         [mix1, mix2] = detonationPolar(obj, mix1, u1)
         [mix1, mix2, mix2_1, mix3] = detonationPolarLimitRR(obj, mix1, u1)
 
@@ -231,22 +231,23 @@ classdef DetonationSolver < handle
                     
                     if isempty(mix1.theta)
 
-                        [mix1, mix2] = obj.detonationObliqueBeta(mix1, u1, beta);
+                        [mix1, mix2, mix3] = obj.detonationObliqueBeta(mix1, driveFactor, beta);
 
                         % Set problemType
                         mix1.problemType = obj.problemType;
                         mix2.problemType = obj.problemType;
-    
+                        mix3.problemType = obj.problemType;
+
                         % Print results
                         if obj.FLAG_RESULTS
-                            print(mix1, mix2);
+                            print(mix1, mix2, mix3);
                         end
     
                         % Set output
-                        varargout = {mix1, mix2};
+                        varargout = {mix1, mix2, mix3};
                     else
                         
-                        [mix1, mix2, mix3] = obj.detonationObliqueTheta(mix1, u1, theta);
+                        [mix1, mix2, mix3] = obj.detonationObliqueTheta(mix1, driveFactor, theta);
                         
                         % Set problemType
                         mix1.problemType = obj.problemType;
@@ -264,7 +265,7 @@ classdef DetonationSolver < handle
                 
                 case 'DET_POLAR'
                     % Solve problem
-                    [mix1, mix2] = obj.detonationPolar(mix1, u1);
+                    [mix1, mix2] = obj.detonationPolar(mix1, driveFactor);
                     
                     % Set problemType
                     mix1.problemType = obj.problemType;
@@ -280,10 +281,10 @@ classdef DetonationSolver < handle
 
                 case 'DET_POLAR_R'
                     % Solve problem
-                    [mix1, mix2] = obj.detonationPolar(mix1, u1);
-                    [~, mix2_1] = obj.detonationObliqueTheta(mix1, u1, theta);
-                    [~, mix3] = obj.detonationPolar(mix2_1, mix2_1.u);
-                    [~, mix3_1, mix3_2] = obj.detonationObliqueTheta(mix2_1, mix2_1.u, theta);
+                    [mix1, mix2] = obj.detonationPolar(mix1, driveFactor);
+                    [~, mix2_1] = obj.detonationObliqueTheta(mix1, driveFactor, theta);
+                    [~, mix3] = obj.detonationPolar(mix2_1, mix2_1.driveFactor);
+                    [~, mix3_1, mix3_2] = obj.detonationObliqueTheta(mix2_1, mix2_1.driveFactor, theta);
                 
                     % Set problemType
                     mix1.problemType = obj.problemType;
@@ -344,7 +345,7 @@ classdef DetonationSolver < handle
 
             % Calculations
             switch upper(problem)
-                case {'DET', 'DET_OVERDRIVEN', 'DET_UNDERDRIVEN', 'DET_OBLIQUE_BETA', 'DET_POLAR'}
+                case {'DET', 'DET_OVERDRIVEN', 'DET_UNDERDRIVEN', 'DET_POLAR'}
                     [mix1Array(n), mix2Array(n)] = obj.solve(mix1Array(n));
                     
                     for i = n-1:-1:1
@@ -354,7 +355,7 @@ classdef DetonationSolver < handle
                     % Set output
                     varargout = {mix1Array, mix2Array};
 
-                case {'DET_R', 'DET_OVERDRIVEN_R', 'DET_UNDERDRIVEN_R', 'DET_OBLIQUE_THETA'}
+                case {'DET_R', 'DET_OVERDRIVEN_R', 'DET_UNDERDRIVEN_R', 'DET_OBLIQUE_BETA', 'DET_OBLIQUE_THETA'}
                     % Initialization
                     mix3Array = mix1Array;
                     

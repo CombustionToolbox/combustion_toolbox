@@ -1,4 +1,4 @@
-classdef DetonationSolver
+classdef DetonationSolver < handle
 
     properties
         problemType             % Problem type
@@ -41,7 +41,7 @@ classdef DetonationSolver
             
             % Parse input arguments
             p = inputParser;
-            addOptional(p, 'problemType', defaultProblemType, @(x) ischar(x) && any(strcmpi(x, {'DET', 'DET_R', 'DET_OVERDRIVEN', 'DET_UNDERDRIVEN', 'DET_OBLIQUE', 'DET_OBLIQUE_R', 'DET_POLAR', 'DET_POLAR_R', 'DET_POLAR_LIMITRR'})));
+            addOptional(p, 'problemType', defaultProblemType, @(x) ischar(x) && any(strcmpi(x, {'DET', 'DET_R', 'DET_OVERDRIVEN', 'DET_OVERDRIVEN_R', 'DET_UNDERDRIVEN', 'DET_UNDERDRIVEN_R', 'DET_OBLIQUE', 'DET_OBLIQUE_R', 'DET_POLAR', 'DET_POLAR_R'})));
             addParameter(p, 'equilibriumSolver', defaultEquilibriumSolver);
             addParameter(p, 'tol0', obj.tol0, @(x) isnumeric(x) && x > 0);
             addParameter(p, 'itMax', obj.itMax, @(x) isnumeric(x) && x > 0);
@@ -155,6 +155,32 @@ classdef DetonationSolver
     
                     % Set output
                     varargout = {mix1, mix2};
+                
+                case 'DET_OVERDRIVEN_R'
+                    if nargin > 2
+                        % Calculate post-shock state (2)
+                        [mix1, mix2] = obj.detonationOverdriven(mix1, driveFactor, varargin{1});
+                        % Calculate post-shock state (5)
+                        [mix1, mix2, mix3] = obj.detonationReflected(mix1, mix2, varargin{2});
+                    else
+                        % Calculate post-shock state (2)
+                        [mix1, mix2] = obj.detonationOverdriven(mix1, driveFactor);
+                        % Calculate post-shock state (5)
+                        [mix1, mix2, mix3] = obj.detonationReflected(mix1, mix2);
+                    end
+
+                    % Set problemType
+                    mix1.problemType = obj.problemType;
+                    mix2.problemType = obj.problemType;
+                    mix3.problemType = obj.problemType;
+
+                    % Print results
+                    if obj.FLAG_RESULTS
+                        print(mix1, mix2, mix3);
+                    end
+
+                    % Set output
+                    varargout = {mix1, mix2, mix3};
 
                 case 'DET_UNDERDRIVEN'
                     if nargin > 2
@@ -174,6 +200,32 @@ classdef DetonationSolver
     
                     % Set output
                     varargout = {mix1, mix2};
+                
+                case 'DET_UNDERDRIVEN_R'
+                    if nargin > 2
+                        % Calculate post-shock state (2)
+                        [mix1, mix2] = obj.detonationUnderdriven(mix1, driveFactor, varargin{1});
+                        % Calculate post-shock state (5)
+                        [mix1, mix2, mix3] = obj.detonationReflected(mix1, mix2, varargin{2});
+                    else
+                        % Calculate post-shock state (2)
+                        [mix1, mix2] = obj.detonationUnderdriven(mix1, driveFactor);
+                        % Calculate post-shock state (5)
+                        [mix1, mix2, mix3] = obj.detonationReflected(mix1, mix2);
+                    end
+
+                    % Set problemType
+                    mix1.problemType = obj.problemType;
+                    mix2.problemType = obj.problemType;
+                    mix3.problemType = obj.problemType;
+
+                    % Print results
+                    if obj.FLAG_RESULTS
+                        print(mix1, mix2, mix3);
+                    end
+
+                    % Set output
+                    varargout = {mix1, mix2, mix3};
 
                 case 'DET_OBLIQUE'
                     
@@ -302,7 +354,7 @@ classdef DetonationSolver
                     % Set output
                     varargout = {mix1Array, mix2Array};
 
-                case {'DET_R', 'DET_OBLIQUE_THETA'}
+                case {'DET_R', 'DET_OVERDRIVEN_R', 'DET_UNDERDRIVEN_R', 'DET_OBLIQUE_THETA'}
                     % Initialization
                     mix3Array = mix1Array;
                     

@@ -34,7 +34,9 @@ function [mix1, mix2_1, mix2_2] = detonationObliqueBeta(obj, mix1, driveFactor, 
     mix1.cjSpeed = mix1.u;
 
     % Set initial velocity for the given drive factor
-    mix1.u = mix1.u * driveFactor; % [m/s]
+    mix1.u = mix1.u * driveFactor;   % pre-shock velocity [m/s] - laboratory fixed
+    mix1.uShock = mix1.u;            % pre-shock velocity [m/s] - shock fixed
+    mix1.mach = mix1.u / mix1.sound; % pre-shock Mach number [-]
 
     % Definitions
     u1 = mix1.u; % [m/s]

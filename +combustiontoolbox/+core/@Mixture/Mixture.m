@@ -94,9 +94,11 @@ classdef Mixture < handle & matlab.mixin.Copyable
         theta                 % Deflection angle [deg]
         betaMin               % Minimum wave angle [deg]
         betaMax               % Maximum wave angle [deg]
+        thetaMin              % Minimum eflection angle [deg]
         thetaMax              % Maximum deflection angle [deg]
         betaSonic             % Wave angle at the sonic point [deg]
         thetaSonic            % Deflection angle at the sonic point [deg]
+        indexMin              % Index of the minimum deflection angle
         indexMax              % Index of the maximum deflection angle
         indexSonic            % Index of the sonic point
         polar                 % Properties of the polar solution

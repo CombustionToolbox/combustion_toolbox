@@ -114,12 +114,12 @@ classdef DetonationSolver < handle
                 case 'DET_R'
                     if nargin > 2
                         % Calculate post-shock state (2)
-                        [mix1, mix2] = obj.detonationCJ(mix1, u1, varargin{1});
+                        [mix1, mix2] = obj.detonationCJ(mix1, varargin{1});
                         % Calculate post-shock state (5)
                         [mix1, mix2, mix3] = obj.detonationReflected(mix1, mix2, varargin{2});
                     else
                         % Calculate post-shock state (2)
-                        [mix1, mix2] = obj.detonationCJ(mix1, u1);
+                        [mix1, mix2] = obj.detonationCJ(mix1);
                         % Calculate post-shock state (5)
                         [mix1, mix2, mix3] = obj.detonationReflected(mix1, mix2);
                     end

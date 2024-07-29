@@ -24,4 +24,7 @@ function mix = computeChamberIAC(obj, mix)
     
     % Set A_chamber/A_throat
     mix.areaRatio = Inf;
+    
+    % Restore problemType
+    mix.problemType = 'ROCKET_IAC';
 end

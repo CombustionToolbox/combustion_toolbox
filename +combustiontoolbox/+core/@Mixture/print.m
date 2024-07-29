@@ -140,7 +140,7 @@ function print_properties(ProblemType, numberMixtures, mix)
 
         fprintf('------------------------------------------------------------------------------------------------------------\n');
         fprintf('PERFORMANCE PARAMETERS\n');
-        fprintf(['A/At [-]       |                 |                 |', string_value_3], get_properties('Aratio', numberMixtures - 2, mix(3:end)));
+        fprintf(['A/At [-]       |                 |                 |', string_value_3], get_properties('areaRatio', numberMixtures - 2, mix(3:end)));
         fprintf(['CSTAR [m/s]    |                 |                 |', string_value_3], get_properties('cstar', numberMixtures - 2, mix(3:end)));
         fprintf(['CF [-]         |                 |                 |', string_value_3], get_properties('cf', numberMixtures - 2, mix(3:end)));
         fprintf(['Ivac [s]       |                 |                 |', string_value_3], get_properties('I_vac', numberMixtures - 2, mix(3:end)));
@@ -263,7 +263,7 @@ function header_composition = print_header(problemType, numberMixtures, mix)
                 header_exit_prop_last = [];
             end
 
-            if mix{3}.Aratio == 1
+            if mix{3}.areaRatio == 1
                 header_exit = repmat({'EXIT                  '}, 1, numberMixtures - 3);
                 header_composition = {'INLET CHAMBER         ', ...
                                       'OUTLET CHAMBER        ', ...

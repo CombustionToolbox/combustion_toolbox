@@ -75,6 +75,7 @@ function mix4 = computeExit(obj, mix2, mix3, mix4, areaRatio, varargin)
     mix4.uShock = mix4.u; % [m/s]
     mix4.mach = mix4.u / mix4.sound; % [-]
     mix4.areaRatio = areaRatio; % [-]
+    mix4.problemType = mix3.problemType;
 end
 
 % SUB-PASS FUNCTIONS

@@ -597,7 +597,7 @@ classdef Mixture < handle & matlab.mixin.Copyable
                 obj.rangeName = properties{FLAG_VECTOR_FIRST};
                 
                 % Check rangeName to match Mixture's property
-                if any(~strcmpi({'T', 'p', 'vspecific', 'phi', 'u', 'mach', 'beta', 'theta'}, obj.rangeName))
+                if any(~strcmpi({'T', 'p', 'vspecific', 'phi', 'u', 'mach', 'beta', 'theta', 'drive_factor', 'aratio'}, obj.rangeName))
 
                     switch lower(obj.rangeName)
                         case {'temperature'}
@@ -616,8 +616,10 @@ classdef Mixture < handle & matlab.mixin.Copyable
                             obj.rangeName = 'beta';
                         case {'deflection angle', 'deflectionangle', 'deflection'}
                             obj.rangeName = 'theta';
-                        case {'drive_factor', 'drivefactor'}
+                        case {'drive_factor'}
                             obj.rangeName = 'driveFactor';
+                        case {'aratio'}
+                            obj.rangeName = 'areaRatio';
                     end
 
                 end
@@ -661,6 +663,8 @@ classdef Mixture < handle & matlab.mixin.Copyable
                             objArray(j).theta = values{i}(j);
                         case {'drive_factor', 'drivefactor'}
                             objArray(j).driveFactor = values{i}(j);
+                        case {'arearatio', 'aratio'}
+                            objArray(j).areaRatio = values{i}(j);
                         otherwise
                             error('Property not found');
                     end

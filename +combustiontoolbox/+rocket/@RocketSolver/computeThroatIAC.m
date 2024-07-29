@@ -46,6 +46,7 @@ function mix3 = computeThroatIAC(obj, mix2, mix3)
     mix3.uShock = mix3.u; % [m/s]
     mix3.mach = mix3.u / mix3.sound; % [-]
     mix3.areaRatio = 1; % [-]
+    mix3.problemType = mix2.problemType;
 end
 
 function pressure = compute_pressure(mix3)

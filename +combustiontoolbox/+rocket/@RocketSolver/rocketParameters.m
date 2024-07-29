@@ -1,21 +1,24 @@
-function [mix3, varargout] = rocketParameters(mix2, mix3, varargin)
+function [mix3, varargout] = rocketParameters(obj, mix2, mix3, varargin)
     % Compute Rocket performance parameters at the throat
     %
     % This method is based on the method outlined in Gordon, S., & McBride,
     % B. J. (1994). NASA reference publication, 1311.
     %
     % Args:
+    %     obj (RocketSolver): Rocket solver object
     %     mix2 (Mixture): Properties of the mixture at the outlet of the chamber
     %     mix3 (Mixture): Properties of the mixture at the throat
     %
+    % Optional Args:
+    %     * mixi (Mixture): Properties of the mixture at the the exit (obj.FLAG_SUBSONIC = false) or at the combustion chamber (obj.FLAG_SUBSONIC = true)
+    %
     % Returns:
-    %     mix3 (struct): Properties of the mixture at the throat
+    %     mix3 (Mixture): Properties of the mixture at the throat
 
     % Definitions
     gravity = combustiontoolbox.common.Constants.G;
 
     % 
-    mix3.area_per_mass_flow_rate = area_per_mass_flow_rate(mix3);
     mix3.cstar = characteristic_velocity(mix2, mix3);
     mix3.cf = velocity_relative(mix3) / mix3.cstar;
     [mix3.I_sp, mix3.I_vac] = specific_impulse(mix3, gravity);

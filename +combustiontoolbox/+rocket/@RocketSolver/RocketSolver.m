@@ -136,7 +136,7 @@ classdef RocketSolver
         mix = computeChamberIAC(obj, mix)
         mix3 = computeThroatIAC(obj, mix2, mix3)
         mix4 = computeExit(obj, mix2, mix3, mix4, areaRatio, varargin)
-        [mix3, varargout] = rocketParameters(mix2, mix3, varargin)
+        [mix3, varargout] = rocketParameters(obj, mix2, mix3, varargin)
     end
 
 end

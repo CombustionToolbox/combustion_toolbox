@@ -61,5 +61,5 @@ function [mix1, mix2_c, mix3, mix4] = rocketIAC(obj, mix1, varargin)
     mix2_c.u = 0; mix2_c.uShock = 0;
 
     % Compute rocket parameters
-    [mix3, mix4] = rocketParameters(mix2_c, mix3, mix4);
+    [mix3, mix4] = rocketParameters(obj, mix2_c, mix3, mix4);
 end

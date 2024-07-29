@@ -45,4 +45,10 @@ mixArray1 = setProperties(mix, 'temperature', 90, 'pressure', 100 * 1.01325, 'eq
 solver = RocketSolver('problemType', 'ROCKET_IAC');
 
 % Solve problem
-[mixArray1, mixArray2] = solver.solveArray(mixArray1);
+[mixArray1, mixArray2, mixArray3, mixArray4] = solver.solveArray(mixArray1);
+
+% Plot properties
+ax1 = plotProperties(repmat({'equivalenceRatio'}, 1, 12), mixArray4, {'T', 'p', 'h', 'e', 'g', 'cp', 's', 'gamma_s', 'sound', 'u', 'I_sp', 'I_vac'}, mixArray4, 'basis', {[], [], 'mi', 'mi', 'mi', 'mi', 'mi', [], [], [], [], []});
+ax1 = plotProperties(repmat({'equivalenceRatio'}, 1, 12), mixArray3, {'T', 'p', 'h', 'e', 'g', 'cp', 's', 'gamma_s', 'sound', 'u', 'I_sp', 'I_vac'}, mixArray3, 'basis', {[], [], 'mi', 'mi', 'mi', 'mi', 'mi', [], [], [], [], []}, 'ax', ax1);
+ax1 = plotProperties(repmat({'equivalenceRatio'}, 1, 10), mixArray2, {'T', 'p', 'h', 'e', 'g', 'cp', 's', 'gamma_s', 'sound', 'u'}, mixArray2, 'basis', {[], [], 'mi', 'mi', 'mi', 'mi', 'mi', [], [], []}, 'ax', ax1);
+leg = legend(ax1.Children(end), {'Exit', 'Throat', 'Chamber'}, 'Interpreter', 'latex', 'FontSize', ax1.Children(end).FontSize);

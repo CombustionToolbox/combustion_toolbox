@@ -54,6 +54,6 @@ ax1 = plotProperties(repmat({'equivalenceRatio'}, 1, 10), mixArray2, {'T', 'p', 
 leg = legend(ax1.Children(end), {'Exit', 'Throat', 'Chamber'}, 'Interpreter', 'latex', 'FontSize', ax1.Children(end).FontSize);
 
 % Plot molar fractions
-plotComposition(mixArray2(1), mixArray1, 'equivalenceRatio', 'Xi', 'mintol', 1e-14, 'y_var', mixArray2);
-plotComposition(mixArray3(1), mixArray1, 'equivalenceRatio', 'Xi', 'mintol', 1e-14, 'y_var', mixArray3);
-plotComposition(mixArray4(1), mixArray1, 'equivalenceRatio', 'Xi', 'mintol', 1e-14, 'y_var', mixArray4);
+plotComposition(mixArray2(1), mixArray1, 'equivalenceRatio', 'Xi', 'mintol', 1e-14, 'y_var', mixArray2, 'title', 'Chamber');
+plotComposition(mixArray3(1), mixArray1, 'equivalenceRatio', 'Xi', 'mintol', 1e-14, 'y_var', mixArray3, 'title', 'Throat');
+plotComposition(mixArray4(1), mixArray1, 'equivalenceRatio', 'Xi', 'mintol', 1e-14, 'y_var', mixArray4, 'title', 'Exit');

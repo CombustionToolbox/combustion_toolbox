@@ -81,6 +81,8 @@ function [ax, fig] = plotComposition(obj, x_var, x_field, y_field, varargin)
                 config.xdir = varargin{i + 1};
             case {'ydir'}
                 config.ydir = varargin{i + 1};
+            case {'title'}
+                config.title = varargin{i + 1};
             case {'ax', 'axes'}
                 ax = varargin{i + 1};
         end
@@ -246,7 +248,13 @@ function [ax, fig] = plotComposition(obj, x_var, x_field, y_field, varargin)
     legend(h, legendname, 'FontSize', config.fontsize - 6, 'Location', 'northeastoutside', 'interpreter', 'latex');
     
     % Set title
-    % title(get_title(self), 'Interpreter', 'latex', 'FontSize', config.fontsize + 4);
+    if isempty(config.title)
+        config.title = getTitle(obj);
+    else
+        config.title = sprintf('%s - %s', config.title, getTitle(obj));
+    end
+    
+    title(config.title, 'Interpreter', 'latex', 'FontSize', config.fontsize + 4);
 end
 
 % SUB-PASS FUNCTIONS

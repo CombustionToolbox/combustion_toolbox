@@ -136,14 +136,14 @@ classdef EquilibriumSolver < handle
             % Obtain properties at equilibrium for the given thermochemical transformation
             %
             % Args:
-            %     obj (EquilibriumSolver): Object of the class EquilibriumSolver
+            %     obj (EquilibriumSolver): EquilibriumSolver object
             %     mix (Mixture): Mixture considering a thermochemical frozen gas
             %
             % Returns:
             %     mix (Mixture): Mixture at chemical equilibrium for the given thermochemical transformation
             %
             % Example:
-            %     * mix = equilibrate(EquilibriumSolver(), 'TP', mix)
+            %     * mix = equilibrate(EquilibriumSolver(), mix)
             
             % Initialization
             mix1 = mix2.copy();

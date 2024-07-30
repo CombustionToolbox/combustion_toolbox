@@ -115,17 +115,17 @@ classdef unitTest < matlab.unittest.TestCase
             verifyLessThanOrEqual(testCase, act_max_rel_error_prop, testCase.max_rel_error);
         end
          
-        % function test_ROCKET_CEA_1(testCase, equivalence_ratio)
-        % 
-        %     % CEA does not converge for phi = 4
-        %     if equivalence_ratio > 3.9
-        %         equivalence_ratio = 3.9;
-        %     end
-        % 
-        %     [act_max_rel_error_moles, act_max_rel_error_prop] = run_test_ROCKET_CEA_1(equivalence_ratio, testCase.database, testCase.database_master);
-        %     verifyLessThanOrEqual(testCase, act_max_rel_error_moles, testCase.max_rel_error);
-        %     verifyLessThanOrEqual(testCase, act_max_rel_error_prop, testCase.max_rel_error);
-        % end
+        function test_ROCKET_CEA_1(testCase, equivalenceRatio)
+
+            % CEA does not converge for phi = 4
+            if equivalenceRatio > 3.9
+                equivalenceRatio = 3.9;
+            end
+
+            [act_max_rel_error_moles, act_max_rel_error_prop] = run_test_ROCKET_CEA_1(equivalenceRatio, testCase.database);
+            verifyLessThanOrEqual(testCase, act_max_rel_error_moles, testCase.max_rel_error);
+            verifyLessThanOrEqual(testCase, act_max_rel_error_prop, testCase.max_rel_error);
+        end
 
     end
 

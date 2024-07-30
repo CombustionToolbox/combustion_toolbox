@@ -32,9 +32,9 @@ function mix4 = rocketExit(obj, mix2, mix3, mix4_guess, areaRatio, varargin)
 
     % Check extra inputs
     if nargin > 5
-        mix2_in = varargin{1};
+        mix2_inj = varargin{1};
     else
-        mix2_in = mix2;
+        mix2_inj = mix2;
     end
 
     % Definitions
@@ -58,7 +58,7 @@ function mix4 = rocketExit(obj, mix2, mix3, mix4_guess, areaRatio, varargin)
         solve(obj.equilibriumSolver, mix4, mix4_guess);
 
         % Compute velocity at the exit point
-        mix4.u = computeVelocity(mix2_in, mix4);
+        mix4.u = computeVelocity(mix2_inj, mix4);
         mix4.mach = mix4.u / mix4.sound;
 
         % Compute new estimate

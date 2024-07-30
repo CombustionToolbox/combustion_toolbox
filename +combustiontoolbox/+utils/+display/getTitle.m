@@ -6,7 +6,7 @@ function titlename = getTitle(obj)
     %
     % Returns:
     %     titlename (char): Title based on the problem type and species involved
-    
+
     % Definitions
     FLAG_FUEL = ~isempty(obj.listSpeciesFuel);
     FLAG_OXIDIZER = ~isempty(obj.listSpeciesOxidizer);
@@ -32,7 +32,7 @@ function titlename = getTitle(obj)
             titlename = [titlename, '('];
         end
 
-        ind = find_ind(obj.listSpeciesOxidizer, 'O2');
+        ind = combustiontoolbox.utils.findIndex(obj.listSpeciesOxidizer, 'O2');
 
         if ind
             obj.molesOxidizer = obj.molesOxidizer / obj.molesOxidizer(ind);

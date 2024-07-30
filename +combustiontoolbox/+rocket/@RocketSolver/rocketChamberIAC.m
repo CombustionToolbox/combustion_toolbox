@@ -1,4 +1,4 @@
-function mix = computeChamberIAC(obj, mix, mix_guess)
+function mix = rocketChamberIAC(obj, mix, mix_guess)
     % Compute chemical equilibria at the exit of the chamber (HP) using
     % the Infinite-Area-Chamber (IAC) model
     %
@@ -14,7 +14,7 @@ function mix = computeChamberIAC(obj, mix, mix_guess)
     %     mix (Mixture): Properties of the mixture at the outlet of the chamber
     %
     % Example:
-    %     mix = computeChamberIAC(obj, mix, mix_guess)
+    %     mix = rocketChamberIAC(obj, mix, mix_guess)
     
     % Temporal value
     TEMP_FLAG_FROZEN = obj.equilibriumSolver.FLAG_FROZEN;

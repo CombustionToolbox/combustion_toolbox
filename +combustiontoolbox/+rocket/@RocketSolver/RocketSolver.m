@@ -154,10 +154,15 @@ classdef RocketSolver
     end
 
     methods (Access = private)
-        mix = computeChamberIAC(obj, mix, mix_guess)
-        mix3 = computeThroatIAC(obj, mix2, mix3)
-        mix4 = computeExit(obj, mix2, mix3, mix4, areaRatio, varargin)
+        mix = rocketChamberIAC(obj, mix, mix_guess)
+        mix3 = rocketThroatIAC(obj, mix2, mix3)
+        mix4 = rocketExit(obj, mix2, mix3, mix4, areaRatio, varargin)
         [mix3, varargout] = rocketParameters(obj, mix2, mix3, varargin)
+    end
+    
+    methods (Static)
+        pressure = rocketGuessThroatIAC(mix)
+        log_Pe = rocketGuessExitIAC(mix2, mix3, areaRatio, FLAG_SUBSONIC)
     end
 
 end

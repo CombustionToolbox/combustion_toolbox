@@ -49,9 +49,9 @@ function [mix1, mix2_c, mix3, mix4] = rocketIAC(obj, mix1, varargin)
     end
 
     % Compute chemical equilibria at different stations of the rocket
-    mix2_c = computeChamberIAC(obj, mix2_c, mix2_c_guess);
-    mix3 = computeThroatIAC(obj, mix2_c, mix3);
-    mix4 = computeExit(obj, mix2_c, mix3, mix4, mix1.areaRatio);
+    mix2_c = rocketChamberIAC(obj, mix2_c, mix2_c_guess);
+    mix3 = rocketThroatIAC(obj, mix2_c, mix3);
+    mix4 = rocketExit(obj, mix2_c, mix3, mix4, mix1.areaRatio);
     
     % Initial velocity of the gas
     mix1.u = 0; mix1.uShock = 0;

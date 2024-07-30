@@ -79,7 +79,8 @@ function cat_text = cat_moles_species(moles, species)
     for i = 2:N
         cat_text = [cat_text, ' + ', cat_mol_species(moles(i), species{i})];
     end
-
+    
+    cat_text = strrep(cat_text, '_$_{', '$_{');
 end
 
 function cat_text = cat_mol_species(mol, species)

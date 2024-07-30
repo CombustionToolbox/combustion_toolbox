@@ -1,4 +1,4 @@
-function mix4 = computeExit(obj, mix2, mix3, mix4, areaRatio, varargin)
+function mix4 = computeExit(obj, mix2, mix3, mix4_guess, areaRatio, varargin)
     % Compute thermochemical composition for a given areaRatio
     %
     % This method is based on the method outlined in Gordon, S., & McBride,
@@ -26,11 +26,9 @@ function mix4 = computeExit(obj, mix2, mix3, mix4, areaRatio, varargin)
         mix4 = [];
         return
     end
-
-    % Check inputs
-    if isempty(mix4)
-        mix4 = copy(mix3);
-    end
+    
+    % Initialize mixture
+    mix4 = copy(mix3);
 
     % Check extra inputs
     if nargin > 5
@@ -50,30 +48,39 @@ function mix4 = computeExit(obj, mix2, mix3, mix4, areaRatio, varargin)
     
     % Loop
     while STOP > obj.tol0 && it < obj.itMax
+        % Update iteration
         it = it + 1;
+
         % Extract pressure [bar]
-        pressure = extract_pressure(logP, mix2.p);
-        mix4.p = pressure;
+        mix4.p = extract_pressure(logP, mix2.p);
+
         % Solve chemical equilibrium (SP)
-        solve(obj.equilibriumSolver, mix4, mix4);
+        solve(obj.equilibriumSolver, mix4, mix4_guess);
+
         % Compute velocity at the exit point
         mix4.u = compute_velocity(mix2_in, mix4);
         mix4.mach = mix4.u / mix4.sound;
+
         % Compute new estimate
         logP = compute_log_pressure_ratio(mix3, mix4, logP, areaRatio);
+
         % Compute error
         STOP = abs(logP - logP0);
+
         % Update guess
         logP0 = logP;
+        mix4_guess = mix4;
+
         % Debug
         % aux_STOP(it) = STOP;
     end
-
+    
+    % Debug
     % debug_plot_error(it, aux_STOP, 1);
+
     % Assign values
     mix4.p = extract_pressure(logP, mix2.p); % [bar]
     mix4.uShock = mix4.u; % [m/s]
-    mix4.mach = mix4.u / mix4.sound; % [-]
     mix4.areaRatio = areaRatio; % [-]
     mix4.problemType = mix3.problemType;
 end

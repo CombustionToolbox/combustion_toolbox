@@ -137,13 +137,13 @@ classdef EquilibriumSolver < handle
             %
             % Args:
             %     obj (EquilibriumSolver): EquilibriumSolver object
-            %     mix (Mixture): Mixture considering a thermochemical frozen gas
+            %     mix2 (Mixture): Mixture considering a thermochemical frozen gas
             %
             % Returns:
-            %     mix (Mixture): Mixture at chemical equilibrium for the given thermochemical transformation
+            %     mix2 (Mixture): Mixture at chemical equilibrium for the given thermochemical transformation
             %
-            % Example:
-            %     * mix = equilibrate(EquilibriumSolver(), mix)
+            % Examples:
+            %     * mix2 = equilibrate(EquilibriumSolver(), mix2)
             
             % Initialization
             mix1 = mix2.copy();
@@ -286,9 +286,15 @@ classdef EquilibriumSolver < handle
             % Check if calculations are for a calorically imperfect gas with frozen chemistry
             if obj.FLAG_FROZEN
                 % Computed by default when defining the mixture (Mixture)
-
+                
+                % Miscellaneous
+                mix2.FLAG_REACTION = false;
+                temp = mix2.equivalenceRatio;
+                mix2.equivalenceRatio = [];
                 % Update thermodynamic properties assuming a thermally perfect gas
                 setTemperature(mix2, T);
+                % Recover original value
+                mix2.equivalenceRatio = temp;
                 return
             end
 
@@ -850,9 +856,10 @@ classdef EquilibriumSolver < handle
                 % Compute f(x) / f2(x)
                 gpoint_relative = gpoint / (mix2.(field));
         
-                if strcmpi(field, 's')
-                    gpoint = gpoint * 1e3;
-                end
+                % if strcmpi(field, 's')
+                %     return
+                %     gpoint = gpoint * 1e3;
+                % end
         
             catch
                 gpoint = NaN;

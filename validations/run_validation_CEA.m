@@ -34,10 +34,12 @@ function run_validation_CEA
     run_validation_DET_CEA_4;
      
     % ROCKET:
-    % run_validation_ROCKET_CEA_17;
-    % run_validation_ROCKET_CEA_18;
-    % run_validation_ROCKET_CEA_20;
-    % run_validation_ROCKET_CEA_21;
-    % run_validation_ROCKET_CEA_22;
-    % run_validation_ROCKET_CEA_23;
+    run_validation_ROCKET_CEA_17;
+    run_validation_ROCKET_CEA_18;
+    run_validation_ROCKET_CEA_20;
+    run_validation_ROCKET_CEA_21;
+    run_validation_ROCKET_CEA_22;
+    run_validation_ROCKET_CEA_23;
+    run_validation_ROCKET_CEA_24;
+    run_validation_ROCKET_CEA_25;
 end

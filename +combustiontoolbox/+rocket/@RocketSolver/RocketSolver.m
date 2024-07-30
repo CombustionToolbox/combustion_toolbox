@@ -20,13 +20,18 @@ classdef RocketSolver
             % Constructor
             defaultProblemType = 'ROCKET_IAC';
             defaultEquilibriumSolver = combustiontoolbox.equilibrium.EquilibriumSolver();
+            defaultFLAG_TCHEM_FROZEN = false;
+            defaultFLAG_FROZEN = false;
 
             % Parse input arguments
             p = inputParser;
             addOptional(p, 'problemType', defaultProblemType, @(x) ischar(x) && any(strcmpi(x, {'ROCKET_IAC', 'ROCKET_FAC'})));
             addParameter(p, 'equilibriumSolver', defaultEquilibriumSolver);
+            addParameter(p, 'FLAG_TCHEM_FROZEN', defaultFLAG_TCHEM_FROZEN, @(x) islogical(x))
+            addParameter(p, 'FLAG_FROZEN', defaultFLAG_FROZEN, @(x) islogical(x));
             addParameter(p, 'FLAG_RESULTS', obj.FLAG_RESULTS, @(x) islogical(x));
             addParameter(p, 'FLAG_TIME', obj.FLAG_TIME, @(x) islogical(x));
+            addParameter(p, 'tolMoles', defaultEquilibriumSolver.tolMoles, @(x) isnumeric(x) && x > 0);
             parse(p, varargin{:});
 
             % Set properties
@@ -34,6 +39,12 @@ classdef RocketSolver
             obj.equilibriumSolver = p.Results.equilibriumSolver;
             obj.FLAG_RESULTS = p.Results.FLAG_RESULTS;
             obj.FLAG_TIME = p.Results.FLAG_TIME;
+            
+            if sum(contains(p.UsingDefaults, 'equilibriumSolver'))
+                obj.equilibriumSolver.FLAG_TCHEM_FROZEN = p.Results.FLAG_TCHEM_FROZEN;
+                obj.equilibriumSolver.FLAG_FROZEN = p.Results.FLAG_FROZEN;
+                obj.equilibriumSolver.tolMoles = p.Results.tolMoles;
+            end
 
             % Miscellaneous
             obj.equilibriumSolver.FLAG_RESULTS = false;
@@ -46,12 +57,17 @@ classdef RocketSolver
             switch upper(obj.problemType)
                 case 'ROCKET_IAC'
                     % Solve rocket problem with Infinite Area Chamber (IAC) model
-                    [mix1, mix2_c, mix3, mix4] = rocketIAC(obj, mix1);
+                    if nargin > 2
+                        [mix1, mix2_c, mix3, mix4] = rocketIAC(obj, mix1, varargin{:});
+                    else
+                        [mix1, mix2_c, mix3, mix4] = rocketIAC(obj, mix1);
+                    end
 
                     % Set problemType
                     mix1.problemType = obj.problemType;
                     mix2_c.problemType = obj.problemType;
                     mix3.problemType = obj.problemType;
+                    mix4.problemType = obj.problemType;
 
                     % Print results
                     if obj.FLAG_RESULTS
@@ -62,13 +78,18 @@ classdef RocketSolver
                     varargout = {mix1, mix2_c, mix3, mix4};
                 case 'ROCKET_FAC'
                     % Solve rocket problem considering an Finite Area Chamber (FAC) model
-                    [mix1, mix2_inj, mix2_c, mix3, mix4] = rocketFAC(obj, mix1);
-
+                    if nargin > 2
+                        [mix1, mix2_inj, mix2_c, mix3, mix4] = rocketFAC(obj, mix1, varargin{:});
+                    else
+                        [mix1, mix2_inj, mix2_c, mix3, mix4] = rocketFAC(obj, mix1);
+                    end
+                    
                     % Set problemType
                     mix1.problemType = obj.problemType;
                     mix2_inj.problemType = obj.problemType;
                     mix2_c.problemType = obj.problemType;
                     mix3.problemType = obj.problemType;
+                    mix4.problemType = obj.problemType;
 
                     % Print results
                     if obj.FLAG_RESULTS
@@ -133,7 +154,7 @@ classdef RocketSolver
     end
 
     methods (Access = private)
-        mix = computeChamberIAC(obj, mix)
+        mix = computeChamberIAC(obj, mix, mix_guess)
         mix3 = computeThroatIAC(obj, mix2, mix3)
         mix4 = computeExit(obj, mix2, mix3, mix4, areaRatio, varargin)
         [mix3, varargout] = rocketParameters(obj, mix2, mix3, varargin)

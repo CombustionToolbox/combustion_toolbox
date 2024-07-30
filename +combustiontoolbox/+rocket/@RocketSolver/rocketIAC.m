@@ -28,29 +28,28 @@ function [mix1, mix2_c, mix3, mix4] = rocketIAC(obj, mix1, varargin)
     %     * [mix1, mix2_c, mix3, mix4] = rocketIAC(obj, mix1, mix2_c, mix3)
     %     * [mix1, mix2_c, mix3, mix4] = rocketIAC(obj, mix1, mix2_c, mix3, mix4)
     
-
+    % Initialization
+    mix2_c = copy(mix1);
+    
     % Unpack additional input parameters
-    if nargin > 2
-        mix2_c = copy(varargin{1});
-        setProperties(mix2_c, 'temperature', mix1.T, 'pressure', mix1.p);
-    else
-        mix2_c = copy(mix1);
-    end
-
-    if nargin > 3
-        mix3 = copy(varargin{2});
-    else
-        mix3 = [];
-    end
-
-    if nargin > 4
-        mix4 = copy(varargin{3});
-    else
-        mix4 = [];
+    switch nargin
+        case 3
+            mix2_c_guess = varargin{1};
+        case 4
+            mix2_c_guess = varargin{1};
+            mix3 = copy(varargin{2});
+        case 5
+            mix2_c_guess = varargin{1};
+            mix3 = copy(varargin{2});
+            mix4 = copy(varargin{3});
+        otherwise
+            mix2_c_guess = [];
+            mix3 = [];
+            mix4 = [];
     end
 
     % Compute chemical equilibria at different stations of the rocket
-    mix2_c = computeChamberIAC(obj, mix2_c);
+    mix2_c = computeChamberIAC(obj, mix2_c, mix2_c_guess);
     mix3 = computeThroatIAC(obj, mix2_c, mix3);
     mix4 = computeExit(obj, mix2_c, mix3, mix4, mix1.areaRatio);
     

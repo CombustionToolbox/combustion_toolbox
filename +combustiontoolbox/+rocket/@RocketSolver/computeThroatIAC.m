@@ -1,4 +1,4 @@
-function mix3 = computeThroatIAC(obj, mix2, mix3)
+function mix3 = computeThroatIAC(obj, mix2, mix3_guess)
     % Compute thermochemical composition for the Infinite-Area-Chamber (IAC) model
     %
     % This method is based on the method outlined in Gordon, S., & McBride,
@@ -7,44 +7,51 @@ function mix3 = computeThroatIAC(obj, mix2, mix3)
     % Args:
     %     obj (RocketSolver): RocketSolver object
     %     mix2 (Mixture): Properties of the mixture at the outlet of the chamber
-    %     mix3 (Mixture): Properties of the mixture at the throat (previous calculation)
+    %     mix3_guess (Mixture): Properties of the mixture at the throat (previous calculation)
     %
     % Returns:
     %     mix3 (Mixture): Properties of the mixture at the throat
     %
-    % Example:
-    %     mix3 = computeThroatIAC(RocketSolver(), mix2, mix3)
+    % Examples:
+    %     * mix3 = computeThroatIAC(RocketSolver(), mix2, mix3_guess)
+    %     * mix3 = computeThroatIAC(RocketSolver(), mix2, [])
 
     % Definitions
     obj.equilibriumSolver.problemType = 'SP';
-    
-    % Check input
-    if isempty(mix3)
-        mix3 = copy(mix2);
-    end
+
+    % Initialize mixture
+    mix3 = copy(mix2);
 
     % Compute pressure guess [bar] for Infinite-Area-Chamber (IAC)
-    pressure = guess_pressure_IAC_model(mix2);
-    mix3.p = pressure;
+    mix3.p = guess_pressure_IAC_model(mix2);
 
     % Initialization
     STOP = 1; it = 0;
     
     % Loop
     while STOP > obj.tol0 && it < obj.itMax
+        % Update iteration
         it = it + 1;
-        solve(obj.equilibriumSolver, mix3, mix3);
+
+        % Solve chemical equilibrium (SP)
+        solve(obj.equilibriumSolver, mix3, mix3_guess);
+
+        % Compute velocity at the throat
         mix3.u = compute_velocity(mix2, mix3);
         mix3.mach = mix3.u / mix3.sound;
-        pressure = compute_pressure(mix3);
-        mix3.p = pressure;
+
+        % Compute new estimate
+        mix3.p = compute_pressure(mix3);
+
+        % Compute STOP criteria
         STOP = compute_STOP(mix3);
+
+        % Update guess
+        mix3_guess = mix3;
     end
 
     % Assign values
-    mix3.p = pressure; % [bar]
     mix3.uShock = mix3.u; % [m/s]
-    mix3.mach = mix3.u / mix3.sound; % [-]
     mix3.areaRatio = 1; % [-]
     mix3.problemType = mix2.problemType;
 end

@@ -301,15 +301,27 @@ classdef Mixture < handle & matlab.mixin.Copyable
             
             % Import packages
             import combustiontoolbox.utils.findIndex
-
+            import combustiontoolbox.common.Units
             % Definitions
             quantityDefault = 1;
-            unitsDefault = 'mol';
+            unitsDefault = 'mol'; % mol or weightPercentage
 
             % 
             if nargin > 3
                 type = varargin{1};
                 quantity = varargin{2};
+
+                if nargin > 4
+                    unitsDefault = varargin{3};
+                    
+                    switch lower(unitsDefault)
+                        case 'mol'
+                            % Nothing to do
+                        case 'weightpercentage'
+                            quantity = Units.convertWeightPercentage2moles(listSpecies, quantity, obj.chemicalSystem.database);
+                    end
+
+                end
 
                 switch lower(type)
                     case 'fuel'

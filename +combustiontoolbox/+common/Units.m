@@ -43,30 +43,30 @@ classdef Units < handle
             value_out = value_in * conversion_factor;
         end
 
-        function moles = convertWeightPercentage2moles(listSpecies, weight_percentage, DB)
+        function moles = convertWeightPercentage2moles(listSpecies, weightPercentage, database)
             % Convert weight percentage (wt%) to moles
             %
             % Args:
             %     listSpecies (cell): List of species
             %     weight_percentage (float): Weight percentage of the species [%]
-            %     DB (struct): Database with custom thermodynamic polynomials functions generated from NASAs 9 polynomials fits
+            %     database (Database): Database with custom thermodynamic polynomials functions generated from NASAs 9 polynomials fits
             %
             % Returns:
             %     moles (float): Number of moles [mol]
             %
             % Example:
-            %     moles = Units.WeightPercentage2moles({'H2O', 'CO2'}, [50, 50], DB)
+            %     moles = Units.WeightPercentage2moles({'H2O', 'CO2'}, [50, 50], database)
         
             % Check if value is a cell
             if ~iscell(listSpecies)
                 listSpecies = {listSpecies};
             end
         
-            % Get molecular weight of the species
-            W = set_prop_DB(listSpecies, 'mm', DB);
+            % Get molecular weight [g] of the species
+            W = getProperty(database, listSpecies, 'W') * 1e3;
             
             % Convert weight percentage (wt%) to moles
-            moles = weight_percentage ./ W;
+            moles = weightPercentage ./ W;
         end
 
     end

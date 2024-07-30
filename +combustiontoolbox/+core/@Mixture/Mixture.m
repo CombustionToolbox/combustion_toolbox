@@ -590,7 +590,7 @@ classdef Mixture < handle & matlab.mixin.Copyable
                 obj.rangeName = properties{FLAG_VECTOR_FIRST};
                 
                 % Check rangeName to match Mixture's property
-                if any(~strcmpi({'T', 'p', 'vspecific', 'phi', 'u', 'mach', 'beta', 'theta', 'drive_factor', 'aratio'}, obj.rangeName))
+                if any(~strcmpi({'T', 'p', 'vspecific', 'phi', 'u', 'mach', 'beta', 'theta', 'drive_factor', 'aratio', 'aratio_c'}, obj.rangeName))
 
                     switch lower(obj.rangeName)
                         case {'temperature'}
@@ -613,6 +613,8 @@ classdef Mixture < handle & matlab.mixin.Copyable
                             obj.rangeName = 'driveFactor';
                         case {'aratio'}
                             obj.rangeName = 'areaRatio';
+                        case {'aratio_c'}
+                            obj.rangeName = 'areaRatioChamber';
                     end
 
                 end
@@ -658,6 +660,8 @@ classdef Mixture < handle & matlab.mixin.Copyable
                             objArray(j).driveFactor = values{i}(j);
                         case {'arearatio', 'aratio'}
                             objArray(j).areaRatio = values{i}(j);
+                        case {'arearatiochamber', 'aratio_c'}
+                            objArray(j).areaRatioChamber = values{i}(j);
                         otherwise
                             error('Property not found');
                     end

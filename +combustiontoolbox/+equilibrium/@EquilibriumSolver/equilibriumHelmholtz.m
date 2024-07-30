@@ -383,9 +383,7 @@ end
 
 function J11 = update_matrix_J11(A0_T, N, indexGas, NE)
     % Compute submatrix J11
-    for k = NE:-1:1
-        J11(:, k) = sum(A0_T(k, indexGas) .* A0_T(:, indexGas) .* N(indexGas)', 2);
-    end
+    J11 = A0_T(:, indexGas) * (A0_T(:, indexGas) .* N(indexGas)')';
 end
 
 function J12 = update_matrix_J12(A0_T, indexCondensed)

@@ -121,5 +121,5 @@ function [mix1, mix2_inj, mix2_c, mix3, mix4] = rocketFAC(obj, mix1, varargin)
     mix4 = rocketExit(obj, mix2_c, mix3, mix4_guess, areaRatio, mix2_inj);
 
     % Compute rocket parameters
-    [mix3, mix4] = rocketParameters(obj, mix2_c, mix3, mix4);
+    [mix3, mix4] = obj.rocketParameters(mix2_c, mix3, mix4);
 end

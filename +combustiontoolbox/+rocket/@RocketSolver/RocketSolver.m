@@ -110,6 +110,9 @@ classdef RocketSolver
             % Definitions
             n = length(mix1Array);
             problem = obj.problemType;
+            
+            % Timer
+            obj.time = tic;
 
             % Initialization
             mix2Array = mix1Array;
@@ -149,6 +152,24 @@ classdef RocketSolver
 
             end
 
+            % Timer
+            obj.time = toc(obj.time);
+
+            % Print elapsed time
+            printTime(obj);
+        end
+
+        function printTime(obj)
+            % Print execution time
+            %
+            % Args:
+            %     obj (EquilibriumSolver): Object of the class EquilibriumSolver
+            
+            if ~obj.FLAG_TIME
+                return
+            end
+
+            fprintf('\nElapsed time is %.5f seconds\n', obj.time);
         end
 
     end
@@ -157,12 +178,15 @@ classdef RocketSolver
         mix = rocketChamberIAC(obj, mix, mix_guess)
         mix3 = rocketThroatIAC(obj, mix2, mix3)
         mix4 = rocketExit(obj, mix2, mix3, mix4, areaRatio, varargin)
-        [mix3, varargout] = rocketParameters(obj, mix2, mix3, varargin)
+        [mix1, mix2_c, mix3, mix4] = rocketIAC(obj, mix1, varargin)
+        [mix1, mix2_inj, mix2_c, mix3, mix4] = rocketFAC(obj, mix1, varargin)
     end
     
     methods (Static)
         pressure = rocketGuessThroatIAC(mix)
         log_Pe = rocketGuessExitIAC(mix2, mix3, areaRatio, FLAG_SUBSONIC)
+        pressure_inf = rocketGuessInjectorFAC(pressure_inj, areaRatioChamber)
+        [mix3, varargout] = rocketParameters(mix2, mix3, varargin)
     end
 
 end

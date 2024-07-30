@@ -45,11 +45,9 @@ function run_validation_ROCKET_CEA_25
     
     % Initialize solver
     solver = RocketSolver('problemType', 'ROCKET_IAC', 'FLAG_FROZEN', true, 'tolMoles', tolMoles, 'FLAG_RESULTS', false);
-    
-    tic
+
     % Solve problem
     [~, ~, ~, mixArray4] = solver.solveArray(mixArray1);
-    toc
     
     if FLAG_BENCHMARK
         return

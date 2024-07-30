@@ -9,13 +9,17 @@ function value = interpreterLabel(property, varargin)
     %     property (char): Property name
     %
     % Optional Args:
-    %     type (char): Type of label to return. Can be 'short', 'medium' or 'long' (default: medium)
+    %     * type (char): Type of label to return. Can be 'short', 'medium' or 'long' (default: medium)
+    %     * FLAG_BASIS (bool): Flag indicating label with basis, e.g., kg or mol (default: true)
+    %     * basis (char): Specific basis (default: kg)
     %
     % Returns:
     %     value (char): Corresponding name of the property
 
     % Default values
     type = 'medium';
+    FLAG_BASIS = true;
+    basis = 'kg';
 
     % Check if property is a cell variable
     if iscell(property)
@@ -35,12 +39,23 @@ function value = interpreterLabel(property, varargin)
     end
     
     % Check additional inputs
-    if nargin > 1
-        type = varargin{1};
+    for i = 1:2:nargin-1
+
+        switch nargin-1
+            case 1
+                type = varargin{1};
+            case 2
+                FLAG_BASIS = varargin{2};
+            case 3
+                basis = check_basis(varargin{3});
+        end
+
     end
 
+    
+
     % Get labels
-    [property_name, property_latex, property_unit] = property_names(property, type);
+    [property_name, property_latex, property_unit] = property_names(property, type, FLAG_BASIS, basis);
 
     % Convert property definition to its name
     switch lower(type)
@@ -64,7 +79,21 @@ function value = interpreterLabel(property, varargin)
 end
 
 % SUB-PASS FUNCTIONS
-function [property_name, property_latex, property_unit] = property_names(property, type)
+function basis = check_basis(basis)
+    % Check basis
+
+    switch lower(basis)
+        case 'mi'
+            basis = 'kg';
+        case 'mw'
+            basis = 'mol';
+        otherwise
+            error('Not known basis.');
+    end
+
+end
+
+function [property_name, property_latex, property_unit] = property_names(property, type, FLAG_BASIS, basis)
 
     switch lower(property)
         case {'phi', 'equivalenceratio'}
@@ -86,27 +115,63 @@ function [property_name, property_latex, property_unit] = property_names(propert
         case 'h'
             property_name = 'Enthalpy';
             property_latex = 'h';
-            property_unit = '[kJ/kg]';
+
+            if FLAG_BASIS
+                property_unit = sprintf('[kJ/%s]', basis);
+            else
+                property_unit = '[kJ]';
+            end
+
         case 'e'
             property_name = 'Internal energy';
             property_latex = 'e';
-            property_unit = '[kJ/kg]';
+
+            if FLAG_BASIS
+                property_unit = sprintf('[kJ/%s]', basis);
+            else
+                property_unit = '[kJ]';
+            end
+
         case 'g'
             property_name = 'Gibbs energy';
             property_latex = 'g';
-            property_unit = '[kJ/kg]';
+            
+            if FLAG_BASIS
+                property_unit = sprintf('[kJ/%s]', basis);
+            else
+                property_unit = '[kJ]';
+            end
+
         case 's'
             property_name = 'Entropy';
             property_latex = 's';
-            property_unit = '[kJ/kg-K]';
+            
+            if FLAG_BASIS
+                property_unit = sprintf('[kJ/%s-K]', basis);
+            else
+                property_unit = '[kJ/K]';
+            end
+
         case 's0'
             property_name = 'Entropy frozen';
             property_latex = 's_0';
-            property_unit = '[kJ/kg-K]';
+            
+            if FLAG_BASIS
+                property_unit = sprintf('[kJ/%s-K]', basis);
+            else
+                property_unit = '[kJ/K]';
+            end
+
         case 'ds'
             property_name = 'Entropy of mixing';
             property_latex = '\Delta s';
-            property_unit = '[kJ/kg-K]';
+            
+            if FLAG_BASIS
+                property_unit = sprintf('[kJ/%s-K]', basis);
+            else
+                property_unit = '[kJ/K]';
+            end
+
         case 'w'
             property_name = 'Molecular weight';
             property_latex = 'W';
@@ -114,27 +179,63 @@ function [property_name, property_latex, property_unit] = property_names(propert
         case 'cp'
             property_name = 'Specific heat pressure';
             property_latex = 'c_p';
-            property_unit = '[kJ/kg-K]';
+
+            if FLAG_BASIS
+                property_unit = sprintf('[kJ/%s-K]', basis);
+            else
+                property_unit = '[kJ/K]';
+            end
+
         case 'cp_f'
             property_name = 'Specific heat pressure frozen';
             property_latex = 'c_{p,f}';
-            property_unit = '[kJ/kg-K]';
+
+            if FLAG_BASIS
+                property_unit = sprintf('[kJ/%s-K]', basis);
+            else
+                property_unit = '[kJ/K]';
+            end
+
         case 'cp_r'
             property_name = 'Specific heat pressure reaction';
             property_latex = 'c_{p,r}';
-            property_unit = '[kJ/kg-K]';
+
+            if FLAG_BASIS
+                property_unit = sprintf('[kJ/%s-K]', basis);
+            else
+                property_unit = '[kJ/K]';
+            end
+
         case 'cv'
             property_name = 'Specific heat volume';
             property_latex = 'c_v';
-            property_unit = '[kJ/kg-K]';
+
+            if FLAG_BASIS
+                property_unit = sprintf('[kJ/%s-K]', basis);
+            else
+                property_unit = '[kJ/K]';
+            end
+
         case 'cv_f'
             property_name = 'Specific heat volume frozen';
             property_latex = 'c_{v,f}';
-            property_unit = '[kJ/kg-K]';
+
+            if FLAG_BASIS
+                property_unit = sprintf('[kJ/%s-K]', basis);
+            else
+                property_unit = '[kJ/K]';
+            end
+
         case 'cv_r'
             property_name = 'Specific heat volume reaction';
             property_latex = 'c_{v,r}';
-            property_unit = '[kJ/kg-K]';
+
+            if FLAG_BASIS
+                property_unit = sprintf('[kJ/%s-K]', basis);
+            else
+                property_unit = '[kJ/K]';
+            end
+            
         case 'gamma'
             property_name = 'Specific heat ratio';
             property_latex = '\gamma';
@@ -206,19 +307,43 @@ function [property_name, property_latex, property_unit] = property_names(propert
         case 'hf'
             property_name = 'Enthalpy of formation';
             property_latex = 'h_f';
-            property_unit = '[kJ/kg]';
+            
+            if FLAG_BASIS
+                property_unit = sprintf('[kJ/%s]', basis);
+            else
+                property_unit = '[kJ]';
+            end
+
         case 'dht'
             property_name = 'Enthalpy thermal';
             property_latex = '\Delta h_T';
-            property_unit = '[kJ/kg]';
+            
+            if FLAG_BASIS
+                property_unit = sprintf('[kJ/%s]', basis);
+            else
+                property_unit = '[kJ]';
+            end
+
         case 'ef'
             property_name = 'Internal energy of formation';
             property_latex = 'e_f';
-            property_unit = '[kJ/kg]';
+            
+            if FLAG_BASIS
+                property_unit = sprintf('[kJ/%s]', basis);
+            else
+                property_unit = '[kJ]';
+            end
+
         case 'det'
             property_name = 'Internal energy thermal';
             property_latex = '\Delta e_T';
-            property_unit = '[kJ/kg]';
+            
+            if FLAG_BASIS
+                property_unit = sprintf('[kJ/%s]', basis);
+            else
+                property_unit = '[kJ]';
+            end
+
         case 'xi'
             property_name = 'Molar fractions';
             property_latex = 'X_j';
@@ -283,11 +408,11 @@ function [property_name, property_latex, property_unit] = property_names(propert
             property_name = 'Pressure $\times$ Volume';
             property_latex = 'pv';
             property_unit = '[bar-m$^3$]';
-        case 'aratio'
+        case {'aratio', 'arearatio'}
             property_name = 'Area exit / throat';
             property_latex = 'A_{\rm ratio} = A_e/A_t';
             property_unit = '';
-        case 'aratio_c'
+        case {'aratio_c', 'arearatiochamber'}
             property_name = 'Area combustor / throat';
             property_latex = 'A_{\rm ratio, c} = A_c/A_t';
             property_unit = '';

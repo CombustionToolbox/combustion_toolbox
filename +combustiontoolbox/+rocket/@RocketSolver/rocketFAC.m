@@ -112,6 +112,12 @@ function [mix1, mix2_inj, mix2_c, mix3, mix4] = rocketFAC(obj, mix1, varargin)
     
     % Debug
     % debug_plot_error(it, aux_STOP, aux_lambda);
+    
+    % Initial velocity of the gas
+    mix1.u = 0; mix1.uShock = 0; mix1.mach = 0;
+
+    % Velocity at the injector of the chamber
+    mix2_inj.u = 0; mix2_inj.uShock = 0; mix2_inj.mach = 0;
 
     % Assign values
     mix2_c.areaRatioChamber = areaRatioChamber; % [-]
@@ -121,5 +127,5 @@ function [mix1, mix2_inj, mix2_c, mix3, mix4] = rocketFAC(obj, mix1, varargin)
     mix4 = rocketExit(obj, mix2_c, mix3, mix4_guess, areaRatio, mix2_inj);
 
     % Compute rocket parameters
-    [mix3, mix4] = obj.rocketParameters(mix2_c, mix3, mix4);
+    [mix3, mix2_c, mix4] = obj.rocketParameters(mix2_inj, mix3, mix2_c, mix4);
 end

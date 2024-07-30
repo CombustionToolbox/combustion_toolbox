@@ -48,19 +48,23 @@ function tab = simplexMethod(A, b, c)
     % Definitions
     [m, n] = size(A);
     tab = [A b; c' 0];
-    rows_to_update0 = true(1, m + 1);
     tol = 1e-4;
     
     % Initialization
-    min_val = -1; % If min_val >= 0 we have found the optimal solution
     it = 0;
     
     % Loop
-    while min_val < -tol
+    while true
         % Update iteration number
         it = it + 1;
+        
         % Find the pivot column (most negative value in the last row)
         [min_val, pivot_col] = min(tab(end, 1:n)); 
+        
+        % Check optimal solution
+        if min_val >= -tol
+            break
+        end
 
         % Find the pivot row using the minimum ratio test
         pivot_col_vals = tab(1:m, pivot_col);
@@ -79,7 +83,7 @@ function tab = simplexMethod(A, b, c)
 
         % Update the rows
         if n < 100
-            rows_to_update = rows_to_update0;
+            rows_to_update = true(1, m + 1);
             rows_to_update(pivot_row) = false;
             tab(rows_to_update, :) = tab(rows_to_update, :) - tab(rows_to_update, pivot_col) * tab(pivot_row, :);
             continue

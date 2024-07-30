@@ -42,8 +42,8 @@ function [ax, dline] = plotFigure(x_field, x_var, y_field, y_var, varargin)
     FLAG_BASIS = false;
     FLAG_COLOR_NEW = false;
     config = PlotConfig;
-    config.labelx = interpreterLabel(x_field, config.label_type);
-    config.labely = interpreterLabel(y_field, config.label_type);
+    config.labelx = interpreterLabel(x_field, config.label_type, false);
+    config.labely = interpreterLabel(y_field, config.label_type, false);
     ax = [];
 
     % Get x and y values
@@ -61,8 +61,8 @@ function [ax, dline] = plotFigure(x_field, x_var, y_field, y_var, varargin)
         switch lower(varargin{i})
             case 'config'
                 config = varargin{i + 1};
-                config.labelx = interpreterLabel(x_field, config.label_type);
-                config.labely = interpreterLabel(y_field, config.label_type);
+                config.labelx = interpreterLabel(x_field, config.label_type, false);
+                config.labely = interpreterLabel(y_field, config.label_type, false);
             case {'leg', 'legend'}
                 config.legend_name = varargin{i + 1};
             case {'legend_location'}
@@ -122,8 +122,10 @@ function [ax, dline] = plotFigure(x_field, x_var, y_field, y_var, varargin)
     % Check if property has to be divided by the basis (kg or mol)
     if FLAG_BASIS
         y_basis = cell2vector(y_var, basis);
-
         y = y ./ y_basis;
+
+        config.labelx = interpreterLabel(x_field, config.label_type, true, basis);
+        config.labely = interpreterLabel(y_field, config.label_type, true, basis);
     end
 
     % Plot

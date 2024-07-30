@@ -53,6 +53,7 @@ classdef ChemicalSystem < handle & matlab.mixin.Copyable
     end
 
     properties (Hidden)
+        database
         propertiesMatrixFuel
         propertiesMatrixOxidizer
         listProducts
@@ -63,7 +64,6 @@ classdef ChemicalSystem < handle & matlab.mixin.Copyable
     
     properties (Access = private, Hidden)
         listSpeciesFormula
-        database
         FLAG_INITIALIZE = true
     end
 

@@ -7,10 +7,10 @@ function vector = cell2vector(value, varargin)
     %     value (cell or struct): Data of the mixture, conditions, and databases
     %
     % Optional Args:
-    %     field (str): Fieldname of the given value (struct)
+    %     field (char): Fieldname of the given value (only for struct or objects)
     %
     % Returns:
-    %     vector (any): Vector with the values of the individual cell/fieldname (struct)
+    %     vector (any): Vector with the values of the individual cell/fieldname (only for struct or objects)
 
     if nargin > 1
         field = varargin{1};

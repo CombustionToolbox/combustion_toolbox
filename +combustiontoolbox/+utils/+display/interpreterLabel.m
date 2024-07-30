@@ -241,7 +241,7 @@ function [property_name, property_latex, property_unit] = property_names(propert
             property_latex = '\gamma';
             property_unit = '';
         case 'gamma_s'
-            property_name = 'Adibatic index';
+            property_name = 'Adiabatic index';
             property_latex = '\gamma_s';
             property_unit = '';
         case {'sound', 'a'}

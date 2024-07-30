@@ -51,7 +51,8 @@ solver = RocketSolver('problemType', 'ROCKET_FAC');
 % Plot properties
 ax1 = plotProperties(repmat({'equivalenceRatio'}, 1, 12), mixArray4, {'T', 'p', 'h', 'e', 'g', 'cp', 's', 'gamma_s', 'sound', 'u', 'I_sp', 'I_vac'}, mixArray4, 'basis', {[], [], 'mi', 'mi', 'mi', 'mi', 'mi', [], [], [], [], []});
 ax1 = plotProperties(repmat({'equivalenceRatio'}, 1, 12), mixArray3, {'T', 'p', 'h', 'e', 'g', 'cp', 's', 'gamma_s', 'sound', 'u', 'I_sp', 'I_vac'}, mixArray3, 'basis', {[], [], 'mi', 'mi', 'mi', 'mi', 'mi', [], [], [], [], []}, 'ax', ax1);
-ax1 = plotProperties(repmat({'equivalenceRatio'}, 1, 10), mixArray2_inj, {'T', 'p', 'h', 'e', 'g', 'cp', 's', 'gamma_s', 'sound', 'u'}, mixArray2_inj, 'basis', {[], [], 'mi', 'mi', 'mi', 'mi', 'mi', [], [], []}, 'ax', ax1);
+ax1 = plotProperties(repmat({'equivalenceRatio'}, 1, 12), mixArray2_c, {'T', 'p', 'h', 'e', 'g', 'cp', 's', 'gamma_s', 'sound', 'u', 'I_sp', 'I_vac'}, mixArray2_c, 'basis', {[], [], 'mi', 'mi', 'mi', 'mi', 'mi', [], [], [], [], []}, 'ax', ax1);
+ax1 = plotProperties(repmat({'equivalenceRatio'}, 1, 10), mixArray2_inj, {'T', 'p', 'h', 'e', 'g', 'cp', 's', 'gamma_s', 'sound'}, mixArray2_inj, 'basis', {[], [], 'mi', 'mi', 'mi', 'mi', 'mi', [], [], []}, 'ax', ax1);
 leg = legend(ax1.Children(end), {'Exit', 'Throat', 'Chamber', 'Injector'}, 'Interpreter', 'latex', 'FontSize', ax1.Children(end).FontSize);
 
 % Plot molar fractions

@@ -130,6 +130,28 @@ classdef (Abstract) Database < handle
             uisave({'DB_master'}, 'DB_master.mat');
         end
 
+        function value = getProperty(obj, listSpecies, property)
+            % Gets the vector of the defined property for the given
+            % set of species
+            %
+            % Args:
+            %     obj (Database): Database with custom thermodynamic polynomials functions generated from NASAs 9 polynomials fits
+            %     listSpecies (cell): List of species
+            %     property (char): Property name
+            %     
+            %
+            % Returns:
+            %     value (float): Property vector
+            %
+            % Example:
+            %     value = getProperty(obj, {'H2O', 'CO2'}, 'hf')
+        
+            for i = length(listSpecies):-1:1
+                value(1, i) = obj.species.(listSpecies{i}).(property);
+            end
+            
+        end
+
     end
 
     methods (Access = protected)

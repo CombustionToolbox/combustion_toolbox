@@ -329,6 +329,9 @@ classdef DetonationSolver < handle
             % Definitions
             n = length(mix1Array);
             problem = obj.problemType;
+            
+            % Timer
+            obj.time = tic;
 
             % Initialization
             mix2Array = mix1Array;
@@ -418,8 +421,28 @@ classdef DetonationSolver < handle
                     varargout = {mix1Array, mix2Array, mix3Array, mix4Array};
             end
 
+            % Timer
+            obj.time = toc(obj.time);
+
+            % Print elapsed time
+            printTime(obj);
         end
 
+
+            
+
+        function printTime(obj)
+            % Print execution time
+            %
+            % Args:
+            %     obj (EquilibriumSolver): Object of the class EquilibriumSolver
+            
+            if ~obj.FLAG_TIME
+                return
+            end
+
+            fprintf('\nElapsed time is %.5f seconds\n', obj.time);
+        end
     end
 
     methods (Access = private, Static)

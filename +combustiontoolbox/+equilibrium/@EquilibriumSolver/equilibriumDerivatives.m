@@ -77,8 +77,8 @@ function [dNi_T, dN_T] = equilibrium_dT(J, N0, A0, NE, indexGas, indexCondensed,
     % NESTED FUNCTION
     function b = update_vector_b(A0, N0, indexGas, indexCondensed, H0RT)
         % Compute vector b
-        b = -[(sum(A0(indexGas, :) .* N0(indexGas, 1) .* H0RT(indexGas)))';...
-              H0RT(indexCondensed); sum(N0(indexGas, 1) .* H0RT(indexGas))];
+        b = -[(sum(A0(indexGas, :) .* N0(indexGas) .* H0RT(indexGas)))';...
+              H0RT(indexCondensed); sum(N0(indexGas) .* H0RT(indexGas))];
     end
 
 end
@@ -130,7 +130,7 @@ function [dNi_p, dN_p] = equilibrium_dp(J, N0, A0, NE, indexGas, indexCondensed,
     function b = update_vector_b(J, N0, ind_nswt)
         % Compute vector b
         b = J(:, end);
-        b(end) = sum(N0(ind_nswt, 1));
+        b(end) = sum(N0(ind_nswt));
     end
 
 end

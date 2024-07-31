@@ -69,13 +69,13 @@ function [N, STOP] = recomputeIons(N, A0, ind_E, indexGas, indexIons, delta_ions
         % Update iteration
         it = it + 1;
         % Apply correction
-        N(indexIons, 1) = N(indexIons, 1) .* exp(A0_ions * delta_ions);
+        N(indexIons) = N(indexIons) .* exp(A0_ions * delta_ions);
         % Compute correction of the Lagrangian multiplier for ions divided by RT
         [delta_ions, ~] = ionsFactor(N, A0, ind_E, indexGas, indexIons);
         STOP = abs(delta_ions);
     end   
     
-    Xi_ions = N(indexIons, 1) / sum(N(:, 1));
+    Xi_ions = N(indexIons) / sum(N);
 
     % Set error to zero if molar fraction of ionized species are below tolerance
     if ~any(Xi_ions > TOL)
@@ -108,7 +108,7 @@ function [delta, deltaN3] = ionsFactor(N, A0, ind_E, indexGas, indexIons)
     end
     
     % Compute relaxation factor for charge balance
-    delta = -sum(A0(indexGas, ind_E) .* N(indexGas, 1))/ ...
-             sum(A0(indexGas, ind_E).^2 .* N(indexGas, 1));
-    deltaN3 = abs(sum(N(indexGas, 1) .* A0(indexGas, ind_E)));
+    delta = -sum(A0(indexGas, ind_E) .* N(indexGas))/ ...
+             sum(A0(indexGas, ind_E).^2 .* N(indexGas));
+    deltaN3 = abs(sum(N(indexGas) .* A0(indexGas, ind_E)));
 end

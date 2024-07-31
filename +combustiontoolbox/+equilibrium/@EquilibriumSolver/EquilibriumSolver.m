@@ -267,7 +267,7 @@ classdef EquilibriumSolver < handle
     
     methods (Access = private, Static)
         [N, NP] = equilibriumGuess(N, NP, A0, muRT, b0, index, indexGas, indexIons, NG, molesGuess)
-        [dNi_T, dN_T, dNi_p, dN_p] = equilibriumDerivatives(J, N0, A0, NE, indexGas, indexCondensed, indexElements, H0RT)
+        [dNi_T, dN_T, dNi_p, dN_p] = equilibriumDerivatives(J, N, A0, NE, indexGas, indexCondensed, indexElements, H0RT)
         [indexCondensed, FLAG_CONDENSED, dL_dnj] = equilibriumCheckCondensed(A0, pi_i, W, indexCondensed, muRT, NC_max, FLAG_ONE, FLAG_RULE)
 
         function [A0, indexRemoveSpecies, ind_E, NatomE] = removeElements(NatomE, A0, ind_E, tol)

@@ -1,10 +1,10 @@
-function [dNi_T, dN_T, dNi_p, dN_p] = equilibriumDerivatives(J, N0, A0, NE, indexGas, indexCondensed, indexElements, H0RT)
+function [dNi_T, dN_T, dNi_p, dN_p] = equilibriumDerivatives(J, N, A0, NE, indexGas, indexCondensed, indexElements, H0RT)
     % Obtain thermodynamic derivative of the moles of the species and of the moles of the mixture
     % respect to temperature and pressure from a given composition [moles] at equilibrium
     %
     % Args:
     %     J (float): Matrix J to solve the linear system J*x = b
-    %     N0 (float): Equilibrium composition [moles]
+    %     N (float): Mixture composition [mol]
     %     A0 (float): Stoichiometric matrix
     %     NE (float): Temporal total number of elements
     %     indexGas (float): Temporal index of gaseous species in the final mixture
@@ -21,22 +21,22 @@ function [dNi_T, dN_T, dNi_p, dN_p] = equilibriumDerivatives(J, N0, A0, NE, inde
     %     * dN_p (float):  Thermodynamic derivative of the moles of the mixture respect to pressure
     %
     % Example:
-    %     [dNi_T, dN_T, dNi_p, dN_p] = equilibriumDerivatives(J, N0, A0, NE, ind, indexGas, indexCondensed, indexElements, H0RT)
+    %     [dNi_T, dN_T, dNi_p, dN_p] = equilibriumDerivatives(J, N, A0, NE, ind, indexGas, indexCondensed, indexElements, H0RT)
     
     % Equilibrium derivative respect temperature
-    [dNi_T, dN_T] = equilibrium_dT(J, N0, A0, NE, indexGas, indexCondensed, indexElements, H0RT);
+    [dNi_T, dN_T] = equilibrium_dT(J, N, A0, NE, indexGas, indexCondensed, indexElements, H0RT);
 
     % Equilibrium derivative respect pressure
-    [dNi_p, dN_p] = equilibrium_dp(J, N0, A0, NE, indexGas, indexCondensed, indexElements);
+    [dNi_p, dN_p] = equilibrium_dp(J, N, A0, NE, indexGas, indexCondensed, indexElements);
 end
 
-function [dNi_T, dN_T] = equilibrium_dT(J, N0, A0, NE, indexGas, indexCondensed, indexElements, H0RT)
+function [dNi_T, dN_T] = equilibrium_dT(J, N, A0, NE, indexGas, indexCondensed, indexElements, H0RT)
     % Obtain thermodynamic derivative of the moles of the species and of the moles of the mixture
     % respect to temperature from a given composition [moles] at equilibrium
     %
     % Args:
     %     J (float): Matrix J to solve the linear system J*x = b
-    %     N0 (float): Equilibrium composition [moles]
+    %     N (float): Mixture composition [mol]
     %     A0 (float): Stoichiometric matrix
     %     NE (float): Temporal total number of elements
     %     indexGas (float): Temporal index of gaseous species in the final mixture
@@ -51,17 +51,17 @@ function [dNi_T, dN_T] = equilibrium_dT(J, N0, A0, NE, indexGas, indexCondensed,
     %     * dN_T (float):  Thermodynamic derivative of the moles of the mixture respect to temperature
     %
     % Example:
-    %     [dNi_T, dN_T] = equilibrium_dT(J, N0, A0, NE, ind, indexGas, indexCondensed, indexElements, H0RT)
+    %     [dNi_T, dN_T] = equilibrium_dT(J, N, A0, NE, ind, indexGas, indexCondensed, indexElements, H0RT)
 
     % Definitions
     opts.SYM = true; % Options linsolve method: real symmetric
     A0 = A0(:, indexElements);
 
     % Initialization
-    dNi_T = zeros(length(N0), 1);
+    dNi_T = zeros(length(N), 1);
 
     % Construction of vector b
-    b = update_vector_b(A0, N0, indexGas, indexCondensed, H0RT);
+    b = update_vector_b(A0, N, indexGas, indexCondensed, H0RT);
 
     % Solve of the linear system J*x = b
     x = linsolve(J, b, opts);
@@ -75,21 +75,21 @@ function [dNi_T, dN_T] = equilibrium_dT(J, N0, A0, NE, indexGas, indexCondensed,
     dNi_T(indexGas) = H0RT(indexGas) + A0(indexGas, :) * dpii_T + dN_T;
 
     % NESTED FUNCTION
-    function b = update_vector_b(A0, N0, indexGas, indexCondensed, H0RT)
+    function b = update_vector_b(A0, N, indexGas, indexCondensed, H0RT)
         % Compute vector b
-        b = -[(sum(A0(indexGas, :) .* N0(indexGas) .* H0RT(indexGas)))';...
-              H0RT(indexCondensed); sum(N0(indexGas) .* H0RT(indexGas))];
+        b = -[(sum(A0(indexGas, :) .* N(indexGas) .* H0RT(indexGas)))';...
+              H0RT(indexCondensed); sum(N(indexGas) .* H0RT(indexGas))];
     end
 
 end
 
-function [dNi_p, dN_p] = equilibrium_dp(J, N0, A0, NE, indexGas, indexCondensed, indexElements)
+function [dNi_p, dN_p] = equilibrium_dp(J, N, A0, NE, indexGas, indexCondensed, indexElements)
     % Obtain thermodynamic derivative of the moles of the species and of the moles of the mixture
     % respect to pressure from a given composition [moles] at equilibrium
     %
     % Args:
     %     J (float): Matrix J to solve the linear system J*x = b
-    %     N0 (float): Equilibrium composition [moles]
+    %     N (float): Mixture composition [mol]
     %     A0 (float): Stoichiometric matrix
     %     NE (float): Temporal total number of elements
     %     indexGas (float): Temporal index of gaseous species in the final mixture
@@ -103,17 +103,17 @@ function [dNi_p, dN_p] = equilibrium_dp(J, N0, A0, NE, indexGas, indexCondensed,
     %     * dN_p (float):  Thermodynamic derivative of the moles of the mixture respect to pressure
     %
     % Example:
-    %     [dNi_p, dN_p] = equilibrium_dp(J, N0, A0, NE, ind, ind_nswt, ind_swt, ind_elem)
+    %     [dNi_p, dN_p] = equilibrium_dp(J, N, A0, NE, ind, ind_nswt, ind_swt, ind_elem)
 
     % Definitions
     opts.SYM = true; % Options linsolve method: real symmetric
     A0 = A0(:, indexElements);
 
     % Initialization
-    dNi_p = zeros(length(N0), 1);
+    dNi_p = zeros(length(N), 1);
 
     % Construction of vector b
-    b = update_vector_b(J, N0, indexGas);
+    b = update_vector_b(J, N, indexGas);
 
     % Solve of the linear system J*x = b
     x = linsolve(J, b, opts);
@@ -127,10 +127,10 @@ function [dNi_p, dN_p] = equilibrium_dp(J, N0, A0, NE, indexGas, indexCondensed,
     dNi_p(indexGas) = -1 + A0(indexGas, :) * dpii_p + dN_p;
 
     % NESTED FUNCTION
-    function b = update_vector_b(J, N0, ind_nswt)
+    function b = update_vector_b(J, N, ind_nswt)
         % Compute vector b
         b = J(:, end);
-        b(end) = sum(N0(ind_nswt));
+        b(end) = sum(N(ind_nswt));
     end
 
 end

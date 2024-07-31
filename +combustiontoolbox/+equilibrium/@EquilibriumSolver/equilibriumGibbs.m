@@ -45,7 +45,7 @@ function [N, dNi_T, dN_T, dNi_p, dN_p, index, STOP, STOP_ions, h0] = equilibrium
 
     % Definitions
     % CHECK: ERROR IN N(:, 2) FOR CONDENSED SPECIES.
-    N = system.molesPhaseMatrix;       % Composition matrix [moles_i, phase_i]
+    N = system.propertyVector;       % Composition matrix [moles_i, phase_i]
     A0 = system.stoichiometricMatrix;  % Stoichiometric matrix [a_ij]
     RT = R0 * T;                       % [J/mol]
     delta0 = 0.9999;
@@ -90,8 +90,8 @@ function [N, dNi_T, dN_T, dNi_p, dN_p, index, STOP, STOP_ions, h0] = equilibrium
     NS = length(index);
     
     % Initialize vectors g0 (molar Gibbs energy) and h0 (molar enthalpy) with zeros
-    g0 = N(:, 1);
-    h0 = N(:, 1);
+    g0 = system.propertyVector;
+    h0 = system.propertyVector;
 
     % Molar Gibbs energy [J/mol]
     g0([indexGas_0, indexCondensed_0]) = set_g0(system.listSpecies([indexGas_0, indexCondensed_0]), T, system.species);
@@ -107,7 +107,7 @@ function [N, dNi_T, dN_T, dNi_p, dN_p, index, STOP, STOP_ions, h0] = equilibrium
     [N, NP] = obj.equilibriumGuess(N, NP, A0_T(indexElements, index0), muRT(index0), NatomE, index0, indexGas_0, indexIons, NG, molesGuess);
 
     % Initialization 
-    psi_j = system.molesPhaseMatrix(:, 1);
+    psi_j = system.propertyVector;
     tauRT = tau0RT .* min(NatomE);
 
     % Solve system
@@ -117,7 +117,7 @@ function [N, dNi_T, dN_T, dNi_p, dN_p, index, STOP, STOP_ions, h0] = equilibrium
     x = equilibriumLoopCondensed(x);
     
     % Update matrix J (jacobian) to compute the thermodynamic derivatives
-    J = update_matrix_J(A0_T(indexElements, :), J22, N(:, 1), NP, indexGas, indexCondensed, NS - NG, psi_j);
+    J = update_matrix_J(A0_T(indexElements, :), J22, N, NP, indexGas, indexCondensed, NS - NG, psi_j);
     J(end, end) = 0;
 
     % Molar enthalpy [J/mol]
@@ -153,10 +153,10 @@ function [N, dNi_T, dN_T, dNi_p, dN_p, index, STOP, STOP_ions, h0] = equilibrium
             muRT(indexGas) =  g0(indexGas) / RT + log(N(indexGas, 1) / NP) + log(p);
             
             % Construction of matrix J
-            J = update_matrix_J(A0_T, J22, N(:, 1), NP, indexGas, indexCondensed, NS - NG, psi_j);
+            J = update_matrix_J(A0_T, J22, N, NP, indexGas, indexCondensed, NS - NG, psi_j);
             
             % Construction of vector b      
-            b = update_vector_b(A0, N(:, 1), NP, NatomE, ind_E, index, indexGas, indexCondensed, indexIons, muRT, tauRT);
+            b = update_vector_b(A0, N, NP, NatomE, ind_E, index, indexGas, indexCondensed, indexIons, muRT, tauRT);
 
             % Solve the linear system J*x = b
             [x, ~] = linsolve(J, b, opts);
@@ -282,7 +282,7 @@ function [N, dNi_T, dN_T, dNi_p, dN_p, index, STOP, STOP_ions, h0] = equilibrium
         indexCondensed_check = indexCondensed_0;
 
         % Get molecular weight species [kg/mol]
-        W = system.molesPhaseMatrix(:, 1);
+        W = system.propertyVector;
         W(indexCondensed_check) = set_prop_DB(system.listSpecies(indexCondensed_check), 'W', system.species);
 
         % Definitions

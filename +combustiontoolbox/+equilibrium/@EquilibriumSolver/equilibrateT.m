@@ -107,8 +107,8 @@ end
 
 function vector = reshapeVector(system, index, indexModified, vectorModified)
     % Reshape vector containing all the species
-    vector = system.molesPhaseMatrix(:, 1);
-    vector(index, 1) = vectorModified(indexModified, 1);
+    vector = system.propertyVector;
+    vector(index) = vectorModified(indexModified);
 end
 
 function mix2 = equilibrateTPerfect(mix1, mix2, T)

@@ -6,7 +6,7 @@ classdef ChemicalSystem < handle & matlab.mixin.Copyable
         listElements           % List of elements
         stoichiometricMatrix   % Stoichiometric matrix
         propertiesMatrix       % Properties matrix
-        molesPhaseMatrix       % Matrix [moles, phase]
+        propertyVector         % Property vector
         % * Index values
         indexGas               % Indeces gaseous species
         indexCondensed         % Indeces condensed species
@@ -171,7 +171,7 @@ classdef ChemicalSystem < handle & matlab.mixin.Copyable
             % Update property matrix
             system.propertiesMatrix = system.propertiesMatrix(system.indexProducts, :);
             % Update compostion matrix
-            system.molesPhaseMatrix = system.molesPhaseMatrix(system.indexProducts, :);
+            system.propertyVector = system.propertyVector(system.indexProducts);
         end
 
         function obj = checkSpecies(obj, species)
@@ -620,8 +620,8 @@ classdef ChemicalSystem < handle & matlab.mixin.Copyable
                 M0(index(i), obj.ind_phase) = obj.species.(obj.listSpecies{i}).phase; % [bool]
             end
 
-            % Initialize molesPhaseMatrix [moles, phase]
-            obj.molesPhaseMatrix = M0(:, [obj.ind_ni, obj.ind_phase]);
+            % Initialize propertyVector
+            obj.propertyVector = M0(:, obj.ind_ni);
             
             % Set properties matrix
             obj.propertiesMatrix = M0;

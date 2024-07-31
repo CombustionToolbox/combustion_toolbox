@@ -43,7 +43,7 @@ function [mix1, mix2] = shockIncident(obj, mix1, u1, varargin)
     % Solve shock incident
     try
         [T2, p2, STOP, it] = solve_shock_incident(FLAG_FAST); % p2 [Pa]
-        assert(STOP < obj.tolShocks);
+        assert(STOP < obj.tol0);
     catch
         % If solution has not converged, repeat without composition estimate
         fprintf('Recalculating: %.2f [m/s]\n', u1);
@@ -53,7 +53,7 @@ function [mix1, mix2] = shockIncident(obj, mix1, u1, varargin)
     end
 
     % Check convergence
-    combustiontoolbox.utils.printConvergence(it, obj.itShocks, T2, STOP, obj.tolShocks);
+    combustiontoolbox.utils.printConvergence(it, obj.itMax, T2, STOP, obj.tol0);
     
     % Save state
     mix2 = save_state(mix1, mix2, STOP);
@@ -61,13 +61,13 @@ function [mix1, mix2] = shockIncident(obj, mix1, u1, varargin)
     % NESTED-FUNCTIONS
     function [T2, p2, STOP, it] = solve_shock_incident(FLAG_FAST)
         % Miscellaneous
-        it = 0; itMax = obj.itShocks; STOP = 1;
+        it = 0; itMax = obj.itMax; STOP = 1;
         % Initial estimates of p2/p1 and T2/T1
         [p2, T2, p2p1, T2T1] = get_guess(obj, mix1, mix2);
         % Check FLAG
         if ~FLAG_FAST, guess_moles = []; end
         % Loop
-        while STOP > obj.tolShocks && it < itMax
+        while STOP > obj.tol0 && it < itMax
             % Update iteration
             it = it + 1;
             % Construction of the Jacobian matrix and vector b

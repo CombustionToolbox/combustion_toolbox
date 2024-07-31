@@ -1,4 +1,4 @@
-function [N, NP] = equilibriumGuess(N, NP, A0, muRT, b0, index, indexGas, indexIons, NG, guess_moles)
+function [N, NP] = equilibriumGuess(N, NP, A0, muRT, b0, index, indexGas, indexIons, NG, molesGuess)
     % Initialize molar composition from a previous calculation or using the simplex algorithm
     %
     % Args:
@@ -11,7 +11,7 @@ function [N, NP] = equilibriumGuess(N, NP, A0, muRT, b0, index, indexGas, indexI
     %     indexGas (float): Index of gaseous species
     %     indexIons (float): Index of ionized species
     %     NG (float): Number of gaseous species
-    %     guess_moles (float): Mixture composition [mol] of a previous computation
+    %     molesGuess (float): Mixture composition [mol] of a previous computation
     %
     % Returns:
     %     Tuple containing
@@ -20,12 +20,12 @@ function [N, NP] = equilibriumGuess(N, NP, A0, muRT, b0, index, indexGas, indexI
     %     * NP (float): Total moles of gaseous species [mol]
     %
     % Example:
-    %     [N, NP] = equilibriumGuess(N, NP, A0, muRT, b0, index, indexGas, indexIons, NG, guess_moles)
+    %     [N, NP] = equilibriumGuess(N, NP, A0, muRT, b0, index, indexGas, indexIons, NG, molesGuess)
     
     % Get molar composition from a previous calculation
-    if ~isempty(guess_moles)
-        N(indexGas, 1) = guess_moles(indexGas);
-        NP = sum(guess_moles(indexGas));
+    if ~isempty(molesGuess)
+        N(indexGas) = molesGuess(indexGas);
+        NP = sum(molesGuess(indexGas));
         return
     end
     
@@ -34,11 +34,11 @@ function [N, NP] = equilibriumGuess(N, NP, A0, muRT, b0, index, indexGas, indexI
         N = getSimplex(N, A0, muRT, b0, index, indexIons, NG);
     catch
         % Get molar composition using a uniform distribution
-        N(index, 1) = NP/NG;
+        N(index) = NP/NG;
     end
 
     % Recompute mol gaseous species
-    NP = sum(N(indexGas, 1));
+    NP = sum(N(indexGas));
 end
 
 % SUB-PASS FUNCTIONS
@@ -51,7 +51,7 @@ function N = getSimplex(N, A0, muRT, b0, index, indexIons, NG)
 
     % Initialization
     Nmin = 1e-2;
-    Nminor = 0 * N(:, 1);
+    Nminor = 0 * N;
 
     % Get major species
     Nmajor = combustiontoolbox.utils.optimization.simplex(A0, b0', muRT);
@@ -67,12 +67,12 @@ function N = getSimplex(N, A0, muRT, b0, index, indexIons, NG)
     end
     
     % Merge solutions
-    N(index, 1) = (1 - alpha) * Nmajor +  alpha * Nminor(index);
-    N(index(N(index, 1) == 0), 1) = alpha * Nmin;
+    N(index) = (1 - alpha) * Nmajor +  alpha * Nminor(index);
+    N(index(N(index) == 0)) = alpha * Nmin;
 
     % Check
     % NmajorCheck = combustiontoolbox.utils.optimization.simplexCheck(A0, b0, muRT);
 
     % Check equality constrain (A * x = b)
-    % error = A0 * N(index, 1) - b0';
+    % error = A0 * N(index) - b0';
 end

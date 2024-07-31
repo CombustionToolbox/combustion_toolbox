@@ -1,4 +1,4 @@
-function problems_solved = run_validation_TP_TEA_3
+function run_validation_TP_TEA_3
     % VALIDATION: TP_TEA_3
     %
     % Compute equilibrium composition at defined temperature and pressure.
@@ -21,7 +21,8 @@ function problems_solved = run_validation_TP_TEA_3
     import combustiontoolbox.databases.NasaDatabase
     import combustiontoolbox.core.*
     import combustiontoolbox.equilibrium.*
-    
+    import combustiontoolbox.utils.display.*
+
     % Benchmark?
     FLAG_BENCHMARK = false;
 

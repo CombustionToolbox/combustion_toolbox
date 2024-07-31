@@ -81,6 +81,21 @@ classdef ShockSolver < handle
 
         function varargout = solve(obj, mix1, varargin)
             % Solve shock waves problems
+            %
+            % Args:
+            %     obj (EquilibriumSolver): EquilibriumSolver object
+            %     mix1 (Mixture): initial Mixture object
+            %
+            % Optional Args:
+            %     * mixGuess_i (Mixture): Mixture object from previous calculation
+            %
+            % Returns:
+            %     varargout: Updated Mixture objects depending on the problem type
+            %
+            % Examples:
+            %     * [mix1, mix2] = solve(ShockSolver(), mix1);
+            %     * [mix1, mix2] = solve(ShockSolver(), mix1, mix2Guess);
+            %     * [mix1, mix2, mix3] = solve(ShockSolver(), mix1, mix2Guess, mix3Guess);
             
             % Definitions
             u1 = mix1.u;
@@ -275,7 +290,18 @@ classdef ShockSolver < handle
 
         function varargout = solveArray(obj, mix1Array, varargin)
             % Solve a set of shock waves problems
-            
+            %
+            % Args:
+            %     obj (EquilibriumSolver): EquilibriumSolver object
+            %     mix1Array (Mixture): Array of initial Mixture objects
+            %
+            % Returns:
+            %     varargout: Updated arrays of Mixture objects depending on the shock problem type
+            %
+            % Examples:
+            %     * [mix1Array, mix2Array] = solveArray(ShockSolver(), mix1Array);
+            %     * [mix1Array, mix2Array, mix3Array] = solveArray(ShockSolver(), mix1Array);
+
             % Definitions
             n = length(mix1Array);
             problem = obj.problemType;

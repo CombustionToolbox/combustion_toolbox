@@ -96,6 +96,17 @@ classdef EquilibriumSolver < handle
 
         function mix = solve(obj, mix, varargin)
             % Obtain chemical equilibrium composition and thermodynamic properties
+            %
+            % Args:
+            %     obj (EquilibriumSolver): EquilibriumSolver object
+            %     mix (Mixture): Mixture object containing initial state
+            %
+            % Optional Args:
+            %     * mixGuess (Mixture): Mixture object from previous calculation
+            %
+            % Returns:
+            %     mix (Mixture): Mixture object updated with equilibrium composition and properties
+
             if nargin > 2
                 obj.equilibrate(mix, varargin{1});
             else
@@ -113,7 +124,17 @@ classdef EquilibriumSolver < handle
         end
 
         function mixArray = solveArray(obj, mixArray, varargin)
-            % Obtain chemical equilibrium composition and thermodynamic properties for an array of values
+            % Obtain chemical equilibrium composition and thermodynamic properties for an array of mixture values
+            %
+            % Args:
+            %     obj (EquilibriumSolver): EquilibriumSolver object
+            %     mixArray (array of Mixture): Array of Mixture objects containing initial states
+            %
+            % Returns:
+            %     mixArray (array of Mixture): Array of Mixture objects updated with equilibrium compositions and properties
+            %
+            % Example:
+            %     * mixArray = solveArray(EquilibriumSolver(), mixArray);
             
             % Definitions
             n = length(mixArray);

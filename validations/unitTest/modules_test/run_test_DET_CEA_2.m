@@ -42,7 +42,7 @@ function [max_rel_error_moles, max_rel_error_prop] = run_test_DET_CEA_2(value, d
     mixArray1 = setProperties(mix, 'temperature', 300, 'pressure', 1, 'equivalenceRatio',  value);
     
     % Initialize solver
-    solver = DetonationSolver('problemType', 'DET', 'FLAG_RESULTS', true, 'tolMoles', tolMoles);
+    solver = DetonationSolver('problemType', 'DET', 'FLAG_RESULTS', false, 'tolMoles', tolMoles);
     
     % Solve problem
     [mixArray1, mixArray2] = solver.solveArray(mixArray1);

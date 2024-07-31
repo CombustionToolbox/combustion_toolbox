@@ -1,5 +1,22 @@
 function [indexCondensed, FLAG_CONDENSED, dL_dnj] = equilibriumCheckCondensed(A0, pi_i, W, indexCondensed, muRT, NC_max, FLAG_ONE, FLAG_RULE)
-    % Check condensed species
+    % Check condensed species that may appear at chemical equilibrium
+    %
+    % Args:
+    %     A0 (float): Stoichiometric matrix
+    %     pi_i (float): Dimensionless Lagrange multiplier vector
+    %     W (float): Molecular mass [kg/mol] vector
+    %     indexCondensed (float): Index condensed species to be considered
+    %     muRT (flaot): List of chemical species indices in gaseous phase
+    %     NC_max (float): Maximum number of condensed species (Gibbs phase rule)
+    %     FLAG_ONE (bool): Flag indicating to include condensed species in the system one by one
+    %     FLAG_RULE (bool): Flag indicating to include condensed species in the system up to the maximum number of condensed species that satisfy the Gibbs phase rule
+    %
+    % Returns:
+    %     Tuple containing
+    %
+    %     * indexCondensed (float): Index condensed species that may appear at chemical equilibrium
+    %     * FLAG_CONDENSED (bool): Flag indicating additional condensed species that may appear at chemical equilibrium
+    %     * dL_dnj (float): Vapor pressure test vector of the species that may appear at chemical equilibrium
     
     % Initialization
     FLAG_CONDENSED = false;

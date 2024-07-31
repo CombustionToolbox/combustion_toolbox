@@ -181,7 +181,17 @@ classdef Mixture < handle & matlab.mixin.Copyable
         end
 
         function obj = setTemperature(obj, T, varargin)
-            % Compute thermodynamic properties at temperature T [K]
+            % Set temperature [K] and compute thermodynamic properties
+            %
+            % Args:
+            %     obj (Mixture): Mixture object
+            %     T (float): Temperature [K]
+            %
+            % Returns:
+            %     obj (Mixture): Mixture object with updated properties
+            %
+            % Example:
+            %     setTemperature(obj, 300)
             
             % Definitions
             defaultUnits = 'K';
@@ -213,17 +223,27 @@ classdef Mixture < handle & matlab.mixin.Copyable
             end
 
             % Assign values to the propertiesMatrix
-            obj.chemicalSystem.set_propertiesMatrix(obj.listSpecies, obj.quantity, obj.T);
+            obj.chemicalSystem.setPropertiesMatrix(obj.listSpecies, obj.quantity, obj.T);
 
             % Compute thermodynamic properties
-            obj.compute_properties(obj.chemicalSystem, T, obj.p);
+            obj.computeProperties(obj.chemicalSystem, T, obj.p);
 
             % Compute equivalence ratio, percentage Fuel, and Oxidizer/Fuel ratio
             obj.computeEquivalenceRatio();
         end
 
         function obj = setPressure(obj, p, varargin)
-            % Compute thermodynamic properties at pressure p [K]
+            % Set pressure [bar] and compute thermodynamic properties
+            %
+            % Args:
+            %     obj (Mixture): Mixture object
+            %     p (float): Pressure [bar]
+            %
+            % Returns:
+            %     obj (Mixture): Mixture object with updated properties
+            %
+            % Example:
+            %     setPressure(obj, 1)
             
             % Definitions
             defaultUnits = 'bar';
@@ -249,18 +269,28 @@ classdef Mixture < handle & matlab.mixin.Copyable
             end
 
             % Assign values to the propertiesMatrix
-            obj.chemicalSystem.set_propertiesMatrix(obj.listSpecies, obj.quantity, obj.T);
+            obj.chemicalSystem.setPropertiesMatrix(obj.listSpecies, obj.quantity, obj.T);
 
             % Compute thermodynamic properties
-            obj.compute_properties(obj.chemicalSystem, obj.T, p);
+            obj.computeProperties(obj.chemicalSystem, obj.T, p);
 
             % Compute equivalence ratio, percentage Fuel, and Oxidizer/Fuel ratio
             obj.computeEquivalenceRatio();
         end
 
         function obj = setVolume(obj, vSpecific, varargin)
-            % Compute thermodynamic properties at pressure p [K]
-            
+            % Set specific volume [m3/kg] and compute thermodynamic properties
+            %
+            % Args:
+            %     obj (Mixture): Mixture object
+            %     vSpecific (float): Specific volume [m3/kg]
+            %
+            % Returns:
+            %     obj (Mixture): Mixture object with updated properties
+            %
+            % Example:
+            %     setVolume(obj, 1)
+
             % Definitions
             defaultUnits = 'm3/kg';
 
@@ -290,18 +320,36 @@ classdef Mixture < handle & matlab.mixin.Copyable
             end
 
             % Assign values to the propertiesMatrix
-            obj.chemicalSystem.set_propertiesMatrix(obj.listSpecies, obj.quantity, obj.T);
+            obj.chemicalSystem.setPropertiesMatrix(obj.listSpecies, obj.quantity, obj.T);
 
             % Compute thermodynamic properties
-            obj.compute_properties(obj.chemicalSystem, obj.T, obj.p);
+            obj.computeProperties(obj.chemicalSystem, obj.T, obj.p);
 
             % Compute equivalence ratio, percentage Fuel, and Oxidizer/Fuel ratio
             obj.computeEquivalenceRatio();
         end
 
         function obj = set(obj, listSpecies, varargin)
-            % 
-            
+            % Set species and quantity and compute thermodynamic properties
+            %
+            % Args:
+            %     obj (Mixture): Mixture object
+            %     listSpecies (cell): List of species
+            %
+            % Optional Args:
+            %     type (char): Type of species (fuel, oxidizer, inert)
+            %     quantity (float): Quantity of species [mol, weightPercentage]
+            %     units (char): Units of quantity (mol, weightPercentage)
+            %
+            % Returns:
+            %     obj (Mixture): Mixture object with updated properties
+            %
+            % Examples:
+            %     * set(obj, {'H2'}, 1)
+            %     * set(obj, {'H2'}, 'fuel', 1)
+            %     * set(obj, {'CH6N2bLb', 'N2H4bLb'}, 'fuel', [86, 14], 'weightPercentage');
+            %     * set(obj, {'N2', 'O2'}, 'oxidizer', [79, 21]);
+
             % Import packages
             import combustiontoolbox.utils.findIndex
             import combustiontoolbox.common.Units
@@ -354,7 +402,7 @@ classdef Mixture < handle & matlab.mixin.Copyable
             obj.chemicalSystem.checkSpecies(listSpecies);
             
             % Get indexReact
-            obj.chemicalSystem.set_react_index(obj.listSpeciesInert);
+            obj.chemicalSystem.setReactIndex(obj.listSpeciesInert);
             
             % Get indexProducts
             obj.chemicalSystem.indexProducts = findIndex(obj.chemicalSystem.listSpecies, obj.chemicalSystem.listProducts);
@@ -383,26 +431,37 @@ classdef Mixture < handle & matlab.mixin.Copyable
             end
             
             % Assign values to the propertiesMatrix
-            obj.chemicalSystem.set_propertiesMatrix(listSpecies, quantity, obj.T);
+            obj.chemicalSystem.setPropertiesMatrix(listSpecies, quantity, obj.T);
 
             % Compute thermodynamic properties
-            obj.compute_properties(obj.chemicalSystem, obj.T, obj.p);
+            obj.computeProperties(obj.chemicalSystem, obj.T, obj.p);
             
             % Compute percentage Fuel, Oxidizer/Fuel ratio and equivalence ratio
-            obj.compute_ratios_fuel_oxidizer(obj.chemicalSystem.propertiesMatrixFuel, obj.chemicalSystem.propertiesMatrixOxidizer);
+            obj.computeRatiosFuelOxidizer(obj.chemicalSystem.propertiesMatrixFuel, obj.chemicalSystem.propertiesMatrixOxidizer);
         end
 
-        function obj = setEquivalenceRatio(obj, value)
-            % 
-            obj.equivalenceRatio = value;
+        function obj = setEquivalenceRatio(obj, equivalenceRatio)
+            % Set equivalence ratio and compute thermodynamic properties
+            %
+            % Args:
+            %     obj (Mixture): Mixture object
+            %     equivalenceRatio (float): Equivalence ratio [-]
+            %
+            % Returns:
+            %     obj (Mixture): Mixture object with updated properties
+            %
+            % Example:
+            %     setEquivalenceRatio(obj, 1)
+
+            obj.equivalenceRatio = equivalenceRatio;
             
             % Check if initial state is defined (temperature, pressure, and composition)
             if ~obj.T || (~obj.p && ~obj.vSpecific) || ~obj.FLAG_FUEL || ~obj.FLAG_OXIDIZER
                 return
             end
             
-            % Get oxidizer of reference
-            obj.chemicalSystem.getOxidizerReference(obj.listSpeciesOxidizer);
+            % Set oxidizer of reference
+            obj.chemicalSystem.setOxidizerReference(obj.listSpeciesOxidizer);
             
             % Computation of theoretical stoichiometricMoles
             obj.defineF();
@@ -419,7 +478,7 @@ classdef Mixture < handle & matlab.mixin.Copyable
             obj.quantity = [obj.molesFuel, obj.molesOxidizer, obj.molesInert];
             
             % Assign values to the propertiesMatrix
-            obj.chemicalSystem = obj.chemicalSystem.set_propertiesMatrix(obj.listSpecies, obj.quantity, obj.T);
+            obj.chemicalSystem = obj.chemicalSystem.setPropertiesMatrix(obj.listSpecies, obj.quantity, obj.T);
 
             % Compute pressure if required
             if obj.vSpecific && obj.FLAG_VOLUME
@@ -428,27 +487,34 @@ classdef Mixture < handle & matlab.mixin.Copyable
             end
 
             % Compute thermodynamic properties
-            obj.compute_properties(obj.chemicalSystem, obj.T, obj.p);
+            obj.computeProperties(obj.chemicalSystem, obj.T, obj.p);
             
             % Compute percentage Fuel, Oxidizer/Fuel ratio and equivalence ratio
-            obj.compute_ratios_fuel_oxidizer(obj.chemicalSystem.propertiesMatrixFuel, obj.chemicalSystem.propertiesMatrixOxidizer);
+            obj.computeRatiosFuelOxidizer(obj.chemicalSystem.propertiesMatrixFuel, obj.chemicalSystem.propertiesMatrixOxidizer);
 
             % Check complete combustion
-            check_complete_reaction(obj.chemicalSystem, obj.equivalenceRatio, obj.equivalenceRatioSoot);
+            checkCompleteReaction(obj.chemicalSystem, obj.equivalenceRatio, obj.equivalenceRatioSoot);
             
             % Get system containing only the list of products
             obj.chemicalSystemProducts = getSystemProducts(obj.chemicalSystem);
         end
 
         function obj = computeEquivalenceRatio(obj)
+            % Compute equivalence ratio [-]
+            %
+            % Args:
+            %     obj (Mixture): Mixture object
+            %
+            % Returns:
+            %     obj (Mixture): Mixture object with updated equivalence ratio [-]
             
             % Check if initial state is defined (temperature, pressure, and composition)
             if ~obj.T || (~obj.p && ~obj.vSpecific) || ~obj.FLAG_FUEL || ~obj.FLAG_OXIDIZER
                 return
             end
 
-            % Get oxidizer of reference
-            obj.chemicalSystem.getOxidizerReference(obj.listSpeciesOxidizer);
+            % Set oxidizer of reference
+            obj.chemicalSystem.setOxidizerReference(obj.listSpeciesOxidizer);
             
             % Computation of theoretical stoichiometricMoles
             obj.defineF();
@@ -457,11 +523,20 @@ classdef Mixture < handle & matlab.mixin.Copyable
             obj.defineO();
             
             % Compute percentage Fuel, Oxidizer/Fuel ratio and equivalence ratio
-            obj.compute_ratios_fuel_oxidizer(obj.chemicalSystem.propertiesMatrixFuel, obj.chemicalSystem.propertiesMatrixOxidizer);
+            obj.computeRatiosFuelOxidizer(obj.chemicalSystem.propertiesMatrixFuel, obj.chemicalSystem.propertiesMatrixOxidizer);
         end
 
-        function obj = compute_ratios_fuel_oxidizer(obj, propertiesMatrixFuel, propertiesMatrixOxidizer)
+        function obj = computeRatiosFuelOxidizer(obj, propertiesMatrixFuel, propertiesMatrixOxidizer)
             % Compute percentage Fuel, Oxidizer/Fuel ratio and equivalence ratio
+            %
+            % Args:
+            %     obj (Mixture): Mixture object
+            %     propertiesMatrixFuel (float): Properties matrix of the fuel
+            %     propertiesMatrixOxidizer (float): Properties matrix of the oxidizer
+            %
+            % Returns:
+            %     obj (Mixture): Mixture object with updated properties
+
             if obj.FLAG_FUEL && obj.FLAG_OXIDIZER
                 mass_fuel = obj.getMass(obj.chemicalSystem, propertiesMatrixFuel);
                 mass_oxidizer = obj.getMass(obj.chemicalSystem, propertiesMatrixOxidizer);
@@ -493,10 +568,10 @@ classdef Mixture < handle & matlab.mixin.Copyable
             % Compute guess of equivalence ratio in which soot appears considering complete combustion
             %
             % Args:
-            %     obj (Mixture): 
+            %     obj (Mixture): Mixture object
             %
             % Returns:
-            %     equivalenceRatioSoot (float): Theoretical equivalence ratio at which soot appears [-]
+            %     obj (Mixture): Mixture object with theoretical equivalence ratio at which soot appears [-]
         
             obj.equivalenceRatioSoot = 2 / (obj.fuel.x - obj.fuel.z) * (obj.fuel.x + obj.fuel.y / 4 - obj.fuel.z / 2);
         
@@ -506,54 +581,54 @@ classdef Mixture < handle & matlab.mixin.Copyable
         
         end
 
-        function obj = set_prop(obj, varargin)
-            % Assign property values to the respective variables
-            %
-            % Args:
-            %     self (struct): Data of the mixture, conditions, and databases
-            %
-            % Optional Args:
-            %     * field (str): Fieldname in Problem Description (PD)
-            %     * value (float): Value/s to assing in the field in Problem Description (PD)
-            %
-            % Returns:
-            %     self (struct): Data of the mixture, conditions, and databases
+        % function obj = set_prop(obj, varargin)
+        %     % Assign property values to the respective variables
+        %     %
+        %     % Args:
+        %     %     self (struct): Data of the mixture, conditions, and databases
+        %     %
+        %     % Optional Args:
+        %     %     * field (str): Fieldname in Problem Description (PD)
+        %     %     * value (float): Value/s to assing in the field in Problem Description (PD)
+        %     %
+        %     % Returns:
+        %     %     self (struct): Data of the mixture, conditions, and databases
         
-            try
-                for i = 1:2:nargin - 1
-                    self = set_prop_common(self, varargin{i}, varargin{i + 1});
-                end
+        %     try
+        %         for i = 1:2:nargin - 1
+        %             self = set_prop_common(self, varargin{i}, varargin{i + 1});
+        %         end
         
-            catch
-                error('Error number inputs @set_prop');
-            end
+        %     catch
+        %         error('Error number inputs @set_prop');
+        %     end
         
-        end
+        % end
         
-        function obj = set_prop_common(obj, name, value)
-            % Assign property values to the given variable name
+        % function obj = set_prop_common(obj, name, value)
+        %     % Assign property values to the given variable name
         
-            % If the value is a char, convert it to a float - (GUI)
-            if value(1) == '['
-                value = sscanf(value, '[%f:%f:%f]');
-                value = value(1):value(2):value(3);
-            elseif sum(value == ':') == 2
-                value = sscanf(value, '%f:%f:%f');
-                value = value(1):value(2):value(3);
-            elseif ischar(value)
-                value = sscanf(value, '%f');
-            end
+        %     % If the value is a char, convert it to a float - (GUI)
+        %     if value(1) == '['
+        %         value = sscanf(value, '[%f:%f:%f]');
+        %         value = value(1):value(2):value(3);
+        %     elseif sum(value == ':') == 2
+        %         value = sscanf(value, '%f:%f:%f');
+        %         value = value(1):value(2):value(3);
+        %     elseif ischar(value)
+        %         value = sscanf(value, '%f');
+        %     end
         
-            % Define flags
-            if length(value) > 1
-                obj.FLAGS_PROP.(name) = true;
-            else
-                obj.FLAGS_PROP.(name) = false;
-            end
+        %     % Define flags
+        %     if length(value) > 1
+        %         obj.FLAGS_PROP.(name) = true;
+        %     else
+        %         obj.FLAGS_PROP.(name) = false;
+        %     end
         
-            % Set value
-            obj.(name).value = value;
-        end
+        %     % Set value
+        %     obj.(name).value = value;
+        % end
 
         function objArray = setProperties(obj, property, value, varargin)
             % Obtain properties at equilibrium for the given thermochemical transformation
@@ -752,7 +827,7 @@ classdef Mixture < handle & matlab.mixin.Copyable
 
         % end
 
-        function obj = compute_properties(obj, system, temperature, pressure)
+        function obj = computeProperties(obj, system, temperature, pressure)
             % Compute properties from the given chemicalSystem at pressure p [bar]
             % and temperature T [K]
             %
@@ -766,7 +841,7 @@ classdef Mixture < handle & matlab.mixin.Copyable
             %     obj (Mixture): Mixture class with the computed properties
             %
             % Example:
-            %     mix = compute_properties(mix, system, T, p)
+            %     mix = computeProperties(mix, system, T, p)
             
             % Definitions
             R0 = combustiontoolbox.common.Constants.R0; % Universal gas constant [J/(K mol)]
@@ -956,9 +1031,9 @@ classdef Mixture < handle & matlab.mixin.Copyable
                 % Set temperature-dependent matrix properties to zero
                 system.clean();
                 % Fill properties matrix with only fuel species
-                system.set_propertiesMatrix(obj.listSpeciesFuel, obj.molesFuel, obj.T);
+                system.setPropertiesMatrix(obj.listSpeciesFuel, obj.molesFuel, obj.T);
                 % Compute thermodynamic properties 
-                mixFuel = obj.copyDeep().compute_properties(system, obj.T, obj.p);
+                mixFuel = obj.copyDeep().computeProperties(system, obj.T, obj.p);
                 % Assign values elements C, H, O, N, S, and Si
                 obj.assign_values_elements(mixFuel.natomElements);
                 % Compute theoretical moles of the oxidizer of reference for a stoichiometric combustion
@@ -998,7 +1073,7 @@ classdef Mixture < handle & matlab.mixin.Copyable
             % Set temperature-dependent matrix properties to zero
             system.clean();
             % Fill properties matrix with only oxidizer species
-            system.set_propertiesMatrix(obj.listSpeciesOxidizer, obj.molesOxidizer, obj.T);
+            system.setPropertiesMatrix(obj.listSpeciesOxidizer, obj.molesOxidizer, obj.T);
             % Assign propertiesMatrixOxidizer
             obj.chemicalSystem.propertiesMatrixOxidizer = system.propertiesMatrix;
         end
@@ -1033,18 +1108,18 @@ classdef Mixture < handle & matlab.mixin.Copyable
 
     methods (Hidden)
 
-        function obj = set_fast(obj, listSpecies, quantity, index, h0)
-            % 
+        function obj = setPropertiesMatrixFast(obj, listSpecies, quantity, index, h0)
+            % Set species and quantity and compute thermodynamic properties
            
             % Update local listSpecies and local quantity
             obj.listSpecies = listSpecies;
             obj.quantity = quantity;
 
             % Assign values to the propertiesMatrix
-            obj.chemicalSystem.set_propertiesMatrix(listSpecies, quantity, obj.T, index, h0);
+            obj.chemicalSystem.setPropertiesMatrix(listSpecies, quantity, obj.T, index, h0);
 
             % Compute thermodynamic properties
-            obj.compute_properties(obj.chemicalSystem, obj.T, obj.p);
+            obj.computeProperties(obj.chemicalSystem, obj.T, obj.p);
         end
 
     end

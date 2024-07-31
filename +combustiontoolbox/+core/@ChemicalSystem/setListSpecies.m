@@ -52,8 +52,11 @@ function [obj, listSpecies, listSpeciesFormula] = setListSpecies(obj, database, 
 
     % Set list of species
     listSpecies = obj.listSpecies;
-    listSpeciesFormula = get_formula(obj.listSpecies, database);
+    listSpeciesFormula = getFormula(obj.listSpecies, database);
     
+    % Assign values
+    obj.listSpeciesFormula = listSpeciesFormula;
+
     % Check if the list of species contains ions
     if any(obj.getIndexIons(obj.listSpecies))
         obj.FLAG_ION = true;
@@ -234,7 +237,7 @@ function [listSpecies, FLAG_COMPLETE] = getListSpecies(database, varargin)
 
 end
 
-function listSpeciesFormula = get_formula(listSpecies, database)
+function listSpeciesFormula = getFormula(listSpecies, database)
     % Get chemical formula from the database (DB)
     for i = length(listSpecies):-1:1
         listSpeciesFormula{i} = database.species.(listSpecies{i}).formula;

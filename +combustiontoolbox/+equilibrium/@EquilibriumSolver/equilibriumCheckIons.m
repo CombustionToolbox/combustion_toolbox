@@ -1,11 +1,11 @@
 function [N, STOP, FLAG_ION] = equilibriumCheckIons(obj, N, A0, ind_E, indexGas, indexIons)
-    % Check convergence of ionized species
+    % Check convergence of ionized species in the mixture
     %
     % Args:
-    %     obj (EquilibriumSolver): Equilibrium solver object
+    %     obj (EquilibriumSolver): EquilibriumSolver object
     %     N (float): Composition matrix [n_i, FLAG_CONDENSED_i] for the given temperature [K] and pressure [bar] at equilibrium
-    %     A0 (float): Pressure [bar]
-    %     ind_E (float): Index electron
+    %     A0 (float): Stoichiometric matrix
+    %     ind_E (float): Index of electron element
     %     indexGas (flaot): List of chemical species indices in gaseous phase
     %     indexIons (float): List of ionized chemical species indices 
     %
@@ -41,6 +41,23 @@ end
 % SUB-PASS FUNCTIONS
 function [N, STOP] = recomputeIons(N, A0, ind_E, indexGas, indexIons, delta_ions, TOL, TOL_pi, itMax)
     % Reestimate composition of ionized species
+    %
+    % Args:
+    %     N (float): Composition matrix
+    %     A0 (float): Stoichiometric matrix
+    %     ind_E (float): Index of electron element
+    %     indexGas (float): List of gaseous species indices
+    %     indexIons (float): List of ionized species indices
+    %     delta_ions (float): Initial error in charge balance
+    %     TOL (float): Tolerance for molar fraction
+    %     TOL_pi (float): Tolerance for charge balance error
+    %     itMax (int): Maximum number of iterations
+    %
+    % Returns:
+    %     Tuple containing
+    %
+    %     * N (float): Updated composition matrix
+    %     * STOP (float): Final relative error in charge balance
     
     % Initialization
     A0_ions = A0(indexIons, ind_E);
@@ -69,13 +86,28 @@ end
 
 function [delta, deltaN3] = ionsFactor(N, A0, ind_E, indexGas, indexIons)
     % Compute relaxation factor for ionized species
+    %
+    % Args:
+    %     N (float): Composition matrix
+    %     A0 (float): Stoichiometric matrix
+    %     ind_E (float): Index of electron element
+    %     indexGas (float): List of gaseous species indices
+    %     indexIons (float): List of ionized species indices
+    %
+    % Returns:
+    %     Tuple containing
+    %
+    %     * delta (float): Relaxation factor for charge balance
+    %     * deltaN3 (float): Absolute sum of ion contributions
     
+    % Return zero if there are no ionized species
     if ~any(indexIons)
         delta = [];
         deltaN3 = 0;
         return
     end
-
+    
+    % Compute relaxation factor for charge balance
     delta = -sum(A0(indexGas, ind_E) .* N(indexGas, 1))/ ...
              sum(A0(indexGas, ind_E).^2 .* N(indexGas, 1));
     deltaN3 = abs(sum(N(indexGas, 1) .* A0(indexGas, ind_E)));

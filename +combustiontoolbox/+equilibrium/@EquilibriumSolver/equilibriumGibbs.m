@@ -1,4 +1,4 @@
-function [N, dNi_T, dN_T, dNi_p, dN_p, index, STOP, STOP_ions, h0] = equilibriumGibbs(obj, system, p, T, mix, guess_moles)
+function [N, dNi_T, dN_T, dNi_p, dN_p, index, STOP, STOP_ions, h0] = equilibriumGibbs(obj, system, p, T, mix, molesGuess)
     % Obtain equilibrium composition [moles] for the given temperature [K] and pressure [bar].
     % The code stems from the minimization of the free energy of the system by using Lagrange
     % multipliers combined with a Newton-Raphson method, upon condition that initial gas
@@ -19,7 +19,7 @@ function [N, dNi_T, dN_T, dNi_p, dN_p, index, STOP, STOP_ions, h0] = equilibrium
     %     p (float): Pressure [bar]
     %     T (float): Temperature [K]
     %     mix1 (struct): Properties of the initial mixture
-    %     guess_moles (float): Mixture composition [mol] of a previous computation
+    %     molesGuess (float): Mixture composition [mol] of a previous computation
     %
     % Returns:
     %     Tuple containing
@@ -60,8 +60,8 @@ function [N, dNi_T, dN_T, dNi_p, dN_p, index, STOP, STOP_ions, h0] = equilibrium
     FLAG_CONDENSED = false;
     STOP_ions = 0;
 
-    % Set moles from guess_moles (if it was given) to 1e-6 to avoid singular matrix
-    guess_moles(guess_moles < obj.tolMolesGuess) = obj.tolMolesGuess;
+    % Set moles from molesGuess (if it was given) to 1e-6 to avoid singular matrix
+    molesGuess(molesGuess < obj.tolMolesGuess) = obj.tolMolesGuess;
     
     % Find indeces of the species/elements that we have to remove from the stoichiometric matrix A0
     % for the sum of elements whose value is <= tolMoles
@@ -104,20 +104,20 @@ function [N, dNi_T, dN_T, dNi_p, dN_p, index, STOP, STOP_ions, h0] = equilibrium
     A0_T = A0';
 
     % Initialize composition matrix N [mol, FLAG_CONDENSED]
-    [N, NP] = obj.equilibriumGuess(N, NP, A0_T(indexElements, index0), muRT(index0), NatomE, index0, indexGas_0, indexIons, NG, guess_moles);
+    [N, NP] = obj.equilibriumGuess(N, NP, A0_T(indexElements, index0), muRT(index0), NatomE, index0, indexGas_0, indexIons, NG, molesGuess);
 
     % Initialization 
     psi_j = system.molesPhaseMatrix(:, 1);
     tauRT = tau0RT .* min(NatomE);
 
     % Solve system
-    x = equilibrium_loop;
+    x = equilibriumLoop;
 
     % Compute chemical equilibrium with condensed species
-    x = equilibrium_loop_condensed(x);
+    x = equilibriumLoopCondensed(x);
     
     % Update matrix J (jacobian) to compute the thermodynamic derivatives
-    J = update_matrix_J(A0_T(indexElements, :), J22, N(:, 1), NP, indexGas, indexCondensed, NE, NS - NG, psi_j);
+    J = update_matrix_J(A0_T(indexElements, :), J22, N(:, 1), NP, indexGas, indexCondensed, NS - NG, psi_j);
     J(end, end) = 0;
 
     % Molar enthalpy [J/mol]
@@ -130,7 +130,7 @@ function [N, dNi_T, dN_T, dNi_p, dN_p, index, STOP, STOP_ions, h0] = equilibrium
     [dNi_T, dN_T, dNi_p, dN_p] = obj.equilibriumDerivatives(J, N, A0, NE, indexGas, indexCondensed, indexElements, H0RT);
 
     % NESTED FUNCTION
-    function x = equilibrium_loop
+    function x = equilibriumLoop
         % Calculate composition at chemical equilibrium
         
         % persistent totalIterations
@@ -153,7 +153,7 @@ function [N, dNi_T, dN_T, dNi_p, dN_p, index, STOP, STOP_ions, h0] = equilibrium
             muRT(indexGas) =  g0(indexGas) / RT + log(N(indexGas, 1) / NP) + log(p);
             
             % Construction of matrix J
-            J = update_matrix_J(A0_T, J22, N(:, 1), NP, indexGas, indexCondensed, NE, NS - NG, psi_j);
+            J = update_matrix_J(A0_T, J22, N(:, 1), NP, indexGas, indexCondensed, NS - NG, psi_j);
             
             % Construction of vector b      
             b = update_vector_b(A0, N(:, 1), NP, NatomE, ind_E, index, indexGas, indexCondensed, indexIons, muRT, tauRT);
@@ -268,7 +268,7 @@ function [N, dNi_T, dN_T, dNi_p, dN_p, index, STOP, STOP_ions, h0] = equilibrium
         % debug_plot_error(it, aux_STOP, aux_delta);
     end
 
-    function x = equilibrium_loop_condensed(x)
+    function x = equilibriumLoopCondensed(x)
         % Calculate composition at chemical equilibrium with condensed species
 
         if isempty(indexCondensed_0)
@@ -340,13 +340,13 @@ function [N, dNi_T, dN_T, dNi_p, dN_p, index, STOP, STOP_ions, h0] = equilibrium
             N_backup = N;
             
             % Check if there are non initialized condensed species
-            N(indexCondensed_add(N(indexCondensed_add, 1) == 0), 1) = 1e-3;
+            N(indexCondensed_add(N(indexCondensed_add, 1) == 0), 1) = 1e-5;
 
             % Initialize Lagrange multiplier vector psi
             psi_j(indexCondensed_add) = 1e-15 ./ N(indexCondensed_add, 1);
 
             % Compute chemical equilibrium considering condensed species
-            x0 = equilibrium_loop;
+            x0 = equilibriumLoop;
 
             % Debug
             % aux2 = N(indexCondensed_add, 1);
@@ -377,7 +377,7 @@ function [N, dNi_T, dN_T, dNi_p, dN_p, index, STOP, STOP_ions, h0] = equilibrium
         
         % Recompute if there are condensed species that may appear at chemical equilibrium
         if FLAG_CONDENSED && any(abs(dL_dnj) > 1e-4)
-            x = equilibrium_loop_condensed(x);
+            x = equilibriumLoopCondensed(x);
         end
         
     end
@@ -396,7 +396,7 @@ function STOP = compute_STOP(NP, deltaNP, N, deltaN, NG, A0, NatomE, max_NatomE,
     STOP = max([deltaN1; deltaN2; deltab]);
 end
 
-function J11 = update_matrix_J11(A0_T, N, indexGas, NE)
+function J11 = update_matrix_J11(A0_T, N, indexGas)
     % Compute submatrix J11
     J11 = A0_T(:, indexGas) * (A0_T(:, indexGas) .* N(indexGas)')';
 end
@@ -413,9 +413,9 @@ function J22 = update_matrix_J22(J22, N, NP, indexGas)
     J22(end, end) = sum(N(indexGas, 1)) - NP;
 end
 
-function J = update_matrix_J(A0_T, J22, N, NP, indexGas, indexCondensed, NE, NC, psi_j)
+function J = update_matrix_J(A0_T, J22, N, NP, indexGas, indexCondensed, NC, psi_j)
     % Compute matrix J
-    J11 = update_matrix_J11(A0_T, N, indexGas, NE);
+    J11 = update_matrix_J11(A0_T, N, indexGas);
     J12 = update_matrix_J12(A0_T, N, indexGas, indexCondensed);
     J22(1:NC, 1:NC) = - diag(psi_j(indexCondensed) ./ N(indexCondensed));
     J22 = update_matrix_J22(J22, N, NP, indexGas);

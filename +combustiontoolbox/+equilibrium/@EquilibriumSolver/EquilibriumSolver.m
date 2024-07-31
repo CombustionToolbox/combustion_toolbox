@@ -33,6 +33,9 @@ classdef EquilibriumSolver < handle
     end
 
     methods
+        
+        mix2 = equilibrate(obj, mix2, varargin)
+        mix2 = equilibrateT(obj, mix1, mix2, T, varargin)
 
         function obj = EquilibriumSolver(varargin)
             % Constructor
@@ -132,296 +135,11 @@ classdef EquilibriumSolver < handle
             printTime(obj);
         end
 
-        function mix2 = equilibrate(obj, mix2, varargin)
-            % Obtain properties at equilibrium for the given thermochemical transformation
-            %
-            % Args:
-            %     obj (EquilibriumSolver): EquilibriumSolver object
-            %     mix2 (Mixture): Mixture considering a thermochemical frozen gas
-            %
-            % Returns:
-            %     mix2 (Mixture): Mixture at chemical equilibrium for the given thermochemical transformation
-            %
-            % Examples:
-            %     * mix2 = equilibrate(EquilibriumSolver(), mix2)
-            
-            % Initialization
-            mix1 = mix2.copy();
-
-            if obj.FLAG_TCHEM_FROZEN
-                % TO BE IMPLEMENTED
-                mix2.errorProblem = 0;
-                return
-            end
-            
-            % Default
-            mix_guess = [];
-
-            % Unpack guess
-            if nargin > 2
-                mix_guess = varargin{1};
-            end
-
-            % Get attribute xx of the specified transformations
-            attr_name = get_attr_name(obj);
-            % Compute initial guess
-            [guess, guess_moles] = get_guess(obj, mix1, mix2, mix_guess, attr_name);
-            % If the problem type is SV, the product's volume is based on the given v_P/v_R ratio
-            % mix2 = set_volume_SV(obj, mix2);
-            % Root finding: find the value x that satisfies f(x) = mix2.xx(x) - mix1.xx = 0
-            [T, STOP, guess_moles] = rootFinding(obj, mix1, mix2, attr_name, guess, guess_moles);
-            % Compute properties
-            obj.equilibrate_T(mix1, mix2, T, guess_moles);
-            % Check convergence in case the problemType is TP (defined Temperature and Pressure)
-            print_convergence(mix2.errorMoles, obj.tolGibbs, mix2.errorMolesIons, obj.tolMultiplierIons, obj.problemType)
-            % Save error from root finding algorithm
-            mix2.errorProblem = STOP;
-
-            % SUB-PASS FUNCTIONS
-            function attr_name = get_attr_name(obj)
-                % Get attribute of the problem type
-                switch upper(obj.problemType)
-                    case {'TP', 'TV'}
-                        attr_name = 'T';
-                    case 'HP'
-                        attr_name = 'h';
-                    case 'EV'
-                        attr_name = 'e';
-                    case {'SP', 'SV'}
-                        attr_name = 's';
-                end
-
-            end
-
-            function [guess, guess_moles] = get_guess(obj, mix1, mix2, mix_guess, attr_name)
-                % Get initial estimates for temperature and molar composition
-
-                % Initialization
-                if any(strcmpi(obj.problemType, {'TP', 'TV'}))
-                    % guess = get_transformation(obj, 'TP');
-                    guess = mix2.T;
-                    guess_moles = [];
-
-                    % if ~isempty(mix_guess)
-                    %     guess_moles = mix_guess.Xi * mix_guess.N;
-                    % end
-                    
-                    return
-                end
-
-                if ~isempty(mix_guess)
-                    guess = mix_guess.T;
-                    guess_moles = mix_guess.Xi * mix_guess.N;
-                else
-                    guess = obj.regulaGuess(mix1, mix2, attr_name);
-                    guess_moles = [];
-                end
-
-            end
-
-            function [x, STOP, guess_moles] = rootFinding(obj, mix1, mix2, attr_name, x0, guess_moles)
-                % Calculate the temperature value that satisfied the problem conditions
-                % using the @rootMethod
-                [x, STOP, guess_moles] = obj.rootMethod(obj, mix1, mix2, attr_name, x0, guess_moles);
-            end
-
-            function print_convergence(STOP, TOL, STOP_ions, TOL_ions, ProblemType)
-                % Print tolerance error if the convergence criteria was not satisfied
-
-                if ~strcmpi(ProblemType, 'TP')
-                    return
-                end
-
-                if STOP > TOL
-                    fprintf('***********************************************************\n')
-                    fprintf('Convergence error number of moles:   %1.2e\n', STOP);
-                end
-
-                if STOP_ions > TOL_ions
-                    fprintf('***********************************************************\n')
-                    fprintf('Convergence error in charge balance: %1.2e\n', STOP_ions);
-                end
-
-            end
-
-            function mix = set_volume_SV(obj, mix)
-                % If the problem type is SV, the product's volume is based on the given v_P/v_R ratio
-                if ~strcmpi(obj.problemType, 'SV')
-                    return
-                end
-
-                %mix.v = mix.v * obj.PD.vP_vR.value;
-                fprintf('\nto be clarified\n')
-            end
-
-        end
-
-        function mix2 = equilibrate_T(obj, mix1, mix2, T, varargin)
-            % Obtain equilibrium properties and composition for the given temperature [K] and pressure [bar]
-            %
-            % Args:
-            %     obj (EquilibriumSolver): Object of the class EquilibriumSolver
-            %     mix1 (Mixture): Properties of the initial mixture
-            %     mix2 (Mixture): Properties of the final mixture
-            %     T (float): Temperature [K]
-            %
-            % Optional Args:
-            %     guess_moles (float): Mixture composition [mol] of a previous computation
-            %
-            % Returns:
-            %     mix2 (Mixture): Properties of the final mixture
-            %
-            % Example:
-            %     mix2 = equilibrate_T(EquilibriumSolver(), mix1, mix2, 3000)
-            
-            % Import packages
-            import combustiontoolbox.utils.findIndex
-            
-            % Check if calculations are for a thermochemical frozen gas (calorically perfect)
-            if obj.FLAG_TCHEM_FROZEN
-                obj.equilibrate_T_tchem(mix1, mix2, T);
-                return
-            end
-        
-            % Check if calculations are for a calorically imperfect gas with frozen chemistry
-            if obj.FLAG_FROZEN
-                % Computed by default when defining the mixture (Mixture)
-                
-                % Miscellaneous
-                mix2.FLAG_REACTION = false;
-                temp = mix2.equivalenceRatio;
-                mix2.equivalenceRatio = [];
-                % Update thermodynamic properties assuming a thermally perfect gas
-                setTemperature(mix2, T);
-                % Recover original value
-                mix2.equivalenceRatio = temp;
-                return
-            end
-
-            % Definitions
-            N_mix0 = moles(mix1); % Get moles of inert species
-            system = mix2.chemicalSystem;
-            systemProducts = mix2.chemicalSystemProducts;
-            
-            % Unpack
-            guess_moles = unpack(varargin);
-
-            % Check flag
-            if ~obj.FLAG_FAST, guess_moles = []; end
-
-            % Compute number of moles
-            [N, dNi_T, dN_T, dNi_p, dN_p, indexProducts, STOP, STOP_ions, h0] = selectEquilibrium(obj, systemProducts, T, mix1, mix2, guess_moles);
-            
-            % Compute property matrix of the species at chemical equilibrium
-            setMixture(mix2);
-
-            % NESTED FUNCTIONS
-            function guess_moles = unpack(value)
-                % Unpack inputs
-                if isempty(value)
-                    guess_moles = [];
-                else
-                    guess_moles = value{1};
-                end
-            
-            end
-            
-            function pP = computePressure(mix, T, moles, index)
-                % Compute pressure [bar] of product mixture
-                vMolar = vSpecific2vMolar(mix, mix.vSpecific, moles, sum(moles(system.indexGas)), index);
-                pP = mix.equationOfState.getPressure(T, vMolar, system.listSpecies, mix.Xi) * 1e-5;
-            end
-            
-            function [N, dNi_T, dN_T, dNi_p, dN_p, indexProducts, STOP, STOP_ions, h0] = selectEquilibrium(obj, system, T, mix1, mix2, guess_moles)
-                % Select equilibrium: TP: Gibbs; TV: Helmholtz
-                
-                if strfind(obj.problemType, 'P') == 2
-                    [N, dNi_T, dN_T, dNi_p, dN_p, indexProducts, STOP, STOP_ions, h0] = equilibriumGibbs(obj, system, mix2.p, T, mix1, guess_moles);
-                else
-                    [N, dNi_T, dN_T, dNi_p, dN_p, indexProducts, STOP, STOP_ions, h0] = equilibriumHelmholtz(obj, system, mix2.v, T, mix1, guess_moles);
-                end
-
-            end
-            
-            function mix = setMixture(mix)
-                % Compute properties of final mixture
-                
-                % Reshape composition matrix N, and partial composition partial derivatives 
-                N = reshapeVector(system, system.indexProducts, systemProducts.indexSpecies, N);
-                dNi_T = reshapeVector(system, system.indexProducts, systemProducts.indexSpecies, dNi_T);
-                dNi_p = reshapeVector(system, system.indexProducts, systemProducts.indexSpecies, dNi_p);
-                h0 = reshapeVector(system, system.indexProducts, systemProducts.indexSpecies, h0);
-                % h0(system.indexFrozen) = set_h0(system.listSpecies(system.indexFrozen), T, system.species); 
-                N(system.indexFrozen) = N_mix0(system.indexFrozen);
-
-                % Assign values
-                mix.T = T;
-                mix.dNi_T = dNi_T; mix.dN_T = dN_T;
-                mix.dNi_p = dNi_p; mix.dN_p = dN_p;
-                mix.FLAG_REACTION = true;
-                mix.errorMoles = STOP;
-                mix.errorMolesIons = STOP_ions;
-
-                % Clean chemical system
-                system.clean;
-                
-                % Check if problemType is at constant volume
-                if strfind(obj.problemType, 'V') == 2
-                    mix.p = computePressure(mix, T, N, [system.indexGas, system.indexCondensed]);
-                end
-                
-                % Get indexSpecies from indexProducts
-                indexSpecies = findIndex(system.listSpecies, systemProducts.listSpecies(indexProducts));
-
-                % Compute properties of final mixture
-                mix.set_fast(system.listSpecies, N', [indexSpecies, system.indexFrozen], h0);
-            end
-            
-            function vector = reshapeVector(system, index, ind_modified, vector_modified)
-                % Reshape vector containing all the species
-                vector = system.molesPhaseMatrix(:, 1);
-                vector(index, 1) = vector_modified(ind_modified, 1);
-            end
-            
-        end
-
-        function mix2 = equilibrate_T_tchem(obj, mix1, mix2, T)
-            % Obtain equilibrium properties and composition for the given
-            % temperature [K] and pressure [bar] assuming a calorically perfect gas
-            %
-            % Args:
-            %     obj (EquilibriumSolver): Object of the class EquilibriumSolver
-            %     mix1 (Mixture): Properties of the initial mixture
-            %     mix2 (Mixture): Properties of the final mixture
-            %     T (float): Temperature [K]
-            %
-            % Returns:
-            %     mix2 (Mixture): Properties of the final mixture assuming a calorically perfect gas
-            %
-            % Example:
-            %     mix2 = equilibrate_T_tchem(EquilibriumSolver(), mix1, mix2, 3000)
-        
-            % Recompute properties of mix2
-            setTemperature(mix2, T);
-
-            % Change properties that remains thermochemically frozen
-            mix2.cp = mix1.cp;
-            mix2.cv = mix1.cv;
-            mix2.gamma = mix1.gamma;
-            mix2.gamma_s = mix1.gamma_s;
-            mix2.sound = sqrt(mix2.gamma * convert_bar_to_Pa(mix2.p) / mix2.rho);
-            
-            if ~isempty(mix2.u)
-                mix2.mach = mix2.u / mix2.sound;
-            end
-            
-        end
-
         function printTime(obj)
             % Print execution time
             %
             % Args:
-            %     obj (EquilibriumSolver): Object of the class EquilibriumSolver
+            %     obj (EquilibriumSolver): EquilibriumSolver object
             
             if ~obj.FLAG_TIME
                 return
@@ -464,7 +182,7 @@ classdef EquilibriumSolver < handle
     end
     
     methods (Access = private, Static)
-        [N, NP] = equilibriumGuess(N, NP, A0, muRT, b0, index, indexGas, indexIons, NG, guess_moles)
+        [N, NP] = equilibriumGuess(N, NP, A0, muRT, b0, index, indexGas, indexIons, NG, molesGuess)
         [dNi_T, dN_T, dNi_p, dN_p] = equilibriumDerivatives(J, N0, A0, NE, indexGas, indexCondensed, indexElements, H0RT)
         [indexCondensed, FLAG_CONDENSED, dL_dnj] = equilibriumCheckCondensed(A0, pi_i, W, indexCondensed, muRT, NC_max, FLAG_ONE, FLAG_RULE)
 
@@ -487,7 +205,7 @@ classdef EquilibriumSolver < handle
             % Set number of atoms
             NatomE(FLAG_REMOVE_ELEMENTS) = [];
             
-            % Check position "element" electron
+            % Check position electron "element"
             if ind_E
                 ind_E = ind_E - sum(FLAG_REMOVE_ELEMENTS(1:ind_E-1));
             end
@@ -570,7 +288,7 @@ classdef EquilibriumSolver < handle
             % Get fixed point of a function based on the chemical transformation using the Aitken acceleration method
             %
             % Args:
-            %     x0 (float): Guess temperature [K]
+            %     x0 (float): Initial guess for temperature [K]
             %     g_vector (struct): Fixed points of the function [J] (HP, EV) or [J/K] (SP, SV)
             %
             % Returns:
@@ -583,28 +301,28 @@ classdef EquilibriumSolver < handle
 
     methods (Access = private)
         
-        [N, dNi_T, dN_T, dNi_p, dN_p, indexProducts, STOP, STOP_ions, h0] = equilibriumGibbs(obj, system, p, T, mix, guess_moles)
-        [N, dNi_T, dN_T, dNi_p, dN_p, indexProducts, STOP, STOP_ions, h0] = equilibriumHelmholtz(obj, system, v, T, mix, guess_moles)
+        [N, dNi_T, dN_T, dNi_p, dN_p, indexProducts, STOP, STOP_ions, h0] = equilibriumGibbs(obj, system, p, T, mix, molesGuess)
+        [N, dNi_T, dN_T, dNi_p, dN_p, indexProducts, STOP, STOP_ions, h0] = equilibriumHelmholtz(obj, system, v, T, mix, molesGuess)
         [N, STOP_ions, FLAG_ION] = equilibriumCheckIons(obj, N, A0, ind_E, indexGas, indexIons)
 
-        function [x, STOP, guess_moles] = newton(obj, mix1, mix2, field, x0, guess_moles)
+        function [x, STOP, molesGuess] = newton(obj, mix1, mix2, attributeName, x0, molesGuess)
             % Find the temperature [K] (root) for the set chemical transformation at equilibrium using the second-order Newton-Raphson method
             %
             % Args:
-            %     obj (EquilibriumSolver): Object of the class EquilibriumSolver
+            %     obj (EquilibriumSolver): EquilibriumSolver object
             %     mix1 (Mixture): Properties of the initial mixture
             %     mix2 (Mixture): Properties of the final mixture
             %     pP (float): Pressure [bar]
-            %     field (str): Fieldname in Problem Description (PD)
-            %     x0 (float): Guess temperature [K]
-            %     guess_moles (float): Guess moles final mixture
+            %     attributeName (char): Attribute name of the problem type
+            %     x0 (float): Initial guess for temperature [K]
+            %     molesGuess (float): Initial guess for moles in the final mixture
             %
             % Returns:
             %     Tuple containing
             %
             %     * x (float): Temperature at equilibrium [K]
             %     * STOP (float): Relative error [-] 
-            %     * guess_moles (struct): Guess moles final mixture
+            %     * molesGuess (float): Updated guess for moles in the final mixture
         
             if any(strcmpi(obj.problemType, {'TP', 'TV'}))
                 x = x0;
@@ -617,60 +335,70 @@ classdef EquilibriumSolver < handle
         
             % Loop
             while STOP > obj.tol0 && it < obj.itMax
-                % Update iteration number
+                % Update iteration
                 it = it + 1;
+
                 % Get the residual of f, its derivative with temperature, and the
                 % relative value of the residual
-                [f0, fprime0, frel, guess_moles] = obj.getRatioNewton(mix1, mix2, field, x0, guess_moles);
+                [f0, fprime0, frel, molesGuess] = obj.getRatioNewton(mix1, mix2, attributeName, x0, molesGuess);
+                
                 % Compute solution
                 x = abs(x0 - f0 / fprime0);
+                
                 % Compute stop criteria
                 STOP = max(abs((x - x0) / x), frel);
+                
                 % Update solution
                 x0 = x;
+                
                 % Debug       
                 % aux_x(it) = x;
                 % aux_STOP(it) = STOP;
             end
-        
+
+            % Debug
             % debug_plot_error(it, aux_STOP);
+            
             if STOP > obj.tol0
                 fprintf('\n***********************************************************\n')
                 fprintf('Newton method not converged\nCalling Newton-Steffensen root finding algorithm\n')
-                x0 = obj.regulaGuess(mix1, mix2, field);
-                [x, STOP] = obj.nsteff(mix1, mix2, field, x0, []);
-            else
-                obj.printError(it, x, STOP);
+                x0 = regulaGuess(obj, mix1, mix2, attributeName);
+                [x, STOP] = nsteff(obj, mix1, mix2, attributeName, x0, []);
+                return
             end
             
+            printError(obj, it, x, STOP);
         end
         
-        function [f, fprime, frel, guess_moles] = getRatioNewton(obj, mix1, mix2, field, x, guess_moles)
-                % Get the residual of f, its derivative with temperature, and the
-                % relative value of the residual
-                
-                try
-                    obj.equilibrate_T(mix1, mix2, x, guess_moles);
-                catch
-                    obj.equilibrate_T(mix1, mix2, x);
-                end
+        function [f, fprime, frel, molesGuess] = getRatioNewton(obj, mix1, mix2, attributeName, x, molesGuess)
+            % Get the residual of f, its derivative with temperature, and the
+            % relative value of the residual
             
-                % Calculate residual of f = 0
-                f = mix2.(field) - mix1.(field);
-                % Calculate partial derivative of f with temperature
-                fprime = obj.getPartialDerivative(mix2);
-                % Get relative value of the residual
-                frel = abs(f / mix2.(field));
-                % Update guess moles
-                guess_moles = mix2.N * mix2.Xi;
+            try
+                obj.equilibrateT(mix1, mix2, x, molesGuess);
+            catch
+                obj.equilibrateT(mix1, mix2, x);
+            end
+        
+            % Calculate residual of f = 0
+            f = mix2.(attributeName) - mix1.(attributeName);
+
+            % Calculate partial derivative of f with temperature
+            fprime = obj.getPartialDerivative(mix2);
+
+            % Get relative value of the residual
+            frel = abs(f / mix2.(attributeName));
+
+            % Update guess moles
+            molesGuess = mix2.N * mix2.Xi;
         end
 
         function value = getPartialDerivative(obj, mix)
             % Get value of the partial derivative for the set problem type [J/K] (HP, EV) or [J/K^2] (SP, SV)
             %
             % Args:
-            %     obj (EquilibriumSolver):
-            %     mix (Mixture):
+            %     obj (EquilibriumSolver): EquilibriumSolver object
+            %     mix (Mixture): Mixture object
             %
             % Returns:
             %     value (float): Value of the partial derivative for the set problem type [J/K] (HP, EV) or [J/K^2] (SP, SV)
@@ -687,23 +415,23 @@ classdef EquilibriumSolver < handle
         
         end
 
-        function [x, STOP, guess_moles] = nsteff(obj, mix1, mix2, field, x0, guess_moles)
+        function [x, STOP, molesGuess] = nsteff(obj, mix1, mix2, attributeName, x0, molesGuess)
             % Find the temperature [K] (root) for the set chemical transformation at equilibrium using the third-order Newton-Steffensen method
             %
             % Args:
-            %     obj (EquilibriumSolver): Object of the class EquilibriumSolver
+            %     obj (EquilibriumSolver): EquilibriumSolver object
             %     mix1 (Mixture): Properties of the initial mixture
             %     mix2 (Mixture): Properties of the final mixture
-            %     field (str): Fieldname in Problem Description (PD)
-            %     x0 (float): Guess temperature [K]
-            %     guess_moles (float): Guess moles final mixture
+            %     attributeName (char): Attribute name of the problem type
+            %     x0 (float): Initial guess for temperature [K]
+            %     molesGuess (float): Initial guess for moles in the final mixture
             %
             % Returns:
             %     Tuple containing
             %
             %     * x (float): Temperature at equilibrium [K]
             %     * STOP (float): Relative error [-] 
-            %     * guess_moles (struct): Guess moles final mixture
+            %     * molesGuess (float): Updated guess for moles in the final mixture
         
             if any(strcmpi(obj.problemType, {'TP', 'TV'}))
                 x = x0;
@@ -713,107 +441,127 @@ classdef EquilibriumSolver < handle
         
             it = 0; STOP = 1.0;
             while STOP > obj.tol0 && it < obj.itMax
-                % Update iteration number
+                % Update iteration
                 it = it + 1;
+                
                 % Get the residual of f, its derivative with temperature, and the
                 % relative value of the residual
-                [f0, fprime0, frel, guess_moles] = getRatioNewton(obj, mix1, mix2, field, x0, guess_moles);
+                [f0, fprime0, frel, molesGuess] = getRatioNewton(obj, mix1, mix2, attributeName, x0, molesGuess);
+                
                 % Compute pseudo-solution
                 x = abs(x0 - f0 / fprime0);
+                
                 % Re-estimation of first derivative
-                f0_2 = getRatioNewton(obj, mix1, mix2, field, x, guess_moles);
+                f0_2 = getRatioNewton(obj, mix1, mix2, attributeName, x, molesGuess);
+                
                 % Compute solution
                 x = abs(x0 - f0^2 / (fprime0 * (f0 - f0_2)));
+                
                 % Compute stop criteria
                 STOP = max(abs((x - x0) / x), frel);
+                
                 % Update solution
                 x0 = x;
+                
                 % Debug       
                 % aux_x(it) = x;
                 % aux_STOP(it) = STOP;
             end
-
+            
+            % Debug
             % debug_plot_error(it, aux_STOP);
 
             if STOP > obj.tol0
                 fprintf('\n***********************************************************\n')
                 fprintf('Newton method not converged\nCalling Steffensen-Aitken root finding algorithm\n')
-                x0 = obj.regulaGuess(mix1, mix2, field);
-                [x, STOP] = obj.steff(mix1, mix2, field, x0, []);
-            else
-                obj.printError(it, x, STOP);
+                x0 = regulaGuess(obj, mix1, mix2, attributeName);
+                [x, STOP] = obj.steff(mix1, mix2, attributeName, x0, []);
+                return
             end
-    
+
+            printError(obj, it, x, STOP);    
         end
 
-        function [x, STOP, guess_moles] = steff(obj, mix1, mix2, field, x0, guess_moles)
+        function [x, STOP, molesGuess] = steff(obj, mix1, mix2, attributeName, x0, molesGuess)
             % Find the temperature [K] (root) for the set chemical transformation at equilibrium using the Steffenson-Aitken method
             %
             % Args:
-            %     obj (EquilibriumSolver): Object of the class EquilibriumSolver
+            %     obj (EquilibriumSolver): EquilibriumSolver object
             %     mix1 (Mixture): Properties of the initial mixture
             %     mix2 (Mixture): Properties of the final mixture
-            %     field (str): Fieldname in Problem Description (PD)
-            %     x0 (float): Guess temperature [K]
-            %     guess_moles (float): Guess moles final mixture
+            %     attributeName (char): Attribute name of the problem type
+            %     x0 (float): Initial guess for temperature [K]
+            %     molesGuess (float): Initial guess for moles in the final mixture
             %
             % Returns:
             %     Tuple containing
             %
             %     * x (float): Temperature at equilibrium [K]
             %     * STOP (float): Relative error [-] 
-            %     * guess_moles (float): Guess moles final mixture
-        
+            %     * molesGuess (float): Updated guess for moles in the final mixture
+            
+            % Check if the problem type is 'TP' or 'TV' which require no iteration
             if any(strcmpi(obj.problemType, {'TP', 'TV'}))
                 x = x0;
                 STOP = 0;
                 return
             end
-        
+            
+            % Initialization
             it = 0; STOP = 1.0;
             
             while STOP > obj.tol0 && it < obj.itMax
+                % Update iteration
                 it = it + 1;
-                [g, g_rel]= getGpoint(obj, mix1, mix2, field, x0, guess_moles);
+
+                % Compute fixed point
+                [g, g_rel]= getGpoint(obj, mix1, mix2, attributeName, x0, molesGuess);
                 fx = abs(g - x0);
-                g_aux  = getGpoint(obj, mix1, mix2, field, fx, guess_moles);
+
+                % Compute auxiliary fixed point
+                g_aux  = getGpoint(obj, mix1, mix2, attributeName, fx, molesGuess);
                 fx2 = abs(g_aux - fx);
+
+                % Compute solution
                 if abs(fx2 - 2*fx + x0) > obj.tol0
                     x = obj.getPointAitken(x0, [fx, fx2]);
                 else
                     x = fx;
                 end
-        
+                
+                % Compute stop criteria
                 STOP = max(abs((x - fx) / x), abs(g_rel));
+
+                % Update solution
                 x0 = x;
             end
         
-            obj.printError(it, x, STOP);
+            printError(obj, it, x, STOP);
         end
 
-        function x0 = regulaGuess(obj, mix1, mix2, field)
+        function x0 = regulaGuess(obj, mix1, mix2, attributeName)
             % Find a estimate of the temperature for the set chemical equilibrium
             % transformation using the regula falsi method
             %
             % Args:
-            %     obj (EquilibriumSolver): 
+            %     obj (EquilibriumSolver): EquilibriumSolver object
             %     mix1 (Mixture): Properties of the initial mixture
             %     mix2 (Mixture): Properties of the final mixture
-            %     field (str): Fieldname in Problem Description (PD)
+            %     attributeName (char): Attribute name of the problem type
             %
             % Returns:
-            %     x0 (float): Guess temperature [K]
+            %     x0 (float): Initial guess for temperature [K]
             
             % Initialization
-            guess_moles = [];
+            molesGuess = [];
 
             % Define branch
             x_l = obj.root_T0_l;
             x_r = obj.root_T0_r;
             
             % Compute f(x) = f2(x) - f1 at the branch limits
-            g_l = obj.getGpoint(mix1, mix2, field, x_l, guess_moles);
-            g_r = obj.getGpoint(mix1, mix2, field, x_r, guess_moles);
+            g_l = obj.getGpoint(mix1, mix2, attributeName, x_l, molesGuess);
+            g_r = obj.getGpoint(mix1, mix2, attributeName, x_r, molesGuess);
             
             % Update estimate based on the region
             if g_l * g_r < 0
@@ -832,38 +580,34 @@ classdef EquilibriumSolver < handle
         
         end
 
-        function [gpoint, gpoint_relative] = getGpoint(obj, mix1, mix2, field, x0, guess_moles)
+        function [gpoint, gpointRelative] = getGpoint(obj, mix1, mix2, attributeName, x0, molesGuess)
             % Get fixed point of a function based on the chemical transformation
             %
             % Args:
-            %     obj (EquilibriumSolver): Object of the class EquilibriumSolver
+            %     obj (EquilibriumSolver): EquilibriumSolver object
             %     mix1 (Mixture): Properties of the initial mixture
             %     mix2 (Mixture): Properties of the final mixture
-            %     field (str):    Fieldname in Problem Description (PD)
+            %     attributeName (str):    Fieldname in Problem Description (PD)
             %     x0 (float):     Guess temperature [K]
             %
             % Returns:
             %     Tuple containing
             %
             %     * gpoint (float): Fixed point of the function [J] (HP, EV) or [J/K] (SP, SV)
-            %     * gpoint_relative (float): Fixed relative point of the function [J] (HP, EV) or [J/K] (SP, SV)
+            %     * gpointRelative (float): Fixed relative point of the function [J] (HP, EV) or [J/K] (SP, SV)
             
             try
                 % Compute TP problem
-                obj.equilibrate_T(mix1, mix2, x0, guess_moles);
+                obj.equilibrateT(mix1, mix2, x0, molesGuess);
+
                 % Compute f(x) = f2(x) - f1 = 0
-                gpoint = (mix2.(field) - mix1.(field));
+                gpoint = (mix2.(attributeName) - mix1.(attributeName));
+
                 % Compute f(x) / f2(x)
-                gpoint_relative = gpoint / (mix2.(field));
-        
-                % if strcmpi(field, 's')
-                %     return
-                %     gpoint = gpoint * 1e3;
-                % end
-        
+                gpointRelative = gpoint / (mix2.(attributeName));
             catch
                 gpoint = NaN;
-                gpoint_relative = NaN;
+                gpointRelative = NaN;
             end
 
         end
@@ -872,7 +616,7 @@ classdef EquilibriumSolver < handle
             % Print error of the method if the number of iterations is greater than maximum iterations allowed
             %
             % Args:
-            %     obj (EquilibriumSolver): Object of the class EquilibriumSolver
+            %     obj (EquilibriumSolver): EquilibriumSolver object
             %     it (float):    Number of iterations executed in the method
             %     T (float):     Temperature [K]
             %     STOP (float):  Relative error [-]

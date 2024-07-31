@@ -45,7 +45,7 @@ classdef PlotConfig < handle
         linestyle = '-';                      % Set line style for plots
         symbolstyle = 'o';                    % Set symbol style for plots
         linewidth = 1.8;                      % Set line width for plots
-        fontsize = 20;                        % Set fontsize
+        fontsize = 22;                        % Set fontsize
         colorpalette = 'Seaborn';             % Set Color palette (see brewermap function for more options)
         colorpaletteLenght = 11;              % Set Maximum number of colors to use in the color palette
         box = 'off';                          % Display axes outline

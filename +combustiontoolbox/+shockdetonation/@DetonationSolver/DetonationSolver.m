@@ -1,4 +1,51 @@
 classdef DetonationSolver < handle
+    % The DetonationSolver class is used to solve detonation problems.
+    %
+    % Problem types:
+    %   * DET: Chapman-Jouguet detonation
+    %   * DET_R: Reflected Chapman-Jouguet detonation
+    %   * DET_OVERDRIVEN: Over-driven detonation    
+    %   * DET_OVERDRIVEN_R: Over-driven reflected detonation
+    %   * DET_UNDERDRIVEN: Under-driven detonation
+    %   * DET_UNDERDRIVEN_R: Under-driven reflected detonation
+    %   * DET_OBLIQUE: Oblique detonation
+    %   * DET_OBLIQUE_R: Oblique reflected detonation
+    %   * DET_POLAR: Detonation polar diagrams
+    %   * DET_POLAR_R: Detonation polar diagrams for incident and reflected states
+    %
+    % Attributes:
+    %     problemType (char): Problem type ['DET', 'DET_R', 'DET_OVERDRIVEN', 'DET_OVERDRIVEN_R', 'DET_UNDERDRIVEN', 'DET_UNDERDRIVEN_R', 'DET_OBLIQUE', 'DET_OBLIQUE_R', 'DET_POLAR', 'DET_POLAR_R']
+    %     equilibriumSolver (EquilibriumSolver): EquilibriumSolver object
+    %     tol0 (float): Tolerance of shocks/detonations kernel
+    %     itMax (float): Max number of iterations - shocks and detonations
+    %     machThermo (float): Pre-shock Mach number above which T2_guess will be computed considering h2 = h1 + u1^2 / 2
+    %     tolOblique (float): Tolerance oblique shocks algorithm
+    %     itOblique (float): Max number of iterations - oblique shocks
+    %     numPointsPolar (float): Number of points to compute shock/detonation polar curves
+    %     tolLimitRR (float): Tolerance to calculate the limit of regular reflections
+    %     itLimitRR (float): Max number of iterations - limit of regular reflections
+    %     itGuess (float): Max number of iterations - guess detonation
+    %     FLAG_RESULTS (bool): Flag to print results
+    %     FLAG_TIME (bool): Flag to print elapsed time
+    %     time (float): Elapsed time
+    %
+    % Methods:
+    %     detonationGuess: Compute the initial guess for the detonation problem
+    %     detonationCJ: Compute the CJ state for the detonation problem
+    %     detonationOverdriven: Compute the overdriven detonation problem
+    %     detonationUnderdriven: Compute the underdriven detonation problem
+    %     detonationReflected: Compute the reflected detonation problem
+    %     detonationObliqueBeta: Compute the oblique detonation problem (beta)
+    %     detonationObliqueTheta: Compute the oblique detonation problem (theta)
+    %     detonationPolar: Compute the polar curve of the detonation problem
+    %     detonationPolarLimitRR: Compute the limit of regular reflections of the detonation problem
+    %     solve: Solve detonations problems
+    %     solveArray: Solve a set of detonation problems
+    %     printTime: Print execution time
+    %
+    % Examples:
+    %     solver = DetonationSolver();
+    %     solver = DetonationSolver('problemType', 'DET_R');
 
     properties
         problemType             % Problem type

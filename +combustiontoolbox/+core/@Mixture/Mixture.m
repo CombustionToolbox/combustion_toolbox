@@ -1110,16 +1110,12 @@ classdef Mixture < handle & matlab.mixin.Copyable
 
         function obj = setPropertiesMatrixFast(obj, listSpecies, quantity, index, h0)
             % Set species and quantity and compute thermodynamic properties
-           
-            % Update local listSpecies and local quantity
-            obj.listSpecies = listSpecies;
-            obj.quantity = quantity;
 
             % Assign values to the propertiesMatrix
-            obj.chemicalSystem.setPropertiesMatrix(listSpecies, quantity, obj.T, index, h0);
+            setPropertiesMatrix(obj.chemicalSystem, listSpecies, quantity, obj.T, index, h0);
 
             % Compute thermodynamic properties
-            obj.computeProperties(obj.chemicalSystem, obj.T, obj.p);
+            computeProperties(obj, obj.chemicalSystem, obj.T, obj.p);
         end
 
     end

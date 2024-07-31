@@ -1,4 +1,4 @@
-function run_validation_TP_TEA_4(varargin)
+function run_validation_TP_TEA_4
     % VALIDATION: TP_TEA_4
     %
     % Compute equilibrium composition at defined temperature and pressure.
@@ -21,6 +21,7 @@ function run_validation_TP_TEA_4(varargin)
     import combustiontoolbox.databases.NasaDatabase
     import combustiontoolbox.core.*
     import combustiontoolbox.equilibrium.*
+    import combustiontoolbox.utils.display.*
     
     % Benchmark?
     FLAG_BENCHMARK = false;

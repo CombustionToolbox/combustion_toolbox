@@ -248,6 +248,9 @@ classdef Mixture < handle & matlab.mixin.Copyable
                 return
             end
 
+            % Assign values to the propertiesMatrix
+            obj.chemicalSystem.set_propertiesMatrix(obj.listSpecies, obj.quantity, obj.T);
+
             % Compute thermodynamic properties
             obj.compute_properties(obj.chemicalSystem, obj.T, p);
 

@@ -1,13 +1,40 @@
 classdef RocketSolver
+    % RocketSolver class to solve rocket problems
+    %
+    % Problem types:
+    %   * ROCKET_IAC: Get the performance of a rocket using the Infinite Area Chamber (IAC) model
+    %   * ROCKET_FAC: Get the performance of a rocket using the Finite Area Chamber (FAC) model
+    %
+    % Attributes:
+    %     problemType (char): Problem type [ROCKET_IAC or ROCKET_FAC]
+    %     equilibriumSolver (EquilibriumSolver): EquilibriumSolver object
+    %     tol0 (float): Tolerance rocket performance
+    %     itMax (float): Max number of iterations - rocket performance
+    %     FLAG_SUBSONIC (bool): Flag to indicate subsonic Area ratio
+    %     FLAG_RESULTS (bool): Flag to print results
+    %     FLAG_TIME (bool): Flag to print elapsed time
+    %     time (float): Elapsed time
+    %
+    % Methods:
+    %     solve: Solve rocket problems
+    %     solveArray: Solve a set of rocket problems
+    %     printTime: Print execution time
+    %
+    % Examples:
+    %     * solver = RocketSolver();
+    %     * solver = RocketSolver('problemType', 'ROCKET_IAC');
+    %     * solver = RocketSolver('problemType', 'ROCKET_FAC');
+    %     * solver = RocketSolver('problemType', 'ROCKET_FAC', 'tolMoles', 1e-30);
+    %     * solver = RocketSolver('problemType', 'ROCKET_FAC', 'tolMoles', 1e-30, 'FLAG_FROZEN', true);
 
     properties
         problemType           % Problem type
-        equilibriumSolver     % EquilibriumSolver
+        equilibriumSolver     % EquilibriumSolver object
         % * Rocket propellant performance (CT-ROCKET module)
         tol0 = 1e-4;          % Tolerance rocket performance
         itMax = 10;           % Max number of iterations - rocket performance
         % * Flags
-        FLAG_SUBSONIC = false % Flag to indicate subsonic Area ratio (CT-ROCKET)
+        FLAG_SUBSONIC = false % Flag to indicate subsonic Area ratio
         FLAG_RESULTS = true   % Flag to print results
         FLAG_TIME = true      % Flag to print elapsed time
         % * Miscellaneous
@@ -143,7 +170,6 @@ classdef RocketSolver
             %     * [mix1Array, mix2Array, mix3Array, mix4Array] = solveArray(RocketSolver(), mix1Array); % Rocket FAC
             %     * [mix1Array, mix2Array, mix3Array, mix4Array, mix5Array] = solveArray(RocketSolver(), mix1Array); % Rocket FAC
 
-            
             % Definitions
             n = length(mix1Array);
             problem = obj.problemType;
@@ -200,7 +226,7 @@ classdef RocketSolver
             % Print execution time
             %
             % Args:
-            %     obj (EquilibriumSolver): Object of the class EquilibriumSolver
+            %     obj (EquilibriumSolver): EquilibriumSolver object
             
             if ~obj.FLAG_TIME
                 return

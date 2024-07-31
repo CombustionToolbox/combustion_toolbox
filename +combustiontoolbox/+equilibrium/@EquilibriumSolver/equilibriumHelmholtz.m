@@ -24,7 +24,7 @@ function [N, dNi_T, dN_T, dNi_p, dN_p, index, STOP, STOP_ions, h0] = equilibrium
     % Returns:
     %     Tuple containing
     %
-    %     * N (float): Equilibrium composition [moles] for the given temperature [K] and pressure [bar]
+    %     * N (float): Mixture composition [moles]
     %     * dNi_T (float): Thermodynamic derivative of the moles of the species respect to temperature
     %     * dN_T (float): Thermodynamic derivative of the moles of the mixture respect to temperature
     %     * dNi_p (float): Thermodynamic derivative of the moles of the species respect to pressure

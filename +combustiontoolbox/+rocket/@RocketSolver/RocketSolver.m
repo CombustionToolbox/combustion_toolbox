@@ -53,6 +53,29 @@ classdef RocketSolver
 
         function varargout = solve(obj, mix1, varargin)
             % Solve rocket problems
+            %
+            % Args:
+            %     obj (EquilibriumSolver): EquilibriumSolver object
+            %     mix1 (Mixture): initial Mixture object
+            %
+            % Optional Args:
+            %     * mix2_inj_guess (Mixture): Initial guess for the injector Mixture object
+            %     * mix2_c_guess (Mixture): Initial guess for the chamber Mixture object
+            %     * mix3_guess (Mixture): Initial guess for the throat Mixture object
+            %     * mix4_guess (Mixture): Initial guess for the exit Mixture object
+            %
+            % Returns:
+            %     varargout: Updated Mixture objects depending on the problem type
+            %
+            % Examples:
+            %     * [mix1, mix2_c, mix3] = solve(RocketSolver(), mix1); % Rocket IAC
+            %     * [mix1, mix2_c, mix3, mix4] = solve(RocketSolver(), mix1); % Rocket IAC
+            %     * [mix1, mix2_c, mix3] = solve(RocketSolver(), mix1, mix2Guess, mix3Guess); % Rocket IAC
+            %     * [mix1, mix2_c, mix3, mix4] = solve(RocketSolver(), mix1, mix2Guess, mix3Guess, mix4Guess); % Rocket IAC
+            %     * [mix1, mix2_inj, mix2_c, mix3] = solve(RocketSolver(), mix1); % Rocket FAC
+            %     * [mix1, mix2_inj, mix2_c, mix3, mix4] = solve(RocketSolver(), mix1); % Rocket FAC
+            %     * [mix1, mix2_inj, mix2_c, mix3] = solve(RocketSolver(), mix1, mix2Guess, mix3Guess); % Rocket FAC
+            %     * [mix1, mix2_inj, mix2_c, mix3] = solve(RocketSolver(), mix1, mix2Guess, mix3Guess, mix4Guess); % Rocket FAC
             
             switch upper(obj.problemType)
                 case 'ROCKET_IAC'
@@ -105,7 +128,21 @@ classdef RocketSolver
         end
 
         function varargout = solveArray(obj, mix1Array, varargin)
-            % Solve a set of detonations problems
+            % Solve a set of rocket problems
+            %
+            % Args:
+            %     obj (EquilibriumSolver): EquilibriumSolver object
+            %     mix1Array (Mixture): Array of initial Mixture objects
+            %
+            % Returns:
+            %     varargout: Updated arrays of Mixture objects depending on the shock problem type
+            %
+            % Examples:
+            %     * [mix1Array, mix2Array, mix3Array] = solveArray(RocketSolver(), mix1Array); % Rocket IAC
+            %     * [mix1Array, mix2Array, mix3Array, mix4Array] = solveArray(RocketSolver(), mix1Array); % Rocket IAC
+            %     * [mix1Array, mix2Array, mix3Array, mix4Array] = solveArray(RocketSolver(), mix1Array); % Rocket FAC
+            %     * [mix1Array, mix2Array, mix3Array, mix4Array, mix5Array] = solveArray(RocketSolver(), mix1Array); % Rocket FAC
+
             
             % Definitions
             n = length(mix1Array);

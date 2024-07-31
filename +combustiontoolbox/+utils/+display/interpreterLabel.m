@@ -39,9 +39,9 @@ function value = interpreterLabel(property, varargin)
     end
     
     % Check additional inputs
-    for i = 1:2:nargin-1
+    for i = 1:nargin-1
 
-        switch nargin-1
+        switch i
             case 1
                 type = varargin{1};
             case 2

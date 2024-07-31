@@ -116,22 +116,22 @@ classdef ChemicalSystem < handle & matlab.mixin.Copyable
             % Initialize chemical system
 
             % Set list species
-            [obj, ~, obj.listSpeciesFormula] = obj.setListSpecies(obj.database, obj.listSpecies);
+            setListSpecies(obj, obj.database, obj.listSpecies);
             
             % Set species
-            obj = obj.get_species(obj.database);
+            setSpecies(obj, obj.database);
 
             % Set contained elements
-            obj = obj.containedElements();
+            setContainedElements(obj);
             
             % Sort species: first gaseous species, secondly condensed species
-            obj = obj.list_phase_species();
+            sortListSpecies(obj);
 
             % Set stoichiometric matrix
-            obj = obj.setStoichiometricMatrix();
+            setStoichiometricMatrix(obj);
 
             % Initialize the properties matrix
-            obj = obj.setPropertiesMatrixInitialize();
+            setPropertiesMatrixInitialize(obj);
 
             % Assign listSpecies with the species to be considered in the
             % chemical transformation
@@ -162,14 +162,19 @@ classdef ChemicalSystem < handle & matlab.mixin.Copyable
             % Initialization
             system.indexGas = []; system.indexCondensed = [];
             system.indexCryogenic = []; system.indexIons = [];
+
             % Set list of species for calculations
             system.listSpecies = system.listSpecies(system.indexProducts);
+
             % Establish cataloged list of species according to the state of the phase
-            system = system.list_phase_species();
+            sortListSpecies(system);
+
             % Update stoichiometric matrix
             system.stoichiometricMatrix = system.stoichiometricMatrix(system.indexProducts, :);
+
             % Update property matrix
             system.propertiesMatrix = system.propertiesMatrix(system.indexProducts, :);
+
             % Update compostion matrix
             system.propertyVector = system.propertyVector(system.indexProducts);
         end
@@ -218,16 +223,16 @@ classdef ChemicalSystem < handle & matlab.mixin.Copyable
             end
 
             % Set contained elements
-            obj = obj.containedElements();
+            setContainedElements(obj);
             
             % Sort species: first gaseous species, secondly condensed species
-            obj = obj.list_phase_species();
+            sortListSpecies(obj);
 
             % Set stoichiometric matrix
-            obj = obj.setStoichiometricMatrix();
+            setStoichiometricMatrix(obj);
 
             % Initialize the properties matrix
-            obj = obj.setPropertiesMatrixInitialize();
+            setPropertiesMatrixInitialize(obj);
         end
 
         function value = get.numSpecies(obj)
@@ -278,7 +283,7 @@ classdef ChemicalSystem < handle & matlab.mixin.Copyable
             value = 1:1:obj.numElements;
         end
 
-        function obj = get_species(obj, database)
+        function obj = setSpecies(obj, database)
             
             for i = obj.numSpecies:-1:1
                 obj.species.(obj.listSpecies{i}) = database.species.(obj.listSpecies{i});
@@ -286,11 +291,11 @@ classdef ChemicalSystem < handle & matlab.mixin.Copyable
 
         end
 
-        function obj = set_propertiesMatrix(obj, species, moles, T, varargin)
+        function obj = setPropertiesMatrix(obj, species, moles, T, varargin)
             % Fill the properties matrix with the data of the mixture
             %
             % Args:
-            %     obj (ChemicalSystem): 
+            %     obj (ChemicalSystem): ChemicalSystem object
             %     species (cell): Species contained in the system
             %     moles (float): Moles of the species in the mixture [mol]
             %     T (float): Temperature [K]
@@ -299,11 +304,11 @@ classdef ChemicalSystem < handle & matlab.mixin.Copyable
             %     ind (float): Vector with the indexes of the species to fill the properties matrix   
             %
             % Returns:
-            %     obj (ChemicalSystem): 
+            %     obj (ChemicalSystem): ChemicalSystem object with the properties matrix filled
             %
             % Examples:
-            %     obj = obj.set_propertiesMatrix({'N2', 'O2'}, [3.76, 1], 300)
-            %     obj = obj.set_propertiesMatrix({'N2', 'O2'}, [3.76, 1], 300, [1, 2])
+            %     setPropertiesMatrix(obj, {'N2', 'O2'}, [3.76, 1], 300)
+            %     setPropertiesMatrix(obj, {'N2', 'O2'}, [3.76, 1], 300, [1, 2])
             
             % Fill properties matrix
             if nargin < 5
@@ -330,7 +335,7 @@ classdef ChemicalSystem < handle & matlab.mixin.Copyable
             obj.propertiesMatrix(:, obj.ind_ni) = 0;
         end
 
-        function obj = check_complete_reaction(obj, equivalenceRatio, equivalenceRatioSoot)
+        function obj = checkCompleteReaction(obj, equivalenceRatio, equivalenceRatioSoot)
             % Check if the list of species corresponds to "complete_reaction"
             % If FLAG_COMPLETE is true, establish the list of species based on the
             % given equivalence ratio (phi)
@@ -351,36 +356,35 @@ classdef ChemicalSystem < handle & matlab.mixin.Copyable
             end
         
             obj.indexProducts = findIndex(obj.listSpecies, listSpecies);
-            obj = obj.reorganizeIndexPhaseSpecies();
+            obj = obj.sortIndexPhaseSpecies();
         end
 
-        function obj = list_phase_species(obj)
+        function obj = sortListSpecies(obj)
             % Establish cataloged list of species according to the state of the
             % phase (gaseous or condensed). It also obtains the indices of
             % cryogenic liquid species, i.e., liquified gases.
             %
             % Args:
-            %     self (struct): Data of the mixture, conditions, and databases
-            %     LS (cell):     List of species
+            %     obj (ChemicalSystem): ChemicalSystem object
             %
             % Returns:
-            %     self (struct): Data of the mixture, conditions, and databases
+            %     obj (ChemicalSystem): ChemicalSystem object with the list of species sorted
         
-            obj = obj.getIndexPhaseSpecies();
+            obj = obj.setIndexPhaseSpecies();
             obj.listSpecies = obj.listSpecies([obj.indexGas, obj.indexCondensed]);
             % Reorginize index of gaseous, condensed and cryogenic species
-            obj = obj.reorganizeIndexPhaseSpecies();
+            obj = obj.sortIndexPhaseSpecies();
         end
 
-        function obj = set_react_index(obj, speciesFrozen)
+        function obj = setReactIndex(obj, speciesFrozen)
             % Set index of react (non-frozen) and frozen species
             %
             % Args:
-            %     obj (ChemicalSystem): 
-            %     species (char): Frozen species
+            %     obj (ChemicalSystem): ChemicalSystem object
+            %     speciesFrozen (char): Frozen chemical species
             %
             % Returns:
-            %     self (struct): Data of the mixture, conditions, and databases
+            %     obj (ChemicalSystem): ChemicalSystem object with the index of react and frozen species
             
             % Import packages
             import combustiontoolbox.utils.findIndex
@@ -396,18 +400,12 @@ classdef ChemicalSystem < handle & matlab.mixin.Copyable
             
             % Get index frozen species
             index = findIndex(obj.listSpecies, speciesFrozen);
+
             % Set index frozen species
             obj.indexFrozen = index;
 
-            % Get length initial species
-            % N_reactants = length([self.PD.S_Fuel, self.PD.S_Oxidizer, self.PD.S_Inert]);
             % Get length frozen species
             N_frozen = length(index);
-            % Check if all the species of the reactants are frozen
-            % if N_frozen == N_reactants
-            %     self.PD.FLAG_FROZEN = true;
-            %     return
-            % end
             
             for i = 1:N_frozen
                 obj.indexReact(obj.indexReact == index(i)) = [];
@@ -415,15 +413,15 @@ classdef ChemicalSystem < handle & matlab.mixin.Copyable
         
         end
 
-        function obj = getOxidizerReference(obj, listOxidizer)
-            % Get oxidizer of reference for computations with the equivalence ratio
+        function obj = setOxidizerReference(obj, listOxidizer)
+            % Set oxidizer of reference for computations with the equivalence ratio
             %
             % Args:
-            %     obj (ChemicalSystem): 
-            %     listOxidizer (cell):
+            %     obj (ChemicalSystem): ChemicalSystem object
+            %     listOxidizer (cell): List of oxidizers
             %
             % Returns:
-            %     obj (ChemicalSystem):     
+            %     obj (ChemicalSystem): ChemicalSystem object with the reference oxidizer   
             
             % Import packages
             import combustiontoolbox.utils.findIndex
@@ -466,14 +464,14 @@ classdef ChemicalSystem < handle & matlab.mixin.Copyable
 
     methods (Access = private)
         
-        function obj = containedElements(obj)
+        function obj = setContainedElements(obj)
             % Obtain containted elements from the given set of species (reactants and products)
             %
             % Args:
-            %     obj (ChemicalSystem): 
+            %     obj (ChemicalSystem): ChemicalSystem object
             %
             % Returns:
-            %     obj (ChemicalSystem): 
+            %     obj (ChemicalSystem): ChemicalSystem object with the list of elements contained in the system
         
             L_formula = [];
         
@@ -506,10 +504,10 @@ classdef ChemicalSystem < handle & matlab.mixin.Copyable
         end
 
         function index = getIndexIons(obj, species)
-            % Get index of ions for the given list of species
+            % Get index of ions for the given list of chemical species
             %
             % Args:
-            %     species (cell): List of species
+            %     species (cell): List of chemical species
             %
             % Returns:
             %     index (float): Index of ions
@@ -517,14 +515,14 @@ classdef ChemicalSystem < handle & matlab.mixin.Copyable
             index = (contains(species, 'minus') | contains(species, 'plus')) & ~contains(species, 'cyclominus');
         end
         
-        function obj = getIndexPhaseSpecies(obj)
+        function obj = setIndexPhaseSpecies(obj)
             % Get index of gaseous, condensed and cryogenic species
             %
             % Args:
-            %     self (struct): Data of the mixture, conditions, and databases
+            %     obj (ChemicalSystem): ChemicalSystem object
             %
             % Returns:
-            %     self (struct): Data of the mixture, conditions, and databases
+            %     obj (ChemicalSystem): ChemicalSystem object with the index of gaseous, condensed and cryogenic species
         
             % Preallocate arrays
             obj.indexGas = zeros(1, obj.numSpecies);
@@ -551,7 +549,9 @@ classdef ChemicalSystem < handle & matlab.mixin.Copyable
                         cryogenicCount = cryogenicCount + 1;
                         obj.indexCryogenic(cryogenicCount) = index;
                     end
+
                 end
+
             end
         
             % Trim excess zeros from preallocated arrays
@@ -563,22 +563,28 @@ classdef ChemicalSystem < handle & matlab.mixin.Copyable
             obj.indexIons = obj.getIndexIons(obj.listSpecies);
         end        
 
-        function obj = reorganizeIndexPhaseSpecies(obj)
+        function obj = sortIndexPhaseSpecies(obj)
             % Reorginize index of gaseous, condensed and cryogenic species
             %
             % Args:
-            %     self (struct): Data of the mixture, conditions, and databases
+            %     obj (ChemicalSystem): ChemicalSystem object
             %     LS (cell): Name list species / list of species
             %
             % Returns:
-            %     self (struct): Data of the mixture, conditions, and databases
+            %     obj (ChemicalSystem): ChemicalSystem object with the index of gaseous, condensed and cryogenic species sorted
         
             obj.indexGas = []; obj.indexCondensed = []; obj.indexCryogenic = [];
-            obj = obj.getIndexPhaseSpecies();
+            obj = obj.setIndexPhaseSpecies();
         end
 
         function obj = setStoichiometricMatrix(obj)
-            % Set stoichiometric matrix
+            % Set stoichiometric matrix of the chemical system
+            %
+            % Args:
+            %     obj (ChemicalSystem): ChemicalSystem object
+            %
+            % Returns:
+            %     obj (ChemicalSystem): ChemicalSystem object with the stoichiometric matrix set
 
             % Preallocate the stoichiometric matrix
             A0 = zeros(obj.numSpecies, obj.numElements);
@@ -597,10 +603,10 @@ classdef ChemicalSystem < handle & matlab.mixin.Copyable
             % Initialize properties matrix
             %
             % Args:
-            %     self (struct):  Data of the mixture, conditions, and databases
+            %     obj (ChemicalSystem): ChemicalSystem object
             %
             % Returns:
-            %     self (struct):  Data of the mixture, conditions, and databases
+            %     obj (ChemicalSystem): ChemicalSystem object with the properties matrix initialized
             
             % Definitions
             if isempty(obj.propertiesMatrix)
@@ -632,7 +638,17 @@ classdef ChemicalSystem < handle & matlab.mixin.Copyable
     methods (Access = private, Static)
         
         function propertiesMatrix = fillPropertiesMatrix(obj, propertiesMatrix, species, moles, T)
+            % Fill the properties matrix with the data of the mixture
             %
+            % Args:
+            %     obj (ChemicalSystem): ChemicalSystem object
+            %     propertiesMatrix (float): Properties matrix
+            %     species (cell): Species contained in the system
+            %     moles (float): Moles of the species in the mixture [mol]
+            %     T (float): Temperature [K]
+            %
+            % Returns:
+            %     propertiesMatrix (float): Properties matrix filled
             
             % Import packages
             import combustiontoolbox.utils.findIndex
@@ -652,7 +668,19 @@ classdef ChemicalSystem < handle & matlab.mixin.Copyable
         end
             
         function propertiesMatrix = fillPropertiesMatrixFast(obj, propertiesMatrix, species, moles, T, index)
-            % Fill properties matrix
+            % Fill properties matrix with the data of the mixture
+            %
+            % Args:
+            %     obj (ChemicalSystem): ChemicalSystem object
+            %     propertiesMatrix (float): Properties matrix
+            %     species (cell): Species contained in the system
+            %     moles (float): Moles of the species in the mixture [mol]
+            %     T (float): Temperature [K]
+            %     index (float): Vector with the indexes of the species to fill the properties matrix
+            %
+            % Returns:
+            %     propertiesMatrix (float): Properties matrix filled
+
             propertiesMatrix(index, obj.ind_ni) = moles(index); % [mol]
             
             % for i = length(index):-1:1
@@ -670,7 +698,20 @@ classdef ChemicalSystem < handle & matlab.mixin.Copyable
         end
 
         function propertiesMatrix = fillPropertiesMatrixFastH0(obj, propertiesMatrix, species, moles, T, index, h0)
-            % Fill properties matrix
+            % Fill properties matrix with the data of the mixture
+            %
+            % Args:
+            %     obj (ChemicalSystem): ChemicalSystem object
+            %     propertiesMatrix (float): Properties matrix
+            %     species (cell): Species contained in the system
+            %     moles (float): Moles of the species in the mixture [mol]
+            %     T (float): Temperature [K]
+            %     index (float): Vector with the indexes of the species to fill the properties matrix
+            %     h0 (float): Enthalpy of formation vector [J/mol]
+            %
+            % Returns:
+            %     propertiesMatrix (float): Properties matrix filled
+
             propertiesMatrix(index, obj.ind_ni) = moles(index); % [mol]
             propertiesMatrix(index, obj.ind_hi) = h0(index); % [J/mol]
 

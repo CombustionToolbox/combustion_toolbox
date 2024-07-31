@@ -31,7 +31,7 @@ function [mix1, mix2] = shockIncident(obj, mix1, u1, varargin)
         T2 = T2T1 * mix1.T; % [K]
         p2 = p2p1 * mix1.p; % [bar]
         mix2.p = p2; mix2.T = T2;
-        mix2 = equilibrate_T_tchem(obj.equilibriumSolver, mix1, mix2, T2);
+        mix2 = equilibrateT(obj.equilibriumSolver, mix1, mix2, T2);
         mix2 = save_state(mix1, mix2, STOP);
         return
     end
@@ -195,7 +195,7 @@ end
 function [mix2, r2, dVdT_p, dVdp_T] = state(equilibriumSolver, mix1, mix2, guess_moles)
     % Calculate state given T & p
     equilibriumSolver.problemType = 'TP';
-    equilibriumSolver.equilibrate_T(mix1, mix2, mix2.T, guess_moles);
+    equilibriumSolver.equilibrateT(mix1, mix2, mix2.T, guess_moles);
     r2 = mix2.rho;
     dVdT_p = mix2.dVdT_p;
     dVdp_T = mix2.dVdp_T;

@@ -245,7 +245,7 @@ function [ax, fig] = plotComposition(obj, x_var, x_field, y_field, varargin)
         legendname{i} = species2latex(species{i});
     end
 
-    legend(h, legendname, 'FontSize', config.fontsize - 6, 'Location', 'northeastoutside', 'interpreter', 'latex');
+    legend(h, legendname, 'FontSize', config.fontsize - 2, 'Location', 'northeastoutside', 'interpreter', 'latex');
     
     % Set title
     if isempty(config.title)

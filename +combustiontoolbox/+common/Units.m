@@ -48,7 +48,7 @@ classdef Units < handle
             %
             % Args:
             %     listSpecies (cell): List of species
-            %     weight_percentage (float): Weight percentage of the species [%]
+            %     weightPercentage (float): Weight percentage of the species [%]
             %     database (Database): Database with custom thermodynamic polynomials functions generated from NASAs 9 polynomials fits
             %
             % Returns:

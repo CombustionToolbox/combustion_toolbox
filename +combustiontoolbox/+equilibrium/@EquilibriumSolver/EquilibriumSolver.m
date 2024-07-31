@@ -154,6 +154,10 @@ classdef EquilibriumSolver < handle
             %
             % Returns:
             %     mix (Mixture): Mixture object updated with equilibrium composition and properties
+            %
+            % Examples:
+            %     * mix = solve(EquilibriumSolver(), mix);
+            %     * mix = solve(EquilibriumSolver(), mix, mixGuess);
 
             if nargin > 2
                 obj.equilibrate(mix, varargin{1});
@@ -218,7 +222,18 @@ classdef EquilibriumSolver < handle
         end
 
         function plot(obj, mixArray, varargin)
-            % Plot results 
+            % Plot results
+            %
+            % Args:
+            %     obj (EquilibriumSolver): EquilibriumSolver object
+            %     mixArray (Mixture): Array of Mixture objects
+            %
+            % Optional Args:
+            %     * mixArray_i (Mixture): Array of Mixture objects
+            %
+            % Examples:
+            %     * plot(EquilibriumSolver(), mixArray);
+            %     * plot(EquilibriumSolver(), mixArray, mixArray2);
             
             % Import packages
             import combustiontoolbox.utils.display.plotComposition
@@ -256,7 +271,19 @@ classdef EquilibriumSolver < handle
         [indexCondensed, FLAG_CONDENSED, dL_dnj] = equilibriumCheckCondensed(A0, pi_i, W, indexCondensed, muRT, NC_max, FLAG_ONE, FLAG_RULE)
 
         function [A0, indexRemoveSpecies, ind_E, NatomE] = removeElements(NatomE, A0, ind_E, tol)
-            % Find zero sum elements
+            % Find zero sum elements and remove them from stoichiometrix matrix
+            %
+            % Args:
+            %     NatomE (float): Number of atoms of each element
+            %     A0 (float): Stoichiometrix matrix
+            %     ind_E (float): Index of electron element
+            %     tol (float): Tolerance
+            %
+            % Returns:
+            %     * A0 (float): Stoichiometrix matrix updated
+            %     * indexRemoveSpecies (float): Index of species to be removed
+            %     * ind_E (float): Index of electron element updated
+            %     * NatomE (float): Number of atoms of each element updated
         
             % Define temporal fictitious value if there are ionized species
             temp_NatomE = NatomE;
@@ -303,7 +330,7 @@ classdef EquilibriumSolver < handle
         end
         
         function [index, indexCondensed, indexGas, indexIons, NG, NS, N] = updateTemp(N, index, indexCondensed, indexGas, indexIons, NP, NG, NS, SIZE)
-            % Update temp items
+            % Update temporal values
 
             % Get species to be removed
             FLAG_REMOVE = N(index, 1) / NP < exp(-SIZE);

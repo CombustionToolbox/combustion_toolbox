@@ -44,8 +44,8 @@ classdef DetonationSolver < handle
     %     printTime: Print execution time
     %
     % Examples:
-    %     solver = DetonationSolver();
-    %     solver = DetonationSolver('problemType', 'DET_R');
+    %     * solver = DetonationSolver();
+    %     * solver = DetonationSolver('problemType', 'DET_R');
 
     properties
         problemType             % Problem type

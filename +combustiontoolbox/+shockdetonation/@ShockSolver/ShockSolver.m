@@ -1,11 +1,53 @@
 classdef ShockSolver < handle
+    % The ShockSolver class is used to solve shock waves problems
+    %
+    % Problem types:
+    %     * SHOCK_I: Incident shock
+    %     * SHOCK_R: Reflected shock
+    %     * SHOCK_OBLIQUE: Oblique shock
+    %     * SHOCK_OBLIQUE_R: Oblique reflected shock 
+    %     * SHOCK_POLAR: Shock polar diagrams
+    %     * SHOCK_POLAR_R: Shock polar diagrams for incident and reflected states
+    %     * SHOCK_POLAR_LIMITRR: Shock polar within the limit of regular reflection
+    %
+    % Attributes:
+    %     problemType (char): Problem type [SHOCK_I, SHOCK_R, SHOCK_OBLIQUE, SHOCK_OBLIQUE_R, SHOCK_POLAR, SHOCK_POLAR_R, SHOCK_POLAR_LIMITRR]
+    %     equilibriumSolver (EquilibriumSolver): EquilibriumSolver object
+    %     tol0 (float): Tolerance of shocks/detonations kernel
+    %     itMax (float): Max number of iterations - shocks and detonations
+    %     machThermo (float): Pre-shock Mach number above which T2_guess will be computed considering h2 = h1 + u1^2 / 2
+    %     tolOblique (float): Tolerance oblique shocks algorithm
+    %     itOblique (float): Max number of iterations - oblique shocks
+    %     numPointsPolar (float): Number of points to compute shock/detonation polar curves
+    %     tolLimitRR (float): Tolerance to calculate the limit of regular reflections
+    %     itLimitRR (float): Max number of iterations - limit of regular reflections
+    %     FLAG_RESULTS (bool): Flag to print results
+    %     FLAG_TIME (bool): Flag to print elapsed time
+    %     time (float): Elapsed time
+    %
+    % Methods:
+    %     shockIncident: Solve incident shock
+    %     shockReflected: Solve reflected shock
+    %     shockObliqueBeta: Solve oblique shock with beta angle
+    %     shockObliqueTheta: Solve oblique shock with theta angle
+    %     shockObliqueReflectedTheta: Solve oblique reflected shock with theta angle
+    %     shockPolar: Solve shock polar diagrams
+    %     shockPolarLimitRR: Solve shock polar within the limit of regular reflection
+    %     shockIncidentIdeal: Solve incident shock for ideal gas
+    %     solve: Solve shock waves problems
+    %     solveArray: Solve a set of shock waves problems
+    %     printTime: Print execution time
+    %
+    % Examples:
+    %     * solver = ShockSolver();
+    %     * solver = ShockSolver('problemType', 'SHOCK_I');
 
     properties
         problemType             % Problem type
         equilibriumSolver       % EquilibriumSolver
         % * Shocks and detonations (CT-SD module)
-        tolShocks = 1e-5        % Tolerance of shocks/detonations kernel
-        itShocks = 50           % Max number of iterations - shocks and detonations
+        tol0 = 1e-5             % Tolerance of shocks/detonations kernel
+        itMax = 50              % Max number of iterations - shocks and detonations
         machThermo = 2          % Pre-shock Mach number above which T2_guess will be computed considering h2 = h1 + u1^2 / 2
         tolOblique = 1e-3       % Tolerance oblique shocks algorithm
         itOblique = 20          % Max number of iterations - oblique shocks
@@ -41,8 +83,8 @@ classdef ShockSolver < handle
             p = inputParser;
             addOptional(p, 'problemType', defaultProblemType, @(x) ischar(x) && any(strcmpi(x, {'SHOCK_I', 'SHOCK_R', 'SHOCK_OBLIQUE', 'SHOCK_OBLIQUE_R', 'SHOCK_POLAR', 'SHOCK_POLAR_R', 'SHOCK_POLAR_LIMITRR'})));
             addParameter(p, 'equilibriumSolver', defaultEquilibriumSolver);
-            addParameter(p, 'tolShocks', obj.tolShocks, @(x) isnumeric(x) && x > 0);
-            addParameter(p, 'itShocks', obj.itShocks, @(x) isnumeric(x) && x > 0);
+            addParameter(p, 'tol0', obj.tol0, @(x) isnumeric(x) && x > 0);
+            addParameter(p, 'itMax', obj.itMax, @(x) isnumeric(x) && x > 0);
             addParameter(p, 'machThermo', obj.machThermo, @(x) isnumeric(x) && x >= 1);
             addParameter(p, 'tolOblique', obj.tolOblique, @(x) isnumeric(x) && x > 0);
             addParameter(p, 'itOblique', obj.itOblique, @(x) isnumeric(x) && x > 0);
@@ -58,8 +100,8 @@ classdef ShockSolver < handle
             % Set properties
             obj.problemType = upper(p.Results.problemType);
             obj.equilibriumSolver = p.Results.equilibriumSolver;
-            obj.tolShocks = p.Results.tolShocks;
-            obj.itShocks = p.Results.itShocks;
+            obj.tol0 = p.Results.tol0;
+            obj.itMax = p.Results.itMax;
             obj.machThermo = p.Results.machThermo;
             obj.tolOblique = p.Results.tolOblique;
             obj.itOblique = p.Results.itOblique;

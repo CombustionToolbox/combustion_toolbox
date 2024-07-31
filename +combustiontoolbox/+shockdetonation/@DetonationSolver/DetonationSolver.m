@@ -85,6 +85,21 @@ classdef DetonationSolver < handle
 
     function varargout = solve(obj, mix1, varargin)
             % Solve detonations problems
+            %
+            % Args:
+            %     obj (EquilibriumSolver): EquilibriumSolver object
+            %     mix1 (Mixture): initial Mixture object
+            %
+            % Optional Args:
+            %     * mixGuess_i (Mixture): Mixture object from previous calculation
+            %
+            % Returns:
+            %     varargout: Updated Mixture objects depending on the problem type
+            %
+            % Examples:
+            %     * [mix1, mix2] = solve(DetonationSolver(), mix1);
+            %     * [mix1, mix2] = solve(DetonationSolver(), mix1, mix2Guess);
+            %     * [mix1, mix2, mix3] = solve(DetonationSolver(), mix1, mix2Guess, mix3Guess);
             
             % Definitions
             driveFactor = mix1.driveFactor;
@@ -324,7 +339,18 @@ classdef DetonationSolver < handle
         end
 
         function varargout = solveArray(obj, mix1Array, varargin)
-            % Solve a set of detonations problems
+            % Solve a set of detonation problems
+            %
+            % Args:
+            %     obj (EquilibriumSolver): EquilibriumSolver object
+            %     mix1Array (Mixture): Array of initial Mixture objects
+            %
+            % Returns:
+            %     varargout: Updated arrays of Mixture objects depending on the shock problem type
+            %
+            % Examples:
+            %     * [mix1Array, mix2Array] = solveArray(DetonationSolver(), mix1Array);
+            %     * [mix1Array, mix2Array, mix3Array] = solveArray(DetonationSolver(), mix1Array);
             
             % Definitions
             n = length(mix1Array);

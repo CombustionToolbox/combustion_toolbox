@@ -33,7 +33,7 @@ function [mix1, mix2, mix5] = shockReflected(obj, mix1, mix2, varargin)
     % Solve shock reflected
     try
         [T5, p5, STOP, it] = solve_shock_reflected(FLAG_FAST);
-        assert(STOP < obj.tolShocks);
+        assert(STOP < obj.tol0);
     catch
         % If solution has not converged, repeat without composition estimate
         fprintf('Recalculating: %.2f [m/s]\n', mix1.u);
@@ -43,7 +43,7 @@ function [mix1, mix2, mix5] = shockReflected(obj, mix1, mix2, varargin)
     end
 
     % Check convergence
-    combustiontoolbox.utils.printConvergence(it, obj.itShocks, T5, STOP, obj.tolShocks);
+    combustiontoolbox.utils.printConvergence(it, obj.itMax, T5, STOP, obj.tol0);
     
     % Save state
     mix5 = save_state(mix2, mix5, STOP);
@@ -51,13 +51,13 @@ function [mix1, mix2, mix5] = shockReflected(obj, mix1, mix2, varargin)
     % NESTED-FUNCTIONS
     function [T5, p5, STOP, it] = solve_shock_reflected(FLAG_FAST)
         % Miscellaneous
-        it = 0; itMax = obj.itShocks; STOP = 1;
+        it = 0; itMax = obj.itMax; STOP = 1;
         % Initial estimates of p5/p2 and T5/T2
         [p5, T5, p5p2, T5T2] = get_guess(mix2, mix5);
         % Check FLAG
         if ~FLAG_FAST, guess_moles = []; end
         % Loop
-        while STOP > obj.tolShocks && it < itMax
+        while STOP > obj.tol0 && it < itMax
             % Update iteration
             it = it + 1;
             % Construction of the Jacobian matrix and vector b

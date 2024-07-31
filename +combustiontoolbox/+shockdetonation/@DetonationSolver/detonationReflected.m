@@ -155,7 +155,7 @@ end
 function [mix5, r5, dVdT_p, dVdp_T] = state(equilibriumSolver, mix2, mix5, guess_moles)
     % Calculate state given T & p
     equilibriumSolver.problemType = 'TP';
-    equilibrate_T(equilibriumSolver, mix2, mix5, mix5.T, guess_moles);
+    equilibrateT(equilibriumSolver, mix2, mix5, mix5.T, guess_moles);
     r5 = mix5.rho;
     dVdT_p = mix5.dVdT_p;
     dVdp_T = mix5.dVdp_T;

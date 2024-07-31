@@ -13,10 +13,18 @@ function titlename = getTitle(obj)
     FLAG_INERT = ~isempty(obj.listSpeciesInert);
     FLAG_RATIO_INERTS_O2 = ~isempty(obj.ratioOxidizer);
     N_oxidizer = length(obj.listSpeciesOxidizer);
-    
+    molesFuel = obj.molesFuel;
+    listSpeciesFuel = obj.listSpeciesFuel;
+
+    % Check if the type of species are specified
+    if ~FLAG_FUEL && ~FLAG_OXIDIZER && ~FLAG_INERT
+        molesFuel = obj.quantity;
+        listSpeciesFuel = obj.listSpecies;
+    end
+
     % Get the title based on the problem type and species involved
     label_problemtype = strrep(obj.problemType, '_', ' ');
-    titlename = [label_problemtype, ': ', cat_moles_species(obj.molesFuel, obj.listSpeciesFuel)];
+    titlename = [label_problemtype, ': ', cat_moles_species(molesFuel, listSpeciesFuel)];
 
     if ~FLAG_OXIDIZER && ~FLAG_INERT
         return

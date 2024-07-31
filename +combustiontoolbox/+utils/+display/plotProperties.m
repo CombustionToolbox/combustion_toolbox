@@ -1,10 +1,6 @@
 function [main_ax, main_figure] = plotProperties(x_field, x_var, y_field, y_var, varargin)
     % Plot figure with customizable settings
     %
-    % Note:
-    %     The 'interpreterLabel.m' routine considers that the properties
-    %     are in mass basis. This will be fixed in a future patch.
-    %
     % Args:
     %     x_field (cell): Cell array containing field names for the x-axis data
     %     x_var (cell): Cell array containing the x-axis data
@@ -42,8 +38,6 @@ function [main_ax, main_figure] = plotProperties(x_field, x_var, y_field, y_var,
     FLAG_SAME = false;
     main_ax = [];
     config = PlotConfig();
-    config.labelx = interpreterLabel(x_field, config.label_type);
-    config.labely = interpreterLabel(y_field, config.label_type);
 
     % Definitions
     colorPalette = config.colorlines(3, :);
@@ -66,8 +60,6 @@ function [main_ax, main_figure] = plotProperties(x_field, x_var, y_field, y_var,
                 FLAG_PLOT_VALIDATION = true;
             case 'config'
                 config = varargin{i + 1};
-                config.labelx = interpreterLabel(x_field, config.label_type);
-                config.labely = interpreterLabel(y_field, config.label_type);
             case {'leg', 'legend'}
                 config.legend_name = varargin{i + 1};
             case {'legend_location'}

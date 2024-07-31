@@ -83,7 +83,7 @@ function mix2 = equilibrateT(obj, mix1, mix2, T, varargin)
         indexSpecies = findIndex(system.listSpecies, systemProducts.listSpecies(indexProducts));
 
         % Compute properties of final mixture
-        mix.set_fast(system.listSpecies, N', [indexSpecies, system.indexFrozen], h0);
+        setPropertiesMatrixFast(mix, system.listSpecies, N', [indexSpecies, system.indexFrozen], h0);
     end
     
 end

@@ -49,7 +49,7 @@ classdef DetonationSolver < handle
 
     properties
         problemType             % Problem type
-        equilibriumSolver       % EquilibriumSolver
+        equilibriumSolver       % EquilibriumSolver object
         % * Shocks and detonations (CT-SD module)
         tol0 = 1e-5             % Tolerance of shocks/detonations kernel
         itMax = 50              % Max number of iterations - shocks and detonations

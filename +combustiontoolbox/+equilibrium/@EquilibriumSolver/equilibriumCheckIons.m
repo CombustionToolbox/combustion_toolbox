@@ -3,7 +3,7 @@ function [N, STOP, FLAG_ION] = equilibriumCheckIons(obj, N, A0, ind_E, indexGas,
     %
     % Args:
     %     obj (EquilibriumSolver): EquilibriumSolver object
-    %     N (float): Composition matrix [n_i, FLAG_CONDENSED_i] for the given temperature [K] and pressure [bar] at equilibrium
+    %     N (float): Mixture composition [mol]
     %     A0 (float): Stoichiometric matrix
     %     ind_E (float): Index of electron element
     %     indexGas (flaot): List of chemical species indices in gaseous phase
@@ -12,7 +12,7 @@ function [N, STOP, FLAG_ION] = equilibriumCheckIons(obj, N, A0, ind_E, indexGas,
     % Returns:
     %     Tuple containing
     %
-    %     * N (float): Composition matrix [n_i, FLAG_CONDENSED_i] for the given temperature [K] and pressure [bar] at equilibrium
+    %     * N (float): Mixture composition [mol]
     %     * STOP (float): Relative error in charge balance [-]
     %     * FLAG_ION (bool): Flag indicating if ionized species are present in the mixture
     
@@ -43,7 +43,7 @@ function [N, STOP] = recomputeIons(N, A0, ind_E, indexGas, indexIons, delta_ions
     % Reestimate composition of ionized species
     %
     % Args:
-    %     N (float): Composition matrix
+    %     N (float): Mixture composition [mol]
     %     A0 (float): Stoichiometric matrix
     %     ind_E (float): Index of electron element
     %     indexGas (float): List of gaseous species indices
@@ -56,7 +56,7 @@ function [N, STOP] = recomputeIons(N, A0, ind_E, indexGas, indexIons, delta_ions
     % Returns:
     %     Tuple containing
     %
-    %     * N (float): Updated composition matrix
+    %     * N (float): Updated mixture composition [mol]
     %     * STOP (float): Final relative error in charge balance
     
     % Initialization
@@ -88,7 +88,7 @@ function [delta, deltaN3] = ionsFactor(N, A0, ind_E, indexGas, indexIons)
     % Compute relaxation factor for ionized species
     %
     % Args:
-    %     N (float): Composition matrix
+    %     N (float): Mixture composition [mol]
     %     A0 (float): Stoichiometric matrix
     %     ind_E (float): Index of electron element
     %     indexGas (float): List of gaseous species indices

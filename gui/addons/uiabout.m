@@ -41,46 +41,52 @@ classdef uiabout < matlab.apps.AppBase
     methods (Access = private)
         
         function select_action(app, event)
+            % Import packages
+            import combustiontoolbox.common.Constants
+            import combustiontoolbox.utils.openWebsite
+
             obj_tag_clicked = event.Source.Tag;
             switch lower(obj_tag_clicked)
                 case {'repo', 'repository'}
-                    system('start https://github.com/AlbertoCuadra/combustion_toolbox');
+                    property = 'repository';
                 case 'website_ct'
-                    system('start https://combustion-toolbox-website.readthedocs.io/');
+                    property = 'website';
                 case {'docs', 'documentation'}
-                    system('start https://combustion-toolbox-website.readthedocs.io/en/latest/documentation');
+                    property = 'documentation';
                 case 'publications'
-                    system('start https://combustion-toolbox-website.readthedocs.io/en/latest/publications.html');
+                    property = 'publications';
                 case 'website_uc3m'
-                    system('start http://fluidosuc3m.es/');
+                    property = 'websiteUC3M';
                 case 'website_acuadra'
-                    system('start https://acuadralara.com/');
+                    property = 'websiteACuadra';
                 case 'mail_acuadra'
-                    system('start mailto:acuadra@ing.uc3m.es');
+                    property = 'mailACuadra';
                 case 'github_acuadra'
-                    system('start https://github.com/AlbertoCuadra');
+                    property = 'githubACuadra';
                 case 'researchgate_acuadra'
-                    system('start https://www.researchgate.net/profile/Alberto_Cuadra_Lara');
+                    property = 'researchgateACuadra';
                 case 'linkedin_acuadra'
-                    system('start https://www.linkedin.com/in/albertocuadralara/');
+                    property = 'linkedinACuadra';
                 case 'website_mvera'
-                    system('start http://fluidosuc3m.es/people/mvcoello/');
+                    property = 'websiteMVera';
                 case 'researchgate_mvera'
-                    system('start https://www.researchgate.net/profile/Marcos_Vera');
+                    property = 'researchgateMVera';
                 case 'linkedin_mvera'
-                    system('start https://www.linkedin.com/in/marcos-vera-coello-05b3a643/?originalSubdomain=es');
+                    property = 'linkedinMVera';
                 case 'website_chuete'
-                    system('start http://fluidosuc3m.es/people/chuete/');
+                    property = 'websiteCHuete';
                 case 'researchgate_chuete'
-                    system('start https://www.researchgate.net/profile/Cesar-Huete');
+                    property = 'researchgateCHuete';
                 case 'linkedin_chuete'
-                    system('start https://www.linkedin.com/in/cesarhuete/');
+                    property = 'linkedinCHuete';
                 case 'contributors'
-                    system('start https://github.com/AlbertoCuadra/combustion_toolbox/blob/master/CONTRIBUTORS.md');
+                    property = 'contributors';
             end
-
+            
+            url = Constants.url.(property);
+            openWebsite(url);
         end
-
+        
     end
     
 

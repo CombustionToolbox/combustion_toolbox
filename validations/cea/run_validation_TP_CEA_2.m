@@ -56,17 +56,15 @@ function run_validation_TP_CEA_2
     resultsCEA = data_CEA(filename, displaySpecies);
     
     % Plot molar fractions
-    plotComposition(mixArray(1), mixArray, 'equivalenceRatio', 'Xi', 'displaySpecies', displaySpecies, 'mintol', 1e-14, 'validation', resultsCEA);
-end
+    fig1 = plotComposition(mixArray(1), mixArray, 'equivalenceRatio', 'Xi', 'displaySpecies', displaySpecies, 'mintol', 1e-3, 'validation', resultsCEA);
 
-% % Display validation (plot)
-% % * Molar fractions
-% [~, fig1] = plot_molar_fractions(results_CT, results_CT.PS.strP, 'phi', 'Xi', 'validation', results_CEA, 'display_species', display_species);
-% % * Properties mixture 2
-% fig2 = plot_properties_validation(results_CT, results_CEA, {'phi', 'phi', 'phi', 'phi', 'phi', 'phi', 'phi', 'phi'}, {'rho', 'h', 'e', 'g', 'S', 'cP', 'cV', 'gamma_s'}, 'mix2');
-% % Save plots
-% folderpath = strcat(pwd,'\Validations\Figures\');
-% stack_trace = dbstack;
-% filename = stack_trace.name;
-% saveas(fig1, strcat(folderpath, filename, '_molar'), 'svg');
-% saveas(fig2, strcat(folderpath, filename, '_properties'), 'svg');
+    % Properties mixture
+    fig2 = plotProperties(repmat({'equivalenceRatio'}, 1, 10), mixArray, {'rho', 'h', 'e', 'g', 's', 'cp', 'cv', 'gamma_s', 'dVdp_T', 'dVdT_p'}, mixArray, 'basis', {[], 'mi', 'mi', 'mi', 'mi', 'mi', 'mi', [], [], []}, 'validation', resultsCEA);
+
+    % Save plots
+    folderpath = fullfile(pwd, 'validations', 'figures');
+    stack_trace = dbstack;
+    filename = stack_trace.name;
+    saveas(fig1, fullfile(folderpath, strcat(filename, '_molar')), 'svg');
+    saveas(fig2, fullfile(folderpath, strcat(filename, '_properties')), 'svg');
+end

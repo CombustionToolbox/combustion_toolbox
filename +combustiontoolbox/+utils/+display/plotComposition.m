@@ -28,7 +28,7 @@ function [ax, fig] = plotComposition(obj, x_var, x_field, y_field, varargin)
     %     * ax (object): Handle of the axes
     %     * fig (object): Handle of the figure
     %
-    % Examples:mixArray1, 'u', 'Xi', 'mintol', 1e-14, 'y_var', mixArray2
+    % Examples:
     %     * [ax, fig] = plotComposition(mixArray(1), mixArray, 'equivalenceRatio', 'Xi')
     %     * [ax, fig] = plotComposition(mixArray(1), mixArray, 'equivalenceRatio', 'Xi', 'y_var', mixArray2)
     %     * [ax, fig] = plotComposition(mixArray(1), mixArray, 'equivalenceRatio', 'Xi', 'y_var', mixArray2, 'validation', resultsCEA)
@@ -38,9 +38,9 @@ function [ax, fig] = plotComposition(obj, x_var, x_field, y_field, varargin)
     import combustiontoolbox.utils.findIndex
     import combustiontoolbox.utils.display.*
     
-    % Temporal
+    % Initialization
     config = PlotConfig();
-    mintol_display = 1e-14;
+    mintolDisplay = config.mintolDisplay;
     displaySpecies = {};
 
     % Default values
@@ -66,7 +66,7 @@ function [ax, fig] = plotComposition(obj, x_var, x_field, y_field, varargin)
             case {'nfrec'}
                 nfrec = varargin{i + 1};
             case {'mintol', 'mintol_display', 'toln'}
-                mintol_display = varargin{i + 1};
+                mintolDisplay = varargin{i + 1};
             case {'ls', 'species', 'displayspecies', 'display species', 'display_species'}
                 species = varargin{i + 1};
             case {'y', 'y_var', 'yvar', 'y var', 'y_data', 'ydata', 'y data'}
@@ -133,9 +133,9 @@ function [ax, fig] = plotComposition(obj, x_var, x_field, y_field, varargin)
     % Set axis limits
     if FLAG_Y_AXIS
         xlim(ax, [min(mix1.(x_field)), max(mix1.(x_field))])
-        ylim(ax, [mintol_display, 1])
+        ylim(ax, [mintolDisplay, 1])
     else
-        xlim(ax, [mintol_display, 1])
+        xlim(ax, [mintolDisplay, 1])
         ylim(ax, [min(mix1.(y_field)), max(mix1.(y_field))])
     end
 

@@ -80,7 +80,7 @@
     fig4 = plotProperties(repmat({'u_preshock'}, 1, 6), [mixArray1.u], {'cp', 'cv', 'dVdT_p', 'dVdp_T', 'sound', 'W'}, mixArray3, 'basis', {'mi', 'mi', [], [], [], []}, 'validation', resultsCEA.mix2);
 
     % Save plots
-    folderpath = strcat(pwd,'\validations\figures\');
+    folderpath = fullfile(pwd, 'validations', 'figures');
     stack_trace = dbstack;
     filename = stack_trace.name;
     saveas(fig1, strcat(folderpath, filename, '_molar'), 'svg');

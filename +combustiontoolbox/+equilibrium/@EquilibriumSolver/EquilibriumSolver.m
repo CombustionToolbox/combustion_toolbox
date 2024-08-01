@@ -76,6 +76,7 @@ classdef EquilibriumSolver < handle
         FLAG_EOS = false           % Flag to use non-ideal Equation of States (EoS)
         FLAG_RESULTS = true        % Flag to print results
         FLAG_TIME = true           % Flag to print elapsed time
+        FLAG_REPORT = false        % Flag to postprocess all the results with predefined plots
         % * Miscellaneous
         time
     end
@@ -114,6 +115,7 @@ classdef EquilibriumSolver < handle
             addParameter(p, 'FLAG_EOS', obj.FLAG_EOS, @(x) islogical(x));
             addParameter(p, 'FLAG_RESULTS', obj.FLAG_RESULTS, @(x) islogical(x));
             addParameter(p, 'FLAG_TIME', obj.FLAG_TIME, @(x) islogical(x));
+            addParameter(p, 'FLAG_REPORT', obj.FLAG_REPORT, @(x) islogical(x));
             parse(p, varargin{:});
 
             % Set properties
@@ -140,6 +142,7 @@ classdef EquilibriumSolver < handle
             obj.FLAG_EOS = p.Results.FLAG_EOS;
             obj.FLAG_RESULTS = p.Results.FLAG_RESULTS;
             obj.FLAG_TIME = p.Results.FLAG_TIME;
+            obj.FLAG_REPORT = p.Results.FLAG_REPORT;
         end
 
         function mix = solve(obj, mix, varargin)
@@ -206,6 +209,12 @@ classdef EquilibriumSolver < handle
 
             % Print elapsed time
             printTime(obj);
+
+            % Postprocess all the results with predefined plots
+            if obj.FLAG_REPORT
+                report(obj, mixArray);
+            end
+
         end
 
         function printTime(obj)
@@ -259,6 +268,28 @@ classdef EquilibriumSolver < handle
             
                 % Plot properties - mixArray_i
                 ax2 = plotProperties(repmat({mixArray(1).rangeName}, 1, 9), mixArray, {'T', 'rho', 'h', 'e', 'g', 'cp', 's', 'gamma_s', 'sound'}, mixArray, 'basis', {[], [], 'mi', 'mi', 'mi', 'mi', 'mi', [], []}, 'ax', ax2);
+            end
+
+        end
+
+        function report(obj, mixArray, varargin)
+            % Postprocess all the results with predefined plots
+            %
+            % Args:
+            %     obj (EquilibriumSolver): EquilibriumSolver object
+            %     mixArray (Mixture): Array of Mixture objects
+            %
+            % Optional args:
+            %     * mixArray_i (Mixture): Array of Mixture objects
+            %
+            % Examples:
+            %     * report(EquilibriumSolver(), mixArray);
+            %     * report(EquilibriumSolver(), mixArray, mixArray2);
+
+            if nargin > 2
+                obj.plot(mixArray, varargin{:});
+            else
+                obj.plot(mixArray);
             end
 
         end

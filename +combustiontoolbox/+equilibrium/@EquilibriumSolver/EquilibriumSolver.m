@@ -230,7 +230,7 @@ classdef EquilibriumSolver < handle
             fprintf('\nElapsed time is %.5f seconds\n', obj.time);
         end
 
-        function plot(obj, mixArray, varargin)
+        function ax2 = plot(obj, mixArray, varargin)
             % Plot results
             %
             % Args:
@@ -239,6 +239,9 @@ classdef EquilibriumSolver < handle
             %
             % Optional Args:
             %     * mixArray_i (Mixture): Array of Mixture objects
+            %
+            % Returns:
+            %     ax2 (Axes): Axes object with properties of the mixtures
             %
             % Examples:
             %     * plot(EquilibriumSolver(), mixArray);
@@ -272,7 +275,7 @@ classdef EquilibriumSolver < handle
 
         end
 
-        function report(obj, mixArray, varargin)
+        function ax = report(obj, mixArray, varargin)
             % Postprocess all the results with predefined plots
             %
             % Args:
@@ -282,14 +285,17 @@ classdef EquilibriumSolver < handle
             % Optional args:
             %     * mixArray_i (Mixture): Array of Mixture objects
             %
+            % Returns:
+            %     ax (Axes): Axes object with properties of the mixtures
+            %
             % Examples:
-            %     * report(EquilibriumSolver(), mixArray);
-            %     * report(EquilibriumSolver(), mixArray, mixArray2);
+            %     * ax = report(EquilibriumSolver(), mixArray);
+            %     * ax = report(EquilibriumSolver(), mixArray, mixArray2);
 
             if nargin > 2
-                obj.plot(mixArray, varargin{:});
+                ax = obj.plot(mixArray, varargin{:});
             else
-                obj.plot(mixArray);
+                ax = obj.plot(mixArray);
             end
 
         end

@@ -1,16 +1,15 @@
-function [fig1, fig2] = plot_validation_shock_polar_SDToolbox(results_CT, results_SDToolbox, config)
+function [ax1, ax2] = plot_validation_shock_polar_SDToolbox(mixArray1, mixArray2, results_SDToolbox, config)
     % Plot numerical results obtained with SDToolbox, which use CANTERA as a thermochemical kernel.
     %
     %   * Pressure ratio with the deflection angle [deg]
     %   * Wave angle [deg] with the deflection angle [deg]
-
-    % Set figures
-    fig1 = figure(1);
-    fig2 = figure(2);
-    set(fig1, 'position', config.position);
-    set(fig2, 'position', config.position);
+    
+    % Import packages
+    import combustiontoolbox.utils.display.plotPolar
+    
     % Shock polars from Combustion Toolbox
-    [ax1, ax2] = plot_shock_polar(results_CT, results_CT.PS.strR, results_CT.PS.strP);
+    [ax1, ax2] = plotPolar(mixArray1, mixArray2);
+
     % Shock polars from SDToolbox
     nfrec = [2, 4, 7, 10]; % frec points SD Toolbox per case
 

@@ -23,6 +23,7 @@ classdef ShockSolver < handle
     %     itLimitRR (float): Max number of iterations - limit of regular reflections
     %     FLAG_RESULTS (bool): Flag to print results
     %     FLAG_TIME (bool): Flag to print elapsed time
+    %     FLAG_REPORT (bool): Flag to print predefined plots
     %     time (float): Elapsed time
     %
     % Methods:
@@ -37,6 +38,8 @@ classdef ShockSolver < handle
     %     solve: Solve shock waves problems
     %     solveArray: Solve a set of shock waves problems
     %     printTime: Print execution time
+    %     plot: Plot results
+    %     report: Postprocess all the results with predefined plots
     %
     % Examples:
     %     * solver = ShockSolver();
@@ -57,8 +60,10 @@ classdef ShockSolver < handle
         % * Flags
         FLAG_RESULTS = true     % Flag to print results
         FLAG_TIME = true        % Flag to print elapsed time
+        FLAG_REPORT = true     % Flag to print predefined plots
         % * Miscellaneous
-        time
+        time                    % Elapsed time
+        plotConfig              % PlotConfig object
     end
 
     methods
@@ -76,6 +81,7 @@ classdef ShockSolver < handle
             % Constructor
             defaultProblemType = 'SHOCK_I';
             defaultEquilibriumSolver = combustiontoolbox.equilibrium.EquilibriumSolver();
+            defaultPlotConfig = combustiontoolbox.utils.display.PlotConfig();
             defaultFLAG_TCHEM_FROZEN = false;
             defaultFLAG_FROZEN = false;
             
@@ -95,6 +101,8 @@ classdef ShockSolver < handle
             addParameter(p, 'FLAG_TIME', obj.FLAG_TIME, @(x) islogical(x));
             addParameter(p, 'FLAG_TCHEM_FROZEN', defaultFLAG_TCHEM_FROZEN, @(x) islogical(x))
             addParameter(p, 'FLAG_FROZEN', defaultFLAG_FROZEN, @(x) islogical(x))
+            addParameter(p, 'FLAG_REPORT', obj.FLAG_REPORT, @(x) islogical(x));
+            addParameter(p, 'plotConfig', defaultPlotConfig, @(x) isa(x, 'combustiontoolbox.utils.display.PlotConfig'));
             parse(p, varargin{:});
 
             % Set properties
@@ -110,6 +118,8 @@ classdef ShockSolver < handle
             obj.itLimitRR = p.Results.itLimitRR;
             obj.FLAG_RESULTS = p.Results.FLAG_RESULTS;
             obj.FLAG_TIME = p.Results.FLAG_TIME;
+            obj.FLAG_REPORT = p.Results.FLAG_REPORT;
+            obj.plotConfig = p.Results.plotConfig;
 
             if sum(contains(p.UsingDefaults, 'equilibriumSolver'))
                 obj.equilibriumSolver.FLAG_TCHEM_FROZEN = p.Results.FLAG_TCHEM_FROZEN;
@@ -444,6 +454,12 @@ classdef ShockSolver < handle
 
             % Print elapsed time
             printTime(obj);
+
+            % Postprocess all the results with predefined plots
+            if obj.FLAG_REPORT
+                report(obj, varargout{:});
+            end
+
         end
 
         function printTime(obj)
@@ -457,6 +473,125 @@ classdef ShockSolver < handle
             end
 
             fprintf('\nElapsed time is %.5f seconds\n', obj.time);
+        end
+
+        function ax2 = plot(obj, mixArray1, mixArray2, varargin)
+            % Plot results
+            %
+            % Args:
+            %     obj (ShockSolver): ShockSolver object
+            %     mixArray1 (Mixture): Array of Mixture objects (pre-shock state)
+            %     mixArray2 (Mixture): Array of Mixture objects (post-shock state)
+            %
+            % Optional Args:
+            %     * mixArray_i (Mixture): Array of Mixture objects
+            %
+            % Examples:
+            %     * plot(ShockSolver(), mixArray1, mixArray2);
+            %     * plot(ShockSolver(), mixArray1, mixArray2, mixArray3);
+            
+            % Import packages
+            import combustiontoolbox.utils.display.*
+            
+            % Definitions
+            additionalMixtures = nargin - 3;
+            numPlotProperties = obj.plotConfig.numPlotProperties;
+
+            % Check if is a polar problem
+            if contains(obj.problemType, 'POLAR')
+                % Plot polars - incident
+                plotPolar(mixArray1, mixArray2);
+                
+                % Check for additional mixtures
+                if ~additionalMixtures
+                    return
+                end
+
+                mixArray2_1 = varargin{1};
+                mixArray3 = varargin{2};
+                
+                plotPolar(mixArray2_1, mixArray3, mixArray2_1, mixArray1);
+                return
+            end
+
+            % Check if is a scalar value
+            if isscalar(mixArray1)
+                return
+            end
+            
+            % Get labels
+            switch upper(obj.problemType)
+                case 'SHOCK_R'
+                    labels = {'Incident', 'Reflected'};
+                case 'SHOCK_OBLIQUE'
+                    if isempty(mixArray1(1).theta)
+                        labels = {''};
+                    else
+                        labels = {'Weak shock', 'Strong shock'};
+                    end
+
+                otherwise
+                    if additionalMixtures
+                        labels = arrayfun(@(x) sprintf('Mixture %d', x), 1:(additionalMixtures + 1), 'UniformOutput', false);
+                    else
+                        labels = {''};
+                    end
+            end
+            
+            % Plot molar fractions - mixArray2
+            ax1 = plotComposition(mixArray2(1), mixArray1, mixArray1(1).rangeName, 'Xi', 'mintol', obj.plotConfig.mintolDisplay, 'y_var', mixArray2, 'title', labels{1});
+        
+            % Plot properties - mixArray2
+            ax2 = plotProperties(repmat({mixArray1(1).rangeName}, 1, numPlotProperties), mixArray1, obj.plotConfig.plotProperties, mixArray2, 'basis', obj.plotConfig.plotPropertiesBasis, 'config', obj.plotConfig);
+
+            % Plot Hugoniot curve
+            % ax3 = plotFigure('\rho_1 / \rho_2', [mixArray1.rho] ./ [mixArray2.rho], 'p_2 / p_1', [mixArray2.p] ./ [mixArray1.p], 'xScale', 'log', 'yScale', 'log', 'color', 'auto');
+            
+            % Check if there are additional mixtures
+            if ~additionalMixtures
+                return
+            end
+
+            for i = 1:additionalMixtures
+                % Unpack input
+                mixArray2 = varargin{i};
+
+                % Plot molar fractions - mixArray_i
+                ax1 = plotComposition(mixArray2(1), mixArray1, mixArray1(1).rangeName, 'Xi', 'mintol', obj.plotConfig.mintolDisplay, 'y_var', mixArray2, 'title', labels{i + 1});
+            
+                % Plot properties - mixArray_i
+                ax2 = plotProperties(repmat({mixArray1(1).rangeName}, 1, numPlotProperties), mixArray1, obj.plotConfig.plotProperties, mixArray2, 'basis', obj.plotConfig.plotPropertiesBasis, 'config', obj.plotConfig, 'ax', ax2);
+
+                % Plot Hugoniot curve
+                % ax3 = plotFigure('\rho_1 / \rho_2', [mixArray1.rho] ./ [mixArray2.rho], 'p_2 / p_1', [mixArray2.p] ./ [mixArray1.p], 'xScale', 'log', 'yScale', 'log', 'color', 'auto', 'ax', ax3);
+            end
+
+            % Set legends
+            legend(ax2.Children(end), labels, 'Interpreter', 'latex', 'FontSize', ax2.Children(end).FontSize);
+            % legend(ax3, legendName, 'Interpreter', 'latex', 'FontSize', ax3.FontSize);
+        end
+
+        function report(obj, mixArray1, mixArray2, varargin)
+            % Postprocess all the results with predefined plots
+            %
+            % Args:
+            %     obj (ShockSolver): ShockSolver object
+            %     mixArray1 (Mixture): Array of Mixture objects (pre-shock state)
+            %     mixArray2 (Mixture): Array of Mixture objects (post-shock state)
+            %
+            % Optional args:
+            %     * mixArray_i (Mixture): Array of Mixture objects
+            %
+            % Examples:
+            %     * report(ShockSolver(), mixArray1, mixArray2);
+            %     * report(ShockSolver(), mixArray1, mixArray2, mixArray3);
+
+            if nargin > 3
+                obj.plot(mixArray1, mixArray2, varargin{:});
+            else
+                obj.plot(mixArray1, mixArray2);
+            end
+
         end
 
     end

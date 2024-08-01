@@ -251,9 +251,23 @@ classdef EquilibriumSolver < handle
             import combustiontoolbox.utils.display.plotComposition
             import combustiontoolbox.utils.display.plotProperties
             
+            % Definitions
+            additionalMixtures = nargin - 2;
+
             % Check if is a scalar value
             if isscalar(mixArray)
                 return
+            end
+
+            % Get labels
+            if additionalMixtures
+
+                if mixArray(1).chemicalSystem.FLAG_COMPLETE && ~varargin{1}(1).chemicalSystem.FLAG_COMPLETE
+                    labels = {'Complete', 'Incomplete'};
+                else
+                    labels = arrayfun(@(x) sprintf('Mixture %d', x), 1:(additionalMixtures + 1), 'UniformOutput', false);
+                end
+
             end
             
             % Plot molar fractions - mixArray
@@ -261,6 +275,11 @@ classdef EquilibriumSolver < handle
         
             % Plot properties - mixArray
             ax2 = plotProperties(repmat({mixArray(1).rangeName}, 1, 9), mixArray, {'T', 'rho', 'h', 'e', 'g', 'cp', 's', 'gamma_s', 'sound'}, mixArray, 'basis', {[], [], 'mi', 'mi', 'mi', 'mi', 'mi', [], []});
+            
+            % Check if there are additional mixtures
+            if ~additionalMixtures
+                return
+            end
 
             for i = 1:nargin - 2
                 % Unpack input
@@ -273,6 +292,8 @@ classdef EquilibriumSolver < handle
                 ax2 = plotProperties(repmat({mixArray(1).rangeName}, 1, 9), mixArray, {'T', 'rho', 'h', 'e', 'g', 'cp', 's', 'gamma_s', 'sound'}, mixArray, 'basis', {[], [], 'mi', 'mi', 'mi', 'mi', 'mi', [], []}, 'ax', ax2);
             end
 
+            % Set legends
+            legend(ax2.Children(end), labels, 'Interpreter', 'latex', 'FontSize', ax2.Children(end).FontSize);
         end
 
         function ax = report(obj, mixArray, varargin)

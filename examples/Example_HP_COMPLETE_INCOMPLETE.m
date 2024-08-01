@@ -75,13 +75,10 @@ mixArray2 = setProperties(mix, 'temperature', 300, 'pressure', 1 * 1.01325, 'equ
 solver.solveArray(mixArray2);
 
 %% COMPARE RESULTS
-config = PlotConfig();
-config.title = '\rm{Complete\ vs\ Incomplete}';
-config.labelx = 'Equivalence ratio $\phi$';
-config.labely = 'Temperature $T$ [K]';
-legend_name = {'Complete', 'Incomplete'};
+ax = solver.report(mixArray1, mixArray2);
+legend(ax.Children(end), {'Complete', 'Incomplete'}, 'Interpreter', 'latex', 'FontSize', ax.Children(end).FontSize);
 
-ax = setFigure(config);
-ax = plotFigure('equivalenceRatio', mixArray1, 'T', mixArray1, 'ax', ax);
-ax = plotFigure('equivalenceRatio', mixArray2, 'T', mixArray2, 'ax', ax, 'legend', legend_name, 'color', 'auto');
-ax.Legend.Location = 'northeast';
+% Another possibility is call directly the next functions:
+% ax = plotProperties(repmat({mixArray1(1).rangeName}, 1, 9), mixArray1, {'T', 'rho', 'h', 'e', 'g', 'cp', 's', 'gamma_s', 'sound'}, mixArray1, 'basis', {[], [], 'mi', 'mi', 'mi', 'mi', 'mi', [], []});
+% ax = plotProperties(repmat({mixArray1(1).rangeName}, 1, 9), mixArray1, {'T', 'rho', 'h', 'e', 'g', 'cp', 's', 'gamma_s', 'sound'}, mixArray2, 'basis', {[], [], 'mi', 'mi', 'mi', 'mi', 'mi', [], []}, 'ax', ax);
+% legend(ax.Children(end), {'Complete', 'Incomplete'}, 'Interpreter', 'latex', 'FontSize', ax.Children(end).FontSize);

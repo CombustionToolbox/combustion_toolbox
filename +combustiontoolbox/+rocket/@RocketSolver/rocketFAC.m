@@ -115,9 +115,11 @@ function [mix1, mix2_inj, mix2_c, mix3, mix4] = rocketFAC(obj, mix1, varargin)
     
     % Initial velocity of the gas
     mix1.u = 0; mix1.uShock = 0; mix1.mach = 0;
+    mix1.I_sp = 0; mix1.I_vac = 0;
 
     % Velocity at the injector of the chamber
     mix2_inj.u = 0; mix2_inj.uShock = 0; mix2_inj.mach = 0;
+    mix2_inj.I_sp = 0; mix2_inj.I_vac = 0;
 
     % Assign values
     mix2_c.areaRatioChamber = areaRatioChamber; % [-]

@@ -78,7 +78,8 @@ classdef EquilibriumSolver < handle
         FLAG_TIME = true           % Flag to print elapsed time
         FLAG_REPORT = false        % Flag to postprocess all the results with predefined plots
         % * Miscellaneous
-        time
+        time                       % Elapsed time [s]
+        plotConfig                 % PlotConfig object
     end
 
     methods
@@ -89,6 +90,7 @@ classdef EquilibriumSolver < handle
         function obj = EquilibriumSolver(varargin)
             % Constructor
             defaultProblemType = 'TP';
+            defaultPlotConfig = combustiontoolbox.utils.display.PlotConfig();
 
             % Parse input arguments
             p = inputParser;
@@ -116,6 +118,7 @@ classdef EquilibriumSolver < handle
             addParameter(p, 'FLAG_RESULTS', obj.FLAG_RESULTS, @(x) islogical(x));
             addParameter(p, 'FLAG_TIME', obj.FLAG_TIME, @(x) islogical(x));
             addParameter(p, 'FLAG_REPORT', obj.FLAG_REPORT, @(x) islogical(x));
+            addParameter(p, 'plotConfig', defaultPlotConfig, @(x) isa(x, 'combustiontoolbox.utils.display.PlotConfig'));
             parse(p, varargin{:});
 
             % Set properties
@@ -143,6 +146,7 @@ classdef EquilibriumSolver < handle
             obj.FLAG_RESULTS = p.Results.FLAG_RESULTS;
             obj.FLAG_TIME = p.Results.FLAG_TIME;
             obj.FLAG_REPORT = p.Results.FLAG_REPORT;
+            obj.plotConfig = p.Results.plotConfig;
         end
 
         function mix = solve(obj, mix, varargin)
@@ -253,6 +257,7 @@ classdef EquilibriumSolver < handle
             
             % Definitions
             additionalMixtures = nargin - 2;
+            numPlotProperties = obj.plotConfig.numPlotProperties;
 
             % Check if is a scalar value
             if isscalar(mixArray)
@@ -271,10 +276,10 @@ classdef EquilibriumSolver < handle
             end
             
             % Plot molar fractions - mixArray
-            ax1 = plotComposition(mixArray(1), mixArray, mixArray(1).rangeName, 'Xi', 'mintol', 1e-14);
+            ax1 = plotComposition(mixArray(1), mixArray, mixArray(1).rangeName, 'Xi', 'mintol', obj.plotConfig.mintolDisplay);
         
             % Plot properties - mixArray
-            ax2 = plotProperties(repmat({mixArray(1).rangeName}, 1, 9), mixArray, {'T', 'rho', 'h', 'e', 'g', 'cp', 's', 'gamma_s', 'sound'}, mixArray, 'basis', {[], [], 'mi', 'mi', 'mi', 'mi', 'mi', [], []});
+            ax2 = plotProperties(repmat({mixArray(1).rangeName}, 1, numPlotProperties), mixArray, obj.plotConfig.plotProperties, mixArray, 'basis', obj.plotConfig.plotPropertiesBasis, 'config', obj.plotConfig);
             
             % Check if there are additional mixtures
             if ~additionalMixtures
@@ -286,10 +291,10 @@ classdef EquilibriumSolver < handle
                 mixArray = varargin{i};
 
                 % Plot molar fractions - mixArray_i
-                ax1 = plotComposition(mixArray(1), mixArray, mixArray(1).rangeName, 'Xi', 'mintol', 1e-14);
+                ax1 = plotComposition(mixArray(1), mixArray, mixArray(1).rangeName, 'Xi', 'mintol', obj.plotConfig.mintolDisplay);
             
                 % Plot properties - mixArray_i
-                ax2 = plotProperties(repmat({mixArray(1).rangeName}, 1, 9), mixArray, {'T', 'rho', 'h', 'e', 'g', 'cp', 's', 'gamma_s', 'sound'}, mixArray, 'basis', {[], [], 'mi', 'mi', 'mi', 'mi', 'mi', [], []}, 'ax', ax2);
+                ax2 = plotProperties(repmat({mixArray(1).rangeName}, 1, numPlotProperties), mixArray, obj.plotConfig.plotProperties, mixArray, 'basis', obj.plotConfig.plotPropertiesBasis, 'config', obj.plotConfig, 'ax', ax2);
             end
 
             % Set legends

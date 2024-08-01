@@ -76,7 +76,7 @@ function run_validation_DET_CEA_4
     fig3 = plotProperties(repmat({'equivalenceRatio'}, 1, 7), [mixArray1.equivalenceRatio], {'cp', 'cv', 'dVdT_p', 'dVdp_T', 'sound', 'W', 'uShock'}, mixArray2, 'basis', {'mi', 'mi', [], [], [], [], []}, 'validation', resultsCEA);
 
     % Save plots
-    folderpath = strcat(pwd,'\validations\figures\');
+    folderpath = fullfile(pwd, 'validations', 'figures');
     stack_trace = dbstack;
     filename = stack_trace.name;
     saveas(fig1, strcat(folderpath, filename, '_molar'), 'svg');

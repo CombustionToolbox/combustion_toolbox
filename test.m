@@ -3,6 +3,7 @@
 import combustiontoolbox.databases.NasaDatabase
 import combustiontoolbox.core.*
 import combustiontoolbox.equilibrium.*
+import combustiontoolbox.utils.display.*
 
 tic
 
@@ -56,13 +57,14 @@ end
 % Display the results
 toc
 
-plot_figure('T', cell2vector(mix2, 'T'), 'h', cell2vector(mix2, 'h'));
+plotFigure('T', cell2vector(mix2, 'T'), 'h', cell2vector(mix2, 'h'));
 %% Same but using Array
 % Example
 % Import the necessary classes ( included in edit(fullfile(userpath,'startup.m')) )
 import combustiontoolbox.databases.NasaDatabase
 import combustiontoolbox.core.*
 import combustiontoolbox.equilibrium.*
+import combustiontoolbox.utils.display.*
 
 clear
 
@@ -94,6 +96,6 @@ solver.solveArray(mixArray);
 
 toc
 
-plot_figure('T', [mixArray.T], 'h', [mixArray.T]);
+plotFigure('T', [mixArray.T], 'h', [mixArray.T]);
 
 

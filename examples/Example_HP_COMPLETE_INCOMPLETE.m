@@ -75,8 +75,7 @@ mixArray2 = setProperties(mix, 'temperature', 300, 'pressure', 1 * 1.01325, 'equ
 solver.solveArray(mixArray2);
 
 %% COMPARE RESULTS
-ax = solver.report(mixArray1, mixArray2);
-legend(ax.Children(end), {'Complete', 'Incomplete'}, 'Interpreter', 'latex', 'FontSize', ax.Children(end).FontSize);
+ax = solver.report(mixArray2, mixArray2);
 
 % Another possibility is call directly the next functions:
 % ax = plotProperties(repmat({mixArray1(1).rangeName}, 1, 9), mixArray1, {'T', 'rho', 'h', 'e', 'g', 'cp', 's', 'gamma_s', 'sound'}, mixArray1, 'basis', {[], [], 'mi', 'mi', 'mi', 'mi', 'mi', [], []});

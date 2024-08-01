@@ -49,7 +49,7 @@ solver = EquilibriumSolver('problemType', 'EV');
 solver.solveArray(mixArray);
 
 % Plot adiabatic flame temperature
-plotFigure('phi', [mixArray.equivalenceRatio], 'T', [mixArray.T]);
+plotFigure('equivalenceRatio', [mixArray.equivalenceRatio], 'T', [mixArray.T]);
 
 % Plot molar fractions
 plotComposition(mixArray(1), mixArray, 'equivalenceRatio', 'Xi', 'mintol', 1e-14);

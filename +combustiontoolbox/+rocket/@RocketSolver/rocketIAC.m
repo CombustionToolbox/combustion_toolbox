@@ -62,9 +62,11 @@ function [mix1, mix2_c, mix3, mix4] = rocketIAC(obj, mix1, varargin)
     
     % Initial velocity of the gas
     mix1.u = 0; mix1.uShock = 0; mix1.mach = 0;
-
+    mix1.I_sp = 0; mix1.I_vac = 0;
+        
     % Velocity at the outlet of the chamber
     mix2_c.u = 0; mix2_c.uShock = 0; mix2_c.mach = 0;
+    mix2_c.I_sp = 0; mix2_c.I_vac = 0;
 
     % Compute rocket parameters
     if ~FLAG_PERFORMANCE

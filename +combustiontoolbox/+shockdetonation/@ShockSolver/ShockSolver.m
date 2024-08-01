@@ -60,7 +60,7 @@ classdef ShockSolver < handle
         % * Flags
         FLAG_RESULTS = true     % Flag to print results
         FLAG_TIME = true        % Flag to print elapsed time
-        FLAG_REPORT = true     % Flag to print predefined plots
+        FLAG_REPORT = false     % Flag to print predefined plots
         % * Miscellaneous
         time                    % Elapsed time
         plotConfig              % PlotConfig object

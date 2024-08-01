@@ -13,12 +13,15 @@ classdef RocketSolver
     %     FLAG_SUBSONIC (bool): Flag to indicate subsonic Area ratio
     %     FLAG_RESULTS (bool): Flag to print results
     %     FLAG_TIME (bool): Flag to print elapsed time
+    %     FLAG_REPORT (bool): Flag to print predefined plots
     %     time (float): Elapsed time
     %
     % Methods:
     %     solve: Solve rocket problems
     %     solveArray: Solve a set of rocket problems
     %     printTime: Print execution time
+    %     plot: Plot results
+    %     report: Postprocess all the results with predefined plots
     %
     % Examples:
     %     * solver = RocketSolver();
@@ -37,8 +40,10 @@ classdef RocketSolver
         FLAG_SUBSONIC = false % Flag to indicate subsonic Area ratio
         FLAG_RESULTS = true   % Flag to print results
         FLAG_TIME = true      % Flag to print elapsed time
+        FLAG_REPORT = false   % Flag to print predefined plots
         % * Miscellaneous
-        time
+        time                  % Elapsed time [s]
+        plotConfig            % PlotConfig object
     end
 
     methods
@@ -47,6 +52,7 @@ classdef RocketSolver
             % Constructor
             defaultProblemType = 'ROCKET_IAC';
             defaultEquilibriumSolver = combustiontoolbox.equilibrium.EquilibriumSolver();
+            defaultPlotConfig = combustiontoolbox.utils.display.PlotConfig();
             defaultFLAG_TCHEM_FROZEN = false;
             defaultFLAG_FROZEN = false;
 
@@ -58,6 +64,8 @@ classdef RocketSolver
             addParameter(p, 'FLAG_FROZEN', defaultFLAG_FROZEN, @(x) islogical(x));
             addParameter(p, 'FLAG_RESULTS', obj.FLAG_RESULTS, @(x) islogical(x));
             addParameter(p, 'FLAG_TIME', obj.FLAG_TIME, @(x) islogical(x));
+            addParameter(p, 'FLAG_REPORT', obj.FLAG_REPORT, @(x) islogical(x));
+            addParameter(p, 'plotConfig', defaultPlotConfig, @(x) isa(x, 'combustiontoolbox.utils.display.PlotConfig'));
             addParameter(p, 'tolMoles', defaultEquilibriumSolver.tolMoles, @(x) isnumeric(x) && x > 0);
             parse(p, varargin{:});
 
@@ -66,6 +74,8 @@ classdef RocketSolver
             obj.equilibriumSolver = p.Results.equilibriumSolver;
             obj.FLAG_RESULTS = p.Results.FLAG_RESULTS;
             obj.FLAG_TIME = p.Results.FLAG_TIME;
+            obj.FLAG_REPORT = p.Results.FLAG_REPORT;
+            obj.plotConfig = p.Results.plotConfig;
             
             if sum(contains(p.UsingDefaults, 'equilibriumSolver'))
                 obj.equilibriumSolver.FLAG_TCHEM_FROZEN = p.Results.FLAG_TCHEM_FROZEN;
@@ -76,6 +86,8 @@ classdef RocketSolver
             % Miscellaneous
             obj.equilibriumSolver.FLAG_RESULTS = false;
             obj.equilibriumSolver.FLAG_TIME = false;
+            obj.plotConfig.plotProperties = [obj.plotConfig.plotProperties, {'u', 'I_sp', 'I_vac'}];
+            obj.plotConfig.plotPropertiesBasis = [obj.plotConfig.plotPropertiesBasis, {[], [], []}];
         end
 
         function varargout = solve(obj, mix1, varargin)
@@ -220,6 +232,11 @@ classdef RocketSolver
 
             % Print elapsed time
             printTime(obj);
+
+            % Postprocess all the results with predefined plots
+            if obj.FLAG_REPORT
+                report(obj, varargout{:});
+            end
         end
 
         function printTime(obj)
@@ -233,6 +250,102 @@ classdef RocketSolver
             end
 
             fprintf('\nElapsed time is %.5f seconds\n', obj.time);
+        end
+
+        function ax2 = plot(obj, mixArray1, mixArray2, varargin)
+            % Plot results
+            %
+            % Args:
+            %     obj (RocketSolver): RocketSolver object
+            %     mixArray1 (Mixture): Array of Mixture objects (initial state)
+            %     mixArray2 (Mixture): Array of Mixture objects
+            %
+            % Optional Args:
+            %     * mixArray_i (Mixture): Array of Mixture objects
+            %
+            % Examples:
+            %     * plot(RocketSolver(), mixArray1, mixArray2, mixArray3);
+            %     * plot(RocketSolver(), mixArray1, mixArray2, mixArray3, mixArray4);
+            %     * plot(RocketSolver(), mixArray1, mixArray2, mixArray3, mixArray4, mixArray5);
+            
+            % Import packages
+            import combustiontoolbox.utils.display.*
+            
+            % Definitions
+            additionalMixtures = nargin - 3;
+            numPlotProperties = obj.plotConfig.numPlotProperties;
+            % indicesToRemoveForInjector = ismember(obj.plotConfig.plotProperties, {'I_sp', 'I_vac'});
+            % plotPropertiesInjector = obj.plotConfig.plotProperties(~indicesToRemoveForInjector);
+            % plotPropertiesBasisInjector = obj.plotConfig.plotPropertiesBasis(~indicesToRemoveForInjector);
+            % numPropertiesInjector = length(plotPropertiesInjector);
+
+            % Check if is a scalar value
+            if isscalar(mixArray1)
+                return
+            end
+            
+            % Get labels
+            switch upper(obj.problemType)
+                case {'ROCKET_IAC'}
+                    labels = {'Chamber', 'Throat', 'Exit'};
+                case {'ROCKET_FAC'}
+                    labels = {'Injector', 'Chamber', 'Throat', 'Exit'};
+
+                otherwise
+                    if additionalMixtures
+                        labels = arrayfun(@(x) sprintf('Mixture %d', x), 1:(additionalMixtures + 1), 'UniformOutput', false);
+                    else
+                        labels = {''};
+                    end
+            end
+            
+            % Plot molar fractions - mixArray2
+            ax1 = plotComposition(mixArray2(1), mixArray1, mixArray1(1).rangeName, 'Xi', 'mintol', obj.plotConfig.mintolDisplay, 'y_var', mixArray2, 'title', labels{1});
+        
+            % Plot properties - mixArray2
+            ax2 = plotProperties(repmat({mixArray1(1).rangeName}, 1, numPlotProperties), mixArray1, obj.plotConfig.plotProperties, mixArray2, 'basis', obj.plotConfig.plotPropertiesBasis, 'config', obj.plotConfig);
+
+            % Check if there are additional mixtures
+            if ~additionalMixtures
+                return
+            end
+
+            for i = 1:additionalMixtures
+                % Unpack input
+                mixArray2 = varargin{i};
+
+                % Plot molar fractions - mixArray_i
+                ax1 = plotComposition(mixArray2(1), mixArray1, mixArray1(1).rangeName, 'Xi', 'mintol', obj.plotConfig.mintolDisplay, 'y_var', mixArray2, 'title', labels{i + 1});
+            
+                % Plot properties - mixArray_i
+                ax2 = plotProperties(repmat({mixArray1(1).rangeName}, 1, numPlotProperties), mixArray1, obj.plotConfig.plotProperties, mixArray2, 'basis', obj.plotConfig.plotPropertiesBasis, 'config', obj.plotConfig, 'ax', ax2);
+            end
+
+            % Set legends
+            legend(ax2.Children(end), labels(1:1+i), 'Interpreter', 'latex', 'FontSize', ax2.Children(end).FontSize);
+        end
+
+        function report(obj, mixArray1, mixArray2, varargin)
+            % Postprocess all the results with predefined plots
+            %
+            % Args:
+            %     obj (DetonationSolver): DetonationSolver object
+            %     mixArray1 (Mixture): Array of Mixture objects (pre-shock state)
+            %     mixArray2 (Mixture): Array of Mixture objects (post-shock state)
+            %
+            % Optional args:
+            %     * mixArray_i (Mixture): Array of Mixture objects
+            %
+            % Examples:
+            %     * report(DetonationSolver(), mixArray1, mixArray2);
+            %     * report(DetonationSolver(), mixArray1, mixArray2, mixArray3);
+
+            if nargin > 3
+                obj.plot(mixArray1, mixArray2, varargin{:});
+            else
+                obj.plot(mixArray1, mixArray2);
+            end
+
         end
 
     end

@@ -123,6 +123,7 @@ function [main_ax, main_figure] = plotProperties(x_field, x_var, y_field, y_var,
         if FLAG_SAME
             nexttile(main_ax, i)
             ax = gca;
+            setFigure(ax, config);
         else
             nexttile;
             ax = gca;

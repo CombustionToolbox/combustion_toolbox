@@ -1,57 +1,29 @@
 classdef EquilibriumSolver < handle
-    % The EquilibriumSolver class is used to solve chemical equilibrium problems
+    % The :mat:func:`EquilibriumSolver` class is used to compute the composition at the equilibrium
+    % of multi-component gas mixtures that undergo canonical thermochemical transformations from
+    % an initial state (reactants), defined by its initial composition, temperature, and pressure,
+    % to a final state (products), defined by a set of chemical species (in gaseous---included
+    % ions---or pure condensed phase). 
+    % 
+    % The :mat:func:`EquilibriumSolver` object can be initialized as follows: ::
+    %
+    %       solver = EquilibriumSolver('problemType', problemType, ...)
+    %
+    % Here ``problemType`` represents the acronym of the problem to be solved (see below).
+    % Additional optional parameters can be provided to customize the solver's behavior.
     %
     % Problem types:
-    %   * TP: Equilibrium composition at defined temperature and pressure
-    %   * TV: Equilibrium composition at defined temperature and specific volume
-    %   * HP: Equilibrium composition at defined enthalpy and pressure
-    %   * EV: Equilibrium composition at defined internal energy and specific volume
-    %   * SP: Equilibrium composition at defined entropy and pressure
-    %   * SV: Equilibrium composition at defined entropy and specific volume
+    %     * `TP`: Equilibrium composition at defined temperature and pressure
+    %     * `TV`: Equilibrium composition at defined temperature and specific volume
+    %     * `HP`: Equilibrium composition at defined enthalpy and pressure
+    %     * `EV`: Equilibrium composition at defined internal energy and specific volume
+    %     * `SP`: Equilibrium composition at defined entropy and pressure
+    %     * `SV`: Equilibrium composition at defined entropy and specific volume
     %
-    % Attributes:
-    %     problemType (char): Type of the problem [TP, TV, HP, EV, SP, SV]
-    %     tolGibbs (float): Tolerance of the Gibbs/Helmholtz minimization method
-    %     tolE (float): Tolerance of the mass balance
-    %     tolMoles (float): Tolerance of the composition of the mixture
-    %     tolMolesGuess (float): Tolerance of the molar composition of the mixture (guess)
-    %     tolMultiplierIons (float): Tolerance of the dimensionless Lagrangian multiplier - ions
-    %     tolTau (float): Tolerance of the slack variables for condensed species
-    %     itMaxGibbs (float): Max number of iterations - Gibbs/Helmholtz minimization method
-    %     itMaxIons (float): Max number of iterations - charge balance (ions)
-    %     temperatureIons (float): Minimum temperature [K] to consider ionized species
-    %     tol0 (float): Tolerance of the root finding algorithm
-    %     itMax (float): Max number of iterations - root finding method
-    %     rootMethod (function): Root finding method [newton (2nd order), steff (2nd order), or nsteff (3rd order)]
-    %     root_T0_l (float): First temperature guess [K] left branch - root finding method
-    %     root_T0_r (float): First temperature guess [K] right branch - root finding method
-    %     root_T0 (float): Temperature guess [K] if it's outside previous range - root finding method
-    %     FLAG_EXTRAPOLATE (bool): Flag indicating linear extrapolation of the polynomials fits
-    %     FLAG_FAST (bool): Flag indicating use guess composition of the previous computation
-    %     FLAG_TCHEM_FROZEN (bool): Flag to consider a thermochemically frozen gas (calorically perfect gas)
-    %     FLAG_FROZEN (bool): Flag to consider a calorically imperfect gas with frozen chemistry
-    %     FLAG_EOS (bool): Flag to use non-ideal Equation of States (EoS)
-    %     FLAG_RESULTS (bool): Flag to print results
-    %     FLAG_TIME (bool): Flag to print elapsed time
-    %     time (float): Elapsed time
-    %
-    % Methods:
-    %     equilibrate: Obtain chemical equilibrium composition and thermodynamic properties
-    %     equilibrateT: Obtain chemical equilibrium composition and thermodynamic properties at a given temperature [K] and pressure [bar] / specific volume [m3/kg]
-    %     solve: Obtain chemical equilibrium composition and thermodynamic properties
-    %     solveArray: Obtain chemical equilibrium composition and thermodynamic properties for an array of mixture values
-    %     printTime: Print execution time
-    %     plot: Plot results
-    %
-    % Examples:
-    %     * solver = EquilibriumSolver();
-    %     * solver = EquilibriumSolver('problemType', 'TP');
-    %     * solver = EquilibriumSolver('problemType', 'TP', 'tolMoles', 1e-30);
-    %     * solver = EquilibriumSolver('problemType', 'TP', 'tolMoles', 1e-30, 'FLAG_RESULTS', false);
+    % See also: :mat:func:`Mixture`, :mat:func:`solve`, :mat:func:`solveArray`, :mat:func:`report`
     
     properties
         problemType                % Problem type [TP, TV, HP, EV, SP, SV]
-        % * Chemical equilibrium TP, TV (CT-EQUIL module)
         tolGibbs = 1e-6            % Tolerance of the Gibbs/Helmholtz minimization method
         tolE = 1e-6                % Tolerance of the mass balance
         tolMoles = 1e-14           % Tolerance of the composition of the mixture                       
@@ -61,14 +33,12 @@ classdef EquilibriumSolver < handle
         itMaxGibbs = 70            % Max number of iterations - Gibbs/Helmholtz minimization method
         itMaxIons = 30             % Max number of iterations - charge balance (ions)
         temperatureIons = 0        % Minimum temperature [K] to consider ionized species
-        % * Chemical equilibrium HP, EV, SP, SV (CT-EQUIL module)
         tol0 = 1e-3                % Tolerance of the root finding algorithm
         itMax = 30                 % Max number of iterations - root finding method
         rootMethod = @newton       % Root finding method [newton (2nd order), steff (2nd order), or nsteff (3rd order)]
         root_T0_l = 1000           % First temperature guess [K] left branch - root finding method
         root_T0_r = 3000           % First temperature guess [K] right branch - root finding method
         root_T0   = 3000           % Temperature guess [K] if it's outside previous range - root finding method
-        % * Flags
         FLAG_EXTRAPOLATE = true    % Flag indicating linear extrapolation of the polynomials fits
         FLAG_FAST = true           % Flag indicating use guess composition of the previous computation
         FLAG_TCHEM_FROZEN = false  % Flag to consider a thermochemically frozen gas (calorically perfect gas)
@@ -77,7 +47,6 @@ classdef EquilibriumSolver < handle
         FLAG_RESULTS = true        % Flag to print results
         FLAG_TIME = true           % Flag to print elapsed time
         FLAG_REPORT = false        % Flag to postprocess all the results with predefined plots
-        % * Miscellaneous
         time                       % Elapsed time [s]
         plotConfig                 % PlotConfig object
     end

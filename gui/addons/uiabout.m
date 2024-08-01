@@ -42,8 +42,7 @@ classdef uiabout < matlab.apps.AppBase
         
         function select_action(app, event)
             % Import packages
-            import combustiontoolbox.common.Constants
-            import combustiontoolbox.utils.openWebsite
+            import combustiontoolbox.utils.SystemUtils
 
             obj_tag_clicked = event.Source.Tag;
             switch lower(obj_tag_clicked)
@@ -83,8 +82,8 @@ classdef uiabout < matlab.apps.AppBase
                     property = 'contributors';
             end
             
-            url = Constants.url.(property);
-            openWebsite(url);
+            url = SystemUtils.url.(property);
+            SystemUtils.openWebsite(url);
         end
         
     end

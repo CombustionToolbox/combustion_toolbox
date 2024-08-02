@@ -1,37 +1,37 @@
-function LS = find_species_LS(LS, cond_with, type_with, cond_without, type_without)
+function listSpecies = findSpecies(listSpecies, cond_with, type_with, cond_without, type_without)
     % Find species in the given list that contain all/any
     % elements of cond_with and that not include all/any elements of
     % cond_without
     %
     % Args:
-    %     LS (cell): List of species
+    %     listSpecies (cell): List of species
     %     cond_with (cell): List of elements to include
     %     type_with (char): Satisfy all or any of the elements in cond_with
     %     cond_without (cell): List of elements to avoid
     %     type_without (char): Satisfy all or any of the elements in cond_without
     %
     % Returns:
-    %     LS (cell): List of species
+    %     listSpecies (cell): List of species
     %
     % Examples:
-    %     * LS = find_species_LS(LS, {'C','N','O','minus','plus','Ar'}, 'any',...
+    %     * listSpecies = findSpecies(listSpecies, {'C','N','O','minus','plus','Ar'}, 'any',...
     %                                {'I', 'S', 'L', 'T', 'P', 'F', 'ab', 'W',...
     %                                 'Z','X','R','Os','Cr','H','Br','G','K',...
     %                                 'U','Co','Cu','B','V','Ni','Na','Mg',...
     %                                 'Mo','Ag','Nb','Cb','Cl','D','T',...
     %                                 'Ca','Cs','Ne','Cd','Mn'}, 'all')
-    %     * LS = find_species_LS(self.S.LS_DB, {}, 'any', {'_M'}, 'all')
+    %     * listSpecies = findSpecies(DB.listSpecies, {}, 'any', {'_M'}, 'all')
 
     % Initialization
     FLAG_WITH = [];
     FLAG_WITHOUT = [];
     % Get all flags
     for i = length(cond_with):-1:1
-        FLAG_WITH(:, i) = contains(LS, cond_with{i});
+        FLAG_WITH(:, i) = contains(listSpecies, cond_with{i});
     end
 
     for i = length(cond_without):-1:1
-        FLAG_WITHOUT(:, i) = ~contains(LS, cond_without{i});
+        FLAG_WITHOUT(:, i) = ~contains(listSpecies, cond_without{i});
     end
 
     % Get functions all or any for each list of elements
@@ -40,7 +40,7 @@ function LS = find_species_LS(LS, cond_with, type_with, cond_without, type_witho
     % Obtain flags that contain (not contain) all/any of the given elements
     index = get_FLAG(f_with, FLAG_WITH) & get_FLAG(f_without, FLAG_WITHOUT);
     % Get list of species
-    LS = LS(index);
+    listSpecies = listSpecies(index);
 end
 
 % SUB-PASS FUNCTION

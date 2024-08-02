@@ -31,8 +31,7 @@ function gui_plot_custom_figures(app)
     if ~iscell(y_field), y_field = {y_field}; end
 
     % Plot settings
-    Misc = Miscellaneous();
-    config = Misc.config;
+    config = PlotConfig();
     config.labelx = interpreterLabel(x_field, config.label_type); % Set x label
     config.labely = interpreterLabel(y_field, config.label_type); % Set y label
     NUM_NODES = length(mixtures_nodes);
@@ -71,6 +70,12 @@ function gui_plot_custom_figures(app)
         basis = cell2vector(mixtures, basisName);
 
         x_values = checkUnits(x_field, x_values, basis);
+        
+        if any(strcmpi(y_field{1}, {'Xi', 'Yi', 'Ni', 'moles', 'molarFraction', 'massFraction'}))
+            y_values = [mixtures{:}];
+            plotComposition(y_values(1), y_values, x_field, y_field{1}, 'y_var', y_values, 'axes', app.UIAxes)
+            return
+        end
 
         for j = NUM_PROP:-1:1
             y_values = cell2vector(mixtures, y_field{j});
@@ -81,9 +86,17 @@ function gui_plot_custom_figures(app)
         end
     end
     
-    % Add legends
+    % Add legends and change ylabel
     if NUM_PROP + NUM_NODES > 2
+        app.UIAxes.YLabel.String = 'Multiple variables';
         setLegends(app.UIAxes, flip(legend_name), 'config', config)
+        app.UIAxes.Legend.Visible = 'on';
+    else
+        if isempty(app.UIAxes.Legend) 
+            return
+        end
+
+        app.UIAxes.Legend.Visible = 'off';
     end
 
 end

@@ -281,7 +281,7 @@ function app = gui_CalculateButtonPushed(app, event)
         gui_update_terminal(app, 'finish', solver.time);
 
         % Save results
-        [results, app.temp_results] = save_results(app, problemType, varargout{1}, varargout{end});
+        [results, app.temp_results] = save_results(app, problemType, mixArray1, varargout{end});
         
         % Update GUI with the last results of the set
         gui_update_results(app, results);

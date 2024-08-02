@@ -2,11 +2,11 @@ classdef Export < handle
     % Class to export and save data to different formats (Excel, CSV, and mat)
 
     properties
-        format     % Format to save data (Excel, CSV, or mat)
-        filename   % Filename to save data
-        FLAG_PROMT % Flag to show promt to save data
-        compositionUnit = 'kg'; % Composition unit (kg or mol)
-        compositionVariable = 'X'; % Composition variable (molar fraction)
+        format              % Format to save data (Excel, CSV, or mat)
+        filename            % Filename to save data
+        FLAG_PROMT          % Flag to show promt to save data
+        compositionUnit     % Composition unit (kg or mol)
+        compositionVariable % Composition variable (molar fraction)
     end
 
     methods
@@ -16,18 +16,24 @@ classdef Export < handle
             % Default values
             defaultFormat = '.xls';
             defaultFilename = 'data';
+            defaultCompositionUnit = 'kg';
+            defaultCompositionVariable = 'X';
             defaultFLAG_PROMT = true;
 
             % Create input parser
             ip = inputParser;
             addParameter(ip, 'format', defaultFormat, @ischar);
             addParameter(ip, 'filename', defaultFilename, @ischar);
+            addParameter(ip, 'compositionUnit', defaultCompositionUnit, @ischar);
+            addParameter(ip, 'compositionVariable', defaultCompositionVariable, @ischar);
             addParameter(ip, 'FLAG_PROMT', defaultFLAG_PROMT, @islogical);
             parse(ip, varargin{:});
 
             % Set properties
             obj.format = ip.Results.format;
             obj.filename = ip.Results.filename;
+            obj.compositionUnit = ip.Results.compositionUnit;
+            obj.compositionVariable = ip.Results.compositionVariable;
             obj.FLAG_PROMT = ip.Results.FLAG_PROMT;
         end
 
@@ -36,15 +42,16 @@ classdef Export < handle
             % file
             %
             % Args:
+            %     obj (Export): Export object
             %     mixArray (Mixture): Array of mixture objects
             %
             % Optional Args:
             %     * mixArray_i (Mixture): Additional arrayy of mixture objects
             %
             % Examples:
-            %     * exportResults(mixArray1)
-            %     * exportResults(mixArray1, mixArray2)
-            %     * exportResults(mixArray1, mixArray2, mixArray3)
+            %     * exportResults(Export(), mixArray1)
+            %     * exportResults(Export(), mixArray1, mixArray2)
+            %     * exportResults(Export(), mixArray1, mixArray2, mixArray3)
 
             % Unpack additional inputs
             varargin = [{mixArray}, varargin];
@@ -61,7 +68,7 @@ classdef Export < handle
                 listSpecies = mixArray(1).chemicalSystem.listSpecies;
 
                 % Format data
-                data(:, :, i) = obj.generateMatrix(mixArray, listSpecies, equivalenceRatio);
+                data(:, :, i) = generateMatrix(obj, mixArray, listSpecies, equivalenceRatio);
             end
 
             % Show promt?
@@ -95,13 +102,11 @@ classdef Export < handle
 
         end
 
-    end
-
-    methods (Access = public, Static)
-        function data = generateMatrix(mixArray, listSpecies, equivalenceRatio)
+        function data = generateMatrix(obj, mixArray, listSpecies, equivalenceRatio)
             % Construct a cell with the thermodynamic data of the given mixture
             %
             % Args:
+            %     obj (Export): Export object
             %     mixArray (Mixture): Mixture object
             %     listSpecies (cell): List of species
             %     equivalenceRatio (float): Vector of equivalence ratio
@@ -110,7 +115,7 @@ classdef Export < handle
             %     data (cell): Cell array with the thermodynamic data of the given mixture
             % 
             % Example:
-            %     data(mixArray, {'CH4', 'O2', 'CO2', 'H2O'}, [0.5, 1.0, 1.5])
+            %     data(Export(), mixArray, {'CH4', 'O2', 'CO2', 'H2O'}, [0.5, 1.0, 1.5])
             
             % Definitions
             numCases = length(mixArray);

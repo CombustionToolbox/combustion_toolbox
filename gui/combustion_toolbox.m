@@ -276,11 +276,12 @@ classdef combustion_toolbox < matlab.apps.AppBase
         chemicalSystem % Chemical system class
         mixture        % Mixture class
         displaySpecies % Checmial species to be shown in plotComposition
-        equilibriumSolver
-        shockSolver
-        detonationSolver
-        rocketSolver
-        plotConfig
+        equilibriumSolver % EquilibriumSolver object
+        shockSolver       % ShockSolver object
+        detonationSolver  % DetonationSolver object
+        rocketSolver      % RocketSolver object
+        plotConfig        % PlotConfig object
+        export            % Export object
         fig          % Auxiliary figure
         default      % Struct with default values of some components in the GUI
         N_flags      % Number of flags active
@@ -463,13 +464,15 @@ classdef combustion_toolbox < matlab.apps.AppBase
             app.chemicalSystem = combustiontoolbox.core.ChemicalSystem(app.database);
             % Initialize mixture
             app.mixture = combustiontoolbox.core.Mixture(app.chemicalSystem);
-            % Initialize plotConfig class
+            % Initialize plotConfig object
             app.plotConfig = combustiontoolbox.utils.display.PlotConfig;
             % Initialize solvers
             app.equilibriumSolver = combustiontoolbox.equilibrium.EquilibriumSolver('plotConfig', app.plotConfig);
             app.shockSolver = combustiontoolbox.shockdetonation.ShockSolver('plotConfig', app.plotConfig, 'equilibriumSolver', app.equilibriumSolver);
             app.detonationSolver = combustiontoolbox.shockdetonation.DetonationSolver('plotConfig', app.plotConfig, 'equilibriumSolver', app.equilibriumSolver);
             app.rocketSolver = combustiontoolbox.rocket.RocketSolver('plotConfig', app.plotConfig, 'equilibriumSolver', app.equilibriumSolver);
+            % Initialize export object
+            app.export = combustiontoolbox.utils.Export();
             % Initialize List box species DataBase master
             app.listbox_LS_DB.Items = app.database.listSpecies;
             % Initialize table data
@@ -646,12 +649,36 @@ classdef combustion_toolbox < matlab.apps.AppBase
 
         % Menu selected function: xlsMenu
         function xlsMenuSelected(app, event)
-            gui_save_results(app, '.xls');
+            % Extract last results
+            mixArray1 = [app.temp_results.mix1];
+            mixArray2 = [app.temp_results.mix2];
+            
+            % Store default format
+            temp = app.export.format;
+
+            % Export results
+            app.export.format = '.xls';
+            app.export.export(mixArray1, mixArray2);
+
+            % Recover default format
+            app.export.format = temp;
         end
 
         % Menu selected function: matMenu
         function matMenuSelected(app, event)
-            gui_save_results(app, '.mat');
+            % Extract last results
+            mixArray1 = [app.temp_results.mix1];
+            mixArray2 = [app.temp_results.mix2];
+            
+            % Store default format
+            temp = app.export.format;
+
+            % Export results
+            app.export.format = '.mat';
+            app.export.export(mixArray1, mixArray2);
+
+            % Recover default format
+            app.export.format = temp;
         end
 
         % Button pushed function: AddButton1
@@ -729,7 +756,7 @@ classdef combustion_toolbox < matlab.apps.AppBase
 
         % Menu selected function: CheckforupdatesMenu
         function CheckforupdatesMenuSelected(app, event)
-            [~, message] = check_update(app.UIFigure);
+            [~, message] = combustiontoolbox.utils.checkUpdate(app.UIFigure);
             app.Console_text.Value = message;
         end
 

@@ -18,7 +18,7 @@
 %          Postdoctoral researcher - Group Fluid Mechanics
 %          Universidad Carlos III de Madrid
 %
-% Last update Jul 28 2024
+% Last update Aug 02 2024
 % -------------------------------------------------------------------------
 
 % Import packages
@@ -41,7 +41,7 @@ set(mix, {'H2'}, 'fuel', 1);
 set(mix, {'N2', 'O2'}, 'oxidizer', [79, 21] / 21);
 
 % Define properties
-mixArray1 = setProperties(mix, 'temperature', 300, 'pressure', 1.01325, 'driveFactor', [1.0382, 1.2458, 1.4534, 1.6611, 2.0763]);
+mixArray1 = setProperties(mix, 'temperature', 300, 'pressure', 1.01325, 'equivalenceRatio', 1, 'driveFactor', [1.0382, 1.2458, 1.4534, 1.6611, 2.0763]);
 
 % Initialize solver
 solver = DetonationSolver('problemType', 'DET_POLAR', 'numPointsPolar', 300);

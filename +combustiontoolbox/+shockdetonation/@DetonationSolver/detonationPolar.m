@@ -35,7 +35,7 @@ function [mix1, mix2] = detonationPolar(obj, mix1, driveFactor, varargin)
     u1 = mix1.u; % [m/s]
     betaMin = asin(mix1.cjSpeed / u1); % [rad]
     betaMax = pi / 2; % [rad]
-    betaOver = linspace(betaMax, betaMin, obj.numPointsPolar / 2); % [rad]
+    betaOver = linspace(betaMax, betaMin, round(obj.numPointsPolar / 2) ); % [rad]
     betaUnder = fliplr(betaOver); % [rad]
 
     % Compute overdriven branch
@@ -61,7 +61,7 @@ function [mix1, mix2] = detonationPolar(obj, mix1, driveFactor, varargin)
     u2y = u2 .* sin(theta); % [m/s]
 
     % Sonic point - CJ point (minimum beta)
-    indexSonic = obj.numPointsPolar / 2;
+    indexSonic = round(obj.numPointsPolar / 2);
     thetaSonic = theta(indexSonic) * 180 / pi; % [deg]
 
     % Max deflection angle
@@ -147,7 +147,7 @@ function [results, mix2] = compute_detonation(obj, fun_det, mix1, beta, mix2, FL
         Xi(:, i) = mix2.Xi; % [-]
 
         % Get index spurious results
-        if (FLAG_UNDER && u2n(i) / a2(i) < 1) || (~FLAG_UNDER && u2n(i) / a2(i) > 1)
+        if (FLAG_UNDER && round(u2n(i) / a2(i), 1) < 1) || (~FLAG_UNDER && round(u2n(i) / a2(i), 1) > 1)
             index = [index, i];
             mix2 = [];
         end

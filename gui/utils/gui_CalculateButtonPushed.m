@@ -44,9 +44,35 @@ function app = gui_CalculateButtonPushed(app, event)
             case {'SHOCK_I', 'SHOCK_R', 'SHOCK_POLAR'}
                 propertyR4 = gui_get_prop(app.PR4.Value);
                 additionalInputsR = [additionalInputsR, 'mach', propertyR4];
-            case {'DET_OVERDRIVEN', 'DET_UNDERDRIVEN', 'DET_POLAR'}
+            case {'SHOCK_OBLIQUE', 'SHOCK_POLAR_R'}
+                    propertyR4 = gui_get_prop(app.PR4.Value);
+                    propertyR5 = gui_get_prop(app.PR5.Value);
+                    propertyP5 = gui_get_prop(app.PP5.Value);
+
+                    if ~isempty(propertyR5)
+                        FLAG_BETA = true;
+                        additionalInputsR = [additionalInputsR, 'mach', propertyR4, 'beta', propertyR5];
+                    else
+                        FLAG_THETA = true;
+                        additionalInputsR = [additionalInputsR, 'mach', propertyR4, 'theta', propertyP5];
+                    end
+                    
+            case {'DET_OVERDRIVEN', 'DET_UNDERDRIVEN', 'DET_OVERDRIVEN_R', 'DET_UNDERDRIVEN_R', 'DET_POLAR'}
                 propertyR3 = gui_get_prop(app.PR3.Value);
                 additionalInputsR = [additionalInputsR, 'driveFactor', propertyR3];
+            case {'DET_OBLIQUE', 'DET_POLAR_R'}
+                    propertyR3 = gui_get_prop(app.PR3.Value);
+                    propertyR4 = gui_get_prop(app.PR4.Value);
+                    propertyP4 = gui_get_prop(app.PP4.Value);
+
+                    if ~isempty(propertyR4)
+                        FLAG_BETA = true;
+                        additionalInputsR = [additionalInputsR, 'driveFactor', propertyR3, 'beta', propertyR4];
+                    else
+                        FLAG_THETA = true;
+                        additionalInputsR = [additionalInputsR, 'driveFactor', propertyR3, 'theta', propertyP4];
+                    end
+                    
             otherwise
                 propertyP1 = propertyR1;
                 propertyP2 = propertyR2;
@@ -115,6 +141,8 @@ function app = gui_CalculateButtonPushed(app, event)
                 solver.plotConfig.plotProperties = {'T', 'rho', 'h', 'e', 'g', 'cp', 's', 'gamma_s', 'sound'};
                 solver.plotConfig.plotPropertiesBasis = {[], [], 'mi', 'mi', 'mi', 'mi', 'mi', [], []};
             case {'SHOCK_I', 'SHOCK_OBLIQUE_BETA', 'SHOCK_POLAR'}
+                % Remove beta/theta
+                problemType = strrep(problemType, '_BETA', '');
                 % Select solver
                 solver = set(app.shockSolver, 'problemType', problemType, 'FLAG_RESULTS', FLAG_RESULTS);
                 % Solve problem
@@ -125,6 +153,8 @@ function app = gui_CalculateButtonPushed(app, event)
                 solver.plotConfig.plotProperties = {'T', 'rho', 'h', 'e', 'g', 'cp', 's', 'gamma_s', 'sound'};
                 solver.plotConfig.plotPropertiesBasis = {[], [], 'mi', 'mi', 'mi', 'mi', 'mi', [], []};
             case {'SHOCK_R', 'SHOCK_OBLIQUE_THETA'}
+                % Remove beta/theta
+                problemType = strrep(problemType, '_THETA', '');
                 % Select solver
                 solver = set(app.shockSolver, 'problemType', problemType, 'FLAG_RESULTS', FLAG_RESULTS);
                 % Solve problem
@@ -135,6 +165,9 @@ function app = gui_CalculateButtonPushed(app, event)
                 solver.plotConfig.plotProperties = {'T', 'rho', 'h', 'e', 'g', 'cp', 's', 'gamma_s', 'sound'};
                 solver.plotConfig.plotPropertiesBasis = {[], [], 'mi', 'mi', 'mi', 'mi', 'mi', [], []};
             case {'SHOCK_OBLIQUE_R_BETA', 'SHOCK_OBLIQUE_R_THETA', 'SHOCK_POLAR_LIMITRR'}
+                % Remove beta/theta
+                problemType = strrep(problemType, '_BETA', '');
+                problemType = strrep(problemType, '_THETA', '');
                 % Select solver
                 solver = set(app.shockSolver, 'problemType', problemType, 'FLAG_RESULTS', FLAG_RESULTS);
                 % Solve problem
@@ -145,6 +178,8 @@ function app = gui_CalculateButtonPushed(app, event)
                 solver.plotConfig.plotProperties = {'T', 'rho', 'h', 'e', 'g', 'cp', 's', 'gamma_s', 'sound'};
                 solver.plotConfig.plotPropertiesBasis = {[], [], 'mi', 'mi', 'mi', 'mi', 'mi', [], []};
             case {'SHOCK_POLAR_R_BETA'}
+                % Remove beta/theta
+                problemType = strrep(problemType, '_BETA', '');
                 % Select solver
                 solver = set(app.shockSolver, 'problemType', problemType, 'FLAG_RESULTS', FLAG_RESULTS);
                 % Solve problem
@@ -155,6 +190,8 @@ function app = gui_CalculateButtonPushed(app, event)
                 solver.plotConfig.plotProperties = {'T', 'rho', 'h', 'e', 'g', 'cp', 's', 'gamma_s', 'sound'};
                 solver.plotConfig.plotPropertiesBasis = {[], [], 'mi', 'mi', 'mi', 'mi', 'mi', [], []};
             case {'SHOCK_POLAR_R_THETA'}
+                % Remove beta/theta
+                problemType = strrep(problemType, '_THETA', '');
                 % Select solver
                 solver = set(app.shockSolver, 'problemType', problemType, 'FLAG_RESULTS', FLAG_RESULTS);
                 % Solve problem
@@ -165,6 +202,7 @@ function app = gui_CalculateButtonPushed(app, event)
                 solver.plotConfig.plotProperties = {'T', 'rho', 'h', 'e', 'g', 'cp', 's', 'gamma_s', 'sound'};
                 solver.plotConfig.plotPropertiesBasis = {[], [], 'mi', 'mi', 'mi', 'mi', 'mi', [], []};
             case {'DET', 'DET_OVERDRIVEN', 'DET_UNDERDRIVEN', 'DET_POLAR'}
+                % Select solver
                 solver = set(app.detonationSolver, 'problemType', problemType, 'FLAG_RESULTS', FLAG_RESULTS);
                 % Solve problem
                 [mixArray1, mixArray2] = solver.solveArray(mixArray1);
@@ -174,6 +212,10 @@ function app = gui_CalculateButtonPushed(app, event)
                 solver.plotConfig.plotProperties = {'T', 'rho', 'h', 'e', 'g', 'cp', 's', 'gamma_s', 'sound', 'uShock'};
                 solver.plotConfig.plotPropertiesBasis = {[], [], 'mi', 'mi', 'mi', 'mi', 'mi', [], [], []};
             case {'DET_R', 'DET_OVERDRIVEN_R', 'DET_UNDERDRIVEN_R', 'DET_OBLIQUE_BETA', 'DET_OBLIQUE_THETA'}
+                % Remove beta/theta
+                problemType = strrep(problemType, '_BETA', '');
+                problemType = strrep(problemType, '_THETA', '');
+                % Select solver
                 solver = set(app.detonationSolver, 'problemType', problemType, 'FLAG_RESULTS', FLAG_RESULTS);
                 % Solve problem
                 [mixArray1, mixArray2, mixArray3] = solver.solveArray(mixArray1);
@@ -183,6 +225,7 @@ function app = gui_CalculateButtonPushed(app, event)
                 solver.plotConfig.plotProperties = {'T', 'rho', 'h', 'e', 'g', 'cp', 's', 'gamma_s', 'sound', 'uShock'};
                 solver.plotConfig.plotPropertiesBasis = {[], [], 'mi', 'mi', 'mi', 'mi', 'mi', [], [], []};
             case {'DET_POLAR_LIMITRR'}
+                % Select solver
                 solver = set(app.detonationSolver, 'problemType', problemType, 'FLAG_RESULTS', FLAG_RESULTS);
                 % Solve problem
                 [mixArray1, mixArray2, mixArray3, mixArray4] = solver.solveArray(mixArray1);
@@ -192,6 +235,9 @@ function app = gui_CalculateButtonPushed(app, event)
                 solver.plotConfig.plotProperties = {'T', 'rho', 'h', 'e', 'g', 'cp', 's', 'gamma_s', 'sound', 'uShock'};
                 solver.plotConfig.plotPropertiesBasis = {[], [], 'mi', 'mi', 'mi', 'mi', 'mi', [], [], []};
             case {'DET_POLAR_R_BETA'}
+                % Remove beta/theta
+                problemType = strrep(problemType, '_BETA', '');
+                % Select solver
                 solver = set(app.detonationSolver, 'problemType', problemType, 'FLAG_RESULTS', FLAG_RESULTS);
                 % Solve problem
                 [mixArray1, mixArray2, mixArray3, mixArray4, mixArray5] = solver.solveArray(mixArray1);
@@ -276,7 +322,6 @@ function app = gui_CalculateButtonPushed(app, event)
 end
 
 % SUB-PASS FUNCTIONS
-
 function gui_update_results(app, results)
     % Update:
     %  1. GUI with the last results computed

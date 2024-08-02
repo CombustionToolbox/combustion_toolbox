@@ -23,12 +23,19 @@ function gui_ReactantsValueChanged(app, event)
             app.chemicalSystem = combustiontoolbox.core.ChemicalSystem(app.database, listSpecies);
         end
         
+        % Temp
+        ratioOxidizer = app.mixture.ratioOxidizer;
+        stoichiometricMoles = app.mixture.stoichiometricMoles;
+
         % Initialize mixture
         app.mixture = combustiontoolbox.core.Mixture(app.chemicalSystem);
+        if ~isempty(stoichiometricMoles)
+            app.mixture.ratioOxidizer = ratioOxidizer;
+        end
 
         % Set chemical state
         gui_set_reactants(app, event);
-        
+
         % Define properties
         if strcmp(app.edit_phi.Value, '-')
             app.mixture = setProperties(app.mixture, 'temperature', temperature, 'pressure', pressure);
@@ -125,7 +132,7 @@ function app = gui_set_reactants(app, event)
         otherwise % SET NEW SPECIES
 
             try
-                listSpeciesFuel = gui_seeker_exact_value(app, event, app.database.listSpecies);
+                listSpeciesAdd = gui_seeker_exact_value(app, event, app.database.listSpecies);
             catch
                 message = {'Species not found.'};
                 uialert(app.UIFigure, message, 'Warning', 'Icon', 'warning');
@@ -137,13 +144,14 @@ function app = gui_set_reactants(app, event)
                 gui_get_reactants(app, event);
             end
 
-            % Add new species to the mixture (fuel by default)
-            if any(findIndex(app.mixture.listSpeciesFuel, listSpeciesFuel))
+            % Add new species to the mixture (inert by default)
+            if any(findIndex(app.mixture.listSpecies, listSpeciesAdd))
                 return
             end
 
-            molesFuel = 1;
-            set(app.mixture, {listSpeciesFuel}, 'fuel', molesFuel);
+            molesAdd = 1;
+            set(app.mixture, {listSpeciesAdd}, 'inert', molesAdd);
+            % app.mixture.ratioOxidizer = molesOxidizer;
             return
     end
     
@@ -154,6 +162,7 @@ function app = gui_set_reactants(app, event)
 
     if FLAG_OXIDIZER
         set(app.mixture, listSpeciesOxidizer, 'oxidizer', molesOxidizer);
+        % app.mixture.ratioOxidizer = molesOxidizer;
     end
     
 end

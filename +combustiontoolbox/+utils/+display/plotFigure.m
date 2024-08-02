@@ -42,8 +42,6 @@ function [ax, dline] = plotFigure(x_field, x_var, y_field, y_var, varargin)
     FLAG_BASIS = false;
     FLAG_COLOR_NEW = false;
     config = PlotConfig;
-    config.labelx = interpreterLabel(x_field, config.label_type, false);
-    config.labely = interpreterLabel(y_field, config.label_type, false);
     ax = [];
 
     % Get x and y values
@@ -107,6 +105,14 @@ function [ax, dline] = plotFigure(x_field, x_var, y_field, y_var, varargin)
         end
 
     end
+    
+    if isempty(config.labelx)
+        config.labelx = interpreterLabel(x_field, config.label_type, false);
+    end
+
+    if isempty(config.labely)
+        config.labely = interpreterLabel(y_field, config.label_type, false);
+    end
 
     % Create figure (if necessary)
     if isempty(ax)
@@ -125,7 +131,11 @@ function [ax, dline] = plotFigure(x_field, x_var, y_field, y_var, varargin)
         y = y ./ y_basis;
 
         config.labelx = interpreterLabel(x_field, config.label_type, true, basis);
-        config.labely = interpreterLabel(y_field, config.label_type, true, basis);
+
+        if ~strcmpi(config.labely, 'Multiple variables')
+            config.labely = interpreterLabel(y_field, config.label_type, true, basis);
+        end
+
     end
 
     % Plot

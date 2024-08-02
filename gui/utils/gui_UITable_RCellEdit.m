@@ -9,9 +9,6 @@ function gui_UITable_RCellEdit(app, event)
         
         % Define chemical system
         app.chemicalSystem = combustiontoolbox.core.ChemicalSystem(app.database, listSpecies);
-
-        % Get previous ratioOxidizer
-        ratioOxidizer = app.mixture.ratioOxidizer;
         
         % Initialize mixture
         app.mixture = combustiontoolbox.core.Mixture(app.chemicalSystem);
@@ -25,8 +22,8 @@ function gui_UITable_RCellEdit(app, event)
         % Define properties
         app.mixture = setProperties(app.mixture, 'temperature', temperature, 'pressure', pressure);
         
-        % Set ratioOxidizer
-        app.mixture.ratioOxidizer = ratioOxidizer;
+        % Set ratioOxidizer based on current oxidizer species
+        app.mixture.ratioOxidizer = app.mixture.ratioOxidizer / app.mixture.stoichiometricMoles * app.mixture.equivalenceRatio;
         
         % Update UITable classes
         gui_update_UITable_R(app);
@@ -39,23 +36,6 @@ function gui_UITable_RCellEdit(app, event)
         % In case frozen chemistry or ionization is considered.
         gui_update_frozen(app);
 
-
-
-
-        % % Initialize self (fast: transfer DB)
-        % self = App('fast', app.DB_master, app.DB, app.S.LS);
-        % % Get reactant species
-        % self = gui_get_reactants(app, event, self);
-        % % Compute properties of the mixture
-        % self = gui_compute_propReactants(app, self);
-        % % Update temperature of the mixture (if needed)
-        % update_temperature_mixture(app, self);
-        % % Update UITable classes
-        % gui_update_UITable_R(app, self);
-        % app.UITable_P.Data = app.UITable_R.Data(:, 1);    % (species, numer of moles, mole fractions, temperature)
-        % app.UITable_R2.Data = app.UITable_R.Data(:, 1:3); % (species, numer of moles, mole fractions)
-        % % Update GUI: equivalence ratio, O/F and percentage Fuel
-        % gui_update_phi(app, self);
     catch ME
         message = {sprintf('Error in function %s() at line %d.\n\nError Message:\n%s', ...
         ME.stack(1).name, ME.stack(1).line, ME.message)};

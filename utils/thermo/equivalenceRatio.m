@@ -7,7 +7,7 @@ function value = equivalenceRatio(mix)
     % Returns:
     %     value (float): Equivalence ratio of the initial mixture [-]
 
-    value = mix.phi;
+    value = mix.equivalenceRatio;
 
     if ischar(value)
         value = nan;

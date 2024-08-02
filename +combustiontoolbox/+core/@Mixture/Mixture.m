@@ -155,6 +155,8 @@ classdef Mixture < handle & matlab.mixin.Copyable
     
     methods
         
+        print(mix, varargin)
+
         function obj = Mixture(chemicalSystem, varargin)
             % The chemical system has the database, we only need the properties matrix to perform all the calculations
             % Now to be compatible with all the capabilities of the previous version, we will have to be able to add a
@@ -382,7 +384,7 @@ classdef Mixture < handle & matlab.mixin.Copyable
                     case 'oxidizer'
                         obj.listSpeciesOxidizer = [obj.listSpeciesOxidizer, listSpecies];
                         obj.molesOxidizer = [obj.molesOxidizer, quantity];
-                        % obj.ratioOxidizer = obj.molesOxidizer;
+                        if isempty(obj.ratioOxidizer), obj.ratioOxidizer = obj.molesOxidizer; end
                         obj.FLAG_OXIDIZER = true;
                     case 'inert'
                         obj.listSpeciesInert = [obj.listSpeciesInert, listSpecies];
@@ -662,7 +664,7 @@ classdef Mixture < handle & matlab.mixin.Copyable
             values = {value, varargin{2:2:end}};
             
             % Definitions
-            numProperties = length(properties);
+            numProperties = min(length(properties), length(values));
 
             % Check vectors
             FLAG_VECTOR = cellfun(@(x) numel(x) > 1, values);
@@ -786,9 +788,22 @@ classdef Mixture < handle & matlab.mixin.Copyable
             % Compute specific volume [m3/mol]
             vMolar = vSpecific * MW * sum(moles) / sum(molesGas);
         end
+
+        function typeSpecies = getTypeSpecies(obj)
+            % Create cell array with the type of species in the mixture
+            %
+            % Args:
+            %     obj (Mixture): Mixture class
+            %
+            % Returns:
+            %     typeSpecies (cell): Cell array with the type of species in the mixture
         
-        % Add print method
-        print(mix, varargin)
+            typeFuel = repmat({'Fuel'}, size(obj.listSpeciesFuel));
+            typeOxidizer = repmat({'Oxidizer'}, size(obj.listSpeciesOxidizer));
+            typeInert = repmat({'Inert'}, size(obj.listSpeciesInert));
+            typeSpecies = [typeInert, typeOxidizer, typeFuel];
+        end
+        
     end
     
     methods(Access = protected)
@@ -1110,6 +1125,10 @@ classdef Mixture < handle & matlab.mixin.Copyable
 
         function obj = setPropertiesMatrixFast(obj, listSpecies, quantity, index, h0)
             % Set species and quantity and compute thermodynamic properties
+           
+            % Update local listSpecies and local quantity
+            % obj.listSpecies = listSpecies;
+            % obj.quantity = quantity;
 
             % Assign values to the propertiesMatrix
             setPropertiesMatrix(obj.chemicalSystem, listSpecies, quantity, obj.T, index, h0);

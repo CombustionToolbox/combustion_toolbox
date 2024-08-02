@@ -32,23 +32,6 @@ function gui_get_reactants(app, event, varargin)
         set(app.mixture, listSpecies(app.indexInert), 'inert', moles(app.indexInert));
     end
 
-
-    % % Get oxidizer of reference
-    % self = get_oxidizer_reference(self, listSpecies(app.ind_Oxidizer));
-    % 
-    % % Get number of moles of each species in the mixture
-    % moles = gui_get_moles(app, event, self, FLAG_COMPUTE_FROM_PHI);
-    % 
-    % % Get temperature of the species in the mixture
-    % temperatures = app.UITable_R.Data(:, 5);
-    % 
-    % % Set mixture into variable self
-    % self = gui_set_species_moles_temperatures(app, self, listSpecies, moles, temperatures, 'S_Fuel', 'N_Fuel', 'T_Fuel', 'ind_Fuel');
-    % self = gui_set_species_moles_temperatures(app, self, listSpecies, moles, temperatures, 'S_Oxidizer', 'N_Oxidizer', 'T_Oxidizer', 'ind_Oxidizer');
-    % self = gui_set_species_moles_temperatures(app, self, listSpecies, moles, temperatures, 'S_Inert', 'N_Inert', 'T_Inert', 'ind_Inert');
-    % 
-    % % Compute ratio oxidizers/O2
-    % self = compute_ratio_oxidizers_O2(self);
 end
 
 % SUB-PASS FUNCTIONS

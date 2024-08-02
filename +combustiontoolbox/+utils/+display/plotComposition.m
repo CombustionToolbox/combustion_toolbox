@@ -121,7 +121,7 @@ function [ax, fig] = plotComposition(obj, x_var, x_field, y_field, varargin)
     index_species_CT = findIndex(listSpecies, species);
 
     % Remove species that do not appear
-    [species, index_species_CT] = clean_displaySpecies(mix1.Xi, listSpecies, index_species_CT);
+    [species, index_species_CT] = clean_displaySpecies(mix1.Xi, listSpecies, index_species_CT, mintolDisplay);
 
     % Set figure
     if isempty(ax)
@@ -269,11 +269,11 @@ function [species, LS] = get_displaySpecies(obj, displaySpecies)
 
 end
 
-function [species, index_pass] = clean_displaySpecies(molar_fractions, species, index_species)
+function [species, index_pass] = clean_displaySpecies(molar_fractions, species, index_species, mintolDisplay)
     % Remove species that do not appear
 
     % Checks
-    index_all_pass = find(any(molar_fractions > 0, 2));
+    index_all_pass = find(any(molar_fractions > mintolDisplay, 2));
     FLAG_PASS = ismember(index_species, index_all_pass);
     % Update species
     index_pass = index_species(FLAG_PASS);

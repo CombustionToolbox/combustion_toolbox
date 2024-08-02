@@ -31,7 +31,7 @@ function gui_plot_custom_figures(app)
     if ~iscell(y_field), y_field = {y_field}; end
 
     % Plot settings
-    config = PlotConfig();
+    config = app.plotConfig();
     config.labelx = interpreterLabel(x_field, config.label_type); % Set x label
     config.labely = interpreterLabel(y_field, config.label_type); % Set y label
     NUM_NODES = length(mixtures_nodes);

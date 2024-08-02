@@ -14,16 +14,15 @@ function gui_compute_mach_or_velocity(app, inputname)
     end
 
     % Compute the pre-shock Mach number/velocity
-    temp_app = gui_create_temp_app(app, [], false);
-    mix1 = temp_app.PS.strR{1};
+    mix1 = app.mixture;
 
     if strcmpi(inputname, 'Mach')
-        [M1, FLAG] = gui_get_prop(app, 'M1', app.PR4.Value);
-        u1 = M1 * soundspeed(mix1);
+        [M1, FLAG] = gui_get_prop(app.PR4.Value);
+        u1 = M1 * mix1.sound;
         app.PR3.Value = compute_vector_or_scalar(u1, FLAG);
     else
-        [u1, FLAG] = gui_get_prop(app, 'u1', app.PR3.Value);
-        M1 = u1 / soundspeed(mix1);
+        [u1, FLAG] = gui_get_prop(app.PR3.Value);
+        M1 = u1 / mix1.sound;
         app.PR4.Value = compute_vector_or_scalar(M1, FLAG);
     end
 

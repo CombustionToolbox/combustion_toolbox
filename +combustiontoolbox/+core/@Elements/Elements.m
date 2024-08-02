@@ -191,8 +191,6 @@ classdef Elements < handle
             NE = numel(elements);
         end
         
-        
-
     end
 
 end

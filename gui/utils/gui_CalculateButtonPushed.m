@@ -17,6 +17,17 @@ function app = gui_CalculateButtonPushed(app, event)
     listSpecies = app.listbox_Products.Items;
     FLAG_EQUIVALENCE_RATIO = ~isempty(equivalenceRatio);
     FLAG_RESULTS = app.PrintresultsCheckBox.Value;
+    
+    % Initialization
+    additionalInputsR = {};
+    additionalInputsP = {};
+    FLAG_BETA = false;
+    FLAG_THETA = false;
+
+    if FLAG_EQUIVALENCE_RATIO
+        additionalInputsR = {'equivalenceRatio', equivalenceRatio};
+        additionalInputsP = {'equivalenceRatio', equivalenceRatio};
+    end
 
     try
         % Set lamp to Working color
@@ -30,6 +41,12 @@ function app = gui_CalculateButtonPushed(app, event)
             case {'TP', 'TV'}
                 propertyP1 = gui_get_prop(app.PP1.Value);
                 propertyP2 = gui_get_prop(app.PP2.Value);
+            case {'SHOCK_I', 'SHOCK_R', 'SHOCK_POLAR'}
+                propertyR4 = gui_get_prop(app.PR4.Value);
+                additionalInputsR = [additionalInputsR, 'mach', propertyR4];
+            case {'DET_OVERDRIVEN', 'DET_UNDERDRIVEN', 'DET_POLAR'}
+                propertyR3 = gui_get_prop(app.PR3.Value);
+                additionalInputsR = [additionalInputsR, 'driveFactor', propertyR3];
             otherwise
                 propertyP1 = propertyR1;
                 propertyP2 = propertyR2;
@@ -71,30 +88,145 @@ function app = gui_CalculateButtonPushed(app, event)
         app.mixture.ratioOxidizer = tempMixture.ratioOxidizer;
         
         % Define mixArray
-        if FLAG_EQUIVALENCE_RATIO
-            mixArray1 = setProperties(app.mixture, propertyNameR1, propertyR1, propertyNameR2, propertyR2, 'equivalenceRatio', equivalenceRatio);
-            mixArray2 = setProperties(app.mixture, propertyNameR1, propertyP1, propertyNameR2, propertyP2, 'equivalenceRatio', equivalenceRatio);
-        else
-            mixArray1 = setProperties(app.mixture, propertyNameR1, propertyR1, propertyNameR2, propertyR2);
-            mixArray2 = setProperties(app.mixture, propertyNameR1, propertyP1, propertyNameR2, propertyP2);
-        end
-
+        mixArray1 = setProperties(app.mixture, propertyNameR1, propertyR1, propertyNameR2, propertyR2, additionalInputsR{:});
+        
         % Update GUI terminal
         gui_update_terminal(app, 'start');
+        
+        % Check conditions
+        if FLAG_BETA & ~FLAG_THETA
+            problemType = [problemType, '_BETA'];
+        elseif ~FLAG_BETA & FLAG_THETA
+            problemType = [problemType, '_THETA'];
+        end
 
         % Select solver and solve problem
         switch problemType
             case {'TP', 'HP', 'SP', 'TV', 'EV', 'SV'}
+                % Define mixArray
+                mixArray2 = setProperties(app.mixture, propertyNameR1, propertyP1, propertyNameR2, propertyP2, additionalInputsP{:});
                 % Select solver
-                solver = combustiontoolbox.equilibrium.EquilibriumSolver('problemType', problemType, 'FLAG_RESULTS', FLAG_RESULTS);
+                solver = set(app.equilibriumSolver, 'problemType', problemType, 'FLAG_RESULTS', FLAG_RESULTS);
                 % Solve problem
                 solver.solveArray(mixArray2);
-            case {'SHOCK_I'}
-                solver = combustiontoolbox.shockdetonation.ShockSolver('problemType', problemType, 'FLAG_RESULTS', FLAG_RESULTS);
-            case {'DET'}
-                solver = combustiontoolbox.shockdetonation.DetonationSolver('problemType', problemType, 'FLAG_RESULTS', FLAG_RESULTS);
-            case {'ROCKET'}
-                solver = combustiontoolbox.shockdetonation.RocketSolver('problemType', problemType, 'FLAG_RESULTS', FLAG_RESULTS);
+                % Set output
+                varargout = {mixArray2};
+                % Set plot properties
+                solver.plotConfig.plotProperties = {'T', 'rho', 'h', 'e', 'g', 'cp', 's', 'gamma_s', 'sound'};
+                solver.plotConfig.plotPropertiesBasis = {[], [], 'mi', 'mi', 'mi', 'mi', 'mi', [], []};
+            case {'SHOCK_I', 'SHOCK_OBLIQUE_BETA', 'SHOCK_POLAR'}
+                % Select solver
+                solver = set(app.shockSolver, 'problemType', problemType, 'FLAG_RESULTS', FLAG_RESULTS);
+                % Solve problem
+                [mixArray1, mixArray2] = solver.solveArray(mixArray1);
+                % Set output
+                varargout = {mixArray1, mixArray2};
+                % Set plot properties
+                solver.plotConfig.plotProperties = {'T', 'rho', 'h', 'e', 'g', 'cp', 's', 'gamma_s', 'sound'};
+                solver.plotConfig.plotPropertiesBasis = {[], [], 'mi', 'mi', 'mi', 'mi', 'mi', [], []};
+            case {'SHOCK_R', 'SHOCK_OBLIQUE_THETA'}
+                % Select solver
+                solver = set(app.shockSolver, 'problemType', problemType, 'FLAG_RESULTS', FLAG_RESULTS);
+                % Solve problem
+                [mixArray1, mixArray2, mixArray3] = solver.solveArray(mixArray1);
+                % Set output
+                varargout = {mixArray1, mixArray2, mixArray3};
+                % Set plot properties
+                solver.plotConfig.plotProperties = {'T', 'rho', 'h', 'e', 'g', 'cp', 's', 'gamma_s', 'sound'};
+                solver.plotConfig.plotPropertiesBasis = {[], [], 'mi', 'mi', 'mi', 'mi', 'mi', [], []};
+            case {'SHOCK_OBLIQUE_R_BETA', 'SHOCK_OBLIQUE_R_THETA', 'SHOCK_POLAR_LIMITRR'}
+                % Select solver
+                solver = set(app.shockSolver, 'problemType', problemType, 'FLAG_RESULTS', FLAG_RESULTS);
+                % Solve problem
+                [mixArray1, mixArray2, mixArray3, mix4Array] = solver.solveArray(mixArray1);
+                % Set output
+                varargout = {mixArray1, mixArray2, mixArray3, mix4Array};
+                % Set plot properties
+                solver.plotConfig.plotProperties = {'T', 'rho', 'h', 'e', 'g', 'cp', 's', 'gamma_s', 'sound'};
+                solver.plotConfig.plotPropertiesBasis = {[], [], 'mi', 'mi', 'mi', 'mi', 'mi', [], []};
+            case {'SHOCK_POLAR_R_BETA'}
+                % Select solver
+                solver = set(app.shockSolver, 'problemType', problemType, 'FLAG_RESULTS', FLAG_RESULTS);
+                % Solve problem
+                [mixArray1, mixArray2, mixArray3, mix4Array, mix5Array] = solver.solveArray(mixArray1);
+                % Set output
+                varargout = {mixArray1, mixArray2, mixArray3, mix4Array, mix5Array};
+                % Set plot properties
+                solver.plotConfig.plotProperties = {'T', 'rho', 'h', 'e', 'g', 'cp', 's', 'gamma_s', 'sound'};
+                solver.plotConfig.plotPropertiesBasis = {[], [], 'mi', 'mi', 'mi', 'mi', 'mi', [], []};
+            case {'SHOCK_POLAR_R_THETA'}
+                % Select solver
+                solver = set(app.shockSolver, 'problemType', problemType, 'FLAG_RESULTS', FLAG_RESULTS);
+                % Solve problem
+                [mixArray1, mixArray2, mixArray3, mix4Array, mix5Array, mix6Array] = solver.solveArray(mixArray1);
+                % Set output
+                varargout = {mixArray1, mixArray2, mixArray3, mix4Array, mix5Array, mix6Array};
+                % Set plot properties
+                solver.plotConfig.plotProperties = {'T', 'rho', 'h', 'e', 'g', 'cp', 's', 'gamma_s', 'sound'};
+                solver.plotConfig.plotPropertiesBasis = {[], [], 'mi', 'mi', 'mi', 'mi', 'mi', [], []};
+            case {'DET', 'DET_OVERDRIVEN', 'DET_UNDERDRIVEN', 'DET_POLAR'}
+                solver = set(app.detonationSolver, 'problemType', problemType, 'FLAG_RESULTS', FLAG_RESULTS);
+                % Solve problem
+                [mixArray1, mixArray2] = solver.solveArray(mixArray1);
+                % Set output
+                varargout = {mixArray1, mixArray2};
+                % Set plot properties
+                solver.plotConfig.plotProperties = {'T', 'rho', 'h', 'e', 'g', 'cp', 's', 'gamma_s', 'sound', 'uShock'};
+                solver.plotConfig.plotPropertiesBasis = {[], [], 'mi', 'mi', 'mi', 'mi', 'mi', [], [], []};
+            case {'DET_R', 'DET_OVERDRIVEN_R', 'DET_UNDERDRIVEN_R', 'DET_OBLIQUE_BETA', 'DET_OBLIQUE_THETA'}
+                solver = set(app.detonationSolver, 'problemType', problemType, 'FLAG_RESULTS', FLAG_RESULTS);
+                % Solve problem
+                [mixArray1, mixArray2, mixArray3] = solver.solveArray(mixArray1);
+                % Set output
+                varargout = {mixArray1, mixArray2, mixArray3};
+                % Set plot properties
+                solver.plotConfig.plotProperties = {'T', 'rho', 'h', 'e', 'g', 'cp', 's', 'gamma_s', 'sound', 'uShock'};
+                solver.plotConfig.plotPropertiesBasis = {[], [], 'mi', 'mi', 'mi', 'mi', 'mi', [], [], []};
+            case {'DET_POLAR_LIMITRR'}
+                solver = set(app.detonationSolver, 'problemType', problemType, 'FLAG_RESULTS', FLAG_RESULTS);
+                % Solve problem
+                [mixArray1, mixArray2, mixArray3, mixArray4] = solver.solveArray(mixArray1);
+                % Set output
+                varargout = {mixArray1, mixArray2, mixArray3, mixArray4};
+                % Set plot properties
+                solver.plotConfig.plotProperties = {'T', 'rho', 'h', 'e', 'g', 'cp', 's', 'gamma_s', 'sound', 'uShock'};
+                solver.plotConfig.plotPropertiesBasis = {[], [], 'mi', 'mi', 'mi', 'mi', 'mi', [], [], []};
+            case {'DET_POLAR_R_BETA'}
+                solver = set(app.detonationSolver, 'problemType', problemType, 'FLAG_RESULTS', FLAG_RESULTS);
+                % Solve problem
+                [mixArray1, mixArray2, mixArray3, mixArray4, mixArray5] = solver.solveArray(mixArray1);
+                % Set output
+                varargout = {mixArray1, mixArray2, mixArray3, mixArray4, mixArray5};
+                % Set plot properties
+                solver.plotConfig.plotProperties = {'T', 'rho', 'h', 'e', 'g', 'cp', 's', 'gamma_s', 'sound', 'uShock'};
+                solver.plotConfig.plotPropertiesBasis = {[], [], 'mi', 'mi', 'mi', 'mi', 'mi', [], [], []};
+            case {'DET_POLAR_R_THETA'}
+                solver = set(app.detonationSolver, 'problemType', problemType, 'FLAG_RESULTS', FLAG_RESULTS);
+                % Solve problem
+                [mixArray1, mixArray2, mixArray3, mixArray4, mixArray5, mixArray6] = solver.solveArray(mixArray1);
+                % Set output
+                varargout = {mixArray1, mixArray2, mixArray3, mixArray4, mixArray5, mixArray6};
+                % Set plot properties
+                solver.plotConfig.plotProperties = {'T', 'rho', 'h', 'e', 'g', 'cp', 's', 'gamma_s', 'sound', 'uShock'};
+                solver.plotConfig.plotPropertiesBasis = {[], [], 'mi', 'mi', 'mi', 'mi', 'mi', [], [], []};
+            case {'ROCKET_IAC'}
+                solver = set(app.rocketSolver, 'problemType', problemType, 'FLAG_RESULTS', FLAG_RESULTS);
+                % Solve problem
+                [mixArray1, mixArray2, mixArray3, mixArray4] = solver.solveArray(mixArray1);
+                % Set output
+                varargout = {mixArray1, mixArray2, mixArray3, mixArray4};
+                % Set plot properties
+                solver.plotConfig.plotProperties = {'T', 'rho', 'h', 'e', 'g', 'cp', 's', 'gamma_s', 'sound', 'u', 'I_sp', 'I_vac'};
+                solver.plotConfig.plotPropertiesBasis = {[], [], 'mi', 'mi', 'mi', 'mi', 'mi', [], [], [], [], []};
+            case {'ROCKET_FAC'}
+                solver = set(app.rocketSolver, 'problemType', problemType, 'FLAG_RESULTS', FLAG_RESULTS);
+                % Solve problem
+                [mixArray1, mixArray2, mixArray3, mixArray4, mixArray5] = solver.solveArray(mixArray1);
+                % Set output
+                varargout = {mixArray1, mixArray2, mixArray3, mixArray4, mixArray5};
+                % Set plot properties
+                solver.plotConfig.plotProperties = {'T', 'rho', 'h', 'e', 'g', 'cp', 's', 'gamma_s', 'sound', 'u', 'I_sp', 'I_vac'};
+                solver.plotConfig.plotPropertiesBasis = {[], [], 'mi', 'mi', 'mi', 'mi', 'mi', [], [], [], [], []};
             otherwise
                 error('Problem type %s is not found', problemType);
         end
@@ -103,7 +235,7 @@ function app = gui_CalculateButtonPushed(app, event)
         gui_update_terminal(app, 'finish', solver.time);
 
         % Save results
-        [results, app.temp_results] = save_results(app, problemType, mixArray1, mixArray2);
+        [results, app.temp_results] = save_results(app, problemType, varargout{1}, varargout{end});
         
         % Update GUI with the last results of the set
         gui_update_results(app, results);
@@ -114,55 +246,24 @@ function app = gui_CalculateButtonPushed(app, event)
         % Display results (plots)
         switch lower(app.Report_type.Value)
             case {'auto'}
-                solver.plot(mixArray2);
+                solver.report(varargout{:});
         end
 
-        % % Get List of Species considered (reactants + products)
-        % app = get_listSpecies_gui(app);
-        % 
-        % % Initialize variable self
-        % self = App('fast', app.DB_master, app.DB, app.LS);
-        % 
-        % % Get Miscellaneous
-        % self = get_miscellaneous_values(app, self);
-        % 
-        % % Get tuning values and constants
-        % self = get_tuning_values(app, self);
-        % 
-        % % Get initial conditions
-        % self = get_input_constrains(app, self);
-        % self = gui_get_reactants(app, event, self);
-        % 
         % % Get display species
         % self = gui_get_display_species(app, self);
-        % 
-        % % Update GUI terminal
-        % gui_update_terminal(app, self, 'start');
-        % 
-        % % Solve selected problem
-        % self = solve_problem(self, self.PD.ProblemType);
-        % 
-        % % Save results
-        % [results, app.temp_results] = save_results(app, self);
-        % 
-        % % Update GUI with the last results of the set
-        % gui_update_results(app, results);
-        % 
-        % % Update GUI custom figures tab
-        % gui_update_custom_figures(app);
-        % 
-        % % Update GUI terminal
-        % gui_update_terminal(app, self, 'finish')
-        % 
-        % % Display results (plots)
-        % switch lower(app.Report_type.Value)
-        %     case {'auto'}
-        %         post_results(self);
-        % end
 
         % Set lamp to Done color
-        app.Lamp.Color = app.color_lamp_done;
+        if app.text_error_problem.Value > app.maxRelativeError
+            app.Lamp.Color = app.color_lamp_error;
+            app.text_error_problem.FontColor = app.color_lamp_error;
+            app.ResultsTab.ForegroundColor = app.color_lamp_error;
+            app.Console_text.Value = sprintf('Warning! The maximum relative error is %.2f%%. Results may be compromised.\nDecreasing the tolerance and increasing the number of iterations may solve the problem.', app.text_error_problem.Value * 100);
+            return
+        end
 
+        app.Lamp.Color = app.color_lamp_done;
+        app.text_error_problem.FontColor = [0 0 0];
+        app.ResultsTab.ForegroundColor = [0 0 0];
     catch ME
         % Set lamp to Error color
         app.Lamp.Color = app.color_lamp_error;
@@ -176,38 +277,23 @@ end
 
 % SUB-PASS FUNCTIONS
 
-
-function self = get_miscellaneous_values(obj, self)
-    % Get miscellaneous properties from GUI and set into self
-    self.Misc = obj.Misc;
-end
-
-function self = get_tuning_values(obj, self)
-    % Get properties from GUI and set into self
-    self.PD = obj.PD;
-    self.TN = obj.TN;
-    self.C = obj.C;
-end
-
-function gui_update_results(obj, results)
+function gui_update_results(app, results)
     % Update:
     %  1. GUI with the last results computed
     %  2. GUI-UITree with all the results
+    %  3. Save the last mixture object computed
     
+    % Definitions
+    selectedCase = 1;
+
     % Update GUI with the last result computed
-    gui_write_results(obj, results, 1);
+    gui_write_results(app, results, selectedCase);
     
     % Update UITree with all the results
-    gui_add_nodes(obj.Node_Results, results)
-end
+    gui_add_nodes(app.Node_Results, results)
 
-function obj = get_listSpecies_gui(obj)
-    obj.LS = obj.listbox_Products.Items;
-    if isempty(obj.LS)
-        % Get default value
-        obj.LS = list_species('Soot Formation');
-    end
-
+    % Update stored mixture object
+    app.mixture = results(selectedCase).mix1;
 end
 
 function [results, temp_results] = save_results(obj, problemType, mixArray1, mixArray2, varargin)
@@ -239,8 +325,12 @@ function [results, temp_results] = save_results(obj, problemType, mixArray1, mix
     % end
 
     for i = numCases:-1:1
-        
+        j = i;
         if numCases1 > numCases2
+            if j > numCases2
+                j = numCases2;
+            end
+            
             results(i).mix1 = mixArray1(i);
             results(i).mix2 = mixArray2;
         elseif numCases1 < numCases2
@@ -265,8 +355,8 @@ function [results, temp_results] = save_results(obj, problemType, mixArray1, mix
             results(i).Products = 'Default';   
         end
 
-        results(i).listSpecies = mixArray2(i).chemicalSystem.listSpecies;
-        results(i).listProducts = mixArray2(i).chemicalSystem.listProducts;
+        results(i).listSpecies = mixArray2(j).chemicalSystem.listSpecies;
+        results(i).listProducts = mixArray2(j).chemicalSystem.listProducts;
         results(i).UITable_R_Data = obj.UITable_R.Data;
     end
 

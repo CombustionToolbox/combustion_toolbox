@@ -135,6 +135,7 @@ function update_properties(app, results, i)
 
         end
     end
+
 end
 
 function update_properties_common(app, mix, suffix)
@@ -163,7 +164,7 @@ function update_properties_velocities(app, mix, suffix)
         case {'r', '1', '_1'}
             app.(['text_u', suffix]).Value = velocity_relative(mix);
         otherwise
-            app.(['text_u', suffix]).Value = mix.v_shock;
+            app.(['text_u', suffix]).Value = mix.uShock;
     end
     % Mach number
     app.(['text_M', suffix]).Value = app.(['text_u', suffix]).Value / soundspeed(mix);
@@ -171,7 +172,7 @@ end
 
 function update_properties_rocket(app, mix, suffix)
     % Update rocket propellant performance parameters
-    app.(['text_Aratio', suffix]).Value = mix.Aratio;
+    app.(['text_Aratio', suffix]).Value = mix.areaRatio;
     app.(['text_Cstar', suffix]).Value = mix.cstar;
     app.(['text_Ivac', suffix]).Value = mix.I_vac;
     app.(['text_Isp', suffix]).Value = mix.I_sp;
@@ -179,7 +180,7 @@ end
 
 function update_properties_oblique(app, mix, suffix)
     % Update rocket propellant performance parameters
-    app.(['text_beta_min', suffix]).Value = mix.beta_min;
+    app.(['text_beta_min', suffix]).Value = mix.betaMin;
     app.(['text_beta', suffix]).Value = mix.beta;
     app.(['text_theta', suffix]).Value = mix.theta;
 end

@@ -131,6 +131,37 @@ classdef ShockSolver < handle
             obj.equilibriumSolver.FLAG_TIME = false;
         end
 
+        function obj = set(obj, property, value, varargin)
+            % Set properties of the ShockSolver object
+            %
+            % Args:
+            %     obj (ShockSolver): ShockSolver object
+            %     property (char): Property name
+            %     value (float): Property value
+            %
+            % Optional Args:
+            %     * property (char): Property name
+            %     * value (float): Property value
+            %
+            % Returns:
+            %     obj (ShockSolver): ShockSolver object with updated properties
+            %
+            % Examples:
+            %     * set(ShockSolver(), 'tol0', 1e-6);
+            %     * set(ShockSolver(), 'problemType', 'SHOCK_I');
+            
+            varargin = [property, value, varargin];
+
+            for i = 1:2:length(varargin)
+                % Assert that the property exists
+                assert(isprop(obj, varargin{i}), 'Property not found');
+
+                % Set property
+                obj.(varargin{i}) = varargin{i + 1};
+            end
+
+        end
+
         function varargout = solve(obj, mix1, varargin)
             % Solve shock waves problems
             %
@@ -516,6 +547,7 @@ classdef ShockSolver < handle
 
             % Check if is a scalar value
             if isscalar(mixArray1)
+                ax2 = [];
                 return
             end
             

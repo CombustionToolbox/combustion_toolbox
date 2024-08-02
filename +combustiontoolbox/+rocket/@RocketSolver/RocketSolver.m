@@ -90,6 +90,37 @@ classdef RocketSolver
             obj.plotConfig.plotPropertiesBasis = [obj.plotConfig.plotPropertiesBasis, {[], [], []}];
         end
 
+        function obj = set(obj, property, value, varargin)
+            % Set properties of the RocketSolver object
+            %
+            % Args:
+            %     obj (RocketSolver): RocketSolver object
+            %     property (char): Property name
+            %     value (float): Property value
+            %
+            % Optional Args:
+            %     * property (char): Property name
+            %     * value (float): Property value
+            %
+            % Returns:
+            %     obj (RocketSolver): RocketSolver object with updated properties
+            %
+            % Examples:
+            %     * set(RocketSolver(), 'tol0', 1e-6);
+            %     * set(RocketSolver(), 'problemType', 'ROCKET_FAC');
+            
+            varargin = [property, value, varargin];
+
+            for i = 1:2:length(varargin)
+                % Assert that the property exists
+                assert(isprop(obj, varargin{i}), 'Property not found');
+
+                % Set property
+                obj.(varargin{i}) = varargin{i + 1};
+            end
+
+        end
+
         function varargout = solve(obj, mix1, varargin)
             % Solve rocket problems
             %
@@ -281,6 +312,7 @@ classdef RocketSolver
 
             % Check if is a scalar value
             if isscalar(mixArray1)
+                ax2 = [];
                 return
             end
             

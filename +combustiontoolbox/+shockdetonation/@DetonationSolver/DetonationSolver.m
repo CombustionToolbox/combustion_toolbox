@@ -142,7 +142,38 @@ classdef DetonationSolver < handle
             obj.plotConfig.plotPropertiesBasis{end + 1} = [];
         end
 
-    function varargout = solve(obj, mix1, varargin)
+        function obj = set(obj, property, value, varargin)
+            % Set properties of the DetonationSolver object
+            %
+            % Args:
+            %     obj (DetonationSolver): DetonationSolver object
+            %     property (char): Property name
+            %     value (float): Property value
+            %
+            % Optional Args:
+            %     * property (char): Property name
+            %     * value (float): Property value
+            %
+            % Returns:
+            %     obj (DetonationSolver): DetonationSolver object with updated properties
+            %
+            % Examples:
+            %     * set(DetonationSolver(), 'tol0', 1e-6);
+            %     * set(DetonationSolver(), 'problemType', 'DET');
+            
+            varargin = [property, value, varargin];
+
+            for i = 1:2:length(varargin)
+                % Assert that the property exists
+                assert(isprop(obj, varargin{i}), 'Property not found');
+
+                % Set property
+                obj.(varargin{i}) = varargin{i + 1};
+            end
+
+        end
+
+        function varargout = solve(obj, mix1, varargin)
             % Solve detonations problems
             %
             % Args:
@@ -573,6 +604,7 @@ classdef DetonationSolver < handle
 
             % Check if is a scalar value
             if isscalar(mixArray1)
+                ax2 = [];
                 return
             end
             

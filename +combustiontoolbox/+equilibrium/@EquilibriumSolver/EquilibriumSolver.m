@@ -118,6 +118,37 @@ classdef EquilibriumSolver < handle
             obj.plotConfig = p.Results.plotConfig;
         end
 
+        function obj = set(obj, property, value, varargin)
+            % Set properties of the EquilibriumSolver object
+            %
+            % Args:
+            %     obj (EquilibriumSolver): EquilibriumSolver object
+            %     property (char): Property name
+            %     value (float): Property value
+            %
+            % Optional Args:
+            %     * property (char): Property name
+            %     * value (float): Property value
+            %
+            % Returns:
+            %     obj (EquilibriumSolver): EquilibriumSolver object with updated properties
+            %
+            % Examples:
+            %     * set(EquilibriumSolver(), 'tolGibbs', 1e-6);
+            %     * set(EquilibriumSolver(), 'problemType', 'TP');
+            
+            varargin = [property, value, varargin];
+
+            for i = 1:2:length(varargin)
+                % Assert that the property exists
+                assert(isprop(obj, varargin{i}), 'Property not found');
+
+                % Set property
+                obj.(varargin{i}) = varargin{i + 1};
+            end
+
+        end
+
         function mix = solve(obj, mix, varargin)
             % Obtain chemical equilibrium composition and thermodynamic properties
             %
@@ -230,6 +261,7 @@ classdef EquilibriumSolver < handle
 
             % Check if is a scalar value
             if isscalar(mixArray)
+                ax2 = [];
                 return
             end
 

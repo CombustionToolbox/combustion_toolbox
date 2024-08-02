@@ -81,6 +81,7 @@ function url = getUrl()
     url.website = 'https://combustion-toolbox-website.readthedocs.io/';
     url.documentation = 'https://combustion-toolbox-website.readthedocs.io/en/latest/documentation/api/index.html';
     url.publications = 'https://combustion-toolbox-website.readthedocs.io/en/latest/publications.html';
+    url.discussions = 'https://github.com/CombustionToolbox/combustion_toolbox/discussions';
     url.websiteUC3M = 'http://fluidosuc3m.es/';
     url.websiteACuadra = 'https://acuadralara.com/';
     url.mailACuadra = 'mailto:acuadra@ing.uc3m.es';

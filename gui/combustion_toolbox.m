@@ -578,7 +578,15 @@ classdef combustion_toolbox < matlab.apps.AppBase
         function DiscussionsMenuSelected(app, event)
             % Open default web browser and redirect to Combustion Toolbox
             % discussion forum
-            system('start https://github.com/AlbertoCuadra/combustion_toolbox/discussions');
+            
+            % Import packages
+            import combustiontoolbox.utils.SystemUtils
+        
+            % Definitions
+            url = SystemUtils.url.discussions;
+            
+            % Open website
+            SystemUtils.openWebsite(url)
         end
 
         % Value changed function: ProblemType

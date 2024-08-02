@@ -1,13 +1,13 @@
-function [LS, ind_elements_DB] = findProducts(obj, listSpecies, varargin)
+function [listSpecies, indexElements_DB] = findProducts(obj, listReactants, varargin)
     % Find all the combinations of species from DB that can appear as
     % products for the given list of reactants
     %
     % Args:
-    %     obj (ChemicalSystem): 
-    %     listSpecies (cell): List of reactants
+    %     obj (ChemicalSystem): ChemicalSystem object
+    %     listReactants (cell): List of reactants
     %
     % Optional Name-Value Pairs Args:
-    %     * ind_elements_DB (float): Matrix NS_DB x MAX_ELEMENTS with element indeces of the species contained in the database
+    %     * indexElements_DB (float): Matrix NS_DB x MAX_ELEMENTS with element indeces of the species contained in the database
     %     * FLAG_BURCAT (bool): Flag indicating to look for species also in Burcat's database
     %     * FLAG_ION (bool): Flag indicating to include ionized species
     %     * FLAG_CONDENSED (bool): Flag indicating to include condensed species
@@ -15,15 +15,15 @@ function [LS, ind_elements_DB] = findProducts(obj, listSpecies, varargin)
     % Returns:
     %     Tuple containing
     %
-    %     * LS (cell): List of products
-    %     * ind_elements_DB (float): Matrix NS_DB x MAX_ELEMENTS with element indeces of the species contained in the database
+    %     * listSpecies (cell): List of products
+    %     * indexElements_DB (float): Matrix NS_DB x MAX_ELEMENTS with element indeces of the species contained in the database
     %
     % Examples:
-    %     * [LS, ind_elements_DB] = findProducts(ChemicalSystem(DB), {'O2', 'N', 'eminus'})
-    %     * [LS, ind_elements_DB] = findProducts(ChemicalSystem(DB), {'O2', 'CO', 'N'}, 'flag_burcat', true)
-    %     * [LS, ind_elements_DB] = findProducts(ChemicalSystem(DB), {'O2', 'CO', 'N'}, 'flag_burcat', true, 'flag_ion', true)
-    %     * [LS, ind_elements_DB] = findProducts(ChemicalSystem(DB), {'O2', 'CO', 'N'}, 'flag_burcat', true, 'flag_ion', true, 'flag_condensed', true, 'ind', ind_elements_DB)
-    %     * [LS, ind_elements_DB] = findProducts(ChemicalSystem(DB), {'O2', 'CO', 'N'}, 'flag_burcat', true, 'flag_ion', true, 'ind', ind_elements_DB)
+    %     * [listSpecies, indexElements_DB] = findProducts(ChemicalSystem(DB), {'O2', 'N', 'eminus'})
+    %     * [listSpecies, indexElements_DB] = findProducts(ChemicalSystem(DB), {'O2', 'CO', 'N'}, 'flag_burcat', true)
+    %     * [listSpecies, indexElements_DB] = findProducts(ChemicalSystem(DB), {'O2', 'CO', 'N'}, 'flag_burcat', true, 'flag_ion', true)
+    %     * [listSpecies, indexElements_DB] = findProducts(ChemicalSystem(DB), {'O2', 'CO', 'N'}, 'flag_burcat', true, 'flag_ion', true, 'flag_condensed', true, 'ind', indexElements_DB)
+    %     * [listSpecies, indexElements_DB] = findProducts(ChemicalSystem(DB), {'O2', 'CO', 'N'}, 'flag_burcat', true, 'flag_ion', true, 'ind', indexElements_DB)
     
     % Import packages
     import combustiontoolbox.utils.findIndex
@@ -36,15 +36,15 @@ function [LS, ind_elements_DB] = findProducts(obj, listSpecies, varargin)
     elements = combustiontoolbox.core.Elements().getElements(); % Elements list
     
     % Initialization
-    FLAG_IND = false;     % Flag indicating that ind_elements_DB is an input
-    LS = [];              % Initialize list of products
-    LS_DB = obj.database.listSpecies; % Get list of species in the database
+    FLAG_IND = false; % Flag indicating that indexElements_DB is an input
+    listSpecies = []; % Initialize list of products
+    listSpecies_DB = obj.database.listSpecies; % Get list of species in the database
 
     % Unpack
     for i = 1:2:nargin-2
         switch lower(varargin{i})
-            case {'ind', 'ind_elements', 'ind_elements_db', 'ind_db'}
-                ind_elements_DB = varargin{i + 1};
+            case {'ind', 'ind_elements', 'ind_elements_db', 'ind_db', 'indexelements_db'}
+                indexElements_DB = varargin{i + 1};
                 FLAG_IND = true;
             case {'flag', 'flag_burcat'}
                 FLAG_BURCAT = varargin{i + 1};
@@ -58,14 +58,14 @@ function [LS, ind_elements_DB] = findProducts(obj, listSpecies, varargin)
     
     % If FLAG_ION == true, then find ionized species
     if FLAG_ION
-        listSpecies{end + 1} = 'eminus';
+        listReactants{end + 1} = 'eminus';
     end
 
     % If FLAG_BURCAT == false, then remove the species from Third millenium database (Burcat)
     if ~FLAG_BURCAT
-        LS_DB = find_species_LS(LS_DB, {}, 'any', {'_M'}, 'all');
+        listSpecies_DB = findSpecies(listSpecies_DB, {}, 'any', {'_M'}, 'all');
         
-        % If ind_elements_DB is given, now have to been recalculated
+        % If indexElements_DB is given, now have to been recalculated
         if FLAG_IND
             FLAG_IND = false;
         end
@@ -74,18 +74,18 @@ function [LS, ind_elements_DB] = findProducts(obj, listSpecies, varargin)
 
     % If FLAG_CONDENSED == true, then include condensed species
     if ~FLAG_CONDENSED
-        NS = length(LS_DB);
+        NS = length(listSpecies_DB);
         FLAG_REMOVE = false(NS, 1);
         for i = 1:NS
-            if self.DB.(LS_DB{i}).phase == 1
+            if self.DB.(listSpecies_DB{i}).phase == 1
                 FLAG_REMOVE(i) = true;
             end
 
         end
 
-        LS_DB(FLAG_REMOVE) = [];
+        listSpecies_DB(FLAG_REMOVE) = [];
 
-        % If ind_elements_DB is given, now have to been recalculated
+        % If indexElements_DB is given, now have to been recalculated
         if FLAG_IND
             FLAG_IND = false;
         end
@@ -93,42 +93,42 @@ function [LS, ind_elements_DB] = findProducts(obj, listSpecies, varargin)
     end
 
     % Get element indeces of the reactants
-    ind_elements_R = sort(get_ind_elements(listSpecies, obj.database.species, elements, MAX_ELEMENTS), 1);
+    indexElements = sort(getIndexElements(listReactants, obj.database.species, elements, MAX_ELEMENTS), 1);
 
     % Get element indeces of each species in the database
     if ~FLAG_IND
         % Remove incompatible species
-        LS_DB(findIndex(LS_DB, 'Air')) = [];
+        listSpecies_DB(findIndex(listSpecies_DB, 'Air')) = [];
         % Get element indeces of each species in the database
-        ind_elements_DB = get_ind_elements(LS_DB, obj.database.species, elements, MAX_ELEMENTS);
+        indexElements_DB = getIndexElements(listSpecies_DB, obj.database.species, elements, MAX_ELEMENTS);
     end
     
     % Remove common vectors
-    ind_elements_R = unique(ind_elements_R, 'rows');
+    indexElements = unique(indexElements, 'rows');
     
     % Get cross terms 
-    temp = get_cross_termms(ind_elements_R, MAX_ELEMENTS);
+    temp = getCrossTermms(indexElements, MAX_ELEMENTS);
     
     % Join vectors
-    ind_elements_R = unique([ind_elements_R; temp], 'rows');
+    indexElements = unique([indexElements; temp], 'rows');
     
     % Get list of products
-    for i = length(ind_elements_R(:, 1)):-1:1
-        ind_species = all(ind_elements_DB - ind_elements_R(i, :) == 0, 2);
-        LS = [LS, LS_DB(ind_species)'];
+    for i = length(indexElements(:, 1)):-1:1
+        indexSpecies = all(indexElements_DB - indexElements(i, :) == 0, 2);
+        listSpecies = [listSpecies, listSpecies_DB(indexSpecies)'];
     end
 
 end
 
 % SUB-PASS FUNCTIONS
-function temp = get_cross_termms(ind_elements_R, MAX_ELEMENTS)
+function temp = getCrossTermms(indexElements, MAX_ELEMENTS)
     % Get cross terms 
 
     % Initialization
     temp = [];
 
     % Define vector to permute
-    ind_perm = sort(unique(ind_elements_R), 1, 'descend')';
+    ind_perm = sort(unique(indexElements), 1, 'descend')';
     try
         ind_perm = [ind_perm, zeros(1, MAX_ELEMENTS - 2)];
     catch

@@ -16,19 +16,19 @@ classdef Export < handle
             % Default values
             defaultFormat = '.xls';
             defaultFilename = 'data';
-            defaultFlagPromt = true;
+            defaultFLAG_PROMT = true;
 
             % Create input parser
             ip = inputParser;
             addParameter(ip, 'format', defaultFormat, @ischar);
             addParameter(ip, 'filename', defaultFilename, @ischar);
-            addParameter(ip, 'FLAG_PROMT', defaultFlagPromt, @islogical);
+            addParameter(ip, 'FLAG_PROMT', defaultFLAG_PROMT, @islogical);
             parse(ip, varargin{:});
 
             % Set properties
             obj.format = ip.Results.format;
             obj.filename = ip.Results.filename;
-            obj.FLAG_PROMT = ip.Results.flagPromt;
+            obj.FLAG_PROMT = ip.Results.FLAG_PROMT;
         end
 
         function export(obj, mixArray, varargin)

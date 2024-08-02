@@ -14,8 +14,7 @@ function [value, FLAG_ARRAY] = gui_get_prop(value, varargin)
 
     if value(1) == '['
         FLAG_ARRAY = true;
-        value = sscanf(value, '[%f:%f:%f]');
-        value = value(1):value(2):value(3);
+        value = str2num(value);
     elseif sum(value == ':') == 2
         FLAG_ARRAY = true;
         value = sscanf(value, '%f:%f:%f');

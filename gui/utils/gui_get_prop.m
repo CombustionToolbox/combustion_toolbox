@@ -11,7 +11,16 @@ function [value, FLAG_ARRAY] = gui_get_prop(value, varargin)
     % Returns:
     %     value (float): Property value as a float
     %     FLAG_ARRAY (bool): True if the value is an array
+    
+    % Initialization
+    FLAG_ARRAY = false;
 
+    % Check inputs
+    if isempty(value)
+        return
+    end
+    
+    % Read value
     if value(1) == '['
         FLAG_ARRAY = true;
         value = str2num(value);

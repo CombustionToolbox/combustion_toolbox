@@ -31,30 +31,15 @@ function [FLAG_UPDATE, message] = checkUpdate(varargin)
     % Get latest version of CT on Github
     [tag_repo, git_data] = get_latest_version_github(user, repo_name);
     date_repo = git_data.published_at(1:end - 1);
-
-    % Convert tag to id
-    tag_id_current = get_tag_id(tag_current);
-    tag_id_repo = get_tag_id(tag_repo);
-
-    % Compare versions
-    l_current = length(tag_id_current);
-    l_report = length(tag_id_repo);
-    N = min(l_current, l_report);
-    i = 0;
     
     % Format date
-    date_current = datetime(date_current, 'Format', 'dd MMM yyyy');
+    date_current = datetime(date_current, 'Format', 'dd MMM yyyy', 'TimeZone', 'UTC');
     date_repo = datetime(date_repo, 'Format', 'uuuu-MM-dd''T''HH:mmXXX', 'TimeZone', 'UTC');
     date_repo.Format = 'dd MMM yyyy';
 
     % Check latest version
-    while ~FLAG_UPDATE && i < N
-        i = i + 1;
-
-        if tag_id_current(i) < tag_id_repo(i)
-            FLAG_UPDATE = true;
-        end
-
+    if date_repo > date_current
+        FLAG_UPDATE = true;
     end
 
     % Get display message

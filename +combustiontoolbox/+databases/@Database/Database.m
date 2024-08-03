@@ -4,7 +4,6 @@ classdef (Abstract) Database < handle
         name
         species
         filename
-        filenameMaster
         interpolationMethod
         extrapolationMethod 
         units
@@ -43,7 +42,6 @@ classdef (Abstract) Database < handle
             % Definitions
             defaultName = 'Database';
             defaultFilename = 'DB.mat';
-            defaultFilenameMaster = 'DB_master.mat';
             defaultInterpolationMethod = 'pchip';
             defaultExtrapolationMethod = 'linear';
             defaultUnits = 'molar';
@@ -56,7 +54,6 @@ classdef (Abstract) Database < handle
             addParameter(ip, 'name', defaultName, @ischar);
             addParameter(ip, 'species', [], @iscell);
             addParameter(ip, 'filename', defaultFilename, @ischar);
-            addParameter(ip, 'filenameMaster', defaultFilenameMaster, @ischar);
             addParameter(ip, 'interpolationMethod', defaultInterpolationMethod, @ischar);
             addParameter(ip, 'extrapolationMethod', defaultExtrapolationMethod, @ischar);
             addParameter(ip, 'units', defaultUnits, @ischar);
@@ -70,7 +67,6 @@ classdef (Abstract) Database < handle
             obj.name = ip.Results.name;
             obj.species = ip.Results.species;
             obj.filename = ip.Results.filename;
-            obj.filenameMaster = ip.Results.filenameMaster;
             obj.interpolationMethod = ip.Results.interpolationMethod;
             obj.extrapolationMethod = ip.Results.extrapolationMethod;
             obj.units = ip.Results.units;
@@ -125,9 +121,7 @@ classdef (Abstract) Database < handle
         function save(obj)
             % Save database
             DB = obj;
-            DB_master = obj.species;
             uisave({'DB'}, 'DB.mat');
-            uisave({'DB_master'}, 'DB_master.mat');
         end
 
         function value = getProperty(obj, listSpecies, property)
@@ -158,7 +152,7 @@ classdef (Abstract) Database < handle
 
         function obj = generate_id(obj)
             % Concatenate input arguments to create a unique identifier string
-            value =  [obj.name, num2str(obj.species), obj.filename, obj.filenameMaster, ...
+            value =  [obj.name, num2str(obj.species), obj.filename, ...
                       obj.interpolationMethod, obj.extrapolationMethod, obj.units, ...
                       num2str(obj.pointsTemperature), num2str(obj.temperatureReference),...
                       obj.thermoFile];

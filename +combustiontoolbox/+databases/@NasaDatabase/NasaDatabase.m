@@ -18,10 +18,6 @@ classdef NasaDatabase < combustiontoolbox.databases.Database & handle
             % Call superclass constructor
             obj@combustiontoolbox.databases.Database('name', 'NASA', 'temperatureReference', 298.15, varargin{:});
         end
-    
-    end
-    
-    methods (Access = public)
 
         function DB_master = generateDatabaseMaster(obj)
             % Generate Master Database (DB_master) with the thermodynamic
@@ -36,13 +32,8 @@ classdef NasaDatabase < combustiontoolbox.databases.Database & handle
             % Example:
             %     * DB_master = generate_DB_master('thermo_CT.inp')
             
-            % Load master database
-            if exist(obj.filenameMaster, 'file')
-                fprintf('Loading %s database ... ', obj.name)
-                load('DB_master.mat', 'DB_master');
-            else
-                DB_master = obj.getDatabaseMaster(obj.thermoFile);        
-            end
+            % Generate master database
+            DB_master = obj.getDatabaseMaster(obj.thermoFile);
         
             fprintf('OK!\n');
         end

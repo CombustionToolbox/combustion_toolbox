@@ -12,7 +12,7 @@ function h0 = species_h0(species, T, DB)
     %
     % Example:
     %     h0 = species_h0('H2O', 300, DB)
-    
+
     persistent cachedSpecies;
     persistent cachedH0curves;
     

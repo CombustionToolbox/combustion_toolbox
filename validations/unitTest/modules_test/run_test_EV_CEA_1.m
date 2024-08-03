@@ -27,7 +27,7 @@ function [max_rel_error_moles, max_rel_error_prop] = run_test_EV_CEA_1(value, da
                       'CH3', 'NO', 'HCO', 'NH2', 'NH', 'N', 'CH', 'Cbgrb'};
     tolMoles = 1e-18;
     propertiesY = {'T', 'p', 'h', 'e', 'g', 's', 'cp', 'cv', 'gamma_s', 'dVdT_p', 'dVdp_T', 'sound', 'W'};
-    propertiesX = create_cell_ntimes('equivalenceRatio', length(propertiesY));
+    propertiesX = repmat({'equivalenceRatio'}, size(propertiesY));
 
     % Define chemical system
     system = ChemicalSystem(database);

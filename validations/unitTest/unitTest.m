@@ -28,9 +28,6 @@ classdef unitTest < matlab.unittest.TestCase
     methods (Test)
         function obj = unitTest(varargin)
             % Initialization
-            
-            % Change current directory
-            addpath('../../');
 
             % Unpack inputs
             if nargin

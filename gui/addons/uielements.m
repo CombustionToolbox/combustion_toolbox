@@ -1492,6 +1492,7 @@ classdef uielements < matlab.apps.AppBase
             % Create type
             app.type = uidropdown(app.GridLayout2);
             app.type.Items = {'CT', 'NASA'};
+            app.type.Enable = 'off';
             app.type.Tooltip = {'Select polynomial fits'};
             app.type.Layout.Row = 2;
             app.type.Layout.Column = 3;

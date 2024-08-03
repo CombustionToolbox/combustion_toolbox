@@ -1,27 +1,37 @@
-function self = gui_get_reactants(app, event, self, varargin)
+function gui_get_reactants(app, event, varargin)
     % Get the species and the number of moles of the current data in
     % UITable_R
-    if nargin > 3
-        FLAG_COMPUTE_FROM_PHI = varargin{1,1};
-    else
-        FLAG_COMPUTE_FROM_PHI = false;
-    end
+
+    % % Definitions
+    % FLAG_COMPUTE_FROM_PHI = [];
+    % 
+    % % Unpack additional inputs
+    % if nargin > 3
+    %     FLAG_COMPUTE_FROM_PHI = varargin{1,1};
+    % end
+
     % Get indexes of the different type of species in the mixture
     app = gui_get_typeSpecies(app);
+    
     % Get species in the mixture
-    species = app.UITable_R.Data(:, 1);
-    % Get oxidizer of reference
-    self = get_oxidizer_reference(self, species(app.ind_Oxidizer));
+    listSpecies = app.UITable_R.Data(:, 1)';
+
     % Get number of moles of each species in the mixture
-    moles = gui_get_moles(app, event, self, FLAG_COMPUTE_FROM_PHI);
-    % Get temperature of the species in the mixture
-    temperatures = app.UITable_R.Data(:, 5);
-    % Set mixture into variable self
-    self = gui_set_species_moles_temperatures(app, self, species, moles, temperatures, 'S_Fuel', 'N_Fuel', 'T_Fuel', 'ind_Fuel');
-    self = gui_set_species_moles_temperatures(app, self, species, moles, temperatures, 'S_Oxidizer', 'N_Oxidizer', 'T_Oxidizer', 'ind_Oxidizer');
-    self = gui_set_species_moles_temperatures(app, self, species, moles, temperatures, 'S_Inert', 'N_Inert', 'T_Inert', 'ind_Inert');
-    % Compute ratio oxidizers/O2
-    self = compute_ratio_oxidizers_O2(self);
+    moles = cell2vector(app.UITable_R.Data(:, 2))';
+    
+    % Define mixture
+    if sum(app.indexFuel)
+        set(app.mixture, listSpecies(app.indexFuel), 'fuel', moles(app.indexFuel));
+    end
+
+    if sum(app.indexOxidizer)
+        set(app.mixture, listSpecies(app.indexOxidizer), 'oxidizer', moles(app.indexOxidizer));
+    end
+
+    if sum(app.indexInert)
+        set(app.mixture, listSpecies(app.indexInert), 'inert', moles(app.indexInert));
+    end
+
 end
 
 % SUB-PASS FUNCTIONS
@@ -29,9 +39,9 @@ function app = gui_get_typeSpecies(app)
     % Function that obtains the indexes of the different type of species in
     % the mixture
     typeSpecies = app.UITable_R.Data(:, 4);
-    app.ind_Fuel     = contains(typeSpecies, 'Fuel');
-    app.ind_Oxidizer = contains(typeSpecies, 'Oxidizer');
-    app.ind_Inert    = contains(typeSpecies, 'Inert');
+    app.indexFuel     = contains(typeSpecies, 'Fuel');
+    app.indexOxidizer = contains(typeSpecies, 'Oxidizer');
+    app.indexInert    = contains(typeSpecies, 'Inert');
 end
 
 function self = gui_set_species(app, self, species, species_name, ind_name)

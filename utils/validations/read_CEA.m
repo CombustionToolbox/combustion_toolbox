@@ -5,6 +5,10 @@
 
 function data = read_CEA(filename)
     % READ DATA FROM CEA AS TXT EXTENSION
+    
+    % Import packages
+    import combustiontoolbox.databases.NasaDatabase
+    
     % fid=fopen('test_soot_acetylene.txt','r');
     fid = fopen(filename, 'r');
 
@@ -23,7 +27,7 @@ function data = read_CEA(filename)
 
         if contains(tline, 'PHI,EQ.RATIO=')
             k = strfind(tline, 'PHI,EQ.RATIO=');
-            data.phi(i) = sscanf(tline(k + 13:end), '%f');
+            data.equivalenceRatio(i) = sscanf(tline(k + 13:end), '%f');
         end
 
         if contains(tline, 'THROAT')
@@ -145,6 +149,10 @@ function data = read_CEA(filename)
             num = regexp(tline, '\d'); data.W(i, :) = sscanf(tline(num(2):num(end)), '%f'); tline = fgetl(fid);
         end
 
+        % if contains(tline, 'MW, MOL WT')
+        %     num = regexp(tline, '\d'); data.MW(i, :) = sscanf(tline(num(2):num(end)), '%f'); tline = fgetl(fid);
+        % end
+
         if contains(tline, '(dLV/dLP)t')
             num = regexp(tline, '\d'); data.dVdp_T(i, :) = sscanf(tline(num(2) - 3:num(end)), '%f'); tline = fgetl(fid);
             num = regexp(tline, '\d'); data.dVdT_p(i, :) = sscanf(tline(num(2) - 3:num(end)), '%f'); tline = fgetl(fid);
@@ -181,7 +189,7 @@ function data = read_CEA(filename)
 
             while ~contains(tline, 'THERMODYNAMIC PROPERTIES FITTED TO 20000.K')
                 if isempty(tline), break, end
-                [sp1, sp2] = regexp(FullName2name(tline), '(?![*,-])\S\w*\s');
+                [sp1, sp2] = regexp(NasaDatabase.fullname2name(tline), '(?![*,-])\S\w*\s');
                 [mole, ~] = regexp(tline, '\s\d');
                 idx = regexp(tline, '-');
 
@@ -190,7 +198,7 @@ function data = read_CEA(filename)
                     if contains(tline, 'C(gr)')
                         data.X(k, 1).mole{j, 1} = 'Cbgrb';
                     else
-                        data.X(k, 1).mole{j, 1} = FullName2name(tline(sp1:sp2 - 1));
+                        data.X(k, 1).mole{j, 1} = NasaDatabase.fullname2name(tline(sp1(1):sp2(1) - 1));
                     end
 
                     try
@@ -214,13 +222,13 @@ function data = read_CEA(filename)
 
             while ~contains(tline, 'THERMODYNAMIC PROPERTIES FITTED TO 20000.K')
                 if isempty(tline), break, end
-                [sp1, sp2] = regexp(FullName2name(tline), '(?![*,-])\S\w*\s');
+                [sp1, sp2] = regexp(NasaDatabase.fullname2name(tline), '(?![*,-])\S\w*\s');
                 [mole, ~] = regexp(tline, '\s\d');
 
                 if contains(tline, 'C(gr)')
                     data.X(i, :).mole{j, 1} = 'Cbgrb';
                 else
-                    data.X(i, :).mole{j, 1} = FullName2name(tline(sp1:sp2 - 1));
+                    data.X(i, :).mole{j, 1} = NasaDatabase.fullname2name(tline(sp1(1):sp2(1) - 1));
                 end
 
                 tline = strrep(tline, ' -', '0-');

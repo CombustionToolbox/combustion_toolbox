@@ -15,7 +15,7 @@ function h0 = set_h0(LS, T, DB)
 
     for i = length(LS):-1:1
         species = LS{i};
-        h0(i, 1) = species_h0(species, T, DB) * 1e3; % [J/mol]
+        h0(i, 1) = species_h0(species, T, DB); % [J/mol]
     end
 
 end

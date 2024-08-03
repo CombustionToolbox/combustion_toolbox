@@ -1,5 +1,5 @@
 function g0 = species_g0_NASA(species, temperature, DB)
-    % Compute Compute Gibbs energy [kJ/mol] of the species at the given
+    % Compute Compute Gibbs energy [J/mol] of the species at the given
     % temperature [K] using NASA's 9 polynomials
     %
     % Args:
@@ -8,7 +8,7 @@ function g0 = species_g0_NASA(species, temperature, DB)
     %     DB (struct): Database with custom thermodynamic polynomials functions generated from NASAs 9 polynomials fits
     %
     % Returns:
-    %     g0 (float): Gibbs energy in molar basis [kJ/mol]
+    %     g0 (float): Gibbs energy in molar basis [J/mol]
     %
     % Example:
     %     g0 = species_g0_NASA('H2O', 300:100:6000, DB)
@@ -17,7 +17,7 @@ function g0 = species_g0_NASA(species, temperature, DB)
     R0 = 8.31446261815324; % Universal Gas Constant [J/(mol-K)];
     % Unpack NASA's polynomials coefficients
     [a, b, tRange, tExponents, ctTInt] = unpack_NASA_coefficients(species, DB);
-    % Compute specific enthalpy [kJ/mol]
+    % Compute specific enthalpy [J/mol]
     for i = length(temperature):-1:1
         T = temperature(i);
 
@@ -41,5 +41,5 @@ function g0 = species_g0_NASA(species, temperature, DB)
     end
 
     % Change units [kJ/mol]
-    g0 = g0 * 1e-3;
+    % g0 = g0 * 1e-3;
 end

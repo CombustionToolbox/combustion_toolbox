@@ -3,31 +3,53 @@
 %
 % Compute pre-shock and post-shock state for a planar incident shock wave
 % at standard conditions, a set of 16 species considered and a set of
-% initial shock front velocities (u1) contained in (sound velocity, 20000) [m/s]
+% pre-shock velocities contained in (400, 12000)
 %    
 % Air == {'O2','N2','O','O3','N','NO','NO2','NO3','N2O','N2O3','N2O4',...
 %         'N3','C','CO','CO2','Ar'}
 %   
-% See wiki or list_species() for more predefined sets of species
+% See wiki or setListspecies method from ChemicalSystem class for more
+% predefined sets of species
 %
 % @author: Alberto Cuadra Lara
-%          PhD Candidate - Group Fluid Mechanics
+%          Postdoctoral researcher - Group Fluid Mechanics
 %          Universidad Carlos III de Madrid
 %                 
-% Last update July 22 2022
+% Last update April 02 2024
 % -------------------------------------------------------------------------
 
-%% INITIALIZE
-self = App('Air');
-%% INITIAL CONDITIONS
-self = set_prop(self, 'TR', 300, 'pR', 1 * 1.01325);
-self.PD.S_Oxidizer = {'N2', 'O2', 'Ar', 'CO2'};
-self.PD.N_Oxidizer = [78.084, 20.9476, 0.9365, 0.0319] ./ 20.9476;
-sound_velocity = compute_sound(self.PD.TR.value, self.PD.pR.value, self.PD.S_Oxidizer, self.PD.N_Oxidizer, 'self', self);
-%% ADDITIONAL INPUTS (DEPENDS OF THE PROBLEM SELECTED)
-u1 = logspace(2, 5, 500); u1 = u1(u1 < 20000); u1 = u1(u1 >= 1 * sound_velocity);
-self = set_prop(self, 'u1', u1);
-%% SOLVE PROBLEM
-self = solve_problem(self, 'SHOCK_I');
-%% DISPLAY RESULTS (PLOTS)
-post_results(self);
+% Import packages
+import combustiontoolbox.databases.NasaDatabase
+import combustiontoolbox.core.*
+import combustiontoolbox.shockdetonation.*
+import combustiontoolbox.utils.display.*
+
+% Get Nasa database
+DB = NasaDatabase();
+
+% Define chemical system
+system = ChemicalSystem(DB, 'air');
+
+% Initialize mixture
+mix = Mixture(system);
+
+% Define chemical state
+set(mix, {'N2', 'O2', 'Ar', 'CO2'}, [78.084, 20.9476, 0.9365, 0.0319] / 20.9476);
+
+% Define properties
+mixArray1 = setProperties(mix, 'temperature', 300, 'pressure', 1.01325, 'u1', 400:100:12000);
+
+% Initialize solver
+solver = ShockSolver('problemType', 'SHOCK_I');
+
+% Solve problem
+[mixArray1, mixArray2] = solver.solveArray(mixArray1);
+
+% Plot Hugoniot curve
+plotFigure('\rho_1 / \rho_2', [mixArray1.rho] ./ [mixArray2.rho], 'p_2 / p_1', [mixArray2.p] ./ [mixArray1.p], 'xScale', 'log', 'yScale', 'log');
+
+% Plot post-shock temperature
+plotFigure('u', mixArray2, 'T', mixArray2);
+
+% Plot molar fractions
+plotComposition(mixArray2(1), mixArray1, 'u', 'Xi', 'mintol', 1e-3, 'y_var', mixArray2);

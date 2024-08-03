@@ -1,5 +1,5 @@
 function s0 = species_s0_NASA(species, temperature, DB)
-    % Compute entropy [kJ/(mol-K)] of the species at the given temperature [K]
+    % Compute entropy [J/(mol-K)] of the species at the given temperature [K]
     % using NASA's 9 polynomials
     %
     % Args:
@@ -8,7 +8,7 @@ function s0 = species_s0_NASA(species, temperature, DB)
     %     DB (struct): Database with custom thermodynamic polynomials functions generated from NASAs 9 polynomials fits
     %
     % Returns:
-    %     s0 (float): Entropy in molar basis [kJ/(mol-K)]
+    %     s0 (float): Entropy in molar basis [J/(mol-K)]
     %
     % Example:
     %     s0 = species_s0_NASA('H2O', 300:100:6000, DB)
@@ -37,5 +37,5 @@ function s0 = species_s0_NASA(species, temperature, DB)
     end
 
     % Change units [kJ/(mol-K)]
-    s0 = s0 * 1e-3;
+    % s0 = s0 * 1e-3;
 end

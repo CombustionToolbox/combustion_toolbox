@@ -15,7 +15,7 @@ function s0 = set_s0(LS, T, DB)
 
     for i = length(LS):-1:1
         species = LS{i};
-        s0(i, 1) = species_s0(species, T, DB) * 1e3;
+        s0(i, 1) = species_s0(species, T, DB);
     end
 
 end

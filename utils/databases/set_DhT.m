@@ -15,7 +15,7 @@ function DhT = set_DhT(LS, T, DB)
 
     for i = length(LS):-1:1
         species = LS{i};
-        DhT(i, 1) = species_DhT(species, T, DB) * 1e3;
+        DhT(i, 1) = species_DhT(species, T, DB);
     end
 
 end

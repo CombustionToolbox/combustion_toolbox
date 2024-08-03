@@ -1,1 +1,1 @@
-https://ssd.mathworks.com/supportfiles/downloads/R2024a/Prerelease/1/deployment_files/installagent/complete/maca64/InstallAgent_R2024a_Prerelease_Update_1_maca64.zip
+https://ssd.mathworks.com/supportfiles/downloads/R2024a/Release/0/deployment_files/installagent/complete/maca64/InstallAgent_R2024a_maca64.zip

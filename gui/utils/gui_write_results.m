@@ -221,6 +221,11 @@ end
 function update_equivalence_ratio(app, results, i)
     % Update GUI: equivalence ratio, O/F, and percentage Fuel
     if isempty(results(i).mix1.equivalenceRatio)
+        app.edit_phi.Value = '-';
+        app.edit_phi2.Value = '-';
+        app.edit_phi3.Value = '-';
+        app.edit_OF.Value = 0;
+        app.edit_F.Value = 0;
         return
     end
 

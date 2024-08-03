@@ -36,3 +36,4 @@ function g0 = species_g0(species, T, DB, varargin)
     % Compute Gibbs energy [J/mol]
     g0 = g0curve(T);
 end
+

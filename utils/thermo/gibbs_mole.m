@@ -7,5 +7,5 @@ function value = gibbs_mole(mix)
     % Returns:
     %     value (float): Mole-basis specific gibbs free energy [kJ/mol] of the mixture
 
-    value = mix.g / mix.N * 1e3;
+    value = mix.g / mix.N * 1e-3;
 end

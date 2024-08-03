@@ -1,4 +1,4 @@
-function problems_solved = run_validation_ROCKET_CEA_22
+function run_validation_ROCKET_CEA_22
     % Run test validation_ROCKET_CEA_22:
     % Contrasted with: NASA's Chemical Equilibrium with Applications software
     % Problem type: Equilibrium composition at exit of the rocket nozzle
@@ -10,43 +10,67 @@ function problems_solved = run_validation_ROCKET_CEA_22
     % Initial mixture: LH2 + LOX === H2bLb + O2bLb
     % List of species considered: list_species('HYDROGEN_L')
 
-    % Inputs
-    Fuel = 'H2bLb';
-    Aratio_c = 2;
-    Aratio = 8;
-    prefixDataName = 'H2';
-    filename = {[prefixDataName, '_LOX_A2_ROCKET_FAC1.out'], [prefixDataName, '_LOX_A2_ROCKET_FAC2.out']};
-    LS =  'HYDROGEN_L';
-    display_species = {'H2O','H2','O2','H','OH','O','O3','HO2','H2O2'};
-    tolN = 1e-18;
-
-    % Load results CEA 
-    results_CEA = data_CEA(filename, display_species);
-    % Combustion Toolbox
-    results_CT = run_CT('ProblemType', 'ROCKET',...
-                        'TR', 90,...
-                        'pR', 101.325,...
-                        'Species', LS,...
-                        'S_Fuel', Fuel,...
-                        'S_Oxidizer', 'O2bLb',...
-                        'ratio_oxidizers_O2', 1,...
-                        'EquivalenceRatio', 0.5:0.01:4,...
-                        'tolN', tolN,...
-                        'FLAG_IAC', false,...
-                        'Aratio_c', Aratio_c,...
-                        'Aratio', Aratio);
-    problems_solved = length(results_CT.PD.range);
+    % Import packages
+    import combustiontoolbox.databases.NasaDatabase
+    import combustiontoolbox.core.*
+    import combustiontoolbox.rocket.*
+    import combustiontoolbox.utils.display.*
     
-    % Display validation (plot)
-    results_CT.Misc.config.axis = 'tight';
-    % * Molar fractions
-    [~, fig1] = plot_molar_fractions(results_CT, results_CT.PS.strP, 'phi', 'Xi', 'validation', results_CEA, 'display_species', display_species);
-    % * Properties mixture Exit - 1
-    fig2 = plot_properties_validation(results_CT, results_CEA, {'phi', 'phi', 'phi', 'phi', 'phi', 'phi', 'phi', 'phi', 'phi'}, {'T', 'p', 'h', 'cP', 'cV', 'gamma_s', 'u', 'I_sp', 'I_vac'}, 'mix2');
+    % Benchmark?
+    FLAG_BENCHMARK = false;
+
+    % Definitions
+    fuel = 'H2bLb';
+    areaRatioChamber = 2;
+    areaRatio = 8;
+    prefixDataName = 'H2';
+    filename = {strcat(prefixDataName, '_LOX_A2_ROCKET_FAC1.out'), strcat(prefixDataName, '_LOX_A2_ROCKET_FAC2.out')};
+    listSpecies = 'HYDROGEN_L';
+    displaySpecies = {'CO2','CO','H2O','H2','O2','C2H2_acetylene',...
+          'C2H4','C2H6','CH2CO_ketene','CH3','CH3CHO_ethanal','CH3OH',...
+          'CH4','COOH','H','H2O2','HCHO_formaldehy','HCO','HCOOH','HO2',...
+          'O','OH','Cbgrb'};
+    tolMoles = 1e-18;
+
+    % Get Nasa database
+    DB = NasaDatabase('FLAG_BENCHMARK', FLAG_BENCHMARK);
+    
+    % Define chemical system
+    system = ChemicalSystem(DB, listSpecies);
+    
+    % Initialize mixture
+    mix = Mixture(system);
+    
+    % Define chemical state
+    set(mix, {fuel}, 'fuel', 1);
+    set(mix, {'O2bLb'}, 'oxidizer', 1);
+    
+    % Define properties
+    mixArray1 = setProperties(mix, 'temperature', 298.15, 'pressure', 101.325, 'equivalenceRatio', 0.5:0.01:4, 'areaRatioChamber', areaRatioChamber, 'areaRatio', areaRatio);
+    
+    % Initialize solver
+    solver = RocketSolver('problemType', 'ROCKET_FAC', 'tolMoles', tolMoles, 'FLAG_RESULTS', false);
+    
+    % Solve problem
+    [~, ~, ~, ~, mixArray4] = solver.solveArray(mixArray1);
+
+    if FLAG_BENCHMARK
+        return
+    end
+    
+    % Load results CEA 
+    resultsCEA = data_CEA(filename, displaySpecies);
+    
+    % Plot molar fractions
+    fig1 = plotComposition(mixArray4(1), mixArray4, 'equivalenceRatio', 'Xi', 'displaySpecies', displaySpecies, 'mintol', 1e-14, 'validation', resultsCEA);
+
+    % Plot properties
+    fig2 = plotProperties(repmat({'equivalenceRatio'}, 1, 12), mixArray4, {'T', 'rho', 'h', 'e', 'g', 'cp', 's', 'gamma_s', 'sound', 'u', 'I_sp', 'I_vac'}, mixArray4, 'basis', {[], [], 'mi', 'mi', 'mi', 'mi', 'mi', [], [], [], [], []}, 'validation', resultsCEA);
+
     % Save plots
-    folderpath = strcat(pwd,'\Validations\Figures\');
+    folderpath = fullfile(pwd, 'validations', 'figures');
     stack_trace = dbstack;
     filename = stack_trace.name;
-    saveas(fig1, strcat(folderpath, filename, '_molar'), 'svg');
-    saveas(fig2, strcat(folderpath, filename, '_properties_1'), 'svg');
+    saveas(fig1, fullfile(folderpath, strcat(filename, '_molar')), 'svg');
+    saveas(fig2, fullfile(folderpath, strcat(filename, '_properties')), 'svg');
 end

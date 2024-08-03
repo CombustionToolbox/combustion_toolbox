@@ -16,50 +16,68 @@
 %                            'C2','C2H4','CH','CH3','CH4','CN','H',...
 %                            'HCN','HCO','N','NH','NH2','NH3','NO','O','OH'}
 %   
-% See wiki or list_species() for more predefined sets of species
+% See wiki or setListspecies method from ChemicalSystem class for more
+% predefined sets of species
 %
 % @author: Alberto Cuadra Lara
-%          PhD Candidate - Group Fluid Mechanics
+%          Postdoctoral researcher - Group Fluid Mechanics
 %          Universidad Carlos III de Madrid
 %                 
-% Last update Oct 13 2022
+% Last update Jul 25 2024
 % -------------------------------------------------------------------------
 
+% Import packages
+import combustiontoolbox.databases.NasaDatabase
+import combustiontoolbox.core.*
+import combustiontoolbox.equilibrium.*
+import combustiontoolbox.utils.display.*
+
+% Get Nasa database
+DB = NasaDatabase();
+
+% Initialize solver
+solver = EquilibriumSolver('problemType', 'HP');
+
 %% COMPLETE COMBUSTION
-% Initialization
-self = App('Complete');
-% Set fuel composition 
-self.PD.S_Fuel = {'CH4', 'C2H6', 'C3H8', 'C4H10_isobutane', 'H2'};
-self.PD.N_Fuel = [0.8, 0.05, 0.05, 0.05, 0.05];
-% Set oxidizer composition
-self = set_air(self, false);
-% Set temperature, pressure and equivalence ratio
-self = set_prop(self, 'TR', 300, 'pR', 1.01325, 'phi', 0.5:0.02:3);
-% Set constant pressure for products
-self = set_prop(self, 'pP', self.PD.pR.value);
-% Solve Problem
-self = solve_problem(self, 'HP');
-% Save results
-results_complete = self;
+
+% Define chemical system
+system = ChemicalSystem(DB, 'complete');
+
+% Initialize mixture
+mix = Mixture(system);
+
+% Define chemical state
+set(mix, {'CH4', 'C2H6', 'C3H8', 'C4H10_isobutane', 'H2'}, 'fuel', [0.8, 0.05, 0.05, 0.05, 0.05]);
+set(mix, {'N2', 'O2', 'Ar', 'CO2'}, 'oxidizer', [78.084, 20.9476, 0.9365, 0.0319] / 20.9476);
+
+% Define properties
+mixArray1 = setProperties(mix, 'temperature', 300, 'pressure', 1 * 1.01325, 'equivalenceRatio', 0.5:0.02:3);
+
+% Solve problem
+solver.solveArray(mixArray1);
+
 %% INCOMPLETE COMBUSTION
-% Set product species at equilibrium
-self = App('copy', self, 'Soot formation');
-% Solve Problem
-self = solve_problem(self, 'HP');
-% Save results
-results_incomplete = self;
+
+% Define chemical system
+system = ChemicalSystem(DB, 'soot formation');
+
+% Initialize mixture
+mix = Mixture(system);
+
+% Define chemical state
+set(mix, {'CH4', 'C2H6', 'C3H8', 'C4H10_isobutane', 'H2'}, 'fuel', [0.8, 0.05, 0.05, 0.05, 0.05]);
+set(mix, {'N2', 'O2', 'Ar', 'CO2'}, 'oxidizer', [78.084, 20.9476, 0.9365, 0.0319] / 20.9476);
+
+% Define properties
+mixArray2 = setProperties(mix, 'temperature', 300, 'pressure', 1 * 1.01325, 'equivalenceRatio', 0.5:0.02:3);
+
+% Solve problem
+solver.solveArray(mixArray2);
+
 %% COMPARE RESULTS
-mix1 = results_complete.PS.strR; % Is the same as the incomplete case (same initial mixture)
-mix2_complete = results_complete.PS.strP; 
-mix2_incomplete = results_incomplete.PS.strP;
+ax = solver.report(mixArray1, mixArray2);
 
-phi = cell2vector(mix1, 'phi');
-
-self.Misc.config.title = '\rm{Complete\ vs\ Incomplete}';
-self.Misc.config.labelx = 'Equivalence ratio $\phi$';
-self.Misc.config.labely = 'Temperature $T$ [K]';
-legend_name = {'Complete', 'Incomplete'};
-
-ax = plot_figure('phi', phi, 'T', mix2_complete, 'config', self.Misc.config);
-ax = plot_figure('phi', phi, 'T', mix2_incomplete, 'config', self.Misc.config, 'ax', ax, 'legend', legend_name, 'color', 'auto');
-ax.Legend.Location = 'northeast';
+% Another possibility is call directly the next functions:
+% ax = plotProperties(repmat({mixArray1(1).rangeName}, 1, 9), mixArray1, {'T', 'rho', 'h', 'e', 'g', 'cp', 's', 'gamma_s', 'sound'}, mixArray1, 'basis', {[], [], 'mi', 'mi', 'mi', 'mi', 'mi', [], []});
+% ax = plotProperties(repmat({mixArray1(1).rangeName}, 1, 9), mixArray1, {'T', 'rho', 'h', 'e', 'g', 'cp', 's', 'gamma_s', 'sound'}, mixArray2, 'basis', {[], [], 'mi', 'mi', 'mi', 'mi', 'mi', [], []}, 'ax', ax);
+% legend(ax.Children(end), {'Complete', 'Incomplete'}, 'Interpreter', 'latex', 'FontSize', ax.Children(end).FontSize);

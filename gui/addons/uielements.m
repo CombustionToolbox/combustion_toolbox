@@ -133,27 +133,25 @@ classdef uielements < matlab.apps.AppBase
 
     
     properties (Access = public)
-        E         % Elements
-        S         % Species
-        C         % Constants
-        Misc      % Miscelaneous
-        PD        % Problem Description
-        PS        % Problem Solution
-        TN        % Tunning properties
-        DB_master % Master DataBase
-        DB        % Reduced DataBase
-        LE_selected % List of elements selected
-        LE_omit   % List of elements to omit
-        FLAG_CALLER % Flag app is called from other app
+        constants            % Constants class
+        database             % Class inhereted from Database superclass
+        chemicalSystem       % Chemical system class
+        mixture              % Mixture class
+        elements             % 
+        plotConfig           % PlotConfig object
+        indexElementsDatabase
+        listElementsSelected % List of elements selected
+        listElementsOmitted  % List of elements omitted
+        FLAG_CALLER          % Flag app is called from other app
     end
 
     properties (Dependent)
-        NE
+        numElements
     end
 
     properties (Access = private)
-        caller_app % Handle to caller app
-        caller_app_tag % Tag of caller app
+        callerApp       % Handle to caller app
+        callerAppTag    % Tag of caller app
         FLAG_LAST_CLICK % true == listbox_LS_DB, false = listbox_LS
     end
     
@@ -181,6 +179,10 @@ classdef uielements < matlab.apps.AppBase
         function plot_property(app)
             % Plot property against temperature
             
+            % Import packages
+            import combustiontoolbox.utils.display.*
+            import combustiontoolbox.utils.extensions.brewermap
+
             % Get species
             if app.FLAG_LAST_CLICK
                 species = app.listbox_LS_DB.Value;
@@ -189,19 +191,16 @@ classdef uielements < matlab.apps.AppBase
             end
             
             % Get number of species
-            NS = length(species);
+            numSpecies = length(species);
 
             % Check that there are species selected
-            if NS == 0
+            if numSpecies == 0
                 return
             end
 
             % Read temperature range
-            app = set_prop(app, 'TR', app.temperature_range.Value);
-
-            % Get temperature range
-            T = app.PD.TR.value;
-            NT = length(T);
+            T = gui_get_prop(app.temperature_range.Value);
+            numTemperature = length(T);
 
             % Get function
             [funname_NASA, funname_CT, property_labelname] = set_inputs_thermo_validations(app.property.Value);
@@ -217,31 +216,31 @@ classdef uielements < matlab.apps.AppBase
 
             % tic
             % % Evaluate property for the temperature range
-            % for i = NS:-1:1
-            %     for j = NT:-1:1
-            %         values(i, j) = funname(species{i}, temperature(j), app.DB);
+            % for i = numSpecies:-1:1
+            %     for j = numTemperature:-1:1
+            %         values(i, j) = funname(species{i}, temperature(j), app.database);
             %     end
             % 
             % end
             % toc
             
             % Initialization
-            ind_REMOVE = [];
+            indexRemove = [];
             messages = [];
             
             % Copy DB local variables
-            DB = app.DB;
+            DB = app.database.species;
 
             % Evaluate property for the temperature range
-            for i = NS:-1:1
+            for i = numSpecies:-1:1
                 try
-                    for j = NT:-1:1
+                    for j = numTemperature:-1:1
                         values(i, j) = funname(species{i}, T(j), DB);
                     end
 
                 catch
                     % Get index of the species that can not be evaluated
-                    ind_REMOVE = [ind_REMOVE, i];
+                    indexRemove = [indexRemove, i];
                     % Print message in the command window
                     message = ['%s can not be evaluated outside T = %.2f K.\n'...
                                'Species removed from the calculations.\n'];
@@ -252,27 +251,27 @@ classdef uielements < matlab.apps.AppBase
                     fprintf(message);
                 end
 
-                species_label{i} = species2latex(species{i});
+                speciesLabel{i} = species2latex(species{i});
             end
             
-            % Show warning if ind_REMOVE
-            if ~isempty(ind_REMOVE)
+            % Show warning if indexRemove
+            if ~isempty(indexRemove)
                 uialert(app.UIElements, messages, 'Warning', 'Icon', 'warning');
             end
 
             % Remove species that can not be evaluated
-            species(ind_REMOVE) = [];
-            NS = length(species);
+            species(indexRemove) = [];
+            numSpecies = length(species);
             
             % Check that there are species that satisfied the requirements
-            if NS == 0
+            if numSpecies == 0
                 return
             end
             
             % Get FLAG if the calculations imply extrapolation
-            FLAG_EXTRAPOLATION_PRE = false(NS, NT);
-            FLAG_EXTRAPOLATION_POST = false(NS, NT);
-            for i = NS:-1:1
+            FLAG_EXTRAPOLATION_PRE = false(numSpecies, numTemperature);
+            FLAG_EXTRAPOLATION_POST = false(numSpecies, numTemperature);
+            for i = numSpecies:-1:1
                 FLAG_EXTRAPOLATION_PRE(i, :) = T < DB.(species{i}).T(1);
                 FLAG_EXTRAPOLATION_POST(i, :) = T > DB.(species{i}).T(end);
             end
@@ -280,62 +279,63 @@ classdef uielements < matlab.apps.AppBase
             % Check figure scale
             FLAG_LOG = app.log.Value;
             if FLAG_LOG
-                app.Misc.config.xscale = 'log';
-                app.Misc.config.yscale = 'log';
+                app.plotConfig.xscale = 'log';
+                app.plotConfig.yscale = 'log';
             else
-                app.Misc.config.xscale = 'linear';
-                app.Misc.config.yscale = 'linear';
+                app.plotConfig.xscale = 'linear';
+                app.plotConfig.yscale = 'linear';
             end
 
             % Initialize figure
-            ax = set_figure(app.Misc.config);
+            ax = setFigure(app.plotConfig);
             
             % Define color palette
-            color_palette = brewermap(NS, app.Misc.config.colorpalette);
+            color_palette = brewermap(numSpecies, app.plotConfig.colorpalette);
 
             % Plot
-            dline = zeros(1, NS);
+            dline = zeros(1, numSpecies);
 
-            for i = 1:NS
+            for i = 1:numSpecies
                 try
-                    [ax, dline(i)] = plot_figure('T', T(~FLAG_EXTRAPOLATION_POST(i, :) & ~FLAG_EXTRAPOLATION_PRE(i, :)), property_labelname, values(i, ~FLAG_EXTRAPOLATION_POST(i, :) & ~FLAG_EXTRAPOLATION_PRE(i, :)), 'color', color_palette(i, :), 'linestyle', '-', 'ax', ax);
+                    [~, dline(i)] = plotFigure('T', T(~FLAG_EXTRAPOLATION_POST(i, :) & ~FLAG_EXTRAPOLATION_PRE(i, :)), property_labelname, values(i, ~FLAG_EXTRAPOLATION_POST(i, :) & ~FLAG_EXTRAPOLATION_PRE(i, :)), 'color', color_palette(i, :), 'linestyle', '-', 'ax', ax);
                 catch
-                    ax = plot_figure('T', T(~FLAG_EXTRAPOLATION_POST(i, :) & ~FLAG_EXTRAPOLATION_PRE(i, :)), property_labelname, values(i, ~FLAG_EXTRAPOLATION_POST(i, :) & ~FLAG_EXTRAPOLATION_PRE(i, :)), 'color', color_palette(i, :), 'linestyle', '-', 'ax', ax);
+                    plotFigure('T', T(~FLAG_EXTRAPOLATION_POST(i, :) & ~FLAG_EXTRAPOLATION_PRE(i, :)), property_labelname, values(i, ~FLAG_EXTRAPOLATION_POST(i, :) & ~FLAG_EXTRAPOLATION_PRE(i, :)), 'color', color_palette(i, :), 'linestyle', '-', 'ax', ax);
                 end
                 
                 try
-                    [ax, dline(i)] = plot_figure('T', T(FLAG_EXTRAPOLATION_PRE(i, :)), property_labelname, values(i, FLAG_EXTRAPOLATION_PRE(i, :)), 'color', color_palette(i, :), 'linestyle', '--', 'ax', ax);
+                    [~, dline(i)] = plotFigure('T', T(FLAG_EXTRAPOLATION_PRE(i, :)), property_labelname, values(i, FLAG_EXTRAPOLATION_PRE(i, :)), 'color', color_palette(i, :), 'linestyle', '--', 'ax', ax);
                 catch
-                    ax = plot_figure('T', T(FLAG_EXTRAPOLATION_PRE(i, :)), property_labelname, values(i, FLAG_EXTRAPOLATION_PRE(i, :)), 'color', color_palette(i, :), 'linestyle', '--', 'ax', ax);
+                    plotFigure('T', T(FLAG_EXTRAPOLATION_PRE(i, :)), property_labelname, values(i, FLAG_EXTRAPOLATION_PRE(i, :)), 'color', color_palette(i, :), 'linestyle', '--', 'ax', ax);
                 end
 
                 try
-                    [ax, dline(i)] = plot_figure('T', T(FLAG_EXTRAPOLATION_POST(i, :)), property_labelname, values(i, FLAG_EXTRAPOLATION_POST(i, :)), 'color', color_palette(i, :), 'linestyle', '--', 'ax', ax);
+                    [~, dline(i)] = plotFigure('T', T(FLAG_EXTRAPOLATION_POST(i, :)), property_labelname, values(i, FLAG_EXTRAPOLATION_POST(i, :)), 'color', color_palette(i, :), 'linestyle', '--', 'ax', ax);
                 catch
-                    ax = plot_figure('T', T(FLAG_EXTRAPOLATION_POST(i, :)), property_labelname, values(i, FLAG_EXTRAPOLATION_POST(i, :)), 'color', color_palette(i, :), 'linestyle', '--', 'ax', ax);
+                    plotFigure('T', T(FLAG_EXTRAPOLATION_POST(i, :)), property_labelname, values(i, FLAG_EXTRAPOLATION_POST(i, :)), 'color', color_palette(i, :), 'linestyle', '--', 'ax', ax);
                 end
                 
             end
 
             % Set legends
-            if NS < 2
+            if numSpecies < 2
                 return
             end
             
-            legend(ax, dline, species_label, 'FontSize', app.Misc.config.fontsize - 4, 'Location', 'best', 'interpreter', 'latex')
+            legend(ax, dline, speciesLabel, 'FontSize', app.plotConfig.fontsize - 4, 'Location', 'best', 'interpreter', 'latex')
         end
 
         
-        function find_species(app)
+        function findSpecies(app)
             % Search species with the elements selected
-            if app.NE
+
+            if app.numElements
                 try
-                    LS = find_products(app, app.LE_selected, 'ind', app.S.ind_elements_DB);
+                    listSpecies = findProducts(app.chemicalSystem, app.listElementsSelected, 'ind', app.indexElementsDatabase);
                 catch
-                    LS = {};
+                    listSpecies = {};
                 end
 
-                app.listbox_LS_DB.Items = LS;
+                app.listbox_LS_DB.Items = listSpecies;
             end
 
         end
@@ -343,8 +343,8 @@ classdef uielements < matlab.apps.AppBase
     end
 
     methods
-        function value = get.NE(app)
-            value = length(app.LE_selected);
+        function value = get.numElements(app)
+            value = length(app.listElementsSelected);
         end
 
     end
@@ -356,57 +356,80 @@ classdef uielements < matlab.apps.AppBase
         function startupFcn(app, varargin)
             if nargin == 1
                 app.FLAG_CALLER = false;
-                % Initialize
-                App(app);
+                % Get Constants
+                app.constants = combustiontoolbox.common.Constants;
+                % Get Nasa's database
+                app.database = combustiontoolbox.databases.NasaDatabase();
+                % Initialize chemical system
+                app.chemicalSystem = combustiontoolbox.core.ChemicalSystem(app.database);
+                % Initialize mixture
+                app.mixture = combustiontoolbox.core.Mixture(app.chemicalSystem);
+                % Initialize plotConfig
+                app.plotConfig = combustiontoolbox.utils.display.PlotConfig();
             else
                 app.FLAG_CALLER = true;
-                app.caller_app = varargin{1};
-                app.caller_app_tag = varargin{2}.Source.Tag;
-                app.S = app.caller_app.S;
-                app.DB = app.caller_app.DB;
-                app.Misc = app.caller_app.Misc;
+                app.callerApp = varargin{1};
+                app.callerAppTag = varargin{2}.Source.Tag;
+                app.constants = app.callerApp.constants;
+                app.database = app.callerApp.database;
+                app.chemicalSystem = app.callerApp.chemicalSystem;
+                app.mixture = app.callerApp.mixture;
+                app.plotConfig = app.callerApp.plotConfig;
             end
-
-            app.LE_omit = [];
+            
+            % Initialize elements
+            app.elements = combustiontoolbox.core.Elements();
+            
+            % Initialization
+            app.listElementsOmitted = [];
             
             % Remove incompatible species
-            app.S.LS_DB(find_ind(app.S.LS_DB, 'Air')) = [];
+            if isfield(app.database.species, 'Air')
+                app.database.species = rmfield(app.database.species, 'Air');
+            end
+
             % Get element indeces of each species contained in the database
-            app.S.ind_elements_DB = get_ind_elements(app.S.LS_DB, app.DB, set_elements(), 5);
+            app.indexElementsDatabase = getIndexElements(app.database.listSpecies, app.database.species, app.elements.listElements, 5);
+
             % Default size for plots
-            app.Misc.config.innerposition = [0.2, 0.15, 0.7, 0.7];
-            app.Misc.config.outerposition = [0.2, 0.15, 0.7, 0.7];
+            % app.plotConfig.innerposition = [0.2, 0.15, 0.7, 0.7];
+            % app.plotConfig.outerposition = [0.2, 0.15, 0.7, 0.7];
+
             % Set default values
-            app.burcat.Value = app.S.FLAG_BURCAT;
-            app.ionized.Value = app.S.FLAG_ION;
-            app.condensed.Value = app.S.FLAG_CONDENSED;
+            app.burcat.Value = app.chemicalSystem.FLAG_BURCAT;
+            app.ionized.Value = app.chemicalSystem.FLAG_ION;
+            app.condensed.Value = app.chemicalSystem.FLAG_CONDENSED;
         end
 
         % Image clicked function: element_1, element_10, element_11, 
         % ...and 77 other components
         function element_1ImageClicked(app, event)
             % Change image
+
+            % Import pakcages
+            import combustiontoolbox.utils.findIndex
+
             FLAG_CLICKED = changes_image(app, event);
             if FLAG_CLICKED
                 % Add element to the list of elements
-                if app.NE
-                    app.LE_selected{end + 1} = event.Source.Tag;
+                if app.numElements
+                    app.listElementsSelected{end + 1} = event.Source.Tag;
                 else
-                    app.LE_selected = {event.Source.Tag};
+                    app.listElementsSelected = {event.Source.Tag};
                 end
 
             else
                 % Remove element of the list of elements
-                index_remove = find_ind(app.LE_selected, event.Source.Tag);
-                app.LE_selected(index_remove) = [];
-                if ~app.NE
+                index_remove = findIndex(app.listElementsSelected, event.Source.Tag);
+                app.listElementsSelected(index_remove) = [];
+                if ~app.numElements
                     app.listbox_LS_DB.Items = {};
                 end
 
             end
 
             % Search species with the elements selected
-            find_species(app);
+            findSpecies(app);
         end
 
         % Button pushed function: AddButton1
@@ -423,12 +446,12 @@ classdef uielements < matlab.apps.AppBase
         function listbox_LSValueChanged(app, event)
             species = event.Source.Value{1};
             % Get values
-            phase = app.DB.(species).phase;
-            W = app.DB.(species).mm; % [g/mol]
+            phase = app.database.species.(species).phase;
+            W = app.database.species.(species).W; % [kg/mol]
             % Update GUI
-            app.text_species.Value = app.DB.(species).FullName;
-            app.text_codename.Value = app.DB.(species).name;
-            app.text_comments.Value = strtrim(app.DB.(species).comments);
+            app.text_species.Value = app.database.species.(species).fullname;
+            app.text_codename.Value = app.database.species.(species).name;
+            app.text_comments.Value = strtrim(app.database.species.(species).comments);
 
             if phase
                 app.text_phase.Value = 'condensed';
@@ -436,29 +459,29 @@ classdef uielements < matlab.apps.AppBase
                 app.text_phase.Value = 'gas';
             end
 
-            app.text_W.Value = W;
-            app.text_hf.Value = app.DB.(species).hf * W * 1e-6;
-            app.text_ef.Value = app.DB.(species).ef * W * 1e-6;
+            app.text_W.Value = W * 1e3; % [g/mol]
+            app.text_hf.Value = app.database.species.(species).hf * W * 1e-3; % [kJ]
+            app.text_ef.Value = app.database.species.(species).ef * W * 1e-3; % [kJ]
         end
 
         % Button pushed function: Export
         function ExportButtonPushed(app, event)
             if app.FLAG_CALLER
                 % Passing data between apps
-                switch upper(app.caller_app_tag)
+                switch upper(app.callerAppTag)
                     case 'R'
                         % To do it compatible with the current routines in the main app
-                        app.caller_app.Reactants.Value = ' ';
+                        app.callerApp.Reactants.Value = ' ';
                         % Update main GUI
                         for i = 1:length(app.listbox_LS.Items)
                             temp.Value = app.listbox_LS.Items{i};
-                            public_ReactantsValueChanged(app.caller_app, temp)
+                            public_ReactantsValueChanged(app.callerApp, temp)
                         end
                         
                     case 'P'
                         % Update main GUI
-                        app.caller_app.listbox_Products.Items = unique([app.caller_app.listbox_Products.Items, app.listbox_LS.Items], 'stable');
-                        public_ProductsValueChanged(app.caller_app)
+                        app.callerApp.listbox_Products.Items = unique([app.callerApp.listbox_Products.Items, app.listbox_LS.Items], 'stable');
+                        public_ProductsValueChanged(app.callerApp)
                     otherwise
                         CopyButtonPushed(app, event);
                 end
@@ -488,20 +511,24 @@ classdef uielements < matlab.apps.AppBase
         % Menu selected function: enableremoveMenu
         function enableremoveMenuSelected(app, event)
             % Get current object
+
+            % Import pakcages
+            import combustiontoolbox.utils.findIndex
+            
             current_fig = gcbf;
             current_obj = current_fig.CurrentObject;
             % Check state to enable/remove the element
             if strcmpi(current_obj.Enable, 'on')
                 % Omit element to be searchable
                 current_obj.Enable = 'off';
-                % Add element to LE_omit
-                app.LE_omit{end+1} = current_obj.Tag; 
+                % Add element to listElementsOmitted
+                app.listElementsOmitted{end+1} = current_obj.Tag; 
             else
                 % Allow element to be searchable
                 current_obj.Enable = 'on';
-                % Remove element from LE_omit
-                ind = find_ind(app.LE_omit, current_obj.Tag);
-                app.LE_omit(ind) = [];
+                % Remove element from listElementsOmitted
+                ind = findIndex(app.listElementsOmitted, current_obj.Tag);
+                app.listElementsOmitted(ind) = [];
             end
             
             % Update GUI
@@ -545,25 +572,25 @@ classdef uielements < matlab.apps.AppBase
         % Value changed function: ionized
         function ionizedValueChanged(app, event)
             % Consider ionized species
-            app.S.FLAG_ION = app.ionized.Value;
+            app.chemicalSystem.FLAG_ION = app.ionized.Value;
             % Search species
-            find_species(app);
+            findSpecies(app);
         end
 
         % Value changed function: condensed
         function condensedValueChanged(app, event)
             % Consider condensed species
-            app.S.FLAG_CONDENSED = app.condensed.Value;
+            app.chemicalSystem.FLAG_CONDENSED = app.condensed.Value;
             % Search species
-            find_species(app);
+            findSpecies(app);
         end
 
         % Value changed function: burcat
         function burcatValueChanged(app, event)
             % Consider species from the Third Millenium database (Burcat)
-            app.S.FLAG_BURCAT = app.burcat.Value;
+            app.chemicalSystem.FLAG_BURCAT = app.burcat.Value;
             % Search species
-            find_species(app);
+            findSpecies(app);
         end
     end
 
@@ -1465,6 +1492,7 @@ classdef uielements < matlab.apps.AppBase
             % Create type
             app.type = uidropdown(app.GridLayout2);
             app.type.Items = {'CT', 'NASA'};
+            app.type.Enable = 'off';
             app.type.Tooltip = {'Select polynomial fits'};
             app.type.Layout.Row = 2;
             app.type.Layout.Column = 3;

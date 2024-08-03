@@ -3,8 +3,6 @@ function gui_ReactantsValueChanged(app, event)
     %   * a given predefined set of reactants
     %   * the new species added in the finder
     try
-        % Initialize self (fast: transfer DB)
-        self = App('fast', app.DB_master, app.DB);
         % If the empty item was selected clear UITable and return
         if app.Reactants.Value == 1 % No species selected
             gui_empty_UITables(app);
@@ -12,19 +10,47 @@ function gui_ReactantsValueChanged(app, event)
         elseif isempty(app.Reactants.Value)
             return
         end
-        % Set reactant species
-        self = gui_set_reactants(app, event, self);
-        % Complete initialization process
-        species = [self.PD.S_Fuel, self.PD.S_Oxidizer];
-        self.S.LS = species;
-        self = complete_initialize(self, species);
-        % Compute properties of the mixture
-        self = gui_compute_propReactants(app, self);
+        
+        % Definitions
+        temperature = gui_get_prop(app.PR1.Value, 'first'); % [K]
+        pressure = gui_get_prop(app.PR2.Value, 'first');    % [bar]
+        listSpecies = app.listbox_Products.Items;
+
+        % Define chemical system
+        if isempty(listSpecies)
+            app.chemicalSystem = combustiontoolbox.core.ChemicalSystem(app.database);
+        else
+            app.chemicalSystem = combustiontoolbox.core.ChemicalSystem(app.database, listSpecies);
+        end
+        
+        % Temp
+        ratioOxidizer = app.mixture.ratioOxidizer;
+        stoichiometricMoles = app.mixture.stoichiometricMoles;
+
+        % Initialize mixture
+        app.mixture = combustiontoolbox.core.Mixture(app.chemicalSystem);
+        if ~isempty(stoichiometricMoles)
+            app.mixture.ratioOxidizer = ratioOxidizer;
+        end
+
+        % Set chemical state
+        gui_set_reactants(app, event);
+
+        % Define properties
+        if strcmp(app.edit_phi.Value, '-')
+            app.mixture = setProperties(app.mixture, 'temperature', temperature, 'pressure', pressure);
+        else
+            equivalenceRatio = gui_get_prop(app.edit_phi.Value, 'first'); % [-]
+            app.mixture = setProperties(app.mixture, 'temperature', temperature, 'pressure', pressure, 'equivalenceRatio', equivalenceRatio);
+        end
+
         % Update UITable classes
-        gui_update_UITable_R(app, self);
+        gui_update_UITable_R(app);
         app.UITable_R2.Data = app.UITable_R.Data(:, 1:3); % (species, numer of moles, mole fractions)
+
         % Update GUI: equivalence ratio, O/F and percentage Fuel
-        gui_update_phi(app, self);
+        gui_update_phi(app);
+
         % Update GUI: Listbox species considered as products.
         % In case frozen chemistry or ionization is considered.
         gui_update_frozen(app);
@@ -33,93 +59,110 @@ function gui_ReactantsValueChanged(app, event)
         ME.stack(1).name, ME.stack(1).line, ME.message);
         fprintf('%s\n', message);
     end
+    
 end
 
 % SUB-PASS FUNCTIONS
-function self = gui_set_reactants(obj, event, self)
+function app = gui_set_reactants(app, event)
     % Set reactant species from the standard set drop down
+    
+    % Import packages
+    import combustiontoolbox.utils.getAir
+    import combustiontoolbox.utils.findIndex
+
+    % Definitions
+    FLAG_FUEL = true;
+    FLAG_OXIDIZER = false;
 
     % Check type of air
     % - ideal:     21.0000% O2, 79.0000% N2
     % - non-ideal: 21.0000% O2, 78.0840% N2, 0.9365% Ar, 0.0319% CO2
-    FLAG_IDEAL_AIR = obj.IdealAirCheckBox.Value;
-    % Get equivalence ratio (phi) from GUI
-    if ~strcmp(obj.edit_phi.Value, '-') % Default value phi = 1 (stoichiometric)
-        self.PD.phi.value = gui_get_prop(self, 'phi', obj.edit_phi.Value);
-    end
+    FLAG_IDEAL_AIR = app.IdealAirCheckBox.Value;
+    
     % Set species in the mixture
-    switch obj.Reactants.Value
+    switch app.Reactants.Value
         case 2 % Air
-            self = set_air(self, FLAG_IDEAL_AIR);
+            [listSpeciesOxidizer, molesOxidizer] = getAir(FLAG_IDEAL_AIR);
+            FLAG_FUEL = false; FLAG_OXIDIZER = true; app.edit_phi.Value = '-';
         case 3 % Methane + Air
-            self = set_air(self, FLAG_IDEAL_AIR);
-            self.PD.S_Fuel = {'CH4'};
+            [listSpeciesOxidizer, molesOxidizer] = getAir(FLAG_IDEAL_AIR); FLAG_OXIDIZER = true;
+            listSpeciesFuel = {'CH4'}; molesFuel = 1; app.edit_phi.Value = '1';
         case 4 % Ethane + Air
-            self = set_air(self, FLAG_IDEAL_AIR);
-            self.PD.S_Fuel = {'C2H6'};
+            [listSpeciesOxidizer, molesOxidizer] = getAir(FLAG_IDEAL_AIR); FLAG_OXIDIZER = true;
+            listSpeciesFuel = {'C2H6'}; molesFuel = 1; app.edit_phi.Value = '1';
         case 5 % Propane + Air
-            self = set_air(self, FLAG_IDEAL_AIR);
-            self.PD.S_Fuel = {'C3H8'};
+            [listSpeciesOxidizer, molesOxidizer] = getAir(FLAG_IDEAL_AIR); FLAG_OXIDIZER = true;
+            listSpeciesFuel = {'C3H8'}; molesFuel = 1; app.edit_phi.Value = '1';
         case 6 % Acetylene + Air
-            self = set_air(self, FLAG_IDEAL_AIR);
-            self.PD.S_Fuel = {'C2H2_acetylene'};
+            [listSpeciesOxidizer, molesOxidizer] = getAir(FLAG_IDEAL_AIR); FLAG_OXIDIZER = true;
+            listSpeciesFuel = {'C2H2_acetylene'}; molesFuel = 1; app.edit_phi.Value = '1';
         case 7 % Ethylene + Air
-            self = set_air(self, FLAG_IDEAL_AIR);
-            self.PD.S_Fuel = {'C2H4'};
+            [listSpeciesOxidizer, molesOxidizer] = getAir(FLAG_IDEAL_AIR); FLAG_OXIDIZER = true;
+            listSpeciesFuel = {'C2H4'}; molesFuel = 1; app.edit_phi.Value = '1';
         case 8 % Bencene + Air
-            self = set_air(self, FLAG_IDEAL_AIR);
-            self.PD.S_Fuel = {'C6H6'};
+            [listSpeciesOxidizer, molesOxidizer] = getAir(FLAG_IDEAL_AIR); FLAG_OXIDIZER = true;
+            listSpeciesFuel = {'C6H6'}; molesFuel = 1; app.edit_phi.Value = '1';
         case 9 % Iso-octane + Air
-            self = set_air(self, FLAG_IDEAL_AIR);
-            self.PD.S_Fuel = {'C8H18_isooctane'};
+            [listSpeciesOxidizer, molesOxidizer] = getAir(FLAG_IDEAL_AIR); FLAG_OXIDIZER = true;
+            listSpeciesFuel = {'C8H18_isooctane'}; molesFuel = 1; app.edit_phi.Value = '1';
         case 10 % Hydrogen + Air
-            self = set_air(self, FLAG_IDEAL_AIR);
-            self.PD.S_Fuel = {'H2'};
+            [listSpeciesOxidizer, molesOxidizer] = getAir(FLAG_IDEAL_AIR); FLAG_OXIDIZER = true;
+            listSpeciesFuel = {'H2'}; molesFuel = 1; app.edit_phi.Value = '1';
         case 11 % Carbon monoxide + Air
-            self = set_air(self, FLAG_IDEAL_AIR);
-            self.PD.S_Fuel = {'CO'};
+            [listSpeciesOxidizer, molesOxidizer] = getAir(FLAG_IDEAL_AIR); FLAG_OXIDIZER = true;
+            listSpeciesFuel = {'CO'}; molesFuel = 1; app.edit_phi.Value = '1';
         case 12 % Methanol + Air
-            self = set_air(self, FLAG_IDEAL_AIR);
-            self.PD.S_Fuel = {'CH3OH'};
+            [listSpeciesOxidizer, molesOxidizer] = getAir(FLAG_IDEAL_AIR); FLAG_OXIDIZER = true;
+            listSpeciesFuel = {'CH3OH'}; molesFuel = 1; app.edit_phi.Value = '1';
         case 13 % Ethanol + Air
-            self = set_air(self, FLAG_IDEAL_AIR);
-            self.PD.S_Fuel = {'C2H5OH'};
+            [listSpeciesOxidizer, molesOxidizer] = getAir(FLAG_IDEAL_AIR); FLAG_OXIDIZER = true;
+            listSpeciesFuel = {'C2H5OH'}; molesFuel = 1; app.edit_phi.Value = '1';
         case 14 % Natural Gas + Air
-            self = set_air(self, FLAG_IDEAL_AIR);
-            self.PD.S_Fuel = {'CH4','C2H6','C3H8'};
-            self.PD.N_Fuel = [0.85, 0.1, 0.05];
+            [listSpeciesOxidizer, molesOxidizer] = getAir(FLAG_IDEAL_AIR); FLAG_OXIDIZER = true;
+            listSpeciesFuel = {'CH4','C2H6','C3H8'}; molesFuel = [0.85, 0.1, 0.05]; app.edit_phi.Value = '1';
         case 15 % Syngas + Air
-            self = set_air(self, FLAG_IDEAL_AIR);
-            self.PD.S_Fuel = {'CO','H2'};  
-            self.PD.N_Fuel = [0.5, 0.5];
+            [listSpeciesOxidizer, molesOxidizer] = getAir(FLAG_IDEAL_AIR); FLAG_OXIDIZER = true;
+            listSpeciesFuel = {'CO','H2'}; molesFuel = [0.5, 0.5]; app.edit_phi.Value = '1';
         case 16 % LH2 + LOX
-            self.PD.S_Fuel = {'H2bLb'};
-            self.PD.S_Oxidizer = {'O2bLb'};
-            obj.Products.Value = 'Hydrogen (L)';
-            % Update List of species considered as Products
-            gui_ProductsValueChanged(obj);
-            % Update Listbox (extended settings)
-            obj.listbox_LS.Items = obj.listbox_Products.Items;
+            listSpeciesFuel = {'H2bLb'}; molesFuel = 1; app.edit_phi.Value = '1';
+            listSpeciesOxidizer = {'O2bLb'}; molesOxidizer = 1; FLAG_OXIDIZER = true;
         case 17 % RP1 + LOX
-            self.PD.S_Fuel = {'RP_1'};
-            self.PD.S_Oxidizer = {'O2bLb'};
+            listSpeciesFuel = {'RP_1'}; molesFuel = 1; app.edit_phi.Value = '1';
+            listSpeciesOxidizer = {'O2bLb'}; molesOxidizer = 1; FLAG_OXIDIZER = true;
         otherwise % SET NEW SPECIES
+
             try
-                species = gui_seeker_exact_value(obj, event, self.S.LS_DB);
+                listSpeciesAdd = gui_seeker_exact_value(app, event, app.database.listSpecies);
             catch
                 message = {'Species not found.'};
-                uialert(obj.UIFigure, message, 'Warning', 'Icon', 'warning');
+                uialert(app.UIFigure, message, 'Warning', 'Icon', 'warning');
                 return
             end
+
             % Get data of the current mixture
-            if ~isempty(obj.UITable_R.Data)
-                % Check if the species is already included          
-                self = gui_get_reactants(obj, event, self);
+            if ~isempty(app.UITable_R.Data)
+                gui_get_reactants(app, event);
             end
-            % Add new species to the mixture (fuel by default)
-            if ~any(find_ind(self.PD.S_Fuel, species))
-                self.PD.S_Fuel = [self.PD.S_Fuel, {species}];
-                self.PD.N_Fuel = [self.PD.N_Fuel, 1];
+
+            % Add new species to the mixture (inert by default)
+            if any(findIndex(app.mixture.listSpecies, listSpeciesAdd))
+                return
             end
+
+            molesAdd = 1;
+            set(app.mixture, {listSpeciesAdd}, 'inert', molesAdd);
+            % app.mixture.ratioOxidizer = molesOxidizer;
+            return
     end
+    
+    % Set chemical state
+    if FLAG_FUEL
+        set(app.mixture, listSpeciesFuel, 'fuel', molesFuel);
+    end
+
+    if FLAG_OXIDIZER
+        set(app.mixture, listSpeciesOxidizer, 'oxidizer', molesOxidizer);
+        % app.mixture.ratioOxidizer = molesOxidizer;
+    end
+    
 end

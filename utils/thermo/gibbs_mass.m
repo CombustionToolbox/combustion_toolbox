@@ -7,5 +7,5 @@ function value = gibbs_mass(mix)
     % Returns:
     %     value (float): Mass-basis specific gibbs free energy [kJ/kg] of the mixture
 
-    value = mix.g / mix.mi;
+    value = mix.g / mix.mi * 1e-3;
 end

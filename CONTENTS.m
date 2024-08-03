@@ -1,30 +1,31 @@
 % -------------------------------------------------------------------------
-% COMBUSTION TOOLBOX @v1.0.5
+% COMBUSTION TOOLBOX @v1.1.0
 % A MATLAB-GUI based open-source tool for solving gaseous combustion problems
 %
 % Type of problems:
-%   * TP -----------------> Equilibrium composition at defined T and p
-%   * HP -----------------> Adiabatic T and composition at constant p
-%   * SP -----------------> Isentropic compression/expansion to a specified p
-%   * TV -----------------> Equilibrium composition at defined T and constant v
-%   * EV -----------------> Adiabatic T and composition at constant v
-%   * SV -----------------> Isentropic compression/expansion to a specified v
-%   * SHOCK_I ------------> Planar incident shock wave
-%   * SHOCK_R ------------> Planar reflected shock wave
-%   * SHOCK_OBLIQUE ------> Oblique incident shock wave
-%   * SHOCK_OBLIQUE_R ----> Oblique incident and reflected states
-%   * SHOCK_POLAR --------> Shock polar diagrams
-%   * SHOCK_POLAR_R ------> Shock polar diagrams for incident and reflected states
-%   * SHOCK_IDEAL_GAS ----> Planar incident shock wave for a fixed adiabatic index
-%   * DET ----------------> Chapman-Jouguet Detonation
-%   * DET_R --------------> Reflected Chapman-Jouguet Detonation
-%   * DET_OBLIQUE --------> Oblique Detonation
-%   * DET_POLAR ----------> Detonation polar diagrams
-%   * DET_OVERDRIVEN -----> Over-driven Detonation    
-%   * DET_OVERDRIVEN_R ---> Over-driven reflected Detonation
-%   * DET_UNDERDRIVEN ----> Under-driven Detonation
-%   * DET_UNDERDRIVEN_R --> Under-driven reflected Detonation
-%   * ROCKET -------------> Propellant rocket performance   
+%   * TP ------------------> Equilibrium composition at defined T and p
+%   * HP ------------------> Adiabatic T and composition at constant p
+%   * SP ------------------> Isentropic compression/expansion to a specified p
+%   * TV ------------------> Equilibrium composition at defined T and constant v
+%   * EV ------------------> Adiabatic T and composition at constant v
+%   * SV ------------------> Isentropic compression/expansion to a specified v
+%   * SHOCK_I -------------> Planar incident shock wave
+%   * SHOCK_R -------------> Planar reflected shock wave
+%   * SHOCK_OBLIQUE -------> Oblique incident shock wave
+%   * SHOCK_OBLIQUE_R -----> Oblique incident and reflected states
+%   * SHOCK_POLAR ---------> Shock polar diagrams
+%   * SHOCK_POLAR_R -------> Shock polar diagrams for incident and reflected states
+%   * SHOCK_POLAR_LIMITRR -> Shock polar diagrams in the limit of regular reflection
+%   * SHOCK_IDEAL_GAS -----> Planar incident shock wave for a fixed adiabatic index
+%   * DET -----------------> Chapman-Jouguet Detonation
+%   * DET_R ---------------> Reflected Chapman-Jouguet Detonation
+%   * DET_OBLIQUE ---------> Oblique Detonation
+%   * DET_POLAR -----------> Detonation polar diagrams
+%   * DET_OVERDRIVEN ------> Over-driven Detonation    
+%   * DET_OVERDRIVEN_R ----> Over-driven reflected Detonation
+%   * DET_UNDERDRIVEN -----> Under-driven Detonation
+%   * DET_UNDERDRIVEN_R ---> Under-driven reflected Detonation
+%   * ROCKET --------------> Propellant rocket performance   
 %
 % SEE THE EXAMPLES OR WEBSITE TO KNOW HOW TO START USING THE COMBUSTION TOOLBOX
 %
@@ -38,13 +39,13 @@
 % Citing:
 %     Cuadra, A., Huete, C., & Vera, M. (2024). Combustion Toolbox: A
 %     MATLAB-GUI based open-source tool for solving gaseous combustion
-%     problems. (v1.0.5). Zenodo. https://doi.org/10.5281/zenodo.5554911.
+%     problems. (v1.1.0). Zenodo. https://doi.org/10.5281/zenodo.5554911.
 %
 % @author: Alberto Cuadra Lara
-%          PhD Candidate - Group Fluid Mechanics
+%          Postdoctoral researcher - Group Fluid Mechanics
 %          Universidad Carlos III de Madrid
 %                  
-% Last update Jan 29 2024
+% Last update Jun 07 2024
 % -------------------------------------------------------------------------
 help CONTENTS.m
 

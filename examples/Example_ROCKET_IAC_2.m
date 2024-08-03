@@ -10,27 +10,51 @@
 %                    'C2','C2H4','CH','CH3','CH4','CN','H',...
 %                    'HCN','HCO','N','NH','NH2','NH3','NO','O','OH'}
 %   
-% See wiki or list_species() for more predefined sets of species
+% See wiki or setListspecies method from ChemicalSystem class for more
+% predefined sets of species
 %
 % @author: Alberto Cuadra Lara
-%          PhD Candidate - Group Fluid Mechanics
+%          Postdoctoral researcher - Group Fluid Mechanics
 %          Universidad Carlos III de Madrid
 %                 
-% Last update Feb 08 2024
+% Last update Jul 30 2024
 % -------------------------------------------------------------------------
 
-%% INITIALIZE
-self = App('Soot Formation');
-%% INITIAL CONDITIONS
-self = set_prop(self, 'TR', 298.15, 'pR', 100 * 1.01325, 'phi', 2);
-self.PD.S_Fuel     = {'CH6N2bLb', 'N2H4bLb'};
-self.PD.N_Fuel     = convert_weight_percentage_to_moles(self.PD.S_Fuel, [86, 14], self.DB);
-self.PD.S_Oxidizer = {'N2O4bLb', 'N2O3'};
-self.PD.wt_ratio_oxidizers = [36.67, 63.33];
-self.PD.FLAG_IAC = true;
-%% ADDITIONAL INPUTS (DEPENDS OF THE PROBLEM SELECTED)
-self = set_prop(self, 'Aratio', 3);
-%% SOLVE PROBLEM
-self = solve_problem(self, 'ROCKET');
-%% DISPLAY RESULTS (PLOTS)
-post_results(self);
+% Import packages
+import combustiontoolbox.databases.NasaDatabase
+import combustiontoolbox.core.*
+import combustiontoolbox.rocket.*
+import combustiontoolbox.utils.display.*
+
+% Get Nasa database
+DB = NasaDatabase();
+
+% Define chemical system
+system = ChemicalSystem(DB, 'soot Formation');
+
+% Initialize mixture
+mix = Mixture(system);
+
+% Define chemical state
+set(mix, {'CH6N2bLb', 'N2H4bLb'}, 'fuel', [86, 14], 'weightPercentage');
+set(mix, {'N2O4bLb', 'N2O3'}, 'oxidizer', [36.67, 63.33], 'weightPercentage');
+
+% Define properties
+mixArray1 = setProperties(mix, 'temperature', 298.15, 'pressure', 100 * 1.01325, 'equivalenceRatio', 2:0.01:5, 'areaRatio', 3);
+
+% Initialize solver
+solver = RocketSolver('problemType', 'ROCKET_IAC');
+
+% Solve problem
+[mixArray1, mixArray2, mixArray3, mixArray4] = solver.solveArray(mixArray1);
+
+% Plot properties
+ax1 = plotProperties(repmat({'equivalenceRatio'}, 1, 12), mixArray4, {'T', 'p', 'h', 'e', 'g', 'cp', 's', 'gamma_s', 'sound', 'u', 'I_sp', 'I_vac'}, mixArray4, 'basis', {[], [], 'mi', 'mi', 'mi', 'mi', 'mi', [], [], [], [], []});
+ax1 = plotProperties(repmat({'equivalenceRatio'}, 1, 12), mixArray3, {'T', 'p', 'h', 'e', 'g', 'cp', 's', 'gamma_s', 'sound', 'u', 'I_sp', 'I_vac'}, mixArray3, 'basis', {[], [], 'mi', 'mi', 'mi', 'mi', 'mi', [], [], [], [], []}, 'ax', ax1);
+ax1 = plotProperties(repmat({'equivalenceRatio'}, 1, 10), mixArray2, {'T', 'p', 'h', 'e', 'g', 'cp', 's', 'gamma_s', 'sound', 'u'}, mixArray2, 'basis', {[], [], 'mi', 'mi', 'mi', 'mi', 'mi', [], [], []}, 'ax', ax1);
+leg = legend(ax1.Children(end), {'Exit', 'Throat', 'Chamber'}, 'Interpreter', 'latex', 'FontSize', ax1.Children(end).FontSize);
+
+% Plot molar fractions
+plotComposition(mixArray2(1), mixArray1, 'equivalenceRatio', 'Xi', 'mintol', 1e-14, 'y_var', mixArray2, 'title', 'Chamber');
+plotComposition(mixArray3(1), mixArray1, 'equivalenceRatio', 'Xi', 'mintol', 1e-14, 'y_var', mixArray3, 'title', 'Throat');
+plotComposition(mixArray4(1), mixArray1, 'equivalenceRatio', 'Xi', 'mintol', 1e-14, 'y_var', mixArray4, 'title', 'Exit');

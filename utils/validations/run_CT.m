@@ -1,6 +1,8 @@
 function self = run_CT(varargin)
     % A generalized function to run Combustion Toolbox for a given set of
     % inputs. Otherwise, it will run the predefined case.
+    
+    % cd('../../');
 
     % DEFAULT VALUES
     DB = [];
@@ -16,7 +18,7 @@ function self = run_CT(varargin)
     S_Inert = []; N_Inert = [];
     ratio_oxidizers_O2 = [79, 21] / 21;
     ratio_inerts_O2 = [];
-    ProblemType = 'HP';
+    problemType = 'HP';
     tolN = 1e-18;
     N_points_polar = 100;
     FLAG_PHI = true;
@@ -34,10 +36,8 @@ function self = run_CT(varargin)
         switch lower(varargin{i})
             case {'db'}
                 DB = varargin{i + 1};
-            case {'db_master'}
-                DB_master = varargin{i + 1};
             case {'problemtype', 'problem'}
-                ProblemType = varargin{i + 1};
+                problemType = varargin{i + 1};
             case {'listspecies', 'species'}
                 species = varargin{i + 1};
             case {'tr'}
@@ -110,97 +110,123 @@ function self = run_CT(varargin)
 
     end
 
-    % INITIALIZE
-    if isempty(DB) || isempty(DB_master)
-        self = App(species);
-    else
-        self = App('fast', DB_master, DB, species);
-    end
-    % MISCELLANEOUS
-    self.Misc.FLAG_RESULTS = FLAG_RESULTS;
-    % TUNNING PROPERTIES
-    self.TN.tolN = tolN;
-    self.TN.N_points_polar = N_points_polar;
-    self.TN.FLAG_FAST = FLAG_FAST;
-    % INITIAL CONDITIONS
-    self = set_prop(self, 'TR', Temp_mix1, 'pR', Pressure_mix1);
-
-    if FLAG_PHI
-        self = set_prop(self, 'phi', EquivalenceRatio);
+    % Initialiaze
+    if isempty(DB)
+        DB = combustiontoolbox.databases.NasaDatabase();
     end
     
-    if ~isempty(vP_vR)
-        self = set_prop(self, 'vP_vR', vP_vR);
+    system = combustiontoolbox.core.ChemicalSystem(DB, species);
+
+    % MISCELLANEOUS
+    self.Misc.FLAG_RESULTS = FLAG_RESULTS;
+
+    % Define the initial mixture composition
+    mix1 = combustiontoolbox.core.Mixture(system);
+    set(mix1, S_Fuel, N_Fuel);
+    % set(mix1, S_Oxidizer, 'oxidizer', N_Oxidizer);
+    % set(mix1, S_Inert, 'inert', N_Inert);
+    
+    % Define the thermodynamic state
+    mix1Array = setProperties(mix1, 'temperature', Temp_mix1 * ones(size(Temp_mix2)), 'pressure', Pressure_mix1);
+    
+    % Select solver
+    switch upper(problemType)
+        case {'TP', 'HP', 'SP', 'TV', 'EV', 'SV'}
+            solver = combustiontoolbox.equilibrium.EquilibriumSolver('problemType', problemType);
     end
+    
+    % Solve chemical transformation at equilibrium
+    % tic
+    numCases = length(Temp_mix2);
+    mix2Array = setProperties(mix1, 'temperature', Temp_mix2, 'pressure', Pressure_mix2);
+    solver.solveArray(mix2Array);
 
-    if ~isempty(Aratio_c)
-        self = set_prop(self, 'Aratio_c', Aratio_c);
-    end
 
-    if ~isempty(Aratio)
-        self = set_prop(self, 'Aratio', Aratio);
-    end
+    % % TUNNING PROPERTIES
+    % self.TN.tolN = tolN;
+    % self.TN.N_points_polar = N_points_polar;
+    % self.TN.FLAG_FAST = FLAG_FAST;
+    % 
+    % % INITIAL CONDITIONS
+    % self = set_prop(self, 'TR', Temp_mix1, 'pR', Pressure_mix1);
+    % 
+    % if FLAG_PHI
+    %     self = set_prop(self, 'phi', EquivalenceRatio);
+    % end
+    % 
+    % if ~isempty(vP_vR)
+    %     self = set_prop(self, 'vP_vR', vP_vR);
+    % end
+    % 
+    % if ~isempty(Aratio_c)
+    %     self = set_prop(self, 'Aratio_c', Aratio_c);
+    % end
+    % 
+    % if ~isempty(Aratio)
+    %     self = set_prop(self, 'Aratio', Aratio);
+    % end
+    % 
+    % self.PD.FLAG_IAC = FLAG_IAC;
+    % self.PD.FLAG_TCHEM_FROZEN = FLAG_TCHEM_FROZEN;
+    % self.PD.FLAG_FROZEN = FLAG_FROZEN;
+    % self.PD.S_Fuel = S_Fuel; self.PD.N_Fuel = N_Fuel;
+    % self.PD.S_Oxidizer = S_Oxidizer; self.PD.N_Oxidizer = N_Oxidizer;
+    % self.PD.S_Inert = S_Inert; self.PD.N_Inert = N_Inert;
+    % self.PD.ratio_oxidizers_O2 = ratio_oxidizers_O2;
+    % self.PD.ratio_inerts_O2 = ratio_inerts_O2;
+    % % ADDITIONAL INPUTS (DEPENDS OF THE PROBLEM SELECTED)
+    % self = set_prop(self, 'pP', Pressure_mix2, 'TP', Temp_mix2);
+    % 
+    % if exist('Velocity', 'var')
+    %     self = set_prop(self, 'u1', Velocity, 'phi', 1 * ones(1, length(Velocity)));
+    % end
+    % 
+    % % SOLVE PROBLEM
+    % self = solve_problem(self, problemType);
 
-    self.PD.FLAG_IAC = FLAG_IAC;
-    self.PD.FLAG_TCHEM_FROZEN = FLAG_TCHEM_FROZEN;
-    self.PD.FLAG_FROZEN = FLAG_FROZEN;
-    self.PD.S_Fuel = S_Fuel; self.PD.N_Fuel = N_Fuel;
-    self.PD.S_Oxidizer = S_Oxidizer; self.PD.N_Oxidizer = N_Oxidizer;
-    self.PD.S_Inert = S_Inert; self.PD.N_Inert = N_Inert;
-    self.PD.ratio_oxidizers_O2 = ratio_oxidizers_O2;
-    self.PD.ratio_inerts_O2 = ratio_inerts_O2;
-    % ADDITIONAL INPUTS (DEPENDS OF THE PROBLEM SELECTED)
-    self = set_prop(self, 'pP', Pressure_mix2, 'TP', Temp_mix2);
-
-    if exist('Velocity', 'var')
-        self = set_prop(self, 'u1', Velocity, 'phi', 1 * ones(1, length(Velocity)));
-    end
-
-    % SOLVE PROBLEM
-    self = solve_problem(self, ProblemType);
     % SET PROPERTIES AS CEA
-    for i = length(self.PD.range):-1:1
+    for i = numCases:-1:1
         % Mix 1
-        self.PS.strR{i}.h = enthalpy_mass(self.PS.strR{i});
-        self.PS.strR{i}.e = intEnergy_mass(self.PS.strR{i});
-        self.PS.strR{i}.g = gibbs_mass(self.PS.strR{i});
-        self.PS.strR{i}.S = entropy_mass(self.PS.strR{i});
-        self.PS.strR{i}.cP = cp_mass(self.PS.strR{i});
-        self.PS.strR{i}.cV = self.PS.strR{i}.cP / self.PS.strR{i}.gamma_s;
+        self.PS.strR{i}.h = enthalpy_mass(mix1Array(i));
+        self.PS.strR{i}.e = intEnergy_mass(mix1Array(i));
+        self.PS.strR{i}.g = gibbs_mass(mix1Array(i));
+        self.PS.strR{i}.S = entropy_mass(mix1Array(i));
+        self.PS.strR{i}.cP = cp_mass(mix1Array(i));
+        self.PS.strR{i}.cV = mix1Array(i).cp / mix1Array(i).gamma_s;
         % Mix 2
-        self.PS.strP{i}.h = enthalpy_mass(self.PS.strP{i});
-        self.PS.strP{i}.e = intEnergy_mass(self.PS.strP{i});
-        self.PS.strP{i}.g = gibbs_mass(self.PS.strP{i});
-        self.PS.strP{i}.S = entropy_mass(self.PS.strP{i});
-        self.PS.strP{i}.cP = cp_mass(self.PS.strP{i});
-        self.PS.strP{i}.cV = self.PS.strP{i}.cP / self.PS.strP{i}.gamma_s;
+        self.PS.strP{i}.h = enthalpy_mass(mix2Array(i));
+        self.PS.strP{i}.e = intEnergy_mass(mix2Array(i));
+        self.PS.strP{i}.g = gibbs_mass(mix2Array(i));
+        self.PS.strP{i}.S = entropy_mass(mix2Array(i));
+        self.PS.strP{i}.cP = cp_mass(mix2Array(i));
+        self.PS.strP{i}.cV = mix2Array(i).cp / mix2Array(i).gamma_s;
 
-        if contains(ProblemType, '_R')
-            self.PS.strP{i}.u = self.PS.strR{i}.u;
-        end
-
-        if contains(ProblemType, 'ROCKET')
-            self.PS.mix2_c{i}.h = enthalpy_mass(self.PS.mix2_c{i});
-            self.PS.mix2_c{i}.e = intEnergy_mass(self.PS.mix2_c{i});
-            self.PS.mix2_c{i}.g = gibbs_mass(self.PS.mix2_c{i});
-            self.PS.mix2_c{i}.S = entropy_mass(self.PS.mix2_c{i});
-            self.PS.mix2_c{i}.cP = cp_mass(self.PS.mix2_c{i});
-            self.PS.mix2_c{i}.cV = self.PS.mix2_c{i}.cP / self.PS.mix2_c{i}.gamma_s;
-
-            self.PS.mix3{i}.h = enthalpy_mass(self.PS.mix3{i});
-            self.PS.mix3{i}.e = intEnergy_mass(self.PS.mix3{i});
-            self.PS.mix3{i}.g = gibbs_mass(self.PS.mix3{i});
-            self.PS.mix3{i}.S = entropy_mass(self.PS.mix3{i});
-            self.PS.mix3{i}.cP = cp_mass(self.PS.mix3{i});
-            self.PS.mix3{i}.cV = self.PS.mix3{i}.cP / self.PS.mix3{i}.gamma_s;
-        end
-
-        if contains(ProblemType, 'SHOCK') || contains(ProblemType, 'DET')
-            self.PS.strR{i}.u_preshock = self.PS.strR{i}.u;
-            self.PS.strR{i}.u_postshock = self.PS.strP{i}.v_shock;
-            self.PS.strP{i}.u_preshock = self.PS.strR{i}.u;
-            self.PS.strP{i}.u_postshock = self.PS.strP{i}.v_shock;
-        end
+        % if contains(problemType, '_R')
+        %     self.PS.strP{i}.u = self.PS.strR{i}.u;
+        % end
+        % 
+        % if contains(problemType, 'ROCKET')
+        %     self.PS.mix2_c{i}.h = enthalpy_mass(self.PS.mix2_c{i});
+        %     self.PS.mix2_c{i}.e = intEnergy_mass(self.PS.mix2_c{i});
+        %     self.PS.mix2_c{i}.g = gibbs_mass(self.PS.mix2_c{i});
+        %     self.PS.mix2_c{i}.S = entropy_mass(self.PS.mix2_c{i});
+        %     self.PS.mix2_c{i}.cP = cp_mass(self.PS.mix2_c{i});
+        %     self.PS.mix2_c{i}.cV = self.PS.mix2_c{i}.cP / self.PS.mix2_c{i}.gamma_s;
+        % 
+        %     self.PS.mix3{i}.h = enthalpy_mass(self.PS.mix3{i});
+        %     self.PS.mix3{i}.e = intEnergy_mass(self.PS.mix3{i});
+        %     self.PS.mix3{i}.g = gibbs_mass(self.PS.mix3{i});
+        %     self.PS.mix3{i}.S = entropy_mass(self.PS.mix3{i});
+        %     self.PS.mix3{i}.cP = cp_mass(self.PS.mix3{i});
+        %     self.PS.mix3{i}.cV = self.PS.mix3{i}.cP / self.PS.mix3{i}.gamma_s;
+        % end
+        % 
+        % if contains(problemType, 'SHOCK') || contains(problemType, 'DET')
+        %     self.PS.strR{i}.u_preshock = self.PS.strR{i}.u;
+        %     self.PS.strR{i}.u_postshock = self.PS.strP{i}.v_shock;
+        %     self.PS.strP{i}.u_preshock = self.PS.strR{i}.u;
+        %     self.PS.strP{i}.u_postshock = self.PS.strP{i}.v_shock;
+        % end
 
     end
 

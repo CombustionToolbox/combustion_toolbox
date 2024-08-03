@@ -1,4 +1,4 @@
-function cP = get_thermo_askari(LS, T, p, DB)
+function cp = get_thermo_askari(LS, T, p, DB)
     % Function that computes the vector of specific heats at constant
     % pressure for the given set of species [J/(mol-K)]
     %
@@ -8,13 +8,13 @@ function cP = get_thermo_askari(LS, T, p, DB)
     %     DB (struct): Database with custom thermodynamic polynomials functions generated from NASAs 9 polynomials fits
     %
     % Returns:
-    %     cP (float): Specific heat at constant pressure [J/(mol-K)]
+    %     cp (float): Specific heat at constant pressure [J/(mol-K)]
 
     for i=length(LS):-1:1
         species = LS{i};
         coeff = compute_coefficents(species, p, DB);
         W(i) = compute_W(T, coeff); % [kg/mol]
-        cP(i) = compute_cp(T, coeff) * W; % [J/(mol-K)]
+        cp(i) = compute_cp(T, coeff) * W; % [J/(mol-K)]
     end
 end
 

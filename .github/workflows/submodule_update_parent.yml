@@ -15,7 +15,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
         with: 
-          repository: AlbertoCuadra/combustion_toolbox_website
+          repository: CombustionToolbox/combustion_toolbox_website
           token: ${{ secrets.CI_TOKEN }}
           submodules: true
 

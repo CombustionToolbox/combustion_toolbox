@@ -17,7 +17,7 @@ classdef uilicense < matlab.apps.AppBase
         % Code that executes after component creation
         function startupFcn(app)
             % Set version Combustion Toolbox
-            release = get_combustion_toolbox_version();
+            release = combustiontoolbox.common.Constants.release;
             app.Label_title.Text = ['Combustion Toolbox ', release];
             % Set license
             app.TextArea.Value = GPL();
@@ -71,7 +71,7 @@ classdef uilicense < matlab.apps.AppBase
             app.Label_2 = uilabel(app.UILicense);
             app.Label_2.HorizontalAlignment = 'center';
             app.Label_2.Position = [111 376 399 30];
-            app.Label_2.Text = {'A MATLAB-GUI based open-source tool for solving combustion problems'; 'Copyright (C) 2022  Alberto Cuadra Lara and contributors'};
+            app.Label_2.Text = {'A MATLAB-GUI based open-source tool for solving combustion problems'; sprintf('Copyright (C) 2022-%d Alberto Cuadra Lara and contributors', year(datetime('now')))};
 
             % Create Label_3
             app.Label_3 = uilabel(app.UILicense);
@@ -82,9 +82,9 @@ classdef uilicense < matlab.apps.AppBase
             % Create Hyperlink
             app.Hyperlink = uihyperlink(app.UILicense);
             app.Hyperlink.HorizontalAlignment = 'center';
-            app.Hyperlink.URL = 'https://combustion-toolbox-website.readthedocs.io/';
+            app.Hyperlink.URL = combustiontoolbox.utils.SystemUtils.url.website;
             app.Hyperlink.Position = [158 355 304 22];
-            app.Hyperlink.Text = 'https://combustion-toolbox-website.readthedocs.io/';
+            app.Hyperlink.Text = combustiontoolbox.utils.SystemUtils.url.website;
 
             % Show the figure after all components are created
             app.UILicense.Visible = 'on';

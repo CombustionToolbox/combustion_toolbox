@@ -10,28 +10,44 @@
 %              'HNO3','NH','NH2OH','NO3','N2H2','N2O3','N3','OH',...
 %              'HNO2','N','NH3','NO2','N2O','N2H4','N2O5','O','O3',...
 %              'HO2','NH2','H2O2','N3H','NH2NO2'}
-%   
-% See wiki or list_species() for more predefined sets of species
+%
+% See wiki or setListspecies method from ChemicalSystem class for more
+% predefined sets of species
 %
 % @author: Alberto Cuadra Lara
-%          PhD Candidate - Group Fluid Mechanics
+%          Postdoctoral researcher - Group Fluid Mechanics
 %          Universidad Carlos III de Madrid
-%                 
-% Last update Oct 07 2022
+%
+% Last update Aug 02 2024
 % -------------------------------------------------------------------------
 
-%% INITIALIZE
-self = App('Hydrogen');
-%% INITIAL CONDITIONS
-self = set_prop(self, 'TR', 300, 'pR', 1 * 1.01325, 'phi', 1);
-self.PD.S_Fuel = {'H2'};
-self.PD.S_Oxidizer = {'N2', 'O2'};
-self.PD.ratio_oxidizers_O2 = [79, 21]/21;
-%% ADDITIONAL INPUTS (DEPENDS OF THE PROBLEM SELECTED)
-self = set_prop(self, 'drive_factor', [1.0382, 1.2458, 1.4534, 1.6611, 2.0763]);
-%% TUNING PROPERTIES
-self.TN.N_points_polar = 300; % Number of points to compute polar curves
-%% SOLVE PROBLEM
-self = solve_problem(self, 'DET_POLAR');
-%% DISPLAY RESULTS (PLOTS)
-post_results(self);
+% Import packages
+import combustiontoolbox.databases.NasaDatabase
+import combustiontoolbox.core.*
+import combustiontoolbox.shockdetonation.*
+import combustiontoolbox.utils.display.*
+
+% Get Nasa database
+DB = NasaDatabase();
+
+% Define chemical system
+system = ChemicalSystem(DB, 'hydrogen');
+
+% Initialize mixture
+mix = Mixture(system);
+
+% Define chemical state
+set(mix, {'H2'}, 'fuel', 1);
+set(mix, {'N2', 'O2'}, 'oxidizer', [79, 21] / 21);
+
+% Define properties
+mixArray1 = setProperties(mix, 'temperature', 300, 'pressure', 1.01325, 'equivalenceRatio', 1, 'driveFactor', [1.0382, 1.2458, 1.4534, 1.6611, 2.0763]);
+
+% Initialize solver
+solver = DetonationSolver('problemType', 'DET_POLAR', 'numPointsPolar', 300);
+
+% Solve problem
+[mixArray1, mixArray2] = solver.solveArray(mixArray1);
+
+% Plot polars
+[ax1, ax2, ax3] = plotPolar(mixArray1, mixArray2);

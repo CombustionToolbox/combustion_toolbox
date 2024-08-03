@@ -10,8 +10,8 @@ function [h0, DhT] = species_h0_NASA(species, temperature, DB)
     % Returns:
     %     Tuple containing
     %
-    %     * h0 (float): Enthalpy in molar basis [kJ/mol]
-    %     * DhT (float): Thermal enthalpy in molar basis [kJ/mol]
+    %     * h0 (float): Enthalpy in molar basis [J/mol]
+    %     * DhT (float): Thermal enthalpy in molar basis [J/mol]
     %
     % Example:
     %     [h0, DhT] = species_h0_NASA('H2O', 300:100:6000, DB)
@@ -21,7 +21,7 @@ function [h0, DhT] = species_h0_NASA(species, temperature, DB)
     hf0 = DB.(species).hf; % [J/mol];
     % Unpack NASA's polynomials coefficients
     [a, b, tRange, tExponents, ctTInt] = unpack_NASA_coefficients(species, DB);
-    % Compute specific enthalpy [kJ/mol]
+    % Compute specific enthalpy [J/mol]
     for i = length(temperature):-1:1
         T = temperature(i);
 
@@ -43,6 +43,6 @@ function [h0, DhT] = species_h0_NASA(species, temperature, DB)
     end
 
     % Change units [kJ/mol]
-    h0 = h0 * 1e-3;
-    DhT = DhT * 1e-3;
+    % h0 = h0 * 1e-3;
+    % DhT = DhT * 1e-3;
 end

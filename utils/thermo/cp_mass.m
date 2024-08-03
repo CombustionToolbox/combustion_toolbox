@@ -7,5 +7,5 @@ function value = cp_mass(mix)
     % Returns:
     %     value (float): Mass-basis specific heat at constant pressure [kJ/kg-K] of the mixture
 
-    value = mix.cP / mix.mi * 1e-3;
+    value = mix.cp / mix.mi * 1e-3;
 end

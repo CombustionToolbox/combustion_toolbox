@@ -1,4 +1,4 @@
-function problems_solved = run_validation_HP_CEA_3
+function run_validation_HP_CEA_3
     % Run test validation_HP_CEA_3:
     % Contrasted with: NASA's Chemical Equilibrium with Applications software
     % Problem type: Adiabatic T and composition at constant p
@@ -7,35 +7,65 @@ function problems_solved = run_validation_HP_CEA_3
     % Equivalence ratio [-] = 0.5:0.01:4
     % Initial mixture: CH4 + AIR_IDEAL (79% N2 + 21% O2)
     % List of species considered: list_species('Soot Formation Extended')
+
+    % Import packages
+    import combustiontoolbox.databases.NasaDatabase
+    import combustiontoolbox.core.*
+    import combustiontoolbox.equilibrium.*
+    import combustiontoolbox.utils.display.*
     
-    % Inputs
-    Fuel = 'CH4';
-    prefixDataName = Fuel;
+    % Benchmark?
+    FLAG_BENCHMARK = false;
+
+    % Definitions
+    fuel = 'CH4';
+    prefixDataName = fuel;
     filename = {strcat(prefixDataName, '_air1_HP.out'), strcat(prefixDataName, '_air1_HP2.out'), strcat(prefixDataName, '_air1_HP3.out')};
-    LS =  'Soot Formation Extended';
-    display_species = {'CO2', 'CO', 'H2O', 'H2', 'O2', 'N2',...
+    listSpecies =  'Soot Formation Extended';
+    displaySpecies = {'CO2', 'CO', 'H2O', 'H2', 'O2', 'N2',...
                       'HCN','H','OH','O','CN','NH3','CH4','C2H4','CH3',...
                       'NO','HCO','NH2','NH','N','CH','Cbgrb'};
-    tolN = 1e-18;
-    % Combustion Toolbox
-    results_CT = run_CT('ListSpecies', LS,...
-                        'S_Fuel', Fuel,...
-                        'S_Oxidizer', {'N2', 'O2'},...
-                        'ratio_oxidizer_O2', [79, 21]/21,...
-                        'EquivalenceRatio', 0.5:0.01:4,...
-                        'tolN', tolN);
-    problems_solved = length(results_CT.PD.range);
+    tolMoles = 1e-18;
+
+    % Get Nasa database
+    DB = NasaDatabase('FLAG_BENCHMARK', FLAG_BENCHMARK);
+    
+    % Define chemical system
+    system = ChemicalSystem(DB, listSpecies);
+    
+    % Initialize mixture
+    mix = Mixture(system);
+    
+    % Define chemical state
+    set(mix, {fuel}, 'fuel', 1);
+    set(mix, {'N2', 'O2'}, 'oxidizer', [79, 21] / 21);
+    
+    % Define properties
+    mixArray = setProperties(mix, 'temperature', 300, 'pressure', 1, 'equivalenceRatio', 0.5:0.01:4);
+    
+    % Initialize solver
+    solver = EquilibriumSolver('problemType', 'HP', 'tolMoles', tolMoles, 'FLAG_RESULTS', false);
+    
+    % Solve problem
+    solver.solveArray(mixArray);
+    
+    if FLAG_BENCHMARK
+        return
+    end
+
     % Load results CEA 
-    results_CEA = data_CEA(filename, display_species);
-    % Display validation (plot)
-    % * Molar fractions
-    [~, fig1] = plot_molar_fractions(results_CT, results_CT.PS.strP, 'phi', 'Xi', 'validation', results_CEA, 'display_species', display_species);
-    % * Properties mixture 2
-    fig2 = plot_properties_validation(results_CT, results_CEA, {'phi', 'phi', 'phi', 'phi', 'phi', 'phi', 'phi', 'phi'}, {'T', 'rho', 'h', 'e', 'g', 'cP', 'S', 'gamma_s'}, 'mix2');
+    resultsCEA = data_CEA(filename, displaySpecies);
+    
+    % Plot molar fractions
+    fig1 = plotComposition(mixArray(1), mixArray, 'equivalenceRatio', 'Xi', 'displaySpecies', displaySpecies, 'mintol', 1e-14, 'validation', resultsCEA);
+
+    % Plot properties
+    fig2 = plotProperties(repmat({'equivalenceRatio'}, 1, 9), mixArray, {'T', 'rho', 'h', 'e', 'g', 'cp', 's', 'gamma_s', 'sound'}, mixArray, 'basis', {[], [], 'mi', 'mi', 'mi', 'mi', 'mi', [], []}, 'validation', resultsCEA);
+
     % Save plots
-    folderpath = strcat(pwd,'\Validations\Figures\');
+    folderpath = fullfile(pwd, 'validations', 'figures');
     stack_trace = dbstack;
     filename = stack_trace.name;
-    saveas(fig1, strcat(folderpath, filename, '_molar'), 'svg');
-    saveas(fig2, strcat(folderpath, filename, '_properties'), 'svg');
+    saveas(fig1, fullfile(folderpath, strcat(filename, '_molar')), 'svg');
+    saveas(fig2, fullfile(folderpath, strcat(filename, '_properties')), 'svg');
 end

@@ -9,47 +9,343 @@ function app = gui_CalculateButtonPushed(app, event)
     % Returns:
     %   app (object): Combustion Toolbox app object
     
+    % Definitions
+    propertyNameR1 = 'temperature';
+    propertyNameR2 = 'pressure';
+    equivalenceRatio = gui_get_prop(app.edit_phi.Value);
+    problemType = app.ProblemType.Value;
+    listSpecies = app.listbox_Products.Items;
+    FLAG_EQUIVALENCE_RATIO = ~isempty(equivalenceRatio);
+    FLAG_RESULTS = app.PrintresultsCheckBox.Value;
+    
+    % Initialization
+    additionalInputsR = {};
+    additionalInputsP = {};
+    FLAG_BETA = false;
+    FLAG_THETA = false;
+
+    if FLAG_EQUIVALENCE_RATIO
+        additionalInputsR = {'equivalenceRatio', equivalenceRatio};
+        additionalInputsP = {'equivalenceRatio', equivalenceRatio};
+    end
+
     try
         % Set lamp to Working color
         app.Lamp.Color = app.color_lamp_working;
-        % Get List of Species considered (reactants + products)
-        app = get_listSpecies_gui(app);
-        % Initialize variable self
-        self = App('fast', app.DB_master, app.DB, app.LS);
-        % Get Miscellaneous
-        self = get_miscellaneous_values(app, self);
-        % Set FLAG GUI
-        self.Misc.FLAG_GUI = true;
-        % Get Print results FLAG (debug mode)
-        self.Misc.FLAG_RESULTS = app.PrintresultsCheckBox.Value;
-        % Get tuning values and constants
-        self = get_tuning_values(app, self);
-        % Get initial conditions
-        self = get_input_constrains(app, self);
-        self = gui_get_reactants(app, event, self);
-        % Get display species
-        self = gui_get_display_species(app, self);
+        
+        % Get properties
+        propertyR1 = gui_get_prop(app.PR1.Value);
+        propertyR2 = gui_get_prop(app.PR2.Value);
+
+        switch problemType
+            case {'TP', 'TV'}
+                propertyP1 = gui_get_prop(app.PP1.Value);
+                propertyP2 = gui_get_prop(app.PP2.Value);
+            case {'SHOCK_I', 'SHOCK_R', 'SHOCK_POLAR'}
+                propertyR4 = gui_get_prop(app.PR4.Value);
+                additionalInputsR = [additionalInputsR, 'mach', propertyR4];
+            case {'SHOCK_OBLIQUE', 'SHOCK_POLAR_R'}
+                    propertyR4 = gui_get_prop(app.PR4.Value);
+                    propertyR5 = gui_get_prop(app.PR5.Value);
+                    propertyP5 = gui_get_prop(app.PP5.Value);
+
+                    if ~isempty(propertyR5)
+                        FLAG_BETA = true;
+                        additionalInputsR = [additionalInputsR, 'mach', propertyR4, 'beta', propertyR5];
+                    else
+                        FLAG_THETA = true;
+                        additionalInputsR = [additionalInputsR, 'mach', propertyR4, 'theta', propertyP5];
+                    end
+                    
+            case {'DET_OVERDRIVEN', 'DET_UNDERDRIVEN', 'DET_OVERDRIVEN_R', 'DET_UNDERDRIVEN_R', 'DET_POLAR'}
+                propertyR3 = gui_get_prop(app.PR3.Value);
+                additionalInputsR = [additionalInputsR, 'driveFactor', propertyR3];
+            case {'DET_OBLIQUE', 'DET_POLAR_R'}
+                    propertyR3 = gui_get_prop(app.PR3.Value);
+                    propertyR4 = gui_get_prop(app.PR4.Value);
+                    propertyP4 = gui_get_prop(app.PP4.Value);
+
+                    if ~isempty(propertyR4)
+                        FLAG_BETA = true;
+                        additionalInputsR = [additionalInputsR, 'driveFactor', propertyR3, 'beta', propertyR4];
+                    else
+                        FLAG_THETA = true;
+                        additionalInputsR = [additionalInputsR, 'driveFactor', propertyR3, 'theta', propertyP4];
+                    end
+            case {'ROCKET'}
+                propertyP1 = gui_get_prop(app.PP1.Value);
+                propertyR3 = gui_get_prop(app.PR3.Value);
+                propertyP3 = gui_get_prop(app.PP3.Value);
+
+                if app.FLAG_IAC.Value
+                    problemType = 'ROCKET_IAC';
+                else
+                    problemType = 'ROCKET_FAC';
+                    assert(~isempty(propertyP1), 'Specify the area chamber / area throat ratio.');
+                    additionalInputsR = [additionalInputsR, 'areaRatioChamber', propertyP1];
+                end
+
+                if ~isempty(propertyR3) % Subsonic region (pre-throat)
+                    additionalInputsR = [additionalInputsR, 'areaRatio', propertyR3];
+                    set(app.rocketSolver, 'FLAG_SUBSONIC',  true);
+                elseif ~isempty(propertyP3) % Supersonic region (post-throat)
+                    additionalInputsR = [additionalInputsR, 'areaRatio', propertyP3];
+                    set(app.rocketSolver, 'FLAG_SUBSONIC',  false);
+                end
+
+            otherwise
+                propertyP1 = propertyR1;
+                propertyP2 = propertyR2;
+        end
+        
+
+        % Check problem type
+        if strcmpi(app.ProblemType.Value(2), 'V')
+            propertyNameR2 = 'volume';
+        end
+        
+        % Define chemical system
+        app.chemicalSystem = combustiontoolbox.core.ChemicalSystem(app.database, listSpecies);
+
+        % Temporal mixture
+        tempMixture = app.mixture.copy();
+        
+        % Initialize mixture
+        app.mixture = combustiontoolbox.core.Mixture(app.chemicalSystem);
+
+        % Define chemical state
+        if ~isempty(tempMixture.listSpeciesFuel)
+            set(app.mixture, tempMixture.listSpeciesFuel, 'fuel', tempMixture.molesFuel);
+        end
+
+        if ~isempty(tempMixture.listSpeciesOxidizer)
+            if isempty(tempMixture.ratioOxidizer)
+                tempMixture.ratioOxidizer = tempMixture.molesOxidizer;
+            end
+            
+            set(app.mixture, tempMixture.listSpeciesOxidizer, 'oxidizer', tempMixture.ratioOxidizer);
+        end
+
+        if ~isempty(tempMixture.listSpeciesInert)
+            set(app.mixture, tempMixture.listSpeciesInert, 'inert', tempMixture.molesInert);
+        end
+        
+        % Set ratioOxidizer
+        app.mixture.ratioOxidizer = tempMixture.ratioOxidizer;
+        
+        % Define mixArray
+        mixArray1 = setProperties(app.mixture, propertyNameR1, propertyR1, propertyNameR2, propertyR2, additionalInputsR{:});
+        
         % Update GUI terminal
-        gui_update_terminal(app, self, 'start');
-        % Solve selected problem
-        self = solve_problem(self, self.PD.ProblemType);
+        gui_update_terminal(app, 'start');
+        
+        % Check conditions
+        if FLAG_BETA & ~FLAG_THETA
+            problemType = [problemType, '_BETA'];
+        elseif ~FLAG_BETA & FLAG_THETA
+            problemType = [problemType, '_THETA'];
+        end
+
+        % Select solver and solve problem
+        switch problemType
+            case {'TP', 'HP', 'SP', 'TV', 'EV', 'SV'}
+                % Define mixArray
+                mixArray2 = setProperties(app.mixture, propertyNameR1, propertyP1, propertyNameR2, propertyP2, additionalInputsP{:});
+                % Select solver
+                solver = set(app.equilibriumSolver, 'problemType', problemType, 'FLAG_RESULTS', FLAG_RESULTS);
+                % Solve problem
+                solver.solveArray(mixArray2);
+                % Set output
+                varargout = {mixArray2};
+                % Set plot properties
+                solver.plotConfig.plotProperties = {'T', 'rho', 'h', 'e', 'g', 'cp', 's', 'gamma_s', 'sound'};
+                solver.plotConfig.plotPropertiesBasis = {[], [], 'mi', 'mi', 'mi', 'mi', 'mi', [], []};
+            case {'SHOCK_I', 'SHOCK_OBLIQUE_BETA', 'SHOCK_POLAR'}
+                % Remove beta/theta
+                problemType = strrep(problemType, '_BETA', '');
+                % Select solver
+                solver = set(app.shockSolver, 'problemType', problemType, 'FLAG_RESULTS', FLAG_RESULTS);
+                % Solve problem
+                [mixArray1, mixArray2] = solver.solveArray(mixArray1);
+                % Set output
+                varargout = {mixArray1, mixArray2};
+                % Set plot properties
+                solver.plotConfig.plotProperties = {'T', 'rho', 'h', 'e', 'g', 'cp', 's', 'gamma_s', 'sound'};
+                solver.plotConfig.plotPropertiesBasis = {[], [], 'mi', 'mi', 'mi', 'mi', 'mi', [], []};
+            case {'SHOCK_R', 'SHOCK_OBLIQUE_THETA'}
+                % Remove beta/theta
+                problemType = strrep(problemType, '_THETA', '');
+                % Select solver
+                solver = set(app.shockSolver, 'problemType', problemType, 'FLAG_RESULTS', FLAG_RESULTS);
+                % Solve problem
+                [mixArray1, mixArray2, mixArray3] = solver.solveArray(mixArray1);
+                % Set output
+                varargout = {mixArray1, mixArray2, mixArray3};
+                % Set plot properties
+                solver.plotConfig.plotProperties = {'T', 'rho', 'h', 'e', 'g', 'cp', 's', 'gamma_s', 'sound'};
+                solver.plotConfig.plotPropertiesBasis = {[], [], 'mi', 'mi', 'mi', 'mi', 'mi', [], []};
+            case {'SHOCK_OBLIQUE_R_BETA', 'SHOCK_OBLIQUE_R_THETA', 'SHOCK_POLAR_LIMITRR'}
+                % Remove beta/theta
+                problemType = strrep(problemType, '_BETA', '');
+                problemType = strrep(problemType, '_THETA', '');
+                % Select solver
+                solver = set(app.shockSolver, 'problemType', problemType, 'FLAG_RESULTS', FLAG_RESULTS);
+                % Solve problem
+                [mixArray1, mixArray2, mixArray3, mix4Array] = solver.solveArray(mixArray1);
+                % Set output
+                varargout = {mixArray1, mixArray2, mixArray3, mix4Array};
+                % Set plot properties
+                solver.plotConfig.plotProperties = {'T', 'rho', 'h', 'e', 'g', 'cp', 's', 'gamma_s', 'sound'};
+                solver.plotConfig.plotPropertiesBasis = {[], [], 'mi', 'mi', 'mi', 'mi', 'mi', [], []};
+            case {'SHOCK_POLAR_R_BETA'}
+                % Remove beta/theta
+                problemType = strrep(problemType, '_BETA', '');
+                % Select solver
+                solver = set(app.shockSolver, 'problemType', problemType, 'FLAG_RESULTS', FLAG_RESULTS);
+                % Solve problem
+                [mixArray1, mixArray2, mixArray3, mix4Array, mix5Array] = solver.solveArray(mixArray1);
+                % Set output
+                varargout = {mixArray1, mixArray2, mixArray3, mix4Array, mix5Array};
+                % Set plot properties
+                solver.plotConfig.plotProperties = {'T', 'rho', 'h', 'e', 'g', 'cp', 's', 'gamma_s', 'sound'};
+                solver.plotConfig.plotPropertiesBasis = {[], [], 'mi', 'mi', 'mi', 'mi', 'mi', [], []};
+            case {'SHOCK_POLAR_R_THETA'}
+                % Remove beta/theta
+                problemType = strrep(problemType, '_THETA', '');
+                % Select solver
+                solver = set(app.shockSolver, 'problemType', problemType, 'FLAG_RESULTS', FLAG_RESULTS);
+                % Solve problem
+                [mixArray1, mixArray2, mixArray3, mix4Array, mix5Array, mix6Array] = solver.solveArray(mixArray1);
+                % Set output
+                varargout = {mixArray1, mixArray2, mixArray3, mix4Array, mix5Array, mix6Array};
+                % Set plot properties
+                solver.plotConfig.plotProperties = {'T', 'rho', 'h', 'e', 'g', 'cp', 's', 'gamma_s', 'sound'};
+                solver.plotConfig.plotPropertiesBasis = {[], [], 'mi', 'mi', 'mi', 'mi', 'mi', [], []};
+            case {'DET', 'DET_OVERDRIVEN', 'DET_UNDERDRIVEN', 'DET_POLAR'}
+                % Select solver
+                solver = set(app.detonationSolver, 'problemType', problemType, 'FLAG_RESULTS', FLAG_RESULTS);
+                % Solve problem
+                [mixArray1, mixArray2] = solver.solveArray(mixArray1);
+                % Set output
+                varargout = {mixArray1, mixArray2};
+                % Set plot properties
+                solver.plotConfig.plotProperties = {'T', 'rho', 'h', 'e', 'g', 'cp', 's', 'gamma_s', 'sound', 'uShock'};
+                solver.plotConfig.plotPropertiesBasis = {[], [], 'mi', 'mi', 'mi', 'mi', 'mi', [], [], []};
+            case {'DET_R', 'DET_OVERDRIVEN_R', 'DET_UNDERDRIVEN_R', 'DET_OBLIQUE_BETA', 'DET_OBLIQUE_THETA'}
+                % Remove beta/theta
+                problemType = strrep(problemType, '_BETA', '');
+                problemType = strrep(problemType, '_THETA', '');
+                % Select solver
+                solver = set(app.detonationSolver, 'problemType', problemType, 'FLAG_RESULTS', FLAG_RESULTS);
+                % Solve problem
+                [mixArray1, mixArray2, mixArray3] = solver.solveArray(mixArray1);
+                % Set output
+                varargout = {mixArray1, mixArray2, mixArray3};
+                % Set plot properties
+                solver.plotConfig.plotProperties = {'T', 'rho', 'h', 'e', 'g', 'cp', 's', 'gamma_s', 'sound', 'uShock'};
+                solver.plotConfig.plotPropertiesBasis = {[], [], 'mi', 'mi', 'mi', 'mi', 'mi', [], [], []};
+            case {'DET_POLAR_LIMITRR'}
+                % Select solver
+                solver = set(app.detonationSolver, 'problemType', problemType, 'FLAG_RESULTS', FLAG_RESULTS);
+                % Solve problem
+                [mixArray1, mixArray2, mixArray3, mixArray4] = solver.solveArray(mixArray1);
+                % Set output
+                varargout = {mixArray1, mixArray2, mixArray3, mixArray4};
+                % Set plot properties
+                solver.plotConfig.plotProperties = {'T', 'rho', 'h', 'e', 'g', 'cp', 's', 'gamma_s', 'sound', 'uShock'};
+                solver.plotConfig.plotPropertiesBasis = {[], [], 'mi', 'mi', 'mi', 'mi', 'mi', [], [], []};
+            case {'DET_POLAR_R_BETA'}
+                % Remove beta/theta
+                problemType = strrep(problemType, '_BETA', '');
+                % Select solver
+                solver = set(app.detonationSolver, 'problemType', problemType, 'FLAG_RESULTS', FLAG_RESULTS);
+                % Solve problem
+                [mixArray1, mixArray2, mixArray3, mixArray4, mixArray5] = solver.solveArray(mixArray1);
+                % Set output
+                varargout = {mixArray1, mixArray2, mixArray3, mixArray4, mixArray5};
+                % Set plot properties
+                solver.plotConfig.plotProperties = {'T', 'rho', 'h', 'e', 'g', 'cp', 's', 'gamma_s', 'sound', 'uShock'};
+                solver.plotConfig.plotPropertiesBasis = {[], [], 'mi', 'mi', 'mi', 'mi', 'mi', [], [], []};
+            case {'DET_POLAR_R_THETA'}
+                solver = set(app.detonationSolver, 'problemType', problemType, 'FLAG_RESULTS', FLAG_RESULTS);
+                % Solve problem
+                [mixArray1, mixArray2, mixArray3, mixArray4, mixArray5, mixArray6] = solver.solveArray(mixArray1);
+                % Set output
+                varargout = {mixArray1, mixArray2, mixArray3, mixArray4, mixArray5, mixArray6};
+                % Set plot properties
+                solver.plotConfig.plotProperties = {'T', 'rho', 'h', 'e', 'g', 'cp', 's', 'gamma_s', 'sound', 'uShock'};
+                solver.plotConfig.plotPropertiesBasis = {[], [], 'mi', 'mi', 'mi', 'mi', 'mi', [], [], []};
+            case {'ROCKET_IAC'}
+                % Select solver
+                solver = set(app.rocketSolver, 'problemType', problemType, 'FLAG_RESULTS', FLAG_RESULTS);
+                % Solve problem
+                [mixArray1, mixArray2, mixArray3, mixArray4] = solver.solveArray(mixArray1);
+                % Set output
+                if ~isempty(mixArray4.N)
+                    varargout = {mixArray1, mixArray2, mixArray3, mixArray4};
+                else
+                    varargout = {mixArray1, mixArray2, mixArray3};
+                end
+
+                % Set plot properties
+                solver.plotConfig.plotProperties = {'T', 'rho', 'h', 'e', 'g', 'cp', 's', 'gamma_s', 'sound', 'u', 'I_sp', 'I_vac'};
+                solver.plotConfig.plotPropertiesBasis = {[], [], 'mi', 'mi', 'mi', 'mi', 'mi', [], [], [], [], []};
+            case {'ROCKET_FAC'}
+                % Select solver
+                solver = set(app.rocketSolver, 'problemType', problemType, 'FLAG_RESULTS', FLAG_RESULTS);
+                % Solve problem
+                [mixArray1, mixArray2, mixArray3, mixArray4, mixArray5] = solver.solveArray(mixArray1);
+                % Set output
+                if ~isempty(mixArray5.N)
+                    varargout = {mixArray1, mixArray2, mixArray3, mixArray4, mixArray5};
+                else
+                    varargout = {mixArray1, mixArray2, mixArray3, mixArray4};
+                end
+
+                % Set plot properties
+                solver.plotConfig.plotProperties = {'T', 'rho', 'h', 'e', 'g', 'cp', 's', 'gamma_s', 'sound', 'u', 'I_sp', 'I_vac'};
+                solver.plotConfig.plotPropertiesBasis = {[], [], 'mi', 'mi', 'mi', 'mi', 'mi', [], [], [], [], []};
+            otherwise
+                error('Problem type %s is not found', problemType);
+        end
+
+        % Update GUI terminal
+        gui_update_terminal(app, 'finish', solver.time);
+
         % Save results
-        [results, app.temp_results] = save_results(app, self);
+        if contains(problemType, 'ROCKET')
+            [results, app.temp_results] = save_results(app, problemType, varargout{:});
+        else
+            [results, app.temp_results] = save_results(app, problemType, mixArray1, varargout{end});
+        end
+        
         % Update GUI with the last results of the set
         gui_update_results(app, results);
+        
         % Update GUI custom figures tab
         gui_update_custom_figures(app);
-        % Update GUI terminal
-        gui_update_terminal(app, self, 'finish')
+
         % Display results (plots)
         switch lower(app.Report_type.Value)
             case {'auto'}
-                post_results(self);
+                solver.report(varargout{:});
         end
 
-        % Set lamp to Done color
-        app.Lamp.Color = app.color_lamp_done;
+        % % Get display species
+        % self = gui_get_display_species(app, self);
 
+        % Set lamp to Done color
+        if app.text_error_problem.Value > app.maxRelativeError
+            app.Lamp.Color = app.color_lamp_error;
+            app.text_error_problem.FontColor = app.color_lamp_error;
+            app.ResultsTab.ForegroundColor = app.color_lamp_error;
+            app.Console_text.Value = sprintf('Warning! The maximum relative error is %.2f%%. Results may be compromised.\nDecreasing the tolerance and increasing the number of iterations may solve the problem.', app.text_error_problem.Value * 100);
+            return
+        end
+
+        app.Lamp.Color = app.color_lamp_done;
+        app.text_error_problem.FontColor = [0 0 0];
+        app.ResultsTab.ForegroundColor = [0 0 0];
     catch ME
         % Set lamp to Error color
         app.Lamp.Color = app.color_lamp_error;
@@ -58,69 +354,58 @@ function app = gui_CalculateButtonPushed(app, event)
         ME.stack(1).name, ME.stack(1).line, ME.message)};
         uialert(app.UIFigure, message, 'Warning', 'Icon', 'warning');
     end
-
+    
 end
 
 % SUB-PASS FUNCTIONS
-function self = get_miscellaneous_values(obj, self)
-    % Get miscellaneous properties from GUI and set into self
-    self.Misc = obj.Misc;
-end
-
-function self = get_tuning_values(obj, self)
-    % Get properties from GUI and set into self
-    self.PD = obj.PD;
-    self.TN = obj.TN;
-    self.C = obj.C;
-end
-
-function gui_update_results(obj, results)
+function gui_update_results(app, results)
     % Update:
     %  1. GUI with the last results computed
     %  2. GUI-UITree with all the results
+    %  3. Save the last mixture object computed
     
+    % Definitions
+    selectedCase = 1;
+
     % Update GUI with the last result computed
-    gui_write_results(obj, results, 1);
-    % Update UITree with all the results
-    gui_add_nodes(obj.Node_Results, results)
-end
-
-function obj = get_listSpecies_gui(obj)
-    obj.LS = obj.listbox_Products.Items;
-    if isempty(obj.LS)
-        % Get default value
-        obj.LS = list_species('Soot Formation');
-    end
-
-end
-
-function [results, temp_results] = save_results(obj, self)
-    % Save results
-    N = length(self.PS.strR);
+    gui_write_results(app, results, selectedCase);
     
-    if strcmpi(self.PD.ProblemType, 'ROCKET')
-        label_mix1 = 'strR';
-        if self.PD.FLAG_IAC
-            label_mix2 = 'mix2_c';
-            label_mix3 = 'mix3';
-            label_mix4 = 'strP';
-            label_mix5 = [];
+    % Update UITree with all the results
+    gui_add_nodes(app.Node_Results, results)
+
+    % Update stored mixture object
+    app.mixture = results(selectedCase).mix1;
+end
+
+function [results, temp_results] = save_results(obj, problemType, mixArray1, mixArray2, varargin)
+    % Save results
+    
+    % Definitions
+    numCases1 = length(mixArray1);
+    numCases2 = length(mixArray2);
+    numCases = max(numCases1, numCases2);
+    numMixtures = nargin - 2;
+    
+    % 
+    for i = numCases:-1:1
+        j = i;
+        if numCases1 > numCases2
+            if j > numCases2
+                j = numCases2;
+            end
+            
+            results(i).mix1 = mixArray1(i);
+            results(i).mix2 = mixArray2;
+        elseif numCases1 < numCases2
+            results(i).mix1 = mixArray1;
+            results(i).mix2 = mixArray2(i);
         else
-            label_mix2 = 'str2';
-            label_mix3 = 'mix2_c';
-            label_mix4 = 'mix3';
-            label_mix5 = 'strP';
+            results(i).mix1 = mixArray1(i);
+            results(i).mix2 = mixArray2(i);
         end
 
-    else
-        label_mix1 = 'strR';
-        label_mix2 = 'strP';
-    end
+        results(i).ProblemType = problemType;
 
-    for i = N:-1:1
-        results(i).mix1 = self.PS.(label_mix1){i};
-        results(i).mix2 = self.PS.(label_mix2){i};
-        results(i).ProblemType = self.PD.ProblemType;
         if ischar(obj.Reactants.Value)
             results(i).Reactants = 'Custom';
         else
@@ -128,32 +413,30 @@ function [results, temp_results] = save_results(obj, self)
         end
 
         results(i).Products = obj.Products.Value;
+
         if isempty(results(i).Products)
             results(i).Products = 'Default';   
         end
 
-        results(i).LS = self.S.LS;
-        results(i).LS_products = obj.LS;
+        results(i).listSpecies = mixArray2(j).chemicalSystem.listSpecies;
+        results(i).listProducts = mixArray2(j).chemicalSystem.listProducts;
         results(i).UITable_R_Data = obj.UITable_R.Data;
     end
 
-    if strcmpi(self.PD.ProblemType, 'ROCKET')
-        try
-            label_mix = {label_mix3, label_mix4, label_mix5};
-            for mix = label_mix
-                for i = N:-1:1
-                    results(i).(mix{:}) = self.PS.(mix{:}){i};
-                end
+    if contains(problemType, 'ROCKET')
+        label_mix = {'mix3', 'mix4', 'mix5'};
 
+        for i = numCases:-1:1
+            for j = 1:numMixtures-2
+                results(i).(label_mix{j}) = varargin{j}(i);
             end
 
-        catch
-            % Nothing to do
         end
 
     end
+
     % Save temporally this parametric study
-    temp_results = self.PS;
+    temp_results = results;
 end
 
 function self = get_input_constrains(obj, self)
@@ -241,23 +524,33 @@ function gui_update_custom_figures(obj)
         delete(obj.Mixtures.Children);
         delete(obj.Variable_x.Children);
         delete(obj.Variable_y.Children);
+
         % Add new nodes
         results = obj.temp_results;
-        fields = fieldnames(results);
-        FLAG_fields = contains(fields, 'str') | contains(fields, 'mix');
+        fields = fieldnames(results(1));
+        FLAG_fields =  contains(fields, 'mix');
         fields = fields(FLAG_fields);
-        % Mixtures
-        add_node(obj, 'Mixtures', fields);
-        % Variables x
-        try
-            fields = sort(fieldnames(obj.temp_results.strP{1}));
-        catch
-            fields = sort(fieldnames(obj.temp_results.mix3{1}));
+        
+        % Get propertiesName
+        propertiesName = sort(fieldnames(obj.temp_results(1).(fields{end})));
+
+        % Remove non-float properties 
+        numProperties = length(propertiesName);
+        FLAG_REMOVE = false(1, numProperties);
+        for i = 1:numProperties
+            temp = obj.temp_results(1).(fields{end}).(propertiesName{i});
+            if ~isfloat(temp) || isempty(temp)
+                FLAG_REMOVE(i) = true;
+            end
+
         end
 
-        add_node(obj, 'Variable_x', fields);
-        % Variables y
-        add_node(obj, 'Variable_y', fields);
+        propertiesName(FLAG_REMOVE) = [];
+
+        % Add nodes
+        add_node(obj, 'Mixtures', fields);
+        add_node(obj, 'Variable_x', propertiesName);
+        add_node(obj, 'Variable_y', propertiesName);
 
     catch ME
         % Print error

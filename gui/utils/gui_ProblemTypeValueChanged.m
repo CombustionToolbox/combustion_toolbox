@@ -14,6 +14,7 @@ function gui_ProblemTypeValueChanged(app)
             % Update input items
             app.PP1.Visible = 'on'; app.PP2.Visible = 'on';
             app.text_P1.Visible = 'on';
+            app.text_RP2.Text = 'Pressure [bar]';
             % Update Additional constraints panel
             app.AdditionalconstraintsPanel.Visible = 'off';
             app.AdditionalconstraintsPanel.Title = 'Additional constraints';
@@ -39,6 +40,7 @@ function gui_ProblemTypeValueChanged(app)
             app.PP3.Visible = 'off'; app.PP4.Visible = 'off';
             app.PR5.Visible = 'off'; app.PP5.Visible = 'off';
             app.text_P1.Visible = 'on';
+            app.text_RP2.Text = 'Pressure [bar]';
             % Visible flags
             app.FLAG_IAC.Visible = 'off';
             % Update Additional constraints panel
@@ -71,6 +73,7 @@ function gui_ProblemTypeValueChanged(app)
             app.PP3.Visible = 'off'; app.PP4.Visible = 'off';
             app.PR5.Visible = 'off'; app.PP5.Visible = 'off';
             app.text_P1.Visible = 'on';
+            app.text_RP2.Text = 'Pressure [bar]';
             % Visible flags
             app.FLAG_IAC.Visible = 'off';
             % Update Additional constraints panel
@@ -98,22 +101,17 @@ function gui_ProblemTypeValueChanged(app)
             app.FLAG_IAC.Value = true;
             gui_FLAG_IACValueChanged(app);
             % Update input items
-            app.PP1.Visible = 'on'; app.PP2.Visible = 'off'; 
+            app.PP1.Visible = 'on'; app.PP2.Visible = 'on'; 
             app.PR3.Visible = 'off'; app.PR4.Visible = 'off';
             app.PP3.Visible = 'off'; app.PP4.Visible = 'off';
             app.PR5.Visible = 'off'; app.PP5.Visible = 'off';
             app.text_P1.Visible = 'on';
+            app.text_RP2.Text = 'Specific volume [m3/kg]';
             % Visible flags
             app.FLAG_IAC.Visible = 'off';
             % Update Additional constraints panel
-            app.AdditionalconstraintsPanel.Visible = 'on';
+            app.AdditionalconstraintsPanel.Visible = 'off';
             app.AdditionalconstraintsPanel.Title = 'Additional constraints';
-            app.text_RP.Visible = 'on'; app.text_RP.Text = 'Products';
-            app.text_R2.Visible = 'off'; app.text_P2.Visible = 'off';
-            app.text_R2.Text = 'Reactants'; app.text_P2.Text = 'Products';
-            app.text_RP3.Text = 'Constant Volume: vP = vR';
-            app.text_RP4.Visible = 'off';
-            app.text_RP5.Visible = 'off';
             % Set default input values
             app.PR1.Value = '300';
             app.PR2.Value = '1';
@@ -136,6 +134,7 @@ function gui_ProblemTypeValueChanged(app)
             app.PP3.Visible = 'off'; app.PP4.Visible = 'off';
             app.PR5.Visible = 'off'; app.PP5.Visible = 'off'; 
             app.text_P1.Visible = 'on';
+            app.text_RP2.Text = 'Specific volume [m3/kg]';
             % Visible flags
             app.FLAG_IAC.Visible = 'off';
             % Update Additional constraints panel
@@ -168,6 +167,7 @@ function gui_ProblemTypeValueChanged(app)
             app.PP3.Visible = 'off'; app.PP4.Visible = 'on';
             app.PR5.Visible = 'off'; app.PP5.Visible = 'off';
             app.text_P1.Visible = 'on';
+            app.text_RP2.Text = 'Specific volume [m3/kg]';
             % Visible flags
             app.FLAG_IAC.Visible = 'off';
             % Update Additional constraints panel
@@ -201,6 +201,7 @@ function gui_ProblemTypeValueChanged(app)
             app.PP3.Visible = 'off'; app.PP4.Visible = 'off';
             app.PR5.Visible = 'off'; app.PP5.Visible = 'off';
             app.text_P1.Visible = 'on';
+            app.text_RP2.Text = 'Pressure [bar]';
             % Visible flags
             app.FLAG_IAC.Visible = 'off';
             % Update Additional constraints panel
@@ -244,7 +245,8 @@ function gui_ProblemTypeValueChanged(app)
             app.text_R2.Text = 'Reactants'; app.text_P2.Text = 'Products';
             app.text_RP3.Text = 'Shock velocity [m/s]'; 
             app.text_RP4.Visible = 'on'; app.text_RP4.Text = 'Mach number [-]';
-            app.text_RP5.Visible = 'off'; 
+            app.text_RP5.Visible = 'off';
+            app.text_RP2.Text = 'Pressure [bar]';
             % Set default input values
             app.PR1.Value = '300';
             app.PR2.Value = '1';
@@ -267,6 +269,7 @@ function gui_ProblemTypeValueChanged(app)
             app.PP3.Visible = 'off'; app.PP4.Visible = 'off';
             app.PR5.Visible = 'on'; app.PP5.Visible = 'on';
             app.text_P1.Visible = 'on';
+            app.text_RP2.Text = 'Pressure [bar]';
             % Visible flags
             app.FLAG_IAC.Visible = 'off';
             % Update Additional constraints panel
@@ -303,6 +306,7 @@ function gui_ProblemTypeValueChanged(app)
             app.PP3.Visible = 'off'; app.PP4.Visible = 'off';
             app.PR5.Visible = 'off'; app.PP5.Visible = 'off';
             app.text_P1.Visible = 'on';
+            app.text_RP2.Text = 'Pressure [bar]';
             % Visible flags
             app.FLAG_IAC.Visible = 'off';
             % Update Additional constraints panel
@@ -336,6 +340,7 @@ function gui_ProblemTypeValueChanged(app)
             app.PP3.Visible = 'off'; app.PP4.Visible = 'off';
             app.PR5.Visible = 'on'; app.PP5.Visible = 'on';
             app.text_P1.Visible = 'on';
+            app.text_RP2.Text = 'Pressure [bar]';
             % Visible flags
             app.FLAG_IAC.Visible = 'off';
             % Update Additional constraints panel
@@ -372,6 +377,7 @@ function gui_ProblemTypeValueChanged(app)
             app.PP3.Visible = 'off'; app.PP4.Visible = 'off';
             app.PR5.Visible = 'off'; app.PP5.Visible = 'off';
             app.text_P1.Visible = 'on';
+            app.text_RP2.Text = 'Pressure [bar]';
             % Visible flags
             app.FLAG_IAC.Visible = 'off';
             % Update Additional constraints panel
@@ -395,6 +401,7 @@ function gui_ProblemTypeValueChanged(app)
             app.PR3.Visible = 'on'; app.PR4.Visible = 'off';
             app.PP3.Visible = 'off'; app.PP4.Visible = 'off';
             app.text_P1.Visible = 'on';
+            app.text_RP2.Text = 'Pressure [bar]';
             % Visible flags
             app.FLAG_IAC.Visible = 'off';
             % Update Additional constraints panel
@@ -431,6 +438,7 @@ function gui_ProblemTypeValueChanged(app)
             app.PP3.Visible = 'off'; app.PP4.Visible = 'on';
             app.PR5.Visible = 'off'; app.PP5.Visible = 'off';
             app.text_P1.Visible = 'on';
+            app.text_RP2.Text = 'Pressure [bar]';
             % Visible flags
             app.FLAG_IAC.Visible = 'off';
             % Update Additional constraints panel
@@ -466,6 +474,7 @@ function gui_ProblemTypeValueChanged(app)
             app.PR3.Visible = 'on'; app.PR4.Visible = 'off';
             app.PP3.Visible = 'off'; app.PP4.Visible = 'off';
             app.text_P1.Visible = 'on';
+            app.text_RP2.Text = 'Pressure [bar]';
             % Visible flags
             app.FLAG_IAC.Visible = 'off';
             % Update Additional constraints panel
@@ -498,6 +507,7 @@ function gui_ProblemTypeValueChanged(app)
             app.PP3.Visible = 'on'; app.PP4.Visible = 'off';
             app.PR5.Visible = 'off'; app.PP5.Visible = 'off';
             app.text_P1.Visible = 'off';
+            app.text_RP2.Text = 'Pressure [bar]';
             % Update Additional constraints panel
             app.AdditionalconstraintsPanel.Visible = 'on';
             app.AdditionalconstraintsPanel.Title = 'Optional parameters';
@@ -521,6 +531,13 @@ function gui_ProblemTypeValueChanged(app)
          case {'SHOCK_OBLIQUE_R', 'DET_OBLIQUE_R', 'DET_POLAR_R'}
             uialert(app.UIFigure, 'Problem not included yet. Sorry for the inconvinience.', 'Error')
     end
+
+    % Update temperature 
+    if isempty(app.UITable_R.Data)
+        return
+    end
+    
+    app.UITable_R.Data(:, 5) = repmat({gui_get_prop(app.PR1.Value, 'first')}, size(app.UITable_R.Data(:, 5)));
 end
 
 % SUB-PASS FUNCTIONS

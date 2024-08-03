@@ -7,5 +7,5 @@ function value = entropy_mole(mix)
     % Returns:
     %     value (float): Mole-basis specific entropy [kJ/mol-K] of the mixture
 
-    value = mix.S / mix.N * 1e3;
+    value = mix.s / mix.N * 1e-3;
 end

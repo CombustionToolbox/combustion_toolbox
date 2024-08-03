@@ -13,12 +13,20 @@
 %     162(12), 4514-4522.
 %
 % @author: Alberto Cuadra Lara
-%          PhD Candidate - Group Fluid Mechanics
+%          Postdoctoral researcher - Group Fluid Mechanics
 %          Universidad Carlos III de Madrid
-%                  
-% Last update Jan 17 2023
+%                 
+% Last update April 02 2024
 % -------------------------------------------------------------------------
-LS = {'C','C2','C2H','C10H8_naphthale','C2H2_acetylene',...
+
+% Import packages
+import combustiontoolbox.databases.NasaDatabase
+import combustiontoolbox.core.*
+import combustiontoolbox.equilibrium.*
+import combustiontoolbox.utils.display.*
+
+% Definitions
+listSpecies = {'C','C2','C2H','C10H8_naphthale','C2H2_acetylene',...
     'C2H2_vinylidene','C2H3_vinyl','C2H4','C2H4O_ethylen_o','C2H5',...
     'C2H5OH','C2H6','C2N2','C2O','C3','C3H3_1_propynl',...
     'C3H3_2_propynl','C3H4_allene','C3H4_propyne','C3H5_allyl',...
@@ -36,20 +44,31 @@ LS = {'C','C2','C2H','C10H8_naphthale','C2H2_acetylene',...
     'NH','NH2','NH2OH','NH3','NO','NO2','O','O2','OCCN','OH','Si',...
     'Si2','Si2C','Si3','SiC','SiC2','SiH','SiH2','SiH3',...
     'SiH4','SiO','SiO2','SiCbbb','SiO2ba_qzb','SiO2bb_qzb','SiO2bb_crtb'};
-%% INITIALIZE
-self = App(LS);
-%% INITIAL CONDITIONS
-self = set_prop(self, 'TR', 300, 'pR', 1.01325);
-self.PD.S_Fuel = {'Si', 'C6H5OH_phenol'};
-self.PD.N_Fuel = [1, 9];
-%% ADDITIONAL INPUTS (DEPENDS OF THE PROBLEM SELECTED)
-self = set_prop(self, 'pP', self.PD.pR.value, 'TP', 200:10:5000);
-self.Misc.display_species = {'H2', 'H', 'CH4', 'C2H2_acetylene', 'SiC2',...
+
+displaySpecies = {'H2', 'H', 'CH4', 'C2H2_acetylene', 'SiC2',...
     'Si', 'C', 'C2H', 'C3', 'CO', 'CO2', 'Cbgrb', 'SiCbbb', 'H2O',...
     'SiO2ba_qzb','SiO2bb_qzb','SiO2bb_crtb','H2ObLb','H2Obcrb'};
-self.C.mintol_display = 1e-3;
-self.TN.tolN = 1e-16;
-%% SOLVE PROBLEM
-self = solve_problem(self, 'TP');
-%% DISPLAY RESULTS (PLOTS)
-post_results(self);
+
+% Get Nasa database
+DB = NasaDatabase();
+
+% Define chemical system
+system = ChemicalSystem(DB, listSpecies);
+
+% Initialize mixture
+mix = Mixture(system);
+
+% Define chemical state
+set(mix, {'Si', 'C6H5OH_phenol'}, [1, 9]);
+
+% Define properties
+mixArray = setProperties(mix, 'temperature', 200:10:5000, 'pressure', 1 * 1.01325);
+
+% Initialize solver
+solver = EquilibriumSolver('problemType', 'TP');
+
+% Solve problem
+solver.solveArray(mixArray);
+
+% Plot molar fractions
+plotComposition(mixArray(1), mixArray, 'T', 'Xi', 'displaySpecies', displaySpecies, 'mintol', 1e-3);

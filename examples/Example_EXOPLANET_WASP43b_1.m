@@ -7,29 +7,48 @@
 % https://github.com/dzesmin/RRC-BlecicEtal-2015a-ApJS-TEA/tree/master/Fig6/WASP43b-solar
 %
 % @author: Alberto Cuadra Lara
-%          PhD Candidate - Group Fluid Mechanics
+%          Postdoctoral researcher - Group Fluid Mechanics
 %          Universidad Carlos III de Madrid
-%                  
-% Last update Oct 12 2022
+%                 
+% Last update April 02 2024
 % -------------------------------------------------------------------------
 
-LS = {'C2H2_acetylene', 'C2H4', 'C', 'CH4', 'CO2', 'CO', 'H2', 'H2O', 'H2S', 'H', 'HCN', 'He', 'HS_M', 'N2', 'N', 'NH3', 'O', 'S'};
-%% INITIALIZE
-self = App(LS);
-%% INITIAL CONDITIONS
-metallicity = 1;
-Fuel = {'H', 'He', 'C', 'N', 'O', 'S'};
-Ni_abundances = abundances2moles(Fuel, 'abundances.txt', metallicity)';
-T = linspace(100, 4000, 300);
-p = logspace(-5, 2, 300);
+% Import packages
+import combustiontoolbox.databases.SolarAbundances
+import combustiontoolbox.databases.NasaDatabase
+import combustiontoolbox.core.*
+import combustiontoolbox.equilibrium.*
+import combustiontoolbox.utils.display.*
 
-self.PD.S_Fuel = Fuel;
-self.PD.N_Fuel = Ni_abundances;
-self = set_prop(self, 'TR', 300, 'pR', 1);
-self = set_prop(self, 'TP', T, 'pP', p);
-%% SOLVE PROBLEM
-self = solve_problem(self, 'TP');
-%% POSTPROCESSING CONFIGURATION
-self.Misc.config.label_type = 'long';
-%% DISPLAY RESULTS (PLOTS)
-plot_molar_fractions(self, self.PS.strP, 'Xi', 'p', 'ydir', 'reverse', 'xscale', 'log');
+% Definitions
+listSpecies = {'C2H2_acetylene', 'C2H4', 'C', 'CH4', 'CO2', 'CO', 'H2', 'H2O', 'H2S', 'H', 'HCN', 'He', 'HS_M', 'N2', 'N', 'NH3', 'O', 'S'};
+species = {'H', 'He', 'C', 'N', 'O', 'S'};
+metallicity = 1;
+
+% Get initial composition from solar abundances
+DB_solar = SolarAbundances();
+moles = DB_solar.abundances2moles(species, metallicity);
+
+% Get Nasa database
+DB = NasaDatabase();
+
+% Define chemical system
+system = ChemicalSystem(DB, listSpecies);
+
+% Initialize mixture
+mix = Mixture(system);
+
+% Define chemical state
+set(mix, species, moles);
+
+% Define properties
+mixArray = setProperties(mix, 'temperature', linspace(100, 4000, 300), 'pressure', logspace(-5, 2, 300));
+
+% Initialize solver
+solver = EquilibriumSolver('problemType', 'TP');
+
+% Solve problem
+solver.solveArray(mixArray);
+
+% Plot molar fractions
+plotComposition(mixArray(1), mixArray, 'Xi', 'p', 'mintol', 1e-14, 'ydir', 'reverse', 'xscale', 'log');

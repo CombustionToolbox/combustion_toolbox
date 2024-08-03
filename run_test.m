@@ -7,7 +7,7 @@
 INSTALL('install', 'path');
 
 % Run the tests and store the results
-results = unit_test().run;
+results = unitTest().run;
 
 % Count the number of failed tests
 N_failed = nnz([results.Failed]);

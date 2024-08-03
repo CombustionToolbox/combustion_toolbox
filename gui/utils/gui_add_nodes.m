@@ -5,16 +5,18 @@ function gui_add_nodes(parent_node, results)
     %     parent_node (object): Parent node of the UITree
     %     results (struct): struct with the data to save in the nodes
 
-
     % * Category 1: new children node: Results -> ProblemType
     match_text = strcat('Problem Type: ', results(1).ProblemType);
     category1 = set_node(parent_node, match_text);
+
     % * Category 2: new children node: ProblemType -> Reactants
     match_text = strcat('Reactants: ', results(1).Reactants);
     category2 = set_node(category1, match_text);
+
     % * Category 3: new children node: Reactants -> ListProducts
     match_text = strcat('List Products: ', results(1).Products);
     category3 = set_node(category2, match_text);
+
     % * Category 4: new children node: ListProducts -> cases
     for i = 1:length(results)
         match_text = sprintf('Case %d', category3.UserData); 

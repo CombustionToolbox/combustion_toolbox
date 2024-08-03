@@ -54,7 +54,7 @@ classdef uivalidations < matlab.apps.AppBase
         % Code that executes after component creation
         function startupFcn(app)
             % Load info system
-            app.system = cpuinfo();
+            app.system = combustiontoolbox.utils.extensions.cpuinfo();
             % Assign info of the system
             app.OS.Value = [app.system.OSType, ' ', app.system.OSVersion];
             app.cpu.Value = app.system.CPUName;
@@ -79,7 +79,8 @@ classdef uivalidations < matlab.apps.AppBase
                 % CPU time
                 cputime = tic;
                 % Run validation
-                app.problems_solved.Value = eval(app.Tree.SelectedNodes.Text(1:end-2));
+                % app.problems_solved.Value = eval(app.Tree.SelectedNodes.Text(1:end-2));
+                eval(app.Tree.SelectedNodes.Text(1:end-2));
                 % CPU time
                 app.cputime.Value = toc(cputime);
                 % Done!
@@ -215,12 +216,16 @@ classdef uivalidations < matlab.apps.AppBase
             % Create CPUtimesLabel_4
             app.CPUtimesLabel_4 = uilabel(app.UIValidations);
             app.CPUtimesLabel_4.HorizontalAlignment = 'right';
+            app.CPUtimesLabel_4.Enable = 'off';
+            app.CPUtimesLabel_4.Visible = 'off';
             app.CPUtimesLabel_4.Position = [404 58 94 22];
             app.CPUtimesLabel_4.Text = 'Problems solved';
 
             % Create problems_solved
             app.problems_solved = uieditfield(app.UIValidations, 'numeric');
             app.problems_solved.Editable = 'off';
+            app.problems_solved.Enable = 'off';
+            app.problems_solved.Visible = 'off';
             app.problems_solved.Position = [508 58 147 22];
 
             % Create Lamp

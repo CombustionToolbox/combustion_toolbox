@@ -1,4 +1,4 @@
-classdef RocketSolver
+classdef RocketSolver < handle
     % RocketSolver class to solve rocket problems
     %
     % Problem types:

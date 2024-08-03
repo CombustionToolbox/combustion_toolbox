@@ -72,7 +72,27 @@ function app = gui_CalculateButtonPushed(app, event)
                         FLAG_THETA = true;
                         additionalInputsR = [additionalInputsR, 'driveFactor', propertyR3, 'theta', propertyP4];
                     end
-                    
+            case {'ROCKET'}
+                propertyP1 = app.PP1.Value;
+                propertyR3 = gui_get_prop(app.PR3.Value);
+                propertyP3 = gui_get_prop(app.PP3.Value);
+
+                if app.FLAG_IAC.Value
+                    problemType = 'ROCKET_IAC';
+                else
+                    problemType = 'ROCKET_FAC';
+                    assert(~isempty(propertyP1), 'Specify the area chamber / area throat ratio.');
+                    additionalInputsR = [additionalInputsR, 'areaRatioChamber', propertyP1];
+                end
+
+                if ~isempty(propertyR3) % Subsonic region (pre-throat)
+                    additionalInputsR = [additionalInputsR, 'areaRatio', propertyR3];
+                    set(app.rocketSolver, 'FLAG_SUBSONIC',  true);
+                elseif ~isempty(propertyP3) % Supersonic region (post-throat)
+                    additionalInputsR = [additionalInputsR, 'areaRatio', propertyP3];
+                    set(app.rocketSolver, 'FLAG_SUBSONIC',  false);
+                end
+
             otherwise
                 propertyP1 = propertyR1;
                 propertyP2 = propertyR2;
@@ -256,20 +276,32 @@ function app = gui_CalculateButtonPushed(app, event)
                 solver.plotConfig.plotProperties = {'T', 'rho', 'h', 'e', 'g', 'cp', 's', 'gamma_s', 'sound', 'uShock'};
                 solver.plotConfig.plotPropertiesBasis = {[], [], 'mi', 'mi', 'mi', 'mi', 'mi', [], [], []};
             case {'ROCKET_IAC'}
+                % Select solver
                 solver = set(app.rocketSolver, 'problemType', problemType, 'FLAG_RESULTS', FLAG_RESULTS);
                 % Solve problem
                 [mixArray1, mixArray2, mixArray3, mixArray4] = solver.solveArray(mixArray1);
                 % Set output
-                varargout = {mixArray1, mixArray2, mixArray3, mixArray4};
+                if ~isempty(mixArray4.N)
+                    varargout = {mixArray1, mixArray2, mixArray3, mixArray4};
+                else
+                    varargout = {mixArray1, mixArray2, mixArray3};
+                end
+
                 % Set plot properties
                 solver.plotConfig.plotProperties = {'T', 'rho', 'h', 'e', 'g', 'cp', 's', 'gamma_s', 'sound', 'u', 'I_sp', 'I_vac'};
                 solver.plotConfig.plotPropertiesBasis = {[], [], 'mi', 'mi', 'mi', 'mi', 'mi', [], [], [], [], []};
             case {'ROCKET_FAC'}
+                % Select solver
                 solver = set(app.rocketSolver, 'problemType', problemType, 'FLAG_RESULTS', FLAG_RESULTS);
                 % Solve problem
                 [mixArray1, mixArray2, mixArray3, mixArray4, mixArray5] = solver.solveArray(mixArray1);
                 % Set output
-                varargout = {mixArray1, mixArray2, mixArray3, mixArray4, mixArray5};
+                if ~isempty(mixArray5.N)
+                    varargout = {mixArray1, mixArray2, mixArray3, mixArray4, mixArray5};
+                else
+                    varargout = {mixArray1, mixArray2, mixArray3, mixArray4};
+                end
+
                 % Set plot properties
                 solver.plotConfig.plotProperties = {'T', 'rho', 'h', 'e', 'g', 'cp', 's', 'gamma_s', 'sound', 'u', 'I_sp', 'I_vac'};
                 solver.plotConfig.plotPropertiesBasis = {[], [], 'mi', 'mi', 'mi', 'mi', 'mi', [], [], [], [], []};
@@ -281,7 +313,11 @@ function app = gui_CalculateButtonPushed(app, event)
         gui_update_terminal(app, 'finish', solver.time);
 
         % Save results
-        [results, app.temp_results] = save_results(app, problemType, mixArray1, varargout{end});
+        if contains(problemType, 'ROCKET')
+            [results, app.temp_results] = save_results(app, problemType, varargout{:});
+        else
+            [results, app.temp_results] = save_results(app, problemType, mixArray1, varargout{end});
+        end
         
         % Update GUI with the last results of the set
         gui_update_results(app, results);
@@ -318,7 +354,7 @@ function app = gui_CalculateButtonPushed(app, event)
         ME.stack(1).name, ME.stack(1).line, ME.message)};
         uialert(app.UIFigure, message, 'Warning', 'Icon', 'warning');
     end
-
+    
 end
 
 % SUB-PASS FUNCTIONS
@@ -348,27 +384,9 @@ function [results, temp_results] = save_results(obj, problemType, mixArray1, mix
     numCases1 = length(mixArray1);
     numCases2 = length(mixArray2);
     numCases = max(numCases1, numCases2);
-
-    % % 
-    % if strcmpi(self.PD.ProblemType, 'ROCKET')
-    %     label_mix1 = 'strR';
-    %     if self.PD.FLAG_IAC
-    %         label_mix2 = 'mix2_c';
-    %         label_mix3 = 'mix3';
-    %         label_mix4 = 'strP';
-    %         label_mix5 = [];
-    %     else
-    %         label_mix2 = 'str2';
-    %         label_mix3 = 'mix2_c';
-    %         label_mix4 = 'mix3';
-    %         label_mix5 = 'strP';
-    %     end
+    numMixtures = nargin - 2;
+    
     % 
-    % else
-    %     label_mix1 = 'strR';
-    %     label_mix2 = 'strP';
-    % end
-
     for i = numCases:-1:1
         j = i;
         if numCases1 > numCases2
@@ -405,21 +423,17 @@ function [results, temp_results] = save_results(obj, problemType, mixArray1, mix
         results(i).UITable_R_Data = obj.UITable_R.Data;
     end
 
-    % if strcmpi(self.PD.ProblemType, 'ROCKET')
-    %     try
-    %         label_mix = {label_mix3, label_mix4, label_mix5};
-    %         for mix = label_mix
-    %             for i = numCases:-1:1
-    %                 results(i).(mix{:}) = self.PS.(mix{:}){i};
-    %             end
-    % 
-    %         end
-    % 
-    %     catch
-    %         % Nothing to do
-    %     end
-    % 
-    % end
+    if contains(problemType, 'ROCKET')
+        label_mix = {'mix3', 'mix4', 'mix5'};
+
+        for i = numCases:-1:1
+            for j = 1:numMixtures-2
+                results(i).(label_mix{j}) = varargin{j}(i);
+            end
+
+        end
+
+    end
 
     % Save temporally this parametric study
     temp_results = results;

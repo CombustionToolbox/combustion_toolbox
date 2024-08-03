@@ -174,15 +174,20 @@ function installPackage(action, type, packageDst)
     % Get type of installation/uninstallation
     [FLAG_PATH, FLAG_GUI] = getType(type);
     
-    % Generate bash script
-    bashScriptFile = generateBash(packageDst, action);
+    % Add/remove Combustion Toolbox in MATLAB startup.m file
+    try
+        % Generate bash script
+        bashScriptFile = generateBash(packageDst, action);
+        
+        % Execute bash script
+        system(['./' bashScriptFile]);
     
-    % Execute bash script
-    system(['./' bashScriptFile]);
+        % Remove the bash script
+        delete(bashScriptFile);
+    catch
+        fprintf('Error including Combustion Toolbox path in MATLAB startup.m file');
+    end
 
-    % Remove the bash script
-    delete(bashScriptFile);
-    
     % Move local path to package destination
     cd(packageDst);
 

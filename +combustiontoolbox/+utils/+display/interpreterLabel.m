@@ -300,7 +300,7 @@ function [property_name, property_latex, property_unit] = property_names(propert
             property_name = 'Volume';
             property_latex = 'v';
             property_unit = '[m$^3$]';
-        case 'v_sp'
+        case {'v_sp', 'vspecific'}
             property_name = 'Specific volume';
             property_latex = 'v_{sp}';
             property_unit = '[m$^3$/kg]';

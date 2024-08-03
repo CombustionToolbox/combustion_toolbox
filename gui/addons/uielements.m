@@ -364,8 +364,6 @@ classdef uielements < matlab.apps.AppBase
                 app.chemicalSystem = combustiontoolbox.core.ChemicalSystem(app.database);
                 % Initialize mixture
                 app.mixture = combustiontoolbox.core.Mixture(app.chemicalSystem);
-                % Initialize elements
-                app.elements = combustiontoolbox.core.Elements();
                 % Initialize plotConfig
                 app.plotConfig = combustiontoolbox.utils.display.PlotConfig();
             else
@@ -378,7 +376,11 @@ classdef uielements < matlab.apps.AppBase
                 app.mixture = app.callerApp.mixture;
                 app.plotConfig = app.callerApp.plotConfig;
             end
-
+            
+            % Initialize elements
+            app.elements = combustiontoolbox.core.Elements();
+            
+            % Initialization
             app.listElementsOmitted = [];
             
             % Remove incompatible species

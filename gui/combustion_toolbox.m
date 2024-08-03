@@ -578,7 +578,7 @@ classdef combustion_toolbox < matlab.apps.AppBase
         function DiscussionsMenuSelected(app, event)
             % Open default web browser and redirect to Combustion Toolbox
             % discussion forum
-            
+
             % Import packages
             import combustiontoolbox.utils.SystemUtils
         
@@ -1061,7 +1061,7 @@ classdef combustion_toolbox < matlab.apps.AppBase
 
         % Value changed function: IonizedspeciesCheckBox
         function IonizedspeciesCheckBoxValueChanged(app, event)
-            value = app.IonizedspeciesCheckBox.Value;
+            gui_update_ions(app);
         end
 
         % Callback function: Tree_variable_x

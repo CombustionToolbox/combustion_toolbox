@@ -73,7 +73,7 @@ function app = gui_CalculateButtonPushed(app, event)
                         additionalInputsR = [additionalInputsR, 'driveFactor', propertyR3, 'theta', propertyP4];
                     end
             case {'ROCKET'}
-                propertyP1 = app.PP1.Value;
+                propertyP1 = gui_get_prop(app.PP1.Value);
                 propertyR3 = gui_get_prop(app.PR3.Value);
                 propertyP3 = gui_get_prop(app.PP3.Value);
 

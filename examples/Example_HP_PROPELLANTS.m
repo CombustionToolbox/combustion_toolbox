@@ -9,24 +9,46 @@
 % HYDROGEN_L == {'H','H2O','OH','H2','O','O3','O2','HO2','H2O2',...
 %                'H2bLb','O2bLb'}
 %   
-% See wiki or list_species() for more predefined sets of species
+% See wiki or setListspecies method from ChemicalSystem class for more
+% predefined sets of species
 %
 % @author: Alberto Cuadra Lara
-%          PhD Candidate - Group Fluid Mechanics
+%          Postdoctoral researcher - Group Fluid Mechanics
 %          Universidad Carlos III de Madrid
 %                 
-% Last update Feb 19 2022
+% Last update April 02 2024
 % -------------------------------------------------------------------------
 
-%% INITIALIZE
-self = App('HYDROGEN_L');
-%% INITIAL CONDITIONS
-self = set_prop(self, 'TR', 300, 'pR', 1 * 1.01325, 'phi', 0.2:0.05:5);
-self.PD.S_Fuel     = {'H2bLb'};
-self.PD.S_Oxidizer = {'O2bLb'};
-%% ADDITIONAL INPUTS (DEPENDS OF THE PROBLEM SELECTED)
-self = set_prop(self, 'pP', self.PD.pR.value); 
-%% SOLVE PROBLEM
-self = solve_problem(self, 'HP');
-%% DISPLAY RESULTS (PLOTS)
-post_results(self);
+% Import packages
+import combustiontoolbox.databases.NasaDatabase
+import combustiontoolbox.core.*
+import combustiontoolbox.equilibrium.*
+import combustiontoolbox.utils.display.*
+
+% Get Nasa database
+DB = NasaDatabase();
+
+% Define chemical system
+system = ChemicalSystem(DB, 'HYDROGEN_L');
+
+% Initialize mixture
+mix = Mixture(system);
+
+% Define chemical state
+set(mix, {'H2bLb'}, 'fuel', 1);
+set(mix, {'O2bLb'}, 'oxidizer', 1);
+
+% Define properties
+mixArray = setProperties(mix, 'temperature', 300, 'pressure', 1 * 1.01325, 'equivalenceRatio', 0.2:0.05:5);
+
+% Initialize solver
+solver = EquilibriumSolver('problemType', 'HP');
+
+% Solve problem
+solver.solveArray(mixArray);
+
+% Plot adiabatic flame temperature
+plotFigure('phi', [mixArray.equivalenceRatio], 'T', [mixArray.T]);
+
+% Plot molar fractions
+plotComposition(mixArray(1), mixArray, 'equivalenceRatio', 'Xi', 'mintol', 1e-14);

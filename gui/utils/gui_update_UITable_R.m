@@ -1,20 +1,24 @@
-function gui_update_UITable_R(app, self)
+function gui_update_UITable_R(app)
     % Update data in the UITable_R with the next order: Inert -> Oxidizer -> Fuel
-    species = [self.PD.S_Inert, self.PD.S_Oxidizer, self.PD.S_Fuel];
-    Nspecies = length(species); 
-    if isempty(self.PD.S_Fuel)
-        self.PD.N_Fuel = []; % Set to 1 by default
-    end
-    moles = [self.PD.N_Inert, self.PD.N_Oxidizer, self.PD.N_Fuel];
-    molar_fraction = moles/sum(moles); % It is easier to recompute
-    typeSpecies = get_typeSpecies(self);
-    if ~isempty(app.UITable_R.Data) && Nspecies == length(app.UITable_R.Data(:, 1))
+
+    % Get chemical species and molar composition
+    listSpecies = [app.mixture.listSpeciesInert, app.mixture.listSpeciesOxidizer, app.mixture.listSpeciesFuel];
+    numSpecies = length(listSpecies);
+    moles = [app.mixture.molesInert, app.mixture.molesOxidizer, app.mixture.molesFuel];
+    molar_fraction = moles / sum(moles);
+
+    % Catalog chemical species (fuel, oxidizer, or inert)
+    typeSpecies = getTypeSpecies(app.mixture);
+
+    if ~isempty(app.UITable_R.Data) && numSpecies == length(app.UITable_R.Data(:, 1))
         temperatures = app.UITable_R.Data(:, 5)';
     else
-        temperatures = create_cell_ntimes(self.PD.TR.value, Nspecies);
+        temperatures = repmat({app.mixture.T}, [1, numSpecies]);
     end
-    % Check if is a condensed species with a fixed temperature
-    [app, temperatures] = gui_check_temperature_reactants(app, self.DB, species, temperatures, Nspecies);
+
+    % Check if is a condensed species with a fixed temperatures
+    [app, temperatures] = gui_check_temperature_reactants(app, listSpecies, temperatures, numSpecies);
+
     % Update table
-    app.UITable_R.Data = [species; vector2cell(moles); vector2cell(molar_fraction); typeSpecies; temperatures]';
+    app.UITable_R.Data = [listSpecies; vector2cell(moles); vector2cell(molar_fraction); typeSpecies; temperatures]';
 end

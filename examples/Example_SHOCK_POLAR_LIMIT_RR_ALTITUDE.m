@@ -4,8 +4,8 @@
 % Compute limit regular reflections at different altitudes considering a
 % thermochemical frozen gas, a chemically frozen gas, and dissociation,
 % ionization, vibrational excitation and electronic excitation. The
-% calculations are carried out for a set of initial shock front velocities
-% u1/a1 = [1.75:0.1:20]
+% calculations are carried out for a set of pre-shock Mach numbers 
+% M1 = [1.75:0.1:20]
 %    
 % Air_ions == {'eminus', 'Ar', 'Arplus', 'C', 'Cplus', 'Cminus', ...
 %              'CN', 'CNplus', 'CNminus', 'CNN', 'CO', 'COplus', ...
@@ -17,80 +17,105 @@
 %              'N2O5', 'N3', 'O', 'Oplus', 'Ominus', 'O2', 'O2plus', ...
 %              'O2minus', 'O3'}
 %   
-% See wiki or list_species() for more predefined sets of species
+% See wiki or setListspecies method from ChemicalSystem class for more
+% predefined sets of species
+%
+% Note: This example uses the Standard Atmosphere Functions package [1]
+%
+% [1] Sky Sartorius (2024). Standard Atmosphere Functions. Available at
+%     https://github.com/sky-s/standard-atmosphere, GitHub.
+%     Retrieved June 12, 2024.
 %
 % @author: Alberto Cuadra Lara
-%          PhD Candidate - Group Fluid Mechanics
+%          Postdoctoral researcher - Group Fluid Mechanics
 %          Universidad Carlos III de Madrid
 %                 
-% Last update Dec 09 2022
+% Last update Jun 11 2024
 % -------------------------------------------------------------------------
+
+% Import packages
+import combustiontoolbox.databases.NasaDatabase
+import combustiontoolbox.core.*
+import combustiontoolbox.equilibrium.*
+import combustiontoolbox.shockdetonation.*
+import combustiontoolbox.utils.display.*
+import combustiontoolbox.common.Units
 
 % Definitions
 S_Oxidizer = {'N2', 'O2', 'Ar', 'CO2'};
 N_Oxidizer = [78.084, 20.9476, 0.9365, 0.0319] ./ 20.9476;
-Mach_number = 1.75:0.1:20.5;
+machNumber = 1.75:0.1:20.5;
 z = [0, 15000, 30000];
+numCases = length(machNumber);
+numAltitude = length(z);
 
-% Default
-FLAG_FROZEN = false;
-FLAG_TCHEM_FROZEN = false;
+% Get Nasa database
+DB = NasaDatabase();
 
-% Calculations
-for i = 3:-1:1
+% Define chemical system
+system = ChemicalSystem(DB, 'air_ions');
+
+% Initialize mixture
+mix = Mixture(system);
+
+% Define chemical state
+set(mix, {'N2', 'O2', 'Ar', 'CO2'}, [78.084, 20.9476, 0.9365, 0.0319] / 20.9476);
+
+% Initialization of Mixture objects
+mixArray1 = repmat(mix, [numCases, 3, numAltitude]);
+mixArray2 = repmat(mix, [numCases, 3, numAltitude]);
+mixArray2_1 = repmat(mix, [numCases, 3, numAltitude]);
+mixArray3 = repmat(mix, [numCases, 3, numAltitude]);
+
+% Initialization of EquilibriumSolver
+equilibriumSolver = EquilibriumSolver();
+
+for i = 3:3
 
     switch i
         case 1
-            LS = 'Air_ions';
+            equilibriumSolver.FLAG_FROZEN = false;
+            equilibriumSolver.FLAG_TCHEM_FROZEN = false;
         case 2
-            LS = {'N2', 'O2', 'Ar', 'CO2'};
-            FLAG_FROZEN = true;
+            equilibriumSolver.FLAG_FROZEN = true;
+            equilibriumSolver.FLAG_TCHEM_FROZEN = false;
         case 3
-            LS = {'N2', 'O2', 'Ar', 'CO2'};
-            FLAG_TCHEM_FROZEN = true;
+            equilibriumSolver.FLAG_FROZEN = false;
+            equilibriumSolver.FLAG_TCHEM_FROZEN = true;
     end
 
-    for j = length(z):-1:1
-        % Initialize
-        self = App(LS);
-        % Initial conditions
-        self.TN.FLAG_FROZEN = FLAG_FROZEN;
-        self.TN.FLAG_TCHEM_FROZEN = FLAG_TCHEM_FROZEN;
-        [~, ~, TR, pR] = atmos(z(j));
-        pR = convert_Pa_to_bar(pR);
-        self = set_prop(self, 'TR', TR, 'pR', pR);
-        sound_velocity = compute_sound(TR, pR, S_Oxidizer, N_Oxidizer, 'self', self);
-        self.PD.S_Oxidizer = S_Oxidizer;
-        self.PD.N_Oxidizer = N_Oxidizer;
-        % Additional inputs (depends of the problem selected)
-        self = set_prop(self, 'u1', sound_velocity * Mach_number);
+    for j = numAltitude
+        % Get temperature and pressure
+        [~, ~, temperature, pressure] = atmos(z(j));
+        pressure = Units.convert(pressure, 'Pa', 'bar');
+        
+        % Define properties
+        mixArray1(:, i, j) = setProperties(mix, 'temperature', temperature, 'pressure', pressure, 'M1', machNumber);
+
+        % Initialize solver
+        solver = ShockSolver('problemType', 'SHOCK_POLAR_LIMITRR', 'equilibriumSolver', equilibriumSolver, 'tolShocks', 1e-7);
+        
         % Solve problem
-        self = solve_problem(self, 'SHOCK_POLAR_LIMITRR');
-        % Get results
-        theta_limitRR(:, i, j) = cell2vector(self.PS.str2_1, 'theta');
-        beta_limitRR(:, i, j) = cell2vector(self.PS.str2_1, 'beta');
+        [mixArray1(:, i, j),...
+         mixArray2(:, i, j),...
+         mixArray2_1(:, i, j),...
+         mixArray3(:, i, j)] = solver.solveArray(mixArray1(:, i, j));
     end
 
 end
 
-% Plots
-
-% Plot settings
-% colors = [209 237 179; 172 222 188; 125 203 195; 66 164 200; 20 111 172] / 255;
+% Definitions
+ax = setFigure();
 colors = [175 221 233; 95 188 211; 0 102 128] / 255;
 
-% Plot wave angle [deg] (limit regular reflection) against pre-shock Mach number
-ax = set_figure();
-for j = 1:length(z)
-    ax = plot_figure('Pre-shock Mach number', Mach_number, 'Wave angle limit RR [deg]', beta_limitRR(:, 1, j), 'linestyle', 'k-', 'ax', ax, 'color', colors(j, :));
-    ax = plot_figure('Pre-shock Mach number', Mach_number, 'Wave angle limit RR [deg]', beta_limitRR(:, 2, j), 'linestyle', 'k--', 'ax', ax, 'color', colors(j, :));
-    ax = plot_figure('Pre-shock Mach number', Mach_number, 'Wave angle limit RR [deg]', beta_limitRR(:, 3, j), 'linestyle', 'k:', 'ax', ax, 'color', colors(j, :));
+for j = 1:numAltitude
+    ax = plotFigure('Pre-shock Mach number', [mixArray1(:, i, j).mach], 'Wave angle limit RR [deg]', [mixArray2_1(:, i, j).beta], 'linestyle', 'k-', 'ax', ax, 'color', colors(j, :));
+    ax = plotFigure('Pre-shock Mach number', [mixArray1(:, i, j).mach], 'Wave angle limit RR [deg]', [mixArray2_1(:, i, j).beta], 'linestyle', 'k--', 'ax', ax, 'color', colors(j, :));
+    ax = plotFigure('Pre-shock Mach number', [mixArray1(:, i, j).mach], 'Wave angle limit RR [deg]', [mixArray2_1(:, i, j).beta], 'linestyle', 'k:', 'ax', ax, 'color', colors(j, :));
 end
 
-% Plot deflection angle [deg] (limit regular reflection) against pre-shock Mach number
-ax = set_figure();
-for j = 1:length(z)
-    ax = plot_figure('Pre-shock Mach number', Mach_number, 'Deflection angle limit RR [deg]', theta_limitRR(:, 1, j), 'linestyle', 'k-', 'ax', ax, 'color', colors(j, :));
-    ax = plot_figure('Pre-shock Mach number', Mach_number, 'Deflection angle limit RR [deg]', theta_limitRR(:, 2, j), 'linestyle', 'k--', 'ax', ax, 'color', colors(j, :));
-    ax = plot_figure('Pre-shock Mach number', Mach_number, 'Deflection angle limit RR [deg]', theta_limitRR(:, 3, j), 'linestyle', 'k:', 'ax', ax, 'color', colors(j, :));
+for j = 1:numAltitude
+    ax = plotFigure('Pre-shock Mach number', [mixArray1(:, i, j).mach], 'Deflection angle limit RR [deg]', [mixArray2_1(:, i, j).theta], 'linestyle', 'k-', 'ax', ax, 'color', colors(j, :));
+    ax = plotFigure('Pre-shock Mach number', [mixArray1(:, i, j).mach], 'Deflection angle limit RR [deg]', [mixArray2_1(:, i, j).theta], 'linestyle', 'k--', 'ax', ax, 'color', colors(j, :));
+    ax = plotFigure('Pre-shock Mach number', [mixArray1(:, i, j).mach], 'Deflection angle limit RR [deg]', [mixArray2_1(:, i, j).theta], 'linestyle', 'k:', 'ax', ax, 'color', colors(j, :));
 end

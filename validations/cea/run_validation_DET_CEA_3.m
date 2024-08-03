@@ -8,33 +8,75 @@ function problems_solved = run_validation_DET_CEA_3
     % Initial mixture: CH4 + AIR_IDEAL (79% N2 + 21% O2)
     % List of species considered: list_species('Soot Formation Extended')
     
-    % Inputs
-    Fuel = 'CH4';
-    prefixDataName = Fuel;
-    filename = {strcat(prefixDataName, '_air1_detonations.out'), strcat(prefixDataName, '_air1_detonations2.out'), strcat(prefixDataName, '_air1_detonations3.out')};
-    LS =  'Soot Formation Extended';
-    display_species = {'CO2', 'CO', 'H2O', 'H2', 'O2', 'N2',...
+    % Import packages
+    import combustiontoolbox.databases.NasaDatabase
+    import combustiontoolbox.core.*
+    import combustiontoolbox.shockdetonation.*
+    import combustiontoolbox.utils.display.*
+
+    % Benchmark?
+    FLAG_BENCHMARK = false;
+
+    % Definitions
+    fuel = 'CH4';
+    prefixDataName = 'air1_detonations';
+
+    for i = 3:-1:1
+        filename{i} = sprintf('%s_%s%d.out', fuel, prefixDataName, i);
+    end
+
+    listSpecies = 'Soot Formation Extended';
+    displaySpecies = {'CO2', 'CO', 'H2O', 'H2', 'O2', 'N2',...
                       'HCN','H','OH','O','CN','NH3','CH4','C2H4','CH3',...
                       'NO','HCO','NH2','NH','N','CH','Cbgrb'};
-    tolN = 1e-18;
-    % Combustion Toolbox
-    results_CT = run_CT('ProblemType', 'DET',...
-                        'Species', LS,...
-                        'S_Fuel', 'CH4',...
-                        'EquivalenceRatio', 0.5:0.01:4,...
-                        'tolN', tolN);
-    problems_solved = length(results_CT.PD.range);
+    
+    % Get Nasa database
+    DB = NasaDatabase('FLAG_BENCHMARK', FLAG_BENCHMARK);
+    
+    % Define chemical system
+    system = ChemicalSystem(DB, listSpecies);
+    
+    % Initialize mixture
+    mix = Mixture(system);
+    
+    % Define chemical state
+    set(mix, {fuel}, 'fuel', 1);
+    set(mix, {'N2', 'O2'}, 'oxidizer', [79, 21] / 21);
+    
+    % Define properties
+    mixArray1 = setProperties(mix, 'temperature', 300, 'pressure', 1, 'equivalenceRatio',  0.5:0.01:4);
+    
+    % Initialize solver
+    solver = DetonationSolver('problemType', 'DET', 'FLAG_RESULTS', false);
+    
+    % Solve problem
+    [mixArray1, mixArray2] = solver.solveArray(mixArray1);
+    
+    if FLAG_BENCHMARK
+        return
+    end
+    
+    % Prepare data
+    for i = 1:length(mixArray2)
+        mixArray2(i).W = mixArray2(i).W * 1e3; % [g/mol]
+        mixArray2(i).uShock = mixArray1(i).u;
+    end
+
     % Load results CEA 
-    results_CEA = data_CEA(filename, display_species);
-    % Display validation (plot)
-    % * Molar fractions
-    [~, fig1] = plot_molar_fractions(results_CT, results_CT.PS.strR, 'phi', 'Xi', 'y_var', results_CT.PS.strP, 'validation', results_CEA, 'display_species', display_species);
-    % * Properties mixture 2 - 1
-    fig2 = plot_properties_validation(results_CT, results_CEA, {'phi', 'phi', 'phi', 'phi', 'phi', 'phi', 'phi', 'phi'}, {'T', 'p', 'rho', 'h', 'e', 'g', 'S', 'gamma_s'}, 'mix2');
-    % * Properties mixture 2 - 2
-    fig3 = plot_properties_validation(results_CT, results_CEA, {'phi', 'phi', 'phi', 'phi', 'phi', 'phi', 'phi', 'phi'}, {'cP', 'cV', 'gamma_s', 'dVdT_p', 'dVdp_T', 'sound', 'W', 'u_preshock'}, 'mix2');
+    resultsCEA = data_CEA(filename, displaySpecies);
+    resultsCEA.uShock = resultsCEA.u_preshock;
+    
+    % Plot molar fractions
+    fig1 = plotComposition(mixArray2(1), mixArray1, 'equivalenceRatio', 'Xi', 'mintol', 1e-14, 'y_var', mixArray2, 'validation', resultsCEA, 'display_species', displaySpecies);
+
+    % Properties mixture 2 - 1
+    fig2 = plotProperties(repmat({'equivalenceRatio'}, 1, 8), [mixArray1.equivalenceRatio], {'T', 'p', 'rho', 'h', 'e', 'g', 's', 'gamma_s'}, mixArray2, 'basis', {[], [], [], 'mi', 'mi', 'mi', 'mi', []}, 'validation', resultsCEA);
+
+    % Properties mixture 2 - 2
+    fig3 = plotProperties(repmat({'equivalenceRatio'}, 1, 7), [mixArray1.equivalenceRatio], {'cp', 'cv', 'dVdT_p', 'dVdp_T', 'sound', 'W', 'uShock'}, mixArray2, 'basis', {'mi', 'mi', [], [], [], [], []}, 'validation', resultsCEA);
+
     % Save plots
-    folderpath = strcat(pwd,'\Validations\Figures\');
+    folderpath = fullfile(pwd, 'validations', 'figures');
     stack_trace = dbstack;
     filename = stack_trace.name;
     saveas(fig1, strcat(folderpath, filename, '_molar'), 'svg');

@@ -6,17 +6,19 @@ function INSTALL(varargin)
     % Optional Args:
     %     * action (char): 'install' or 'uninstall' (default: 'install')
     %     * type (char): 'path', 'GUI', or 'all' (default: 'all')
+    %     * FLAG_HOME (bool): true or false (default: false)
     %
     % Examples:
-    %     * INSTALL();                  % Installs the Combustion Toolbox
-    %     * INSTALL('uninstall');       % Uninstalls the Combustion Toolbox
-    %     * INSTALL('install', 'path'); % Installs the Combustion Toolbox (only MATLAB path)
-    %     * INSTALL('install', 'GUI');  % Installs the Combustion Toolbox (only GUI)
-    %     * INSTALL('install', 'all');  % Installs the Combustion Toolbox
+    %     * INSTALL();                       % Installs the Combustion Toolbox
+    %     * INSTALL('uninstall');            % Uninstalls the Combustion Toolbox
+    %     * INSTALL('install', 'path');      % Installs the Combustion Toolbox (only MATLAB path)
+    %     * INSTALL('install', 'GUI');       % Installs the Combustion Toolbox (only GUI)
+    %     * INSTALL('install', 'all');       % Installs the Combustion Toolbox
+    %     * INSTALL('install', 'all', true); % Installs the Combustion Toolbox with FLAG_HOME set to true
     %
     % Notes:
     %     The code is available in:
-    %     * GitHub - https://github.com/AlbertoCuadra/combustion_toolbox
+    %     * GitHub - https://github.com/CombustionToolbox/combustion_toolbox
     %     * MATLAB File Exchange - https://in.mathworks.com/matlabcentral/fileexchange/101088-combustion-toolbox
     %     * Zenodo - https://doi.org/10.5281/zenodo.5554911
     %
@@ -24,18 +26,13 @@ function INSTALL(varargin)
     %          or type "run website_CT"
     %
     % @author: Alberto Cuadra Lara
-    %          PhD Candidate - Group Fluid Mechanics
+    %          Postdoctoral researcher - Group Fluid Mechanics
     %          Universidad Carlos III de Madrid
     
     % Default
     action = 'install';
     type = 'all';
-    
-    % Definitions
-    name = 'Combustion Toolbox';
-    app_name = 'combustion_toolbox_app';
-    dir_code = get_dir_code();
-    dir_app = fullfile(dir_code, 'installer', [app_name, '.mlappinstall']);
+    FLAG_HOME = false;
 
     % Unpack
     if nargin
@@ -45,15 +42,160 @@ function INSTALL(varargin)
     if nargin > 1
         type = varargin{2};
     end
+
+    if nargin > 2
+        FLAG_HOME = varargin{3};
+    end
+    
+    % Get package destination
+    packageDst = getPath(FLAG_HOME);
+    
+    % Install Combustion Toolbox package and app
+    installPackage(action, type, packageDst);
+end
+
+% SUB-PASS FUNCTIONS
+function packageDst = getPath(FLAG_HOME)
+    % Get path package destination
+
+    % Get path package destination based on current location
+    if ~FLAG_HOME
+        packageDst = pwd();
+        return
+    end
+    
+    % Get path package destination based on home operating system location
+    switch computer('arch')
+        case {'mac', 'maci64', 'maca64', 'maci'}
+            % macOS
+            packageDst = '/Applications/CombustionToolbox/matlab';
+        case 'linux64'
+            % Linux
+            packageDst = '/usr/local/CombustionToolbox/matlab';
+        case 'win64'
+            % Windows
+            packageDst = 'C:\Program Files\CombustionToolbox\matlab';
+        otherwise
+            error('Unsupported operating system');
+    end
+
+end
+
+function bashScriptFile = generateBash(packageDst, action)
+    % Generate bash script
+
+    % Definitions
+    packageSrc = pwd();
+    startupFile = fullfile(getenv('HOME'), 'Documents', 'MATLAB', 'startup.m');
+    addPathLine = sprintf('addpath(genpath(''%s'')) %%%% added by Combustion toolbox installer', packageDst);
+    
+    % Define the content of the Bash script
+    if strcmp(action, 'install')
+        bashScriptContent = sprintf([
+            '#!/bin/bash\n' ...
+            '\n' ...
+            'PACKAGE_SRC="%s"\n' ...
+            'PACKAGE_DST="%s"\n' ...
+            'STARTUP_FILE="%s"\n' ...
+            'ADDPATH_LINE="%s"\n' ...
+            '\n' ...
+            'printf "Copying Combustion Toolbox destination directory... "\n' ...
+            'rsync -aq --exclude=".git" "$PACKAGE_SRC/" "$PACKAGE_DST/"\n' ...
+            'printf "OK!\\n"\n' ...
+            '\n' ...
+            'printf "Adding Combustion Toolbox destination directory to startup.m... "\n' ...
+            'if grep -Fxq "$ADDPATH_LINE" "$STARTUP_FILE"; then\n' ...
+            '    printf "OK!\\n"\n' ...
+            'else\n' ...
+            '    echo "$ADDPATH_LINE" >> "$STARTUP_FILE"\n' ...
+            '    printf "OK!\\n"\n' ...
+            'fi\n'], ...
+        packageSrc, packageDst, startupFile, addPathLine);
+    elseif strcmp(action, 'uninstall')
+        bashScriptContent = sprintf([
+            '#!/bin/bash\n' ...
+            '\n' ...
+            'STARTUP_FILE="%s"\n' ...
+            '\n' ...
+            'printf "Removing Combustion Toolbox data from startup.m... "\n' ...
+            'sed -i '''' "/added by Combustion toolbox installer/d" "$STARTUP_FILE"\n' ...
+            'printf "OK!\\n"\n'], ...
+        startupFile);
+    else
+        error('Invalid action specified. Please use ''install'' or ''uninstall''.');
+    end
+    
+    % Write the Bash script content to a file
+    bashScriptFile = 'install.sh';
+    fid = fopen(bashScriptFile, 'wt');
+    fprintf(fid, bashScriptContent);
+    fclose(fid);
+
+    % Make the script executable
+    system(['chmod +x ' bashScriptFile]);
+end
+
+function installPackage(action, type, packageDst)
+    % This function installs the Combustion Toolbox repository from local
+    % files. It adds all subfolders to the MATLAB path and installs the
+    % Combustion Toolbox app.
+    %
+    % Args:
+    %     action (char): 'install' or 'uninstall'
+    %     type (char): 'path', 'GUI', or 'all'
+    %     packageDst (char): package destination path
+    %
+    % Examples:
+    %     * installPackage();                  % Installs the Combustion Toolbox
+    %     * installPackage('uninstall');       % Uninstalls the Combustion Toolbox
+    %     * installPackage('install', 'path'); % Installs the Combustion Toolbox (only MATLAB path)
+    %     * installPackage('install', 'GUI');  % Installs the Combustion Toolbox (only GUI)
+    %     * installPackage('install', 'all');  % Installs the Combustion Toolbox
+    %
+    % Notes:
+    %     The code is available in:
+    %     * GitHub - https://github.com/CombustionToolbox/combustion_toolbox
+    %     * MATLAB File Exchange - https://in.mathworks.com/matlabcentral/fileexchange/101088-combustion-toolbox
+    %     * Zenodo - https://doi.org/10.5281/zenodo.5554911
+    %
+    % Website: https://combustion-toolbox-website.readthedocs.io/ 
+    %          or type "run website_CT"
+    %
+    % @author: Alberto Cuadra Lara
+    %          Postdoctoral researcher - Group Fluid Mechanics
+    %          Universidad Carlos III de Madrid
+        
+    % Definitions
+    name = 'Combustion Toolbox';
+    app_name = 'combustion_toolbox_app';
+    dir_code = getDirCode();
+    dir_app = fullfile(dir_code, 'installer', [app_name, '.mlappinstall']);
     
     % Get type of installation/uninstallation
-    [FLAG_PATH, FLAG_GUI] = get_type(type);
+    [FLAG_PATH, FLAG_GUI] = getType(type);
     
+    % Add/remove Combustion Toolbox in MATLAB startup.m file
+    try
+        % Generate bash script
+        bashScriptFile = generateBash(packageDst, action);
+        
+        % Execute bash script
+        system(['./' bashScriptFile]);
+    
+        % Remove the bash script
+        delete(bashScriptFile);
+    catch
+        fprintf('Error including Combustion Toolbox path in MATLAB startup.m file');
+    end
+
+    % Move local path to package destination
+    cd(packageDst);
+
     % Install/Uninstall Combustion Toolbox
-    action_code(action);
+    actionCode(action);
     
     % NESTED FUNCTIONS
-    function action_code(action)
+    function actionCode(action)
         % Install or uninstall the Combustion Toolbox
         %
         % Args:
@@ -85,14 +227,14 @@ function INSTALL(varargin)
         end
         
         % Install/Uninstall path
-        action_path(f_path, message);
+        actionPath(f_path, message);
         
         % Install/Uninstall the Combustion Toolbox app
-        action_app(f_app, message);
+        actionApp(f_app, message);
     
     end
     
-    function action_path(f_path, message)
+    function actionPath(f_path, message)
         % Install/Uninstall path
         %
         % Args:
@@ -115,6 +257,13 @@ function INSTALL(varargin)
         % Add all subfolders to the MATLAB path
         for i = length(subfolders):-1:1
             dir_subfolders = fullfile(subfolders(i).folder, subfolders(i).name);
+
+            % Check if the subfolder is a package folder
+            if startsWith(subfolders(i).name, '+')
+                f_path(subfolders(i).folder); % Add parent directory
+                continue
+            end
+
             genpath_subfolders = genpath(dir_subfolders);
             f_path(genpath_subfolders);
         end
@@ -127,7 +276,7 @@ function INSTALL(varargin)
         fprintf('OK!\n')
     end
 
-    function action_app(f_app, message)
+    function actionApp(f_app, message)
         % Install/Uninstall the Combustion Toolbox app
         %
         % Args:
@@ -150,8 +299,7 @@ function INSTALL(varargin)
 
 end
 
-% SUB-PASS FUNCTIONS
-function dir_code = get_dir_code()
+function dir_code = getDirCode()
     % Get the directory where the code is located
     %
     % Returns:
@@ -169,7 +317,7 @@ function dir_code = get_dir_code()
     dir_code = pwd;
 end
 
-function [FLAG_PATH, FLAG_GUI] = get_type(type)
+function [FLAG_PATH, FLAG_GUI] = getType(type)
     % Get the type of installation/uninstallation
     %
     % Args:

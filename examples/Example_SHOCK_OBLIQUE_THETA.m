@@ -2,9 +2,8 @@
 % EXAMPLE: SHOCK_OBLIQUE_THETA
 %
 % Compute pre-shock and post-shock state for a oblique incident shock wave
-% at standard conditions, a set of 51 species considered, a initial 
-% shock front velocities u1 = a1 * 10 [m/s], and a set of deflection angle 
-% theta = [5:5:40] [deg]
+% at standard conditions, a set of 51 species considered, a pre-shock Mach
+% number M1 = 10, and a set of deflection angle theta = [5:1:40] [deg]
 %    
 % Air_ions == {'eminus', 'Ar', 'Arplus', 'C', 'Cplus', 'Cminus', ...
 %              'CN', 'CNplus', 'CNminus', 'CNN', 'CO', 'COplus', ...
@@ -16,25 +15,57 @@
 %              'N2O5', 'N3', 'O', 'Oplus', 'Ominus', 'O2', 'O2plus', ...
 %              'O2minus', 'O3'}
 %   
-% See wiki or list_species() for more predefined sets of species
+% See wiki or setListspecies method from ChemicalSystem class for more
+% predefined sets of species
 %
 % @author: Alberto Cuadra Lara
-%          PhD Candidate - Group Fluid Mechanics
+%          Postdoctoral researcher - Group Fluid Mechanics
 %          Universidad Carlos III de Madrid
 %                 
-% Last update July 22 2022
+% Last update April 02 2024
 % -------------------------------------------------------------------------
 
-%% INITIALIZE
-self = App('Air_ions');
-%% INITIAL CONDITIONS
-self = set_prop(self, 'TR', 300, 'pR', 1 * 1.01325);
-self.PD.S_Oxidizer = {'N2', 'O2', 'Ar', 'CO2'};
-self.PD.N_Oxidizer = [78.084, 20.9476, 0.9365, 0.0319] ./ 20.9476;
-%% ADDITIONAL INPUTS (DEPENDS OF THE PROBLEM SELECTED)
-Mach_number = 5;
-self = set_prop(self, 'u1', 3.472107491008314e+02 * Mach_number, 'theta', 5:5:40);
-%% SOLVE PROBLEM
-self = solve_problem(self, 'SHOCK_OBLIQUE');
-%% DISPLAY RESULTS (PLOTS)
-post_results(self);
+% Import packages
+import combustiontoolbox.databases.NasaDatabase
+import combustiontoolbox.core.*
+import combustiontoolbox.shockdetonation.*
+import combustiontoolbox.utils.display.*
+
+% Get Nasa database
+DB = NasaDatabase();
+
+% Define chemical system
+system = ChemicalSystem(DB, 'air ions');
+
+% Initialize mixture
+mix = Mixture(system);
+
+% Define chemical state
+set(mix, {'N2', 'O2', 'Ar', 'CO2'}, [78.084, 20.9476, 0.9365, 0.0319] / 20.9476);
+
+% Define properties
+mixArray1 = setProperties(mix, 'temperature', 300, 'pressure', 1.01325, 'M1', 10, 'theta', 5:1:40);
+
+% Initialize solver
+solver = ShockSolver('problemType', 'SHOCK_OBLIQUE');
+
+% Solve problem
+[mixArray1, mixArray2_1, mixArray2_2] = solver.solveArray(mixArray1);
+
+% Plot Hugoniot curve
+ax1 = plotFigure('\rho_1 / \rho_2', [mixArray1.rho] ./ [mixArray2_1.rho], 'p_2 / p_1', [mixArray2_1.p] ./ [mixArray1.p], 'xScale', 'log', 'yScale', 'log', 'color', 'auto');
+ax1 = plotFigure('\rho_1 / \rho_2', [mixArray1.rho] ./ [mixArray2_2.rho], 'p_2 / p_1', [mixArray2_2.p] ./ [mixArray1.p], 'xScale', 'log', 'yScale', 'log', 'color', 'auto', 'ax', ax1);
+
+% Plot post-shock temperature
+ax2 = plotFigure('theta', [mixArray1.theta], 'T', [mixArray2_1.T], 'color', 'auto');
+ax2 = plotFigure('theta', [mixArray1.theta], 'T', [mixArray2_2.T], 'color', 'auto', 'ax', ax2);
+
+% Plot molar fractions
+plotComposition(mixArray2_1(1), mixArray1, 'theta', 'Xi', 'mintol', 1e-3, 'y_var', mixArray2_1);
+plotComposition(mixArray2_2(1), mixArray1, 'theta', 'Xi', 'mintol', 1e-3, 'y_var', mixArray2_2);
+
+% Plot properties
+properties = {'T', 'p', 'rho', 'h', 'e', 'g', 's', 'gamma_s'};
+propertiesBasis = {[], [], [], 'mi', 'mi', 'mi', 'mi', []};
+ax = plotProperties(repmat({'theta'}, 1, length(properties)), mixArray2_1, properties, mixArray2_1, 'basis', propertiesBasis, 'color', [0 0 0], 'linestyle', '-');
+ax = plotProperties(repmat({'theta'}, 1, length(properties)), mixArray2_2, properties, mixArray2_2, 'basis', propertiesBasis, 'color', [0 0 0], 'linestyle', '--', 'ax', ax);

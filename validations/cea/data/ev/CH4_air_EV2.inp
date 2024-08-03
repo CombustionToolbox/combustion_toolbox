@@ -1,0 +1,30 @@
+### CEA analysis performed on Thu 06-Jun-2024 15:34:41
+
+# Problem Type: "Combustion at Assigned Volume"  
+
+prob case=test___________8300 uv     
+
+# Density (1 value):
+rho,kg/m**3= 1
+
+# Equivalence based on Fuel/Oxid. wt ratio (Eq 9.19*) (10 values):
+phi= 3.1, 3.2, 3.3, 3.4, 3.5, 3.6, 3.7, 3.8, 3.9, 4
+
+# You selected the following fuels and oxidizers:
+reac
+fuel CH4              mole=100.0000  t,k= 300.000 
+oxid Air              mole=100.0000  t,k= 300.000 
+
+# You selected these options for output:
+# short version of output
+output short 
+# Proportions of any products will be expressed as Mole Fractions.
+# Heat will be expressed as siunits
+output siunits
+# Trace variable:
+output trace=1e-16
+
+# Input prepared by this script:/var/www/sites/cearun.grc.nasa.gov/cgi-bin/CEARUN/prepareInputFile.cgi
+
+### IMPORTANT:  The following line is the end of your CEA input file!
+end

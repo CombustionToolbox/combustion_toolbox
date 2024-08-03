@@ -9,25 +9,45 @@
 %                    'C2','C2H4','CH','CH3','CH4','CN','H',...
 %                    'HCN','HCO','N','NH','NH2','NH3','NO','O','OH'}
 %   
-% See wiki or list_species() for more predefined sets of species
+% See wiki or setListspecies method from ChemicalSystem class for more predefined sets of species
 %
 % @author: Alberto Cuadra Lara
-%          PhD Candidate - Group Fluid Mechanics
+%          Postdoctoral researcher - Group Fluid Mechanics
 %          Universidad Carlos III de Madrid
 %                 
-% Last update July 22 2022
+% Last update April 02 2024
 % -------------------------------------------------------------------------
 
-%% INITIALIZE
-self = App('Soot formation');
-%% INITIAL CONDITIONS
-self = set_prop(self, 'TR', 300, 'pR', 1 * 1.01325, 'phi', 1.5);
-self.PD.S_Fuel     = {'CH4'};
-self.PD.S_Oxidizer = {'N2', 'O2', 'Ar', 'CO2'};
-self.PD.ratio_oxidizers_O2 = [78.084, 20.9476, 0.9365, 0.0319] ./ 20.9476;
-%% ADDITIONAL INPUTS (DEPENDS OF THE PROBLEM SELECTED)
-self = set_prop(self, 'pP', 1.01325 * logspace(0, 3, 200)); 
-%% SOLVE PROBLEM
-self = solve_problem(self, 'SP');
-%% DISPLAY RESULTS (PLOTS)
-post_results(self);
+% Import packages
+import combustiontoolbox.databases.NasaDatabase
+import combustiontoolbox.core.*
+import combustiontoolbox.equilibrium.*
+import combustiontoolbox.utils.display.*
+
+% Get Nasa database
+DB = NasaDatabase();
+
+% Define chemical system
+system = ChemicalSystem(DB, 'soot formation');
+
+% Initialize mixture
+mix = Mixture(system);
+
+% Define chemical state
+set(mix, {'CH4'}, 'fuel', 1);
+set(mix, {'N2', 'O2', 'Ar', 'CO2'}, 'oxidizer', [78.084, 20.9476, 0.9365, 0.0319] / 20.9476);
+
+% Define properties
+mixArray = setProperties(mix, 'temperature', 300, 'pressure', 1.01325 * logspace(0, 3, 200), 'equivalenceRatio', 1.5);
+
+% Initialize solver
+solver = EquilibriumSolver('problemType', 'SP');
+
+% Solve problem
+solver.solveArray(mixArray);
+
+% Plot adiabatic flame temperature
+plotFigure('p', mixArray, 'T', mixArray);
+
+% Plot molar fractions
+plotComposition(mixArray(1), mixArray, 'p', 'Xi', 'mintol', 1e-14);

@@ -7,5 +7,5 @@ function value = entropy_mass(mix)
     % Returns:
     %     value (float): Mass-basis specific entropy [kJ/kg-K] of the mixture
 
-    value = mix.S / mix.mi;
+    value = mix.s / mix.mi * 1e-3;
 end

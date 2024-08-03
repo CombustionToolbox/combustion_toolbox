@@ -50,7 +50,7 @@ function position = getMonitorPositions(varargin)
     
     % Get the position of the monitor using MATLAB's routines
     catch
-        position = getMonitorPositionsMATLAB(varargin{:});
+        position = combustiontoolbox.utils.display.getMonitorPositionsMATLAB(varargin{:});
     end
 
 end

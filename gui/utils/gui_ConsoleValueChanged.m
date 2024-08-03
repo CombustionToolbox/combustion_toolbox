@@ -7,34 +7,38 @@ function gui_ConsoleValueChanged(app, event)
     try
         switch lower(app.Console.Value{1,1})
             case {'about'}
-                run('uiabout.mlapp');
+                run('uiabout.m');
                 output = 'Running uiabout...';
             case 'clear'
                 public_ClearButtonPushed(app, event);
                 output = ' ';
             case {'docs', 'documentation'}
-                docs_CT;
+                combustiontoolbox.utils.SystemUtils.openWebsite(combustiontoolbox.utils.SystemUtils.url.docs);
                 output = 'Redirecting to CT documentation using the default browser...';
             case {'license'}
-                run('uilicense.mlapp');
+                run('uilicense.m');
                 output = 'Running uilicense...';
             case {'update'}
                 check_update(app.UIFigure);
                 output = 'Checking for updates of Combustion Toolbox...';
             case {'validations'}
-                run('uivalidations.mlapp');
+                run('uivalidations.m');
                 output = 'Running uivalidations...';
             case {'version'}
-                [temp_tag, temp_date] = get_combustion_toolbox_version();
+                temp_tag = combustiontoolbox.common.Constants.release;
+                temp_date = combustiontoolbox.common.Constants.date;
                 output = sprintf('Version: %s\nDate: %s', temp_tag, temp_date);
-            case {'save', 'export'}
-                gui_save_results(app, app.export_results.format);
+            case {'save', 'export', 'export(''xls'')', 'export(''csv'')'}
+                public_xlsMenuSelected(app, event)
                 output = 'Exporting results...';
-            case {'settings', 'configuration'}
+            case {'export(''mat'')'}
+                public_matMenuSelected(app, event)
+                output = 'Exporting results...';
+            case {'settings', 'configuration', 'uipreferences'}
                 uipreferences(app);
                 output = 'Opening uipreferences...';
             case {'web', 'website', 'webpage'}
-                website_CT;
+                combustiontoolbox.utils.SystemUtils.websiteCT;
                 output = 'Redirecting to CT website using the default browser...';
             otherwise
                 app.Console_text.Value = sprintf('Running: %s...', app.Console.Value{1,1});

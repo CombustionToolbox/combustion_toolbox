@@ -1,5 +1,5 @@
 function DhT = species_DhT(species, T, DB)
-    % Compute thermal enthalpy [kJ/mol] of the species at the given temperature [K]
+    % Compute thermal enthalpy [J/mol] of the species at the given temperature [K]
     % using piecewise cubic Hermite interpolating polynomials and linear extrapolation
     %
     % Args:
@@ -8,7 +8,7 @@ function DhT = species_DhT(species, T, DB)
     %     DB (struct): Database with custom thermodynamic polynomials functions generated from NASAs 9 polynomials fits
     %
     % Returns:
-    %     DhT (float): Thermal enthalpy in molar basis [kJ/mol]
+    %     DhT (float): Thermal enthalpy in molar basis [J/mol]
     %
     % Example:
     %     DhT = species_DhT('H2O', 300, DB)
@@ -22,17 +22,17 @@ function DhT = species_DhT(species, T, DB)
     end
     
     % Check if species data is already cached
-    idx = find(strcmp(cachedSpecies, species), 1);
-    if isempty(idx)
+    index = find(strcmp(cachedSpecies, species), 1);
+    if isempty(index)
         % Load species data and cache it
         DhTcurve = DB.(species).DhTcurve;
         cachedSpecies{end+1} = species;
         cachedDHTcurves{end+1} = DhTcurve;
     else
         % Retrieve cached data
-        DhTcurve = cachedDHTcurves{idx};
+        DhTcurve = cachedDHTcurves{index};
     end
     
-    % Compute thermal enthalpy [kJ/mol]
-    DhT = DhTcurve(T) / 1000;
+    % Compute thermal enthalpy [J/mol]
+    DhT = DhTcurve(T);
 end

@@ -7,5 +7,5 @@ function value = MolecularWeight(mix)
     % Returns:
     %     value (float): Molecular weight [g/mol] of the mixture
 
-    value = mix.W;
+    value = mix.W * 1e3;
 end

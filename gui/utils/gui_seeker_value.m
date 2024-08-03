@@ -14,7 +14,7 @@ function value = gui_seeker_value(app, event, ListValues)
         if any(seekIndex)
             value = ListValues(seekIndex); % Value found in ListValues
         else
-            value = []; % Value not found in ListValues
+            value = {}; % Value not found in ListValues
         end
 
     catch ME

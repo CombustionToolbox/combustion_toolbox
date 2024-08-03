@@ -14,24 +14,42 @@
 %              'N2O5', 'N3', 'O', 'Oplus', 'Ominus', 'O2', 'O2plus', ...
 %              'O2minus', 'O3'}
 %   
-% See wiki or list_species() for more predefined sets of species
+% See wiki or setListspecies method from ChemicalSystem class for more
+% predefined sets of species
 %
 % @author: Alberto Cuadra Lara
-%          PhD Candidate - Group Fluid Mechanics
+%          Postdoctoral researcher - Group Fluid Mechanics
 %          Universidad Carlos III de Madrid
 %                 
-% Last update Jan 10 2023
+% Last update April 02 2024
 % -------------------------------------------------------------------------
 
-%% INITIALIZE
-self = App('Air_ions');
-%% INITIAL CONDITIONS
-self = set_prop(self, 'TR', 300, 'pR', 1 * 1.01325);
-self.PD.S_Oxidizer = {'N2', 'O2', 'Ar', 'CO2'};
-self.PD.N_Oxidizer = [78.084, 20.9476, 0.9365, 0.0319] ./ 20.9476;
-%% ADDITIONAL INPUTS (DEPENDS OF THE PROBLEM SELECTED)
-self = set_prop(self, 'M1', [2, 3, 5, 14]);
-%% SOLVE PROBLEM
-self = solve_problem(self, 'SHOCK_POLAR');
-%% DISPLAY RESULTS (PLOTS)
-post_results(self);
+% Import packages
+import combustiontoolbox.databases.NasaDatabase
+import combustiontoolbox.core.*
+import combustiontoolbox.shockdetonation.*
+import combustiontoolbox.utils.display.*
+
+% Get Nasa database
+DB = NasaDatabase();
+
+% Define chemical system
+system = ChemicalSystem(DB, 'air ions');
+
+% Initialize mixture
+mix = Mixture(system);
+
+% Define chemical state
+set(mix, {'N2', 'O2', 'Ar', 'CO2'}, [78.084, 20.9476, 0.9365, 0.0319] / 20.9476);
+
+% Define properties
+mixArray1 = setProperties(mix, 'temperature', 300, 'pressure', 1.01325, 'M1', [2, 3, 5, 14]);
+
+% Initialize solver
+solver = ShockSolver('problemType', 'SHOCK_POLAR');
+
+% Solve problem
+[mixArray1, mixArray2] = solver.solveArray(mixArray1);
+
+% Plot polars
+[ax1, ax2, ax3] = plotPolar(mixArray1, mixArray2);

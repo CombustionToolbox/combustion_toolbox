@@ -271,52 +271,52 @@ classdef combustion_toolbox < matlab.apps.AppBase
     end
 
     properties (Access = public)
-        constants      % Constants class
-        database       % Class inhereted from Database superclass
-        chemicalSystem % Chemical system class
-        mixture        % Mixture class
-        displaySpecies % Checmial species to be shown in plotComposition
+        constants         % Constants object
+        database          % Class inhereted from Database superclass
+        chemicalSystem    % Chemical system object
+        mixture           % Mixture object
         equilibriumSolver % EquilibriumSolver object
         shockSolver       % ShockSolver object
         detonationSolver  % DetonationSolver object
         rocketSolver      % RocketSolver object
         plotConfig        % PlotConfig object
         export            % Export object
-        fig          % Auxiliary figure
-        default      % Struct with default values of some components in the GUI
-        N_flags      % Number of flags active
-        PR1_vector   % Condition Reactants 1
-        PR2_vector   % Condition Reactants 2
-        PR3_vector   % Condition Reactants 3
-        PP1_vector   % Condition Products 1
-        PP2_vector   % Condition Products 2
-        PR1_var_name % Variable name for PR1
-        PR2_var_name % Variable name for PR2
-        PR3_var_name % Variable name for PR3
-        PP1_var_name % Variable name for PP1
-        PP2_var_name % Variable name for PP2
-        flag_PR1     % FLAG for PR1: true-> vector
-        flag_PR2     % FLAG for PR2: true-> vector
-        flag_PR3     % FLAG for PR3: true-> vector
-        flag_PP1     % FLAG for PP1: true-> vector
-        flag_PP2     % FLAG for PP2: true-> vector
-        flag_phi     % FLAG for phi: true-> vector
-        indexFuel     % Index position Fuel species
-        indexOxidizer % Index position Oxidizer species
-        indexInert    % Index position Inert species
-        LS           % List of species considered (reactants + products)
-        LS_products  % List of species considered as products
+        displaySpecies    % Checmial species to be shown in plotComposition
+        fig               % Auxiliary figure
+        default           % Struct with default values of some components in the GUI
+        N_flags           % Number of flags active
+        PR1_vector        % Condition Reactants 1
+        PR2_vector        % Condition Reactants 2
+        PR3_vector        % Condition Reactants 3
+        PP1_vector        % Condition Products 1
+        PP2_vector        % Condition Products 2
+        PR1_var_name      % Variable name for PR1
+        PR2_var_name      % Variable name for PR2
+        PR3_var_name      % Variable name for PR3
+        PP1_var_name      % Variable name for PP1
+        PP2_var_name      % Variable name for PP2
+        flag_PR1          % FLAG for PR1: true-> vector
+        flag_PR2          % FLAG for PR2: true-> vector
+        flag_PR3          % FLAG for PR3: true-> vector
+        flag_PP1          % FLAG for PP1: true-> vector
+        flag_PP2          % FLAG for PP2: true-> vector
+        flag_phi          % FLAG for phi: true-> vector
+        indexFuel         % Index position Fuel species
+        indexOxidizer     % Index position Oxidizer species
+        indexInert        % Index position Inert species
+        LS                % List of species considered (reactants + products)
+        LS_products       % List of species considered as products
         color_splash       = [0.5098, 0.6039, 0.6745]; % Font color splash
         color_lamp_nothing = [0.8000, 0.8000, 0.8000]; % Lamp color (rgb): nothing to report
         color_lamp_working = [0.9961, 0.9804, 0.8314]; % Lamp color (rgb): working
         color_lamp_done    = [0.5608, 0.7255, 0.6588]; % Lamp color (rgb): done
         color_lamp_error   = [0.6400, 0.0800, 0.1800]; % Lamp color (rgb): error
-        temp_results % Temporal variable that contains the last parametric study
-        current_history % Current history of commands
-        temp_index % Temporal index to get current position of command history
+        temp_results       % Temporal variable that contains the last parametric study
+        current_history    % Current history of commands
+        temp_index         % Temporal index to get current position of command history
         dynamic_components % Struct with all the dynamic components
         welcome_message = 'Welcome to Combustion Toolbox %s --- A MATLAB-GUI based open-source tool for solving gaseous combustion problems.';
-        maxRelativeError = 2e-2; % 2% error
+        maxRelativeError = 2e-2; % Relative error threshold to change color (2 %)
     end
     
     properties (Dependent)
@@ -393,6 +393,14 @@ classdef combustion_toolbox < matlab.apps.AppBase
         function public_ClearButtonPushed(app, event)
             ClearButtonPushed(app, event)
         end
+        
+        function public_xlsMenuSelected(app, event)
+            xlsMenuSelected(app, event);
+        end
+
+        function public_matMenuSelected(app, event)
+            matMenuSelected(app, event);
+        end
 
     end
 
@@ -440,8 +448,15 @@ classdef combustion_toolbox < matlab.apps.AppBase
         function startupFcn(app)
             % Load figure in the background
             app.UIFigure.Visible = 'off';
+            
             % Splash
-            splash_obj = gui_display_splash('app', app);
+            try
+                FLAG_SPLASH = true;
+                splash_obj = gui_display_splash('app', app);
+            catch
+                FLAG_SPLASH = false;
+            end
+
             % Add additional components
             % create_components(app); % Next release
             % Get screen position
@@ -495,7 +510,9 @@ classdef combustion_toolbox < matlab.apps.AppBase
             % Make app visible
             app.UIFigure.Visible = 'on';
             % Delete splash
-            delete(splash_obj);
+            if FLAG_SPLASH
+                delete(splash_obj);
+            end
         end
 
         % Menu selected function: AboutMenu
@@ -619,7 +636,7 @@ classdef combustion_toolbox < matlab.apps.AppBase
 
         % Menu selected function: DocumentationMenu
         function DocumentationMenuSelected(app, event)
-            website_CT;
+            combustiontoolbox.utils.SystemUtils.websiteCT;
         end
 
         % Button pushed function: Clear

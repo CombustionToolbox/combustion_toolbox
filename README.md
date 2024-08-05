@@ -3,6 +3,7 @@
 ## Combustion Toolbox: A MATLAB-GUI based open-source tool for solving gaseous combustion problems
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.5554911.svg)](https://doi.org/10.5281/zenodo.5554911)
+[![Open in MATLAB Online](https://www.mathworks.com/images/responsive/global/open-in-matlab-online.svg)](https://matlab.mathworks.com/open/github/v1?repo=CombustionToolbox/combustion_toolbox&file=CONTENTS.m)
 [![File Exchange](https://www.mathworks.com/matlabcentral/images/matlab-file-exchange.svg)](https://es.mathworks.com/matlabcentral/fileexchange/101088-combustion-toolbox)
 [![CD](https://github.com/AlbertoCuadra/combustion_toolbox/actions/workflows/CD.yml/badge.svg)](https://github.com/AlbertoCuadra/combustion_toolbox/actions/workflows/CD.yml)
 [![Documentation](https://readthedocs.org/projects/combustion-toolbox-website/badge/?version=latest)](https://combustion-toolbox-website.readthedocs.io/en/latest/?badge=latest)

@@ -22,7 +22,7 @@ function [cp0, cv0, h0, DhT, e0, DeT, s0, g0] = species_thermo_NASA(species, tem
     %     [cP, cV, h0, DhT, e0, DeT, s0, g0] = species_thermo_NASA('H2O', 300:100:6000, DB)
 
     % Definitions
-    R0 = 8.31446261815324; % Universal Gas Constant [J/(mol-K)];
+    R0 = combustiontoolbox.common.Constants.R0; % Universal Gas Constant [J/(mol-K)];
     hf0 = DB.(species).hf; % [J/mol];
     Tref = 298.15; % [K]
     % Unpack NASA's polynomials coefficients

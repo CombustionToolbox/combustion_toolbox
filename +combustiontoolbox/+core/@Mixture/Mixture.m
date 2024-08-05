@@ -1,44 +1,13 @@
 classdef Mixture < handle & matlab.mixin.Copyable
-
-    % properties
-    %     T (1,1) double {mustBeNumeric, mustBeNonnegative}
-    %     p (1,1) double {mustBeNumeric, mustBeNonnegative}
-    %     N (1,1) double {mustBeNumeric, mustBeNonnegative}
-    %     hf (1,1) double {mustBeNumeric}
-    %     ef (1,1) double {mustBeNumeric}
-    %     h (1,1) double {mustBeNumeric}
-    %     e (1,1) double {mustBeNumeric}
-    %     g (1,1) double {mustBeNumeric}
-    %     s (1,1) double {mustBeNumeric}
-    %     cp (1,1) double {mustBeNumeric, mustBeNonnegative}
-    %     cv (1,1) double {mustBeNumeric, mustBeNonnegative}
-    %     gamma (1,1) double {mustBeNumeric, mustBeNonnegative}
-    %     gamma_s (1,1) double {mustBeNumeric, mustBeNonnegative}
-    %     sound (1,1) double {mustBeNumeric, mustBeNonnegative}
-    %     s0 (1,1) double {mustBeNumeric}
-    %     DhT (1,1) double {mustBeNumeric}
-    %     DeT (1,1) double {mustBeNumeric}
-    %     Ds (1,1) double {mustBeNumeric}
-    %     rho (1,1) double {mustBeNumeric, mustBeNonnegative}
-    %     v (1,1) double {mustBeNumeric, mustBeNonnegative}
-    %     W (1,1) double {mustBeNumeric, mustBeNonnegative}
-    %     MW (1,1) double {mustBeNumeric, mustBeNonnegative}
-    %     mi (1,1) double {mustBeNumeric, mustBeNonnegative}
-    %     Xi (:, 1) double {mustBeNumeric, mustBeNonnegative}
-    %     Yi (:, 1) double {mustBeNumeric, mustBeNonnegative}
-    %     phase (:, 1) logical 
-    %     dVdT_p (1,1) double {mustBeNumeric}
-    %     dVdp_T (1,1) double {mustBeNumeric}
-    %     equivalenceRatio (1,1) double {mustBeNumeric, mustBeNonnegative}
-    %     natomElements (1,:) double {mustBeNumeric, mustBeNonnegative}
-    %     natomElementsReact (1,:) double {mustBeNumeric, mustBeNonnegative}
-    %     errorMoles (1, 1) double {mustBeNumeric}
-    %     errorMolesIons (1, 1) double {mustBeNumeric}
-    %     errorProblem (1, 1) double {mustBeNumeric}
-    %     chemicalSystem combustiontoolbox.core.ChemicalSystem
-    %     rangeName (1, :) char {mustBeText}
-    %     rangeValue (1, :) double {mustBeNumeric}
-    % end
+    % The :mat:class:`Mixture` class is used to store the properties of a chemical mixture.
+    %
+    % The :mat:class:`Mixture` object can be initialized as follows: ::
+    %
+    %      mix = Mixture(chemicalSystem)
+    %
+    % This creates an instance of the `Mixture` class and initializes it with a predefined chemical system.
+    %
+    % See also: :mat:func:`ChemicalSystem`, :mat:func:`Database`, :mat:func:`NasaDatabase`
 
     properties
         T (1,1)               % Temperature [K]
@@ -83,7 +52,6 @@ classdef Mixture < handle & matlab.mixin.Copyable
         errorProblem          % Relative error in the problem [-]
         chemicalSystem        % Chemical system object
         equationOfState       % Equation of State object
-        % Properties from shock and detonation module (CT-SD)
         u                     % Velocity relative to the shock front [m/s]
         uShock                % Velocity in the shock tube [m/s]
         uNormal               % Normal component of u [m/s]
@@ -102,13 +70,12 @@ classdef Mixture < handle & matlab.mixin.Copyable
         indexMax              % Index of the maximum deflection angle
         indexSonic            % Index of the sonic point
         polar                 % Properties of the polar solution
-        % Properties from rocket module (CT-ROCKET)
-        areaRatio
-        areaRatioChamber
-        cstar
-        cf
-        I_sp
-        I_vac
+        areaRatio             % Area ratio = area_i / areaThroat
+        areaRatioChamber      % Area ratio = areaChamber / areaThroat
+        cstar                 % Characteristic velocity [m/s]
+        cf                    % Thrust coefficient [-]
+        I_sp                  % Specific impulse [s]
+        I_vac                 % Vacuum impulse [s]
     end
 
     properties (Access = private)
@@ -116,16 +83,6 @@ classdef Mixture < handle & matlab.mixin.Copyable
         FLAGS_PROP
         FLAG_VOLUME = false
     end
-
-    % properties (Hidden)
-    %     cp_f (1,1) double {mustBeNumeric, mustBeNonnegative}
-    %     cp_r (1,1) double {mustBeNumeric, mustBeNonnegative}
-    %     dNi_T (:, 1) double {mustBeNumeric}
-    %     dN_T (1,1) double {mustBeNumeric}
-    %     dNi_p (:, 1) double {mustBeNumeric}
-    %     dN_p (1,1) double {mustBeNumeric}
-    %     FLAG_REACTION = false
-    % end
     
     properties (Hidden)
         cp_f
@@ -158,9 +115,7 @@ classdef Mixture < handle & matlab.mixin.Copyable
         print(mix, varargin)
 
         function obj = Mixture(chemicalSystem, varargin)
-            % The chemical system has the database, we only need the properties matrix to perform all the calculations
-            % Now to be compatible with all the capabilities of the previous version, we will have to be able to add a
-            % list of species for calculations and another list with all the species involved (reactants and products)
+            % Mixture constructor
 
             % Definitions
             defaultTemperature = 300; % [K]

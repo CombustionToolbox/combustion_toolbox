@@ -61,10 +61,10 @@ classdef combustion_toolbox < matlab.apps.AppBase
         PP1                             matlab.ui.control.EditField
         PP2                             matlab.ui.control.EditField
         DefinereactantsandspeciestobeconsideredPanel  matlab.ui.container.Panel
+        PeriodicTable_P                 matlab.ui.control.Button
         PeriodicTable_R                 matlab.ui.control.Button
         edit_F                          matlab.ui.control.NumericEditField
         ProductsPanel                   matlab.ui.container.Panel
-        PeriodicTable_P                 matlab.ui.control.Button
         Products                        matlab.ui.control.DropDown
         FuelEditFieldLabel              matlab.ui.control.Label
         text_phi                        matlab.ui.control.Label
@@ -1148,12 +1148,13 @@ classdef combustion_toolbox < matlab.apps.AppBase
             app.UIFigure = uifigure('Visible', 'off');
             app.UIFigure.AutoResizeChildren = 'off';
             app.UIFigure.Color = [0.9098 0.9098 0.8902];
-            app.UIFigure.Position = [650 100 639 768];
+            app.UIFigure.Position = [100 100 639 768];
             app.UIFigure.Name = 'Combustion Toolbox';
             app.UIFigure.Icon = fullfile(pathToMLAPP, 'assets', 'logo_CT_noversion.png');
             app.UIFigure.Resize = 'off';
             app.UIFigure.CloseRequestFcn = createCallbackFcn(app, @UIFigureCloseRequest, true);
             app.UIFigure.KeyPressFcn = createCallbackFcn(app, @UIFigureKeyPress, true);
+            app.UIFigure.Scrollable = 'on';
 
             % Create FileMenu
             app.FileMenu = uimenu(app.UIFigure);
@@ -1368,16 +1369,6 @@ classdef combustion_toolbox < matlab.apps.AppBase
             app.Products.Position = [4 7 222 25];
             app.Products.Value = '';
 
-            % Create PeriodicTable_P
-            app.PeriodicTable_P = uibutton(app.ProductsPanel, 'push');
-            app.PeriodicTable_P.ButtonPushedFcn = createCallbackFcn(app, @PeriodicTable_PButtonPushed, true);
-            app.PeriodicTable_P.Tag = 'P';
-            app.PeriodicTable_P.Icon = fullfile(pathToMLAPP, 'assets', 'logo_uielements.svg');
-            app.PeriodicTable_P.IconAlignment = 'center';
-            app.PeriodicTable_P.Tooltip = {''};
-            app.PeriodicTable_P.Position = [190 40 36 18];
-            app.PeriodicTable_P.Text = '';
-
             % Create edit_F
             app.edit_F = uieditfield(app.DefinereactantsandspeciestobeconsideredPanel, 'numeric');
             app.edit_F.Position = [478 252 73 22];
@@ -1391,6 +1382,16 @@ classdef combustion_toolbox < matlab.apps.AppBase
             app.PeriodicTable_R.Tooltip = {''};
             app.PeriodicTable_R.Position = [189 270 36 18];
             app.PeriodicTable_R.Text = '';
+
+            % Create PeriodicTable_P
+            app.PeriodicTable_P = uibutton(app.DefinereactantsandspeciestobeconsideredPanel, 'push');
+            app.PeriodicTable_P.ButtonPushedFcn = createCallbackFcn(app, @PeriodicTable_PButtonPushed, true);
+            app.PeriodicTable_P.Tag = 'P';
+            app.PeriodicTable_P.Icon = fullfile(pathToMLAPP, 'assets', 'logo_uielements.svg');
+            app.PeriodicTable_P.IconAlignment = 'center';
+            app.PeriodicTable_P.Tooltip = {''};
+            app.PeriodicTable_P.Position = [189 216 36 18];
+            app.PeriodicTable_P.Text = '';
 
             % Create DefinestateofreactantsandproductsPanel
             app.DefinestateofreactantsandproductsPanel = uipanel(app.InputsTab);

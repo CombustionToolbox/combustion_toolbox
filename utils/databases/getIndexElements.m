@@ -14,13 +14,13 @@ function indexElements = getIndexElements(listSpecies, database, elements, MAX_E
     %     indexElements = getIndexElements(listSpecies, database, elements, MAX_ELEMENTS)
     
     % Definitions
-    NS = length(listSpecies);
+    numSpecies = length(listSpecies);
 
     % Initialization
-    indexElements = zeros(NS, MAX_ELEMENTS);
+    indexElements = zeros(numSpecies, MAX_ELEMENTS);
 
     % Get indeces
-    for i = NS:-1:1
+    for i = numSpecies:-1:1
         species = listSpecies{i};
         temp = database.(species).getElementMatrix(elements);
         indexElements(i, 1:length(temp(1, :))) = temp(1, :);

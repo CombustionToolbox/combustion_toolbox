@@ -17,25 +17,30 @@ function [e0, DeT] = species_e0_NASA(species, temperature, DB)
     %     [e0, DeT] = species_e0_NASA('H2O', 300:100:6000, DB)
 
     % Definitions
-    R0 = 8.31446261815324; % Universal Gas Constant [J/(mol-K)];
+    R0 = combustiontoolbox.common.Constants.R0; % Universal Gas Constant [J/(mol-K)];
     hf0 = DB.(species).hf; % [J/mol];
     Tref = 298.15; % [K]
+
     % Unpack NASA's polynomials coefficients
     [a, b, tRange, tExponents, ctTInt, txFormula, swtCondensed] = unpack_NASA_coefficients(species, DB);
+
     % Get elements
-    elements = set_elements();
+    elements = combustiontoolbox.core.elements().setElements();
+
     % Get element matrix of the species
-    element_matrix = set_element_matrix(txFormula, elements);
+    elementMatrix = setElementMatrix(txFormula, elements);
+
     % Compute change in moles of gases during the formation reaction of a
     % mole of that species starting from the elements in their reference state
-    Delta_n = compute_change_moles_gas_reaction(element_matrix, swtCondensed);
+    Delta_n = compute_change_moles_gas_reaction(elementMatrix, swtCondensed);
     % Compute specific enthalpy [J/mol]
     for i = length(temperature):-1:1
         T = temperature(i);
 
-        if DB.(species).ctTInt > 0
+        if ctTInt > 0
             % Compute interval temperature
-            tInterval = compute_interval_NASA(species, T, DB, tRange, ctTInt);
+            tInterval = obj.getIndexTempereratureInterval(species, T, obj.species);
+
             % Compute specific enthalpy from NASA's 9 polynomials
             h0(i) = R0 * T * (sum(a{tInterval} .* T.^tExponents{tInterval} .* [-1 log(T) 1 1/2 1/3 1/4 1/5 0]) + b{tInterval}(1) / T);
             ef0 = hf0 - Delta_n * R0 * Tref;

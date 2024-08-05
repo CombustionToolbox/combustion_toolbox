@@ -1,6 +1,6 @@
-function g0 = species_g0_NASA(species, temperature, DB)
-    % Compute Compute Gibbs energy [J/mol] of the species at the given
-    % temperature [K] using NASA's 9 polynomials
+function [h0, DhT] = species_h0_NASA(species, temperature, DB)
+    % Compute enthalpy and thermal enthalpy [kJ/mol] of the species at the
+    % given temperature [K] using NASA's 9 polynomials
     %
     % Args:
     %     species (char): Chemical species
@@ -8,13 +8,17 @@ function g0 = species_g0_NASA(species, temperature, DB)
     %     DB (struct): Database with custom thermodynamic polynomials functions generated from NASAs 9 polynomials fits
     %
     % Returns:
-    %     g0 (float): Gibbs energy in molar basis [J/mol]
+    %     Tuple containing
+    %
+    %     * h0 (float): Enthalpy in molar basis [J/mol]
+    %     * DhT (float): Thermal enthalpy in molar basis [J/mol]
     %
     % Example:
-    %     g0 = species_g0_NASA('H2O', 300:100:6000, DB)
+    %     [h0, DhT] = species_h0_NASA('H2O', 300:100:6000, DB)
 
     % Definitions
-    R0 = 8.31446261815324; % Universal Gas Constant [J/(mol-K)];
+    R0 = combustiontoolbox.common.Constants.R0; % Universal Gas Constant [J/(mol-K)];
+    hf0 = DB.(species).hf; % [J/mol];
     % Unpack NASA's polynomials coefficients
     [a, b, tRange, tExponents, ctTInt] = unpack_NASA_coefficients(species, DB);
     % Compute specific enthalpy [J/mol]
@@ -24,22 +28,21 @@ function g0 = species_g0_NASA(species, temperature, DB)
         if DB.(species).ctTInt > 0
             % Compute interval temperature
             tInterval = compute_interval_NASA(species, T, DB, tRange, ctTInt);
-            % Compute Gibbs energy
-            % h0 = R0 * T * (sum(a{tInterval} .* T.^tExponents{tInterval} .* [-1, log(T), 1, 1/2, 1/3, 1/4, 1/5, 0]) + b{tInterval}(1)/T);
-            % s0 = R0 * (sum(a{tInterval} .* T.^tExponents{tInterval} .* [-1/2, -1, log(T), 1, 1/2, 1/3, 1/4, 0]) + b{tInterval}(2));
-            % g0(i) = h0 - T * s0;
-
-            g0(i) = R0 * T * (sum(a{tInterval} .* T.^tExponents{tInterval} .* [-1/2, 1 + log(T), 1 - log(T), -1/2, -1/6, -1/12, -1/20, 0]) + b{tInterval}(1) / T - b{tInterval}(2));
+            % Compute specific enthalpy from NASA's 9 polynomials
+            h0(i) = R0 * T * (sum(a{tInterval} .* T.^tExponents{tInterval} .* [-1 log(T) 1 1/2 1/3 1/4 1/5 0]) + b{tInterval}(1) / T);
+            DhT(i) = h0(i) - hf0;
             % If the species is only a reactant determine it's reference temperature
             % Tref. For noncryogenic reactants, assigned enthalpies are given at 298.15
             % K. For cryogenic liquids, assigned enthalpies are given at their boiling
             % points instead of 298.15 K
         else
-            g0(i) = DB.(species).Hf0;
+            h0(i) = hf0;
+            DhT(i) = 0;
         end
 
     end
 
     % Change units [kJ/mol]
-    % g0 = g0 * 1e-3;
+    % h0 = h0 * 1e-3;
+    % DhT = DhT * 1e-3;
 end

@@ -14,7 +14,7 @@ function s0 = species_s0_NASA(species, temperature, DB)
     %     s0 = species_s0_NASA('H2O', 300:100:6000, DB)
 
     % Definitions
-    R0 = 8.31446261815324; % Universal Gas Constant [J/(mol-K)];
+    R0 = combustiontoolbox.common.Constants.R0; % Universal Gas Constant [J/(mol-K)];
     % Unpack NASA's polynomials coefficients
     [a, b, tRange, tExponents, ctTInt] = unpack_NASA_coefficients(species, DB);
     % Compute entropy

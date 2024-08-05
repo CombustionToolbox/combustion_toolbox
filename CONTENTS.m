@@ -54,4 +54,4 @@ INSTALL();
 % Display splash
 gui_display_splash('pause', 2);
 % Check for updates
-check_update();
+combustiontoolbox.utils.checkUpdate();

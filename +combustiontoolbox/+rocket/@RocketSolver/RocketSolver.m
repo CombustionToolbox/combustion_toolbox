@@ -1,34 +1,20 @@
 classdef RocketSolver < handle
-    % RocketSolver class to solve rocket problems
+    % The :mat:func:`RocketSolver` class is used to solve rocket problems. The class provides methods
+    % to compute the performance of a rocket using the Infinite Area Chamber (IAC) and Finite Area
+    % Chamber (FAC) models.
+    %
+    % The :mat:func:`RocketSolver` object can be initialized as follows: ::
+    %
+    %       solver = RocketSolver('problemType', problemType, ...)
+    %
+    % Here ``problemType`` represents the acronym of the problem to be solved (see below).
+    % Additional optional parameters can be provided to customize the solver's behavior.
     %
     % Problem types:
-    %   * ROCKET_IAC: Get the performance of a rocket using the Infinite Area Chamber (IAC) model
-    %   * ROCKET_FAC: Get the performance of a rocket using the Finite Area Chamber (FAC) model
+    %     * ``ROCKET_IAC``: Get the performance of a rocket using the Infinite Area Chamber (IAC) model
+    %     * ``ROCKET_FAC``: Get the performance of a rocket using the Finite Area Chamber (FAC) model
     %
-    % Attributes:
-    %     problemType (char): Problem type [ROCKET_IAC or ROCKET_FAC]
-    %     equilibriumSolver (EquilibriumSolver): EquilibriumSolver object
-    %     tol0 (float): Tolerance rocket performance
-    %     itMax (float): Max number of iterations - rocket performance
-    %     FLAG_SUBSONIC (bool): Flag to indicate subsonic Area ratio
-    %     FLAG_RESULTS (bool): Flag to print results
-    %     FLAG_TIME (bool): Flag to print elapsed time
-    %     FLAG_REPORT (bool): Flag to print predefined plots
-    %     time (float): Elapsed time
-    %
-    % Methods:
-    %     solve: Solve rocket problems
-    %     solveArray: Solve a set of rocket problems
-    %     printTime: Print execution time
-    %     plot: Plot results
-    %     report: Postprocess all the results with predefined plots
-    %
-    % Examples:
-    %     * solver = RocketSolver();
-    %     * solver = RocketSolver('problemType', 'ROCKET_IAC');
-    %     * solver = RocketSolver('problemType', 'ROCKET_FAC');
-    %     * solver = RocketSolver('problemType', 'ROCKET_FAC', 'tolMoles', 1e-30);
-    %     * solver = RocketSolver('problemType', 'ROCKET_FAC', 'tolMoles', 1e-30, 'FLAG_FROZEN', true);
+    % See also: :mat:func:`Mixture`, :mat:func:`EquilibriumSolver`, :mat:func:`solve`, :mat:func:`solveArray`, :mat:func:`report`
 
     properties
         problemType           % Problem type

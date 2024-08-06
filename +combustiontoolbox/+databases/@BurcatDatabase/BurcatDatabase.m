@@ -1,5 +1,16 @@
 classdef BurcatDatabase < combustiontoolbox.databases.Database & handle
-    
+    % The :mat:func:`BurcatDatabase` class is used to store thermodynamic data from Burcat's database
+    % using NASA's 9 coefficient polynomial fits.
+    %
+    % The :mat:func:`BurcatDatabase` object can be initialized as follows:
+    %
+    %       database = BurcatDatabase()
+    %
+    % This creates an instance of the :mat:func:`BurcatDatabase` class and initializes it with the
+    % chemical species contained in Burcat's database.
+    %
+    % See also: :mat:func:`NasaDatabase`, :mat:func:`Database`
+
     methods (Access = public)
         
         function obj = BurcatDatabase(varargin)

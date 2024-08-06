@@ -1,4 +1,15 @@
 classdef EquationState < handle
+    % The :mat:func:`EquationState` class is used to compute the pressure and molar volume of a mixture using the equation of state specified by the user.
+    %
+    % The :mat:func:`EquationState` object can be initialized as follows:
+    %
+    %       equationState = EquationState('idealgas')
+    %
+    % This creates an instance of the :mat:func:`EquationState` class and initializes it with the
+    % equation of state specified by the user.
+    %
+    % See also: :mat:func:`Mixture`
+    
     properties
         equationOfState
         pressureFunction

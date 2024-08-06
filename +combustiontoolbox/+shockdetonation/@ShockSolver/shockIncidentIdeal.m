@@ -1,6 +1,5 @@
 function [R, P, T, Gammas, M1] = shockIncidentIdeal(obj, gamma, M1)
-    % Compute jump conditions assuming a thermochemically frozen gas
-    % (calorically perfect gas)
+    % Compute jump conditions assuming a thermochemically frozen gas (calorically perfect gas)
     %
     % Args:
     %     obj (ShockSolver): ShockSolver object

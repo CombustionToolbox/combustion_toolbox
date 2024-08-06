@@ -30,7 +30,7 @@
 % SEE THE EXAMPLES OR WEBSITE TO KNOW HOW TO START USING THE COMBUSTION TOOLBOX
 %
 % WEBSITE: https://combustion-toolbox-website.readthedocs.io/ 
-%          or type in the promt "website_CT".
+%          or type in the promt "websiteCT".
 %
 % Please to send feedback or inquiries type in the promt "uifeedback".
 %

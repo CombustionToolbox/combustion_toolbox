@@ -1,49 +1,25 @@
 classdef ShockSolver < handle
-    % The ShockSolver class is used to solve shock waves problems
+    % The :mat:func:`ShockSolver` class is used to solve shock waves problems under different
+    % flow configurations. The class provides methods to compute the post-shock state of the gas
+    % mixture, including incident and reflected shocks, oblique shocks, and shock polar diagrams.
+    %
+    % The :mat:func:`ShockSolver` object can be initialized as follows: ::
+    %
+    %       solver = ShockSolver('problemType', problemType, ...)
+    %
+    % Here ``problemType`` represents the acronym of the problem to be solved (see below).
+    % Additional optional parameters can be provided to customize the solver's behavior.
     %
     % Problem types:
-    %     * SHOCK_I: Incident shock
-    %     * SHOCK_R: Reflected shock
-    %     * SHOCK_OBLIQUE: Oblique shock
-    %     * SHOCK_OBLIQUE_R: Oblique reflected shock 
-    %     * SHOCK_POLAR: Shock polar diagrams
-    %     * SHOCK_POLAR_R: Shock polar diagrams for incident and reflected states
-    %     * SHOCK_POLAR_LIMITRR: Shock polar within the limit of regular reflection
+    %     * ``SHOCK_I``: Incident shock
+    %     * ``SHOCK_R``: Reflected shock
+    %     * ``SHOCK_OBLIQUE``: Oblique shock
+    %     * ``SHOCK_OBLIQUE_R``: Oblique reflected shock 
+    %     * ``SHOCK_POLAR``: Shock polar diagrams
+    %     * ``SHOCK_POLAR_R``: Shock polar diagrams for incident and reflected states
+    %     * ``SHOCK_POLAR_LIMITRR``: Shock polar within the limit of regular reflection
     %
-    % Attributes:
-    %     problemType (char): Problem type [SHOCK_I, SHOCK_R, SHOCK_OBLIQUE, SHOCK_OBLIQUE_R, SHOCK_POLAR, SHOCK_POLAR_R, SHOCK_POLAR_LIMITRR]
-    %     equilibriumSolver (EquilibriumSolver): EquilibriumSolver object
-    %     tol0 (float): Tolerance of shocks/detonations kernel
-    %     itMax (float): Max number of iterations - shocks and detonations
-    %     machThermo (float): Pre-shock Mach number above which T2_guess will be computed considering h2 = h1 + u1^2 / 2
-    %     tolOblique (float): Tolerance oblique shocks algorithm
-    %     itOblique (float): Max number of iterations - oblique shocks
-    %     numPointsPolar (float): Number of points to compute shock/detonation polar curves
-    %     tolLimitRR (float): Tolerance to calculate the limit of regular reflections
-    %     itLimitRR (float): Max number of iterations - limit of regular reflections
-    %     FLAG_RESULTS (bool): Flag to print results
-    %     FLAG_TIME (bool): Flag to print elapsed time
-    %     FLAG_REPORT (bool): Flag to print predefined plots
-    %     time (float): Elapsed time
-    %
-    % Methods:
-    %     shockIncident: Solve incident shock
-    %     shockReflected: Solve reflected shock
-    %     shockObliqueBeta: Solve oblique shock with beta angle
-    %     shockObliqueTheta: Solve oblique shock with theta angle
-    %     shockObliqueReflectedTheta: Solve oblique reflected shock with theta angle
-    %     shockPolar: Solve shock polar diagrams
-    %     shockPolarLimitRR: Solve shock polar within the limit of regular reflection
-    %     shockIncidentIdeal: Solve incident shock for ideal gas
-    %     solve: Solve shock waves problems
-    %     solveArray: Solve a set of shock waves problems
-    %     printTime: Print execution time
-    %     plot: Plot results
-    %     report: Postprocess all the results with predefined plots
-    %
-    % Examples:
-    %     * solver = ShockSolver();
-    %     * solver = ShockSolver('problemType', 'SHOCK_I');
+    % See also: :mat:func:`Mixture`, :mat:func:`EquilibriumSolver`, :mat:func:`DetonationSolver`, :mat:func:`solve`, :mat:func:`solveArray`, :mat:func:`report`
 
     properties
         problemType             % Problem type

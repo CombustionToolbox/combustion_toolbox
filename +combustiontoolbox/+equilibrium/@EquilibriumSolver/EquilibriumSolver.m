@@ -187,10 +187,10 @@ classdef EquilibriumSolver < handle
             %
             % Args:
             %     obj (EquilibriumSolver): EquilibriumSolver object
-            %     mixArray (array of Mixture): Array of Mixture objects containing initial states
+            %     mixArray (Mixture): Array of Mixture objects containing initial states
             %
             % Returns:
-            %     mixArray (array of Mixture): Array of Mixture objects updated with equilibrium compositions and properties
+            %     mixArray (Mixture): Array of Mixture objects updated with equilibrium compositions and properties
             %
             % Example:
             %     * mixArray = solveArray(EquilibriumSolver(), mixArray);

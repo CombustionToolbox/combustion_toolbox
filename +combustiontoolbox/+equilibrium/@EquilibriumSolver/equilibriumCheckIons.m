@@ -6,7 +6,7 @@ function [N, STOP, FLAG_ION] = equilibriumCheckIons(obj, N, A0, ind_E, indexGas,
     %     N (float): Mixture composition [mol]
     %     A0 (float): Stoichiometric matrix
     %     ind_E (float): Index of electron element
-    %     indexGas (flaot): List of chemical species indices in gaseous phase
+    %     indexGas (float): List of chemical species indices in gaseous phase
     %     indexIons (float): List of ionized chemical species indices 
     %
     % Returns:

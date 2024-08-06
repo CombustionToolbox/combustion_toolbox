@@ -886,7 +886,7 @@ classdef Mixture < handle & matlab.mixin.Copyable
             obj.DhT = obj.h - obj.hf;
 
             % Compute entropy of mixing [J/K]
-            obj.Ds = obj.compute_entropy_mixing(Ni, N_gas, R0, FLAG_NONZERO);
+            obj.Ds = obj.computeEntropyMixing(Ni, N_gas, R0, FLAG_NONZERO);
 
             % Compute entropy [J/K]
             obj.s = obj.s0 + obj.Ds;
@@ -963,13 +963,13 @@ classdef Mixture < handle & matlab.mixin.Copyable
             MW = dot(moles, obj.chemicalSystem.propertiesMatrix(index, obj.chemicalSystem.ind_W)) / sum(moles);
         end
 
-        function Ds = compute_entropy_mixing(obj, Ni, N_gas, R0, FLAG_NONZERO)
+        function Ds = computeEntropyMixing(obj, Ni, N_gas, R0, FLAG_NONZERO)
             % Compute entropy of mixing [J/K]
             %
             % Args:
             %     obj (Mixture): Mixture class
-            %     Ni (moles): Vector of moles of each species [mol]
-            %     N_gas (moles): Total moles of gas species [mol]
+            %     Ni (float): Vector of moles of each species [mol]
+            %     N_gas (float): Total moles of gas species [mol]
             %     R0 (float): Universal gas constant [J/(mol-K)]
             %     FLAG_NONZERO (bool): Vector of nonzero species
             %
@@ -980,7 +980,7 @@ classdef Mixture < handle & matlab.mixin.Copyable
             %     only nonzero for gaseous species
             %
             % Example:
-            %     Ds = compute_entropy_mixing(mix, Ni, N_gas, R0, FLAG_NONZERO)
+            %     Ds = computeEntropyMixing(mix, Ni, N_gas, R0, FLAG_NONZERO)
         
             Dsi = Ni(FLAG_NONZERO) .* log(Ni(FLAG_NONZERO) / N_gas * obj.p) .* (1 - obj.phase(FLAG_NONZERO));
             Ds = -R0 * sum(Dsi);

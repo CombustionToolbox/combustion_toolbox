@@ -158,7 +158,7 @@ function print_composition(mix, LS, units, header, mintol_display)
     %     LS (cell): Cell with the names of the species
     %     units (char): Units of the composition
     %     header (char): Header of the composition
-    %     mintol_display (double): Minimum value to be displayed
+    %     mintol_display (float): Minimum value to be displayed
     
     switch lower(units)
         case 'mol'

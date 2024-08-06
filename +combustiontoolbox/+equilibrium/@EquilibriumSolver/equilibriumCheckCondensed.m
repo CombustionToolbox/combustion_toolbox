@@ -6,7 +6,7 @@ function [indexCondensed, FLAG_CONDENSED, dL_dnj] = equilibriumCheckCondensed(A0
     %     pi_i (float): Dimensionless Lagrange multiplier vector
     %     W (float): Molecular mass [kg/mol] vector
     %     indexCondensed (float): Index condensed species to be considered
-    %     muRT (flaot): List of chemical species indices in gaseous phase
+    %     muRT (float): List of chemical species indices in gaseous phase
     %     NC_max (float): Maximum number of condensed species (Gibbs phase rule)
     %     FLAG_ONE (bool): Flag indicating to include condensed species in the system one by one
     %     FLAG_RULE (bool): Flag indicating to include condensed species in the system up to the maximum number of condensed species that satisfy the Gibbs phase rule

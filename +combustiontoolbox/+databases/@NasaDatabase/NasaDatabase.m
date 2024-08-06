@@ -1,7 +1,20 @@
 classdef NasaDatabase < combustiontoolbox.databases.Database & handle
-    
+    % The :mat:func:`NasaDatabase` class is used to store thermodynamic data from NASA's database
+    % using NASA's 9 coefficient polynomial fits.
+    %
+    % The :mat:func:`NasaDatabase` object can be initialized as follows:
+    %
+    %       database = NasaDatabase()
+    %
+    % This creates an instance of the :mat:func:`NasaDatabase` class and initializes it with the
+    % chemical species contained in NASA's database.
+    %
+    % See also: :mat:func:`BurcatDatabase`, :mat:func:`Database`
+
     methods (Access = public)
         
+        g0 = species_g0_NASA(obj, species, temperature)
+
         function obj = NasaDatabase(varargin)
             % Constructor
             %
@@ -24,13 +37,13 @@ classdef NasaDatabase < combustiontoolbox.databases.Database & handle
             % data of the chemical species
             %
             % Args:
-            %     obj (Database): 
+            %     obj (NasaDatabase): NasaDatabase object
             %
             % Returns:
             %     DB_master (struct): Database with the thermodynamic data of the chemical species
             %
             % Example:
-            %     * DB_master = generate_DB_master('thermo_CT.inp')
+            %     * DB_master = generateDatabaseMaster('thermo_CT.inp')
             
             % Generate master database
             DB_master = obj.getDatabaseMaster(obj.thermoFile);
@@ -38,23 +51,44 @@ classdef NasaDatabase < combustiontoolbox.databases.Database & handle
             fprintf('OK!\n');
         end
 
-        function DB = generateDatabase(obj, DB_master)
+        function obj = generateDatabase(obj, varargin)
             % Generate Database with thermochemical interpolation curves
-            % for the species contained in DB_master
+            % from the data extracted from the thermoFile
+            % 
+            % Args:
+            %     obj (NasaDatabase): NasaDatabase object
+            %
+            % Optional Args:
+            %     * listSpecies (cell): List of species to generate the database
+            %
+            % Returns:
+            %     DB (struct): Database with thermochemical interpolation curves
             
+            % Get master database from the thermoFile
+            DB_master = getDatabaseMaster(obj, obj.thermoFile);
+
+            % Unpack inputs
+            if nargin > 1
+                listSpecies = varargin{1};
+
+                % Remove not required species
+                DB_master = rmfield(DB_master, setdiff(fieldnames(DB_master), listSpecies));
+            else
+                listSpecies = fieldnames(DB_master);
+            end
+
             % Definitions
-            LS = fieldnames(DB_master);
-            NS = length(LS);
+            numSpecies = length(listSpecies);
 
             % Control message
             fprintf('Generating %s database with thermo ... ', obj.name);
             
             % Compute interpolation curves for each species
-            for i = 1:NS
-                species = obj.fullname2name(LS{i});
+            for i = 1:numSpecies
+                species = obj.fullname2name(listSpecies{i});
 
                 if ~isfield(DB_master, species)
-                    fprintf(['\n- Species ''', LS{i}, ''' does not exist as a field in DB_master structure ... ']);
+                    fprintf(['\n- Species ''', listSpecies{i}, ''' does not exist as a field in species structure ... ']);
                     continue
                 end
                 
@@ -69,7 +103,7 @@ classdef NasaDatabase < combustiontoolbox.databases.Database & handle
                 if temp.Tintervals == 0
                     Tref = Trange(1);
 
-                    [Cp0, Hf0, H0, Ef0, S0, DfG0] = obj.getSpeciesThermo(obj, DB_master, LS{i}, Tref, obj.units);
+                    [Cp0, Hf0, H0, Ef0, S0, DfG0] = obj.getSpeciesThermo(obj, DB_master, listSpecies{i}, Tref, obj.units);
                     
                     temp.hf = Hf0;
                     temp.ef = Ef0;
@@ -89,7 +123,7 @@ classdef NasaDatabase < combustiontoolbox.databases.Database & handle
                 end
                 
                 % Get thermodynamic data from the species that can be evaluated at different temperatures
-                [~, Hf0, ~, Ef0, ~, ~] = obj.getSpeciesThermo(obj, DB_master, LS{i}, obj.temperatureReference, obj.units);
+                [~, Hf0, ~, Ef0, ~, ~] = obj.getSpeciesThermo(obj, DB_master, listSpecies{i}, obj.temperatureReference, obj.units);
                 
                 temp.hf = Hf0;
                 temp.ef = Ef0;
@@ -99,7 +133,7 @@ classdef NasaDatabase < combustiontoolbox.databases.Database & handle
                 Tmax = Trange{Tintervals}(2);
                 T_vector = linspace(Tmin, Tmax, obj.pointsTemperature);
 
-                [Cp0_vector, ~, H0_vector, ~, S0_vector, ~] = obj.getSpeciesThermo(obj, DB_master, LS{i}, T_vector, obj.units);
+                [Cp0_vector, ~, H0_vector, ~, S0_vector, ~] = obj.getSpeciesThermo(obj, DB_master, listSpecies{i}, T_vector, obj.units);
                 DfG0_vector = H0_vector - T_vector .* S0_vector;
 
                 temp.T = T_vector;
@@ -120,7 +154,9 @@ classdef NasaDatabase < combustiontoolbox.databases.Database & handle
                 % Store the species data in the database
                 DB.(species) = temp;
             end
-
+            
+            % Assign data
+            obj.species = DB;
         end
         
         function [cp, cv, h0, DhT, e0, DeT, s0, g0] = getSpeciesThermoFull(obj, DB, species, temperature, units)

@@ -1,4 +1,8 @@
 classdef (Abstract) Database < handle
+    % The :mat:class:`Database` abstract class contains the common methods between database objects.
+    % This class is used as a base class for the :mat:class:`NasaDatabase` and :mat:class:`BurcatDatabase` classes.
+    %
+    % See also: :mat:func:`NasaDatabase`, :mat:func:`BurcatDatabase`
 
     properties
         name
@@ -97,7 +101,16 @@ classdef (Abstract) Database < handle
         end
 
         function obj = load(obj, varargin)
+            % Load database from file
             %
+            % Args:
+            %     obj (Database): Database object
+            %
+            % Optional Args:
+            %     filename (char): Filename of the database
+            %
+            % Returns:
+            %     obj (Database): Database object
 
             if nargin > 1
                 obj.filename = varargin{1};
@@ -109,9 +122,7 @@ classdef (Abstract) Database < handle
                 load(obj.filename, 'DB');
                 obj = DB;
             else
-                DB_master = obj.generateDatabaseMaster();
-                DB = obj.generateDatabase(DB_master);
-                obj.species = DB;
+                generateDatabase(obj);
             end
 
             % Status
@@ -119,7 +130,11 @@ classdef (Abstract) Database < handle
         end
 
         function save(obj)
-            % Save database
+            % Save database to a *.mat file
+            % 
+            % Args:
+            %     obj (Database): Database object
+
             DB = obj;
             uisave({'DB'}, 'DB.mat');
         end

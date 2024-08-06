@@ -1,54 +1,29 @@
 classdef DetonationSolver < handle
-    % The DetonationSolver class is used to solve detonation problems.
+    % The :mat:func:`DetonationSolver` class is used to solve detonation waves problems under different
+    % flow configurations. The class provides methods to compute the post-detonation state of the gas
+    % mixture, including incident and reflected detonations in over-driven and under-driven conditions,
+    % oblique detonations, and detonation polar diagrams.
     %
+    % The :mat:func:`DetonationSolver` object can be initialized as follows: ::
+    %
+    %       solver = DetonationSolver('problemType', problemType, ...)
+    %
+    % Here ``problemType`` represents the acronym of the problem to be solved (see below).
+    % Additional optional parameters can be provided to customize the solver's behavior.
+    % 
     % Problem types:
-    %   * DET: Chapman-Jouguet detonation
-    %   * DET_R: Reflected Chapman-Jouguet detonation
-    %   * DET_OVERDRIVEN: Over-driven detonation    
-    %   * DET_OVERDRIVEN_R: Over-driven reflected detonation
-    %   * DET_UNDERDRIVEN: Under-driven detonation
-    %   * DET_UNDERDRIVEN_R: Under-driven reflected detonation
-    %   * DET_OBLIQUE: Oblique detonation
-    %   * DET_OBLIQUE_R: Oblique reflected detonation
-    %   * DET_POLAR: Detonation polar diagrams
-    %   * DET_POLAR_R: Detonation polar diagrams for incident and reflected states
+    %     * ``DET``: Chapman-Jouguet detonation
+    %     * ``DET_R``: Chapman-Jouguet reflected detonation
+    %     * ``DET_OVERDRIVEN``: Over-driven detonation
+    %     * ``DET_OVERDRIVEN_R``: Reflected over-driven detonation
+    %     * ``DET_UNDERDRIVEN``: Under-driven detonation
+    %     * ``DET_UNDERDRIVEN_R``: Reflected under-driven detonation
+    %     * ``DET_OBLIQUE``: Oblique detonation
+    %     * ``DET_OBLIQUE_R``: Oblique reflected detonation 
+    %     * ``DET_POLAR``: Detonation polar diagrams
+    %     * ``DET_POLAR_R``: Detonation polar diagrams for incident and reflected states
     %
-    % Attributes:
-    %     problemType (char): Problem type ['DET', 'DET_R', 'DET_OVERDRIVEN', 'DET_OVERDRIVEN_R', 'DET_UNDERDRIVEN', 'DET_UNDERDRIVEN_R', 'DET_OBLIQUE', 'DET_OBLIQUE_R', 'DET_POLAR', 'DET_POLAR_R']
-    %     equilibriumSolver (EquilibriumSolver): EquilibriumSolver object
-    %     tol0 (float): Tolerance of shocks/detonations kernel
-    %     itMax (float): Max number of iterations - shocks and detonations
-    %     machThermo (float): Pre-shock Mach number above which T2_guess will be computed considering h2 = h1 + u1^2 / 2
-    %     tolOblique (float): Tolerance oblique shocks algorithm
-    %     itOblique (float): Max number of iterations - oblique shocks
-    %     numPointsPolar (float): Number of points to compute shock/detonation polar curves
-    %     tolLimitRR (float): Tolerance to calculate the limit of regular reflections
-    %     itLimitRR (float): Max number of iterations - limit of regular reflections
-    %     itGuess (float): Max number of iterations - guess detonation
-    %     FLAG_RESULTS (bool): Flag to print results
-    %     FLAG_TIME (bool): Flag to print elapsed time
-    %     FLAG_REPORT (bool): Flag to print predefined plots
-    %     time (float): Elapsed time
-    %
-    % Methods:
-    %     detonationGuess: Compute the initial guess for the detonation problem
-    %     detonationCJ: Compute the CJ state for the detonation problem
-    %     detonationOverdriven: Compute the overdriven detonation problem
-    %     detonationUnderdriven: Compute the underdriven detonation problem
-    %     detonationReflected: Compute the reflected detonation problem
-    %     detonationObliqueBeta: Compute the oblique detonation problem (beta)
-    %     detonationObliqueTheta: Compute the oblique detonation problem (theta)
-    %     detonationPolar: Compute the polar curve of the detonation problem
-    %     detonationPolarLimitRR: Compute the limit of regular reflections of the detonation problem
-    %     solve: Solve detonations problems
-    %     solveArray: Solve a set of detonation problems
-    %     printTime: Print execution time
-    %     plot: Plot results
-    %     report: Postprocess all the results with predefined plots
-    %
-    % Examples:
-    %     * solver = DetonationSolver();
-    %     * solver = DetonationSolver('problemType', 'DET_R');
+    % See also: :mat:func:`Mixture`, :mat:func:`EquilibriumSolver`, :mat:func:`ShockSolver`, :mat:func:`solve`, :mat:func:`solveArray`, :mat:func:`report`
 
     properties
         problemType             % Problem type

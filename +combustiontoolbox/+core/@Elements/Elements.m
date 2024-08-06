@@ -1,5 +1,15 @@
 classdef Elements < handle
-  
+    % The :mat:class:`Elements` class is used to store the list of elements that may appear in the database.
+    %
+    % The :mat:class:`Elements` object can be initialized as follows:
+    %
+    %       elements = Elements()
+    %
+    % This creates an instance of the `Elements` class and initializes it with a predefined list of elements
+    % and their indices.
+    %
+    % See also: :mat:func:`Species`, :mat:func:`ChemicalSystem`, :mat:func:`Database`, :mat:func:`NasaDatabase`
+    
     properties
         listElements cell
         indexH double

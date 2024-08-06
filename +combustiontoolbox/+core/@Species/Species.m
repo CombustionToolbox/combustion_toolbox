@@ -1,4 +1,7 @@
 classdef Species < handle
+    % The :mat:func:`Species` class is used to store the properties of a chemical species.
+    %
+    % See also: :mat:func:`Database`, :mat:func:`NasaDatabase`
 
     properties
         name          % Name chemical species

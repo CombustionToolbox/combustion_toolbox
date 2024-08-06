@@ -1,4 +1,22 @@
 classdef ChemicalSystem < handle & matlab.mixin.Copyable
+    % The :mat:func:`ChemicalSystem` class is used to define a chemical system
+    % with a list of species and their thermodynamic properties.
+    % 
+    % The :mat:func:`ChemicalSystem` object can be initialized as follows: ::
+    %
+    %       system = ChemicalSystem(DB)
+    %       system = ChemicalSystem(DB, {'CO2', 'CO', 'H2O', 'H2', 'O2', 'N2', 'Ar'})
+    %       system = ChemicalSystem(DB, 'soot formation extended')
+    %
+    % Here ``DB`` represents an instance of the :mat:func:`NasaDatabase` or
+    % :mat:func:`BurcatDatabase` class. The first case initializes the chemical
+    % system with all the species in the database that may appear as products
+    % given the initial mixture. The second case initializes the chemical system
+    % with the list of species provided. The third case initialize the chemical
+    % system with one of the predefined list of species (see :mat:func:`setListSpecies`)
+    % that typically appear in hydrocarbon combustion systems.
+    %
+    % See also: :mat:func:`Database`, :mat:func:`NasaDatabase`, :mat:func:`findProducts`, :mat:func:`setListSpecies`
 
     properties
         species                % Struct with class Species
@@ -7,18 +25,15 @@ classdef ChemicalSystem < handle & matlab.mixin.Copyable
         stoichiometricMatrix   % Stoichiometric matrix
         propertiesMatrix       % Properties matrix
         propertyVector         % Property vector
-        % * Index values
         indexGas               % Indeces gaseous species
         indexCondensed         % Indeces condensed species
         indexCryogenic         % Indeces cryogenic liquified species
         indexIons              % Indeces ionized species in species
         indexReact             % Indeces react species
         indexFrozen            % Indeces inert/frozen species
-        % * List of species for a complete combustion
         listSpeciesLean = {'CO2', 'H2O', 'N2', 'Ar', 'O2'}                % List of species for a lean complete combustion (equivalence ratio < 1)
         listSpeciesRich = {'CO2', 'H2O', 'N2', 'Ar', 'CO', 'H2'}          % List of species for a rich complete combustion (equivalence ratio > 1)
         listSpeciesSoot = {'N2', 'Ar', 'CO', 'H2', 'Cbgrb', 'CO2', 'H2O'} % List of species for a roch complete combustion with soot formation  (equivalence ratio > equivalence ratio soot)
-        % * Flags
         FLAG_COMPLETE = false % Flag indicating to compute chemical equilibrium considering a complete combustion
         FLAG_BURCAT = false   % Find all the combinations of species from the database (without BURCAT's DB) that can appear as products for the given list of reactants
         FLAG_ION = false      % Flag indicating to include ionized species in the automatic finder of species

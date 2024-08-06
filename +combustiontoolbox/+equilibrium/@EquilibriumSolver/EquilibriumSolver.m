@@ -13,12 +13,12 @@ classdef EquilibriumSolver < handle
     % Additional optional parameters can be provided to customize the solver's behavior.
     %
     % Problem types:
-    %     * `TP`: Equilibrium composition at defined temperature and pressure
-    %     * `TV`: Equilibrium composition at defined temperature and specific volume
-    %     * `HP`: Equilibrium composition at defined enthalpy and pressure
-    %     * `EV`: Equilibrium composition at defined internal energy and specific volume
-    %     * `SP`: Equilibrium composition at defined entropy and pressure
-    %     * `SV`: Equilibrium composition at defined entropy and specific volume
+    %     * ``TP``: Equilibrium composition at defined temperature and pressure
+    %     * ``TV``: Equilibrium composition at defined temperature and specific volume
+    %     * ``HP``: Equilibrium composition at defined enthalpy and pressure
+    %     * ``EV``: Equilibrium composition at defined internal energy and specific volume
+    %     * ``SP``: Equilibrium composition at defined entropy and pressure
+    %     * ``SV``: Equilibrium composition at defined entropy and specific volume
     %
     % See also: :mat:func:`Mixture`, :mat:func:`solve`, :mat:func:`solveArray`, :mat:func:`report`
     

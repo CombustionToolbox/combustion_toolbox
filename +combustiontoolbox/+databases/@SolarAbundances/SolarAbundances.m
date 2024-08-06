@@ -1,13 +1,8 @@
 classdef SolarAbundances
-    % SolarAbundances class to read solar abundances and compute the initial molar composition
-    % of the mixture 
+    % The :mat:class:`SolarAbundances` class is used to read solar abundances and compute the 
+    % initial molar composition of the mixture
     %
-    % Optional Args:
-    %     filename (char): Filename with the solar elemental abundances
-    %
-    % Examples:
-    %     * DB = combustiontoolbox.databases.SolarAbundances;
-    %     * moles = DB.abundances2moles({'H', 'He', 'C', 'N', 'O', 'Ne', 'Ar', 'S', 'Cl', 'Fe'}, 10);
+    % See also: :mat:func:`abundances2moles`
 
     properties
         logAbundances

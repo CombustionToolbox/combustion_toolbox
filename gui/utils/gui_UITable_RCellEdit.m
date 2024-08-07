@@ -8,7 +8,11 @@ function gui_UITable_RCellEdit(app, event)
         listSpecies = app.listbox_Products.Items;
         
         % Define chemical system
-        app.chemicalSystem = combustiontoolbox.core.ChemicalSystem(app.database, listSpecies);
+        if isempty(listSpecies)
+            app.chemicalSystem = combustiontoolbox.core.ChemicalSystem(app.database);
+        else
+            app.chemicalSystem = combustiontoolbox.core.ChemicalSystem(app.database, listSpecies);
+        end
         
         % Initialize mixture
         app.mixture = combustiontoolbox.core.Mixture(app.chemicalSystem);
@@ -23,7 +27,9 @@ function gui_UITable_RCellEdit(app, event)
         app.mixture = setProperties(app.mixture, 'temperature', temperature, 'pressure', pressure);
         
         % Set ratioOxidizer based on current oxidizer species
-        app.mixture.ratioOxidizer = app.mixture.ratioOxidizer / app.mixture.stoichiometricMoles * app.mixture.equivalenceRatio;
+        if ~isempty(app.mixture.stoichiometricMoles)
+            app.mixture.ratioOxidizer = app.mixture.ratioOxidizer / app.mixture.stoichiometricMoles * app.mixture.equivalenceRatio;
+        end
         
         % Update UITable classes
         gui_update_UITable_R(app);

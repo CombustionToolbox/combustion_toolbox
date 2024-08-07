@@ -29,6 +29,7 @@ function gui_ReactantsValueChanged(app, event)
 
         % Initialize mixture
         app.mixture = combustiontoolbox.core.Mixture(app.chemicalSystem);
+        
         if ~isempty(stoichiometricMoles)
             app.mixture.ratioOxidizer = ratioOxidizer;
         end
@@ -151,7 +152,6 @@ function app = gui_set_reactants(app, event)
 
             molesAdd = 1;
             set(app.mixture, {listSpeciesAdd}, 'inert', molesAdd);
-            % app.mixture.ratioOxidizer = molesOxidizer;
             return
     end
     
@@ -162,7 +162,7 @@ function app = gui_set_reactants(app, event)
 
     if FLAG_OXIDIZER
         set(app.mixture, listSpeciesOxidizer, 'oxidizer', molesOxidizer);
-        % app.mixture.ratioOxidizer = molesOxidizer;
+        app.mixture.ratioOxidizer = molesOxidizer;
     end
     
 end

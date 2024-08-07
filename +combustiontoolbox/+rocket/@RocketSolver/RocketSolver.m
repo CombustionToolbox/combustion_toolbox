@@ -121,7 +121,7 @@ classdef RocketSolver < handle
             %     * mix4_guess (Mixture): Initial guess for the exit Mixture object
             %
             % Returns:
-            %     varargout: Updated Mixture objects depending on the problem type
+            %     varargout (Mixture): Updated Mixture objects depending on the problem type
             %
             % Examples:
             %     * [mix1, mix2_c, mix3] = solve(RocketSolver(), mix1); % Rocket IAC
@@ -191,7 +191,7 @@ classdef RocketSolver < handle
             %     mix1Array (Mixture): Array of initial Mixture objects
             %
             % Returns:
-            %     varargout: Updated arrays of Mixture objects depending on the shock problem type
+            %     varargout (Mixture): Updated arrays of Mixture objects depending on the shock problem type
             %
             % Examples:
             %     * [mix1Array, mix2Array, mix3Array] = solveArray(RocketSolver(), mix1Array); % Rocket IAC

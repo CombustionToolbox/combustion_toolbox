@@ -44,7 +44,11 @@ function gui_ConsoleValueChanged(app, event)
                 app.Console_text.Value = sprintf('Running: %s...', app.Console.Value{1,1});
                 app.Lamp.Color = app.color_lamp_working;
                 pause(0.1);
-                output = evalc(app.Console.Value{1,1});
+
+                numLines = length(app.Console.Value);
+                for i = 1:numLines
+                    output = evalc(app.Console.Value{i,1});
+                end
         end
         
     catch ME
@@ -59,10 +63,12 @@ function gui_ConsoleValueChanged(app, event)
     if ~isempty(output) || strcmp('clc', app.Console.Value{1,1})
         app.Console_text.Value = output;
     end
+
     app.Console.Value = '';
 
     % Set color lamp
     if ~FLAG_ERROR
         app.Lamp.Color = app.color_lamp_nothing;
     end
+
 end

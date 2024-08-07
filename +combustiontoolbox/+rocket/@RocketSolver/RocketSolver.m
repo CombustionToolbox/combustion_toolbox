@@ -19,15 +19,12 @@ classdef RocketSolver < handle
     properties
         problemType           % Problem type
         equilibriumSolver     % EquilibriumSolver object
-        % * Rocket propellant performance (CT-ROCKET module)
         tol0 = 1e-4;          % Tolerance rocket performance
         itMax = 10;           % Max number of iterations - rocket performance
-        % * Flags
         FLAG_SUBSONIC = false % Flag to indicate subsonic Area ratio
         FLAG_RESULTS = true   % Flag to print results
         FLAG_TIME = true      % Flag to print elapsed time
         FLAG_REPORT = false   % Flag to print predefined plots
-        % * Miscellaneous
         time                  % Elapsed time [s]
         plotConfig            % PlotConfig object
     end

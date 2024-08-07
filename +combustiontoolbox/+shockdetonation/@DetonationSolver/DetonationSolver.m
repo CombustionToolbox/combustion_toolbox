@@ -159,7 +159,7 @@ classdef DetonationSolver < handle
             %     * mixGuess_i (Mixture): Mixture object from previous calculation
             %
             % Returns:
-            %     varargout: Updated Mixture objects depending on the problem type
+            %     varargout (Mixture): Updated Mixture objects depending on the problem type
             %
             % Examples:
             %     * [mix1, mix2] = solve(DetonationSolver(), mix1);
@@ -411,7 +411,7 @@ classdef DetonationSolver < handle
             %     mix1Array (Mixture): Array of initial Mixture objects
             %
             % Returns:
-            %     varargout: Updated arrays of Mixture objects depending on the shock problem type
+            %     varargout (Mixture): Updated arrays of Mixture objects depending on the shock problem type
             %
             % Examples:
             %     * [mix1Array, mix2Array] = solveArray(DetonationSolver(), mix1Array);

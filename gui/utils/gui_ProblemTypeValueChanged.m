@@ -499,7 +499,6 @@ function gui_ProblemTypeValueChanged(app)
         case {'ROCKET', 'ROCKET_IAC', 'ROCKET_FAC'}
             % Visible flags
             app.FLAG_IAC.Visible = 'on';
-            app.FLAG_IAC.Value = true;
             gui_FLAG_IACValueChanged(app);
             % Update input items
             app.PP1.Visible = 'off'; app.PP2.Visible = 'off';

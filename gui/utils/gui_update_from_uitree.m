@@ -16,11 +16,9 @@ function gui_update_from_uitree(app, selectedNodes)
         case 'ROCKET_IAC'
             app.ProblemType.Value = 'ROCKET';
             app.FLAG_IAC.Value = true;
-            public_FLAG_IACValueChanged(app);
         case 'ROCKET_FAC'
             app.ProblemType.Value = 'ROCKET';
-            app.FLAG_IAC.Value = false; 
-            public_FLAG_IACValueChanged(app);
+            app.FLAG_IAC.Value = false;
         otherwise
             app.ProblemType.Value = results.mix2.problemType;
     end

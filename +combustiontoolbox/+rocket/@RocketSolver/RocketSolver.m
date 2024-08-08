@@ -19,15 +19,12 @@ classdef RocketSolver < handle
     properties
         problemType           % Problem type
         equilibriumSolver     % EquilibriumSolver object
-        % * Rocket propellant performance (CT-ROCKET module)
         tol0 = 1e-4;          % Tolerance rocket performance
         itMax = 10;           % Max number of iterations - rocket performance
-        % * Flags
         FLAG_SUBSONIC = false % Flag to indicate subsonic Area ratio
         FLAG_RESULTS = true   % Flag to print results
         FLAG_TIME = true      % Flag to print elapsed time
         FLAG_REPORT = false   % Flag to print predefined plots
-        % * Miscellaneous
         time                  % Elapsed time [s]
         plotConfig            % PlotConfig object
     end
@@ -121,7 +118,7 @@ classdef RocketSolver < handle
             %     * mix4_guess (Mixture): Initial guess for the exit Mixture object
             %
             % Returns:
-            %     varargout: Updated Mixture objects depending on the problem type
+            %     varargout (Mixture): Updated Mixture objects depending on the problem type
             %
             % Examples:
             %     * [mix1, mix2_c, mix3] = solve(RocketSolver(), mix1); % Rocket IAC
@@ -191,7 +188,7 @@ classdef RocketSolver < handle
             %     mix1Array (Mixture): Array of initial Mixture objects
             %
             % Returns:
-            %     varargout: Updated arrays of Mixture objects depending on the shock problem type
+            %     varargout (Mixture): Updated arrays of Mixture objects depending on the shock problem type
             %
             % Examples:
             %     * [mix1Array, mix2Array, mix3Array] = solveArray(RocketSolver(), mix1Array); % Rocket IAC

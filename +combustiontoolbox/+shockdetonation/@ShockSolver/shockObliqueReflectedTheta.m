@@ -11,11 +11,11 @@ function [mix1, mix2, mix5_1, mix5_2] = shockObliqueReflectedTheta(obj, mix1, u2
     %     mix1 (Mixture): Properties of the mixture in the pre-shock state of the incident shock
     %     u2 (float): Post-shock velocity [m/s] of the incident shock
     %     theta (float): Deflection angle [deg]
-    %     mix2 (struct): Properties of the mixture in the post-shock state of the incident shock
+    %     mix2 (Mixture): Properties of the mixture in the post-shock state of the incident shock
     %
     % Optional Args:
-    %     * mix5_1 (struct): Properties of the mixture in the post-shock state of the reflected shock - weak shock (previous calculation)
-    %     * mix5_2 (struct): Properties of the mixture in the post-shock state of the reflected shock - strong shock (previous calculation)
+    %     * mix5_1 (Mixture): Properties of the mixture in the post-shock state of the reflected shock - weak shock (previous calculation)
+    %     * mix5_2 (Mixture): Properties of the mixture in the post-shock state of the reflected shock - strong shock (previous calculation)
     %
     % Returns:
     %     Tuple containing

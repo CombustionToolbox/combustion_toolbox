@@ -1,6 +1,5 @@
 function [R, P, T, Gammas, M1] = shockIncidentIdeal(obj, gamma, M1)
-    % Compute jump conditions assuming a thermochemically frozen gas
-    % (calorically perfect gas)
+    % Compute jump conditions assuming a thermochemically frozen gas (calorically perfect gas)
     %
     % Args:
     %     obj (ShockSolver): ShockSolver object
@@ -17,7 +16,7 @@ function [R, P, T, Gammas, M1] = shockIncidentIdeal(obj, gamma, M1)
     %     * M1 (float): Pre-shock Mach number [-]
     %
     % Example:
-    %     [R, P, T, Gammas, M1] = shockIncidentIdeal(1.4, 2.0)
+    %     [R, P, T, Gammas, M1] = shockIncidentIdeal(ShockSolver(), 1.4, 2.0)
 
     R = (gamma + 1) .* M1.^2 ./ ((gamma - 1) .* M1.^2 + 2);
     P = (2 * gamma * M1.^2 - (gamma - 1)) ./ (gamma + 1);
@@ -30,7 +29,6 @@ function [R, P, T, Gammas, M1] = shockIncidentIdeal(obj, gamma, M1)
 
     % Compute Gamma numerically
     Gammas = obj.computeGammasFrozen(M1, R, P);
-    % Gammas = obj.computeGammas(u2, rho2, p2);
 
     % Remove last point of the dataset to match dimensions with Gammas
     R = R(1:end-1);

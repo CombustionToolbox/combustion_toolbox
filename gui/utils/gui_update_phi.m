@@ -6,6 +6,11 @@ function gui_update_phi(app)
     %     self (object): Data of the mixture, conditions, and databases
     
     if isempty(app.mixture.equivalenceRatio)
+        app.edit_phi.Value = '-';
+        app.edit_phi2.Value = app.edit_phi.Value;
+        app.edit_phi3.Value = app.edit_phi.Value;
+        app.edit_OF.Value = 0;
+        app.edit_F.Value = 0;
         return
     end
     

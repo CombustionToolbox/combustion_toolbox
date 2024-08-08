@@ -1140,7 +1140,8 @@ classdef combustion_toolbox < matlab.apps.AppBase
         function RemoveMenu_2Selected(app, event)
             % Checks
             if isempty(event.ContextObject.Selection)
-                app.Console_text.Value = 'Warning! To remove species from the list of reactants, please select them first.';
+                message = 'To remove species from the list of reactants, please select them first.';
+                uialert(app.UIFigure, message, 'Warning', 'Icon', 'warning');
                 return
             end
             

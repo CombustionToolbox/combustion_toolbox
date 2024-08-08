@@ -51,8 +51,6 @@
 * Export results as a .mat format
 * `Display predefined plots` (e.g., molar fraction vs. equilence ratio)
 
-This project is also part of the PhD of [Alberto Cuadra-Lara](https://www.acuadralara.com/).
-
 ## Start here!
 
 * The [tutorials](https://combustion-toolbox-website.readthedocs.io/en/latest/tutorials.html) will help you get started using the Combustion Toolbox on your pc.

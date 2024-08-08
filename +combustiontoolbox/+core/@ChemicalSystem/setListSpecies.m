@@ -1,4 +1,4 @@
-function [obj, listSpecies, listSpeciesFormula] = setListSpecies(obj, database, varargin)
+function [obj, listSpecies, listSpeciesFormula] = setListSpecies(obj, varargin)
     % Set list of species in the mixture (products)
     %
     % Predefined list of species:
@@ -19,7 +19,6 @@ function [obj, listSpecies, listSpeciesFormula] = setListSpecies(obj, database, 
     %
     % Args:
     %     obj (ChemicalSystem): Chemical system object
-    %     database (Database): Object inhereted from Database superclass
     %
     % Optional Args:
     %     * listSpecies (cell): Name list species / list of species
@@ -34,16 +33,19 @@ function [obj, listSpecies, listSpeciesFormula] = setListSpecies(obj, database, 
     %     * listSpeciesFormula (cell): List with chemical formula of species
     %
     % Examples:
-    %     * [obj, listSpecies, listSpeciesFormula] = setListSpecies(system, system.database, 'soot formation');
-    %     * [obj, listSpecies, listSpeciesFormula] = setListSpecies(system, system.database, 'soot formation');
-    %     * [obj, listSpecies, listSpeciesFormula] = setListSpecies(system, system.database, 'complete', 1.5, 2.5);
+    %     * [obj, listSpecies, listSpeciesFormula] = setListSpecies(chemicalSystem, 'soot formation');
+    %     * [obj, listSpecies, listSpeciesFormula] = setListSpecies(chemicalSystem, 'soot formation');
+    %     * [obj, listSpecies, listSpeciesFormula] = setListSpecies(chemicalSystem, 'complete', 1.5, 2.5);
     
-    % 
+    % Definitions
+    database = obj.database;
+
+    % Initialization
     if isempty(varargin)
         listSpecies = [];
         return
     end
-
+    
     % Get list of species
     [obj.listSpecies, obj.FLAG_COMPLETE] = getListSpecies(database, varargin{:});
     

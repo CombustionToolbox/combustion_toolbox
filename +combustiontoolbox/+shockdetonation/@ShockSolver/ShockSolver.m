@@ -24,7 +24,6 @@ classdef ShockSolver < handle
     properties
         problemType             % Problem type
         equilibriumSolver       % EquilibriumSolver object
-        % * Shocks and detonations (CT-SD module)
         tol0 = 1e-5             % Tolerance of shocks/detonations kernel
         itMax = 50              % Max number of iterations - shocks and detonations
         machThermo = 2          % Pre-shock Mach number above which T2_guess will be computed considering h2 = h1 + u1^2 / 2
@@ -33,11 +32,9 @@ classdef ShockSolver < handle
         numPointsPolar = 100    % Number of points to compute shock/detonation polar curves
         tolLimitRR = 1e-4       % Tolerance to calculate the limit of regular reflections
         itLimitRR = 10          % Max number of iterations - limit of regular reflections
-        % * Flags
         FLAG_RESULTS = true     % Flag to print results
         FLAG_TIME = true        % Flag to print elapsed time
         FLAG_REPORT = false     % Flag to print predefined plots
-        % * Miscellaneous
         time                    % Elapsed time
         plotConfig              % PlotConfig object
     end
@@ -51,7 +48,7 @@ classdef ShockSolver < handle
         [mix1, mix2, mix5_1, mix5_2] = shockObliqueReflectedTheta(obj, mix1, u2, theta, mix2, varargin)
         [mix1, mix2] = shockPolar(obj, mix1, u1)
         [mix1, mix2, mix2_1, mix3] = shockPolarLimitRR(obj, mix1, u1)
-        [R, P, T, Gammas, beta, M1] = shockIncidentIdeal(obj, gamma, M1)
+        [R, P, T, Gammas, M1] = shockIncidentIdeal(obj, gamma, M1)
 
         function obj = ShockSolver(varargin)
             % Constructor
@@ -149,7 +146,7 @@ classdef ShockSolver < handle
             %     * mixGuess_i (Mixture): Mixture object from previous calculation
             %
             % Returns:
-            %     varargout: Updated Mixture objects depending on the problem type
+            %     varargout (Mixture): Updated Mixture objects depending on the problem type
             %
             % Examples:
             %     * [mix1, mix2] = solve(ShockSolver(), mix1);
@@ -355,7 +352,7 @@ classdef ShockSolver < handle
             %     mix1Array (Mixture): Array of initial Mixture objects
             %
             % Returns:
-            %     varargout: Updated arrays of Mixture objects depending on the shock problem type
+            %     varargout (Mixture): Updated arrays of Mixture objects depending on the shock problem type
             %
             % Examples:
             %     * [mix1Array, mix2Array] = solveArray(ShockSolver(), mix1Array);

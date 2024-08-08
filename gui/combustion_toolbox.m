@@ -268,6 +268,8 @@ classdef combustion_toolbox < matlab.apps.AppBase
         ContextMenu_UIAxes              matlab.ui.container.ContextMenu
         property_inspector_menu         matlab.ui.container.Menu
         Menu                            matlab.ui.container.Menu
+        ContextMenuUITable_R            matlab.ui.container.ContextMenu
+        RemoveMenu_2                    matlab.ui.container.Menu
     end
 
     properties (Access = public)
@@ -1132,6 +1134,24 @@ classdef combustion_toolbox < matlab.apps.AppBase
 
                 app.Tree_variable_y.CheckedNodes(indexRemove) = [];
             end
+        end
+
+        % Menu selected function: RemoveMenu_2
+        function RemoveMenu_2Selected(app, event)
+            % Checks
+            if isempty(event.ContextObject.Selection)
+                app.Console_text.Value = 'Warning! To remove species from the list of reactants, please select them first.';
+                return
+            end
+            
+            % Definitions
+            FLAG_REMOVE = event.ContextObject.Selection(:, 1);
+
+            % Remove selected species
+            event.ContextObject.Data(FLAG_REMOVE, :) = [];
+            
+            % Update values of the UITable items with the changes made
+            gui_UITable_RCellEdit(app, event)
         end
     end
 
@@ -2945,6 +2965,17 @@ classdef combustion_toolbox < matlab.apps.AppBase
             
             % Assign app.ContextMenu_UIAxes
             app.UIAxes.ContextMenu = app.ContextMenu_UIAxes;
+
+            % Create ContextMenuUITable_R
+            app.ContextMenuUITable_R = uicontextmenu(app.UIFigure);
+
+            % Create RemoveMenu_2
+            app.RemoveMenu_2 = uimenu(app.ContextMenuUITable_R);
+            app.RemoveMenu_2.MenuSelectedFcn = createCallbackFcn(app, @RemoveMenu_2Selected, true);
+            app.RemoveMenu_2.Text = 'Remove';
+            
+            % Assign app.ContextMenuUITable_R
+            app.UITable_R.ContextMenu = app.ContextMenuUITable_R;
 
             % Show the figure after all components are created
             app.UIFigure.Visible = 'on';

@@ -496,7 +496,7 @@ function gui_ProblemTypeValueChanged(app)
             gui_visible_oblique(app, false);
             % Set invisible rocket items
             gui_visible_rocket(app, false);
-        case {'ROCKET'}
+        case {'ROCKET', 'ROCKET_IAC', 'ROCKET_FAC'}
             % Visible flags
             app.FLAG_IAC.Visible = 'on';
             app.FLAG_IAC.Value = true;

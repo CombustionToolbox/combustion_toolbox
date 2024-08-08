@@ -28,7 +28,6 @@ classdef DetonationSolver < handle
     properties
         problemType             % Problem type
         equilibriumSolver       % EquilibriumSolver object
-        % * Shocks and detonations (CT-SD module)
         tol0 = 1e-5             % Tolerance of shocks/detonations kernel
         itMax = 50              % Max number of iterations - shocks and detonations
         machThermo = 2          % Pre-shock Mach number above which T2_guess will be computed considering h2 = h1 + u1^2 / 2
@@ -38,11 +37,9 @@ classdef DetonationSolver < handle
         tolLimitRR = 1e-4       % Tolerance to calculate the limit of regular reflections
         itLimitRR = 10          % Max number of iterations - limit of regular reflections
         itGuess = 5             % Max number of iterations - guess detonation
-        % * Flags
         FLAG_RESULTS = true     % Flag to print results
         FLAG_TIME = true        % Flag to print elapsed time
         FLAG_REPORT = false     % Flag to print predefined plots
-        % * Miscellaneous
         time                    % Elapsed time [s]
         plotConfig              % PlotConfig object
     end
@@ -159,7 +156,7 @@ classdef DetonationSolver < handle
             %     * mixGuess_i (Mixture): Mixture object from previous calculation
             %
             % Returns:
-            %     varargout: Updated Mixture objects depending on the problem type
+            %     varargout (Mixture): Updated Mixture objects depending on the problem type
             %
             % Examples:
             %     * [mix1, mix2] = solve(DetonationSolver(), mix1);
@@ -411,7 +408,7 @@ classdef DetonationSolver < handle
             %     mix1Array (Mixture): Array of initial Mixture objects
             %
             % Returns:
-            %     varargout: Updated arrays of Mixture objects depending on the shock problem type
+            %     varargout (Mixture): Updated arrays of Mixture objects depending on the shock problem type
             %
             % Examples:
             %     * [mix1Array, mix2Array] = solveArray(DetonationSolver(), mix1Array);

@@ -25,12 +25,12 @@ function gui_ProductsValueChanged(app)
         FLAG_ADD = ~isempty(combustiontoolbox.utils.findIndex(app.database.listSpecies, app.Products.Value));
 
         if FLAG_ADD
-            app.chemicalSystem.setListSpecies(app.database, app.Products.Value);
+            app.chemicalSystem.setListSpecies(app.Products.Value);
             app.listbox_Products.Items = unique([app.listbox_Products.Items, app.chemicalSystem.listSpecies], 'stable');
             return
         end
 
-        app.chemicalSystem.setListSpecies(app.database, app.Products.Value);
+        app.chemicalSystem.setListSpecies(app.Products.Value);
         app.listbox_Products.Items = app.chemicalSystem.listSpecies;
 
     catch

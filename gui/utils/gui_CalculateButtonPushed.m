@@ -281,7 +281,7 @@ function app = gui_CalculateButtonPushed(app, event)
                 % Solve problem
                 [mixArray1, mixArray2, mixArray3, mixArray4] = solver.solveArray(mixArray1);
                 % Set output
-                if ~isempty(mixArray4.N)
+                if ~isempty(mixArray4(1).N)
                     varargout = {mixArray1, mixArray2, mixArray3, mixArray4};
                 else
                     varargout = {mixArray1, mixArray2, mixArray3};
@@ -296,7 +296,7 @@ function app = gui_CalculateButtonPushed(app, event)
                 % Solve problem
                 [mixArray1, mixArray2, mixArray3, mixArray4, mixArray5] = solver.solveArray(mixArray1);
                 % Set output
-                if ~isempty(mixArray5.N)
+                if ~isempty(mixArray5(1).N)
                     varargout = {mixArray1, mixArray2, mixArray3, mixArray4, mixArray5};
                 else
                     varargout = {mixArray1, mixArray2, mixArray3, mixArray4};

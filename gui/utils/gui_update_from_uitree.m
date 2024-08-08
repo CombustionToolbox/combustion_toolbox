@@ -11,6 +11,22 @@ function gui_update_from_uitree(app, selectedNodes)
     % Get the results from the selected node
     results = selectedNodes.NodeData;
 
+    % Update GUI layout if required
+    switch upper(results.mix2.problemType)
+        case 'ROCKET_IAC'
+            app.ProblemType.Value = 'ROCKET';
+            app.FLAG_IAC.Value = true;
+            public_FLAG_IACValueChanged(app);
+        case 'ROCKET_FAC'
+            app.ProblemType.Value = 'ROCKET';
+            app.FLAG_IAC.Value = false; 
+            public_FLAG_IACValueChanged(app);
+        otherwise
+            app.ProblemType.Value = results.mix2.problemType;
+    end
+
+    gui_ProblemTypeValueChanged(app);
+
     % Update the GUI with the results
     gui_write_results(app, results, 1, 'FLAG_REACTANTS', true);
 end

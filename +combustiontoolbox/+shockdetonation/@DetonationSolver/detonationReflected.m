@@ -20,8 +20,8 @@ function [mix1, mix2, mix5] = detonationReflected(obj, mix1, mix2, varargin)
     %     * mix5 (Mixture): Properties of the mixture in the post-shock state of the reflected shock
     %
     % Examples:
-    %     * [mix1, mix2, mix5] = detonationReflected(ShockSolver(), mix1, mix2)
-    %     * [mix1, mix2, mix5] = detonationReflected(ShockSolver(), mix1, mix2, mix5)
+    %     * [mix1, mix2, mix5] = detonationReflected(DetonationSolver(), mix1, mix2)
+    %     * [mix1, mix2, mix5] = detonationReflected(DetonationSolver(), mix1, mix2, mix5)
 
     % Unpack input data
     [mix5, guess_moles] = unpack(mix2, varargin{:});

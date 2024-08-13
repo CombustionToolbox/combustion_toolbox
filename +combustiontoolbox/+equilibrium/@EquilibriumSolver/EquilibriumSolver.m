@@ -47,6 +47,7 @@ classdef EquilibriumSolver < handle
         FLAG_RESULTS = true        % Flag to print results
         FLAG_TIME = true           % Flag to print elapsed time
         FLAG_REPORT = false        % Flag to postprocess all the results with predefined plots
+        FLAG_CACHE = true          % Flag to clear cache after calculations
         time                       % Elapsed time [s]
         plotConfig                 % PlotConfig object
     end
@@ -87,6 +88,7 @@ classdef EquilibriumSolver < handle
             addParameter(p, 'FLAG_RESULTS', obj.FLAG_RESULTS, @(x) islogical(x));
             addParameter(p, 'FLAG_TIME', obj.FLAG_TIME, @(x) islogical(x));
             addParameter(p, 'FLAG_REPORT', obj.FLAG_REPORT, @(x) islogical(x));
+            addParameter(p, 'FLAG_CACHE', obj.FLAG_CACHE, @(x) islogical(x));
             addParameter(p, 'plotConfig', defaultPlotConfig, @(x) isa(x, 'combustiontoolbox.utils.display.PlotConfig'));
             parse(p, varargin{:});
 
@@ -115,6 +117,7 @@ classdef EquilibriumSolver < handle
             obj.FLAG_RESULTS = p.Results.FLAG_RESULTS;
             obj.FLAG_TIME = p.Results.FLAG_TIME;
             obj.FLAG_REPORT = p.Results.FLAG_REPORT;
+            obj.FLAG_CACHE = p.Results.FLAG_CACHE;
             obj.plotConfig = p.Results.plotConfig;
         end
 
@@ -217,6 +220,11 @@ classdef EquilibriumSolver < handle
             % Postprocess all the results with predefined plots
             if obj.FLAG_REPORT
                 report(obj, mixArray);
+            end
+
+            % Clear cache
+            if obj.FLAG_CACHE
+                combustiontoolbox.utils.clearCache();
             end
 
         end

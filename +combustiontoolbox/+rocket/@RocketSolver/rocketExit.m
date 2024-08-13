@@ -12,14 +12,14 @@ function mix4 = rocketExit(obj, mix2, mix3, mix4_guess, areaRatio, varargin)
     %     areaRatio (float): Ratio area_exit / area_throat
     %
     % Optional Args:
-    %     mix2_in (Mixture): Properties of the mixture at the inlet of the chamber
+    %     mix2_inj (Mixture): Properties of the mixture at the injector of the chamber
     %
     % Returns:
     %     mix3 (Mixture): Properties of the mixture at the throat
     %
     % Examples:
     %     * mix4 = rocketExit(RocketSolver(), mix2, mix3, mix4)
-    %     * mix4 = rocketExit(RocketSolver(), mix2, mix3, mix4, mix2_in)
+    %     * mix4 = rocketExit(RocketSolver(), mix2, mix3, mix4, mix2_inj)
 
     % Check if areaRatio is provided
     if isempty(areaRatio)

@@ -28,6 +28,7 @@ classdef DetonationSolver < handle
     properties
         problemType             % Problem type
         equilibriumSolver       % EquilibriumSolver object
+        shockSolver             % ShockSolver object
         tol0 = 1e-5             % Tolerance of shocks/detonations kernel
         itMax = 50              % Max number of iterations - shocks and detonations
         machThermo = 2          % Pre-shock Mach number above which T2_guess will be computed considering h2 = h1 + u1^2 / 2
@@ -40,6 +41,7 @@ classdef DetonationSolver < handle
         FLAG_RESULTS = true     % Flag to print results
         FLAG_TIME = true        % Flag to print elapsed time
         FLAG_REPORT = false     % Flag to print predefined plots
+        FLAG_CACHE = true       % Flag to clear cache after calculations
         time                    % Elapsed time [s]
         plotConfig              % PlotConfig object
     end
@@ -59,8 +61,9 @@ classdef DetonationSolver < handle
         function obj = DetonationSolver(varargin)
             % Constructor
             defaultProblemType = 'DET';
-            defaultEquilibriumSolver = combustiontoolbox.equilibrium.EquilibriumSolver();
             defaultPlotConfig = combustiontoolbox.utils.display.PlotConfig();
+            defaultEquilibriumSolver = combustiontoolbox.equilibrium.EquilibriumSolver('plotConfig', defaultPlotConfig);
+            defaultShockSolver = combustiontoolbox.shockdetonation.ShockSolver('plotConfig', defaultPlotConfig);
             defaultFLAG_TCHEM_FROZEN = false;
             defaultFLAG_FROZEN = false;
             
@@ -68,6 +71,7 @@ classdef DetonationSolver < handle
             p = inputParser;
             addOptional(p, 'problemType', defaultProblemType, @(x) ischar(x) && any(strcmpi(x, {'DET', 'DET_R', 'DET_OVERDRIVEN', 'DET_OVERDRIVEN_R', 'DET_UNDERDRIVEN', 'DET_UNDERDRIVEN_R', 'DET_OBLIQUE', 'DET_OBLIQUE_R', 'DET_POLAR', 'DET_POLAR_R'})));
             addParameter(p, 'equilibriumSolver', defaultEquilibriumSolver);
+            addParameter(p, 'shockSolver', defaultShockSolver);
             addParameter(p, 'tol0', obj.tol0, @(x) isnumeric(x) && x > 0);
             addParameter(p, 'itMax', obj.itMax, @(x) isnumeric(x) && x > 0);
             addParameter(p, 'machThermo', obj.machThermo, @(x) isnumeric(x) && x >= 1);
@@ -81,6 +85,7 @@ classdef DetonationSolver < handle
             addParameter(p, 'FLAG_TCHEM_FROZEN', defaultFLAG_TCHEM_FROZEN, @(x) islogical(x))
             addParameter(p, 'FLAG_FROZEN', defaultFLAG_FROZEN, @(x) islogical(x))
             addParameter(p, 'FLAG_REPORT', obj.FLAG_REPORT, @(x) islogical(x));
+            addParameter(p, 'FLAG_CACHE', obj.FLAG_CACHE, @(x) islogical(x));
             addParameter(p, 'plotConfig', defaultPlotConfig, @(x) isa(x, 'combustiontoolbox.utils.display.PlotConfig'));
             addParameter(p, 'tolMoles', defaultEquilibriumSolver.tolMoles, @(x) isnumeric(x) && x > 0);
             parse(p, varargin{:});
@@ -88,6 +93,7 @@ classdef DetonationSolver < handle
             % Set properties
             obj.problemType = upper(p.Results.problemType);
             obj.equilibriumSolver = p.Results.equilibriumSolver;
+            obj.shockSolver = p.Results.shockSolver;
             obj.tol0 = p.Results.tol0;
             obj.itMax = p.Results.itMax;
             obj.machThermo = p.Results.machThermo;
@@ -99,6 +105,7 @@ classdef DetonationSolver < handle
             obj.FLAG_RESULTS = p.Results.FLAG_RESULTS;
             obj.FLAG_TIME = p.Results.FLAG_TIME;
             obj.FLAG_REPORT = p.Results.FLAG_REPORT;
+            obj.FLAG_CACHE = p.Results.FLAG_CACHE;
             obj.plotConfig = p.Results.plotConfig;
 
             if sum(contains(p.UsingDefaults, 'equilibriumSolver'))
@@ -110,6 +117,10 @@ classdef DetonationSolver < handle
             % Miscellaneous
             obj.equilibriumSolver.FLAG_RESULTS = false;
             obj.equilibriumSolver.FLAG_TIME = false;
+            obj.equilibriumSolver.FLAG_CACHE = false;
+            obj.shockSolver.FLAG_RESULTS = false;
+            obj.shockSolver.FLAG_TIME = false;
+            obj.shockSolver.FLAG_CACHE = false;
             obj.plotConfig.plotProperties{end + 1} = 'uShock';
             obj.plotConfig.plotPropertiesBasis{end + 1} = [];
         end
@@ -518,6 +529,12 @@ classdef DetonationSolver < handle
             % Postprocess all the results with predefined plots
             if obj.FLAG_REPORT
                 report(obj, varargout{:});
+            end
+
+
+            % Clear cache
+            if obj.FLAG_CACHE
+                combustiontoolbox.utils.clearCache();
             end
 
         end

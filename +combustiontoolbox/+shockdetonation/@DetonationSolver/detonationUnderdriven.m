@@ -19,9 +19,6 @@ function [mix1, mix2] = detonationUnderdriven(obj, mix1, driveFactor, varargin)
     %     * [mix1, mix2] = detonationUnderdriven(DetonationSolver(), mix1, 1.5)
     %     * [mix1, mix2] = detonationUnderdriven(DetonationSolver(), mix1, 1.5, mix2)
     
-    % Import packages
-    import combustiontoolbox.shockdetonation.ShockSolver
-    
     % Definitions
     R0 = combustiontoolbox.common.Constants.R0;
     zeta = 0.1;
@@ -44,7 +41,7 @@ function [mix1, mix2] = detonationUnderdriven(obj, mix1, driveFactor, varargin)
     end
     
     % Solve detonation
-    [mix1, mix2] = shockIncident(ShockSolver(), mix1, mix1.cjSpeed * mix1.driveFactor, mix2);
+    [mix1, mix2] = shockIncident(obj.shockSolver, mix1, mix1.cjSpeed * mix1.driveFactor, mix2);
 
     % Assign CJ speed
     mix2.cjSpeed = mix1.cjSpeed;

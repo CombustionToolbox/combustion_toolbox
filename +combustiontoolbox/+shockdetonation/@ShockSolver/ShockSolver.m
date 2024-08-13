@@ -35,6 +35,7 @@ classdef ShockSolver < handle
         FLAG_RESULTS = true     % Flag to print results
         FLAG_TIME = true        % Flag to print elapsed time
         FLAG_REPORT = false     % Flag to print predefined plots
+        FLAG_CACHE = true       % Flag to clear cache after calculations
         time                    % Elapsed time
         plotConfig              % PlotConfig object
     end
@@ -75,6 +76,7 @@ classdef ShockSolver < handle
             addParameter(p, 'FLAG_TCHEM_FROZEN', defaultFLAG_TCHEM_FROZEN, @(x) islogical(x))
             addParameter(p, 'FLAG_FROZEN', defaultFLAG_FROZEN, @(x) islogical(x))
             addParameter(p, 'FLAG_REPORT', obj.FLAG_REPORT, @(x) islogical(x));
+            addParameter(p, 'FLAG_CACHE', obj.FLAG_CACHE, @(x) islogical(x));
             addParameter(p, 'plotConfig', defaultPlotConfig, @(x) isa(x, 'combustiontoolbox.utils.display.PlotConfig'));
             parse(p, varargin{:});
 
@@ -92,6 +94,7 @@ classdef ShockSolver < handle
             obj.FLAG_RESULTS = p.Results.FLAG_RESULTS;
             obj.FLAG_TIME = p.Results.FLAG_TIME;
             obj.FLAG_REPORT = p.Results.FLAG_REPORT;
+            obj.FLAG_CACHE = p.Results.FLAG_CACHE;
             obj.plotConfig = p.Results.plotConfig;
 
             if sum(contains(p.UsingDefaults, 'equilibriumSolver'))
@@ -102,6 +105,7 @@ classdef ShockSolver < handle
             % Miscellaneous
             obj.equilibriumSolver.FLAG_RESULTS = false;
             obj.equilibriumSolver.FLAG_TIME = false;
+            obj.equilibriumSolver.FLAG_CACHE = false;
         end
 
         function obj = set(obj, property, value, varargin)

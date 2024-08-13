@@ -25,6 +25,7 @@ classdef RocketSolver < handle
         FLAG_RESULTS = true   % Flag to print results
         FLAG_TIME = true      % Flag to print elapsed time
         FLAG_REPORT = false   % Flag to print predefined plots
+        FLAG_CACHE = true     % Flag to clear cache after calculations
         time                  % Elapsed time [s]
         plotConfig            % PlotConfig object
     end
@@ -48,6 +49,7 @@ classdef RocketSolver < handle
             addParameter(p, 'FLAG_RESULTS', obj.FLAG_RESULTS, @(x) islogical(x));
             addParameter(p, 'FLAG_TIME', obj.FLAG_TIME, @(x) islogical(x));
             addParameter(p, 'FLAG_REPORT', obj.FLAG_REPORT, @(x) islogical(x));
+            addParameter(p, 'FLAG_CACHE', obj.FLAG_CACHE, @(x) islogical(x));
             addParameter(p, 'plotConfig', defaultPlotConfig, @(x) isa(x, 'combustiontoolbox.utils.display.PlotConfig'));
             addParameter(p, 'tolMoles', defaultEquilibriumSolver.tolMoles, @(x) isnumeric(x) && x > 0);
             parse(p, varargin{:});
@@ -59,6 +61,7 @@ classdef RocketSolver < handle
             obj.FLAG_TIME = p.Results.FLAG_TIME;
             obj.FLAG_REPORT = p.Results.FLAG_REPORT;
             obj.plotConfig = p.Results.plotConfig;
+            obj.FLAG_CACHE = p.Results.FLAG_CACHE;
             
             if sum(contains(p.UsingDefaults, 'equilibriumSolver'))
                 obj.equilibriumSolver.FLAG_TCHEM_FROZEN = p.Results.FLAG_TCHEM_FROZEN;
@@ -69,6 +72,7 @@ classdef RocketSolver < handle
             % Miscellaneous
             obj.equilibriumSolver.FLAG_RESULTS = false;
             obj.equilibriumSolver.FLAG_TIME = false;
+            obj.equilibriumSolver.FLAG_CACHE = false;
             obj.plotConfig.plotProperties = [obj.plotConfig.plotProperties, {'u', 'I_sp', 'I_vac'}];
             obj.plotConfig.plotPropertiesBasis = [obj.plotConfig.plotPropertiesBasis, {[], [], []}];
         end
@@ -251,6 +255,12 @@ classdef RocketSolver < handle
             if obj.FLAG_REPORT
                 report(obj, varargout{:});
             end
+
+            % Clear cache
+            if obj.FLAG_CACHE
+                combustiontoolbox.utils.clearCache();
+            end
+            
         end
 
         function printTime(obj)

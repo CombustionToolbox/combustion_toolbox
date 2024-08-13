@@ -15,12 +15,15 @@ function [tMean, tArray] = timeFunction(f, nFrec, varargin)
     %  
     % Example:
     %      [tMean, tArray] = timeFunction(@Example_TP_scoggins2015, 10)
+    
+    % Import packages
+    import combustiontoolbox.utils.clearCache
 
     for i = nFrec:-1:1
+        clearCache();
         t = tic;
         f(varargin{:});
         tArray(i) = toc(t);
-        clearvars -except f nFrec varargin tArray
     end
     
     tMean = mean(tArray);

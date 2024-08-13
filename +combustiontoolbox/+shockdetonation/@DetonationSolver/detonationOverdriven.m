@@ -18,9 +18,6 @@ function [mix1, mix2] = detonationOverdriven(obj, mix1, driveFactor, varargin)
     % Examples:
     %     * [mix1, mix2] = detonationOverdriven(DetonationSolver(), mix1, 1.5)
     %     * [mix1, mix2] = detonationOverdriven(DetonationSolver(), mix1, 1.5, mix2)
-    
-    % Import packages
-    import combustiontoolbox.shockdetonation.ShockSolver
 
     % Unpack input data
     [mix1, mix2] = unpack(mix1, driveFactor, varargin);
@@ -34,7 +31,7 @@ function [mix1, mix2] = detonationOverdriven(obj, mix1, driveFactor, varargin)
     end
 
     % Solve overdriven detonation
-    [mix1, mix2] = shockIncident(ShockSolver(), mix1, mix1.cjSpeed * mix1.driveFactor, mix2);
+    [mix1, mix2] = shockIncident(obj.shockSolver, mix1, mix1.cjSpeed * mix1.driveFactor, mix2);
 
     % Assign CJ speed
     mix2.cjSpeed = mix1.cjSpeed;

@@ -62,7 +62,11 @@ classdef NasaDatabase < combustiontoolbox.databases.Database & handle
             %     * listSpecies (cell): List of species to generate the database
             %
             % Returns:
-            %     DB (struct): Database with thermochemical interpolation curves
+            %     obj (NasaDatabase): NasaDatabase object with thermochemical interpolation curves
+            %
+            % Examples:
+            %     * DB = generateDatabase(NasaDatabase());
+            %     * DB = generateDatabase(NasaDatabase(), {'N2', 'O2', 'NO', 'O', 'N'});
             
             % Get master database from the thermoFile
             DB_master = getDatabaseMaster(obj, obj.thermoFile);

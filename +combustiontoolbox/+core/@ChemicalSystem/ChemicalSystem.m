@@ -19,7 +19,7 @@ classdef ChemicalSystem < handle & matlab.mixin.Copyable
     % See also: :mat:func:`Database`, :mat:func:`NasaDatabase`, :mat:func:`findProducts`, :mat:func:`setListSpecies`
 
     properties
-        species                % Struct with class Species
+        species                % Struct with Species objects
         listSpecies            % List of species
         listElements           % List of elements
         stoichiometricMatrix   % Stoichiometric matrix

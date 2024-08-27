@@ -34,7 +34,7 @@ function [N, NP] = equilibriumGuess(N, NP, A0, muRT, b0, index, indexGas, indexI
         N = getSimplex(N, A0, muRT, b0, index, indexIons, NG);
     catch
         % Get molar composition using a uniform distribution
-        N(index) = NP/NG;
+        N(indexGas) = NP/NG;
     end
 
     % Recompute mol gaseous species

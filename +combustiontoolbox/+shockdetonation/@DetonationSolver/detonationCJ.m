@@ -63,8 +63,8 @@ function [mix1, mix2] = detonationCJ(obj, mix1, varargin)
             it = it + 1;
             % Construction of the Jacobian matrix and vector b
             [J, b, guess_moles] = update_system(obj.equilibriumSolver, mix1, mix2, p2, T2, R0, guess_moles, FLAG_FAST);
-            % Solve of the linear system A*x = b
-            x = J \ b;
+            % Solve of the linear system J*x = b
+            x = linsolve(J, b);
             % Calculate correction factor
             lambda = relax_factor(x);
             % Apply correction
@@ -169,10 +169,9 @@ end
 
 function relax = relax_factor(x)
     % Compute relaxation factor
-    factor = [0.40546511; 0.04879016];
-    % factor = [0.40546511; 0.40546511];
+    factor = 0.40546511;
     lambda = factor ./ abs(x);
-    relax = min([1, lambda']);
+    relax = min([1; lambda]);
 end
 
 function [log_p2p1, log_T2T1] = apply_correction(x, p2p1, T2T1, lambda)

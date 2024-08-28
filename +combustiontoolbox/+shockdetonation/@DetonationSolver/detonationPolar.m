@@ -24,7 +24,7 @@ function [mix1, mix2] = detonationPolar(obj, mix1, driveFactor, varargin)
     
     % Compute CJ state
     [mix1, ~] = detonationCJ(obj, mix1);
-    mix1.cjSpeed = mix1.u;
+    mix1.cjSpeed = (1 + obj.tol0) * mix1.u; % [m/s]
     
     % Set initial velocity for the given drive factor
     mix1.u = mix1.u * driveFactor;   % pre-shock velocity [m/s] - laboratory fixed

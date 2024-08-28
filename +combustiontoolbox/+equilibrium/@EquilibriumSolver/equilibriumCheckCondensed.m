@@ -38,7 +38,7 @@ function [indexCondensed, FLAG_CONDENSED, dL_dnj] = equilibriumCheckCondensed(A0
         end
 
         % Calculate dLdnj of the condensed species
-        dL_dnj(i) = (muRT(indexCondensed(i)) - dot(pi_i, A0(indexCondensed(i), :))) / W(i); % / W(i);
+        dL_dnj(i) = (muRT(indexCondensed(i)) - dot(pi_i, A0(indexCondensed(i), :))) / W(i);
     end
     
     % Get condensed species that may appear at chemical equilibrium

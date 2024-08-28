@@ -32,6 +32,7 @@ classdef EquilibriumSolver < handle
         tolTau = 1e-25             % Tolerance of the slack variables for condensed species
         itMaxGibbs = 70            % Max number of iterations - Gibbs/Helmholtz minimization method
         itMaxIons = 30             % Max number of iterations - charge balance (ions)
+        slackGuess = 1e-14         % Initial guess of the slack variables for condensed species
         temperatureIons = 0        % Minimum temperature [K] to consider ionized species
         tol0 = 1e-3                % Tolerance of the root finding algorithm
         itMax = 30                 % Max number of iterations - root finding method
@@ -74,6 +75,7 @@ classdef EquilibriumSolver < handle
             addParameter(p, 'itMaxGibbs', obj.itMaxGibbs, @(x) isnumeric(x) && x > 0);
             addParameter(p, 'itMaxIons', obj.itMaxIons, @(x) isnumeric(x) && x > 0);
             addParameter(p, 'temperatureIons', obj.temperatureIons, @(x) isnumeric(x) && x >= 0);
+            addParameter(p, 'slackGuess', obj.slackGuess, @(x) isnumeric(x) && x > 0);
             addParameter(p, 'tol0', obj.tol0, @(x) isnumeric(x) && x > 0);
             addParameter(p, 'itMax', obj.itMax, @(x) isnumeric(x) && x > 0);
             addParameter(p, 'rootMethod', obj.rootMethod, @(method) ismember(method, {@newton, @steff, @nsteff}));
@@ -103,6 +105,7 @@ classdef EquilibriumSolver < handle
             obj.itMaxGibbs = p.Results.itMaxGibbs;
             obj.itMaxIons = p.Results.itMaxIons;
             obj.temperatureIons = p.Results.temperatureIons;
+            obj.slackGuess = p.Results.slackGuess;
             obj.tol0 = p.Results.tol0;
             obj.itMax = p.Results.itMax;
             obj.rootMethod = p.Results.rootMethod;
@@ -431,13 +434,43 @@ classdef EquilibriumSolver < handle
             NS = length(index);
         end
 
-        function delta = relaxFactor(NP, ni, eta, Delta_ln_NP, NG)
-            % Compute relaxation factor
-            FLAG = eta(1:NG) > 0;
-            FLAG_MINOR = ni(1:NG) / NP <= 1e-8 & FLAG;
-            delta1 = 2./max(5*abs(Delta_ln_NP), abs(eta(FLAG)));
-            delta2 = min(abs((-log(ni(FLAG_MINOR)/NP) - 9.2103404) ./ (eta(FLAG_MINOR) - Delta_ln_NP)));
+        function delta = relaxFactorGas(NP, nj_gas, Delta_ln_nj, Delta_ln_NP)
+            % Compute relaxation factor for gas species
+            FLAG = Delta_ln_nj > 0;
+            FLAG_MINOR = nj_gas / NP <= 1e-8 & FLAG;
+            delta1 = 2 / max(abs( [5 * Delta_ln_NP; Delta_ln_nj(FLAG)] ));
+            delta2 = min(abs( (-log(nj_gas(FLAG_MINOR) / NP) - 9.2103404) ./ (Delta_ln_nj(FLAG_MINOR) - Delta_ln_NP) ));
             delta = min([1; delta1; delta2]);
+        end
+
+        function [N, psi_j, FLAG_UNSTABLE] = relaxFactorCondensed(NP, N, psi_j, Delta_nj, indexCondensed, NG, NS, SIZE, tau, RT)
+            % Compute and apply relaxation factor for condensed species
+
+            % Definitions
+            delta0 = 0.9999;
+
+            % Initialization
+            FLAG_UNSTABLE = false;
+
+            % Check if there are condensed species
+            if NS - NG == 0
+                return
+            end
+
+            % Compute and apply relaxation factor
+            FLAG_DELTA = N(indexCondensed) + Delta_nj < 0;
+            deltaCondensed = min([1; -delta0 * N(indexCondensed(FLAG_DELTA)) ./ Delta_nj(FLAG_DELTA)]);
+            N(indexCondensed) = N(indexCondensed) + deltaCondensed .* Delta_nj;
+
+            Delta_psi_j = (tau - psi_j(indexCondensed) .* Delta_nj) ./ N(indexCondensed) - psi_j(indexCondensed);
+            FLAG_DELTA = psi_j(indexCondensed) + Delta_psi_j < 0;
+            deltaCondensed = min([1; -delta0 * psi_j(indexCondensed(FLAG_DELTA)) ./ Delta_psi_j(FLAG_DELTA)]);
+            psi_j(indexCondensed) = psi_j(indexCondensed) + deltaCondensed .* Delta_psi_j;
+
+            % Check if there are unstable species
+            Omega_pi = exp(-psi_j(indexCondensed) / RT);
+            FLAG_UNSTABLE = (N(indexCondensed) / NP < exp(-SIZE)) | (abs(log10(Omega_pi)) > 1e-2);
+            N(indexCondensed(FLAG_UNSTABLE)) = 0;
         end
 
         function point = getPoint(x_vector, f_vector)

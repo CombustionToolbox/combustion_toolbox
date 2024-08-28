@@ -47,9 +47,8 @@ function [N, dNi_T, dN_T, dNi_p, dN_p, index, STOP, STOP_ions, h0] = equilibrium
     N = system.propertyVector;         % Composition vector [moles_i]   
     A0 = system.stoichiometricMatrix;  % Stoichiometric matrix [a_ij]
     RT = R0 * T;                       % [J/mol]
-    delta0 = 0.9999;
-    tau0 = obj.tolTau;
-    opts.SYM = true; % Options linsolve method: real symmetric
+    tau0 = obj.tolTau;                 % Tolerance of the slack variables for condensed species
+    opts.SYM = true;                   % Options linsolve method: real symmetric
 
     % Initialization
     NatomE = mix.natomElementsReact;
@@ -137,8 +136,6 @@ function [N, dNi_T, dN_T, dNi_p, dN_p, index, STOP, STOP_ions, h0] = equilibrium
         it = 0; counter_errors = 0;
         itMax = obj.itMaxGibbs;
         STOP = 1.0;
-        FLAG_UNSTABLE = false;
-        delta_j0 = ones(NS - NG, 1);
 
         % Calculations
         while STOP > obj.tolGibbs && it < itMax
@@ -169,9 +166,9 @@ function [N, dNi_T, dN_T, dNi_p, dN_p, index, STOP, STOP_ions, h0] = equilibrium
                 NG = length(indexGas);
                 NS = length(index);
 
-                % Reset removed species to 1e-6 to try the avoid singular matrix
+                % Reset removed species to tolMolesGuess to try the avoid singular matrix
                 N( N(index) < obj.tolMoles ) = obj.tolMolesGuess;
-                psi_j(indexCondensed) = 1e-15 ./ N(indexCondensed);
+                psi_j(indexCondensed) = obj.slackGuess;
 
                 if counter_errors > 2
                     x = NaN;
@@ -190,48 +187,28 @@ function [N, dNi_T, dN_T, dNi_p, dN_p, index, STOP, STOP_ions, h0] = equilibrium
             Delta_ln_nj = update_Delta_ln_nj(A0, pi_i, muRT, indexGas);
             
             % Calculate correction factor
-            delta = obj.relaxFactor(NP, N(index), [Delta_ln_nj; Delta_nj], 0, NG);
+            deltaGas = obj.relaxFactorGas(NP, N(indexGas), Delta_ln_nj, 0);
             
             % Apply correction
-            N(indexGas) = N(indexGas) .* exp(delta * Delta_ln_nj);
+            N(indexGas) = N(indexGas) .* exp(deltaGas * Delta_ln_nj);
 
-            % Apply correction condensed species
-            if NS - NG > 0
-                delta_j = delta_j0;
-                FLAG_DELTA = N(indexCondensed) + Delta_nj < 0;
-                delta_j(FLAG_DELTA) = -delta0 * N(indexCondensed(FLAG_DELTA)) ./ Delta_nj(FLAG_DELTA);
-                N(indexCondensed) = N(indexCondensed) + min(delta_j) .* Delta_nj;
-
-                delta_j = delta_j0;
-                Delta_psi_j = (tau - psi_j(indexCondensed) .* Delta_nj) ./ N(indexCondensed) - psi_j(indexCondensed);
-                FLAG_DELTA = psi_j(indexCondensed) + Delta_psi_j < 0;
-                delta_j(FLAG_DELTA) = -delta0 * psi_j(indexCondensed(FLAG_DELTA)) ./ Delta_psi_j(FLAG_DELTA);
-                psi_j(indexCondensed) = psi_j(indexCondensed) + min(delta_j) .* Delta_psi_j;
-                
-                Omega_pi = exp(-psi_j(indexCondensed) / RT);
-                FLAG_UNSTABLE = (N(indexCondensed) / NP < exp(-SIZE)) | (abs(log10(Omega_pi)) > 1e-2);
-                N(indexCondensed(FLAG_UNSTABLE)) = 0;
-            end
+            % Calculate and apply correction condensed species
+            [N, psi_j] = obj.relaxFactorCondensed(NP, N, psi_j, Delta_nj, indexCondensed, NG, NS, SIZE, tau, RT);
             
             % Compute STOP criteria
             STOP = compute_STOP(N(index), [Delta_ln_nj; Delta_nj], NG, A0(index, :), NatomE, max_NatomE, obj.tolE);
-            
-            % Check for negative condensed species
-            FLAG_NEGATIVE = N(indexCondensed) < 0;
 
             % Update temp values in order to remove species with moles < tolerance
             [index, indexCondensed, indexGas, indexIons, NG, NS, N] = obj.updateTemp(N, index, indexCondensed, indexGas, indexIons, NP, NG, NS, SIZE);
             
-            % Update delta_j0
-            if sum(FLAG_NEGATIVE)
-                FLAG_UNSTABLE(:) = false;
-                delta_j0 = ones(NS - NG, 1);
-            end
 
             % Debug 
-            % aux_delta(it) = delta;
+            % aux_delta(it) = min(deltaGas, deltaCondensed);
             % aux_STOP(it) = STOP;
         end
+
+        % Debug
+        % debug_plot_error(it, aux_STOP, aux_delta);
 
         % Check convergence of charge balance (ionized species)
         [N, STOP_ions, FLAG_ION] = equilibriumCheckIons(obj, N, A0, ind_E, indexGas, indexIons);
@@ -258,9 +235,6 @@ function [N, dNi_T, dN_T, dNi_p, dN_p, index, STOP, STOP_ions, h0] = equilibrium
         % Remove element E from matrix
         indexElements(ind_E) = [];
         NE = NE - 1;
-
-        % Debug
-        % debug_plot_error(it, aux_STOP, aux_delta);
     end
 
     function x = equilibriumLoopCondensed(x)
@@ -335,7 +309,7 @@ function [N, dNi_T, dN_T, dNi_p, dN_p, index, STOP, STOP_ions, h0] = equilibrium
             N(indexCondensed_add( N(indexCondensed_add) == 0) ) = obj.tolMolesGuess;
 
             % Initialize Lagrange multiplier vector psi
-            psi_j(indexCondensed_add) = 1e-15 ./ N(indexCondensed_add);
+            psi_j(indexCondensed_add) = obj.slackGuess;
 
             % Compute chemical equilibrium considering condensed species
             x0 = equilibriumLoop;

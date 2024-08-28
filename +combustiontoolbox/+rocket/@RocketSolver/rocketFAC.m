@@ -73,7 +73,7 @@ function [mix1, mix2_inj, mix2_c, mix3, mix4] = rocketFAC(obj, mix1, varargin)
     % Initialization
     STOP = 1; it = 0;
     pressure_inj = convert_bar_to_Pa(pressure_inj); % [Pa]
-    mix2_inf_guess = [];
+    mix2_inf_guess = mix2_inj;
     temp_mix1.areaRatio = areaRatioChamber;
     
     % Loop

@@ -44,12 +44,11 @@ function [N, dNi_T, dN_T, dNi_p, dN_p, index, STOP, STOP_ions, h0] = equilibrium
     R0 = combustiontoolbox.common.Constants.R0; % Universal gas constant [J/(K mol)]
 
     % Definitions
-    % CHECK: ERROR IN N(:, 2) FOR CONDENSED SPECIES.
-    N = system.propertyVector;       % Composition matrix [moles_i, phase_i]
+    N = system.propertyVector;         % Composition vector [moles_i]   
     A0 = system.stoichiometricMatrix;  % Stoichiometric matrix [a_ij]
     RT = R0 * T;                       % [J/mol]
     delta0 = 0.9999;
-    tau0RT = obj.tolTau;
+    tau0 = obj.tolTau;
     opts.SYM = true; % Options linsolve method: real symmetric
 
     % Initialization
@@ -107,7 +106,7 @@ function [N, dNi_T, dN_T, dNi_p, dN_p, index, STOP, STOP_ions, h0] = equilibrium
 
     % Initialization 
     psi_j = system.propertyVector;
-    tauRT = tau0RT .* min(NatomE);
+    tau = tau0 .* min(NatomE);
 
     % Solve system
     x = equilibriumLoop;
@@ -154,7 +153,7 @@ function [N, dNi_T, dN_T, dNi_p, dN_p, index, STOP, STOP_ions, h0] = equilibrium
             J = update_matrix_J(A0_T, N, indexGas, indexCondensed, psi_j);
             
             % Construction of vector b      
-            b = update_vector_b(A0, N, NatomE, ind_E, index, indexGas, indexCondensed, indexIons, muRT, tauRT);
+            b = update_vector_b(A0, N, NatomE, ind_E, index, indexGas, indexCondensed, indexIons, muRT, tau);
             
             % Solve the linear system J*x = b
             [x, ~] = linsolve(J, b, opts);
@@ -171,8 +170,8 @@ function [N, dNi_T, dN_T, dNi_p, dN_p, index, STOP, STOP_ions, h0] = equilibrium
                 NS = length(index);
 
                 % Reset removed species to 1e-6 to try the avoid singular matrix
-                N( N(index) < obj.tolMoles ) = 1e-6;
-                psi_j(indexCondensed) = tauRT ./ N(indexCondensed);
+                N( N(index) < obj.tolMoles ) = obj.tolMolesGuess;
+                psi_j(indexCondensed) = 1e-15 ./ N(indexCondensed);
 
                 if counter_errors > 2
                     x = NaN;
@@ -204,12 +203,12 @@ function [N, dNi_T, dN_T, dNi_p, dN_p, index, STOP, STOP_ions, h0] = equilibrium
                 N(indexCondensed) = N(indexCondensed) + min(delta_j) .* Delta_nj;
 
                 delta_j = delta_j0;
-                Delta_psi_j = (tauRT - psi_j(indexCondensed) .* Delta_nj) ./ N(indexCondensed) - psi_j(indexCondensed);
+                Delta_psi_j = (tau - psi_j(indexCondensed) .* Delta_nj) ./ N(indexCondensed) - psi_j(indexCondensed);
                 FLAG_DELTA = psi_j(indexCondensed) + Delta_psi_j < 0;
                 delta_j(FLAG_DELTA) = -delta0 * psi_j(indexCondensed(FLAG_DELTA)) ./ Delta_psi_j(FLAG_DELTA);
                 psi_j(indexCondensed) = psi_j(indexCondensed) + min(delta_j) .* Delta_psi_j;
                 
-                Omega_pi = exp(-psi_j(indexCondensed));
+                Omega_pi = exp(-psi_j(indexCondensed) / RT);
                 FLAG_UNSTABLE = (N(indexCondensed) / NP < exp(-SIZE)) | (abs(log10(Omega_pi)) > 1e-2);
                 N(indexCondensed(FLAG_UNSTABLE)) = 0;
             end
@@ -333,7 +332,7 @@ function [N, dNi_T, dN_T, dNi_p, dN_p, index, STOP, STOP_ions, h0] = equilibrium
             N_backup = N;
 
             % Check if there are non initialized condensed species
-            N(indexCondensed_add( N(indexCondensed_add) == 0) ) = 1e-5;
+            N(indexCondensed_add( N(indexCondensed_add) == 0) ) = obj.tolMolesGuess;
 
             % Initialize Lagrange multiplier vector psi
             psi_j(indexCondensed_add) = 1e-15 ./ N(indexCondensed_add);
@@ -384,6 +383,11 @@ end
 function J11 = update_matrix_J11(A0_T, N, indexGas)
     % Compute submatrix J11
     J11 = A0_T(:, indexGas) * (A0_T(:, indexGas) .* N(indexGas)')';
+    
+    % J11 is expected to be symmetric. However, due to precision errors,
+    % slight asymmetries may occur. To enforce symmetry, we explicitly 
+    % symmetrize the matrix by averaging it with its transpose
+    J11 = (J11 + J11') / 2;
 end
 
 function J12 = update_matrix_J12(A0_T, indexCondensed)
@@ -399,7 +403,7 @@ function J = update_matrix_J(A0_T, N, indexGas, indexCondensed, psi_j)
     J = [J11, J12; J12', J22];
 end
 
-function b = update_vector_b(A0, N, NatomE, ind_E, index, indexGas, indexCondensed, indexIons, muRT, tauRT)
+function b = update_vector_b(A0, N, NatomE, ind_E, index, indexGas, indexCondensed, indexIons, muRT, tau)
     % Compute vector b
     bi = N(index)' * A0(index, :);
 
@@ -408,7 +412,7 @@ function b = update_vector_b(A0, N, NatomE, ind_E, index, indexGas, indexCondens
     end
     
     b1 = (NatomE - bi + sum(A0(indexGas, :) .* N(indexGas) .* muRT(indexGas)))';
-    b2 = muRT(indexCondensed) - tauRT ./ N(indexCondensed);
+    b2 = muRT(indexCondensed) - tau ./ N(indexCondensed);
     
     b = [b1; b2];
 end

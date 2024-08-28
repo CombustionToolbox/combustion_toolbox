@@ -26,12 +26,6 @@ function [mix1, mix2] = shockPolar(obj, mix1, u1)
     beta = linspace(betaMin, pi / 2, obj.numPointsPolar);
     u1n = u1 * sin(beta);
 
-    % Compute as SDToolbox for comparison
-    % step = 5; % [m/s]
-    % u1n = linspace(a1 + 1, u1, (u1 - a1) / step);
-    % beta = asin(u1n ./ u1);
-    % betaMin = asin(a1 / u1);
-
     N = length(u1n);
     ut = u1 .* cos(beta);
     

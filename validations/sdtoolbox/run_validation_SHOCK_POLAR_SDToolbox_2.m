@@ -24,7 +24,7 @@ function run_validation_SHOCK_POLAR_SDToolbox_2
     end
 
     listSpecies = {'O2', 'O', 'N2', 'N', 'NO', 'eminus', 'Nplus', 'NOplus',...
-          'N2plus', 'Oplus', 'O2plus', 'Ar'};
+          'N2plus', 'Oplus', 'O2plus', 'Ar', 'Arplus'};
     M1 = [2, 3, 5, 14];
     numPointsPolar = 300;
     filename = 'shock_polar_equilwithions_SDToolbox';

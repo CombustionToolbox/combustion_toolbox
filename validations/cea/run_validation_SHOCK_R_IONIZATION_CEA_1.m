@@ -68,7 +68,7 @@
     resultsCEA = data_CEA(filename, displaySpecies);
     
     % Plot molar fractions
-    fig1 = plotComposition(mixArray3(1), mixArray1, 'u', 'Xi', 'mintol', 1e-14, 'y_var', mixArray3);
+    fig1 = plotComposition(mixArray3(1), mixArray1, 'u', 'Xi', 'mintol', 1e-5, 'y_var', mixArray3);
 
     % Properties mixture 1
     fig2 = plotProperties(repmat({'u_preshock'}, 1, 8), [mixArray1.u], {'T', 'p', 'rho', 'h', 'e', 'g', 's', 'gamma_s'}, mixArray1, 'basis', {[], [], [], 'mi', 'mi', 'mi', 'mi', []}, 'validation', resultsCEA.mix1);
@@ -83,8 +83,8 @@
     folderpath = fullfile(pwd, 'validations', 'figures');
     stack_trace = dbstack;
     filename = stack_trace.name;
-    saveas(fig1, strcat(folderpath, filename, '_molar'), 'svg');
-    saveas(fig2, strcat(folderpath, filename, '_properties_1'), 'svg');
-    saveas(fig3, strcat(folderpath, filename, '_properties_2'), 'svg');
-    saveas(fig4, strcat(folderpath, filename, '_properties_3'), 'svg');
+    saveas(fig1, fullfile(folderpath, strcat(filename, '_molar')), 'svg');
+    saveas(fig2, fullfile(folderpath, strcat(filename, '_properties_1')), 'svg');
+    saveas(fig3, fullfile(folderpath, strcat(filename, '_properties_2')), 'svg');
+    saveas(fig4, fullfile(folderpath, strcat(filename, '_properties_3')), 'svg');
  end

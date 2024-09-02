@@ -77,7 +77,7 @@ function run_validation_DET_CEA_2
     folderpath = fullfile(pwd, 'validations', 'figures');
     stack_trace = dbstack;
     filename = stack_trace.name;
-    saveas(fig1, strcat(folderpath, filename, '_molar'), 'svg');
-    saveas(fig2, strcat(folderpath, filename, '_properties_1'), 'svg');
-    saveas(fig3, strcat(folderpath, filename, '_properties_2'), 'svg');
+    saveas(fig1, fullfile(folderpath, strcat(filename, '_molar')), 'svg');
+    saveas(fig2, fullfile(folderpath, strcat(filename, '_properties_1')), 'svg');
+    saveas(fig3, fullfile(folderpath, strcat(filename, '_properties_2')), 'svg');
 end

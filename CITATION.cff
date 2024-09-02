@@ -5,7 +5,7 @@ message: "If you use this software, please cite it using these metadata."
 type: misc
 license: "GPL-3.0"
 title: "Combustion Toolbox: A MATLAB-GUI based open-source tool for solving gaseous combustion problems"
-version: 1.1.1
+version: 1.1.0
 doi: 10.5281/zenodo.5554911
 date-released: 2024-08-03
 url: "https://combustion-toolbox-website.readthedocs.io"
@@ -47,8 +47,7 @@ abstract:
     * Export results in a spreadsheet
     * Export results as a .mat format
     * `Display predefined plots` (e.g., molar fraction vs equilence ratio)
-
-    This project is also part of the PhD of [Alberto Cuadra-Lara](https://www.acuadralara.com)."
+    "
 authors: 
   -
     family-names: "Cuadra"

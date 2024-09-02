@@ -89,78 +89,9 @@ classdef NasaDatabase < combustiontoolbox.databases.Database & handle
             
             % Compute interpolation curves for each species
             for i = 1:numSpecies
-                species = obj.fullname2name(listSpecies{i});
-
-                if ~isfield(DB_master, species)
-                    fprintf(['\n- Species ''', listSpecies{i}, ''' does not exist as a field in species structure ... ']);
-                    continue
-                end
-                
-                % Initialization
-                temp = DB_master.(species);
-
-                % Get data
-                Tintervals = DB_master.(species).Tintervals;
-                Trange = DB_master.(species).Trange;
-                
-                % Get thermodynamic data from the species that cannot be evaluated at different temperatures
-                if temp.Tintervals == 0
-                    Tref = Trange(1);
-
-                    [Cp0, Hf0, H0, Ef0, S0, DfG0] = obj.getSpeciesThermo(obj, DB_master, listSpecies{i}, Tref, obj.units);
-                    
-                    temp.hf = Hf0;
-                    temp.ef = Ef0;
-                    temp.Tref = Tref;
-                    temp.T = Tref;
-
-                    % Interpolation curves (constant values)
-                    temp.cpcurve = griddedInterpolant([Tref, Tref + 1], [Cp0, Cp0], 'linear', 'linear');
-                    temp.h0curve = griddedInterpolant([Tref, Tref + 1], [H0, H0], 'linear', 'linear');
-                    temp.s0curve = griddedInterpolant([Tref, Tref + 1], [S0, S0], 'linear', 'linear');
-                    temp.g0curve = griddedInterpolant([Tref, Tref + 1], [DfG0, DfG0], 'linear', 'linear');
-
-                    % Store the species data in the SpeciesDB
-                    DB.(species) = temp;
-
-                    continue
-                end
-                
-                % Get thermodynamic data from the species that can be evaluated at different temperatures
-                [~, Hf0, ~, Ef0, ~, ~] = obj.getSpeciesThermo(obj, DB_master, listSpecies{i}, obj.temperatureReference, obj.units);
-                
-                temp.hf = Hf0;
-                temp.ef = Ef0;
-                temp.Tref = obj.temperatureReference;
-
-                Tmin = Trange{1}(1);
-                Tmax = Trange{Tintervals}(2);
-                T_vector = linspace(Tmin, Tmax, obj.pointsTemperature);
-
-                [Cp0_vector, ~, H0_vector, ~, S0_vector, ~] = obj.getSpeciesThermo(obj, DB_master, listSpecies{i}, T_vector, obj.units);
-                DfG0_vector = H0_vector - T_vector .* S0_vector;
-
-                temp.T = T_vector;
-
-                % Interpolation curves
-                temp.cpcurve = griddedInterpolant(T_vector, Cp0_vector, obj.interpolationMethod, obj.extrapolationMethod);
-                temp.h0curve = griddedInterpolant(T_vector, H0_vector, obj.interpolationMethod, obj.extrapolationMethod);
-                temp.s0curve = griddedInterpolant(T_vector, S0_vector, obj.interpolationMethod, obj.extrapolationMethod);
-                temp.g0curve = griddedInterpolant(T_vector, DfG0_vector, obj.interpolationMethod, obj.extrapolationMethod);
-
-                % Coefficients NASA's 9 polynomial fits
-                temp.Tintervals = DB_master.(species).Tintervals;
-                temp.Trange = DB_master.(species).Trange;
-                temp.Texponents = DB_master.(species).Texponents;
-                temp.a = DB_master.(species).a;
-                temp.b = DB_master.(species).b;
-
-                % Store the species data in the database
-                DB.(species) = temp;
+                addSpecies(obj, listSpecies{i}, DB_master);
             end
             
-            % Assign data
-            obj.species = DB;
         end
         
         function [cp, cv, h0, DhT, e0, DeT, s0, g0] = getSpeciesThermoFull(obj, DB, species, temperature, units)
@@ -198,7 +129,7 @@ classdef NasaDatabase < combustiontoolbox.databases.Database & handle
 
             % Compute additional thermodynamic function not included in getSpeciesThermo
             if Tintervals > 0
-                e0 = (ef + (h0 - hf) - (1 - phase) * R0 * (T - obj.temperatureReference));
+                e0 = (ef + (h0 - hf) - (1 - phase) * R0 * (T - DB.(species).Tref));
                 cv = cp - R0;
                 DhT = h0 - hf;
                 DeT = e0 - ef;
@@ -210,14 +141,122 @@ classdef NasaDatabase < combustiontoolbox.databases.Database & handle
                 DhT = zeros(1, N);
                 DeT = zeros(1, N);
             end
+            
+        end
+
+        function [cp0, hf, h0, ef, s0, g0] = getSpeciesThermo(obj, DB, species, temperature, units)
+            % Calculates the thermodynamic properties of any species included in the NASA database
+            %
+            % Args:
+            %     DB (struct): Database with custom thermodynamic polynomials functions generated from NASAs 9 polynomials fits
+            %     species (char): Chemical species
+            %     T (float): Temperature [K]
+            %     units (char): Label indicating mass [kg] or molar [mol] units
+            %
+            % Returns:
+            %     Tuple containing
+            %
+            %     * cP0 (float): Specific heat at constant pressure [J/(mol-k)]
+            %     * hf0 (float): Enthalpy of formation [J/mol]
+            %     * h0 (float):  Enthalpy [J/mol]
+            %     * ef0 (float): Internal energy of formation [J/mol]
+            %     * s0 (float):  Entropy [J/(mol-k)]
+            %     * Dg0 (float): Gibbs energy [J/mol]
+            %
+            % Example:
+            %     * [cp0, hf0, h0, ef0, s0, g0] = getSpeciesThermo(obj, DB, 'CO', 1000, 'molar')
+            %
+            %     * cp0 = 33.1788
+            %     * hf0 = -1.1054e+05
+            %     * h0  = -8.8848e+04
+            %     * ef0 = -1.1177e+05
+            %     * s0  = 234.5409
+            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+            
+            % Definitions
+            R0 = combustiontoolbox.common.Constants.R0; % Universal gas constant [J/(K mol)]
+            N = length(temperature);
+
+            % Unpack NASA's polynomials coefficients
+            [a, b, Trange, Texponents, Tintervals, phase, hf, W, FLAG_REFERENCE] = obj.getCoefficients(species, DB);
         
-            % Change units
-            % h0 = h0 * 1e-3;   % [kJ/mol]
-            % DhT = DhT * 1e-3; % [kJ/mol]
-            % e0 = e0 * 1e-3;   % [kJ/mol]
-            % DeT = DeT * 1e-3; % [kJ/mol]
-            % g0 = g0 * 1e-3;   % [kJ/mol]
-            % s0 = s0 * 1e-3;   % [kJ/(mol-K)]
+            % Get elements
+            elements = combustiontoolbox.core.Elements();
+
+            % Get element matrix of the species
+            elementMatrix = DB.(species).getElementMatrix(elements.listElements);
+        
+            % Compute change in moles of gases during the formation reaction of a
+            % mole of that species starting from the elements in their reference state
+            Delta_n = obj.getChangeMolesGasReaction(elements, elementMatrix, phase);
+        
+            % If temperature interval is zero the species is only a reactant. In that case,
+            % determine it's reference temperature Tref. For noncryogenic reactants, assigned
+            % enthalpies are given at 298.15 K. For cryogenic liquids, assigned enthalpies
+            % are given at their boiling points instead of 298.15 K
+            if Tintervals == 0
+                Tref = Trange(1);
+                cp0 = zeros(1, N);
+                h0 = hf * ones(1, N);
+                ef = hf - Delta_n * R0 * Tref;
+                s0 = zeros(1, N);
+                g0 = h0;
+        
+                if strcmpi(units, 'mass')
+                    hf = molar2mass(hf, W);
+                    ef = molar2mass(ef, W);
+                end
+
+                return
+            end
+
+            % Compute thermodynamic properties
+            for i = N:-1:1
+                T = temperature(i);
+
+                if Tintervals > 0
+                    Tref = DB.(species).Tref;
+            
+                    % Get temperature interval
+                    Tinterval = obj.getIndexTempereratureInterval(species, T, DB);
+
+                    % Compute thermodynamic function
+                    cp0(i) = R0 * sum(a{Tinterval} .* T.^Texponents{Tinterval});
+                    h0(i) = R0 * T * (sum(a{Tinterval} .* T.^Texponents{Tinterval} .* [-1 log(T) 1 1/2 1/3 1/4 1/5 0]) + b{Tinterval}(1) / T);
+                    s0(i) = R0 * (sum(a{Tinterval} .* T.^Texponents{Tinterval} .* [-1/2 -1 log(T) 1 1/2 1/3 1/4 0]) + b{Tinterval}(2));
+                    ef(i) = hf - Delta_n * R0 * Tref;
+            
+                    % Compute the standar gibbs free energy of formation at the specified
+                    % temperature. This enforces us to consider explicitely the formation
+                    % reaction from the elements in their reference states at room
+                    % temperature, unless the species is precisely an element in its
+                    % reference state, in which case the standard gibbs free energy of
+                    % formation is identically zero.
+                    if ~FLAG_REFERENCE
+                        g0(i) = h0(i) - T .* s0(i);
+                    else
+                        g0(i) = 0;
+                    end
+            
+                end
+
+            end
+            
+            if strcmpi(units, 'mass')
+                cp0 = molar2mass(cp0, W);
+                hf = molar2mass(hf, W);
+                ef = molar2mass(ef, W);
+                h0 = molar2mass(h0, W);
+                s0 = molar2mass(s0, W);
+                g0 = molar2mass(g0, W);
+            end
+
+            % SUB-PASS FUNCTIONS
+            function value = molar2mass(value, W)
+                % Change molar units [mol] to mass units [kg]
+                value = value / W;
+            end
+
         end
 
     end
@@ -361,8 +400,16 @@ classdef NasaDatabase < combustiontoolbox.databases.Database & handle
                 temp.name = obj.fullname2name(temp.fullname);
                 temp.comments = tline(19:end);
 
-                if contains(temp.comments, 'Ref-')
+                if any(contains(temp.comments, {'Ref-', 'REFERENCE ELEMENT'}))
                     temp.FLAG_REFERENCE = true;
+                end
+                
+                if  contains(tline, 'HF298=', 'IgnoreCase', true)
+                    temp.Tref = 298.15; % [K]
+                elseif  contains(tline, 'HF0=', 'IgnoreCase', true)
+                    temp.Tref = 0; % [K]
+                else
+                    temp.Tref = obj.temperatureReference; % [K]
                 end
 
                 tline = fgetl(fid);
@@ -412,123 +459,6 @@ classdef NasaDatabase < combustiontoolbox.databases.Database & handle
     end
 
     methods (Access = private, Static)
-
-        function [cp0, hf, h0, ef, s0, g0] = getSpeciesThermo(obj, DB, species, temperature, units)
-            % Calculates the thermodynamic properties of any species included in the NASA database
-            %
-            % Args:
-            %     DB (struct): Database with custom thermodynamic polynomials functions generated from NASAs 9 polynomials fits
-            %     species (char): Chemical species
-            %     T (float): Temperature [K]
-            %     units (char): Label indicating mass [kg] or molar [mol] units
-            %
-            % Returns:
-            %     Tuple containing
-            %
-            %     * cP0 (float): Specific heat at constant pressure [J/(mol-k)]
-            %     * hf0 (float): Enthalpy of formation [J/mol]
-            %     * h0 (float):  Enthalpy [J/mol]
-            %     * ef0 (float): Internal energy of formation [J/mol]
-            %     * s0 (float):  Entropy [J/(mol-k)]
-            %     * Dg0 (float): Gibbs energy [J/mol]
-            %
-            % Example:
-            %     * [formula, mm, cP0, hf0, h0, ef0, s0, g0] = getSpeciesThermo(obj, DB, 'CO', 1000, 'molar')
-            %
-            %     * formula = 'C   1.00O   1.00    0.00    0.00    0.00'
-            %     * mm  = 28.0101
-            %     * cP0 = 33.1788
-            %     * hf0 = -1.1054e+05
-            %     * h0  = -8.8848e+04
-            %     * ef0 = -1.1177e+05
-            %     * s0  = 234.5409
-            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-            
-            % Definitions
-            R0 = combustiontoolbox.common.Constants.R0; % Universal gas constant [J/(K mol)]
-            N = length(temperature);
-
-            % Unpack NASA's polynomials coefficients
-            [a, b, Trange, Texponents, Tintervals, phase, hf, W, FLAG_REFERENCE] = obj.getCoefficients(species, DB);
-        
-            % Get elements
-            elements = combustiontoolbox.core.Elements();
-
-            % Get element matrix of the species
-            elementMatrix = DB.(species).getElementMatrix(elements.listElements);
-        
-            % Compute change in moles of gases during the formation reaction of a
-            % mole of that species starting from the elements in their reference state
-            Delta_n = obj.getChangeMolesGasReaction(elements, elementMatrix, phase);
-        
-            % If temperature interval is zero the species is only a reactant. In that case,
-            % determine it's reference temperature Tref. For noncryogenic reactants, assigned
-            % enthalpies are given at 298.15 K. For cryogenic liquids, assigned enthalpies
-            % are given at their boiling points instead of 298.15 K
-            if Tintervals == 0
-                Tref = Trange(1);
-                cp0 = zeros(1, N);
-                h0 = hf * ones(1, N);
-                ef = hf - Delta_n * R0 * Tref;
-                s0 = zeros(1, N);
-                g0 = h0;
-        
-                if strcmpi(units, 'mass')
-                    hf = molar2mass(hf, W);
-                    ef = molar2mass(ef, W);
-                end
-
-                return
-            end
-
-            % Compute thermodynamic properties
-            for i = N:-1:1
-                T = temperature(i);
-
-                if Tintervals > 0
-                    Tref = obj.temperatureReference;
-            
-                    % Get temperature interval
-                    Tinterval = obj.getIndexTempereratureInterval(species, T, DB);
-
-                    % Compute thermodynamic function
-                    cp0(i) = R0 * sum(a{Tinterval} .* T.^Texponents{Tinterval});
-                    h0(i) = R0 * T * (sum(a{Tinterval} .* T.^Texponents{Tinterval} .* [-1 log(T) 1 1/2 1/3 1/4 1/5 0]) + b{Tinterval}(1) / T);
-                    s0(i) = R0 * (sum(a{Tinterval} .* T.^Texponents{Tinterval} .* [-1/2 -1 log(T) 1 1/2 1/3 1/4 0]) + b{Tinterval}(2));
-                    ef(i) = hf - Delta_n * R0 * Tref;
-            
-                    % Compute the standar gibbs free energy of formation at the specified
-                    % temperature. This enforces us to consider explicitely the formation
-                    % reaction from the elements in their reference states at room
-                    % temperature, unless the species is precisely an element in its
-                    % reference state, in which case the standard gibbs free energy of
-                    % formation is identically zero.
-                    if ~FLAG_REFERENCE
-                        g0(i) = h0(i) - T .* s0(i);
-                    else
-                        g0(i) = 0;
-                    end
-            
-                end
-
-            end
-            
-            if strcmpi(units, 'mass')
-                cp0 = molar2mass(cp0, W);
-                hf = molar2mass(hf, W);
-                ef = molar2mass(ef, W);
-                h0 = molar2mass(h0, W);
-                s0 = molar2mass(s0, W);
-                g0 = molar2mass(g0, W);
-            end
-
-            % SUB-PASS FUNCTIONS
-            function value = molar2mass(value, W)
-                % Change molar units [mol] to mass units [kg]
-                value = value / W;
-            end
-
-        end
 
         function Delta_n = getChangeMolesGasReaction(elements, elementMatrix, phase)
             % In order to compute the internal energy of formation from the enthalpy of

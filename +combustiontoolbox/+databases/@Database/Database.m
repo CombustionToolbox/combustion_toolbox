@@ -5,20 +5,20 @@ classdef (Abstract) Database < handle
     % See also: :mat:func:`NasaDatabase`, :mat:func:`BurcatDatabase`
 
     properties
-        name
-        species
-        filename
-        interpolationMethod
-        extrapolationMethod 
-        units
-        pointsTemperature
-        temperatureReference
-        thermoFile
+        name                   % Database name
+        species                % Struct with Species objects
+        filename               % Database filename
+        interpolationMethod    % Interpolation method for the griddedInterpolant objects
+        extrapolationMethod    % Extrapolation method for the griddedInterpolant objects
+        pointsTemperature      % Number of points to use in the interpolation of the thermodynamic data
+        temperatureReference   % Default temperature of reference
+        thermoFile             % Name with path for the thermodynamic database file (raw data)
+        units                  % Units thermodynamic data [molar or mass]
     end
 
     properties (Hidden)
-        id
-        FLAG_BENCHMARK = false
+        id                     % Database ID
+        FLAG_BENCHMARK = false % Flag to reload the database despite being in cache for benchamarking purposes
     end
 
     properties (Dependent)
@@ -78,8 +78,8 @@ classdef (Abstract) Database < handle
             obj.temperatureReference = ip.Results.temperatureReference;
             obj.thermoFile = ip.Results.thermoFile;
 
-            % Generate ID
-            obj = obj.generate_id();
+            % Set ID
+            setID(obj);
 
             % Check if database is in cached and the id matches
             if ip.Results.FLAG_BENCHMARK
@@ -165,16 +165,100 @@ classdef (Abstract) Database < handle
 
     methods (Access = protected)
 
-        function obj = generate_id(obj)
+        function obj = setID(obj)
             % Concatenate input arguments to create a unique identifier string
             value =  [obj.name, num2str(obj.species), obj.filename, ...
                       obj.interpolationMethod, obj.extrapolationMethod, obj.units, ...
                       num2str(obj.pointsTemperature), num2str(obj.temperatureReference),...
                       obj.thermoFile];
 
-            obj.id = combustiontoolbox.utils.generate_id(value);
+            obj.id = combustiontoolbox.utils.generateID(value);
         end
 
     end
+
+    methods (Abstract)
+        getSpeciesThermo(obj)
+    end
+
+    methods (Access = public)
+        
+        function addSpecies(obj, speciesName, DB_master)
+            % Add species to the database
+
+            speciesName = obj.fullname2name(speciesName);
     
+            % Initialization
+            species = DB_master.(speciesName);
+    
+            % Get data
+            Tintervals = species.Tintervals;
+            Trange = species.Trange;
+    
+            if Tintervals == 0
+                % Handle species with no temperature intervals
+                species = obj.computeConstantTemperatureSpecies(species, speciesName, Trange, DB_master);
+            else
+                % Handle species with temperature intervals
+                species = obj.computeVariableTemperatureSpecies(species, speciesName, Trange, Tintervals, DB_master);
+            end
+    
+            % Store the species data in the species struct property
+            obj.species.(speciesName) = species;
+        end
+        
+    end
+
+    methods (Access = private)
+
+        function species = computeConstantTemperatureSpecies(obj, species, speciesName, Trange, DB_master)
+            Tref = Trange(1);
+        
+            % Get thermodynamic data at reference temperature
+            [Cp0, Hf0, H0, Ef0, S0, DfG0] = obj.getSpeciesThermo(DB_master, speciesName, Tref, obj.units);
+        
+            % Store the thermodynamic data
+            species.hf = Hf0;
+            species.ef = Ef0;
+            species.Tref = Tref;
+            species.T = Tref;
+        
+            % Generate interpolation curves (constant values)
+            species.cpcurve = griddedInterpolant([Tref, Tref + 1], [Cp0, Cp0], 'linear', 'linear');
+            species.h0curve = griddedInterpolant([Tref, Tref + 1], [H0, H0], 'linear', 'linear');
+            species.s0curve = griddedInterpolant([Tref, Tref + 1], [S0, S0], 'linear', 'linear');
+            species.g0curve = griddedInterpolant([Tref, Tref + 1], [DfG0, DfG0], 'linear', 'linear');
+        end
+        
+        function species = computeVariableTemperatureSpecies(obj, species, speciesName, Trange, Tintervals, DB_master)
+            Tmin = Trange{1}(1);
+            Tmax = Trange{Tintervals}(2);
+            T_vector = linspace(Tmin, Tmax, obj.pointsTemperature);
+            
+            % Store the thermodynamic data
+            species.T = T_vector;
+            [~, Hf0, ~, Ef0, ~, ~] = obj.getSpeciesThermo(DB_master, speciesName, species.Tref, obj.units);
+            species.hf = Hf0;
+            species.ef = Ef0;
+
+            % Get thermodynamic data over the temperature range
+            [Cp0_vector, ~, H0_vector, ~, S0_vector, ~] = obj.getSpeciesThermo(DB_master, speciesName, T_vector, obj.units);
+            DfG0_vector = H0_vector - T_vector .* S0_vector;
+        
+            % Generate interpolation curves
+            species.cpcurve = griddedInterpolant(T_vector, Cp0_vector, obj.interpolationMethod, obj.extrapolationMethod);
+            species.h0curve = griddedInterpolant(T_vector, H0_vector, obj.interpolationMethod, obj.extrapolationMethod);
+            species.s0curve = griddedInterpolant(T_vector, S0_vector, obj.interpolationMethod, obj.extrapolationMethod);
+            species.g0curve = griddedInterpolant(T_vector, DfG0_vector, obj.interpolationMethod, obj.extrapolationMethod);
+        
+            % Store additional species data
+            species.Tintervals = species.Tintervals;
+            species.Trange = species.Trange;
+            species.Texponents = species.Texponents;
+            species.a = species.a;
+            species.b = species.b;
+        end
+
+    end
+
 end

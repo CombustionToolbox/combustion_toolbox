@@ -1,20 +1,20 @@
-<img alt="Combustion Toolbox" align="left" href="https://combustion-toolbox-website.readthedocs.io" style="border-width:0" src="https://github.com/AlbertoCuadra/combustion_toolbox/blob/master/gui/assets/logo_CT_noversion_matlab.png" width="115"/>
+<img alt="Combustion Toolbox" align="left" href="https://combustion-toolbox-website.readthedocs.io" style="border-width:0" src="https://github.com/CombustionToolbox/combustion_toolbox/blob/master/gui/assets/logo_CT_noversion_matlab.png" width="115"/>
 
 ## Combustion Toolbox: A MATLAB-GUI based open-source tool for solving gaseous combustion problems
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.5554911.svg)](https://doi.org/10.5281/zenodo.5554911)
 [![Open in MATLAB Online](https://www.mathworks.com/images/responsive/global/open-in-matlab-online.svg)](https://matlab.mathworks.com/open/github/v1?repo=CombustionToolbox/combustion_toolbox&file=CONTENTS.m)
 [![File Exchange](https://www.mathworks.com/matlabcentral/images/matlab-file-exchange.svg)](https://es.mathworks.com/matlabcentral/fileexchange/101088-combustion-toolbox)
-[![CD](https://github.com/AlbertoCuadra/combustion_toolbox/actions/workflows/CD.yml/badge.svg)](https://github.com/AlbertoCuadra/combustion_toolbox/actions/workflows/CD.yml)
+[![CD](https://github.com/CombustionToolbox/combustion_toolbox/actions/workflows/CD.yml/badge.svg)](https://github.com/CombustionToolbox/combustion_toolbox/actions/workflows/CD.yml)
 [![Documentation](https://readthedocs.org/projects/combustion-toolbox-website/badge/?version=latest)](https://combustion-toolbox-website.readthedocs.io/en/latest/?badge=latest)
-[![license](https://img.shields.io/github/license/AlbertoCuadra/combustion_toolbox)](https://www.gnu.org/licenses/gpl-3.0.html)
+[![license](https://img.shields.io/github/license/CombustionToolbox/combustion_toolbox)](https://www.gnu.org/licenses/gpl-3.0.html)
 
 <br>
 
 <p align=center>
-    <img src="https://github.com/AlbertoCuadra/combustion_toolbox_website/blob/main/docs/source/_static/gif/example_det_overdriven_gui.gif" width="360">
+    <img src="https://github.com/CombustionToolbox/combustion_toolbox_website/blob/main/docs/source/_static/gif/example_det_overdriven_gui.gif" width="360">
     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-    <img src="https://github.com/AlbertoCuadra/combustion_toolbox_website/blob/main/docs/source/_static/gif/example_det_overdriven.gif" width="360">
+    <img src="https://github.com/CombustionToolbox/combustion_toolbox_website/blob/main/docs/source/_static/gif/example_det_overdriven.gif" width="360">
 </p>
 
 ## Main features
@@ -49,7 +49,7 @@
 * The code `is in it’s transition to Python`
 * Export results in a spreadsheet
 * Export results as a .mat format
-* `Display predefined plots` (e.g., molar fraction vs. equilence ratio)
+* `Display predefined plots` (e.g., molar fraction vs. equivalence ratio)
 
 ## Start here!
 
@@ -62,32 +62,32 @@
 We have several examples of what the Combustion Toolbox can do. Here we show a preview of the GUI and some results obtained from the Combustion Toolbox.
 
 <p align="left">
-    <img src="https://github.com/AlbertoCuadra/combustion_toolbox_website/blob/main/docs/source/_static/img/cuadra2022/gui_1_labels.svg" width="500">
+    <img src="https://github.com/CombustionToolbox/combustion_toolbox_website/blob/main/docs/source/_static/img/cuadra2022/gui_cuadra2024_labels_1.svg" width="500">
 </p>
 
 **Figure 1:** *Current state of the GUI*.
 
 <p align="left">
-    <img src="https://github.com/AlbertoCuadra/combustion_toolbox_website/blob/main/docs/source/_static/img/Hugoniot_benchmarking.svg" width="400">
+    <img src="https://github.com/CombustionToolbox/combustion_toolbox_website/blob/main/docs/source/_static/img/Hugoniot_benchmarking.svg" width="400">
 </p>
     
 **Figure 2:** *Hugoniot curves for different molecular gases at pre-shock temperature T1 = 300 K and pressure p1 = 1 atm \[numerical results obtained with Combustion Toolbox (lines) and contrasted with NASA’s Chemical Equilibrium with Applications (CEA) code excluding ionization (symbols)\]*.
     
 <p align="left">
-    <img src="https://github.com/AlbertoCuadra/combustion_toolbox_website/blob/main/docs/source/_static/img/run_validation_DET_CEA_3_molar.svg" width="1200">
+    <img src="https://github.com/CombustionToolbox/combustion_toolbox_website/blob/main/docs/source/_static/img/run_validation_DET_CEA_3_molar.svg" width="1200">
 </p>
 
 **Figure 3:** *Example CJ detonation for lean to rich CH4-air mixtures at standard conditions: (a) variation of molar fraction, (b) variation of temperature. The computational time was of 9.25 seconds using a Intel(R) Core(TM) i7-8700 CPU @ 3.20GHz for a set of 24 species considered and a total of 351 case studies.*
 
 <p align="left">
-    <img src="https://github.com/AlbertoCuadra/combustion_toolbox_website/blob/main/docs/source/_static/img/polar_shock_full_and_frozen_both_air_complete.svg" width="1000">
+    <img src="https://github.com/CombustionToolbox/combustion_toolbox_website/blob/main/docs/source/_static/img/polar_shock_full_and_frozen_both_air_complete.svg" width="1000">
 </p>
 
 **Figure 4:** *Pressure-deflection shock polar (left) and wave angle-deflection shock polar (right) for an air mixture (78.084% N2, 20.9476% O2, 0.9365% Ar, 0.0319% CO2) at pre-shock temperature T1 = 300 K and pressure p1 = 1 atm, and a range of preshock Mach numbers M1 = [2, 14]; line: considering dissociation, ionization, and recombination in multi-species mixtures; dashed: considering a thermochemically frozen air mixture.*
 
 ## Contributing
 
-Please read [CONTRIBUTING.md](https://github.com/AlbertoCuadra/combustion_toolbox/blob/master/CONTRIBUTING.md) for details of the process for submitting pull requests to the repository.
+Please read [CONTRIBUTING.md](https://github.com/CombustionToolbox/combustion_toolbox/blob/master/CONTRIBUTING.md) for details of the process for submitting pull requests to the repository.
 
 Please send feedback or inquiries to [acuadra@ing.uc3m.es](mailto:acuadra@ing.uc3m.es)
 
@@ -107,7 +107,7 @@ Thank you for using the Combustion Toolbox!
 
 Grupo de Mecánica de Fluidos, Universidad Carlos III, Av. Universidad 30, 28911, Leganés, Spain
 
-See also the list of [contributors](https://github.com/AlbertoCuadra/combustion_toolbox/blob/master/CONTRIBUTORS.md) who participated in this project.
+See also the list of [contributors](https://github.com/CombustionToolbox/combustion_toolbox/blob/master/CONTRIBUTORS.md) who participated in this project.
 
 ## Citing Combustion Toolbox
 

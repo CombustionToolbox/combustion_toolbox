@@ -8,7 +8,7 @@ function [main_ax, main_figure] = plotProperties(x_field, x_var, y_field, y_var,
     %     y_var (cell): Cell array containing the y-axis data
     %
     % Optional Name-Value Pair Args:
-    %     * config (struct): Struct with the configuration for plots
+    %     * config (plotConfig): object with the plot configuration
     %     * leg or legend (cell): Cell array of strings containing the legend names
     %     * legend_location (char): Location of the legend
     %     * ax or axes (object): Handle of the axes to plot on
@@ -108,9 +108,17 @@ function [main_ax, main_figure] = plotProperties(x_field, x_var, y_field, y_var,
     end
 
     % Set common title
+    if isa(x_var, 'combustiontoolbox.core.Mixture')
+        if isempty(config.title)
+            config.title = getTitle(x_var(1));
+        else
+            config.title = sprintf('%s - %s', config.title, getTitle(x_var(1)));
+        end
+    end
+
     setTitle(main_ax, config)
     config.title = [];
-    
+
     % Definitions
     N_properties = length(y_field);
     if ~FLAG_BASIS

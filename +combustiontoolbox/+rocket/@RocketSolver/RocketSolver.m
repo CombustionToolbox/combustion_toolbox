@@ -96,7 +96,7 @@ classdef RocketSolver < handle
             %     * set(RocketSolver(), 'tol0', 1e-6);
             %     * set(RocketSolver(), 'problemType', 'ROCKET_FAC');
             
-            varargin = [property, value, varargin];
+            varargin = [{property, value}, varargin{:}];
 
             for i = 1:2:length(varargin)
                 % Assert that the property exists
@@ -184,64 +184,64 @@ classdef RocketSolver < handle
 
         end
 
-        function varargout = solveArray(obj, mix1Array, varargin)
+        function varargout = solveArray(obj, mixArray1, varargin)
             % Solve a set of rocket problems
             %
             % Args:
             %     obj (EquilibriumSolver): EquilibriumSolver object
-            %     mix1Array (Mixture): Array of initial Mixture objects
+            %     mixArray1 (Mixture): Array of initial Mixture objects
             %
             % Returns:
             %     varargout (Mixture): Updated arrays of Mixture objects depending on the shock problem type
             %
             % Examples:
-            %     * [mix1Array, mix2Array, mix3Array] = solveArray(RocketSolver(), mix1Array); % Rocket IAC
-            %     * [mix1Array, mix2Array, mix3Array, mix4Array] = solveArray(RocketSolver(), mix1Array); % Rocket IAC
-            %     * [mix1Array, mix2Array, mix3Array, mix4Array] = solveArray(RocketSolver(), mix1Array); % Rocket FAC
-            %     * [mix1Array, mix2Array, mix3Array, mix4Array, mix5Array] = solveArray(RocketSolver(), mix1Array); % Rocket FAC
+            %     * [mixArray1, mixArray2, mixArray3] = solveArray(RocketSolver(), mixArray1); % Rocket IAC
+            %     * [mixArray1, mixArray2, mixArray3, mixArray4] = solveArray(RocketSolver(), mixArray1); % Rocket IAC
+            %     * [mixArray1, mixArray2, mixArray3, mixArray4] = solveArray(RocketSolver(), mixArray1); % Rocket FAC
+            %     * [mixArray1, mixArray2, mixArray3, mixArray4, mixArray5] = solveArray(RocketSolver(), mixArray1); % Rocket FAC
 
             % Definitions
-            n = length(mix1Array);
+            n = length(mixArray1);
             problem = obj.problemType;
             
             % Timer
             obj.time = tic;
 
             % Initialization
-            mix2Array = mix1Array;
+            mixArray2 = mixArray1;
 
             % Calculations
             switch upper(problem)
                 case {'ROCKET_IAC'}
                     % Initialization
-                    mix3Array = mix1Array;
-                    mix4Array = mix1Array;
+                    mixArray3 = mixArray1;
+                    mixArray4 = mixArray1;
                     
                     % Calculations
-                    [mix1Array(n), mix2Array(n), mix3Array(n), mix4Array(n)] = obj.solve(mix1Array(n));
+                    [mixArray1(n), mixArray2(n), mixArray3(n), mixArray4(n)] = obj.solve(mixArray1(n));
                     
                     for i = n-1:-1:1
-                        [mix1Array(i), mix2Array(i), mix3Array(i), mix4Array(i)] = obj.solve(mix1Array(i), mix2Array(i + 1), mix3Array(i + 1), mix4Array(i + 1));
+                        [mixArray1(i), mixArray2(i), mixArray3(i), mixArray4(i)] = obj.solve(mixArray1(i), mixArray2(i + 1), mixArray3(i + 1), mixArray4(i + 1));
                     end
 
                     % Set output
-                    varargout = {mix1Array, mix2Array, mix3Array, mix4Array};
+                    varargout = {mixArray1, mixArray2, mixArray3, mixArray4};
 
                 case {'ROCKET_FAC'}
                     % Initialization
-                    mix3Array = mix1Array;
-                    mix4Array = mix1Array;
-                    mix5Array = mix1Array;
+                    mixArray3 = mixArray1;
+                    mixArray4 = mixArray1;
+                    mixArray5 = mixArray1;
                     
                     % Calculations
-                    [mix1Array(n), mix2Array(n), mix3Array(n), mix4Array(n), mix5Array(n)] = obj.solve(mix1Array(n));
+                    [mixArray1(n), mixArray2(n), mixArray3(n), mixArray4(n), mixArray5(n)] = obj.solve(mixArray1(n));
                     
                     for i = n-1:-1:1
-                        [mix1Array(i), mix2Array(i), mix3Array(i), mix4Array(i), mix5Array(i)] = obj.solve(mix1Array(i), mix2Array(i + 1), mix3Array(i + 1), mix4Array(i + 1), mix5Array(i + 1));
+                        [mixArray1(i), mixArray2(i), mixArray3(i), mixArray4(i), mixArray5(i)] = obj.solve(mixArray1(i), mixArray2(i + 1), mixArray3(i + 1), mixArray4(i + 1), mixArray5(i + 1));
                     end
 
                     % Set output
-                    varargout = {mix1Array, mix2Array, mix3Array, mix4Array, mix5Array};
+                    varargout = {mixArray1, mixArray2, mixArray3, mixArray4, mixArray5};
 
             end
 

@@ -143,7 +143,7 @@ classdef EquilibriumSolver < handle
             %     * set(EquilibriumSolver(), 'tolGibbs', 1e-6);
             %     * set(EquilibriumSolver(), 'problemType', 'TP');
             
-            varargin = [property, value, varargin];
+            varargin = [{property, value}, varargin{:}];
 
             for i = 1:2:length(varargin)
                 % Assert that the property exists

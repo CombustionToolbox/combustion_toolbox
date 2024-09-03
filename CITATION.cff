@@ -7,7 +7,7 @@ license: "GPL-3.0"
 title: "Combustion Toolbox: A MATLAB-GUI based open-source tool for solving gaseous combustion problems"
 version: 1.1.0
 doi: 10.5281/zenodo.5554911
-date-released: 2024-08-03
+date-released: 2024-09-03
 url: "https://combustion-toolbox-website.readthedocs.io"
 repository-code: "https://github.com/CombustionToolbox/combustion_toolbox"
 abstract:

@@ -43,8 +43,9 @@ function [mix1, mix2] = detonationUnderdriven(obj, mix1, driveFactor, varargin)
     % Solve detonation
     [mix1, mix2] = shockIncident(obj.shockSolver, mix1, mix1.cjSpeed * mix1.driveFactor, mix2);
 
-    % Assign CJ speed
+    % Assign CJ speed and driveFactor
     mix2.cjSpeed = mix1.cjSpeed;
+    mix2.driveFactor = mix1.driveFactor;
 end
 
 % SUB-PASS FUNCTIONS

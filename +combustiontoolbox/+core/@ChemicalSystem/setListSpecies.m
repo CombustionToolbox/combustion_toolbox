@@ -2,7 +2,7 @@ function [obj, listSpecies, listSpeciesFormula] = setListSpecies(obj, varargin)
     % Set list of species in the mixture (products)
     %
     % Predefined list of species:
-    %     * SOOT FORMATION (default)
+    %     * SOOT FORMATION
     %     * COMPLETE
     %     * HC/O2/N2 EXTENDED
     %     * SOOT FORMATION EXTENDED

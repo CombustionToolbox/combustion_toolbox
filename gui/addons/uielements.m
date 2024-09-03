@@ -129,6 +129,8 @@ classdef uielements < matlab.apps.AppBase
         element_1              matlab.ui.control.Image
         ContextMenu            matlab.ui.container.ContextMenu
         enableremoveMenu       matlab.ui.container.Menu
+        ContextMenu2           matlab.ui.container.ContextMenu
+        SnapshotMenu           matlab.ui.container.Menu
     end
 
     
@@ -542,7 +544,7 @@ classdef uielements < matlab.apps.AppBase
 
         % Value changing function: edit_seeker
         function edit_seekerValueChanging(app, event)
-            seek_value = gui_seeker_value(app, event, app.S.LS_DB);
+            seek_value = gui_seeker_value(app, event, app.chemicalSystem.database.listSpecies);
             % Update Listbox (inputs)
             if ~isempty(seek_value)
                 app.listbox_LS_DB.Items = seek_value;
@@ -591,6 +593,11 @@ classdef uielements < matlab.apps.AppBase
             app.chemicalSystem.FLAG_BURCAT = app.burcat.Value;
             % Search species
             findSpecies(app);
+        end
+
+        % Menu selected function: SnapshotMenu
+        function SnapshotMenuSelected(app, event)
+            gui_SnapshotMenuSelected(app.UIElements)
         end
     end
 
@@ -1663,6 +1670,17 @@ classdef uielements < matlab.apps.AppBase
             app.element_90.ContextMenu = app.ContextMenu;
             app.element_91.ContextMenu = app.ContextMenu;
             app.element_92.ContextMenu = app.ContextMenu;
+
+            % Create ContextMenu2
+            app.ContextMenu2 = uicontextmenu(app.UIElements);
+
+            % Create SnapshotMenu
+            app.SnapshotMenu = uimenu(app.ContextMenu2);
+            app.SnapshotMenu.MenuSelectedFcn = createCallbackFcn(app, @SnapshotMenuSelected, true);
+            app.SnapshotMenu.Text = 'Snapshot';
+            
+            % Assign app.ContextMenu2
+            app.GridLayout.ContextMenu = app.ContextMenu2;
 
             % Show the figure after all components are created
             app.UIElements.Visible = 'on';

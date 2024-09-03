@@ -1815,7 +1815,7 @@ classdef combustion_toolbox < matlab.apps.AppBase
             app.DisplaySpeciesEditField.ValueDisplayFormat = '%.1e';
             app.DisplaySpeciesEditField.ValueChangedFcn = createCallbackFcn(app, @DisplaySpeciesEditFieldValueChanged, true);
             app.DisplaySpeciesEditField.Position = [149 13 72 22];
-            app.DisplaySpeciesEditField.Value = 1e-14;
+            app.DisplaySpeciesEditField.Value = 1e-06;
 
             % Create RootFindingMethodEditFieldLabel
             app.RootFindingMethodEditFieldLabel = uilabel(app.TolerancesPanel);

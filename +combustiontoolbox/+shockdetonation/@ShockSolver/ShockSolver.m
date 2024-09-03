@@ -548,7 +548,7 @@ classdef ShockSolver < handle
             end
             
             % Plot molar fractions - mixArray2
-            ax1 = plotComposition(mixArray2(1), mixArray1, mixArray1(1).rangeName, 'Xi', 'mintol', obj.plotConfig.mintolDisplay, 'y_var', mixArray2, 'title', labels{1});
+            ax1 = plotComposition(mixArray2(1), mixArray1, mixArray1(1).rangeName, 'Xi', 'mintol', obj.plotConfig.mintolDisplay, 'displaySpecies', obj.plotConfig.displaySpecies, 'y_var', mixArray2, 'title', labels{1});
         
             % Plot properties - mixArray2
             ax2 = plotProperties(repmat({mixArray1(1).rangeName}, 1, numPlotProperties), mixArray1, obj.plotConfig.plotProperties, mixArray2, 'basis', obj.plotConfig.plotPropertiesBasis, 'config', obj.plotConfig);
@@ -566,7 +566,7 @@ classdef ShockSolver < handle
                 mixArray2 = varargin{i};
 
                 % Plot molar fractions - mixArray_i
-                ax1 = plotComposition(mixArray2(1), mixArray1, mixArray1(1).rangeName, 'Xi', 'mintol', obj.plotConfig.mintolDisplay, 'y_var', mixArray2, 'title', labels{i + 1});
+                ax1 = plotComposition(mixArray2(1), mixArray1, mixArray1(1).rangeName, 'Xi', 'mintol', obj.plotConfig.mintolDisplay, 'displaySpecies', obj.plotConfig.displaySpecies, 'y_var', mixArray2, 'title', labels{i + 1});
             
                 % Plot properties - mixArray_i
                 ax2 = plotProperties(repmat({mixArray1(1).rangeName}, 1, numPlotProperties), mixArray1, obj.plotConfig.plotProperties, mixArray2, 'basis', obj.plotConfig.plotPropertiesBasis, 'config', obj.plotConfig, 'ax', ax2);

@@ -324,6 +324,10 @@ function app = gui_CalculateButtonPushed(app, event)
         
         % Update GUI custom figures tab
         gui_update_custom_figures(app);
+        
+        % Set display properties
+        solver.plotConfig.mintolDisplay = app.DisplaySpeciesEditField.Value;
+        solver.plotConfig.displaySpecies = app.listbox_LS_display.Items;
 
         % Display results (plots)
         switch lower(app.Report_type.Value)

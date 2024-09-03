@@ -41,7 +41,7 @@ function [ax, fig] = plotComposition(obj, x_var, x_field, y_field, varargin)
     % Initialization
     config = PlotConfig();
     mintolDisplay = config.mintolDisplay;
-    displaySpecies = {};
+    displaySpecies = config.displaySpecies;
 
     % Default values
     ax = [];
@@ -53,7 +53,6 @@ function [ax, fig] = plotComposition(obj, x_var, x_field, y_field, varargin)
     config.labely = interpreterLabel(y_field, config.label_type);
     % mintol_display = self.C.mintol_display;
     config.yscale = 'log';
-    [species, listSpecies] = get_displaySpecies(obj, displaySpecies);
     y_var = x_var;
 
     % Unpack
@@ -68,7 +67,7 @@ function [ax, fig] = plotComposition(obj, x_var, x_field, y_field, varargin)
             case {'mintol', 'mintol_display', 'toln'}
                 mintolDisplay = varargin{i + 1};
             case {'ls', 'species', 'displayspecies', 'display species', 'display_species'}
-                species = varargin{i + 1};
+                displaySpecies = varargin{i + 1};
             case {'y', 'y_var', 'yvar', 'y var', 'y_data', 'ydata', 'y data'}
                 y_var = varargin{i + 1};
             case {'config'}
@@ -88,6 +87,9 @@ function [ax, fig] = plotComposition(obj, x_var, x_field, y_field, varargin)
         end
 
     end
+    
+    % Set species to displaySpecies
+    [species, listSpecies] = get_displaySpecies(obj, displaySpecies);
 
     % Read data
     FLAG_Y_AXIS = strcmpi(y_field, 'Xi');
@@ -258,8 +260,8 @@ function [ax, fig] = plotComposition(obj, x_var, x_field, y_field, varargin)
 end
 
 % SUB-PASS FUNCTIONS
-function [species, LS] = get_displaySpecies(obj, displaySpecies)
-    LS = obj.chemicalSystem.listSpecies;
+function [species, listSpecies] = get_displaySpecies(obj, displaySpecies)
+    listSpecies = obj.chemicalSystem.listSpecies;
 
     if isempty(displaySpecies)
         species = obj.chemicalSystem.listProducts;

@@ -288,7 +288,7 @@ classdef EquilibriumSolver < handle
             end
             
             % Plot molar fractions - mixArray
-            ax1 = plotComposition(mixArray(1), mixArray, mixArray(1).rangeName, 'Xi', 'mintol', obj.plotConfig.mintolDisplay);
+            ax1 = plotComposition(mixArray(1), mixArray, mixArray(1).rangeName, 'Xi', 'mintol', obj.plotConfig.mintolDisplay, 'displaySpecies', obj.plotConfig.displaySpecies);
         
             % Plot properties - mixArray
             ax2 = plotProperties(repmat({mixArray(1).rangeName}, 1, numPlotProperties), mixArray, obj.plotConfig.plotProperties, mixArray, 'basis', obj.plotConfig.plotPropertiesBasis, 'config', obj.plotConfig);
@@ -303,7 +303,7 @@ classdef EquilibriumSolver < handle
                 mixArray = varargin{i};
 
                 % Plot molar fractions - mixArray_i
-                ax1 = plotComposition(mixArray(1), mixArray, mixArray(1).rangeName, 'Xi', 'mintol', obj.plotConfig.mintolDisplay);
+                ax1 = plotComposition(mixArray(1), mixArray, mixArray(1).rangeName, 'Xi', 'mintol', obj.plotConfig.mintolDisplay, 'displaySpecies', obj.plotConfig.displaySpecies);
             
                 % Plot properties - mixArray_i
                 ax2 = plotProperties(repmat({mixArray(1).rangeName}, 1, numPlotProperties), mixArray, obj.plotConfig.plotProperties, mixArray, 'basis', obj.plotConfig.plotPropertiesBasis, 'config', obj.plotConfig, 'ax', ax2);

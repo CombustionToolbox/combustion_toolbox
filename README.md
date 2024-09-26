@@ -12,7 +12,7 @@
 <br>
 
 <p align=center>
-    <img src="https://github.com/CombustionToolbox/combustion_toolbox_website/blob/main/docs/source/_static/gif/example_det_overdriven_gui.gif" width="360">
+    <img src="https://github.com/CombustionToolbox/combustion_toolbox_website/blob/main/docs/source/_static/gif/example_det_overdriven_gui.gif" width="345">
     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
     <img src="https://github.com/CombustionToolbox/combustion_toolbox_website/blob/main/docs/source/_static/gif/example_det_overdriven.gif" width="360">
 </p>

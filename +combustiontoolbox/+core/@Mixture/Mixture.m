@@ -47,9 +47,6 @@ classdef Mixture < handle & matlab.mixin.Copyable
         oxidizerFuelMassRatio % Mass ratio of fuel to oxidizer [-]
         natomElements         % Vector atoms of each element [-]
         natomElementsReact    % Vector atoms of each element without frozen species [-]
-        errorMoles            % Relative error in the moles calculation [-]
-        errorMolesIons        % Relative error in the moles of ions calculation [-]
-        errorProblem          % Relative error in the problem [-]
         chemicalSystem        % Chemical system object
         equationOfState       % Equation of State object
         u                     % Velocity relative to the shock front [m/s]
@@ -79,12 +76,14 @@ classdef Mixture < handle & matlab.mixin.Copyable
     end
 
     properties (Access = private)
-        indexGas
-        FLAGS_PROP
+        indexGas             % Index of the gas species
         FLAG_VOLUME = false
     end
     
     properties (Hidden)
+        errorMoles            % Relative error in the moles calculation [-]
+        errorMolesIons        % Relative error in the moles of ions calculation [-]
+        errorProblem          % Relative error in the problem [-]
         cp_f
         cp_r
         dNi_T
@@ -537,55 +536,6 @@ classdef Mixture < handle & matlab.mixin.Copyable
             end
         
         end
-
-        % function obj = set_prop(obj, varargin)
-        %     % Assign property values to the respective variables
-        %     %
-        %     % Args:
-        %     %     self (struct): Data of the mixture, conditions, and databases
-        %     %
-        %     % Optional Args:
-        %     %     * field (str): Fieldname in Problem Description (PD)
-        %     %     * value (float): Value/s to assing in the field in Problem Description (PD)
-        %     %
-        %     % Returns:
-        %     %     self (struct): Data of the mixture, conditions, and databases
-        
-        %     try
-        %         for i = 1:2:nargin - 1
-        %             self = set_prop_common(self, varargin{i}, varargin{i + 1});
-        %         end
-        
-        %     catch
-        %         error('Error number inputs @set_prop');
-        %     end
-        
-        % end
-        
-        % function obj = set_prop_common(obj, name, value)
-        %     % Assign property values to the given variable name
-        
-        %     % If the value is a char, convert it to a float - (GUI)
-        %     if value(1) == '['
-        %         value = sscanf(value, '[%f:%f:%f]');
-        %         value = value(1):value(2):value(3);
-        %     elseif sum(value == ':') == 2
-        %         value = sscanf(value, '%f:%f:%f');
-        %         value = value(1):value(2):value(3);
-        %     elseif ischar(value)
-        %         value = sscanf(value, '%f');
-        %     end
-        
-        %     % Define flags
-        %     if length(value) > 1
-        %         obj.FLAGS_PROP.(name) = true;
-        %     else
-        %         obj.FLAGS_PROP.(name) = false;
-        %     end
-        
-        %     % Set value
-        %     obj.(name).value = value;
-        % end
 
         function objArray = setProperties(obj, property, value, varargin)
             % Obtain properties at equilibrium for the given thermochemical transformation

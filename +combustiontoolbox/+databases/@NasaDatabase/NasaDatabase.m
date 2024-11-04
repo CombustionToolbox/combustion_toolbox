@@ -70,6 +70,9 @@ classdef NasaDatabase < combustiontoolbox.databases.Database & handle
             
             % Get master database from the thermoFile
             DB_master = getDatabaseMaster(obj, obj.thermoFile);
+            
+            % Remove species allocated from cache
+            obj.species = [];
 
             % Unpack inputs
             if nargin > 1

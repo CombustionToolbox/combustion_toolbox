@@ -79,8 +79,8 @@ classdef PlotConfig < handle
         id_polar3 = 1003                      % Axes id for velocity polar diagrams
         displaySpecies
         mintolDisplay = 1e-6
-        plotProperties = {'T', 'rho', 'h', 'e', 'g', 'cp', 's', 'gamma_s', 'sound'}
-        plotPropertiesBasis = {[], [], 'mi', 'mi', 'mi', 'mi', 'mi', [], []}
+        plotProperties = {'T', 'p', 'rho', 'h', 'e', 'g', 'cp', 's', 'gamma_s', 'sound'}
+        plotPropertiesBasis = {[], [], [], 'mi', 'mi', 'mi', 'mi', 'mi', [], []}
     end
 
     properties (Dependent)

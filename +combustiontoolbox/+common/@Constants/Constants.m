@@ -17,7 +17,9 @@ classdef Constants < handle
         R0      = 8.31446261815324 % Universal gas constant [J/(K mol)]
         G       = 9.80665          % Standard gravity [m/s2]
         NA      = 6.0221415e23     % Avogadro's number [molecule/mol]
-        release = 'v1.1.1'         % Release version
+        KB      = 1.38064852e-23   % Boltzmann constant [J/K]
+        HBAR    = 6.626070041e-34  % Planck constant [J-s]
+        release = 'v1.1.2'         % Release version
         date    = '04 Nov 2024'    % Release date
     end
     

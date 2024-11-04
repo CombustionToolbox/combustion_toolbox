@@ -45,9 +45,14 @@ function [ax, dline] = plotFigure(x_field, x_var, y_field, y_var, varargin)
     ax = [];
 
     % Get x and y values
-    x = cell2vector(x_var, x_field);
-    y = cell2vector(y_var, y_field);
-    
+    try
+        x = cell2vector(x_var, x_field);
+        y = cell2vector(y_var, y_field);
+    catch
+        x = x_var.x_field;
+        y = y_var.y_field;
+    end
+
     % Check lenghts
     if length(x) < 2
         return

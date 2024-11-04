@@ -39,7 +39,7 @@
 % Citing:
 %     Cuadra, A., Huete, C., & Vera, M. (2024). Combustion Toolbox: A
 %     MATLAB-GUI based open-source tool for solving gaseous combustion
-%     problems. (v1.1.1). Zenodo. https://doi.org/10.5281/zenodo.5554911.
+%     problems. (v1.1.2). Zenodo. https://doi.org/10.5281/zenodo.5554911.
 %
 % @author: Alberto Cuadra Lara
 %          Postdoctoral researcher - Group Fluid Mechanics

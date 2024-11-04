@@ -178,6 +178,7 @@ classdef (Abstract) Database < handle
     end
 
     methods (Abstract)
+        generateDatabase(obj)
         getSpeciesThermo(obj)
     end
 
@@ -240,7 +241,7 @@ classdef (Abstract) Database < handle
             [~, Hf0, ~, Ef0, ~, ~] = obj.getSpeciesThermo(DB_master, speciesName, species.Tref, obj.units);
             species.hf = Hf0;
             species.ef = Ef0;
-
+            
             % Get thermodynamic data over the temperature range
             [Cp0_vector, ~, H0_vector, ~, S0_vector, ~] = obj.getSpeciesThermo(DB_master, speciesName, T_vector, obj.units);
             DfG0_vector = H0_vector - T_vector .* S0_vector;

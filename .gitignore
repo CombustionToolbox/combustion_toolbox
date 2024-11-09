@@ -3,6 +3,7 @@
 
 ### Files ###
 CHECKLIST.md
+databases/DB.mat
 
 # OSX
 *.DS_Store
@@ -19,6 +20,7 @@ CHECKLIST.md
 
 # Packaged app and toolbox files
 *.prj
+
 # Generated helpsearch folders
 helpsearch*/
 

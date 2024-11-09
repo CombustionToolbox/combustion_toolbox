@@ -1,9 +1,9 @@
-function value = set_prop_DB(LS, property, DB)
+function value = set_prop_DB(listSpecies, property, DB)
     % Function that gets the vector of the defined property for the given
     % set of species
     %
     % Args:
-    %     LS (cell): List of species
+    %     listSpecies (cell): List of species
     %     property (str): Property to obtain from the database
     %     DB (struct): Database with custom thermodynamic polynomials functions generated from NASAs 9 polynomials fits
     %
@@ -13,8 +13,8 @@ function value = set_prop_DB(LS, property, DB)
     % Example:
     %     value = set_prop_DB({'H2O', 'CO2'}, 'hf', DB)
 
-    for i = length(LS):-1:1
-        species = LS{i};
+    for i = length(listSpecies):-1:1
+        species = listSpecies{i};
 
         try
             value(1, i) = DB.(species).(property);

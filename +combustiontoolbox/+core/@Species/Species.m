@@ -34,6 +34,16 @@ classdef Species < handle
 
     methods (Access = public)
 
+        cp = getHeatCapacityPressure(obj, T)
+        cv = getHeatCapacityVolume(obj, T)
+        e0 = getInternalEnergy(obj, T)
+        h0 = getEnthalpy(obj, T)
+        s0 = getEntropy(obj, T)
+        g0 = getGibbsEnergy(obj, T)
+        DeT = getThermalInternalEnergy(obj, T)
+        DhT = getThermalEnthalpy(obj, T)
+        gamma = getAdiabaticIndex(obj, T)
+
         function elementMatrix = getElementMatrix(obj, elements)
             % Compute element matrix of the given species formula
             %

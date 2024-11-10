@@ -1,5 +1,5 @@
 function indexElements = getIndexElements(listSpecies, database, elements, MAX_ELEMENTS)
-    % Get element indeces of each species contained in LS
+    % Get element indeces of each species contained in listSpecies
     %
     % Args:
     %     listSpecies (cell): List of species
@@ -8,7 +8,7 @@ function indexElements = getIndexElements(listSpecies, database, elements, MAX_E
     %     MAX_ELEMENTS (float): Maximum number of elements contained in one species
     %
     % Returns:
-    %     indexElements (float): Matrix numel(LS) x MAX_ELEMENTS with element indeces of the species contained in LS
+    %     indexElements (float): Matrix numel(listSpecies) x MAX_ELEMENTS with element indeces of the species contained in listSpecies
     %
     % Example:
     %     indexElements = getIndexElements(listSpecies, database, elements, MAX_ELEMENTS)

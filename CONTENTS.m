@@ -1,5 +1,5 @@
 % -------------------------------------------------------------------------
-% COMBUSTION TOOLBOX @v1.1.0
+% COMBUSTION TOOLBOX @v1.1.3
 % A MATLAB-GUI based open-source tool for solving gaseous combustion problems
 %
 % Type of problems:
@@ -37,15 +37,19 @@
 % Thank you for using the Combustion Toolbox!
 %
 % Citing:
+%     Cuadra, A., Huete, C., & Vera, M. (2024). Combustion Toolbox: An
+%     open-source thermochemical code for gas- and condensed-phase
+%     problems involving chemical equilibrium. arXiv:2409.15086.
+%
 %     Cuadra, A., Huete, C., & Vera, M. (2024). Combustion Toolbox: A
 %     MATLAB-GUI based open-source tool for solving gaseous combustion
-%     problems. (v1.1.2). Zenodo. https://doi.org/10.5281/zenodo.5554911.
+%     problems. (v1.1.3). Zenodo. https://doi.org/10.5281/zenodo.5554911.
 %
 % @author: Alberto Cuadra Lara
 %          Postdoctoral researcher - Group Fluid Mechanics
 %          Universidad Carlos III de Madrid
 %                  
-% Last update Nov 04 2024
+% Last update Nov 10 2024
 % -------------------------------------------------------------------------
 help CONTENTS.m
 

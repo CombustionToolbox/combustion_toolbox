@@ -129,14 +129,46 @@ classdef (Abstract) Database < handle
             fprintf('OK!\n');
         end
 
-        function save(obj)
+        function save(obj, varargin)
             % Save database to a *.mat file
-            % 
+            %
             % Args:
             %     obj (Database): Database object
+            % 
+            % Optional Args:
+            %     filename (char): Name of the file
+            %     savePath (char): Save path
 
+            % Set up the input parser
+            parser = inputParser;
+        
+            % Define default values
+            defaultFilename = obj.filename;
+            defaultPath = '';
+        
+            % Add parameters
+            addParameter(parser, 'filename', defaultFilename, @(x) ischar(x) || isstring(x));
+            addParameter(parser, 'path', defaultPath, @(x) ischar(x) || isstring(x));
+        
+            % Parse input
+            parse(parser, varargin{:});
+        
+            % Retrieve parsed inputs
+            filename = parser.Results.filename;
+            path = parser.Results.path;
+        
+            % Rename object
             DB = obj;
-            uisave({'DB'}, 'DB.mat');
+            
+            % Define full file path
+            if ~isempty(path)
+                fullPath = fullfile(path, filename);
+                save(fullPath, 'DB');
+            else
+                % Use uisave if no path provided
+                uisave({'DB'}, filename);
+            end
+            
         end
 
         function value = getProperty(obj, listSpecies, property)

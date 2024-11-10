@@ -127,7 +127,7 @@ See also the list of [contributors](https://github.com/CombustionToolbox/combust
     author  = "Cuadra, A. and Huete, C. and Vera, M.",
     title   = "{Combustion Toolbox: A MATLAB-GUI based open-source tool for solving gaseous combustion problems}",
     year    = 2024,
-    note    = "Version 1.1.2",
+    note    = "Version 1.1.3",
     doi     = {https://doi.org/10.5281/zenodo.5554911}
 }
 ```

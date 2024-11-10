@@ -1,8 +1,10 @@
 # Created by https://www.toptal.com/developers/gitignore/api/matlab
 # Edit at https://www.toptal.com/developers/gitignore?templates=matlab
 
-### Files ###
+### Files and folders ###
 CHECKLIST.md
+databases/DB.mat
+validations/figures/
 
 # OSX
 *.DS_Store
@@ -19,6 +21,7 @@ CHECKLIST.md
 
 # Packaged app and toolbox files
 *.prj
+
 # Generated helpsearch folders
 helpsearch*/
 

@@ -169,6 +169,7 @@ function installPackage(action, type, packageDst)
     name = 'Combustion Toolbox';
     app_name = 'combustion_toolbox_app';
     dir_code = getDirCode();
+    dir_database = fullfile(dir_code, 'databases');
     dir_app = fullfile(dir_code, 'installer', [app_name, '.mlappinstall']);
     
     % Get type of installation/uninstallation
@@ -212,6 +213,11 @@ function installPackage(action, type, packageDst)
                 f_path = @rmpath;
                 f_app = @matlab.apputil.uninstall;
                 app_info = matlab.apputil.getInstalledAppInfo;
+
+                if isempty(app_info)
+                    return
+                end
+                
                 FLAG_ID = contains(struct2table(app_info).id, app_name);
     
                 if ~sum(FLAG_ID)
@@ -228,12 +234,33 @@ function installPackage(action, type, packageDst)
         
         % Install/Uninstall path
         actionPath(f_path, message);
-        
+
         % Install/Uninstall the Combustion Toolbox app
         actionApp(f_app, message);
-    
     end
     
+    function actionDatabases(action, path)
+        % Install/Uninstall databases
+        %
+        % Args:
+        %     action (char): 'install' or 'uninstall'
+
+        % Import packages
+        import combustiontoolbox.databases.*
+
+        if strcmpi(action, 'uninstall')
+            return
+        end
+
+        % Install databases
+        databases = {NasaDatabase()};
+
+        for i = 1:length(databases)
+            databases{i}.save('path', path);
+        end
+
+    end
+
     function actionPath(f_path, message)
         % Install/Uninstall path
         %
@@ -271,6 +298,9 @@ function installPackage(action, type, packageDst)
         % Save the path permanently
         if strcmpi(action, 'install')
             savepath;
+
+            % Install databases
+            actionDatabases(action, dir_database);
         end
 
         fprintf('OK!\n')
@@ -282,6 +312,7 @@ function installPackage(action, type, packageDst)
         % Args:
         %     f_app (function): Function to install or uninstall the app
         %     message (char): Message to display
+
         if ~FLAG_GUI
             return
         end
@@ -293,8 +324,28 @@ function installPackage(action, type, packageDst)
 
         fprintf('%s %s app...  ', message, name);
         f_app(dir_app);
-        fprintf('OK!\n')
         
+        if isequal(f_app, @matlab.apputil.install)
+            % Get dir app
+            app_info = matlab.apputil.getInstalledAppInfo;
+            FLAG_ID = contains(struct2table(app_info).id, app_name);
+            dir_app =  app_info(FLAG_ID).location;
+            dir_database_app = fullfile(dir_app, 'databases');
+    
+            % Make directory databases
+            if ~exist(dir_database_app, 'dir')
+                mkdir(dir_database_app);
+                % Add directory to the MATLAB path
+                addpath(dir_database_app);
+                % Save the path permanently
+                savepath;
+            end
+            
+            % Install databases
+            actionDatabases(action, dir_database_app);
+        end
+        
+        fprintf('OK!\n')
     end
 
 end

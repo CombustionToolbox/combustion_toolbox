@@ -675,9 +675,9 @@ classdef ChemicalSystem < handle & matlab.mixin.Copyable
             propertiesMatrix(index, obj.ind_ni) = moles; % [mol]
 
             for i = length(moles):-1:1
-                propertiesMatrix(index(i), obj.ind_hi) = species_h0(species{i}, T, obj.species); % [J/mol]
-                propertiesMatrix(index(i), obj.ind_cpi) = species_cP(species{i}, T, obj.species); % [J/mol-K]
-                propertiesMatrix(index(i), obj.ind_si) = species_s0(species{i}, T, obj.species); % [J/mol-K]
+                propertiesMatrix(index(i), obj.ind_hi) = getEnthalpy(obj.species.(species{i}), T); % [J/mol]
+                propertiesMatrix(index(i), obj.ind_cpi) = getHeatCapacityPressure(obj.species.(species{i}), T); % [J/mol-K]
+                propertiesMatrix(index(i), obj.ind_si) = getEntropy(obj.species.(species{i}), T); % [J/mol-K]
             end
 
         end
@@ -705,9 +705,9 @@ classdef ChemicalSystem < handle & matlab.mixin.Copyable
             % end
 
             for i = length(index):-1:1
-                propertiesMatrix(index(i), obj.ind_hi) = species_h0(species{i}, T, obj.species); % [J/mol]
-                propertiesMatrix(index(i), obj.ind_cpi) = species_cP(species{i}, T, obj.species); % [J/mol-K]
-                propertiesMatrix(index(i), obj.ind_si) = species_s0(species{i}, T, obj.species); % [J/mol-K]
+                propertiesMatrix(index(i), obj.ind_hi) = getEnthalpy(obj.species.(species{i}), T); % [J/mol]
+                propertiesMatrix(index(i), obj.ind_cpi) = getHeatCapacityPressure(obj.species.(species{i}), T); % [J/mol-K]
+                propertiesMatrix(index(i), obj.ind_si) = getEntropy(obj.species.(species{i}), T); % [J/mol-K]
             end
 
         end
@@ -731,8 +731,8 @@ classdef ChemicalSystem < handle & matlab.mixin.Copyable
             propertiesMatrix(index, obj.ind_hi) = h0(index); % [J/mol]
 
             for i = length(index):-1:1
-                propertiesMatrix(index(i), obj.ind_cpi) = species_cP(species{i}, T, obj.species); % [J/mol-K]
-                propertiesMatrix(index(i), obj.ind_si) = species_s0(species{i}, T, obj.species); % [J/mol-K]
+                propertiesMatrix(index(i), obj.ind_cpi) = getHeatCapacityPressure(obj.species.(species{i}), T); % [J/mol-K]
+                propertiesMatrix(index(i), obj.ind_si) = getEntropy(obj.species.(species{i}), T); % [J/mol-K]
             end
 
         end

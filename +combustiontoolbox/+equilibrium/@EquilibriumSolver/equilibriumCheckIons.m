@@ -73,8 +73,12 @@ function [N, STOP] = recomputeIons(N, A0, ind_E, indexGas, indexIons, delta_ions
         % Compute correction of the Lagrangian multiplier for ions divided by RT
         [delta_ions, ~] = ionsFactor(N, A0, ind_E, indexGas, indexIons);
         STOP = abs(delta_ions);
-    end   
-    
+    end
+
+    if STOP > 0.1
+        N(indexIons) = 0;
+    end
+
     Xi_ions = N(indexIons) / sum(N);
 
     % Set error to zero if molar fraction of ionized species are below tolerance

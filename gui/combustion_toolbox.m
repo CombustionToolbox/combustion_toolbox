@@ -449,6 +449,17 @@ classdef combustion_toolbox < matlab.apps.AppBase
             import combustiontoolbox.databases.NasaDatabase
 
             if ~isdeployed
+                % Get dir app
+                app_info = matlab.apputil.getInstalledAppInfo;
+                FLAG_ID = contains(struct2table(app_info).id, 'combustion_toolbox_app');
+                dir_app =  app_info(FLAG_ID).location;
+                dir_database_app = fullfile(dir_app, 'databases');
+        
+                % Generate database
+                if ~exist(fullfile(dir_database_app, 'DB.mat'), 'file')
+                    INSTALL('install', 'path');
+                end
+                
                 return
             end
 

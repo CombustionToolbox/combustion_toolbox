@@ -324,25 +324,28 @@ function installPackage(action, type, packageDst)
 
         fprintf('%s %s app...  ', message, name);
         f_app(dir_app);
-        fprintf('OK!\n')
         
-        % Get dir app
-        app_info = matlab.apputil.getInstalledAppInfo;
-        FLAG_ID = contains(struct2table(app_info).id, app_name);
-        dir_app =  app_info(FLAG_ID).location;
-        dir_database_app = fullfile(dir_app, 'databases');
-
-        % Make directory databases
-        if ~exist(dir_database_app, 'dir')
-            mkdir(dir_database_app);
-            % Add directory to the MATLAB path
-            addpath(dir_database_app);
-            % Save the path permanently
-            savepath;
+        if isequal(f_app, @matlab.apputil.install)
+            % Get dir app
+            app_info = matlab.apputil.getInstalledAppInfo;
+            FLAG_ID = contains(struct2table(app_info).id, app_name);
+            dir_app =  app_info(FLAG_ID).location;
+            dir_database_app = fullfile(dir_app, 'databases');
+    
+            % Make directory databases
+            if ~exist(dir_database_app, 'dir')
+                mkdir(dir_database_app);
+                % Add directory to the MATLAB path
+                addpath(dir_database_app);
+                % Save the path permanently
+                savepath;
+            end
+            
+            % Install databases
+            actionDatabases(action, dir_database_app);
         end
         
-        % Install databases
-        actionDatabases(action, dir_database_app);
+        fprintf('OK!\n')
     end
 
 end

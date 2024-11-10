@@ -441,6 +441,68 @@ classdef combustion_toolbox < matlab.apps.AppBase
             app.dynamic_components.toolbar_button5 = uiimage(app.UIFigure, 'Position', [608 746 20 20], 'ImageSource', 'icon_github_CT.svg', 'Tooltip', 'GitHub', 'ImageClickedFcn', @(~,~) system('start https://github.com/AlbertoCuadra/combustion_toolbox'));
         end
 
+        
+        function installDatabase(app)
+            % Check if running in standalone mode
+
+            % Import packages
+            import combustiontoolbox.databases.NasaDatabase
+
+            if ~isdeployed
+                return
+            end
+
+            % In standalone mode, use the ctfroot directory for application files
+            appRoot = fullfile(ctfroot, 'CombustionTo');
+            databaseFolder = fullfile(appRoot, 'databases');
+            databasePath = fullfile(databaseFolder, 'DB.mat');
+    
+            % Return if file already exists
+            if exist(databasePath, 'file')
+                return
+            end
+
+            % Create the directory if it doesn’t exist
+            if ~exist(databaseFolder, 'dir')
+                mkdir(databaseFolder);
+            end
+
+            % Install database
+            DB = NasaDatabase();
+            DB.save('path', databaseFolder); % Not working when app is deployed (saved as obj in macOS)
+            
+            % Force save with proper naming
+            % data.DB = DB;
+            % databasePath = fullfile(pwd, 'DB.mat');
+            % save(databasePath, '-struct', 'data');
+            
+            % Assign database
+            app.database = DB;
+        end
+
+        
+        function getDatabase(app)
+            % Load database
+            if ~isempty(app.database)
+                return
+            end
+
+            OS = combustiontoolbox.utils.SystemUtils.getOS;
+
+            if ~isdeployed
+                app.database = combustiontoolbox.databases.NasaDatabase();
+                return
+            end
+
+            switch OS
+                case 'macOS'
+                    app.database = combustiontoolbox.databases.NasaDatabase('filename', 'obj');
+                otherwise
+                    app.database = combustiontoolbox.databases.NasaDatabase();
+            end
+
+        end
+        
     end
 
     % Callbacks that handle component events
@@ -450,7 +512,6 @@ classdef combustion_toolbox < matlab.apps.AppBase
         function startupFcn(app)
             % Load figure in the background
             app.UIFigure.Visible = 'off';
-            
             % Splash
             try
                 FLAG_SPLASH = true;
@@ -458,7 +519,9 @@ classdef combustion_toolbox < matlab.apps.AppBase
             catch
                 FLAG_SPLASH = false;
             end
-
+            
+            % Install database (only standalone versions)
+            installDatabase(app);
             % Add additional components
             % create_components(app); % Next release
             % Get screen position
@@ -476,7 +539,7 @@ classdef combustion_toolbox < matlab.apps.AppBase
             % Get Constants
             app.constants = combustiontoolbox.common.Constants;
             % Get Nasa's database
-            app.database = combustiontoolbox.databases.NasaDatabase();
+            getDatabase(app);
             % Initialize chemical system
             app.chemicalSystem = combustiontoolbox.core.ChemicalSystem(app.database);
             % Initialize mixture

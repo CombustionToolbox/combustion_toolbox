@@ -31,7 +31,7 @@ classdef Units < handle
             import combustiontoolbox.common.Units
             
             % Get the conversion factor property name
-            conversion_factor_name = [unit_in,'2',unit_out];
+            conversion_factor_name = [unit_in, '2', unit_out];
             
             % Check conversion factor exist
             assert(isprop(Units, conversion_factor_name), 'Conversion from %s to %s is not defined.', unit_in, unit_out); 
@@ -67,6 +67,42 @@ classdef Units < handle
             
             % Convert weight percentage (wt%) to moles
             moles = weightPercentage ./ W;
+        end
+
+        function velocity = convertData2VelocityField(data)
+            % Convert the input to a VelocityField object
+            %
+            % Args:
+            %     data: Either a VelocityField object, a struct, or a 4D matrix
+            %
+            % Returns:
+            %     velocity (VelocityField): VelocityField object
+            
+            % Import packages
+            import combustiontoolbox.turbulence.VelocityField
+            
+            if isa(data, 'VelocityField')
+                % Input is already a VelocityField object
+                velocity = data;
+                return
+            end
+
+            if isstruct(data) && all(isfield(data, {'u', 'v', 'w'}))
+                % Input is a struct; convert to VelocityField
+                velocity = VelocityField(data.u, data.v, data.w);
+                return;
+            end
+
+            if ndims(data) == 4 && size(data, 4) == 3
+                % Input is a 4D matrix; convert to VelocityField
+                velocity = VelocityField(data(:, :, :, 1), ...
+                                         data(:, :, :, 2), ...
+                                         data(:, :, :, 3));
+                return;
+            end
+            
+            % Unsupported format
+            error('Unsupported velocity input format. Expected a VelocityField object, a struct, or a 4D matrix.');
         end
 
     end

@@ -5,10 +5,11 @@ classdef TurbulenceSpectra < handle
     properties
         averaging = 'spherical'  % Type of averaging ('spherical', 'crossplane')
         axis = 'x'               % Axis for cross-plane averaging ('x', 'y', or 'z')
-        time                    % Elapsed time
-        plotConfig              % PlotConfig object
-        FLAG_TIME = true        % Flag to print elapsed time
-        FLAG_REPORT = false     % Flag to print predefined plots
+        fps = 60                 % Frame rate for movie (temporal will be added into PlotConfig)
+        time                     % Elapsed time
+        plotConfig               % PlotConfig object
+        FLAG_TIME = true         % Flag to print elapsed time
+        FLAG_REPORT = false      % Flag to print predefined plots
     end
 
     methods
@@ -146,18 +147,69 @@ classdef TurbulenceSpectra < handle
             
             % Definitions
             numCases = length(varargin) + 1;
+            numWaves = length(k);
 
             % Plot spectra
             ax = setFigure(obj.plotConfig);
-            plotFigure('k', k, 'E(k)', EK(1:length(k)), 'color', 'auto', 'ax', ax);
+            plotFigure('k', k, 'E(k)', EK(1:numWaves), 'color', 'auto', 'ax', ax);
 
             for i = 1:numCases-1
                 EK = varargin{i};
-                plotFigure('k', k, 'E(k)', EK(1:length(k)), 'color', 'auto', 'ax', ax);
+                plotFigure('k', k, 'E(k)', EK(1:numWaves), 'color', 'auto', 'ax', ax);
             end
 
             % legend(ax, {'solenoidal', 'dilatational', 'total'}, 'interpreter', 'latex');
             % plotFigure('k', k, 'E(k)', 0.1 * k.^(-5/3), 'linestyle', '--', 'color', [0 0 0], 'ax', ax);
+        end
+
+        function movie(obj, k, EK, varargin)
+            % Create a movie by plotting slices of the spectra
+            %
+            % Args:
+            %     obj (TurbulenceSpectra): TurbulenceSpectra object
+            %     k (float): Wavenumber vector
+            %     EK (float): Energy spectra (2D array)
+            %
+            % Example:
+            %     obj.movie(k, EK);
+
+            % Import packages
+            import combustiontoolbox.utils.display.*
+
+            if ~isnumeric(EK) || size(EK, 1) <= 1
+                error('EK must be a 2D array with multiple slices.');
+            end
+
+            % Definitions
+            numCases = length(varargin) + 1;
+            numSlices = size(EK, 1);
+            numWaves = length(k);
+
+            % Plot
+            ax = setFigure(obj.plotConfig);
+            
+            % Temporal
+            ylim([1e-15, 1e0]);
+
+            % Movie
+            for sliceIndex = 1:numSlices
+                % Clear previous plot
+                cla(ax);
+
+                % Plot current slice
+                plotFigure('k', k, 'E(k)', EK(sliceIndex, 1:numWaves), 'color', 'auto', 'ax', ax);
+
+                for i = 1:numCases-1
+                    EK_aux = varargin{i};
+                    plotFigure('k', k, 'E(k)', EK_aux(sliceIndex, 1:numWaves), 'color', 'auto', 'ax', ax);
+                end
+
+                title(ax, sprintf('Slice %d of %d', sliceIndex, numSlices), 'Interpreter', 'latex');
+
+                % Pause for the desired frame rate
+                pause(1 / obj.fps);
+            end
+            
         end
 
         function printTime(obj)

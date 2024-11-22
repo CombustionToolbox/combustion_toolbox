@@ -11,7 +11,7 @@ To contribute to this repository, please follow these steps:
 2. Clone it to your local machine.
 
 ```console
-git clone https://github.com/your-github-username/combustion_toolbox.git
+https://github.com/CombustionToolbox/combustion_toolbox.git
 ```
 
 3. Create a new branch for your changes:

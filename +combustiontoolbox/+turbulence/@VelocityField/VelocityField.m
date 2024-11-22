@@ -2,9 +2,13 @@ classdef VelocityField < handle
     % This :mat:func:`VelocityField` class provides methods for computing properties of a velocity field.
     
     properties
-        u % x-component of the velocity field
-        v % y-component of the velocity field
-        w % z-component of the velocity field
+        u      % x-component of the velocity field
+        v      % y-component of the velocity field
+        w      % z-component of the velocity field
+    end
+
+    properties(Dependent)
+        size   % Size of the velocity field
     end
 
     methods
@@ -31,6 +35,15 @@ classdef VelocityField < handle
             obj.u = p.Results.u;
             obj.v = p.Results.v;
             obj.w = p.Results.w;
+        end
+
+        function sz = get.size(obj)
+            % Getter for the dependent property 'size'
+            %
+            % Returns:
+            %     sz (vector): Size of the velocity field
+            
+            sz = size(obj.u); % Assume all components (u, v, w) have the same size
         end
 
         function magnitudeField = pointwiseMagnitude(obj)

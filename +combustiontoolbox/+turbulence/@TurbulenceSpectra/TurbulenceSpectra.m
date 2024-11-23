@@ -17,7 +17,7 @@ classdef TurbulenceSpectra < handle
         function obj = TurbulenceSpectra(varargin)
             % Constructor for TurbulenceSpectra
             %
-            % Optional Args:d
+            % Optional Args:
             %     averaging (char): Type of averaging ('spherical' or 'crossplane')
             %     axis (char): Axis for cross-plane averaging ('x', 'y', 'z')
             %

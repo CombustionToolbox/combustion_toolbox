@@ -5,6 +5,9 @@ classdef VelocityField < handle
         u      % x-component of the velocity field
         v      % y-component of the velocity field
         w      % z-component of the velocity field
+        x      % x-component field
+        y      % y-component field
+        z      % z-component field
     end
 
     properties(Dependent)
@@ -13,7 +16,7 @@ classdef VelocityField < handle
 
     methods
         
-        function obj = VelocityField(u, v, w)
+        function obj = VelocityField(u, v, w, varargin)
             % Constructor for VelocityField
             %
             % Args:
@@ -24,26 +27,122 @@ classdef VelocityField < handle
             % Returns:
             %     obj (VelocityField): VelocityField object
             
+            % Definitions
+            defaultX = [];
+            defaultY = [];
+            defaultZ = [];
+
             % Parse inputs
             p = inputParser;
             addRequired(p, 'u', @isnumeric);
             addRequired(p, 'v', @isnumeric);
             addRequired(p, 'w', @isnumeric);
-            parse(p, u, v, w);
+            addOptional(p, 'x', defaultX, @isnumeric);
+            addOptional(p, 'y', defaultY, @isnumeric);
+            addOptional(p, 'z', defaultZ, @isnumeric);
+            parse(p, u, v, w, varargin{:});
 
             % Assign properties
             obj.u = p.Results.u;
             obj.v = p.Results.v;
             obj.w = p.Results.w;
+            obj.x = p.Results.x;
+            obj.y = p.Results.y;
+            obj.z = p.Results.z;
         end
 
         function sz = get.size(obj)
-            % Getter for the dependent property 'size'
+            % Get size of the velocity field
+            %
+            % Args:
+            %     obj (VelocityField): VelocityField object
             %
             % Returns:
             %     sz (vector): Size of the velocity field
             
             sz = size(obj.u); % Assume all components (u, v, w) have the same size
+        end
+
+        function obj = plus(obj, obj2)
+            % Overload the plus operator to add the velocity field from two VelocityField objects
+            %
+            % Args:
+            %     obj (VelocityField): VelocityField object
+            %     obj2 (VelocityField): VelocityField object
+            %
+            % Returns:
+            %     obj (VelocityField): VelocityField object 
+
+            obj.u = obj.u + obj2.u;
+            obj.v = obj.v + obj2.v;
+            obj.w = obj.w + obj2.w;            
+        end
+        
+        function velocityRMS = getVelocityRMS(obj)
+            % Compute root mean square (rms) of the velocity field
+            %
+            % Args:
+            %     obj (VelocityField): VelocityField object
+            %
+            % Returns:
+            %     velocityRMS (float): Root mean square of the velocity field
+
+            velocityRMS = sqrt( mean(obj.u.^2 + obj.v.^2 + obj.w.^2, 'all') / 3);
+        end
+
+        function Mt = getTurbulentMachNumberAverage(obj, soundVelocityAverage)
+            % Compute mean turbulent Mach number
+            %
+            % Args:
+            %     obj (VelocityField): VelocityField object
+            %     soundVelocityAverage (float): Mean sound velocity
+            %
+            % Returns:
+            %     Mt (float): Mean turbulent Mach number
+
+            velocityRMS = obj.getVelocityRMS;
+            Mt = sqrt(3) * velocityRMS / soundVelocityAverage;
+        end
+
+        function K = getTurbulentKineticEnergy(obj, varargin)
+            % Compute Turbulent Kinetic Energy (TKE)
+            %
+            % Args:
+            %     obj (VelocityField): VelocityField object
+            %
+            % Optional Args:
+            %     * rho (float): 3D array with the density field
+            %
+            % Returns:
+            %     K (float): 3D array with the TKE
+            %
+            % Example:
+            %     K = getTurbulentKineticEnergy(u, v, w, rho);
+            
+            % Compressible flows
+            if nargin > 1
+                rho = varargin{1};
+                K = 0.5 * mean(rho .* (obj.u.^2 + obj.v.^2 + obj.w.^2), 'all');
+                return
+            end
+
+            % Incompressible flows
+            K = 0.5 * mean((obj.u.^2 + obj.v.^2 + obj.w.^2), 'all');
+        end
+
+        function dissipation = getDissipation(obj, temperature, dynamicViscosity, varargin)
+            % Compute dissipation energy
+            %
+            % Args:
+            %     obj (VelocityField): VelocityField object
+            %     temperature (float): 3D array with the temperature field
+            %     dynamicViscosity (float): 3D array with the dynamic viscosity field
+            %
+            % Optional Args:
+            %
+            %
+            % Returns:
+            %     dissipation (float): 
         end
 
         function magnitudeField = pointwiseMagnitude(obj)

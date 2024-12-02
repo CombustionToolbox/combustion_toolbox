@@ -140,7 +140,7 @@ classdef HelmholtzSolver < handle
             
             % Reshape velocity input and compute fluctuations
             velocity = convertData2VelocityField(velocity);
-            velocity = obj.computeFluctuations(velocity, rho);
+            velocity = getFluctuations(velocity, rho);
 
             % Solve the Helmholtz equation
             [solenoidal, dilatational] = obj.decomposition(velocity);
@@ -174,7 +174,7 @@ classdef HelmholtzSolver < handle
             W = fftn(velocity.w);
 
             % Compute wave numbers
-            [KX, KY, KZ] = obj.computeWaveNumbers(size(velocity.u));
+            [KX, KY, KZ] = obj.getWaveNumbers(size(velocity.u));
 
             % Compute k^2, avoiding division by zero
             K2 = KX.^2 + KY.^2 + KZ.^2;
@@ -223,7 +223,7 @@ classdef HelmholtzSolver < handle
             fprintf('Performing checks... ');
             
             % Compute wave numbers
-            [KX, KY, KZ] = obj.computeWaveNumbers(size(velocity.u));
+            [KX, KY, KZ] = obj.getWaveNumbers(size(velocity.u));
             
             % Compute magnitude of the original velocity field for relative error
             velocityMagnitude = globalMagnitude(velocity);
@@ -295,40 +295,8 @@ classdef HelmholtzSolver < handle
     end
 
     methods (Static) 
-    
-        function velocity = computeFluctuations(velocity, rho)
-            % Compute fluctuating velocity components
-            %
-            % Args:
-            %     velocity (VelocityField): VelocityField instance with fields (u, v, w) containing the velocity components
-            %     rho (float): Density field
-            %
-            % Returns:
-            %     velocity (struct): Struct with fields (u, v, w) containing the fluctuating velocity components (fluctuations)
-            
-            % Shallow copy of the velocity field
-            velocity = velocity.copy();
 
-            % For compressible flows
-            if ~isempty(rho)
-                rhoMean = mean(rho, 'all');
-                rhou = mean(rho .* velocity.u, 'all') / rhoMean;
-                rhov = mean(rho .* velocity.v, 'all') / rhoMean;
-                rhow = mean(rho .* velocity.w, 'all') / rhoMean;
-
-                velocity.u = sqrt(rho) .* (velocity.u - rhou);
-                velocity.v = sqrt(rho) .* (velocity.v - rhov);
-                velocity.w = sqrt(rho) .* (velocity.w - rhow);
-                return
-            end
-
-            % For incompressible flows
-            velocity.u = velocity.u - mean(velocity.u, 'all');
-            velocity.v = velocity.v - mean(velocity.v, 'all');
-            velocity.w = velocity.w - mean(velocity.w, 'all');
-        end
-
-        function [KX, KY, KZ] = computeWaveNumbers(sz)
+        function [KX, KY, KZ] = getWaveNumbers(sz)
             % Compute wave number grids for FFT
             %
             % Args:
@@ -340,7 +308,7 @@ classdef HelmholtzSolver < handle
             %     KZ (float): 3D array with the wave number in the z-direction
             %
             % Example:
-            %     [KX, KY, KZ] = computeWaveNumbers(sz)
+            %     [KX, KY, KZ] = getWaveNumbers(sz)
 
             % Import packages
             import combustiontoolbox.utils.math.fftfreq

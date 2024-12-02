@@ -78,6 +78,76 @@ classdef VelocityField < handle & matlab.mixin.Copyable
             obj.w = obj.w + obj2.w;            
         end
         
+        function velocity = getFluctuations(obj, rho)
+            % Compute fluctuating velocity components
+            %
+            % Args:
+            %     obj (VelocityField): VelocityField instance with fields (u, v, w) containing the velocity components
+            %     rho (float): Density field
+            %
+            % Returns:
+            %     velocity (VelocityField): Struct with fields (u, v, w) containing the fluctuating velocity components (fluctuations)
+            
+            % Shallow copy of the velocity field
+            velocity = obj.copy();
+
+            % For compressible flows
+            if ~isempty(rho)
+                rhoMean = mean(rho, 'all');
+                rhou = mean(rho .* velocity.u, 'all') / rhoMean;
+                rhov = mean(rho .* velocity.v, 'all') / rhoMean;
+                rhow = mean(rho .* velocity.w, 'all') / rhoMean;
+
+                velocity.u = sqrt(rho) .* (velocity.u - rhou);
+                velocity.v = sqrt(rho) .* (velocity.v - rhov);
+                velocity.w = sqrt(rho) .* (velocity.w - rhow);
+                return
+            end
+
+            % For incompressible flows
+            velocity.u = velocity.u - mean(velocity.u, 'all');
+            velocity.v = velocity.v - mean(velocity.v, 'all');
+            velocity.w = velocity.w - mean(velocity.w, 'all');
+        end
+
+        function velocity = getCrossplaneFluctuations(obj, rho, axisType)
+            % Compute fluctuating velocity components
+            %
+            % Args:
+            %     obj (VelocityField): VelocityField instance with fields (u, v, w) containing the velocity components
+            %     rho (float): Density field
+            %     axisType (char): Axis for cross-plane averaging ('x', 'y', or 'z')
+            %
+            % Returns:
+            %     velocity (VelocityField): Struct with fields (u, v, w) containing the fluctuating velocity components (fluctuations)
+            
+            % Shallow copy of the velocity field
+            velocity = obj.copy();
+
+            % Map axis to slicing dimension
+            sliceDim = find('xyz' == axisType);
+            dims = 1:3;
+            homogeneousDims = setdiff(dims, sliceDim);
+            
+            % For compressible flows
+            if ~isempty(rho)
+                rhoMean = mean(rho, homogeneousDims);
+                rhou = mean(rho .* velocity.u, homogeneousDims) / rhoMean;
+                rhov = mean(rho .* velocity.v, homogeneousDims) / rhoMean;
+                rhow = mean(rho .* velocity.w, homogeneousDims) / rhoMean;
+
+                velocity.u = sqrt(rho) .* (velocity.u - rhou);
+                velocity.v = sqrt(rho) .* (velocity.v - rhov);
+                velocity.w = sqrt(rho) .* (velocity.w - rhow);
+                return
+            end
+
+            % For incompressible flows
+            velocity.u = velocity.u - mean(velocity.u, homogeneousDims);
+            velocity.v = velocity.v - mean(velocity.v, homogeneousDims);
+            velocity.w = velocity.w - mean(velocity.w, homogeneousDims);
+        end
+
         function velocityRMS = getVelocityRMS(obj)
             % Compute root mean square (rms) of the velocity field
             %

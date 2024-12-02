@@ -104,7 +104,7 @@ classdef HelmholtzSolver < handle
 
         end
 
-        function [solenoidal, dilatational, STOP] = solve(obj, velocity, varargin)
+        function [solenoidal, dilatational, velocity, STOP] = solve(obj, velocity, varargin)
             % Compute Helmholtz decomposition of the velocity field
             %
             % Args:
@@ -115,13 +115,14 @@ classdef HelmholtzSolver < handle
             %     * rho (float): Density field
             %
             % Returns:
-            %     solenoidal (VelocityField): Struct with fields (u, v, w) containing the solenoidal velocity components
-            %     dilatational (VelocityField): Struct with fields (u, v, w) containing the dilatational velocity components
+            %     solenoidal (VelocityField): Struct with fields (u, v, w) containing the solenoidal velocity components (fluctuations)
+            %     dilatational (VelocityField): Struct with fields (u, v, w) containing the dilatational velocity components (fluctuations)
+            %     velocity (VelocityField): Struct with fields (u, v, w) containing the velocity components (fluctuations)
             %     STOP (float): Relative error doing the decomposition
             %
             % Examples:
-            %     * [solenoidal, dilatational, STOP] = solve(obj, velocity)
-            %     * [solenoidal, dilatational, STOP] = solve(obj, velocity, 'rho', rho)
+            %     * [solenoidal, dilatational, velocity, STOP] = solve(obj, velocity)
+            %     * [solenoidal, dilatational, velocity, STOP] = solve(obj, velocity, 'rho', rho)
             
             % Import packages
             import combustiontoolbox.common.Units.convertData2VelocityField
@@ -155,14 +156,14 @@ classdef HelmholtzSolver < handle
         end
 
         function [solenoidal, dilatational] = decomposition(obj, velocity)
-            % Compute Helmholtz decomposition of the velocity field
+            % Compute Helmholtz decomposition of the velocity field (fluctuations)
             %
             % Args:
-            %     velocity (VelocityField): VelocityField instance with fields (u, v, w) containing the velocity components
+            %     velocity (VelocityField): VelocityField instance with fields (u, v, w) containing the velocity components (fluctuations)
             %
             % Returns:
-            %     solenoidal (VelocityField): VelocityField instance with fields (u, v, w) containing the solenoidal velocity components
-            %     dilatational (VelocityField): VelocityField instance with fields (u, v, w) containing the dilatational velocity components
+            %     solenoidal (VelocityField): VelocityField instance with fields (u, v, w) containing the solenoidal velocity components (fluctuations)
+            %     dilatational (VelocityField): VelocityField instance with fields (u, v, w) containing the dilatational velocity components (fluctuations)
             
             % Import packages
             import combustiontoolbox.turbulence.VelocityField
@@ -204,9 +205,9 @@ classdef HelmholtzSolver < handle
             %
             % Args:
             %     obj (HelmholtzSolver): HelmholtzSolver object
-            %     velocity (VelocityField): VelocityField instance with fields (u, v, w) containing the velocity components
-            %     solenoidal (VelocityField): VelocityField instance with fields (u, v, w) containing the solenoidal velocity components
-            %     dilatational (VelocityField): VelocityField instance with fields (u, v, w) containing the dilatational velocity components
+            %     velocity (VelocityField): VelocityField instance with fields (u, v, w) containing the velocity components (fluctuations)
+            %     solenoidal (VelocityField): VelocityField instance with fields (u, v, w) containing the solenoidal velocity components (fluctuations)
+            %     dilatational (VelocityField): VelocityField instance with fields (u, v, w) containing the dilatational velocity components (fluctuations)
             %
             % Returns:
             %     STOP (float): Relative error doing the decomposition
@@ -299,12 +300,15 @@ classdef HelmholtzSolver < handle
             % Compute fluctuating velocity components
             %
             % Args:
-            %     velocity (struct): Struct with fields (u, v, w)
+            %     velocity (VelocityField): VelocityField instance with fields (u, v, w) containing the velocity components
             %     rho (float): Density field
             %
             % Returns:
-            %     velocity (struct): Struct with fields (u, v, w) containing the fluctuating velocity components
+            %     velocity (struct): Struct with fields (u, v, w) containing the fluctuating velocity components (fluctuations)
             
+            % Shallow copy of the velocity field
+            velocity = velocity.copy();
+
             % For compressible flows
             if ~isempty(rho)
                 rhoMean = mean(rho, 'all');
@@ -326,6 +330,17 @@ classdef HelmholtzSolver < handle
 
         function [KX, KY, KZ] = computeWaveNumbers(sz)
             % Compute wave number grids for FFT
+            %
+            % Args:
+            %     sz (float): Size of the 3D array
+            %
+            % Returns:
+            %     KX (float): 3D array with the wave number in the x-direction
+            %     KY (float): 3D array with the wave number in the y-direction
+            %     KZ (float): 3D array with the wave number in the z-direction
+            %
+            % Example:
+            %     [KX, KY, KZ] = computeWaveNumbers(sz)
 
             % Import packages
             import combustiontoolbox.utils.math.fftfreq

@@ -78,8 +78,52 @@ classdef TurbulenceSpectra < handle
 
         end
 
-        function [EK_avg, k] = getEnergySpectra(obj, velocity)
-            % Compute the energy spectra of a 3D velocity field.
+        function [EK_avg, k] = getEnergySpectra(obj, fluctuation)
+            % Compute the energy spectra of a 3D fluctuation field
+            %
+            % Args:
+            %     fluctuation (float): 3D fluctuation field
+            %
+            % Returns:
+            %     EK_avg (float): Averaged energy spectra
+            %     k (float): Wavenumber vector
+            %
+            % Example:
+            %     [EK_avg, k] = getEnergySpectra(fluctuation);
+
+            % Check input
+            assert(isnumeric(fluctuation), 'Input must be a 3D array.');
+
+            % Start timer
+            obj.time = tic;
+
+            % Set the appropriate averaging function
+            switch obj.averaging
+                case 'spherical'
+                    % Use 3D FFT for spherical averaging
+                    F = fftn(fluctuation) / numel(fluctuation);
+                    EK = fftshift(abs(F).^2);
+                    % Set the function for spherical averaging
+                    averagingFunction = @obj.getSphericallyAveragedSpectra;
+                case 'crossplane'
+                    % Use 2D FFT for cross-plane averaging
+                    EK = obj.getCrossplaneFFT(fluctuation, obj.axis);
+                    % Set the function for cross-plane averaging
+                    averagingFunction = @obj.getCrossplaneAveragedSpectra;
+            end
+            
+            % Compute the energy spectra based on the averaging type
+            [EK_avg, k] = averagingFunction(EK);
+
+            % Time elapsed
+            obj.time = toc(obj.time);
+            
+            % Print elapsed time
+            printTime(obj);
+        end
+
+        function [EK_avg, k] = getEnergySpectraVelocity(obj, velocity)
+            % Compute the energy spectrum of a 3D velocity field
             %
             % Args:
             %     velocity (VelocityField): Velocity field as a VelocityField object, struct, or 4D matrix
@@ -87,9 +131,15 @@ classdef TurbulenceSpectra < handle
             % Returns:
             %     EK_avg (float): Averaged energy spectra
             %     k (float): Wavenumber vector
+            %
+            % Example:
+            %     [EK_avg, k] = getEnergySpectraVelocity(velocity);
             
             % Import packages
             import combustiontoolbox.common.Units.convertData2VelocityField
+
+            % Check input
+            assert(isa(velocity, 'combustiontoolbox.turbulence.VelocityField'), 'Input must be a VelocityField object.');
 
             % Start timer
             obj.time = tic;
@@ -109,7 +159,7 @@ classdef TurbulenceSpectra < handle
                     averagingFunction = @obj.getSphericallyAveragedSpectra;
                 case 'crossplane'
                     % Use 2D FFT for cross-plane averaging
-                    EK = obj.getCrossplaneFFT(velocity, obj.axis);
+                    EK = obj.getCrossplaneFFTVelocity(velocity, obj.axis);
                     % Set the function for cross-plane averaging
                     averagingFunction = @obj.getCrossplaneAveragedSpectra;
             end
@@ -233,7 +283,49 @@ classdef TurbulenceSpectra < handle
 
     methods (Static, Access = private)
 
-        function EK = getCrossplaneFFT(velocity, axisType)
+        function EK = getCrossplaneFFT(fluctuation, axisType)
+            % Compute 2D FFT on homogeneous planes based on axisType
+            %
+            % Args:
+            %   fluctuation (float): 3D fluctuation field
+            %   axisType (char): Axis for cross-plane averaging ('x', 'y', or 'z')
+            %
+            % Returns:
+            %   EK (float): 3D array representing the 2D energy spectra computed on the
+            %               homogeneous planes, sliced along the inhomogeneous axis.
+            %               The first two dimensions correspond to the homogeneous plane,
+            %               while the third dimension represents the slices along the
+            %               inhomogeneous axis.
+            %
+            % Examples:
+            %   * EK = getCrossplaneFFT(fluctuation, 'x');
+            %   * EK = getCrossplaneFFT(fluctuation, 'y');
+            %   * EK = getCrossplaneFFT(fluctuation, 'z');
+            
+            % Map axis to slicing dimension
+            sliceDim = find('xyz' == axisType);
+            dims = 1:3;
+            homogeneousDims = setdiff(dims, sliceDim);
+        
+            % Permute dimensions to bring slice dimension last
+            permutedF = permute(fluctuation, [homogeneousDims, sliceDim]);
+        
+            % Extract slice sizes and initialize EK
+            [size1, size2, numSlices] = size(permutedF);
+            EK = zeros(size1, size2, numSlices);
+        
+            % Compute 2D FFT slice by slice
+            for i = 1:numSlices
+                % Extract slices
+                F = fft2(squeeze(permutedF(:, :, i))) / numel(permutedF(:, :, i));
+        
+                % Compute energy spectra for the slice
+                EK(:, :, i) = fftshift(abs(F).^2);
+            end
+        
+        end
+
+        function EK = getCrossplaneFFTVelocity(velocity, axisType)
             % Compute 2D FFT on homogeneous planes based on axisType
             %
             % Args:
@@ -250,9 +342,9 @@ classdef TurbulenceSpectra < handle
             %               inhomogeneous axis.
             %
             % Examples:
-            %   * EK = getCrossplaneFFT(velocity, 'x');
-            %   * EK = getCrossplaneFFT(velocity, 'y');
-            %   * EK = getCrossplaneFFT(velocity, 'z');
+            %   * EK = getCrossplaneFFTVelocity(velocity, 'x');
+            %   * EK = getCrossplaneFFTVelocity(velocity, 'y');
+            %   * EK = getCrossplaneFFTVelocity(velocity, 'z');
             
             % Map axis to slicing dimension
             sliceDim = find('xyz' == axisType);

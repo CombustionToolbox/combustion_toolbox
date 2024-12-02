@@ -268,7 +268,7 @@ classdef TurbulenceSpectra < handle
 
             % Plot the PDF
             ax = setFigure(obj.plotConfig);
-            plotFigure('x', edges, '\text{p.d.f.}', pdf, 'color', 'auto', 'ax', ax);
+            plotFigure('x', edges, '\rm{p.d.f.}', pdf, 'color', 'auto', 'ax', ax);
 
             % Restore original plot configuration
             obj.plotConfig.xscale = originalXScale;

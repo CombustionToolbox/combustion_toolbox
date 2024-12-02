@@ -82,6 +82,7 @@ classdef TurbulenceSpectra < handle
             % Compute the energy spectra of a 3D fluctuation field
             %
             % Args:
+            %     obj (TurbulenceSpectra): TurbulenceSpectra object
             %     fluctuation (float): 3D fluctuation field
             %
             % Returns:
@@ -126,6 +127,7 @@ classdef TurbulenceSpectra < handle
             % Compute the energy spectrum of a 3D velocity field
             %
             % Args:
+            %     obj (TurbulenceSpectra): TurbulenceSpectra object
             %     velocity (VelocityField): Velocity field as a VelocityField object, struct, or 4D matrix
             %
             % Returns:
@@ -172,6 +174,35 @@ classdef TurbulenceSpectra < handle
             
             % Print elapsed time
             printTime(obj);
+        end
+
+        function L = getIntegralLengthScale(obj, EK, k)
+            % Compute the integral length scale from the energy spectra
+            %
+            % Args:
+            %     obj (TurbulenceSpectra): TurbulenceSpectra object
+            %     EK (float): Energy spectra
+            %     k (float): Wavenumber vector
+            %
+            % Returns:
+            %     L (float): Integral length scale
+            %
+            % Example:
+            %     L = getIntegralLengthScale(obj, EK, k);
+
+            % Check input
+            assert(isnumeric(EK) && isnumeric(k), 'Input must be numeric arrays.');
+
+            % Remove zero values
+            FLAG_REMOVE = k == 0;
+            k(FLAG_REMOVE) = [];
+            EK(FLAG_REMOVE) = [];
+
+            % Include only wavenumbers contained in the energy spectra
+            EK = EK(1:length(k));
+
+            % Compute the integral length scale
+            L = 2 * pi * trapz(k, EK ./ k) / trapz(k, EK);
         end
 
         function ax = plot(obj, k, EK, varargin)
@@ -266,7 +297,7 @@ classdef TurbulenceSpectra < handle
             % Print execution time
             %
             % Args:
-            %     obj (EquilibriumSolver): Object of the class EquilibriumSolver
+            %     obj (TurbulenceSpectra): TurbulenceSpectra object
             
             if ~obj.FLAG_TIME
                 return
@@ -447,6 +478,25 @@ classdef TurbulenceSpectra < handle
             fftResult = fft(EK(:, 1, 1));
             numFreqs = ceil(length(fftResult) / 2);
             k = 0:numFreqs - 1;
+        end
+
+        function pdf = getPDF(fluctuation)
+            % Compute the probability density function (PDF) of a 3D fluctuation field
+            %
+            % Args:
+            %     fluctuation (float): 3D fluctuation field
+            %
+            % Returns:
+            %     pdf (float): Probability density function
+            %
+            % Example:
+            %     pdf = getPDF(fluctuation);
+
+            % Check input
+            assert(isnumeric(fluctuation), 'Input must be a 3D array.');
+
+            % Compute the PDF
+            pdf = histogram(fluctuation, 'Normalization', 'pdf');
         end
 
     end

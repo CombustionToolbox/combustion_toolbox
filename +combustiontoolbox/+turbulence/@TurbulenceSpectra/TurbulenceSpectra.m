@@ -90,7 +90,7 @@ classdef TurbulenceSpectra < handle
             %     k (float): Wavenumber vector
             %
             % Example:
-            %     [EK_avg, k] = getEnergySpectra(fluctuation);
+            %     [EK_avg, k] = getEnergySpectra(TurbulenceSpectra(), fluctuation);
 
             % Check input
             assert(isnumeric(fluctuation), 'Input must be a 3D array.');
@@ -135,7 +135,7 @@ classdef TurbulenceSpectra < handle
             %     k (float): Wavenumber vector
             %
             % Example:
-            %     [EK_avg, k] = getEnergySpectraVelocity(velocity);
+            %     [EK_avg, k] = getEnergySpectraVelocity(TurbulenceSpectra(), velocity);
             
             % Import packages
             import combustiontoolbox.common.Units.convertData2VelocityField
@@ -176,6 +176,33 @@ classdef TurbulenceSpectra < handle
             printTime(obj);
         end
 
+        function [pdf, edges] = getPDF(obj, fluctuation)
+            % Compute the probability density function (PDF) of a 3D fluctuation field
+            %
+            % Args:
+            %     obj (TurbulenceSpectra): TurbulenceSpectra object
+            %     fluctuation (float): 3D fluctuation field
+            %
+            % Returns:
+            %     pdf (float): Probability density function
+            %     edges (float): Bin edges
+            %
+            % Example:
+            %     pdf = getPDF(TurbulenceSpectra(), fluctuation);
+
+            % Import packages
+            import combustiontoolbox.utils.display.*
+
+            % Check input
+            assert(isnumeric(fluctuation), 'Input must be a 3D array.');
+            
+            % Compute the PDF
+            [pdf, edges] = histcounts(fluctuation(:), 'Normalization', 'pdf');
+            
+            % Adjust bin edges to remove the last edge
+            edges = edges(1:end-1);
+        end
+
         function ax = plot(obj, k, EK, varargin)
             % Plot results
             %
@@ -212,6 +239,40 @@ classdef TurbulenceSpectra < handle
 
             % legend(ax, {'solenoidal', 'dilatational', 'total'}, 'interpreter', 'latex');
             % plotFigure('k', k, 'E(k)', 0.1 * k.^(-5/3), 'linestyle', '--', 'color', [0 0 0], 'ax', ax);
+        end
+
+        function ax = plotPDF(obj, pdf, edges)
+            % Plot the probability density function (PDF)
+            %
+            % Args:
+            %     obj (TurbulenceSpectra): TurbulenceSpectra object
+            %     pdf (float): Probability density function
+            %     edges (float): Bin edges
+            %
+            % Returns:
+            %     ax (Axes): Axes object
+            %
+            % Example:
+            %     ax = plotPDF(obj, pdf, edges);
+
+            % Import packages
+            import combustiontoolbox.utils.display.*
+
+            % Backup current plot configuration
+            originalXScale = obj.plotConfig.xscale;
+            originalYScale = obj.plotConfig.yscale;
+
+            % Set plot configuration to linear scales
+            obj.plotConfig.xscale = 'linear';
+            obj.plotConfig.yscale = 'linear';
+
+            % Plot the PDF
+            ax = setFigure(obj.plotConfig);
+            plotFigure('x', edges, 'p.d.f.', pdf, 'color', 'auto', 'ax', ax);
+
+            % Restore original plot configuration
+            obj.plotConfig.xscale = originalXScale;
+            obj.plotConfig.yscale = originalYScale;
         end
 
         function movie(obj, k, EK, varargin)
@@ -285,11 +346,10 @@ classdef TurbulenceSpectra < handle
 
     methods (Static, Access = public)
         
-        function L = getIntegralLengthScale(obj, EK, k)
+        function L = getIntegralLengthScale(EK, k)
             % Compute the integral length scale from the energy spectra
             %
             % Args:
-            %     obj (TurbulenceSpectra): TurbulenceSpectra object
             %     EK (float): Energy spectra
             %     k (float): Wavenumber vector
             %
@@ -297,7 +357,7 @@ classdef TurbulenceSpectra < handle
             %     L (float): Integral length scale
             %
             % Example:
-            %     L = getIntegralLengthScale(obj, EK, k);
+            %     L = getIntegralLengthScale(EK, k);
 
             % Check input
             assert(isnumeric(EK) && isnumeric(k), 'Input must be numeric arrays.');
@@ -312,25 +372,6 @@ classdef TurbulenceSpectra < handle
 
             % Compute the integral length scale
             L = 2 * pi * trapz(k, EK ./ k) / trapz(k, EK);
-        end
-        
-        function pdf = getPDF(fluctuation)
-            % Compute the probability density function (PDF) of a 3D fluctuation field
-            %
-            % Args:
-            %     fluctuation (float): 3D fluctuation field
-            %
-            % Returns:
-            %     pdf (float): Probability density function
-            %
-            % Example:
-            %     pdf = getPDF(fluctuation);
-
-            % Check input
-            assert(isnumeric(fluctuation), 'Input must be a 3D array.');
-
-            % Compute the PDF
-            pdf = histogram(fluctuation, 'Normalization', 'pdf');
         end
 
     end

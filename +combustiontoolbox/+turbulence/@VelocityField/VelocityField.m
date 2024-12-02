@@ -213,6 +213,8 @@ classdef VelocityField < handle & matlab.mixin.Copyable
             %
             % Returns:
             %     dissipation (float): 
+
+            error('Method not implemented');
         end
 
         function magnitudeField = pointwiseMagnitude(obj)

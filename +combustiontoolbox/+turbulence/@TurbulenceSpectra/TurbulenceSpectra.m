@@ -176,35 +176,6 @@ classdef TurbulenceSpectra < handle
             printTime(obj);
         end
 
-        function L = getIntegralLengthScale(obj, EK, k)
-            % Compute the integral length scale from the energy spectra
-            %
-            % Args:
-            %     obj (TurbulenceSpectra): TurbulenceSpectra object
-            %     EK (float): Energy spectra
-            %     k (float): Wavenumber vector
-            %
-            % Returns:
-            %     L (float): Integral length scale
-            %
-            % Example:
-            %     L = getIntegralLengthScale(obj, EK, k);
-
-            % Check input
-            assert(isnumeric(EK) && isnumeric(k), 'Input must be numeric arrays.');
-
-            % Remove zero values
-            FLAG_REMOVE = k == 0;
-            k(FLAG_REMOVE) = [];
-            EK(FLAG_REMOVE) = [];
-
-            % Include only wavenumbers contained in the energy spectra
-            EK = EK(1:length(k));
-
-            % Compute the integral length scale
-            L = 2 * pi * trapz(k, EK ./ k) / trapz(k, EK);
-        end
-
         function ax = plot(obj, k, EK, varargin)
             % Plot results
             %
@@ -308,6 +279,58 @@ classdef TurbulenceSpectra < handle
 
             % Print elapsed time
             fprintf('\nElapsed time for %s: %.5f seconds\n', operationName, obj.time);
+        end
+
+    end
+
+    methods (Static, Access = public)
+        
+        function L = getIntegralLengthScale(obj, EK, k)
+            % Compute the integral length scale from the energy spectra
+            %
+            % Args:
+            %     obj (TurbulenceSpectra): TurbulenceSpectra object
+            %     EK (float): Energy spectra
+            %     k (float): Wavenumber vector
+            %
+            % Returns:
+            %     L (float): Integral length scale
+            %
+            % Example:
+            %     L = getIntegralLengthScale(obj, EK, k);
+
+            % Check input
+            assert(isnumeric(EK) && isnumeric(k), 'Input must be numeric arrays.');
+
+            % Remove zero values
+            FLAG_REMOVE = k == 0;
+            k(FLAG_REMOVE) = [];
+            EK(FLAG_REMOVE) = [];
+
+            % Include only wavenumbers contained in the energy spectra
+            EK = EK(1:length(k));
+
+            % Compute the integral length scale
+            L = 2 * pi * trapz(k, EK ./ k) / trapz(k, EK);
+        end
+        
+        function pdf = getPDF(fluctuation)
+            % Compute the probability density function (PDF) of a 3D fluctuation field
+            %
+            % Args:
+            %     fluctuation (float): 3D fluctuation field
+            %
+            % Returns:
+            %     pdf (float): Probability density function
+            %
+            % Example:
+            %     pdf = getPDF(fluctuation);
+
+            % Check input
+            assert(isnumeric(fluctuation), 'Input must be a 3D array.');
+
+            % Compute the PDF
+            pdf = histogram(fluctuation, 'Normalization', 'pdf');
         end
 
     end
@@ -478,25 +501,6 @@ classdef TurbulenceSpectra < handle
             fftResult = fft(EK(:, 1, 1));
             numFreqs = ceil(length(fftResult) / 2);
             k = 0:numFreqs - 1;
-        end
-
-        function pdf = getPDF(fluctuation)
-            % Compute the probability density function (PDF) of a 3D fluctuation field
-            %
-            % Args:
-            %     fluctuation (float): 3D fluctuation field
-            %
-            % Returns:
-            %     pdf (float): Probability density function
-            %
-            % Example:
-            %     pdf = getPDF(fluctuation);
-
-            % Check input
-            assert(isnumeric(fluctuation), 'Input must be a 3D array.');
-
-            % Compute the PDF
-            pdf = histogram(fluctuation, 'Normalization', 'pdf');
         end
 
     end

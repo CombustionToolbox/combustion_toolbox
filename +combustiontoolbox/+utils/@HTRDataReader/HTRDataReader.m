@@ -27,6 +27,25 @@ classdef HTRDataReader < handle
             %     value (float): Data array for the specified property
             
             value = h5read(filepath, ['/', property]);
+        end
+
+        function value = readAverage(filepath, property)
+            % Read general data from the .hdf file
+            %
+            % Args:
+            %     filepath (char): Path to the .hdf file
+            %     property (char): Name of the property to read
+            %
+            % Returns:
+            %     value (float): Data array for the specified property
+            
+            % Import packages
+            import combustiontoolbox.utils.HTRDataReader;
+
+            % Read data
+            value = HTRDataReader.read(filepath, property);
+
+            % Definitions
             sz = size(value);
             N_min = min(sz);
 

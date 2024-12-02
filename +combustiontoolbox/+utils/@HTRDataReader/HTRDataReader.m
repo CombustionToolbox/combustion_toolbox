@@ -83,12 +83,11 @@ classdef HTRDataReader < handle
             L = max(x);
         end
 
-        function [velocity, sz] = readVelocityField(filepath, property)
+        function [velocity, sz] = readVelocityField(filepath)
             % Read a 3D property field from the .hdf file
             %
             % Args:
             %     filepath (char): Path to the .hdf file
-            %     property (char): Name of the property to read
             %
             % Returns:
             %     velocity (VelocityField): Velocity field object
@@ -99,7 +98,7 @@ classdef HTRDataReader < handle
             import combustiontoolbox.turbulence.VelocityField;
 
             % Read 3D field
-            [u, v, w, sz] = HTRDataReader.read3D(filepath, property);
+            [u, v, w, sz] = HTRDataReader.read3D(filepath, 'velocity');
 
             % Convert to VelocityField object
             velocity = VelocityField(u, v, w);

@@ -1,4 +1,4 @@
-classdef VelocityField < handle
+classdef VelocityField < handle & matlab.mixin.Copyable
     % This :mat:func:`VelocityField` class provides methods for computing properties of a velocity field.
     
     properties

@@ -132,9 +132,9 @@ classdef VelocityField < handle & matlab.mixin.Copyable
             % For compressible flows
             if ~isempty(rho)
                 rhoMean = mean(rho, homogeneousDims);
-                rhou = mean(rho .* velocity.u, homogeneousDims) / rhoMean;
-                rhov = mean(rho .* velocity.v, homogeneousDims) / rhoMean;
-                rhow = mean(rho .* velocity.w, homogeneousDims) / rhoMean;
+                rhou = mean(rho .* velocity.u, homogeneousDims) ./ rhoMean;
+                rhov = mean(rho .* velocity.v, homogeneousDims) ./ rhoMean;
+                rhow = mean(rho .* velocity.w, homogeneousDims) ./ rhoMean;
 
                 velocity.u = sqrt(rho) .* (velocity.u - rhou);
                 velocity.v = sqrt(rho) .* (velocity.v - rhov);

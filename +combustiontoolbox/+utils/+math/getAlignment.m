@@ -4,9 +4,6 @@ function [cosTheta] = getAlignment(field1, field2)
     % Args:
     %     field1 (float): 3D scalar field
     %     field2 (float): 3D scalar field
-    %     x (float): 3D array with the x-coordinate of the grid
-    %     y (float): 3D array with the y-coordinate of the grid
-    %     z (float): 3D array with the z-coordinate of the grid
     %
     % Returns:
     %     cosTheta (float): 3D array representing the pointwise cosine of the angle between two fields

@@ -361,6 +361,10 @@ classdef TurbulenceSpectra < handle
             % Check input
             assert(isnumeric(EK) && isnumeric(k), 'Input must be numeric arrays.');
 
+            % Flatten arrays
+            k = k(:);
+            EK = EK(:);
+
             % Remove zero values
             FLAG_REMOVE = k == 0;
             k(FLAG_REMOVE) = [];

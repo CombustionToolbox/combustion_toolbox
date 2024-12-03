@@ -370,7 +370,7 @@ classdef TurbulenceSpectra < handle
             EK = EK(1:length(k));
 
             % Compute the integral length scale
-            L = 3/4 * pi * trapz(k, EK ./ k) / trapz(k, EK);
+            L = 3/4 * pi * trapz(EK ./ k) / trapz(EK);
         end
 
     end

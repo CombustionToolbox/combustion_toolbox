@@ -1,19 +1,19 @@
 function [cosTheta] = getAlignment(field1, field2)
-    % Computes the local cosine of the angle (alignment) between two scalar fields
+    % Computes the local cosine of the angle (alignment) between two vector fields
     %
     % Args:
-    %     field1 (float): 3D scalar field
-    %     field2 (float): 3D scalar field
+    %     field1 (float): 3D vector field
+    %     field2 (float): 3D vector field
     %
     % Returns:
-    %     cosTheta (float): 3D array representing the pointwise cosine of the angle between two fields
+    %     cosTheta (float): 3D array representing the pointwise cosine of the angle between two vectors
 
     % Compute pointwise dot product
     dotProduct = field1 .* field2;
 
-    % Compute pointwise magnitudes
-    magnitude1 = abs(field1);
-    magnitude2 = abs(field2);
+    % Compute magnitudes (norms) of the two fields
+    magnitude1 = norm(field1);
+    magnitude2 = norm(field2);
 
     % Compute cosine of angles between gradients
     cosTheta = dotProduct ./ (magnitude1 .* magnitude2);

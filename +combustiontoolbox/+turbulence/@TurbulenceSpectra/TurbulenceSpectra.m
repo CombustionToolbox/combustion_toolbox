@@ -176,33 +176,6 @@ classdef TurbulenceSpectra < handle
             printTime(obj);
         end
 
-        function [pdf, edges] = getPDF(obj, fluctuation)
-            % Compute the probability density function (PDF) of a 3D fluctuation field
-            %
-            % Args:
-            %     obj (TurbulenceSpectra): TurbulenceSpectra object
-            %     fluctuation (float): 3D fluctuation field
-            %
-            % Returns:
-            %     pdf (float): Probability density function
-            %     edges (float): Bin edges
-            %
-            % Example:
-            %     pdf = getPDF(TurbulenceSpectra(), fluctuation);
-
-            % Import packages
-            import combustiontoolbox.utils.display.*
-
-            % Check input
-            assert(isnumeric(fluctuation), 'Input must be a 3D array.');
-            
-            % Compute the PDF
-            [pdf, edges] = histcounts(fluctuation(:), 'Normalization', 'pdf');
-            
-            % Adjust bin edges to remove the last edge
-            edges = edges(1:end-1);
-        end
-
         function ax = plot(obj, k, EK, varargin)
             % Plot results
             %
@@ -346,6 +319,32 @@ classdef TurbulenceSpectra < handle
 
     methods (Static, Access = public)
         
+        function [pdf, edges] = getPDF(fluctuation)
+            % Compute the probability density function (PDF) of a 3D fluctuation field
+            %
+            % Args:
+            %     fluctuation (float): 3D fluctuation field
+            %
+            % Returns:
+            %     pdf (float): Probability density function
+            %     edges (float): Bin edges
+            %
+            % Example:
+            %     pdf = getPDF(TurbulenceSpectra(), fluctuation);
+
+            % Import packages
+            import combustiontoolbox.utils.display.*
+
+            % Check input
+            assert(isnumeric(fluctuation), 'Input must be a 3D array.');
+            
+            % Compute the PDF
+            [pdf, edges] = histcounts(fluctuation(:), 'Normalization', 'pdf');
+            
+            % Adjust bin edges to remove the last edge
+            edges = edges(1:end-1);
+        end
+
         function L = getIntegralLengthScale(EK, k)
             % Compute the integral length scale from the energy spectra
             %

@@ -287,6 +287,7 @@ classdef TurbulenceSpectra < handle
             contourf(ax, X, Y, log10(pdf)');
             c = colorbar(ax, 'linewidth', obj.plotConfig.linewidth, 'fontsize', obj.plotConfig.fontsize - 4);
             c.Label.Interpreter = 'latex'; c.TickLabelInterpreter = 'latex';
+            c.Label.String = '$\log_{10}(\rm{p.d.f.})$';
 
             % Restore original plot configuration
             obj.plotConfig.xscale = originalXScale;

@@ -1,6 +1,6 @@
 classdef HTRDataReader < handle
     % The :mat:func:`HTRDataReader` class provides static methods to read 3D fields,
-    % coordinates, and general data from HTR solver output files, which are
+    % coordinates, and general data from HTR solver [1] output files, which are
     % stored in the Hierarchical Data Format (HDF) file format.
     %
     % The Hypersonic Task-based Research (HTR) solver [1] is an open-source

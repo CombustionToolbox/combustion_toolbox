@@ -20,26 +20,12 @@ classdef HelmholtzSolver < handle
     %     when the field is smooth enough, the imaginary part caused by
     %     the Nyquist frequency kmode should be negligible.
     %
-    % Args:
-    %     file_location (char): Path to the data .hdf file
-    %     file_location_nodes (char): Path to the grid .hdf file
-    %     T_ref (float): Temperature of reference [K]
-    %     mu_ref (float): Dynamic viscosity of reference [kg/(m-s)] or [Pa-s]
-    %
-    % Example:
-    %     solver = HelmholtzSolver();
-    %
     % References:
     %   [1] Johnson, S. G. (2011). Notes on FFT-based differentiation.
     %       MIT Applied Mathematics, Tech. Rep. 
     %       Available: http://math.mit.edu/~stevenj/fft-deriv.pdf
     %   [2] Xun Shi, Helmholtz-Hodge decomposition using fft (Python),
     %       Available: https://github.com/shixun22/helmholtz
-    %
-    %
-    % @author: Alberto Cuadra Lara
-    %          Postdoctoral researcher - Group Fluid Mechanics
-    %          Universidad Carlos III de Madrid
 
     properties
         tol0 = 1e-3             % Tolerance for checks

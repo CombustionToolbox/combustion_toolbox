@@ -304,6 +304,48 @@ classdef HelmholtzSolver < handle
             kz = fftfreq(sz(3));
             [KX, KY, KZ] = ndgrid(kx, ky, kz);
         end
+
+        function [chi, chiVariance] = getChi(solenoidal, rho, pressure, sound_mean)
+            % Compute the correlation between the entropic density and the soleonidal part of the velocity field
+            %
+            % Args:
+            %     solenoidal (VelocityField): VelocityField instance with fields (u, v, w) containing the solenoidal velocity components (fluctuations)
+            %     rho (float): Density field
+            %     pressure (float): Pressure field
+            %     sound_mean (float): Mean speed of sound
+            %
+            % Returns:
+            %     chi (float): Correlation between the entropic density and the soleonidal part of the velocity field
+            %     chiVariance (float): Variance of the correlation
+            %
+            % Example:
+            %     [chi, chiVariance] = getChi(obj, solenoidal, rho, pressure, sound_mean)
+
+            % Definitions
+            rho_mean = mean(rho, 'all');
+            p_mean = mean(p, 'all');
+            delta_rho = rho - rho_mean;
+            delta_p = p - p_mean;
+
+            % Compute acoustic and entropic fluctuations of the density
+            delta_rho_acoustic = delta_p ./ sound_mean.^2;
+            delta_rho_entropic = delta_rho - delta_rho_acoustic;
+
+            % Compute root mean square values
+            delta_u_solenoidal_rms = sqrt(mean((solenoidal.u ./ sqrt(rho)).^2, 'all'));
+            delta_rho_acoustic_rms = sqrt(mean(delta_rho_acoustic.^2, 'all'));
+            delta_rho_entropic_rms = sqrt(mean(delta_rho_entropic.^2, 'all'));
+
+            % Compute chi
+            chi_mean = - mean(solenoidal.u .* delta_rho_entropic ./ sqrt(rho), 'all') /  mean(solenoidal.u .* solenoidal.u, 'all') * sound_mean / rho_mean;
+            chi_rms = delta_rho_entropic_rms ./ delta_u_solenoidal_rms * sound_mean / rho_mean;
+
+            fprintf('u_rms_solenoidal:      %.2e\n', delta_u_solenoidal_rms);
+            fprintf('rho_rms_acoustic:      %.2e\n', delta_rho_acoustic_rms);
+            fprintf('rho_rms_entropic:      %.2e\n', delta_rho_entropic_rms);
+            fprintf('chi (Cuadra):          %.2e\n', chi_mean);
+            fprintf('chi variance (Cuadra): %.2e\n', chi_rms^2);
+        end
         
     end
 

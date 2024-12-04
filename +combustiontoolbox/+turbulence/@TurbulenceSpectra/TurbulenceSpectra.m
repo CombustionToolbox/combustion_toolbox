@@ -282,7 +282,8 @@ classdef TurbulenceSpectra < handle
             % Plot the joint PDF
             ax = setFigure(obj.plotConfig);
             contourf(ax, X, Y, log10(pdf)');
-            colorbar(ax, 'linewidth', obj.plotConfig.linewidth, 'fontsize', obj.plotConfig.fontsize - 4, 'interpreter', 'latex');
+            c = colorbar(ax, 'linewidth', obj.plotConfig.linewidth, 'fontsize', obj.plotConfig.fontsize - 4);
+            c.Label.Interpreter = 'latex';
 
             % Restore original plot configuration
             obj.plotConfig.xscale = originalXScale;

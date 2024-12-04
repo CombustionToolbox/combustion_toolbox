@@ -337,7 +337,6 @@ classdef HelmholtzSolver < handle
             
             % Compute root mean square values
             delta_u_solenoidal_rms = sqrt(mean((delta_u_solenoidal).^2, 'all'));
-            delta_rho_acoustic_rms = sqrt(mean(delta_rho_acoustic.^2, 'all'));
             delta_rho_entropic_rms = sqrt(mean(delta_rho_entropic.^2, 'all'));
 
             % Compute chi

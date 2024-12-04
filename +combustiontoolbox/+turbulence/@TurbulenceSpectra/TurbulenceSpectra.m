@@ -231,6 +231,9 @@ classdef TurbulenceSpectra < handle
             % Import packages
             import combustiontoolbox.utils.display.*
 
+            % Definitions
+            centers = (edges(1:end-1) + edges(2:end)) / 2;
+
             % Backup current plot configuration
             originalXScale = obj.plotConfig.xscale;
             originalYScale = obj.plotConfig.yscale;
@@ -241,7 +244,7 @@ classdef TurbulenceSpectra < handle
 
             % Plot the PDF
             ax = setFigure(obj.plotConfig);
-            plotFigure('x', edges, '\rm{p.d.f.}', pdf, 'color', 'auto', 'ax', ax);
+            plotFigure('x', centers, '\rm{p.d.f.}', pdf, 'color', 'auto', 'ax', ax);
 
             % Restore original plot configuration
             obj.plotConfig.xscale = originalXScale;
@@ -379,9 +382,6 @@ classdef TurbulenceSpectra < handle
             
             % Compute the PDF
             [pdf, edges] = histcounts(fluctuation(:), 'Normalization', 'pdf');
-            
-            % Adjust bin edges to remove the last edge
-            edges = edges(1:end-1);
         end
 
         function [pdf, edgesX, edgesY] = getJointPDF(fluctuationX, fluctuationY)

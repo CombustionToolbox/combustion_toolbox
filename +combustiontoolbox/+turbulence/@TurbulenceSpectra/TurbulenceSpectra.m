@@ -266,6 +266,11 @@ classdef TurbulenceSpectra < handle
             % Import packages
             import combustiontoolbox.utils.display.*
 
+            % Definitions
+            xCenters = (edgesX(1:end-1) + edgesX(2:end)) / 2;
+            yCenters = (edgesY(1:end-1) + edgesY(2:end)) / 2;
+            [X, Y] = meshgrid(xCenters, yCenters);
+
             % Backup current plot configuration
             originalXScale = obj.plotConfig.xscale;
             originalYScale = obj.plotConfig.yscale;
@@ -276,10 +281,8 @@ classdef TurbulenceSpectra < handle
 
             % Plot the joint PDF
             ax = setFigure(obj.plotConfig);
-            imagesc(edgesX, edgesY, pdf, 'Parent', ax);
-            xlabel(ax, 'x', 'Interpreter', 'latex');
-            ylabel(ax, 'y', 'Interpreter', 'latex');
-            colorbar(ax);
+            contourf(ax, X, Y, log10(joint)');
+            colorbar(ax, 'linewidth', obj.plotConfig.linewidth, 'fontsize', obj.plotConfig.fontsize);
 
             % Restore original plot configuration
             obj.plotConfig.xscale = originalXScale;

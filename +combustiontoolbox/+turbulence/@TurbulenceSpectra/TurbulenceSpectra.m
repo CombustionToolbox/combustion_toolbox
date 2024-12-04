@@ -1,6 +1,6 @@
 classdef TurbulenceSpectra < handle
-    % The :mat:func:`TurbulenceSpectra` class provides methods for computing turbulence spectra.
-    % Supports spherical and cross-plane averaging.
+    % The :mat:func:`TurbulenceSpectra` class provides methods for computing
+    % turbulence spectra. Supports spherical and cross-plane averaging.
 
     properties
         averaging = 'spherical'  % Type of averaging ('spherical', 'crossplane')
@@ -248,6 +248,44 @@ classdef TurbulenceSpectra < handle
             obj.plotConfig.yscale = originalYScale;
         end
 
+        function ax = plotJointPDF(obj, pdf, edgesX, edgesY)
+            % Plot the joint probability density function (PDF)
+            %
+            % Args:
+            %     obj (TurbulenceSpectra): TurbulenceSpectra object
+            %     pdf (float): Joint probability density function
+            %     edgesX (float): Bin edges for fluctuationX
+            %     edgesY (float): Bin edges for fluctuationY
+            %
+            % Returns:
+            %     ax (Axes): Axes object
+            %
+            % Example:
+            %     ax = plotJointPDF(obj, pdf, edgesX, edgesY);
+
+            % Import packages
+            import combustiontoolbox.utils.display.*
+
+            % Backup current plot configuration
+            originalXScale = obj.plotConfig.xscale;
+            originalYScale = obj.plotConfig.yscale;
+
+            % Set plot configuration to linear scales
+            obj.plotConfig.xscale = 'linear';
+            obj.plotConfig.yscale = 'linear';
+
+            % Plot the joint PDF
+            ax = setFigure(obj.plotConfig);
+            imagesc(edgesX, edgesY, pdf, 'Parent', ax);
+            xlabel(ax, 'x', 'Interpreter', 'latex');
+            ylabel(ax, 'y', 'Interpreter', 'latex');
+            colorbar(ax);
+
+            % Restore original plot configuration
+            obj.plotConfig.xscale = originalXScale;
+            obj.plotConfig.yscale = originalYScale;
+        end
+
         function movie(obj, k, EK, varargin)
             % Create a movie by plotting slices of the spectra
             %
@@ -332,9 +370,6 @@ classdef TurbulenceSpectra < handle
             % Example:
             %     pdf = getPDF(TurbulenceSpectra(), fluctuation);
 
-            % Import packages
-            import combustiontoolbox.utils.display.*
-
             % Check input
             assert(isnumeric(fluctuation), 'Input must be a 3D array.');
             
@@ -343,6 +378,28 @@ classdef TurbulenceSpectra < handle
             
             % Adjust bin edges to remove the last edge
             edges = edges(1:end-1);
+        end
+
+        function [pdf, edgesX, edgesY] = getJointPDF(fluctuationX, fluctuationY)
+            % Compute the joint probability density function (PDF) of two 3D fluctuation fields
+            %
+            % Args:
+            %     fluctuationX (float): 3D fluctuation field
+            %     fluctuationY (float): 3D fluctuation field 
+            %
+            % Returns:
+            %     pdf (float): Joint probability density function
+            %     edgesX (float): Bin edges for fluctuationX
+            %     edgesY (float): Bin edges for fluctuationY
+            %
+            % Example:
+            %     pdf = getJointPDF(TurbulenceSpectra(), fluctuationX, fluctuationY);
+
+            % Check input
+            assert(isnumeric(fluctuationX) && isnumeric(fluctuationY), 'Input must be 3D arrays.');
+
+            % Compute the joint PDF
+            [pdf, edgesX, edgesY] = histcounts2(fluctuationX(:), fluctuationY(:), 'Normalization', 'pdf');
         end
 
         function L = getIntegralLengthScale(EK, k)

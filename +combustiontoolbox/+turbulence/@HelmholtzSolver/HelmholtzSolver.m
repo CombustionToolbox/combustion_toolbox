@@ -326,21 +326,22 @@ classdef HelmholtzSolver < handle
 
             % Definitions
             rho_mean = mean(rho, 'all');
-            p_mean = mean(pressure, 'all');
+            pressure_mean = mean(pressure, 'all');
             delta_rho = rho - rho_mean;
-            delta_p = pressure - p_mean;
+            delta_pressure = pressure - pressure_mean;
+            delta_u_solenoidal = solenoidal.u ./ sqrt(rho);
 
             % Compute acoustic and entropic fluctuations of the density
-            delta_rho_acoustic = delta_p ./ sound_mean.^2;
+            delta_rho_acoustic = delta_pressure ./ sound_mean.^2;
             delta_rho_entropic = delta_rho - delta_rho_acoustic;
-
+            
             % Compute root mean square values
-            delta_u_solenoidal_rms = sqrt(mean((solenoidal.u ./ sqrt(rho)).^2, 'all'));
+            delta_u_solenoidal_rms = sqrt(mean((delta_u_solenoidal).^2, 'all'));
             delta_rho_acoustic_rms = sqrt(mean(delta_rho_acoustic.^2, 'all'));
             delta_rho_entropic_rms = sqrt(mean(delta_rho_entropic.^2, 'all'));
 
             % Compute chi
-            chi = - mean(solenoidal.u .* delta_rho_entropic ./ sqrt(rho), 'all') /  mean(solenoidal.u .* solenoidal.u, 'all') * sound_mean / rho_mean;
+            chi = - mean(solenoidal.u .* delta_rho_entropic, 'all') /  mean(delta_u_solenoidal.^2, 'all') * sound_mean / rho_mean;
             chiVariance = (delta_rho_entropic_rms ./ delta_u_solenoidal_rms * sound_mean / rho_mean)^2;
         end
         

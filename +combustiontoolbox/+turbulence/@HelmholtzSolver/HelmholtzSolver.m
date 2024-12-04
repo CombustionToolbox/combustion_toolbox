@@ -342,12 +342,6 @@ classdef HelmholtzSolver < handle
             % Compute chi
             chi = - mean(solenoidal.u .* delta_rho_entropic ./ sqrt(rho), 'all') /  mean(solenoidal.u .* solenoidal.u, 'all') * sound_mean / rho_mean;
             chiVariance = (delta_rho_entropic_rms ./ delta_u_solenoidal_rms * sound_mean / rho_mean)^2;
-
-            fprintf('u_rms_solenoidal:      %.2e\n', delta_u_solenoidal_rms);
-            fprintf('rho_rms_acoustic:      %.2e\n', delta_rho_acoustic_rms);
-            fprintf('rho_rms_entropic:      %.2e\n', delta_rho_entropic_rms);
-            fprintf('chi (Cuadra):          %.2e\n', chi);
-            fprintf('chi variance (Cuadra): %.2e\n', chiVariance);
         end
         
     end

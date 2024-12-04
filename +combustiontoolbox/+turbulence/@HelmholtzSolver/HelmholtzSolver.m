@@ -318,14 +318,17 @@ classdef HelmholtzSolver < handle
             %     chi (float): Correlation between the entropic density and the soleonidal part of the velocity field
             %     chiVariance (float): Variance of the correlation
             %
+            % Note: The components of solenoidal refer to the fluctuations of the density weighted velocity field, i.e.,
+            %       u_weighted = u * sqrt(rho), v_weighted = v * sqrt(rho), w_weighted = w * sqrt(rho).
+            %
             % Example:
             %     [chi, chiVariance] = getChi(obj, solenoidal, rho, pressure, sound_mean)
 
             % Definitions
             rho_mean = mean(rho, 'all');
-            p_mean = mean(p, 'all');
+            p_mean = mean(pressure, 'all');
             delta_rho = rho - rho_mean;
-            delta_p = p - p_mean;
+            delta_p = pressure - p_mean;
 
             % Compute acoustic and entropic fluctuations of the density
             delta_rho_acoustic = delta_p ./ sound_mean.^2;
@@ -337,14 +340,14 @@ classdef HelmholtzSolver < handle
             delta_rho_entropic_rms = sqrt(mean(delta_rho_entropic.^2, 'all'));
 
             % Compute chi
-            chi_mean = - mean(solenoidal.u .* delta_rho_entropic ./ sqrt(rho), 'all') /  mean(solenoidal.u .* solenoidal.u, 'all') * sound_mean / rho_mean;
-            chi_rms = delta_rho_entropic_rms ./ delta_u_solenoidal_rms * sound_mean / rho_mean;
+            chi = - mean(solenoidal.u .* delta_rho_entropic ./ sqrt(rho), 'all') /  mean(solenoidal.u .* solenoidal.u, 'all') * sound_mean / rho_mean;
+            chiVariance = (delta_rho_entropic_rms ./ delta_u_solenoidal_rms * sound_mean / rho_mean)^2;
 
             fprintf('u_rms_solenoidal:      %.2e\n', delta_u_solenoidal_rms);
             fprintf('rho_rms_acoustic:      %.2e\n', delta_rho_acoustic_rms);
             fprintf('rho_rms_entropic:      %.2e\n', delta_rho_entropic_rms);
-            fprintf('chi (Cuadra):          %.2e\n', chi_mean);
-            fprintf('chi variance (Cuadra): %.2e\n', chi_rms^2);
+            fprintf('chi (Cuadra):          %.2e\n', chi);
+            fprintf('chi variance (Cuadra): %.2e\n', chiVariance);
         end
         
     end

@@ -99,14 +99,14 @@ classdef TurbulenceSpectra < handle
             obj.time = tic;
 
             % Set the appropriate averaging function
-            switch obj.averaging
+            switch lower(obj.averaging)
                 case 'spherical'
                     % Use 3D FFT for spherical averaging
                     F = fftn(fluctuation) / numel(fluctuation);
                     EK = fftshift(abs(F).^2);
                     % Set the function for spherical averaging
                     averagingFunction = @obj.getSphericallyAveragedSpectra;
-                case 'spherical2D'
+                case 'spherical2d'
                     % Use 3D FFT for spherical averaging
                     F = fftn(fluctuation) / numel(fluctuation);
                     EK = fftshift(abs(F).^2);
@@ -156,7 +156,7 @@ classdef TurbulenceSpectra < handle
             velocity = convertData2VelocityField(velocity);
 
             % Set the appropriate averaging function
-            switch obj.averaging
+            switch lower(obj.averaging)
                 case 'spherical'
                     % Use 3D FFT for spherical averaging
                     U = fftn(velocity.u) / numel(velocity.u);
@@ -165,7 +165,7 @@ classdef TurbulenceSpectra < handle
                     EK = 0.5 * fftshift(abs(U).^2 + abs(V).^2 + abs(W).^2);
                     % Set the function for spherical averaging
                     averagingFunction = @obj.getSphericallyAveragedSpectra;
-                case 'spherical2D'
+                case 'spherical2d'
                     % Use 3D FFT for spherical averaging
                     U = fftn(velocity.u) / numel(velocity.u);
                     V = fftn(velocity.v) / numel(velocity.v);

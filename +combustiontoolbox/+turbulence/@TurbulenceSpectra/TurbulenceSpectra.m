@@ -32,7 +32,7 @@ classdef TurbulenceSpectra < handle
 
             % Parse input arguments
             p = inputParser;
-            addParameter(p, 'averaging', obj.averaging, @(x) ischar(x) && ismember(lower(x), {'spherical', 'spherical2D', 'crossplane'}));
+            addParameter(p, 'averaging', obj.averaging, @(x) ischar(x) && ismember(lower(x), {'spherical', 'spherical2d', 'crossplane'}));
             addParameter(p, 'axis', obj.axis, @(x) ischar(x) && ismember(lower(x), {'x', 'y', 'z'}));
             addParameter(p, 'plotConfig', defaultPlotConfig, @(x) isa(x, 'combustiontoolbox.utils.display.PlotConfig'));
             addParameter(p, 'FLAG_TIME', obj.FLAG_TIME, @islogical);

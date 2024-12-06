@@ -3,8 +3,8 @@ classdef TurbulenceSpectra < handle
     % turbulence spectra. Supports spherical and cross-plane averaging.
 
     properties
-        averaging = 'spherical'  % Type of averaging ('spherical', 'crossplane')
-        axis = 'x'               % Axis for cross-plane averaging ('x', 'y', or 'z')
+        averaging = 'spherical'  % Type of averaging ('spherical', 'spherical2D', 'crossplane')
+        axis = 'x'               % Axis for cross-plane averaging ('x', 'y', 'z')
         fps = 60                 % Frame rate for movie (temporal will be added into PlotConfig)
         time                     % Elapsed time
         plotConfig               % PlotConfig object
@@ -18,7 +18,7 @@ classdef TurbulenceSpectra < handle
             % Constructor for TurbulenceSpectra
             %
             % Optional Args:
-            %     averaging (char): Type of averaging ('spherical' or 'crossplane')
+            %     averaging (char): Type of averaging ('spherical', 'spherical2D', 'crossplane')
             %     axis (char): Axis for cross-plane averaging ('x', 'y', 'z')
             %
             % Example:
@@ -32,7 +32,7 @@ classdef TurbulenceSpectra < handle
 
             % Parse input arguments
             p = inputParser;
-            addParameter(p, 'averaging', obj.averaging, @(x) ischar(x) && ismember(lower(x), {'spherical', 'crossplane'}));
+            addParameter(p, 'averaging', obj.averaging, @(x) ischar(x) && ismember(lower(x), {'spherical', 'spherical2D', 'crossplane'}));
             addParameter(p, 'axis', obj.axis, @(x) ischar(x) && ismember(lower(x), {'x', 'y', 'z'}));
             addParameter(p, 'plotConfig', defaultPlotConfig, @(x) isa(x, 'combustiontoolbox.utils.display.PlotConfig'));
             addParameter(p, 'FLAG_TIME', obj.FLAG_TIME, @islogical);
@@ -106,6 +106,12 @@ classdef TurbulenceSpectra < handle
                     EK = fftshift(abs(F).^2);
                     % Set the function for spherical averaging
                     averagingFunction = @obj.getSphericallyAveragedSpectra;
+                case 'spherical2D'
+                    % Use 3D FFT for spherical averaging
+                    F = fftn(fluctuation) / numel(fluctuation);
+                    EK = fftshift(abs(F).^2);
+                    % Set the function for spherical averaging
+                    averagingFunction = @obj.getSphericallyAveragedSpectra2D;
                 case 'crossplane'
                     % Use 2D FFT for cross-plane averaging
                     EK = obj.getCrossplaneFFT(fluctuation, obj.axis);
@@ -159,6 +165,14 @@ classdef TurbulenceSpectra < handle
                     EK = 0.5 * fftshift(abs(U).^2 + abs(V).^2 + abs(W).^2);
                     % Set the function for spherical averaging
                     averagingFunction = @obj.getSphericallyAveragedSpectra;
+                case 'spherical2D'
+                    % Use 3D FFT for spherical averaging
+                    U = fftn(velocity.u) / numel(velocity.u);
+                    V = fftn(velocity.v) / numel(velocity.v);
+                    W = fftn(velocity.w) / numel(velocity.w);
+                    EK = 0.5 * fftshift(abs(U).^2 + abs(V).^2 + abs(W).^2);
+                    % Set the function for spherical averaging
+                    averagingFunction = @obj.getSphericallyAveragedSpectra2D;
                 case 'crossplane'
                     % Use 2D FFT for cross-plane averaging
                     EK = obj.getCrossplaneFFTVelocity(velocity, obj.axis);
@@ -448,7 +462,7 @@ classdef TurbulenceSpectra < handle
             %
             % Args:
             %   fluctuation (float): 3D fluctuation field
-            %   axisType (char): Axis for cross-plane averaging ('x', 'y', or 'z')
+            %   axisType (char): Axis for cross-plane averaging ('x', 'y', 'z')
             %
             % Returns:
             %   EK (float): 3D array representing the 2D energy spectra computed on the
@@ -492,7 +506,7 @@ classdef TurbulenceSpectra < handle
             %   u (float): 3D velocity field in the x-direction
             %   v (float): 3D velocity field in the y-direction
             %   w (float): 3D velocity field in the z-direction
-            %   axisType (char): Axis for cross-plane averaging ('x', 'y', or 'z')
+            %   axisType (char): Axis for cross-plane averaging ('x', 'y', 'z')
             %
             % Returns:
             %   EK (float): 3D array representing the 2D energy spectra computed on the
@@ -607,6 +621,45 @@ classdef TurbulenceSpectra < handle
             fftResult = fft(EK(:, 1, 1));
             numFreqs = ceil(length(fftResult) / 2);
             k = 0:numFreqs - 1;
+        end
+
+        function [EK_avg2D, k] = getSphericallyAveragedSpectra2D(EK)
+            % Compute the spherically averaged 2D energy spectra of a 3D field
+            %
+            % Args:
+            %   EK (float): 3D energy spectra
+            %
+            % Returns:
+            %   EK_avg2D (float): Spherically averaged 2D energy spectra
+            %   k (float): Wavenumber vector
+            %
+            % Example:
+            %   [EK_avg2D, k] = getSphericallyAveragedSpectra2D(EK);
+            
+            % Get the center of the 3D field
+            [NX, NY, NZ] = size(EK);
+            centerX = floor(NX/2);
+            centerY = floor(NY/2);
+
+            % Generate grid indices for the entire 3D array
+            [X, Y, ~] = ndgrid(1:NX, 1:NY, 1:NZ);
+
+            % Compute wavenumber indices relative to the center
+            KX = round(abs(X - centerX));
+            KY = round(abs(Y - centerY));
+
+            % Map the 3D energy spectrum to a 2D grid using accumulation
+            waveIndices = [KX(:), KY(:)] + 1;
+
+            % Accumulate the energy spectrum in a 2D matrix
+            maxWaveIndicesX = max(waveIndices(:, 1));
+            maxWaveIndicesY = max(waveIndices(:, 2));
+            EK_avg2D = accumarray(waveIndices, EK(:), [maxWaveIndicesX, maxWaveIndicesY], @sum, 1e-50);
+
+            % Compute wavenumber vector
+            fftResult = fft(EK(:, 1, 1));
+            numFreqs = ceil(length(fftResult) / 2);
+            k = sqrt(2) * (0:numFreqs - 1);
         end
 
     end

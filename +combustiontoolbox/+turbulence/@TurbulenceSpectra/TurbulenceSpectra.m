@@ -3,7 +3,7 @@ classdef TurbulenceSpectra < handle
     % turbulence spectra. Supports spherical and cross-plane averaging.
 
     properties
-        averaging = 'spherical'  % Type of averaging ('spherical', 'spherical2D', 'crossplane')
+        averaging = 'spherical'  % Type of averaging ('spherical', 'spherical2D', 'crossplane', 'crossplane2D')
         axis = 'x'               % Axis for cross-plane averaging ('x', 'y', 'z')
         fps = 60                 % Frame rate for movie (temporal will be added into PlotConfig)
         time                     % Elapsed time
@@ -18,7 +18,7 @@ classdef TurbulenceSpectra < handle
             % Constructor for TurbulenceSpectra
             %
             % Optional Args:
-            %     averaging (char): Type of averaging ('spherical', 'spherical2D', 'crossplane')
+            %     averaging (char): Type of averaging ('spherical', 'spherical2D', 'crossplane', 'crossplane2D')
             %     axis (char): Axis for cross-plane averaging ('x', 'y', 'z')
             %
             % Example:
@@ -32,7 +32,7 @@ classdef TurbulenceSpectra < handle
 
             % Parse input arguments
             p = inputParser;
-            addParameter(p, 'averaging', obj.averaging, @(x) ischar(x) && ismember(lower(x), {'spherical', 'spherical2d', 'crossplane'}));
+            addParameter(p, 'averaging', obj.averaging, @(x) ischar(x) && ismember(lower(x), {'spherical', 'spherical2d', 'crossplane', 'crossplane2d'}));
             addParameter(p, 'axis', obj.axis, @(x) ischar(x) && ismember(lower(x), {'x', 'y', 'z'}));
             addParameter(p, 'plotConfig', defaultPlotConfig, @(x) isa(x, 'combustiontoolbox.utils.display.PlotConfig'));
             addParameter(p, 'FLAG_TIME', obj.FLAG_TIME, @islogical);
@@ -117,6 +117,11 @@ classdef TurbulenceSpectra < handle
                     EK = obj.getCrossplaneFFT(fluctuation, obj.axis);
                     % Set the function for cross-plane averaging
                     averagingFunction = @obj.getCrossplaneAveragedSpectra;
+                case 'crossplane2d'
+                    % Use 2D FFT for cross-plane averaging
+                    EK = obj.getCrossplaneFFT(fluctuation, obj.axis);
+                    % Set the function for cross-plane averaging
+                    averagingFunction = @obj.getCrossplaneAveragedSpectra2D;
             end
             
             % Compute the energy spectra based on the averaging type
@@ -178,6 +183,11 @@ classdef TurbulenceSpectra < handle
                     EK = obj.getCrossplaneFFTVelocity(velocity, obj.axis);
                     % Set the function for cross-plane averaging
                     averagingFunction = @obj.getCrossplaneAveragedSpectra;
+                case 'crossplane2d'
+                    % Use 2D FFT for cross-plane averaging
+                    EK = obj.getCrossplaneFFTVelocity(velocity, obj.axis);
+                    % Set the function for cross-plane averaging
+                    averagingFunction = @obj.getCrossplaneAveragedSpectra2D;
             end
             
             % Compute the energy spectra based on the averaging type
@@ -560,35 +570,79 @@ classdef TurbulenceSpectra < handle
             %
             % Example:
             %   [EK_avg, k] = getCrossplaneAveragedSpectra(EK);
-        
-            % Definitions
-            sliceDim = 3; % Axis for slicing
-            numSlices = size(EK, sliceDim);
-        
+                
             % Get the center of the homogeneous plane
-            [N1, N2, ~] = size(EK);
-            centerX1 = floor(N1 / 2);
-            centerX2 = floor(N2 / 2);
-            [X1, X2] = ndgrid(1:N1, 1:N2);
+            [NX, NY, numSlices] = size(EK);
+            centerX = floor(NX / 2);
+            centerY = floor(NY / 2);
+            [X, Y] = ndgrid(1:NX, 1:NY);
             
             % Compute radii for radial averaging
-            radii = round(sqrt((X1  - centerX1).^2 + (X2 - centerX2).^2)) + 1;
+            radii = round(sqrt((X  - centerX).^2 + (Y - centerY).^2)) + 1;
             maxRadius = max(radii(:));
             
             % Radially average slices
             EK_avg = zeros(numSlices, maxRadius);
             for i = 1:numSlices
                 % Extract slice
-                sliceData = squeeze(EK(:, :, i));
+                sliceData = EK(:, :, i);
         
                 % Radially average
-                EK_avg(i, :) = accumarray(radii(:), sliceData(:), [maxRadius, 1], @mean, 1e-50);
+                EK_avg(i, :) = accumarray(radii(:), sliceData(:), [maxRadius, 1], @sum, 1e-50);
             end
         
             % Compute wavenumber vector
             fftResult = fft(EK(:, 1, 1));
             numFreqs = ceil(length(fftResult) / 2);
             k = 0:numFreqs - 1;
+        end
+
+        function [EK_avg2D, k] = getCrossplaneAveragedSpectra2D(EK)
+            % Compute the cross-plane averaged 2D energy spectra of a 3D field.
+            % The homogeneous plane corresponds to the first two dimensions.
+            %
+            % Args:
+            %   EK (float): 3D energy spectra (combined from all velocity components)
+            %
+            % Returns:
+            %   EK_avg2D (float): 2D radially averaged energy spectra
+            %   k (float): Wavenumber vector along homogeneous directions
+            %
+            % Example:
+            %   [EK_avg2D, k] = getCrossplaneAveragedSpectra2D(EK);
+        
+            % Get the size of the homogeneous plane
+            [NX, NY, numSlices] = size(EK);
+        
+            % Define the center of the homogeneous plane
+            centerX = floor(NX / 2);
+            centerY = floor(NY / 2);
+        
+            % Create the grid for radial averaging
+            [X, Y] = ndgrid(1:NX, 1:NY);
+            radiiX = round(abs(X - centerX)) + 1;
+            radiiY = round(abs(Y - centerY)) + 1;
+        
+            % Accumulate energy spectra into 2D grid
+            waveIndices = [radiiX(:), radiiY(:)];
+            maxWaveIndicesX = max(waveIndices(:, 1));
+            maxWaveIndicesY = max(waveIndices(:, 2));
+            
+            % Radially average slices
+            EK_avg2D = zeros(maxWaveIndicesX, maxWaveIndicesY, numSlices);
+            for i = 1:numSlices
+                % Extract slice
+                sliceData = squeeze(EK(:, :, i));
+
+                % Radially average
+                EK_avg2D(:, :, i) = accumarray(waveIndices, sliceData(:), ...
+                    [maxWaveIndicesX, maxWaveIndicesY], @sum, 1e-50);
+            end
+        
+            % Compute wavenumber vector
+            fftResult = fft(EK(:, 1, 1));
+            numFreqs = ceil(length(fftResult) / 2);
+            k = sqrt(2) * (0:numFreqs - 1);
         end
         
         function [EK_avg, k] = getSphericallyAveragedSpectra(EK)
@@ -613,7 +667,7 @@ classdef TurbulenceSpectra < handle
             [X, Y, Z] = ndgrid(1:NX, 1:NY, 1:NZ);
             radii = round(sqrt((X - centerX).^2 + (Y - centerY).^2 + (Z - centerZ).^2)) + 1;
             maxRadius = max(radii(:));
-        
+
             % Radially average the energy spectra 
             EK_avg = accumarray(radii(:), EK(:), [maxRadius, 1], @sum, 1e-50);
         

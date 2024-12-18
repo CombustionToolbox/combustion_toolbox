@@ -573,8 +573,8 @@ classdef TurbulenceSpectra < handle
                 
             % Get the center of the homogeneous plane
             [NX, NY, numSlices] = size(EK);
-            centerX = floor(NX / 2);
-            centerY = floor(NY / 2);
+            centerX = floor(NX / 2) + 1;
+            centerY = floor(NY / 2) + 1;
             [X, Y] = ndgrid(1:NX, 1:NY);
             
             % Compute radii for radial averaging
@@ -594,7 +594,7 @@ classdef TurbulenceSpectra < handle
             % Compute wavenumber vector
             fftResult = fft(EK(:, 1, 1));
             numFreqs = ceil(length(fftResult) / 2);
-            k = 0:numFreqs - 1;
+            k = sqrt(2) * (0:numFreqs - 1);
         end
 
         function [EK_avg2D, k] = getCrossplaneAveragedSpectra2D(EK)
@@ -615,8 +615,8 @@ classdef TurbulenceSpectra < handle
             [NX, NY, numSlices] = size(EK);
         
             % Define the center of the homogeneous plane
-            centerX = floor(NX / 2);
-            centerY = floor(NY / 2);
+            centerX = floor(NX / 2) + 1;
+            centerY = floor(NY / 2) + 1;
         
             % Create the grid for radial averaging
             [X, Y] = ndgrid(1:NX, 1:NY);
@@ -659,9 +659,9 @@ classdef TurbulenceSpectra < handle
         
             % Get the center of the 3D field
             [NX, NY, NZ] = size(EK);
-            centerX = floor(NX / 2);
-            centerY = floor(NY / 2);
-            centerZ = floor(NZ / 2);
+            centerX = floor(NX / 2) + 1;
+            centerY = floor(NY / 2) + 1;
+            centerZ = floor(NZ / 2) + 1;
         
             % Compute radii for radial averaging
             [X, Y, Z] = ndgrid(1:NX, 1:NY, 1:NZ);
@@ -692,8 +692,8 @@ classdef TurbulenceSpectra < handle
             
             % Get the center of the 3D field
             [NX, NY, NZ] = size(EK);
-            centerX = floor(NX/2);
-            centerY = floor(NY/2);
+            centerX = floor(NX/2) + 1;
+            centerY = floor(NY/2) + 1;
 
             % Generate grid indices for the entire 3D array
             [X, Y, ~] = ndgrid(1:NX, 1:NY, 1:NZ);

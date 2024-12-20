@@ -87,7 +87,7 @@ classdef TurbulenceSpectra < handle
             %
             % Returns:
             %     EK_avg (float): Averaged energy spectra
-            %     k (float): Wavenumber vector
+            %     k (float): Wavenumber along the homogeneous direction
             %
             % Example:
             %     [EK_avg, k] = getEnergySpectra(TurbulenceSpectra(), fluctuation);
@@ -143,7 +143,7 @@ classdef TurbulenceSpectra < handle
             %
             % Returns:
             %     EK_avg (float): Averaged energy spectra
-            %     k (float): Wavenumber vector
+            %     k (float): Wavenumber along the homogeneous direction
             %
             % Example:
             %     [EK_avg, k] = getEnergySpectraVelocity(TurbulenceSpectra(), velocity);
@@ -205,7 +205,7 @@ classdef TurbulenceSpectra < handle
             %
             % Args:
             %     obj (TurbluenceSpectra): TurbulenceSpectra object
-            %     k (float): Wavenumber vector
+            %     k (float): Wavenumber along the homogeneous direction
             %     EK (float): Energy spectra
             %
             % Optional Args:
@@ -323,7 +323,7 @@ classdef TurbulenceSpectra < handle
             %
             % Args:
             %     obj (TurbulenceSpectra): TurbulenceSpectra object
-            %     k (float): Wavenumber vector
+            %     k (float): Wavenumber along the homogeneous direction
             %     EK (float): Energy spectra (2D array)
             %
             % Example:
@@ -436,7 +436,7 @@ classdef TurbulenceSpectra < handle
             %
             % Args:
             %     EK (float): Energy spectra
-            %     k (float): Wavenumber vector
+            %     k (float): Wavenumber along the homogeneous direction
             %
             % Returns:
             %     L (float): Integral length scale
@@ -566,7 +566,7 @@ classdef TurbulenceSpectra < handle
             %
             % Returns:
             %   EK_avg (float): Radially averaged energy spectra for the slices
-            %   k (float): Wavenumber vector along the homogeneous direction
+            %   k (float): Wavenumber along the homogeneous direction
             %
             % Example:
             %   [EK_avg, k] = getCrossplaneAveragedSpectra(EK);
@@ -591,7 +591,7 @@ classdef TurbulenceSpectra < handle
                 EK_avg(i, :) = accumarray(radii(:), sliceData(:), [maxRadius, 1], @sum, 1e-50);
             end
         
-            % Compute wavenumber vector
+            % Compute wavenumber
             fftResult = fft(EK(:, 1, 1));
             numFreqs = ceil(length(fftResult) / 2);
             k = sqrt(2) * (0:numFreqs - 1);
@@ -606,7 +606,7 @@ classdef TurbulenceSpectra < handle
             %
             % Returns:
             %   EK_avg2D (float): 2D radially averaged energy spectra
-            %   k (float): Wavenumber vector along homogeneous directions
+            %   k (float): Wavenumber along homogeneous directions
             %
             % Example:
             %   [EK_avg2D, k] = getCrossplaneAveragedSpectra2D(EK);
@@ -639,7 +639,7 @@ classdef TurbulenceSpectra < handle
                     [maxWaveIndicesX, maxWaveIndicesY], @sum, 1e-50);
             end
         
-            % Compute wavenumber vector
+            % Compute wavenumber
             fftResult = fft(EK(:, 1, 1));
             numFreqs = ceil(length(fftResult) / 2);
             k = sqrt(2) * (0:numFreqs - 1);
@@ -671,7 +671,7 @@ classdef TurbulenceSpectra < handle
             % Radially average the energy spectra 
             EK_avg = accumarray(radii(:), EK(:), [maxRadius, 1], @sum, 1e-50);
         
-            % Compute wavenumber vector
+            % Compute wavenumber
             fftResult = fft(EK(:, 1, 1));
             numFreqs = ceil(length(fftResult) / 2);
             k = 0:numFreqs - 1;
@@ -685,7 +685,7 @@ classdef TurbulenceSpectra < handle
             %
             % Returns:
             %   EK_avg2D (float): Spherically averaged 2D energy spectra
-            %   k (float): Wavenumber vector
+            %   k (float): Wavenumber along the homogeneous direction
             %
             % Example:
             %   [EK_avg2D, k] = getSphericallyAveragedSpectra2D(EK);
@@ -710,7 +710,7 @@ classdef TurbulenceSpectra < handle
             maxWaveIndicesY = max(waveIndices(:, 2));
             EK_avg2D = accumarray(waveIndices, EK(:), [maxWaveIndicesX, maxWaveIndicesY], @sum, 1e-50);
 
-            % Compute wavenumber vector
+            % Compute wavenumber
             fftResult = fft(EK(:, 1, 1));
             numFreqs = ceil(length(fftResult) / 2);
             k = sqrt(2) * (0:numFreqs - 1);

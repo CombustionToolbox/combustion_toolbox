@@ -49,8 +49,8 @@ classdef Mixture < handle & matlab.mixin.Copyable
         natomElementsReact    % Vector atoms of each element without frozen species [-]
         chemicalSystem        % Chemical system object
         equationOfState       % Equation of State object
-        u                     % Velocity relative to the shock front [m/s]
-        uShock                % Velocity in the shock tube [m/s]
+        u                     % Velocity module relative to the shock front [m/s]
+        uShock                % Velocity module in the shock tube [m/s]
         uNormal               % Normal component of u [m/s]
         cjSpeed               % Chapman-Jouguet speed
         mach                  % Mach number [-]
@@ -111,6 +111,7 @@ classdef Mixture < handle & matlab.mixin.Copyable
     
     methods
         
+        mix = setStagnation(mix, varargin)
         print(mix, varargin)
 
         function obj = Mixture(chemicalSystem, varargin)
@@ -840,7 +841,7 @@ classdef Mixture < handle & matlab.mixin.Copyable
 
             % Compute entropy [J/K]
             obj.s = obj.s0 + obj.Ds;
-
+            
             % Compute Gibbs energy [J]
             obj.g = obj.h - obj.T * obj.s;
             

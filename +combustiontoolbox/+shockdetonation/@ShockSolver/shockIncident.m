@@ -128,7 +128,7 @@ function [p2, T2, p2p1, T2T1] = get_guess(obj, mix1, mix2)
 
         if M1 > obj.machThermo
             % Estimate post-shock state considering h2 = h1 + u1^2 / 2
-            mix2.h = (mix1.h + mix1.u^2/2) * mix1.mi; % [J]
+            mix2.h = mix1.h + 0.5 * mix1.u^2 * mix1.mi; % [J]
 
             % Initialize mix2 and set pressure
             mix2.p = p2p1 * mix1.p;

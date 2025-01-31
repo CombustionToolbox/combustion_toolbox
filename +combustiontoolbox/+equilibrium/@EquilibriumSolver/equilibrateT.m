@@ -128,6 +128,10 @@ function mix2 = equilibrateTPerfect(mix1, mix2, T)
     
     % Import packages
     import combustiontoolbox.common.Units
+    import combustiontoolbox.common.Constants
+
+    % Definitions
+    Tref = 298.15; % [K] To be fixed: each species should have its own reference temperature
 
     % Recompute properties of mix2
     setTemperature(mix2, T);
@@ -138,7 +142,24 @@ function mix2 = equilibrateTPerfect(mix1, mix2, T)
     mix2.gamma = mix1.gamma;
     mix2.gamma_s = mix1.gamma_s;
     mix2.sound = sqrt(mix2.gamma * Units.convert(mix2.p, 'bar', 'Pa') / mix2.rho);
+
+    % Compute enthalpy [J]
+    mix2.hf = mix1.hf;
+    mix2.DhT = mix1.cp * (T - Tref);
+    mix2.h = mix2.hf + mix2.DhT;
+
+    % Compute internal energy [J]
+    mix2.ef = mix1.ef;
+    mix2.DeT = mix1.cv * (T - Tref);
+    mix2.e = mix2.ef + mix2.DeT;
+
+    % Compute entropy [J/K]
+    mix2.s0 = mix1.s0 + mix1.cp * log(T / mix1.T);
+    mix2.s = mix2.s0 + mix2.Ds;
     
+    % Compute Gibbs free energy
+    mix2.g = mix2.h - T * mix2.s;
+
     if isempty(mix2.u)
         return
     end

@@ -17,12 +17,6 @@ function mix2 = equilibrate(obj, mix2, varargin)
     
     % Initialization
     mix1 = mix2.copy();
-
-    if obj.FLAG_TCHEM_FROZEN
-        % TO BE IMPLEMENTED
-        mix2.errorProblem = 0;
-        return
-    end
     
     % Default
     mixGuess = [];

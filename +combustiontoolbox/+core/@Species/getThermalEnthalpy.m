@@ -13,26 +13,9 @@ function DhT = getThermalEnthalpy(obj, T)
     % Example:
     %     DhT = getThermalEnthalpy(obj, 300)
 
-    persistent cachedSpecies;
-    persistent cachedDHTcurves;
-    
-    if isempty(cachedSpecies)
-        cachedSpecies = {};
-        cachedDHTcurves = {};
-    end
-    
-    % Check if species data is already cached
-    index = find(strcmp(cachedSpecies, obj.name), 1);
-    if isempty(index)
-        % Load species data and cache it
-        DhTcurve = obj.DhTcurve;
-        cachedSpecies{end+1} = obj.name;
-        cachedDHTcurves{end+1} = DhTcurve;
-    else
-        % Retrieve cached data
-        DhTcurve = cachedDHTcurves{index};
-    end
-    
+    % Compute enthalpy [J/mol]
+    h0 = getEnthalpy(obj, T);
+
     % Compute thermal enthalpy [J/mol]
-    DhT = DhTcurve(T);
+    DhT = h0 - obj.hf;
 end

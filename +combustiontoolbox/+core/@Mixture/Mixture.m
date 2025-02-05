@@ -1073,7 +1073,7 @@ classdef Mixture < handle & matlab.mixin.Copyable
             
             % If all species have the same temperature, return it directly
             if isscalar(unique(speciesTemperatures))
-                T_eq = speciesTemperatures(1);
+                T = speciesTemperatures(1);
                 return;
             end
             
@@ -1107,7 +1107,7 @@ classdef Mixture < handle & matlab.mixin.Copyable
             
             % Newton-Raphson iterative loop
             while STOP > tol0 && it < itMax
-
+                % Update iteration
                 it = it + 1;
                 
                 % Evaluate the enthalpy/internal-energy at the current guess temperature

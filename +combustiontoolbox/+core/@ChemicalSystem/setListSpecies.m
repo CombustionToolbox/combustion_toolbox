@@ -47,7 +47,7 @@ function [obj, listSpecies, listSpeciesFormula] = setListSpecies(obj, varargin)
     end
     
     % Get list of species
-    [obj.listSpecies, obj.FLAG_COMPLETE] = getListSpecies(database, varargin{:});
+    [obj.listSpecies, obj.FLAG_COMPLETE] = getListSpecies(obj, database, varargin{:});
     
     % Check that there are not repeated species
     obj.listSpecies = unique(obj.listSpecies, 'stable');
@@ -67,7 +67,7 @@ function [obj, listSpecies, listSpeciesFormula] = setListSpecies(obj, varargin)
 end
 
 % SUB-PASS FUNCTIONS
-function [listSpecies, FLAG_COMPLETE] = getListSpecies(database, varargin)
+function [listSpecies, FLAG_COMPLETE] = getListSpecies(obj, database, varargin)
     % Get list of species
     
     % Default values
@@ -89,7 +89,7 @@ function [listSpecies, FLAG_COMPLETE] = getListSpecies(database, varargin)
         case {'COMPLETE', 'COMPLETE REACTION'}
             FLAG_COMPLETE = true;
 
-            if nargin > 2
+            if nargin > 3
                 phi = varargin{1, 2};
                 phi_c = varargin{1, 3};
 

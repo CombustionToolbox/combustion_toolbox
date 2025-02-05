@@ -491,9 +491,11 @@ classdef Mixture < handle & matlab.mixin.Copyable
             
             % Compute the equilibrium temperature
             obj.T = obj.computeEquilibriumTemperature(speciesTemperatures);
-            
-            % Recompute the mixture's thermodynamic properties
+
+            % Assign values to the propertiesMatrix
             obj.chemicalSystem.setPropertiesMatrix(obj.listSpecies, obj.quantity, obj.T);
+
+            % Compute thermodynamic properties
             obj.computeProperties(obj.chemicalSystem, obj.T, obj.p);
         end
 

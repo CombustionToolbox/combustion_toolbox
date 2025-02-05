@@ -47,7 +47,7 @@ set(mix, {'N2', 'O2', 'Ar', 'CO2'}, [78.084, 20.9476, 0.9365, 0.0319] / 20.9476)
 mixArray1 = setProperties(mix, 'temperature', 226.65, 'pressure', 0.0117, 'M1', 1.75:0.1:20.45);
 
 % Initialize solver
-solver = ShockSolver('problemType', 'SHOCK_POLAR_LIMITRR', 'tolShocks', 1e-7);
+solver = ShockSolver('problemType', 'SHOCK_POLAR_LIMITRR', 'tol0', 1e-7);
 
 % Solve problem
 [mixArray1, mixArray2, mixArray2_1, mixArray3] = solver.solveArray(mixArray1);

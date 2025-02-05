@@ -30,6 +30,7 @@ function [mix1, mix2_inj, mix2_c, mix3, mix4] = rocketFAC(obj, mix1, varargin)
     mix2_inj = copy(mix1);
     areaRatio = mix1.areaRatio;
     areaRatioChamber = mix1.areaRatioChamber;
+    temp_FLAG_SUBSONIC = obj.FLAG_SUBSONIC;
     obj.FLAG_SUBSONIC = true;
 
     % Unpack additional input parameters
@@ -125,7 +126,7 @@ function [mix1, mix2_inj, mix2_c, mix3, mix4] = rocketFAC(obj, mix1, varargin)
     mix2_c.areaRatioChamber = areaRatioChamber; % [-]
 
     % Compute chemical equilibria at the given exit points
-    obj.FLAG_SUBSONIC = false;
+    obj.FLAG_SUBSONIC = temp_FLAG_SUBSONIC;
     mix4 = rocketExit(obj, mix2_c, mix3, mix4_guess, areaRatio, mix2_inj);
 
     % Compute rocket parameters

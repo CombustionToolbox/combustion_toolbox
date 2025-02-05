@@ -3,8 +3,7 @@ function gui_UITable_RCellEdit(app, event)
     
     try
         % Definitions
-        temperature = gui_get_prop(app.PR1.Value, 'first'); % [K]
-        pressure = gui_get_prop(app.PR2.Value, 'first');    % [bar]
+        pressure = gui_get_prop(app.PR2.Value, 'first'); % [bar]
         listSpecies = app.listbox_Products.Items;
         
         % Define chemical system
@@ -20,11 +19,11 @@ function gui_UITable_RCellEdit(app, event)
         % Define chemical state
         gui_get_reactants(app, event);
         
-        % Update temperature of the mixture (if needed)
-        temperature = updateTemperature(app);
+        % Set temperature of the mixture
+        setTemperature(app);
 
-        % Define properties
-        app.mixture = setProperties(app.mixture, 'temperature', temperature, 'pressure', pressure);
+        % Set pressure of the mixture
+        setPressure(app.mixture, pressure);
         
         % Set ratioOxidizer based on current oxidizer species
         if ~isempty(app.mixture.stoichiometricMoles)
@@ -50,8 +49,20 @@ function gui_UITable_RCellEdit(app, event)
 
 end
 
-function temperature = updateTemperature(app)
-    % Get temperature of the mixture (if needed)
-    temperature = compute_temperature_mixture(app.ProblemType.Value, app.chemicalSystem.species, app.UITable_R.Data(:, 1), app.UITable_R.Data(:, 2), app.UITable_R.Data(:, 5));
-    app.PR1.Value = sprintf('%.4g', temperature);
+function setTemperature(app)
+    % Set temperature of the mixture
+
+    % Definitions
+    app.mixture.problemType = app.ProblemType.Value;
+    speciesTemperatures = cell2vector(app.UITable_R.Data(:, 5))';
+
+    % Reorganize species temperature in the same order as in listSpecies
+    [~, index] = ismember(app.mixture.listSpecies, app.UITable_R.Data(:, 1));
+    speciesTemperatures = speciesTemperatures(index);
+
+    % Compute equilibrium temperature
+    setSpeciesTemperatures(app.mixture, speciesTemperatures);
+
+    % Update GUI
+    app.PR1.Value = sprintf('%.4g', app.mixture.T);
 end

@@ -76,8 +76,10 @@ classdef Mixture < handle & matlab.mixin.Copyable
     end
 
     properties (Access = private)
-        indexGas             % Index of the gas species
-        FLAG_VOLUME = false
+        indexGas              % Index of the gas species
+        Tspecies              % Species-specific initial temperatures [K]
+        FLAG_TSPECIES = false % Flag to indicate species-specific initial temperatures are defined
+        FLAG_VOLUME = false   % Flag to indicate specific volume is defined
     end
     
     properties (Hidden)
@@ -436,6 +438,14 @@ classdef Mixture < handle & matlab.mixin.Copyable
             
             % Assign values to the propertiesMatrix
             obj.chemicalSystem = obj.chemicalSystem.setPropertiesMatrix(obj.listSpecies, obj.quantity, obj.T);
+            
+            % Compute equilibrium temperature if species-specific initial temperatures are defined
+            if obj.FLAG_TSPECIES
+                obj.setSpeciesTemperatures(obj.Tspecies);
+                % Reset species-specific temperatures 
+                obj.Tspecies = [];
+                obj.FLAG_TSPECIES = false;
+            end
 
             % Compute pressure if required
             if obj.vSpecific && obj.FLAG_VOLUME
@@ -454,6 +464,37 @@ classdef Mixture < handle & matlab.mixin.Copyable
             
             % Get system containing only the list of products
             obj.chemicalSystemProducts = getSystemProducts(obj.chemicalSystem);
+        end
+
+        function obj = setSpeciesTemperatures(obj, speciesTemperatures)
+            % Set species-specific temperatures and update equilibrium temperature and properties
+            %
+            % Args:
+            %     speciesTemperatures (float): Array with the temperatures [K] for each species in the mixture
+            %
+            % Returns:
+            %     obj (Mixture): Mixture object with updated equilibrium temperature and properties
+            %
+            % Note: The temperature vector is assigned to the species in the same order as they were added to the mixture object
+            %
+            % Example:
+            %     setSpeciesTemperatures(obj, [300, 400, 350])
+            
+            % Validate input: check that the number of temperatures equals the number of species
+            if numel(speciesTemperatures) ~= numel(obj.listSpecies)
+                error('Temperature input must be either a scalar or a vector of length equal to the number of species (%d).', numSpecies);
+            end       
+            
+            % Definitions
+            obj.FLAG_TSPECIES = true;
+            obj.Tspecies = speciesTemperatures;
+            
+            % Compute the equilibrium temperature
+            obj.T = obj.computeEquilibriumTemperature(speciesTemperatures);
+            
+            % Recompute the mixture's thermodynamic properties
+            obj.chemicalSystem.setPropertiesMatrix(obj.listSpecies, obj.quantity, obj.T);
+            obj.computeProperties(obj.chemicalSystem, obj.T, obj.p);
         end
 
         function obj = computeEquivalenceRatio(obj)
@@ -1008,6 +1049,121 @@ classdef Mixture < handle & matlab.mixin.Copyable
             if isempty(obj.chemicalSystem.ind_N), obj.fuel.w = 0; else, obj.fuel.w = natomElementsFuel(obj.chemicalSystem.ind_N); end
             if isempty(obj.chemicalSystem.ind_S), obj.fuel.x2 = 0; else, obj.fuel.x2 = natomElementsFuel(obj.chemicalSystem.ind_S); end
             if isempty(obj.chemicalSystem.ind_Si), obj.fuel.x3 = 0; else, obj.fuel.x3 = natomElementsFuel(obj.chemicalSystem.ind_Si); end
+        end
+
+        function T = computeEquilibriumTemperature(obj, speciesTemperatures)
+            % Compute the equilibrium temperature [K] for a mixture of n species, each initially at a specified
+            % temperature. A Newton-Raphson method is used to iteratively adjust the temperature until equilibrium is reached
+            %
+            % Args:
+            %     speciesTemperatures (float): Array containing the initial temperatures [K] for each species
+            %
+            % Returns:
+            %     T (float): Equilibrium temperature [K] of the mixture
+            %
+            % Example:
+            %     T = obj.computeEquilibriumTemperature([300, 400, 350])
+            
+            % Import packages
+            import combustiontoolbox.core.Species.*
+
+            % Convergence criteria and maximum number of iterations
+            tol0 = 1e-3;
+            itMax = 100;
+            
+            % If all species have the same temperature, return it directly
+            if isscalar(unique(speciesTemperatures))
+                T_eq = speciesTemperatures(1);
+                return;
+            end
+            
+            % Determine problem type (default to 'TP' if not set)
+            if isempty(obj.problemType)
+                problemType = 'TP';
+            else
+                problemType = obj.problemType;
+            end
+            
+            % Choose the appropriate property functions based on problem type
+            switch lower(problemType)
+                case {'tv', 'ev', 'sv', 'volume', 'v'}
+                    funCpOrCv = @getHeatCapacityVolume;
+                    funHorE   = @getInternalEnergy;
+                otherwise
+                    funCpOrCv = @getHeatCapacityPressure;
+                    funHorE   = @getEnthalpy;
+            end
+            
+            % Evaluate properties at each species' initial temperature
+            CpOrCv_0 = obj.getPropertyListSpecies(funCpOrCv, speciesTemperatures);
+            HorE_0   = obj.getPropertyListSpecies(funHorE, speciesTemperatures);
+            
+            % Initial guess for the equilibrium temperature is a weighted average
+            T = sum(obj.quantity .* speciesTemperatures .* CpOrCv_0) / sum(obj.quantity .* CpOrCv_0);
+            
+            % Initialize iteration counter and convergence check variable
+            it = 0;
+            STOP = 1.0;
+            
+            % Newton-Raphson iterative loop
+            while STOP > tol0 && it < itMax
+
+                it = it + 1;
+                
+                % Evaluate the enthalpy/internal-energy at the current guess temperature
+                HorE = obj.getPropertyListSpecies(funHorE, T);
+                
+                % Evaluate the function f, i.e., the difference between the initial and current enthalpy/internal-energy
+                f = sum(obj.quantity .* HorE_0) - sum(obj.quantity .* HorE);
+                f_rel = f / sum(obj.quantity .* HorE);
+                
+                % Compute the derivative using the appropriate specific heat function
+                CpOrCv = obj.getPropertyListSpecies(funCpOrCv, T);
+                df = -sum(obj.quantity .* CpOrCv);
+                
+                % Compute the temperature correction
+                DeltaT = -f / df;
+                
+                % Update temperature
+                T = T + DeltaT;
+                
+                % Compute STOP criterion
+                STOP = max(abs([DeltaT, f_rel]));
+            end
+
+        end
+
+        function value = getPropertyListSpecies(obj, fun, temperatures)
+            % This helper method evaluates a given property function (e.g., specific heat, enthalpy)
+            % for each species in the mixture at the specified temperature(s).
+            %
+            % Args:
+            %       fun (function handle): Function to compute the property (e.g., @species_cP, @species_cV,
+            %                              @species_h0, or @species_e0).
+            %       temperatures (float): Temperature(s) [K] at which to evaluate the property. If provided
+            %                             as a vector, each species is evaluated at its corresponding temperature.
+            %
+            % Returns:
+            %       value (vector): Vector containing the computed property for each species.
+            %
+            % Example:
+            %       cp_values = obj.getPropertyListSpecies(@species_cP, [300, 400, 350]);
+            
+            % Definitions
+            numSpecies = numel(obj.listSpecies);
+            value = zeros(1, numSpecies);
+            
+            % If a single temperature is provided, replicate it for all species.
+            if isscalar(temperatures)
+                temperatures = repmat(temperatures, 1, numSpecies);
+            end
+
+            % Evaluate property for each species
+            for i = 1:numSpecies
+                species = obj.chemicalSystem.database.species.(obj.listSpecies{i});
+                value(i) = fun(species, temperatures(i));
+            end
+
         end
 
     end

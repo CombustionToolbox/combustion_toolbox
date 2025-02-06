@@ -103,10 +103,15 @@ function app = gui_CalculateButtonPushed(app, event)
         if strcmpi(app.ProblemType.Value(2), 'V')
             propertyNameR2 = 'volume';
         end
+
+        % Check if list species corresponds with complete combustion
+        if strcmpi(app.Products.Value, 'complete reaction')
+            listSpecies = 'complete';
+        end
         
         % Define chemical system
         app.chemicalSystem = combustiontoolbox.core.ChemicalSystem(app.database, listSpecies);
-
+        
         % Temporal mixture
         tempMixture = app.mixture.copy();
         
@@ -321,6 +326,12 @@ function app = gui_CalculateButtonPushed(app, event)
         
         % Update GUI with the last results of the set
         gui_update_results(app, results);
+        
+        % Update GUI list species (complete reaction)
+        if strcmpi(app.Products.Value, 'complete reaction') && length(mixArray1) > 1
+            app.listbox_Products.Items = unique([app.chemicalSystem.listSpecies, app.chemicalSystem.listSpeciesLean, app.chemicalSystem.listSpeciesLean, app.chemicalSystem.listSpeciesRich, app.chemicalSystem.listSpeciesSoot]);
+            public_ProductsValueChanged(app);
+        end
         
         % Update GUI custom figures tab
         gui_update_custom_figures(app);

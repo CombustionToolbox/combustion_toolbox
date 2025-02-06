@@ -210,10 +210,11 @@ function update_equivalence_ratio(app, results, i)
         app.edit_F.Value = 0;
         return
     end
-
-    app.edit_phi.Value = sprintf('%.5g', round(results(i).mix1.equivalenceRatio, 5));
-    app.edit_phi2.Value = app.edit_phi.Value;
-    app.edit_phi3.Value = app.edit_phi.Value;
+    
+    equivalenceRatio = sprintf('%.5g', round(results(i).mix1.equivalenceRatio, 5));
+    % app.edit_phi.Value = equivalenceRatio;
+    app.edit_phi2.Value = equivalenceRatio;
+    app.edit_phi3.Value = equivalenceRatio;
     app.edit_OF.Value = results(i).mix1.oxidizerFuelMassRatio;
     app.edit_F.Value = results(i).mix1.percentageFuel;
 end

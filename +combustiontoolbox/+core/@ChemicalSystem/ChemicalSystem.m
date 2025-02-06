@@ -31,9 +31,9 @@ classdef ChemicalSystem < handle & matlab.mixin.Copyable
         indexIons              % Indeces ionized species in species
         indexReact             % Indeces react species
         indexFrozen            % Indeces inert/frozen species
-        listSpeciesLean = {'CO2', 'H2O', 'N2', 'Ar', 'O2'}                % List of species for a lean complete combustion (equivalence ratio < 1)
-        listSpeciesRich = {'CO2', 'H2O', 'N2', 'Ar', 'CO', 'H2'}          % List of species for a rich complete combustion (equivalence ratio > 1)
-        listSpeciesSoot = {'N2', 'Ar', 'CO', 'H2', 'Cbgrb', 'CO2', 'H2O'} % List of species for a roch complete combustion with soot formation  (equivalence ratio > equivalence ratio soot)
+        listSpeciesLean = {'CO2', 'H2O', 'N2', 'Ar', 'O2'}       % List of species for a lean complete combustion (equivalence ratio < 1)
+        listSpeciesRich = {'CO2', 'H2O', 'N2', 'Ar', 'CO', 'H2'} % List of species for a rich complete combustion (equivalence ratio > 1)
+        listSpeciesSoot = {'N2', 'Ar', 'CO', 'H2', 'Cbgrb'}      % List of species for a roch complete combustion with soot formation  (equivalence ratio > equivalence ratio soot)
         FLAG_COMPLETE = false % Flag indicating to compute chemical equilibrium considering a complete combustion
         FLAG_BURCAT = false   % Find all the combinations of species from the database (without BURCAT's DB) that can appear as products for the given list of reactants
         FLAG_ION = false      % Flag indicating to include ionized species in the automatic finder of species

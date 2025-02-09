@@ -20,7 +20,7 @@
 %          Postdoctoral researcher - Group Fluid Mechanics
 %          Universidad Carlos III de Madrid
 %                 
-% Last update Nov 22 2024
+% Last update Nov 23 2024
 % -------------------------------------------------------------------------
 
 % Import required packages
@@ -35,21 +35,28 @@ v = double(h5read(filePath, ['/', 'velocity/v']));
 w = double(h5read(filePath, ['/', 'velocity/w']));
 
 % Convert velocity to VelocityField object
-velocityField = VelocityField(u, v, w);
+velocity = VelocityField(u, v, w);
 
 % Initialize HelmholtzSolver
 solver = HelmholtzSolver();
 
 % Perform Helmholtz decomposition
-[solenoidal, dilatational, STOP] = solver.solve(velocityField, 'rho', rho);
+[solenoidal, dilatational, STOP] = solver.solve(velocity, 'rho', rho);
+
+% Compute turbulent kinetic energy (TKE)
+K_solenoidal = solenoidal.getTurbulentKineticEnergy(rho);
+K_dilatational = dilatational.getTurbulentKineticEnergy(rho);
+
+% Get dilatational over solenoidal TKE ratio
+eta = K_dilatational / K_solenoidal;
 
 % Analyze turbulence spectra using TurbulenceSpectra
 analyzer = TurbulenceSpectra();
 
 % Compute energy spectra for the original, solenoidal, and dilatational fields
-[EK1, k1] = analyzer.getEnergySpectra(velocityField); % Original field
-[EK2, k2] = analyzer.getEnergySpectra(solenoidal);    % Solenoidal component
-[EK3, k3] = analyzer.getEnergySpectra(dilatational);  % Dilatational component
+[EK1, k1] = analyzer.getEnergySpectra(velocity);     % Original field
+[EK2, k2] = analyzer.getEnergySpectra(solenoidal);   % Solenoidal component
+[EK3, k3] = analyzer.getEnergySpectra(dilatational); % Dilatational component
 
 % Plot results
 analyzer.plot(k1, EK1, EK2, EK3);

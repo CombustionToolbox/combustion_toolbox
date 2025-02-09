@@ -20,26 +20,12 @@ classdef HelmholtzSolver < handle
     %     when the field is smooth enough, the imaginary part caused by
     %     the Nyquist frequency kmode should be negligible.
     %
-    % Args:
-    %     file_location (char): Path to the data .hdf file
-    %     file_location_nodes (char): Path to the grid .hdf file
-    %     T_ref (float): Temperature of reference [K]
-    %     mu_ref (float): Dynamic viscosity of reference [kg/(m-s)] or [Pa-s]
-    %
-    % Example:
-    %     solver = HelmholtzSolver();
-    %
     % References:
     %   [1] Johnson, S. G. (2011). Notes on FFT-based differentiation.
     %       MIT Applied Mathematics, Tech. Rep. 
     %       Available: http://math.mit.edu/~stevenj/fft-deriv.pdf
     %   [2] Xun Shi, Helmholtz-Hodge decomposition using fft (Python),
     %       Available: https://github.com/shixun22/helmholtz
-    %
-    %
-    % @author: Alberto Cuadra Lara
-    %          Postdoctoral researcher - Group Fluid Mechanics
-    %          Universidad Carlos III de Madrid
 
     properties
         tol0 = 1e-3             % Tolerance for checks
@@ -104,7 +90,7 @@ classdef HelmholtzSolver < handle
 
         end
 
-        function [solenoidal, dilatational, STOP] = solve(obj, velocity, varargin)
+        function [solenoidal, dilatational, velocity, STOP] = solve(obj, velocity, varargin)
             % Compute Helmholtz decomposition of the velocity field
             %
             % Args:
@@ -115,13 +101,14 @@ classdef HelmholtzSolver < handle
             %     * rho (float): Density field
             %
             % Returns:
-            %     solenoidal (VelocityField): Struct with fields (u, v, w) containing the solenoidal velocity components
-            %     dilatational (VelocityField): Struct with fields (u, v, w) containing the dilatational velocity components
+            %     solenoidal (VelocityField): Struct with fields (u, v, w) containing the solenoidal velocity components (fluctuations)
+            %     dilatational (VelocityField): Struct with fields (u, v, w) containing the dilatational velocity components (fluctuations)
+            %     velocity (VelocityField): Struct with fields (u, v, w) containing the velocity components (fluctuations)
             %     STOP (float): Relative error doing the decomposition
             %
             % Examples:
-            %     * [solenoidal, dilatational, STOP] = solve(obj, velocity)
-            %     * [solenoidal, dilatational, STOP] = solve(obj, velocity, 'rho', rho)
+            %     * [solenoidal, dilatational, velocity, STOP] = solve(obj, velocity)
+            %     * [solenoidal, dilatational, velocity, STOP] = solve(obj, velocity, 'rho', rho)
             
             % Import packages
             import combustiontoolbox.common.Units.convertData2VelocityField
@@ -139,7 +126,7 @@ classdef HelmholtzSolver < handle
             
             % Reshape velocity input and compute fluctuations
             velocity = convertData2VelocityField(velocity);
-            velocity = obj.computeFluctuations(velocity, rho);
+            velocity = getFluctuations(velocity, rho);
 
             % Solve the Helmholtz equation
             [solenoidal, dilatational] = obj.decomposition(velocity);
@@ -155,14 +142,14 @@ classdef HelmholtzSolver < handle
         end
 
         function [solenoidal, dilatational] = decomposition(obj, velocity)
-            % Compute Helmholtz decomposition of the velocity field
+            % Compute Helmholtz decomposition of the velocity field (fluctuations)
             %
             % Args:
-            %     velocity (VelocityField): VelocityField instance with fields (u, v, w) containing the velocity components
+            %     velocity (VelocityField): VelocityField instance with fields (u, v, w) containing the velocity components (fluctuations)
             %
             % Returns:
-            %     solenoidal (VelocityField): VelocityField instance with fields (u, v, w) containing the solenoidal velocity components
-            %     dilatational (VelocityField): VelocityField instance with fields (u, v, w) containing the dilatational velocity components
+            %     solenoidal (VelocityField): VelocityField instance with fields (u, v, w) containing the solenoidal velocity components (fluctuations)
+            %     dilatational (VelocityField): VelocityField instance with fields (u, v, w) containing the dilatational velocity components (fluctuations)
             
             % Import packages
             import combustiontoolbox.turbulence.VelocityField
@@ -173,7 +160,7 @@ classdef HelmholtzSolver < handle
             W = fftn(velocity.w);
 
             % Compute wave numbers
-            [KX, KY, KZ] = obj.computeWaveNumbers(size(velocity.u));
+            [KX, KY, KZ] = obj.getWaveNumbers(size(velocity.u));
 
             % Compute k^2, avoiding division by zero
             K2 = KX.^2 + KY.^2 + KZ.^2;
@@ -204,9 +191,9 @@ classdef HelmholtzSolver < handle
             %
             % Args:
             %     obj (HelmholtzSolver): HelmholtzSolver object
-            %     velocity (VelocityField): VelocityField instance with fields (u, v, w) containing the velocity components
-            %     solenoidal (VelocityField): VelocityField instance with fields (u, v, w) containing the solenoidal velocity components
-            %     dilatational (VelocityField): VelocityField instance with fields (u, v, w) containing the dilatational velocity components
+            %     velocity (VelocityField): VelocityField instance with fields (u, v, w) containing the velocity components (fluctuations)
+            %     solenoidal (VelocityField): VelocityField instance with fields (u, v, w) containing the solenoidal velocity components (fluctuations)
+            %     dilatational (VelocityField): VelocityField instance with fields (u, v, w) containing the dilatational velocity components (fluctuations)
             %
             % Returns:
             %     STOP (float): Relative error doing the decomposition
@@ -222,7 +209,7 @@ classdef HelmholtzSolver < handle
             fprintf('Performing checks... ');
             
             % Compute wave numbers
-            [KX, KY, KZ] = obj.computeWaveNumbers(size(velocity.u));
+            [KX, KY, KZ] = obj.getWaveNumbers(size(velocity.u));
             
             % Compute magnitude of the original velocity field for relative error
             velocityMagnitude = globalMagnitude(velocity);
@@ -294,38 +281,20 @@ classdef HelmholtzSolver < handle
     end
 
     methods (Static) 
-    
-        function velocity = computeFluctuations(velocity, rho)
-            % Compute fluctuating velocity components
+
+        function [KX, KY, KZ] = getWaveNumbers(sz)
+            % Compute wave number grids for FFT
             %
             % Args:
-            %     velocity (struct): Struct with fields (u, v, w)
-            %     rho (float): Density field
+            %     sz (float): Size of the 3D array
             %
             % Returns:
-            %     velocity (struct): Struct with fields (u, v, w) containing the fluctuating velocity components
-            
-            % For compressible flows
-            if ~isempty(rho)
-                rhoMean = mean(rho, 'all');
-                rhou = mean(rho .* velocity.u, 'all') / rhoMean;
-                rhov = mean(rho .* velocity.v, 'all') / rhoMean;
-                rhow = mean(rho .* velocity.w, 'all') / rhoMean;
-
-                velocity.u = sqrt(rho) .* (velocity.u - rhou);
-                velocity.v = sqrt(rho) .* (velocity.v - rhov);
-                velocity.w = sqrt(rho) .* (velocity.w - rhow);
-                return
-            end
-
-            % For incompressible flows
-            velocity.u = velocity.u - mean(velocity.u, 'all');
-            velocity.v = velocity.v - mean(velocity.v, 'all');
-            velocity.w = velocity.w - mean(velocity.w, 'all');
-        end
-
-        function [KX, KY, KZ] = computeWaveNumbers(sz)
-            % Compute wave number grids for FFT
+            %     KX (float): 3D array with the wave number in the x-direction
+            %     KY (float): 3D array with the wave number in the y-direction
+            %     KZ (float): 3D array with the wave number in the z-direction
+            %
+            % Example:
+            %     [KX, KY, KZ] = getWaveNumbers(sz)
 
             % Import packages
             import combustiontoolbox.utils.math.fftfreq
@@ -334,6 +303,45 @@ classdef HelmholtzSolver < handle
             ky = fftfreq(sz(2));
             kz = fftfreq(sz(3));
             [KX, KY, KZ] = ndgrid(kx, ky, kz);
+        end
+
+        function [chi, chiVariance] = getChi(solenoidal, rho, pressure, sound_mean)
+            % Compute the correlation between the entropic density and the soleonidal part of the velocity field
+            %
+            % Args:
+            %     solenoidal (VelocityField): VelocityField instance with fields (u, v, w) containing the solenoidal velocity components (fluctuations)
+            %     rho (float): Density field
+            %     pressure (float): Pressure field
+            %     sound_mean (float): Mean speed of sound
+            %
+            % Returns:
+            %     chi (float): Correlation between the entropic density and the soleonidal part of the velocity field
+            %     chiVariance (float): Variance of the correlation
+            %
+            % Note: The components of solenoidal refer to the fluctuations of the density weighted velocity field, i.e.,
+            %       u_weighted = u * sqrt(rho), v_weighted = v * sqrt(rho), w_weighted = w * sqrt(rho).
+            %
+            % Example:
+            %     [chi, chiVariance] = getChi(obj, solenoidal, rho, pressure, sound_mean)
+
+            % Definitions
+            rho_mean = mean(rho, 'all');
+            pressure_mean = mean(pressure, 'all');
+            delta_rho = rho - rho_mean;
+            delta_pressure = pressure - pressure_mean;
+            delta_u_solenoidal = solenoidal.u ./ sqrt(rho);
+
+            % Compute acoustic and entropic fluctuations of the density
+            delta_rho_acoustic = delta_pressure ./ sound_mean.^2;
+            delta_rho_entropic = delta_rho - delta_rho_acoustic;
+            
+            % Compute root mean square values
+            delta_u_solenoidal_rms = sqrt(mean((delta_u_solenoidal).^2, 'all'));
+            delta_rho_entropic_rms = sqrt(mean(delta_rho_entropic.^2, 'all'));
+
+            % Compute chi
+            chi = - mean(solenoidal.u .* delta_rho_entropic, 'all') /  mean(delta_u_solenoidal.^2, 'all') * sound_mean / rho_mean;
+            chiVariance = (delta_rho_entropic_rms ./ delta_u_solenoidal_rms * sound_mean / rho_mean)^2;
         end
         
     end

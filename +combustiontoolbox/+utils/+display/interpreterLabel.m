@@ -416,6 +416,82 @@ function [property_name, property_latex, property_unit] = property_names(propert
             property_name = 'Area combustor / throat';
             property_latex = 'A_{\rm ratio, c} = A_c/A_t';
             property_unit = '';
+        case {'density_variance', 'rho_variance'}
+            property_name = 'Density variance';
+            property_latex = '\rho_{\rm rms}^2 / \rho_1^2';
+            property_unit = '';
+        case {'pressure_variance', 'p_variance'}
+            property_name = 'Pressure variance';
+            property_latex = 'p_{\rm rms}^2 / (\rho_1 a_1^2)^2';
+            property_unit = '';
+        case {'temperature_variance', 't_variance'}
+            property_name = 'Temperature variance';
+            property_latex = 'T_{\rm rms}^2 / T_1^2';
+            property_unit = '';
+        case {'velocity_variance', 'u_variance'}
+            property_name = 'Velocity variance';
+            property_latex = 'u_{\rm rms}^2 / a_1^2';
+            property_unit = '';
+        case {'v_variance'}
+            property_name = 'Velocity variance';
+            property_latex = 'v_{\rm rms}^2 / a_1^2';
+            property_unit = '';
+        case {'w_variance'}
+            property_name = 'Velocity variance';
+            property_latex = 'w_{\rm rms}^2 / a_1^2';
+            property_unit = '';
+        case {'corr_rhot'}
+            property_name = 'Correlation density-temperature';
+            property_latex = '\langle \rho'' T'' \rangle / (\rho_1 T_1)';
+            property_unit = '';
+        case {'corr_rhop'}
+            property_name = 'Correlation density-pressure';
+            property_latex = '\langle \rho'' p'' \rangle / (\rho_1 p_1)';
+            property_unit = '';
+        case {'corr_rhou'}
+            property_name = 'Correlation density-velocity';
+            property_latex = '\langle \rho'' u'' \rangle / (\rho_1 a_1)';
+            property_unit = '';
+        case {'corr_rhov'}
+            property_name = 'Correlation density-velocity';
+            property_latex = '\langle \rho'' v'' \rangle / (\rho_1 a_1)';
+            property_unit = '';
+        case {'corr_rhow'}
+            property_name = 'Correlation density-velocity';
+            property_latex = '\langle \rho'' w'' \rangle / (\rho_1 a_1)';
+            property_unit = '';
+        case {'r11', 'r11_f', 'r11_tke', 'r11_ftke'}
+            property_name = 'Streamwise Reynolds stress';
+            property_latex = 'R_{11}';
+            property_unit = '';
+        case {'r22', 'r22_f', 'r22_tke', 'r22_ftke'}
+            property_name = 'Transverse Reynolds stress';
+            property_latex = 'R_{22}';
+            property_unit = '';
+        case {'r33', 'r33_f', 'r33_tke', 'r33_ftke'}
+            property_name = 'Transverse Reynolds stress';
+            property_latex = 'R_{33}';
+            property_unit = '';
+        case {'rtt', 'rtt_f', 'rtt_tke', 'rtt_ftke'}
+            property_name = 'Transverse Reynolds stress';
+            property_latex = 'R_{\rm TT}';
+            property_unit = '';
+        case {'tke', 'tke_f'}
+            property_name = 'Turbulent kinetic energy';
+            property_latex = 'K';
+            property_unit = '';
+        case {'lengthkolmogorov'}
+            property_name = 'Kolmogorov length';
+            property_latex = '\ell_{k}';
+            property_unit = '';
+        case {'ratiolengthkolmogorov'}
+            property_name = 'Normalized Kolmogorov length';
+            property_latex = '\ell_{k} / \ell_{k, 1}';
+            property_unit = '';
+        case {'ratiogridlengthkolmogorov'}
+            property_name = 'Ratio grid spacing to Kolmogorov length';
+            property_latex = '\Delta x / \ell_{k}';
+            property_unit = '';
         otherwise
             property_unit = '';
 

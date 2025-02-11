@@ -1399,7 +1399,6 @@ classdef combustion_toolbox < matlab.apps.AppBase
             app.Reactants.ItemsData = [1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30];
             app.Reactants.Editable = 'on';
             app.Reactants.ValueChangedFcn = createCallbackFcn(app, @ReactantsValueChanged, true);
-            app.Reactants.BackgroundColor = [1 1 1];
             app.Reactants.Position = [4 6 222 25];
             app.Reactants.Value = 1;
 
@@ -1460,7 +1459,6 @@ classdef combustion_toolbox < matlab.apps.AppBase
             app.Products.Items = {'', 'Complete reaction', 'HC/O2/N2', 'HC/O2/N2 extended', 'HC/O2/N2 rich', 'HC/O2/N2 Propellants', 'Soot formation', 'Soot formation Extended', 'Hydrogen', 'Hydrogen (L)', 'Hydrogen ions', 'Dissociated air', 'Air ions'};
             app.Products.Editable = 'on';
             app.Products.ValueChangedFcn = createCallbackFcn(app, @ProductsValueChanged, true);
-            app.Products.BackgroundColor = [1 1 1];
             app.Products.Position = [4 7 222 25];
             app.Products.Value = '';
 
@@ -2902,7 +2900,6 @@ classdef combustion_toolbox < matlab.apps.AppBase
             app.UIAxes.LabelFontSizeMultiplier = 1;
             app.UIAxes.LineWidth = 1.2;
             app.UIAxes.Box = 'on';
-            app.UIAxes.FontSize = 12;
             app.UIAxes.TitleFontSizeMultiplier = 1;
             app.UIAxes.Position = [8 10 552 260];
 

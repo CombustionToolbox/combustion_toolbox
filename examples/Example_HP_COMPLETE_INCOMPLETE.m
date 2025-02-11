@@ -4,12 +4,12 @@
 % Compute adiabatic temperature and equilibrium composition at constant
 % pressure (e.g., 1.01325 bar) for lean to rich natural gas-air mixtures at
 % standard conditions, a set of equivalence ratios phi contained in
-% (0.5, 3) [-], and two different sets of species "Complete" or "Incomplete"
+% (0.5, 5) [-], and two different sets of species "Complete" or "Incomplete"
 % 
 % * Complete:
-%       - lean = {'CO2', 'H2O', 'N2', 'Ar', 'O2'};                (equivalence ratio < 1)
-%       - rich = {'CO2', 'H2O', 'N2', 'Ar', 'CO', 'H2'};          (equivalence ratio > 1)
-%       - soot = {'N2', 'Ar', 'CO', 'H2', 'Cbgrb', 'CO2', 'H2O'}; (equivalence ratio > equivalence ratio soot)   
+%       - lean = {'CO2', 'H2O', 'N2', 'Ar', 'O2'};        (equivalence ratio < 1)
+%       - rich = {'CO2', 'H2O', 'N2', 'Ar', 'CO', 'H2'};  (equivalence ratio > 1)
+%       - soot = {'N2', 'Ar', 'CO', 'H2', 'Cbgrb'};       (equivalence ratio > equivalence ratio soot)   
 %
 % * Incomplete:
 %       - Soot formation == {'CO2','CO','H2O','H2','O2','N2','Ar','Cbgrb',...
@@ -51,7 +51,7 @@ set(mix, {'CH4', 'C2H6', 'C3H8', 'C4H10_isobutane', 'H2'}, 'fuel', [0.8, 0.05, 0
 set(mix, {'N2', 'O2', 'Ar', 'CO2'}, 'oxidizer', [78.084, 20.9476, 0.9365, 0.0319] / 20.9476);
 
 % Define properties
-mixArray1 = setProperties(mix, 'temperature', 300, 'pressure', 1 * 1.01325, 'equivalenceRatio', 0.5:0.02:3);
+mixArray1 = setProperties(mix, 'temperature', 300, 'pressure', 1 * 1.01325, 'equivalenceRatio', 0.5:0.02:5);
 
 % Solve problem
 solver.solveArray(mixArray1);
@@ -69,7 +69,7 @@ set(mix, {'CH4', 'C2H6', 'C3H8', 'C4H10_isobutane', 'H2'}, 'fuel', [0.8, 0.05, 0
 set(mix, {'N2', 'O2', 'Ar', 'CO2'}, 'oxidizer', [78.084, 20.9476, 0.9365, 0.0319] / 20.9476);
 
 % Define properties
-mixArray2 = setProperties(mix, 'temperature', 300, 'pressure', 1 * 1.01325, 'equivalenceRatio', 0.5:0.02:3);
+mixArray2 = setProperties(mix, 'temperature', 300, 'pressure', 1 * 1.01325, 'equivalenceRatio', 0.5:0.02:5);
 
 % Solve problem
 solver.solveArray(mixArray2);

@@ -61,7 +61,7 @@ function setTemperature(app)
     speciesTemperatures = speciesTemperatures(index);
 
     % Compute equilibrium temperature
-    setSpeciesTemperatures(app.mixture, speciesTemperatures);
+    setTemperatureSpecies(app.mixture, speciesTemperatures);
 
     % Update GUI
     app.PR1.Value = sprintf('%.4g', app.mixture.T);

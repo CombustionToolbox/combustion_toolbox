@@ -41,7 +41,7 @@ set(mix, {'CH4'}, 'fuel', 1);
 set(mix, {'N2', 'O2', 'Ar', 'CO2'}, 'oxidizer', [78.084, 20.9476, 0.9365, 0.0319] / 20.9476);
 
 % Set specifc-species tempearature
-setSpeciesTemperatures(mix, [300, 380, 380, 380, 380]);
+setTemperatureSpecies(mix, [300, 380, 380, 380, 380]);
 
 % Define properties
 mixArray = setProperties(mix, 'pressure', 1 * 1.01325, 'equivalenceRatio', 0.5:0.01:5);

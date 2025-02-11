@@ -441,7 +441,7 @@ classdef Mixture < handle & matlab.mixin.Copyable
             
             % Compute equilibrium temperature if species-specific initial temperatures are defined
             if obj.FLAG_TSPECIES
-                obj.setSpeciesTemperatures(obj.Tspecies);
+                obj.setTemperatureSpecies(obj.Tspecies);
                 % Reset species-specific temperatures 
                 obj.Tspecies = [];
                 obj.FLAG_TSPECIES = false;
@@ -466,7 +466,7 @@ classdef Mixture < handle & matlab.mixin.Copyable
             obj.chemicalSystemProducts = getSystemProducts(obj.chemicalSystem);
         end
 
-        function obj = setSpeciesTemperatures(obj, speciesTemperatures)
+        function obj = setTemperatureSpecies(obj, speciesTemperatures)
             % Set species-specific temperatures and update equilibrium temperature and properties
             %
             % Args:
@@ -478,7 +478,7 @@ classdef Mixture < handle & matlab.mixin.Copyable
             % Note: The temperature vector is assigned to the species in the same order as they were added to the mixture object
             %
             % Example:
-            %     setSpeciesTemperatures(obj, [300, 400, 350])
+            %     setTemperatureSpecies(obj, [300, 400, 350])
             
             % Validate input: check that the number of temperatures equals the number of species
             if numel(speciesTemperatures) ~= numel(obj.listSpecies)

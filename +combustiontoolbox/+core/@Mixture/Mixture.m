@@ -110,6 +110,10 @@ classdef Mixture < handle & matlab.mixin.Copyable
         FLAG_INERT = false
         FLAG_REACTION = false
     end
+
+    properties (Hidden, Dependent)
+        numSpecies % Number of species in the reactant mixture
+    end
     
     methods
         
@@ -137,6 +141,11 @@ classdef Mixture < handle & matlab.mixin.Copyable
 
             % Assign properties matrix
             obj.chemicalSystem = ip.Results.chemicalSystem;
+        end
+
+        function numSpecies = get.numSpecies(obj)
+            % Get number of species in the reactant mixture
+            numSpecies = length(obj.listSpecies);
         end
 
         function obj = setTemperature(obj, T, varargin)
@@ -481,14 +490,14 @@ classdef Mixture < handle & matlab.mixin.Copyable
             %     setTemperatureSpecies(obj, [300, 400, 350])
             
             % Validate input: check that the number of temperatures equals the number of species
-            if numel(speciesTemperatures) ~= numel(obj.listSpecies)
-                error('Temperature input must be either a scalar or a vector of length equal to the number of species (%d).', numSpecies);
+            if numel(speciesTemperatures) ~= obj.numSpecies
+                error('Temperature input must be either a scalar or a vector of length equal to the number of species (%d).', obj.numSpecies);
             end       
             
             % Definitions
             obj.FLAG_TSPECIES = true;
             obj.Tspecies = speciesTemperatures;
-            
+
             % Compute the equilibrium temperature
             obj.T = obj.computeEquilibriumTemperature(speciesTemperatures);
 
@@ -1078,7 +1087,14 @@ classdef Mixture < handle & matlab.mixin.Copyable
                 T = speciesTemperatures(1);
                 return;
             end
-            
+
+            % Check if condensed species can be only evaluated a particular temperature
+            FLAG_FIXED = checkTemperatureSpecies(obj);
+            if FLAG_FIXED
+                T = max(speciesTemperatures);
+                return
+            end
+
             % Determine problem type (default to 'TP' if not set)
             if isempty(obj.problemType)
                 problemType = 'TP';
@@ -1140,8 +1156,8 @@ classdef Mixture < handle & matlab.mixin.Copyable
             % for each species in the mixture at the specified temperature(s).
             %
             % Args:
-            %       fun (function handle): Function to compute the property (e.g., @species_cP, @species_cV,
-            %                              @species_h0, or @species_e0).
+            %       fun (function handle): Function to compute the property (e.g., @getHeatCapacityPressure,
+            %                              @getHeatCapacityVolume, @getEnthalpy, or @getInternalEnergy).
             %       temperatures (float): Temperature(s) [K] at which to evaluate the property. If provided
             %                             as a vector, each species is evaluated at its corresponding temperature.
             %
@@ -1149,11 +1165,10 @@ classdef Mixture < handle & matlab.mixin.Copyable
             %       value (vector): Vector containing the computed property for each species.
             %
             % Example:
-            %       cp_values = obj.getPropertyListSpecies(@species_cP, [300, 400, 350]);
+            %       cp_values = obj.getPropertyListSpecies(@getHeatCapacityPressure, [300, 400, 350]);
             
             % Definitions
-            numSpecies = numel(obj.listSpecies);
-            value = zeros(1, numSpecies);
+            numSpecies = obj.numSpecies;
             
             % If a single temperature is provided, replicate it for all species.
             if isscalar(temperatures)
@@ -1199,6 +1214,26 @@ classdef Mixture < handle & matlab.mixin.Copyable
 
             % Compute thermodynamic properties
             computeProperties(obj, obj.chemicalSystem, obj.T, obj.p);
+        end
+
+        function FLAG_FIXED = checkTemperatureSpecies(obj)
+            % Check if condensed species can be only evaluated a particular temperature
+
+            % Initialization
+            FLAG_FIXED = false;
+
+            for i = 1:obj.numSpecies
+                % Get Species object
+                species = obj.chemicalSystem.database.species.(obj.listSpecies{i});
+                
+                % Check if condensed species can be only evaluated a particular temperature
+                if isscalar(species.T)
+                    obj.Tspecies(i) = obj.chemicalSystem.database.species.(obj.listSpecies{i}).T;
+                    FLAG_FIXED = true;
+                end
+        
+            end
+        
         end
 
     end

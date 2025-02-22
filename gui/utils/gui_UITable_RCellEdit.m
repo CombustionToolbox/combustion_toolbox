@@ -65,4 +65,13 @@ function setTemperature(app)
 
     % Update GUI
     app.PR1.Value = sprintf('%.4g', app.mixture.T);
+
+    % Print error if condensed species can be only evaluated a particular temperature
+    FLAG_FIXED = checkTemperatureSpecies(app.mixture);
+
+    if FLAG_FIXED
+        message = sprintf('The species selected as reactants can only be evaluated at its defined temperature.\nThe temperature shown as the temperature of the reactant is a ficticious value! The species are unmixed.');
+        uialert(app.UIFigure, message, 'Warning', 'Icon', 'warning');
+    end
+
 end

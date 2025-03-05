@@ -53,18 +53,19 @@ classdef ChemicalSystem < handle & matlab.mixin.Copyable
     end
 
     properties (Dependent)
-        numSpecies
-        numSpeciesGas
-        numElements
-        indexElements
-        indexSpecies
-        ind_C
-        ind_H
-        ind_O
-        ind_N
-        ind_E % Index electron
-        ind_S % Index 
-        ind_Si % Index
+        numSpecies    % Number of species
+        numSpeciesGas % Number of gaseous species
+        numElements   % Number of elements
+        indexElements % Index of elements
+        indexSpecies  % Index of species
+        ind_C         % Index carbon
+        ind_H         % Index hydrogen
+        ind_O         % Index oxygen
+        ind_N         % Index nitrogen
+        ind_E         % Index electron
+        ind_S         % Index sulfur
+        ind_Si        % Index silicon
+        ind_B         % Index boron
     end
 
     properties (Hidden)
@@ -288,6 +289,10 @@ classdef ChemicalSystem < handle & matlab.mixin.Copyable
 
         function value = get.ind_Si(obj)
             value = find(ismember(obj.listElements, 'SI'));
+        end
+
+        function value = get.ind_B(obj)
+            value = find(ismember(obj.listElements, 'B'));
         end
     
         function value = get.indexSpecies(obj)

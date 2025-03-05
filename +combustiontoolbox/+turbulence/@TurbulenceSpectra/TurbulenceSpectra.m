@@ -92,6 +92,12 @@ classdef TurbulenceSpectra < handle
             % Example:
             %     [EK_avg, k] = getEnergySpectra(TurbulenceSpectra(), fluctuation);
 
+            % Check type of fluctuation
+            if isa(fluctuation, 'combustiontoolbox.turbulence.VelocityField')
+                [EK_avg, k] = getEnergySpectraVelocity(obj, fluctuation);
+                return
+            end
+
             % Check input
             assert(isnumeric(fluctuation), 'Input must be a 3D array.');
 

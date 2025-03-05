@@ -16,10 +16,10 @@ function print(mix, varargin)
     %     * print(mix1, mix2, mix3)
     %     * print(mix1, mix2, mix3, mix4)
     
-    % Temporal
-    mintol_display = 1e-14; % (will be moved to Miscellaneous)
-    composition_units = 'molar fraction'; % Possible values: mol, molar fraction or mass fraction
-    FLAG_COMPACT = false; % Flag to print composition in a compact way
+    % Definitions
+    mintolDisplay = mix.config.mintolDisplay;
+    compositionUnits = mix.config.compositionUnits;
+    FLAG_COMPACT = mix.config.FLAG_COMPACT;
 
     % Unpack cell with mixtures
     mix = [{mix}, varargin(:)'];
@@ -42,13 +42,13 @@ function print(mix, varargin)
     print_properties(problemType, numMixtures, mix);
     
     % Print composition
-    print_composition(mix, listSpecies, composition_units, header_composition, mintol_display);
+    print_composition(mix, listSpecies, compositionUnits, header_composition, mintolDisplay);
 
     % End
     fprintf('************************************************************************************************************\n\n\n');
 
     % NESTED FUNCTIONS
-    function print_composition(mix, listSpecies, units, header, mintol_display)
+    function print_composition(mix, listSpecies, units, header, mintolDisplay)
         % Print composition of the mixture in the command window
         %
         % Args:
@@ -56,17 +56,17 @@ function print(mix, varargin)
         %     listSpecies (cell): Cell with the names of the species
         %     units (char): Units of the composition
         %     header (char): Header of the composition
-        %     mintol_display (float): Minimum value to be displayed
+        %     mintolDisplay (float): Minimum value to be displayed
     
         % Print composition (compact)
         if FLAG_COMPACT
-            print_compact_composition(mix, listSpecies, units, mintol_display);
+            print_compact_composition(mix, listSpecies, units, mintolDisplay);
             return
         end
     
         % Print composition (sequential)
         for i = 1:numMixtures
-            print_composition_sequential(mix{i}, listSpecies, composition_units, header{i}, mintol_display);
+            print_composition_sequential(mix{i}, listSpecies, compositionUnits, header{i}, mintolDisplay);
         end
     
     end
@@ -189,11 +189,11 @@ function print_properties(ProblemType, numberMixtures, mix)
     fprintf('------------------------------------------------------------------------------------------------------------\n');
 end
 
-function print_compact_composition(mixCell, listSpecies, units, mintol_display)
+function print_compact_composition(mixCell, listSpecies, units, mintolDisplay)
     % mixCell         = cell array of mixture objects
     % listSpecies     = cell array of species names
     % units           = 'molar fraction', 'mass fraction', or 'mol'
-    % mintol_display  = threshold below which species are considered minor
+    % mintolDisplay  = threshold below which species are considered minor
 
     % Definitions
     numMixtures = numel(mixCell);
@@ -217,8 +217,8 @@ function print_compact_composition(mixCell, listSpecies, units, mintol_display)
         end
     end
 
-    % Determine which species exceed mintol_display in ANY mixture (major species)
-    major_mask  = any(comp_matrix > mintol_display, 2);
+    % Determine which species exceed mintolDisplay in ANY mixture (major species)
+    major_mask  = any(comp_matrix > mintolDisplay, 2);
     major_vals  = comp_matrix(major_mask, :);
     major_names = listSpecies(major_mask);
 
@@ -259,7 +259,7 @@ function print_compact_composition(mixCell, listSpecies, units, mintol_display)
 end
 
 
-function print_composition_sequential(mix, listSpecies, units, header, mintol_display)
+function print_composition_sequential(mix, listSpecies, units, header, mintolDisplay)
     % Print composition of the mixture in the command window
     %
     % Args:
@@ -267,7 +267,7 @@ function print_composition_sequential(mix, listSpecies, units, header, mintol_di
     %     listSpecies (cell): Cell with the names of the species
     %     units (char): Units of the composition
     %     header (char): Header of the composition
-    %     mintol_display (float): Minimum value to be displayed
+    %     mintolDisplay (float): Minimum value to be displayed
     
     switch lower(units)
         case 'mol'
@@ -285,7 +285,7 @@ function print_composition_sequential(mix, listSpecies, units, header, mintol_di
     %%%% SORT SPECIES COMPOSITION %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     [variable, ind_sort] = sort(variable, 'descend');
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    j = variable > mintol_display;
+    j = variable > mintolDisplay;
     minor = sum(variable(~j));
 
     for i = 1:length(j)

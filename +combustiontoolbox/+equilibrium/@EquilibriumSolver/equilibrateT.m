@@ -102,7 +102,7 @@ end
 function pP = computePressure(mix, T, moles, system)
     % Compute pressure [bar] of product mixture
     vMolar = vSpecific2vMolar(mix, mix.vSpecific, moles, sum(moles(system.indexGas)), [system.indexGas, system.indexCondensed]);
-    pP = mix.equationOfState.getPressure(T, vMolar, system.listSpecies, mix.Xi) * 1e-5;
+    pP = mix.equationState.getPressure(T, vMolar, system.listSpecies, mix.Xi) * 1e-5;
 end
 
 function vector = reshapeVector(system, index, indexModified, vectorModified)

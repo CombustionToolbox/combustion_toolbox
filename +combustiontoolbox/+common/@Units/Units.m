@@ -3,29 +3,29 @@ classdef Units < handle
     
     properties (Constant)
         % Pressure conversion factors
-        atm2bar = @(x) x * 1.01325     % Atmospheres to bar
-        bar2atm = @(x) x * 1.01325^-1  % Bar to atmospheres
-        atm2Pa  = @(x) x * 101325      % Atmospheres to Pascales
-        Pa2atm  = @(x) x * 101325^-1   % Pascales to atmospheres
-        bar2Pa  = @(x) x * 1e5         % Bar to Pascals
-        Pa2bar  = @(x) x * 1e-5        % Pascals to bar
+        atm2bar = 1.01325     % Atmospheres to bar
+        bar2atm = 1.01325^-1  % Bar to atmospheres
+        atm2Pa  = 101325      % Atmospheres to Pascales
+        Pa2atm  = 101325^-1   % Pascales to atmospheres
+        bar2Pa  = 1e5         % Bar to Pascals
+        Pa2bar  = 1e-5        % Pascals to bar
         % Temperature conversion factors
         K2C     = @(x) x - 273.15      % Kelvin to degrees Celsius
         C2K     = @(x) x + 273.15      % Degrees Celsius to Kelvin
         F2C     = @(x) (x - 32) * 5/9  % Fahrenheit to degrees Celsius
         K2F     = @(x) (x - 273.15) * 9/5 + 32 % Kelvin to Fahrenheit
         % Mass conversion factors
-        kg2lbs  = @(x) x * 2.20462     % Kilograms to pounds
-        lbs2kg  = @(x) x * 0.453592    % Pounds to kilograms
-        kg2g    = @(x) x * 1e3         % Kilograms to grams
-        g2kg    = @(x) x * 1e-3        % Grams to kilograms
+        kg2lbs  = 2.20462     % Kilograms to pounds
+        lbs2kg  = 0.453592    % Pounds to kilograms
+        kg2g    = 1e3         % Kilograms to grams
+        g2kg    = 1e-3        % Grams to kilograms
         % Volume conversion factors
-        m32ft3  = @(x) x * 35.3147     % Cubic meters to cubic feet
-        ft32m3  = @(x) x * 35.3147^-1  % Cubic feet to cubic meters
-        m32L    = @(x) x * 1e3         % Cubic meters to liters
-        L2m3    = @(x) x * 1e-3        % Liters to cubic meters
-        ft32L   = @(x) x * 28.3168     % Cubic feet to liters
-        L2ft3   = @(x) x * 28.3168^-1  % Liters to cubic feet
+        m32ft3  = 35.3147     % Cubic meters to cubic feet
+        ft32m3  = 35.3147^-1  % Cubic feet to cubic meters
+        m32L    = 1e3         % Cubic meters to liters
+        L2m3    = 1e-3        % Liters to cubic meters
+        ft32L   = 28.3168     % Cubic feet to liters
+        L2ft3   = 28.3168^-1  % Liters to cubic feet
     end
 
     methods (Static)
@@ -54,13 +54,18 @@ classdef Units < handle
             % Get the conversion key property name
             conversionKey = [unit_in, '2', unit_out];
             
-            % Check conversion key exist
-            assert(isprop(Units, conversionKey), 'Conversion from %s to %s is not defined.', unit_in, unit_out); 
+            % Check conversion key exist (slow)
+            % assert(isprop(Units, conversionKey), 'Conversion from %s to %s is not defined.', unit_in, unit_out); 
 
             % Get the conversion key value
             conversion = Units.(conversionKey);
             
             % Convert the value
+            if ~ishandle(conversion)
+                value_out = value_in * conversion;
+                return
+            end
+            
             value_out = conversion(value_in);
         end
 

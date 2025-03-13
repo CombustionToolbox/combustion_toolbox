@@ -77,10 +77,10 @@ classdef PlotConfig < handle
         id_polar1 = 1001                      % Axes id for pressure-deflection polar diagrams
         id_polar2 = 1002                      % Axes id for wave-deflection polar diagrams
         id_polar3 = 1003                      % Axes id for velocity polar diagrams
-        displaySpecies
-        mintolDisplay = 1e-6
-        plotProperties = {'T', 'p', 'rho', 'h', 'e', 'g', 'cp', 's', 'gamma_s', 'sound'}
-        plotPropertiesBasis = {[], [], [], 'mi', 'mi', 'mi', 'mi', 'mi', [], []}
+        displaySpecies                        % Display species
+        mintolDisplay = 1e-6                  % Minimum tolerance to display species
+        plotProperties = {'T', 'p', 'rho', 'h', 'e', 'g', 'cp', 's', 'gamma_s', 'sound'} % Plot properties
+        plotPropertiesBasis = {[], [], [], 'mi', 'mi', 'mi', 'mi', 'mi', [], []} % Plot properties basis
     end
 
     properties (Dependent)

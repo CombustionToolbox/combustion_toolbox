@@ -147,7 +147,7 @@ function mix2 = equilibrateTPerfect(mix1, mix2, T)
     mix2.cv = mix1.cv;
     mix2.gamma = mix1.gamma;
     mix2.gamma_s = mix1.gamma_s;
-    mix2.sound = sqrt(mix2.gamma * Units.convert(mix2.p, 'bar', 'Pa') / mix2.rho);
+    mix2.sound = sqrt(mix2.gamma * mix2.p * Units.bar2Pa / mix2.rho);
 
     % Compute enthalpy [J]
     mix2.hf = mix1.hf;

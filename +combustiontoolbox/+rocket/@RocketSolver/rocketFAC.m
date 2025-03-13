@@ -26,6 +26,9 @@ function [mix1, mix2_inj, mix2_c, mix3, mix4] = rocketFAC(obj, mix1, varargin)
     % Example:
     %     [mix2_inj, mix2_c, mix3] = rocketFAC(obj, mix1, mix2_inj, mix2_c, mix3)
     
+    % Import packages
+    import combustiontoolbox.common.Units
+    
     % Definitions
     mix2_inj = copy(mix1);
     areaRatio = mix1.areaRatio;
@@ -73,7 +76,7 @@ function [mix1, mix2_inj, mix2_c, mix3, mix4] = rocketFAC(obj, mix1, varargin)
 
     % Initialization
     STOP = 1; it = 0;
-    pressure_inj = convert_bar_to_Pa(pressure_inj); % [Pa]
+    pressure_inj = pressure_inj * Units.bar2Pa; % [Pa]
     mix2_inf_guess = mix2_inj;
     temp_mix1.areaRatio = areaRatioChamber;
     
@@ -89,7 +92,7 @@ function [mix1, mix2_inj, mix2_c, mix3, mix4] = rocketFAC(obj, mix1, varargin)
         [~, mix2_inf, mix3, mix2_c] = rocketIAC(obj, temp_mix1, mix2_inf_guess, mix3_guess, mix2_c_guess, false);
 
         % Get results
-        pressure_c = convert_bar_to_Pa(mix2_c.p); % [Pa]
+        pressure_c = mix2_c.p * Units.bar2Pa; % [Pa]
         density_c = mix2_c.rho; % [kg/m3]
         velocity_c = mix2_c.u; % [m/s]
 

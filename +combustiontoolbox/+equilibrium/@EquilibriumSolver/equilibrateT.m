@@ -41,6 +41,13 @@ function mix2 = equilibrateT(obj, mix1, mix2, T, varargin)
     % Unpack addtitional inputs
     if nargin > 4
         molesGuess = varargin{1};
+        
+        if system.FLAG_COMPLETE
+            molesGuess = [];
+        elseif ~isempty(molesGuess)
+            molesGuess = molesGuess(system.indexProducts);
+        end
+
     end
 
     % Check flag
@@ -102,7 +109,7 @@ end
 function pP = computePressure(mix, T, moles, system)
     % Compute pressure [bar] of product mixture
     vMolar = vSpecific2vMolar(mix, mix.vSpecific, moles, sum(moles(system.indexGas)), [system.indexGas, system.indexCondensed]);
-    pP = mix.equationOfState.getPressure(T, vMolar, system.listSpecies, mix.Xi) * 1e-5;
+    pP = mix.equationState.getPressure(T, vMolar, system.listSpecies, mix.Xi) * 1e-5;
 end
 
 function vector = reshapeVector(system, index, indexModified, vectorModified)
@@ -128,7 +135,6 @@ function mix2 = equilibrateTPerfect(mix1, mix2, T)
     
     % Import packages
     import combustiontoolbox.common.Units
-    import combustiontoolbox.common.Constants
 
     % Definitions
     Tref = 298.15; % [K] To be fixed: each species should have its own reference temperature
@@ -141,7 +147,7 @@ function mix2 = equilibrateTPerfect(mix1, mix2, T)
     mix2.cv = mix1.cv;
     mix2.gamma = mix1.gamma;
     mix2.gamma_s = mix1.gamma_s;
-    mix2.sound = sqrt(mix2.gamma * Units.convert(mix2.p, 'bar', 'Pa') / mix2.rho);
+    mix2.sound = sqrt(mix2.gamma * mix2.p * Units.bar2Pa / mix2.rho);
 
     % Compute enthalpy [J]
     mix2.hf = mix1.hf;

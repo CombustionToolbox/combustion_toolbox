@@ -199,7 +199,7 @@ classdef EquilibriumSolver < handle
             %     mixArray (Mixture): Array of Mixture objects updated with equilibrium compositions and properties
             %
             % Example:
-            %     * mixArray = solveArray(EquilibriumSolver(), mixArray);
+            %     mixArray = solveArray(EquilibriumSolver(), mixArray);
             
             % Definitions
             n = length(mixArray);

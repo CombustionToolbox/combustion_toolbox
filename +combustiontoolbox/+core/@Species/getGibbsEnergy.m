@@ -3,15 +3,14 @@ function g0 = getGibbsEnergy(obj, T)
     % using piecewise cubic Hermite interpolating polynomials and linear extrapolation
     %
     % Args:
-    %     species (char): Chemical species
+    %     obj (Species): Species object
     %     T (float): Temperature [K]
-    %     DB (struct): Database with custom thermodynamic polynomials functions generated from NASAs 9 polynomials fits
     %
     % Returns:
     %     g0 (float): Gibbs energy in molar basis [J/mol]
     %
     % Example:
-    %     g0 = getGibbsEnergy('H2O', 298.15, DB)
+    %     g0 = getGibbsEnergy(obj, 300)
     
     persistent cachedSpecies;
     persistent cachedG0curves;

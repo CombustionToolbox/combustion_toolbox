@@ -41,6 +41,13 @@ function mix2 = equilibrateT(obj, mix1, mix2, T, varargin)
     % Unpack addtitional inputs
     if nargin > 4
         molesGuess = varargin{1};
+        
+        if system.FLAG_COMPLETE
+            molesGuess = [];
+        elseif ~isempty(molesGuess)
+            molesGuess = molesGuess(system.indexProducts);
+        end
+
     end
 
     % Check flag
@@ -128,7 +135,6 @@ function mix2 = equilibrateTPerfect(mix1, mix2, T)
     
     % Import packages
     import combustiontoolbox.common.Units
-    import combustiontoolbox.common.Constants
 
     % Definitions
     Tref = 298.15; % [K] To be fixed: each species should have its own reference temperature

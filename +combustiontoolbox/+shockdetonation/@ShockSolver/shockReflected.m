@@ -69,9 +69,9 @@ function [mix1, mix2, mix5] = shockReflected(obj, mix1, mix2, varargin)
             % Apply correction
             [log_p5p2, log_T5T2] = apply_correction(x, p5p2, T5T2, lambda);
             % Apply antilog
-            [p5, T5] = apply_antilog(mix2, log_p5p2, log_T5T2); % [Pa] and [K]
+            [p5, T5] = apply_antilog(mix2, log_p5p2, log_T5T2); % [bar] and [K]
             % Update ratios
-            p5p2 = p5 / (convert_bar_to_Pa(mix2.p));
+            p5p2 = p5 / mix2.p;
             T5T2 = T5 / mix2.T;
             % Compute STOP criteria
             STOP = compute_STOP(x);
@@ -102,13 +102,13 @@ function [p5, T5, p5p2, T5T2] = get_guess(mix2, mix5)
         b = (mix2.gamma_s + 1) / (mix2.gamma_s - 1);
         p5p2 = 0.5 * (b + sqrt(8 + b^2)); % positive root of (7.45 - report CEA)
 
-        p5 = p5p2 * convert_bar_to_Pa(mix2.p); % [Pa]
+        p5 = p5p2 * mix2.p; % [bar]
         T5 = T5T2 * mix2.T; % [K]
     else
-        p5 = convert_bar_to_Pa(mix5.p); % [Pa]
+        p5 = mix5.p; % [bar]
         T5 = mix5.T; % [K]
 
-        p5p2 = p5 / (convert_bar_to_Pa(mix2.p));
+        p5p2 = p5 / mix2.p;
         T5T2 = T5 / mix2.T;
     end
 
@@ -117,30 +117,32 @@ end
 function [J, b, guess_moles] = update_system(equilibriumSolver, mix2, mix5, p5, T5, R0, guess_moles, FLAG_FAST)
     % Update Jacobian matrix and vector b
     r2 = mix2.rho; % [kg/m3]
-    p2 = convert_bar_to_Pa(mix2.p); % [Pa]
+    p2 = mix2.p; % [bar]
     T2 = mix2.T; % [K]
     u2 = mix2.u; % [m/s]
     W2 = mix2.W; % [kg/mol]
     h2 = mix2.h / mix2.mi; % [J/kg]
 
     % Set pressure and temperature of mix5
-    mix5.p = convert_Pa_to_bar(p5); mix5.T = T5;
+    mix5.p = p5; mix5.T = T5;
 
     % Calculate state given T & p
     [mix5, r5, dVdT_p, dVdp_T] = state(equilibriumSolver, mix2, mix5, guess_moles);
-
+    
+    r5r2 = r5 / r2; % [-]
+    p5p2 = p5 / p2; % [-]
     W5 = mix5.W; % [kg/mol]
     h5 = mix5.h / mix5.mi; % [J/kg]
     cp5 = mix5.cp / mix5.mi; % [J/(K-kg)]
 
     alpha = (W2 * u2^2) / (R0 * T2);
-    J1 = (r5 / r2) / (r5 / r2 - 1)^2 * alpha * dVdp_T - p5 / p2;
-    J2 = (r5 / r2) / (r5 / r2 - 1)^2 * alpha * dVdT_p;
-    b1 = p5 / p2 - 1 - alpha * r5 / r2 / (r5 / r2 - 1);
+    J1 = r5r2 / (r5r2 - 1)^2 * alpha * dVdp_T - p5p2;
+    J2 = r5r2 / (r5r2 - 1)^2 * alpha * dVdT_p;
+    b1 = p5p2 - 1 - alpha * r5r2 / (r5r2 - 1);
 
-    J3 = u2^2 / R0 * (r5 / r2) / (r5 / r2 - 1)^2 * dVdp_T + T5 / W5 * (dVdT_p - 1);
-    J4 = u2^2 / R0 * (r5 / r2) / (r5 / r2 - 1)^2 * dVdT_p - T5 * cp5 / R0;
-    b2 = (h5 - h2) / R0 - u2^2 / (2 * R0) * (r5 / r2 + 1) / (r5 / r2 - 1);
+    J3 = u2^2 / R0 * r5r2 / (r5r2 - 1)^2 * dVdp_T + T5 / W5 * (dVdT_p - 1);
+    J4 = u2^2 / R0 * r5r2 / (r5r2 - 1)^2 * dVdT_p - T5 * cp5 / R0;
+    b2 = (h5 - h2) / R0 - u2^2 / (2 * R0) * (r5r2 + 1) / (r5r2 - 1);
 
     J = [J1 J2; J3 J4];
     b = [b1; b2];
@@ -176,8 +178,8 @@ end
 
 function [p5, T5] = apply_antilog(mix2, log_p5p2, log_T5T2)
     % compute p2 and T2
-    p5 = exp(log_p5p2) * convert_bar_to_Pa(mix2.p); % [Pa]
-    T5 = exp(log_T5T2) * mix2.T;
+    p5 = exp(log_p5p2) * mix2.p; % [bar]
+    T5 = exp(log_T5T2) * mix2.T; % [K]
 end
 
 function STOP = compute_STOP(x)
@@ -186,7 +188,7 @@ function STOP = compute_STOP(x)
 end
 
 function mix5 = save_state(mix2, mix5, STOP)
-    mix5.u = convert_bar_to_Pa(mix5.p - mix2.p) / (mix2.u * mix2.rho) - mix2.u;
+    mix5.u = combustiontoolbox.common.Units.bar2Pa * (mix5.p - mix2.p) / (mix2.u * mix2.rho) - mix2.u;
     mix5.uShock = mix2.u * mix2.rho / mix5.rho;
     mix5.mach = mix5.uShock / mix5.sound;
     mix5.errorProblem = STOP;

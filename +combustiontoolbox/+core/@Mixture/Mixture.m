@@ -634,7 +634,7 @@ classdef Mixture < handle & matlab.mixin.Copyable
                 % Compute pressure in Pascals using the equationState
                 pressure = obj.equationState.getPressure(obj.T, vMolar, obj.chemicalSystem.listSpecies, obj.quantity / sum(obj.quantity)); % [Pa]
                 % Convert pressure to [bar]
-                obj.p = combustiontoolbox.common.Units.convert(pressure, 'Pa', 'bar');
+                obj.p = pressure * combustiontoolbox.common.Units.Pa2bar;
             end
             
             % Assign values to the propertiesMatrix
@@ -865,7 +865,7 @@ classdef Mixture < handle & matlab.mixin.Copyable
             
             % Compute volume [m3]
             if N_gas
-                obj.v = obj.equationState.getVolume(temperature, combustiontoolbox.common.Units.convert(pressure, 'bar', 'Pa'), obj.chemicalSystem.listSpecies, obj.Xi) * N_gas;
+                obj.v = obj.equationState.getVolume(temperature, pressure * combustiontoolbox.common.Units.bar2Pa, obj.chemicalSystem.listSpecies, obj.Xi) * N_gas;
             else
                 % Mixture that only has condensed species
                 obj.v = obj.vSpecific * obj.mi;
@@ -920,7 +920,7 @@ classdef Mixture < handle & matlab.mixin.Copyable
                     obj.gamma_s = -obj.gamma / obj.dVdp_T;
 
                     % Compute sound velocity [m/s]
-                    obj.sound = sqrt(obj.gamma_s * combustiontoolbox.common.Units.convert(pressure, 'bar', 'Pa') / obj.rho); % [m/s]
+                    obj.sound = sqrt(obj.gamma_s * pressure * combustiontoolbox.common.Units.bar2Pa / obj.rho); % [m/s]
 
                     % Compute Mach number
                     if ~isempty(obj.u)
@@ -950,7 +950,7 @@ classdef Mixture < handle & matlab.mixin.Copyable
             obj.gamma_s = obj.gamma;
 
             % Compute sound velocity [m/s]
-            obj.sound = sqrt(obj.gamma * combustiontoolbox.common.Units.convert(pressure, 'bar', 'Pa') / obj.rho);
+            obj.sound = sqrt(obj.gamma * combustiontoolbox.common.Units.bar2Pa / obj.rho);
             
             % Compute Mach number
             if ~isempty(obj.u)
@@ -1058,21 +1058,13 @@ classdef Mixture < handle & matlab.mixin.Copyable
             % Returns:
             %     obj (Mixture): Mixture object with updated atomic counts for the fuel
             
-            % List of elements to assign (extend this list as needed)
-            elements = {'C', 'H',  'O', 'N', 'S', 'Si', 'B'};
-            coeffVec = [  1, 1/4, -1/2,   0,   1,    1, 3/4];
-            
-            for i = 1:length(elements)
-                elem = elements{i};
-                indexField = ['ind_' elem];
-
-                if isprop(obj.chemicalSystem, indexField) && ~isempty(obj.chemicalSystem.(indexField))
-                    obj.fuel.(elem) = natomElementsFuel(obj.chemicalSystem.(indexField));
-                    continue
-                end
-
-                obj.fuel.(elem) = 0;
-            end
+            if isempty(obj.chemicalSystem.ind_C), obj.fuel.C = 0; else, obj.fuel.C = natomElementsFuel(obj.chemicalSystem.ind_C); end
+            if isempty(obj.chemicalSystem.ind_H), obj.fuel.H = 0; else, obj.fuel.H = natomElementsFuel(obj.chemicalSystem.ind_H); end
+            if isempty(obj.chemicalSystem.ind_O), obj.fuel.O = 0; else, obj.fuel.O = natomElementsFuel(obj.chemicalSystem.ind_O); end
+            if isempty(obj.chemicalSystem.ind_N), obj.fuel.N = 0; else, obj.fuel.N = natomElementsFuel(obj.chemicalSystem.ind_N); end
+            if isempty(obj.chemicalSystem.ind_S), obj.fuel.S = 0; else, obj.fuel.S = natomElementsFuel(obj.chemicalSystem.ind_S); end
+            if isempty(obj.chemicalSystem.ind_Si), obj.fuel.Si = 0; else, obj.fuel.Si = natomElementsFuel(obj.chemicalSystem.ind_Si); end
+            if isempty(obj.chemicalSystem.ind_B), obj.fuel.B = 0; else, obj.fuel.B = natomElementsFuel(obj.chemicalSystem.ind_B); end
 
         end
 

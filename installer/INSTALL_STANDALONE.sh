@@ -10,7 +10,7 @@ set -Eeuo pipefail
 # Supported platforms: macOS, Linux, Windows
 #   
 # Usage:
-#   bash INSTALL_STANDALONE.sh
+#   sh INSTALL_STANDALONE.sh
 #
 # @author: Alberto Cuadra Lara
 #          Postdoctoral researcher - Group Fluid Mechanics

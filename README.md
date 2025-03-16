@@ -26,7 +26,7 @@ The Combustion Toolbox is a MATLAB-based thermochemical framework designed to so
 - **CT-ROCKET** estimates the theoretical performance of rocket engines under highly idealized conditions.
 - **CT-TURBULENCE** performs detailed analyses of turbulent flows, including turbulent statistics computations, Helmholtz decomposition, and spectral analyses.
 
-The framework also features a **user-friendly graphical user interface (GUI)**.
+The framework also includes an intuitive **graphical user interface (GUI)**, with a **royalty-free standalone version** available for Windows, macOS, and Linux.
 
 > For installation instructions and usage guidelines, visit the [Combustion Toolbox website](https://combustion-toolbox-website.readthedocs.io).
 

@@ -5,49 +5,22 @@ message: "If you use this software, please cite it using these metadata."
 type: misc
 license: "GPL-3.0"
 title: "Combustion Toolbox: A MATLAB-GUI based open-source tool for solving gaseous combustion problems"
-version: 1.1.3
+version: 1.2.0
 doi: 10.5281/zenodo.5554911
-date-released: 2024-11-10
+date-released: 2025-03-16
 url: "https://combustion-toolbox-website.readthedocs.io"
 repository-code: "https://github.com/CombustionToolbox/combustion_toolbox"
 abstract:
-    "
-    [Website](https://combustion-toolbox-website.readthedocs.io)
-    
-    ## Main features
-      - The code stems from the minimization of the free energy of the system by using Lagrange multipliers combined with a Newton-Raphson method, upon condition that initial gas properties are defined by two functions of states (e.g., temperature and pressure)
-      - When temperature is not externally imposed, the code retrieves a routine also based on Newton-Raphson method to find the equilibrium temperature
-      - Solve processes that involve strong changes in the dynamic pressure, such as detonations and shock waves in the steady state
-      - Find the equilibrium conditions of the different phenomena undergoing behind the shock: molecular vibrational excitation up to dissociation, and electronic excitation up to ionization, thereby providing the `properties of the gas in plasma state` within the temperature range given by the NASA’s 9-coefficient polynomial fits.
-      - Calculate the chemical equilibrium composition of a mixture by selecting which species can react or remain chemically frozen (inert).
-      - The corresponding thermodynamic properties of the species are modelled with `NASA’s 9-coefficient polynomial fits`, which ranges `up to 20000 K`, and the ideal gas equation of state
-      - Results are in `excellent agreement with NASA’s Chemical Equilibrium with Applications (CEA) program`, CANTERA and Caltech’s Shock and Detonation Toolbox, and TEA
-    * `Chemical equilibrium problems`
-      - TP: Equilibrium composition at defined temperature and pressure
-      - HP: Adiabatic temperature and composition at constant pressure
-      - SP: Isentropic compression/expansion to a specified pressure
-      - TV: Equilibrium composition at defined temperature and constant volume
-      - EV: Adiabatic temperature and composition at constant volume
-      - SV: Isentropic compression/expansion to a specified volume
-    * `Shock calculations:`
-      - Pre-shock and post shock states
-      - Equilibrium or frozen composition
-      - Incident or reflected shocks
-      - Chapman-Jouguet detonations and overdriven detonations
-      - Reflected detonations
-      - Oblique shocks/detonations
-      - Shock/detonation polar curves for incident and reflected states
-      - Hugoniot curves
-      - Ideal jump conditions for a given adiabatic index and pre-shock Mach number
-    * `Rocket propellant performance assuming:`
-      - Infinite-Area-Chamber model (IAC)
-      - Finite-Area-Chamber model (FAC)
-    * All the routines and computations are encapsulated in a more comprehensive and `user-friendly GUI`
-    * The code `is in it’s transition to Python`
-    * Export results in a spreadsheet
-    * Export results as a .mat format
-    * `Display predefined plots` (e.g., molar fraction vs equilence ratio)
-    "
+    "The Combustion Toolbox is a MATLAB-based thermochemical framework designed to solve problems involving chemical equilibrium for both gas- and condensed-phase species. The toolbox is composed of several modules, each of which is designed to solve a specific class of problems:
+
+    - **CT-EQUIL** computes the equilibrium composition of multi-component gas mixtures undergoing thermochemical transformations. The final equilibrium state is determined by a predefined set of chemical species (gaseous—including ions—or condensed phases) and two thermodynamic state functions, such as enthalpy and pressure, e.g., for isobaric combustion processes.
+    - **CT-SD** solves steady-state shock and detonation wave problems for both normal and oblique incidence.  
+    - **CT-ROCKET** estimates the theoretical performance of rocket engines under highly idealized conditions.
+    - **CT-TURBULENCE** performs detailed analyses of turbulent flows, including turbulent statistics computations, Helmholtz decomposition, and spectral analyses.
+
+    The framework also features a **user-friendly graphical user interface (GUI)**.
+
+    > For installation instructions and usage guidelines, visit the [Combustion Toolbox website](https://combustion-toolbox-website.readthedocs.io)."
 authors: 
   -
     family-names: "Cuadra"
@@ -73,3 +46,4 @@ keywords:
   - app
   - toolbox
   - "open-source"
+  - turbulence

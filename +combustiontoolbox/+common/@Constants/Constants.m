@@ -20,7 +20,7 @@ classdef Constants < handle
         KB      = 1.38064852e-23   % Boltzmann constant [J/K]
         HBAR    = 6.626070041e-34  % Planck constant [J-s]
         release = 'v1.2.0'         % Release version
-        date    = '05 Feb 2025'    % Release date
+        date    = '16 March 2025'  % Release date
     end
     
 end

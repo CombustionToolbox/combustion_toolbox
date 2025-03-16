@@ -36,7 +36,7 @@ The framework also features a **user-friendly graphical user interface (GUI)**.
 If you use the Combustion Toolbox in a publication, please cite it using the following references:
 
 * *Cuadra, A., Huete, C., & Vera, M. (2024). Combustion Toolbox: An open-source thermochemical code for gas- and condensed-phase problems involving chemical equilibrium. [arXiv:2409.15086](https://doi.org/10.48550/arXiv.2409.15086).*
-* *Cuadra, A., Huete, C., & Vera, M. (2024). Combustion Toolbox: A MATLAB-GUI based open-source tool for solving gaseous combustion problems. Version 1.2.0. Zenodo. [doi:10.5281/zenodo.5554911](https://doi.org/10.5281/zenodo.5554911).*
+* *Cuadra, A., Huete, C., & Vera, M. (2025). Combustion Toolbox: A MATLAB-GUI based open-source tool for solving gaseous combustion problems. Version 1.2.0. Zenodo. [doi:10.5281/zenodo.5554911](https://doi.org/10.5281/zenodo.5554911).*
 
 It can be handy the BibTeX format:
 

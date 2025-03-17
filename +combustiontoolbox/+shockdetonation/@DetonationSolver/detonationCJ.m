@@ -196,6 +196,8 @@ end
 function [mix1, mix2] = save_state(mix1, mix2, STOP)
     mix2.u = mix2.sound; % velocity postshock [m/s] - laboratory fixed
     mix1.u = mix2.u * mix2.rho / mix1.rho;
+    mix1.uShock = mix1.u;
+    mix1.cjSpeed = mix1.u;
     mix1.mach = mix1.u / mix1.sound;
     mix2.uShock = mix1.u * mix1.rho / mix2.rho;
     mix2.errorProblem = STOP;

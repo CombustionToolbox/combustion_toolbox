@@ -190,14 +190,13 @@ function mix = equilibrateTFrozen(mix, T)
 
     % Definitions
     mix.FLAG_REACTION = false;
-    temp = mix.equivalenceRatio;
-    mix.equivalenceRatio = [];
-    mix.listSpecies = mix.chemicalSystem.listSpecies;
+    mix.T = T;
     mix.quantity = mix.Xi * mix.N;
+    mix.listSpecies = mix.chemicalSystem.listSpecies;
+    
+    % Update indexSpecies
+    updateIndexSpecies(mix);
 
     % Update thermodynamic properties assuming a thermally perfect gas
-    setTemperature(mix, T);
-
-    % Recover original value
-    mix.equivalenceRatio = temp;  
+    updateThermodynamics(mix); 
 end

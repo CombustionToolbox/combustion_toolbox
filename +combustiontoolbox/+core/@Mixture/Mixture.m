@@ -321,8 +321,8 @@ classdef Mixture < handle & matlab.mixin.Copyable
             % Check if species are contained in the chemical system
             obj.chemicalSystem.checkSpecies(listSpecies);
             
-            % Get index species in the mixture
-            obj.indexSpecies = findIndex(obj.chemicalSystem.listSpecies, obj.listSpecies);
+            % Update index species in the mixture
+            updateIndexSpecies(obj);
 
             % Get index react species
             obj.chemicalSystem.setReactIndex(obj.listSpeciesInert);
@@ -697,6 +697,18 @@ classdef Mixture < handle & matlab.mixin.Copyable
             obj.chemicalSystemProducts = getSystemProducts(obj.chemicalSystem);
         end
 
+        function obj = updateIndexSpecies(obj)
+            % Update index species in the mixture
+            %
+            % Args:
+            %     obj (Mixture): Mixture object
+            %
+            % Returns:
+            %     obj (Mixture): Mixture object with updated indexSpecies
+
+            obj.indexSpecies = combustiontoolbox.utils.findIndex(obj.chemicalSystem.listSpecies, obj.listSpecies);
+        end
+
         function vMolar = vSpecific2vMolar(obj, vSpecific, moles, molesGas, varargin)
             % Compute molar volume [m3/mol] from specific volume [m3/kg]
 
@@ -920,7 +932,7 @@ classdef Mixture < handle & matlab.mixin.Copyable
                     obj.gamma_s = -obj.gamma / obj.dVdp_T;
 
                     % Compute sound velocity [m/s]
-                    obj.sound = sqrt(obj.gamma_s * pressure * combustiontoolbox.common.Units.bar2Pa / obj.rho); % [m/s]
+                    obj.sound = sqrt(obj.gamma_s * combustiontoolbox.common.Units.bar2Pa * pressure / obj.rho);
 
                     % Compute Mach number
                     if ~isempty(obj.u)
@@ -938,9 +950,9 @@ classdef Mixture < handle & matlab.mixin.Copyable
             % Compute thermodynamic derivatives, cp, cv, gamma, and speed
             % of sound considering frozen chemistry
             
-            % Set thermodynamic derivatives
-            obj.dVdT_p = 1;          % [-]
-            obj.dVdp_T = -1;         % [-]
+            % Set thermodynamic derivatives [-]
+            obj.dVdT_p = 1;
+            obj.dVdp_T = -1;
 
             % Compute specific heat at constant volume [J/K]
             obj.cv = obj.cp - R0 * N_gas;
@@ -950,7 +962,7 @@ classdef Mixture < handle & matlab.mixin.Copyable
             obj.gamma_s = obj.gamma;
 
             % Compute sound velocity [m/s]
-            obj.sound = sqrt(obj.gamma * combustiontoolbox.common.Units.bar2Pa / obj.rho);
+            obj.sound = sqrt(obj.gamma * combustiontoolbox.common.Units.bar2Pa * pressure / obj.rho);
             
             % Compute Mach number
             if ~isempty(obj.u)

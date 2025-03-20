@@ -19,8 +19,8 @@ classdef Constants < handle
         NA      = 6.0221415e23     % Avogadro's number [molecule/mol]
         KB      = 1.38064852e-23   % Boltzmann constant [J/K]
         HBAR    = 6.626070041e-34  % Planck constant [J-s]
-        release = 'v1.2.0'         % Release version
-        date    = '16 March 2025'  % Release date
+        release = 'v1.2.1'         % Release version
+        date    = '20 Mar 2025'    % Release date
     end
     
 end

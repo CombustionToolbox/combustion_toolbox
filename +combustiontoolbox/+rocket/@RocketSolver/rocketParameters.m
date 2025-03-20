@@ -23,16 +23,14 @@ function [mix3, varargout] = rocketParameters(mix2, mix3, varargin)
     [mix3.I_sp, mix3.I_vac] = specificImpulse(mix3, gravity);
 
     for i = nargin-2:-1:1
-
+        
         if ~isempty(varargin{i})
             varargin{i}.cstar = mix3.cstar;
             varargin{i}.cf = varargin{i}.u / varargin{i}.cstar;
             [varargin{i}.I_sp, varargin{i}.I_vac] = specificImpulse(varargin{i}, gravity);
-            varargout{i} = varargin{i};
-        else
-            varargout{i} = [];
         end
 
+        varargout{i} = varargin{i};
     end
 
 end

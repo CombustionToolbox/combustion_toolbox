@@ -31,6 +31,9 @@ function [mix1, mix2_c, mix3, mix4] = rocketIAC(obj, mix1, varargin)
     
     % Initialization
     mix2_c = copy(mix1);
+    mix2_c_guess = [];
+    mix3_guess = [];
+    mix4_guess = [];
     FLAG_PERFORMANCE = true;
 
     % Unpack additional input parameters
@@ -49,10 +52,6 @@ function [mix1, mix2_c, mix3, mix4] = rocketIAC(obj, mix1, varargin)
             mix3_guess = varargin{2};
             mix4_guess = varargin{3};
             FLAG_PERFORMANCE = varargin{4};
-        otherwise
-            mix2_c_guess = [];
-            mix3_guess = [];
-            mix4_guess = [];
     end
 
     % Compute chemical equilibria at different stations of the rocket

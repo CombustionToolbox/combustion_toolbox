@@ -30,14 +30,14 @@ function [mix1, mix2] = detonationCJ(obj, mix1, varargin)
     
     % Solve Chapman-Jouguet detonation
     try
-        [T2, p2, STOP, it, T_guess, p2_guess] = solve_cj_detonation(FLAG_FAST); % p2 [Pa]
+        [T2, p2, STOP, it, T_guess, p2_guess] = solve_cj_detonation(FLAG_FAST);
         assert(STOP < obj.tol0);
     catch
         % If solution has not converged, repeat without composition estimate
         fprintf('Recalculating: %.2f [K]\n', T2);
         guess_moles = [];
         FLAG_FAST = false;
-        [T2, p2, STOP, it, T_guess, p2_guess] = solve_cj_detonation(FLAG_FAST); % p2 [Pa]
+        [T2, p2, STOP, it, T_guess, p2_guess] = solve_cj_detonation(FLAG_FAST);
     end
 
     % Check convergence
@@ -70,9 +70,9 @@ function [mix1, mix2] = detonationCJ(obj, mix1, varargin)
             % Apply correction
             [log_p2p1, log_T2T1] = apply_correction(x, p2p1, T2T1, lambda);
             % Apply antilog
-            [p2, T2] = apply_antilog(mix1, log_p2p1, log_T2T1); % [Pa] and [K]
+            [p2, T2] = apply_antilog(mix1, log_p2p1, log_T2T1); % [bar] and [K]
             % Update ratios
-            p2p1 = p2 / (convert_bar_to_Pa(mix1.p));
+            p2p1 = p2 / mix1.p;
             T2T1 = T2 / mix1.T;
             % Compute STOP criteria
             STOP = compute_STOP(x);
@@ -101,12 +101,12 @@ function [p2, T2, p2p1, T2T1, STOP] = get_guess(obj, mix1, mix2)
     if mix1.T == mix2.T
         [p2p1, T2T1, STOP] = detonationGuess(obj, mix1);
 
-        p2 = p2p1 * convert_bar_to_Pa(mix1.p); % [Pa]
+        p2 = p2p1 * mix1.p; % [bar]
         T2 = T2T1 * mix1.T; % [K]
     else
-        p2 = convert_bar_to_Pa(mix2.p); % [Pa]
+        p2 = mix2.p; % [bar]
         T2 = mix2.T; % [K]
-        p2p1 = p2 / (convert_bar_to_Pa(mix1.p));
+        p2p1 = p2 / mix1.p;
         T2T1 = T2 / mix1.T;
         STOP = 1;
     end
@@ -125,28 +125,30 @@ end
 function [J, b, guess_moles] = update_system(equilibriumSolver, mix1, mix2, p2, T2, R0, guess_moles, FLAG_FAST)
     % Update Jacobian matrix and vector b
     r1 = mix1.rho; % [kg/m3]
-    p1 = convert_bar_to_Pa(mix1.p); % [Pa]
+    p1 = mix1.p; % [bar]
     h1 = mix1.h / mix1.mi; % [J/kg]
     
     % Set pressure and temperature of mix2
-    mix2.p = convert_Pa_to_bar(p2); mix2.T = T2;
+    mix2.p = p2; mix2.T = T2;
 
     % Calculate frozen state given T & p
     [mix2, r2, dVdT_p, dVdp_T] = state(equilibriumSolver, mix1, mix2, guess_moles);
 
+    r2r1 = r2 / r1; % [-]
+    p1p2 = p1 / p2; % [-]
     W2 = mix2.W; % [kg/mol]
     h2 = mix2.h / mix2.mi; % [J/kg]
     cp2 = mix2.cp / mix2.mi; % [J/(K-kg)]
     gamma2_s = mix2.gamma_s; % [-]
 
-    J1 = p1 / p2 + r2 / r1 * gamma2_s * dVdp_T;
-    J2 = r2 / r1 * gamma2_s * dVdT_p;
-    b1 = p1 / p2 - 1 + gamma2_s * (r2 / r1 - 1);
+    J1 = p1p2 + r2r1 * gamma2_s * dVdp_T;
+    J2 = r2r1 * gamma2_s * dVdT_p;
+    b1 = p1p2 - 1 + gamma2_s * (r2r1 - 1);
 
-    J3 = gamma2_s * T2 / (2 * W2) * ((r2 / r1)^2 - 1 - dVdp_T * (1 + (r2 / r1)^2)) ...
+    J3 = gamma2_s * T2 / (2 * W2) * (r2r1^2 - 1 - dVdp_T * (1 + r2r1^2)) ...
         + T2 / W2 * (dVdT_p - 1);
-    J4 = -gamma2_s * T2 / (2 * W2) * ((r2 / r1)^2 + 1) * dVdT_p - T2 * cp2 / R0;
-    b2 = (h2 - h1) / R0 - gamma2_s * T2 / (2 * W2) * ((r2 / r1)^2 - 1);
+    J4 = - gamma2_s * T2 / (2 * W2) * (r2r1^2 + 1) * dVdT_p - T2 * cp2 / R0;
+    b2 = (h2 - h1) / R0 - gamma2_s * T2 / (2 * W2) * (r2r1^2 - 1);
 
     J = [J1 J2; J3 J4];
     b = [b1; b2];
@@ -182,8 +184,8 @@ end
 
 function [p2, T2] = apply_antilog(mix1, log_p2p1, log_T2T1)
     % compute p2 and T2
-    p2 = exp(log_p2p1) * convert_bar_to_Pa(mix1.p); % [Pa]
-    T2 = exp(log_T2T1) * mix1.T;
+    p2 = exp(log_p2p1) * mix1.p; % [bar]
+    T2 = exp(log_T2T1) * mix1.T; % [K]
 end
 
 function STOP = compute_STOP(x)
@@ -194,6 +196,8 @@ end
 function [mix1, mix2] = save_state(mix1, mix2, STOP)
     mix2.u = mix2.sound; % velocity postshock [m/s] - laboratory fixed
     mix1.u = mix2.u * mix2.rho / mix1.rho;
+    mix1.uShock = mix1.u;
+    mix1.cjSpeed = mix1.u;
     mix1.mach = mix1.u / mix1.sound;
     mix2.uShock = mix1.u * mix1.rho / mix2.rho;
     mix2.errorProblem = STOP;

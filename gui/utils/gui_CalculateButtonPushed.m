@@ -23,6 +23,7 @@ function app = gui_CalculateButtonPushed(app, event)
     additionalInputsP = {};
     FLAG_BETA = false;
     FLAG_THETA = false;
+    FLAG_ARATIO = false;
 
     if FLAG_EQUIVALENCE_RATIO
         additionalInputsR = {'equivalenceRatio', equivalenceRatio};
@@ -88,9 +89,11 @@ function app = gui_CalculateButtonPushed(app, event)
                 if ~isempty(propertyR3) % Subsonic region (pre-throat)
                     additionalInputsR = [additionalInputsR, 'areaRatio', propertyR3];
                     set(app.rocketSolver, 'FLAG_SUBSONIC',  true);
+                    FLAG_ARATIO = true;
                 elseif ~isempty(propertyP3) % Supersonic region (post-throat)
                     additionalInputsR = [additionalInputsR, 'areaRatio', propertyP3];
                     set(app.rocketSolver, 'FLAG_SUBSONIC',  false);
+                    FLAG_ARATIO = true;
                 end
 
             otherwise
@@ -103,10 +106,15 @@ function app = gui_CalculateButtonPushed(app, event)
         if strcmpi(app.ProblemType.Value(2), 'V')
             propertyNameR2 = 'volume';
         end
+
+        % Check if list species corresponds with complete combustion
+        if strcmpi(app.Products.Value, 'complete reaction')
+            listSpecies = 'complete';
+        end
         
         % Define chemical system
         app.chemicalSystem = combustiontoolbox.core.ChemicalSystem(app.database, listSpecies);
-
+        
         % Temporal mixture
         tempMixture = app.mixture.copy();
         
@@ -144,6 +152,8 @@ function app = gui_CalculateButtonPushed(app, event)
             problemType = [problemType, '_BETA'];
         elseif ~FLAG_BETA & FLAG_THETA
             problemType = [problemType, '_THETA'];
+        elseif FLAG_ARATIO
+            problemType = [problemType, '_ARATIO'];
         end
 
         % Select solver and solve problem
@@ -279,6 +289,19 @@ function app = gui_CalculateButtonPushed(app, event)
                 % Select solver
                 solver = set(app.rocketSolver, 'problemType', problemType, 'FLAG_RESULTS', FLAG_RESULTS);
                 % Solve problem
+                [mixArray1, mixArray2, mixArray3] = solver.solveArray(mixArray1);
+                % Set output
+                varargout = {mixArray1, mixArray2, mixArray3};
+
+                % Set plot properties
+                solver.plotConfig.plotProperties = {'T', 'rho', 'h', 'e', 'g', 'cp', 's', 'gamma_s', 'sound', 'u', 'I_sp', 'I_vac'};
+                solver.plotConfig.plotPropertiesBasis = {[], [], 'mi', 'mi', 'mi', 'mi', 'mi', [], [], [], [], []};
+            case {'ROCKET_IAC_ARATIO'}
+                % Remove ARATIO
+                problemType = strrep(problemType, '_ARATIO', '');
+                % Select solver
+                solver = set(app.rocketSolver, 'problemType', problemType, 'FLAG_RESULTS', FLAG_RESULTS);
+                % Solve problem
                 [mixArray1, mixArray2, mixArray3, mixArray4] = solver.solveArray(mixArray1);
                 % Set output
                 if ~isempty(mixArray4(1).N)
@@ -291,6 +314,19 @@ function app = gui_CalculateButtonPushed(app, event)
                 solver.plotConfig.plotProperties = {'T', 'rho', 'h', 'e', 'g', 'cp', 's', 'gamma_s', 'sound', 'u', 'I_sp', 'I_vac'};
                 solver.plotConfig.plotPropertiesBasis = {[], [], 'mi', 'mi', 'mi', 'mi', 'mi', [], [], [], [], []};
             case {'ROCKET_FAC'}
+                % Select solver
+                solver = set(app.rocketSolver, 'problemType', problemType, 'FLAG_RESULTS', FLAG_RESULTS);
+                % Solve problem
+                [mixArray1, mixArray2, mixArray3, mixArray4] = solver.solveArray(mixArray1);
+                % Set output
+                varargout = {mixArray1, mixArray2, mixArray3, mixArray4};
+
+                % Set plot properties
+                solver.plotConfig.plotProperties = {'T', 'rho', 'h', 'e', 'g', 'cp', 's', 'gamma_s', 'sound', 'u', 'I_sp', 'I_vac'};
+                solver.plotConfig.plotPropertiesBasis = {[], [], 'mi', 'mi', 'mi', 'mi', 'mi', [], [], [], [], []};
+            case {'ROCKET_FAC_ARATIO'}
+                % Remove ARATIO
+                problemType = strrep(problemType, '_ARATIO', '');
                 % Select solver
                 solver = set(app.rocketSolver, 'problemType', problemType, 'FLAG_RESULTS', FLAG_RESULTS);
                 % Solve problem
@@ -321,6 +357,12 @@ function app = gui_CalculateButtonPushed(app, event)
         
         % Update GUI with the last results of the set
         gui_update_results(app, results);
+        
+        % Update GUI list species (complete reaction)
+        if strcmpi(app.Products.Value, 'complete reaction') && length(mixArray1) > 1
+            app.listbox_Products.Items = unique([app.chemicalSystem.listSpecies, app.chemicalSystem.listSpeciesLean, app.chemicalSystem.listSpeciesLean, app.chemicalSystem.listSpeciesRich, app.chemicalSystem.listSpeciesSoot]);
+            public_ProductsValueChanged(app);
+        end
         
         % Update GUI custom figures tab
         gui_update_custom_figures(app);

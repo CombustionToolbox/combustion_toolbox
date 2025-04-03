@@ -17,12 +17,21 @@ function gui_edit_phiValueChanged(app, event)
         end
         
         % Definitions
-        temperature = gui_get_prop(app.PR1.Value, 'first'); % [K]
         pressure = gui_get_prop(app.PR2.Value, 'first');    % [bar]
         equivalenceRatio = gui_get_prop(app.edit_phi.Value, 'first'); % [-]
         
         % Temporal mixture
         tempMixture = app.mixture.copy();
+    
+        % Get list species
+        if strcmpi(app.Products.Value, 'complete reaction')
+            listSpecies = 'complete';
+        else
+            listSpecies = app.UITable_R.Data(:, 1)';
+        end
+
+        % Define chemical system
+        app.chemicalSystem = combustiontoolbox.core.ChemicalSystem(app.database, listSpecies);
 
         % Initialize mixture
         app.mixture = combustiontoolbox.core.Mixture(app.chemicalSystem);
@@ -32,15 +41,15 @@ function gui_edit_phiValueChanged(app, event)
         set(app.mixture, tempMixture.listSpeciesOxidizer, 'oxidizer', tempMixture.ratioOxidizer);
         set(app.mixture, tempMixture.listSpeciesInert, 'inert', tempMixture.molesInert);
 
+        % Set temperature of the mixture
+        setTemperature(app);
+
         % Define properties
-        app.mixture = setProperties(app.mixture, 'temperature', temperature, 'pressure', pressure, 'equivalenceRatio', equivalenceRatio);
-        
-        % Update temperature of the mixture (if needed)
-        updateTemperature(app);
+        app.mixture = setProperties(app.mixture, 'pressure', pressure, 'equivalenceRatio', equivalenceRatio);
         
         % Update UITable classes
         gui_update_UITable_R(app);
-        app.UITable_R2.Data = app.UITable_R.Data(:, 1:3); % (species, numer of moles, mole fractions)
+        app.UITable_R2.Data = app.UITable_R.Data(:, 1:3); % (species, number of moles, mole fractions)
 
         % Update GUI: equivalence ratio, O/F and percentage Fuel
         app.edit_phi2.Value = app.edit_phi.Value;
@@ -50,7 +59,7 @@ function gui_edit_phiValueChanged(app, event)
 
         % Update GUI: Listbox species considered as products.
         % In case frozen chemistry or ionization is considered.
-        gui_update_frozen(app);
+        % gui_update_frozen(app);
 
         % Check List of products (only in case of ListProducts == Complete reaction)
         check_ListProducts(app, equivalenceRatio);
@@ -60,6 +69,7 @@ function gui_edit_phiValueChanged(app, event)
         ME.stack(1).name, ME.stack(1).line, ME.message)};
         uialert(app.UIFigure, message, 'Warning', 'Icon', 'warning');
     end
+
 end
 
 % SUB-PASS FUNCTIONS
@@ -70,25 +80,27 @@ function check_ListProducts(app, equivalenceRatio)
     end
 
     % Update List of Products depending of the value of the equivalence ratio
-    app.chemicalSystem.listSpecies(app.database, 'complete', equivalenceRatio);
+    app.chemicalSystem.setListSpecies('complete', equivalenceRatio, app.mixture.equivalenceRatioSoot);
     app.listbox_Products.Items = app.chemicalSystem.listSpecies;
 end
 
-function temperature = updateTemperature(app)
-    % Get temperature of the mixture (if needed)
+function setTemperature(app)
+    % Set temperature of the mixture
     
+    % Definitions
+    app.mixture.problemType = app.ProblemType.Value;
+    speciesTemperatures = cell2vector(app.UITable_R.Data(:, 5))';
+
     % Update table compostion
     gui_update_UITable_R(app);
-    
-    % Compute temperature of the mixture
-    temperature = compute_temperature_mixture(app.ProblemType.Value, app.chemicalSystem.species, app.UITable_R.Data(:, 1), app.UITable_R.Data(:, 2), app.UITable_R.Data(:, 5));
-    
-    % Check if temperature remains constant
-    if temperature == app.mixture.T
-        return
-    end
 
-    % Update temperature
-    setTemperature(app.mixture, temperature);
-    app.PR1.Value = sprintf('%.4g', temperature);
+    % Reorganize species temperature in the same order as in listSpecies
+    [~, index] = ismember(app.mixture.listSpecies, app.UITable_R.Data(:, 1));
+    speciesTemperatures = speciesTemperatures(index);
+
+    % Compute equilibrium temperature
+    setTemperatureSpecies(app.mixture, speciesTemperatures);
+    
+    % Update GUI
+    app.PR1.Value = sprintf('%.4g', app.mixture.T);
 end

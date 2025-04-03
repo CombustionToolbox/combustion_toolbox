@@ -79,9 +79,9 @@ function [mix1, mix2] = shockIncident(obj, mix1, u1, varargin)
             % Apply correction
             [log_p2p1, log_T2T1] = apply_correction(x, p2p1, T2T1, lambda);
             % Apply antilog
-            [p2, T2] = apply_antilog(mix1, log_p2p1, log_T2T1); % [Pa] and [K]
+            [p2, T2] = apply_antilog(mix1, log_p2p1, log_T2T1); % [bar] and [K]
             % Update ratios
-            p2p1 = p2 / (convert_bar_to_Pa(mix1.p));
+            p2p1 = p2 / mix1.p;
             T2T1 = T2 / mix1.T;
             % Compute STOP criteria
             aux = compute_STOP(x);
@@ -128,7 +128,7 @@ function [p2, T2, p2p1, T2T1] = get_guess(obj, mix1, mix2)
 
         if M1 > obj.machThermo
             % Estimate post-shock state considering h2 = h1 + u1^2 / 2
-            mix2.h = (mix1.h + mix1.u^2/2) * mix1.mi; % [J]
+            mix2.h = mix1.h + 0.5 * mix1.u^2 * mix1.mi; % [J]
 
             % Initialize mix2 and set pressure
             mix2.p = p2p1 * mix1.p;
@@ -143,12 +143,12 @@ function [p2, T2, p2p1, T2T1] = get_guess(obj, mix1, mix2)
             T2 = T2T1 * mix1.T; % [K]
         end
 
-        p2 = p2p1 * convert_bar_to_Pa(mix1.p); % [Pa]
+        p2 = p2p1 * mix1.p; % [bar]
     else
-        p2 = convert_bar_to_Pa(mix2.p); % [Pa]
+        p2 = mix2.p; % [bar]
         T2 = mix2.T; % [K]
 
-        p2p1 = p2 / convert_bar_to_Pa(mix1.p);
+        p2p1 = p2 / mix1.p;
         T2T1 = T2 / mix1.T;
     end
     
@@ -157,30 +157,32 @@ end
 function [J, b, guess_moles] = update_system(equilibriumSolver, mix1, mix2, p2, T2, R0, guess_moles, FLAG_FAST)
     % Update Jacobian matrix and vector b
     r1 = mix1.rho; % [kg/m3]
-    p1 = convert_bar_to_Pa(mix1.p); % [Pa]
+    p1 = mix1.p; % [bar]
     T1 = mix1.T; % [K]
     u1 = mix1.u; % [m/s]
     W1 = mix1.W; % [kg/mol]
     h1 = mix1.h / mix1.mi; % [J/kg]
     
     % Set pressure and temperature of mix2
-    mix2.p = convert_Pa_to_bar(p2); mix2.T = T2;
+    mix2.p = p2; mix2.T = T2;
 
     % Calculate state given T & p
     [mix2, r2, dVdT_p, dVdp_T] = state(equilibriumSolver, mix1, mix2, guess_moles);
     
+    r1r2 = r1 / r2; % [-]
+    p2p1 = p2 / p1; % [-]
     W2 = mix2.W; % [kg/mol]
     h2 = mix2.h / mix2.mi; % [J/kg]
     cp2 = mix2.cp / mix2.mi; % [J/(K-kg)]
 
     alpha = (W1 * u1^2) / (R0 * T1);
-    J1 = -r1 / r2 * alpha * dVdp_T - p2 / p1;
-    J2 = -r1 / r2 * alpha * dVdT_p;
-    b1 = p2 / p1 - 1 + alpha * (r1 / r2 - 1);
+    J1 = -r1r2 * alpha * dVdp_T - p2p1;
+    J2 = -r1r2 * alpha * dVdT_p;
+    b1 = p2p1 - 1 + alpha * (r1 / r2 - 1);
 
-    J3 = -u1^2 / R0 * (r1 / r2)^2 * dVdp_T + T2 / W2 * (dVdT_p - 1);
-    J4 = -u1^2 / R0 * (r1 / r2)^2 * dVdT_p - T2 * cp2 / R0;
-    b2 = (h2 - h1) / R0 - u1^2 / (2 * R0) * (1 - (r1 / r2)^2);
+    J3 = -u1^2 / R0 * r1r2^2 * dVdp_T + T2 / W2 * (dVdT_p - 1);
+    J4 = -u1^2 / R0 * r1r2^2 * dVdT_p - T2 * cp2 / R0;
+    b2 = (h2 - h1) / R0 - u1^2 / (2 * R0) * (1 - r1r2^2);
 
     J = [J1 J2; J3 J4];
     b = [b1; b2];
@@ -216,8 +218,8 @@ end
 
 function [p2, T2] = apply_antilog(mix1, log_p2p1, log_T2T1)
     % compute p2 and T2
-    p2 = exp(log_p2p1) * convert_bar_to_Pa(mix1.p); % [Pa]
-    T2 = exp(log_T2T1) * mix1.T;
+    p2 = exp(log_p2p1) * mix1.p; % [bar]
+    T2 = exp(log_T2T1) * mix1.T; % [K]
 end
 
 function STOP = compute_STOP(x)

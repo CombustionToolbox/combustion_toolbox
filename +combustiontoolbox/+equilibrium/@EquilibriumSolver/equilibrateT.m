@@ -41,6 +41,13 @@ function mix2 = equilibrateT(obj, mix1, mix2, T, varargin)
     % Unpack addtitional inputs
     if nargin > 4
         molesGuess = varargin{1};
+        
+        if system.FLAG_COMPLETE
+            molesGuess = [];
+        elseif ~isempty(molesGuess)
+            molesGuess = molesGuess(system.indexProducts);
+        end
+
     end
 
     % Check flag
@@ -102,7 +109,7 @@ end
 function pP = computePressure(mix, T, moles, system)
     % Compute pressure [bar] of product mixture
     vMolar = vSpecific2vMolar(mix, mix.vSpecific, moles, sum(moles(system.indexGas)), [system.indexGas, system.indexCondensed]);
-    pP = mix.equationOfState.getPressure(T, vMolar, system.listSpecies, mix.Xi) * 1e-5;
+    pP = mix.equationState.getPressure(T, vMolar, system.listSpecies, mix.Xi) * 1e-5;
 end
 
 function vector = reshapeVector(system, index, indexModified, vectorModified)
@@ -129,6 +136,9 @@ function mix2 = equilibrateTPerfect(mix1, mix2, T)
     % Import packages
     import combustiontoolbox.common.Units
 
+    % Definitions
+    Tref = 298.15; % [K] To be fixed: each species should have its own reference temperature
+
     % Recompute properties of mix2
     setTemperature(mix2, T);
 
@@ -137,8 +147,25 @@ function mix2 = equilibrateTPerfect(mix1, mix2, T)
     mix2.cv = mix1.cv;
     mix2.gamma = mix1.gamma;
     mix2.gamma_s = mix1.gamma_s;
-    mix2.sound = sqrt(mix2.gamma * Units.convert(mix2.p, 'bar', 'Pa') / mix2.rho);
+    mix2.sound = sqrt(mix2.gamma * mix2.p * Units.bar2Pa / mix2.rho);
+
+    % Compute enthalpy [J]
+    mix2.hf = mix1.hf;
+    mix2.DhT = mix1.cp * (T - Tref);
+    mix2.h = mix2.hf + mix2.DhT;
+
+    % Compute internal energy [J]
+    mix2.ef = mix1.ef;
+    mix2.DeT = mix1.cv * (T - Tref);
+    mix2.e = mix2.ef + mix2.DeT;
+
+    % Compute entropy [J/K]
+    mix2.s0 = mix1.s0 + mix1.cp * log(T / mix1.T);
+    mix2.s = mix2.s0 + mix2.Ds;
     
+    % Compute Gibbs free energy
+    mix2.g = mix2.h - T * mix2.s;
+
     if isempty(mix2.u)
         return
     end
@@ -163,14 +190,13 @@ function mix = equilibrateTFrozen(mix, T)
 
     % Definitions
     mix.FLAG_REACTION = false;
-    temp = mix.equivalenceRatio;
-    mix.equivalenceRatio = [];
-    mix.listSpecies = mix.chemicalSystem.listSpecies;
+    mix.T = T;
     mix.quantity = mix.Xi * mix.N;
+    mix.listSpecies = mix.chemicalSystem.listSpecies;
+    
+    % Update indexSpecies
+    updateIndexSpecies(mix);
 
     % Update thermodynamic properties assuming a thermally perfect gas
-    setTemperature(mix, T);
-
-    % Recover original value
-    mix.equivalenceRatio = temp;  
+    updateThermodynamics(mix); 
 end

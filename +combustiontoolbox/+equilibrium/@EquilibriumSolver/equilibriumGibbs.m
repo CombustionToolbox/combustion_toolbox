@@ -101,7 +101,7 @@ function [N, dNi_T, dN_T, dNi_p, dN_p, index, STOP, STOP_ions, h0] = equilibrium
     J22 = zeros(NS - NG + 1);
     A0_T = A0';
 
-    % Initialize composition matrix N [mol, FLAG_CONDENSED]
+    % Initialize composition vector N
     [N, NP] = obj.equilibriumGuess(N, NP, A0_T(indexElements, index0), muRT(index0), NatomE, index0, indexGas_0, indexIons, NG, molesGuess);
 
     % Initialization 

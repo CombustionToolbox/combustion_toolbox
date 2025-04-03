@@ -134,8 +134,37 @@ classdef RocketSolver < handle
             %     * [mix1, mix2_inj, mix2_c, mix3] = solve(RocketSolver(), mix1, mix2Guess, mix3Guess); % Rocket FAC
             %     * [mix1, mix2_inj, mix2_c, mix3] = solve(RocketSolver(), mix1, mix2Guess, mix3Guess, mix4Guess); % Rocket FAC
             
-            switch upper(obj.problemType)
+            % Definitions
+            problem = obj.problemType;
+            FLAG_ARATIO = ~isempty(mix1.areaRatio);
+            
+            if FLAG_ARATIO
+                problem = [problem, '_ARATIO'];
+            end
+            
+            switch upper(problem)
                 case 'ROCKET_IAC'
+                    % Solve rocket problem with Infinite Area Chamber (IAC) model
+                    if nargin > 2
+                        [mix1, mix2_c, mix3] = rocketIAC(obj, mix1, varargin{:});
+                    else
+                        [mix1, mix2_c, mix3] = rocketIAC(obj, mix1);
+                    end
+
+                    % Set problemType
+                    mix1.problemType = obj.problemType;
+                    mix2_c.problemType = obj.problemType;
+                    mix3.problemType = obj.problemType;
+                    
+                    % Set output
+                    varargout = {mix1, mix2_c, mix3};
+
+                    % Print results
+                    if obj.FLAG_RESULTS
+                        print(varargout{:});
+                    end
+
+                case 'ROCKET_IAC_ARATIO'
                     % Solve rocket problem with Infinite Area Chamber (IAC) model
                     if nargin > 2
                         [mix1, mix2_c, mix3, mix4] = rocketIAC(obj, mix1, varargin{:});
@@ -149,14 +178,37 @@ classdef RocketSolver < handle
                     mix3.problemType = obj.problemType;
                     mix4.problemType = obj.problemType;
 
+                    % Set output
+                    varargout = {mix1, mix2_c, mix3, mix4};
+
                     % Print results
                     if obj.FLAG_RESULTS
-                        print(mix1, mix2_c, mix3, mix4);
+                        print(varargout{:});
+                    end
+
+                case 'ROCKET_FAC'
+                    % Solve rocket problem considering an Finite Area Chamber (FAC) model
+                    if nargin > 2
+                        [mix1, mix2_inj, mix2_c, mix3] = rocketFAC(obj, mix1, varargin{:});
+                    else
+                        [mix1, mix2_inj, mix2_c, mix3] = rocketFAC(obj, mix1);
+                    end
+                    
+                    % Set problemType
+                    mix1.problemType = obj.problemType;
+                    mix2_inj.problemType = obj.problemType;
+                    mix2_c.problemType = obj.problemType;
+                    mix3.problemType = obj.problemType;
+
+                    % Print results
+                    if obj.FLAG_RESULTS
+                        print(mix1, mix2_inj, mix2_c, mix3);
                     end
 
                     % Set output
-                    varargout = {mix1, mix2_c, mix3, mix4};
-                case 'ROCKET_FAC'
+                    varargout = {mix1, mix2_inj, mix2_c, mix3};
+
+                case 'ROCKET_FAC_ARATIO'
                     % Solve rocket problem considering an Finite Area Chamber (FAC) model
                     if nargin > 2
                         [mix1, mix2_inj, mix2_c, mix3, mix4] = rocketFAC(obj, mix1, varargin{:});
@@ -178,6 +230,7 @@ classdef RocketSolver < handle
 
                     % Set output
                     varargout = {mix1, mix2_inj, mix2_c, mix3, mix4};
+
                 otherwise
                     error('Invalid problem type');
             end
@@ -203,7 +256,12 @@ classdef RocketSolver < handle
             % Definitions
             n = length(mixArray1);
             problem = obj.problemType;
-            
+            FLAG_ARATIO = ~isempty(mixArray1(1).areaRatio);
+
+            if FLAG_ARATIO
+                problem = [problem, '_ARATIO'];
+            end
+
             % Timer
             obj.time = tic;
 
@@ -213,6 +271,20 @@ classdef RocketSolver < handle
             % Calculations
             switch upper(problem)
                 case {'ROCKET_IAC'}
+                    % Initialization
+                    mixArray3 = mixArray1;
+                    
+                    % Calculations
+                    [mixArray1(n), mixArray2(n), mixArray3(n)] = obj.solve(mixArray1(n));
+                    
+                    for i = n-1:-1:1
+                        [mixArray1(i), mixArray2(i), mixArray3(i)] = obj.solve(mixArray1(i), mixArray2(i + 1), mixArray3(i + 1));
+                    end
+
+                    % Set output
+                    varargout = {mixArray1, mixArray2, mixArray3};
+
+                case {'ROCKET_IAC_ARATIO'}
                     % Initialization
                     mixArray3 = mixArray1;
                     mixArray4 = mixArray1;
@@ -231,6 +303,21 @@ classdef RocketSolver < handle
                     % Initialization
                     mixArray3 = mixArray1;
                     mixArray4 = mixArray1;
+                    
+                    % Calculations
+                    [mixArray1(n), mixArray2(n), mixArray3(n), mixArray4(n)] = obj.solve(mixArray1(n));
+                    
+                    for i = n-1:-1:1
+                        [mixArray1(i), mixArray2(i), mixArray3(i), mixArray4(i)] = obj.solve(mixArray1(i), mixArray2(i + 1), mixArray3(i + 1), mixArray4(i + 1));
+                    end
+
+                    % Set output
+                    varargout = {mixArray1, mixArray2, mixArray3, mixArray4};
+
+                case {'ROCKET_FAC_ARATIO'}
+                    % Initialization
+                    mixArray3 = mixArray1;
+                    mixArray4 = mixArray1;
                     mixArray5 = mixArray1;
                     
                     % Calculations
@@ -242,7 +329,6 @@ classdef RocketSolver < handle
 
                     % Set output
                     varargout = {mixArray1, mixArray2, mixArray3, mixArray4, mixArray5};
-
             end
 
             % Timer

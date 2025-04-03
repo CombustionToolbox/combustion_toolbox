@@ -93,7 +93,7 @@ for i = 3:3
         mixArray1(:, i, j) = setProperties(mix, 'temperature', temperature, 'pressure', pressure, 'M1', machNumber);
 
         % Initialize solver
-        solver = ShockSolver('problemType', 'SHOCK_POLAR_LIMITRR', 'equilibriumSolver', equilibriumSolver, 'tolShocks', 1e-7);
+        solver = ShockSolver('problemType', 'SHOCK_POLAR_LIMITRR', 'equilibriumSolver', equilibriumSolver, 'tol0', 1e-7);
         
         % Solve problem
         [mixArray1(:, i, j),...

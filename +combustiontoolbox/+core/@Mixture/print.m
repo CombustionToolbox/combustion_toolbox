@@ -11,15 +11,16 @@ function print(mix, varargin)
     %     * mixN (Mixture): Mixture object with the properties of the mixture
     %
     % Examples:
-    %     * printMixture(mix1)
-    %     * printMixture(mix1, mix2)
-    %     * printMixture(mix1, mix2, mix3)
-    %     * printMixture(mix1, mix2, mix3, mix4)
+    %     * print(mix1)
+    %     * print(mix1, mix2)
+    %     * print(mix1, mix2, mix3)
+    %     * print(mix1, mix2, mix3, mix4)
     
-    % Temporal
-    mintol_display = 1e-14; % (will be moved to Miscellaneous)
-    composition_units = 'molar fraction'; % Possible values: mol, molar fraction or mass fraction
-    
+    % Definitions
+    mintolDisplay = mix.config.mintolDisplay;
+    compositionUnits = mix.config.compositionUnits;
+    FLAG_COMPACT = mix.config.FLAG_COMPACT;
+
     % Unpack cell with mixtures
     mix = [{mix}, varargin(:)'];
 
@@ -39,14 +40,37 @@ function print(mix, varargin)
 
     % Print properties
     print_properties(problemType, numMixtures, mix);
-
+    
     % Print composition
-    for i = 1:numMixtures
-        print_composition(mix{i}, listSpecies, composition_units, header_composition{i}, mintol_display);
-    end
+    print_composition(mix, listSpecies, compositionUnits, header_composition, mintolDisplay);
 
     % End
     fprintf('************************************************************************************************************\n\n\n');
+
+    % NESTED FUNCTIONS
+    function print_composition(mix, listSpecies, units, header, mintolDisplay)
+        % Print composition of the mixture in the command window
+        %
+        % Args:
+        %     mix (struct): Struct with the properties of the mixture
+        %     listSpecies (cell): Cell with the names of the species
+        %     units (char): Units of the composition
+        %     header (char): Header of the composition
+        %     mintolDisplay (float): Minimum value to be displayed
+    
+        % Print composition (compact)
+        if FLAG_COMPACT
+            print_compact_composition(mix, listSpecies, units, mintolDisplay);
+            return
+        end
+    
+        % Print composition (sequential)
+        for i = 1:numMixtures
+            print_composition_sequential(mix{i}, listSpecies, compositionUnits, header{i}, mintolDisplay);
+        end
+    
+    end
+
 end
 
 % SUB-PASS FUNCTIONS
@@ -76,17 +100,32 @@ function value = get_properties(property, numberMixtures, mix)
 
 end
 
-function line = set_string_value(Nmixtures)
+function line = set_string_value(Nmixtures, varargin)
     % Set the char to print the properties
     %
     % Args:
     %     Nmixtures (float): Number of mixtures
     %
+    % Optional Args:
+    %     * format (char): Format to print the properties
+    %     * limiter (char): Limiter to print the properties
+    %
     % Returns:
     %     line (char): Char to print the properties
     
-    line_body = '   %12.4f  |';
-    line_end = '   %12.4f\n';
+    % Default
+    format = '%12.4f';
+    limiter = '|';
+
+    % Unpack additional inputs
+    if nargin > 1
+        format = varargin{1};
+        limiter = varargin{2};
+    end
+
+    % Set line
+    line_body = sprintf('   %s  %s', format, limiter);
+    line_end = sprintf('   %s\n', format);
     line = [repmat(line_body, 1, Nmixtures - 1), line_end];
 end
 
@@ -150,15 +189,85 @@ function print_properties(ProblemType, numberMixtures, mix)
     fprintf('------------------------------------------------------------------------------------------------------------\n');
 end
 
-function print_composition(mix, LS, units, header, mintol_display)
+function print_compact_composition(mixCell, listSpecies, units, mintolDisplay)
+    % mixCell         = cell array of mixture objects
+    % listSpecies     = cell array of species names
+    % units           = 'molar fraction', 'mass fraction', or 'mol'
+    % mintolDisplay  = threshold below which species are considered minor
+
+    % Definitions
+    numMixtures = numel(mixCell);
+    nSpecies    = numel(listSpecies);
+
+    % Build the composition matrix: each column is one mixture's composition
+    comp_matrix = zeros(nSpecies, numMixtures);
+    for m = 1:numMixtures
+        switch lower(units)
+            case 'mol'
+                comp_matrix(:, m) = moles(mixCell{m});
+                short_label = 'Ni [mol]';
+            case 'molar fraction'
+                comp_matrix(:, m) = moleFractions(mixCell{m});
+                short_label = 'Xi [-]';
+            case 'mass fraction'
+                comp_matrix(:, m) = massFractions(mixCell{m});
+                short_label = 'Yi [-]';
+            otherwise
+                error('Unsupported composition unit: %s', units);
+        end
+    end
+
+    % Determine which species exceed mintolDisplay in ANY mixture (major species)
+    major_mask  = any(comp_matrix > mintolDisplay, 2);
+    major_vals  = comp_matrix(major_mask, :);
+    major_names = listSpecies(major_mask);
+
+    % Sort major species by their composition in the FIRST mixture (descending)
+    [~, idxSort] = sort(major_vals(:,1), 'descend');
+    major_vals   = major_vals(idxSort, :);
+    major_names  = major_names(idxSort);
+
+    % Print composition property
+    fprintf('COMPOSITION    ', short_label);
+    for m = 1:numMixtures
+        fprintf('%15s   ', short_label);
+    end
+    fprintf('\n');
+
+    % Prepare a single format string for aligned column
+    line = set_string_value(numMixtures, '%12.4e', ' ');
+
+    % Print each major species in one row, columns for each mixture
+    for i = 1:size(major_vals, 1)
+        fprintf('%-16s', major_names{i});  % Species name, left-justified
+        fprintf(line, major_vals(i,:));    % Species composition in each mixture
+    end
+
+    % Compute MINORS (sum of all species below threshold in EVERY mixture)
+    minor_mask = ~major_mask; % Get the mask for minor species
+    Nminor = sum(minor_mask); % Number of minor species
+    minor_values = sum(comp_matrix(minor_mask, :), 1); % Sum of minor species for each mixture
+
+    % Print a single MINORS row with columns for each mixture
+    fprintf('%-16s', sprintf('MINORS[+%d]', Nminor));
+    fprintf([line, '\n'], minor_values);  
+
+    % Print TOTAL row for each mixture
+    totals = sum(comp_matrix, 1);  % sum of all species for each mixture
+    fprintf('%-16s', 'TOTAL');
+    fprintf(line, totals);
+end
+
+
+function print_composition_sequential(mix, listSpecies, units, header, mintolDisplay)
     % Print composition of the mixture in the command window
     %
     % Args:
     %     mix (struct): Struct with the properties of the mixture
-    %     LS (cell): Cell with the names of the species
+    %     listSpecies (cell): Cell with the names of the species
     %     units (char): Units of the composition
     %     header (char): Header of the composition
-    %     mintol_display (float): Minimum value to be displayed
+    %     mintolDisplay (float): Minimum value to be displayed
     
     switch lower(units)
         case 'mol'
@@ -176,13 +285,13 @@ function print_composition(mix, LS, units, header, mintol_display)
     %%%% SORT SPECIES COMPOSITION %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     [variable, ind_sort] = sort(variable, 'descend');
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    j = variable > mintol_display;
+    j = variable > mintolDisplay;
     minor = sum(variable(~j));
 
     for i = 1:length(j)
 
         if j(i)
-            fprintf('%-20s %1.4e\n', LS{ind_sort(i)}, variable(i));
+            fprintf('%-20s %1.4e\n', listSpecies{ind_sort(i)}, variable(i));
         end
 
     end

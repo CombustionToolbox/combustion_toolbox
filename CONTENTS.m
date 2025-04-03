@@ -1,5 +1,5 @@
 % -------------------------------------------------------------------------
-% COMBUSTION TOOLBOX @v1.1.3
+% COMBUSTION TOOLBOX @v1.2.1
 % A MATLAB-GUI based open-source tool for solving gaseous combustion problems
 %
 % Type of problems:
@@ -25,7 +25,9 @@
 %   * DET_OVERDRIVEN_R ----> Over-driven reflected Detonation
 %   * DET_UNDERDRIVEN -----> Under-driven Detonation
 %   * DET_UNDERDRIVEN_R ---> Under-driven reflected Detonation
-%   * ROCKET --------------> Propellant rocket performance   
+%   * ROCKET --------------> Propellant rocket performance
+%   * HELMHOLTZ -----------> Helmholtz-Hodge decomposition of a velocity field
+%   * SPECTRA -------------> Turbulence spectra analysis
 %
 % SEE THE EXAMPLES OR WEBSITE TO KNOW HOW TO START USING THE COMBUSTION TOOLBOX
 %
@@ -43,13 +45,13 @@
 %
 %     Cuadra, A., Huete, C., & Vera, M. (2024). Combustion Toolbox: A
 %     MATLAB-GUI based open-source tool for solving gaseous combustion
-%     problems. (v1.1.3). Zenodo. https://doi.org/10.5281/zenodo.5554911.
+%     problems. (v1.2.0). Zenodo. https://doi.org/10.5281/zenodo.5554911.
 %
 % @author: Alberto Cuadra Lara
 %          Postdoctoral researcher - Group Fluid Mechanics
 %          Universidad Carlos III de Madrid
 %                  
-% Last update Nov 10 2024
+% Last update Mar 20 2025
 % -------------------------------------------------------------------------
 help CONTENTS.m
 

@@ -5,6 +5,7 @@
 CHECKLIST.md
 databases/DB.mat
 validations/figures/
+combustion_toolbox_standalone_*
 
 # OSX
 *.DS_Store

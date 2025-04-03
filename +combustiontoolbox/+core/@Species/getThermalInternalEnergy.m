@@ -13,26 +13,9 @@ function DeT = getThermalInternalEnergy(obj, T)
     % Example:
     %     DeT = getThermalInternalEnergy(obj, 300)
 
-    persistent cachedSpecies;
-    persistent cachedDETcurves;
-    
-    if isempty(cachedSpecies)
-        cachedSpecies = {};
-        cachedDETcurves = {};
-    end
-    
-    % Check if species data is already cached
-    index = find(strcmp(cachedSpecies, obj.name), 1);
-    if isempty(index)
-        % Load species data and cache it
-        DeTcurve = obj.DeTcurve;
-        cachedSpecies{end+1} = obj.name;
-        cachedDETcurves{end+1} = DeTcurve;
-    else
-        % Retrieve cached data
-        DeTcurve = cachedDETcurves{index};
-    end
-    
+    % Compute internal energy [J/mol]
+    e0 = getInternalEnergy(obj, T);
+
     % Compute thermal internal energy [J/mol]
-    DeT = DeTcurve(T);
+    DeT = e0 - obj.ef;
 end

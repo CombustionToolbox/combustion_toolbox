@@ -3,7 +3,7 @@ classdef TurbulenceSpectra < handle
     % turbulence spectra. Supports spherical and cross-plane averaging.
 
     properties
-        averaging = 'spherical'  % Type of averaging ('spherical', 'spherical2D', 'crossplane', 'crossplane2D')
+        averaging = 'spherical'  % Type of averaging ('spherical', 'spherical2D', 'spherical2dPerp', 'crossplane', 'crossplane2D')
         axis = 'x'               % Axis for cross-plane averaging ('x', 'y', 'z')
         fps = 60                 % Frame rate for movie (temporal will be added into PlotConfig)
         time                     % Elapsed time
@@ -18,7 +18,7 @@ classdef TurbulenceSpectra < handle
             % Constructor for TurbulenceSpectra
             %
             % Optional Args:
-            %     averaging (char): Type of averaging ('spherical', 'spherical2D', 'crossplane', 'crossplane2D')
+            %     averaging (char): Type of averaging ('spherical', 'spherical2D', 'spherical2dPerp', 'crossplane', 'crossplane2D')
             %     axis (char): Axis for cross-plane averaging ('x', 'y', 'z')
             %
             % Example:
@@ -32,7 +32,7 @@ classdef TurbulenceSpectra < handle
 
             % Parse input arguments
             p = inputParser;
-            addParameter(p, 'averaging', obj.averaging, @(x) ischar(x) && ismember(lower(x), {'spherical', 'spherical2d', 'crossplane', 'crossplane2d'}));
+            addParameter(p, 'averaging', obj.averaging, @(x) ischar(x) && ismember(lower(x), {'spherical', 'spherical2d', 'spherical2dperp', 'crossplane', 'crossplane2d'}));
             addParameter(p, 'axis', obj.axis, @(x) ischar(x) && ismember(lower(x), {'x', 'y', 'z'}));
             addParameter(p, 'plotConfig', defaultPlotConfig, @(x) isa(x, 'combustiontoolbox.utils.display.PlotConfig'));
             addParameter(p, 'FLAG_TIME', obj.FLAG_TIME, @islogical);
@@ -78,7 +78,7 @@ classdef TurbulenceSpectra < handle
 
         end
 
-        function [EK_avg, k] = getEnergySpectra(obj, fluctuation)
+        function [EK_avg, varargout] = getEnergySpectra(obj, fluctuation)
             % Compute the energy spectra of a 3D fluctuation field
             %
             % Args:
@@ -87,14 +87,25 @@ classdef TurbulenceSpectra < handle
             %
             % Returns:
             %     EK_avg (float): Averaged energy spectra
-            %     k (float): Wavenumber along the homogeneous direction
+            %     k (float): Wavenumber along the homogeneous direction ('spherical', 'spherical2D', 'crossplane', 'crossplane2D')
+            %     kParalell (float): Wavenumber along the parallel direction ('spherical2dPerp')
+            %     kPerp (float): Wavenumber along the perpendicular direction ('spherical2dPerp')
             %
-            % Example:
-            %     [EK_avg, k] = getEnergySpectra(TurbulenceSpectra(), fluctuation);
+            % Examples:
+            %     * [EK_avg, k] = getEnergySpectra(TurbulenceSpectra(), fluctuation);
+            %     * [EK_avg, kParallel, kPerp] = getEnergySpectra(TurbulenceSpectra('averaging', 'spherical2dPerp'), fluctuation);
 
             % Check type of fluctuation
             if isa(fluctuation, 'combustiontoolbox.turbulence.VelocityField')
-                [EK_avg, k] = getEnergySpectraVelocity(obj, fluctuation);
+                switch lower(obj.averaging)
+                    case 'spherical2dperp'
+                        [EK_avg, kParalell, kPerp] = getEnergySpectraVelocity(obj, fluctuation);
+                        varargout = {kParalell, kPerp};
+                    otherwise
+                        [EK_avg, k] = getEnergySpectraVelocity(obj, fluctuation);
+                        varargout = {k};
+                end
+
                 return
             end
 
@@ -118,6 +129,12 @@ classdef TurbulenceSpectra < handle
                     EK = fftshift(abs(F).^2);
                     % Set the function for spherical averaging
                     averagingFunction = @obj.getSphericallyAveragedSpectra2D;
+                case 'spherical2dperp'
+                    % Use 3D FFT for spherical averaging
+                    F = fftn(fluctuation) / numel(fluctuation);
+                    EK = fftshift(abs(F).^2);
+                    % Set the function for spherical averaging
+                    averagingFunction = @obj.getSphericallyAveragedSpectra2DPerp;
                 case 'crossplane'
                     % Use 2D FFT for cross-plane averaging
                     EK = obj.getCrossplaneFFT(fluctuation, obj.axis);
@@ -131,7 +148,14 @@ classdef TurbulenceSpectra < handle
             end
             
             % Compute the energy spectra based on the averaging type
-            [EK_avg, k] = averagingFunction(EK);
+            switch lower(obj.averaging)
+                case 'spherical2dperp'
+                    [EK_avg, kParalell, kPerp] = averagingFunction(EK, obj.axis);
+                    varargout = {kParalell, kPerp};
+                otherwise
+                    [EK_avg, k] = averagingFunction(EK);
+                    varargout = {k};
+            end
 
             % Time elapsed
             obj.time = toc(obj.time);
@@ -140,7 +164,7 @@ classdef TurbulenceSpectra < handle
             printTime(obj);
         end
 
-        function [EK_avg, k] = getEnergySpectraVelocity(obj, velocity)
+        function [EK_avg, varargout] = getEnergySpectraVelocity(obj, velocity)
             % Compute the energy spectrum of a 3D velocity field
             %
             % Args:
@@ -149,10 +173,13 @@ classdef TurbulenceSpectra < handle
             %
             % Returns:
             %     EK_avg (float): Averaged energy spectra
-            %     k (float): Wavenumber along the homogeneous direction
+            %     k (float): Wavenumber along the homogeneous direction ('spherical', 'spherical2D', 'crossplane', 'crossplane2D')
+            %     kParalell (float): Wavenumber along the parallel direction ('spherical2dPerp')
+            %     kPerp (float): Wavenumber along the perpendicular direction ('spherical2dPerp')
             %
-            % Example:
-            %     [EK_avg, k] = getEnergySpectraVelocity(TurbulenceSpectra(), velocity);
+            % Examples:
+            %     * [EK_avg, k] = getEnergySpectraVelocity(TurbulenceSpectra(), velocity);
+            %     * [EK_avg, kParallel, kPerp] = getEnergySpectraVelocity(TurbulenceSpectra('averaging', 'spherical2dPerp'), velocity);
             
             % Import packages
             import combustiontoolbox.common.Units.convertData2VelocityField
@@ -184,6 +211,14 @@ classdef TurbulenceSpectra < handle
                     EK = 0.5 * fftshift(abs(U).^2 + abs(V).^2 + abs(W).^2);
                     % Set the function for spherical averaging
                     averagingFunction = @obj.getSphericallyAveragedSpectra2D;
+                case 'spherical2dperp'
+                    % Use 3D FFT for spherical averaging
+                    U = fftn(velocity.u) / numel(velocity.u);
+                    V = fftn(velocity.v) / numel(velocity.v);
+                    W = fftn(velocity.w) / numel(velocity.w);
+                    EK = 0.5 * fftshift(abs(U).^2 + abs(V).^2 + abs(W).^2);
+                    % Set the function for spherical averaging
+                    averagingFunction = @obj.getSphericallyAveragedSpectra2DPerp;
                 case 'crossplane'
                     % Use 2D FFT for cross-plane averaging
                     EK = obj.getCrossplaneFFTVelocity(velocity, obj.axis);
@@ -197,7 +232,14 @@ classdef TurbulenceSpectra < handle
             end
             
             % Compute the energy spectra based on the averaging type
-            [EK_avg, k] = averagingFunction(EK);
+            switch lower(obj.averaging)
+                case 'spherical2dperp'
+                    [EK_avg, kParalell, kPerp] = averagingFunction(EK, obj.axis);
+                    varargout = {kParalell, kPerp};
+                otherwise
+                    [EK_avg, k] = averagingFunction(EK);
+                    varargout = {k};
+            end
 
             % Time elapsed
             obj.time = toc(obj.time);
@@ -600,7 +642,7 @@ classdef TurbulenceSpectra < handle
             % Compute wavenumber
             fftResult = fft(EK(:, 1, 1));
             numFreqs = ceil(length(fftResult) / 2);
-            k = sqrt(2) * (0:numFreqs - 1);
+            k = 0:numFreqs - 1;
         end
 
         function [EK_avg2D, k] = getCrossplaneAveragedSpectra2D(EK)
@@ -648,7 +690,7 @@ classdef TurbulenceSpectra < handle
             % Compute wavenumber
             fftResult = fft(EK(:, 1, 1));
             numFreqs = ceil(length(fftResult) / 2);
-            k = sqrt(2) * (0:numFreqs - 1);
+            k = 0:numFreqs - 1;
         end
         
         function [EK_avg, k] = getSphericallyAveragedSpectra(EK)
@@ -719,7 +761,62 @@ classdef TurbulenceSpectra < handle
             % Compute wavenumber
             fftResult = fft(EK(:, 1, 1));
             numFreqs = ceil(length(fftResult) / 2);
-            k = sqrt(2) * (0:numFreqs - 1);
+            k = 0:numFreqs - 1;
+        end
+    
+        function [EK_avg2D, kParalell, kPerp] = getSphericallyAveragedSpectra2DPerp(EK, axisType)
+            % Compute the 2D spherical average of a 3D energy spectrum as a function
+            % of kParalell and kPerp, where kPerp = sqrt(k2^2 + k3^2) is calculated
+            % from the two dimensions orthogonal to the specified axis.
+            %
+            % Args:
+            %   EK (float): 3D energy spectra
+            %   axisType (char): Axis for cross-plane averaging ('x', 'y', 'z')
+            %
+            % Returns:
+            %   EK_avg2D (float): Spherically averaged 2D energy spectra E(kParalell, kPerp)
+            %   kParalell (float): Wavenumber along the parallel direction
+            %   kPerp (float): Wavenumber along the perpendicular direction
+            %
+            % Example:
+            %   [EK_avg2D, kParalell, kPerp] = getSphericallyAveragedSpectra2DPerp(EK, 'x');
+
+            % Map axis to slicing dimension
+            sliceDim = find('xyz' == axisType);
+            dims = 1:3;
+            homogeneousDims = setdiff(dims, sliceDim);
+
+            % Permute dimensions to bring slice dimension last
+            permutedEK = permute(EK, [homogeneousDims, sliceDim]);
+
+            % Get the center of the 3D field
+            [NY, NZ, numSlices] = size(permutedEK);
+            centerX = floor(numSlices / 2) + 1;
+            centerY = floor(NY / 2) + 1;
+            centerZ = floor(NZ / 2) + 1;
+
+            % Generate grid indices for the entire 3D array
+            [X, Y, Z] = ndgrid(1:numSlices, 1:NY, 1:NZ);
+
+            % Compute wavenumber indices relative to the center
+            KX = round(abs(X - centerX));
+            KY = round(abs(Y - centerY));
+            KZ = round(abs(Z - centerZ));
+            KPerp = round( sqrt(KY.^2 + KZ.^2) );
+
+            % Map the 3D energy spectrum to a 2D grid using accumulation
+            waveIndices = [KX(:), KPerp(:)] + 1;
+
+            % Accumulate the energy spectrum in a 2D matrix
+            maxWaveIndicesX = max(waveIndices(:, 1));
+            maxWaveIndicesPerp = max(waveIndices(:, 2));
+            EK_avg2D = accumarray(waveIndices, EK(:), [maxWaveIndicesX, maxWaveIndicesPerp], @sum, 1e-50);
+
+            % Compute wavenumber
+            fftResult = fft(permutedEK(1, 1, :));
+            numFreqs = ceil(length(fftResult) / 2);
+            kParalell = 0:numFreqs - 1;
+            kPerp = 0:maxWaveIndicesPerp - 1;
         end
 
     end

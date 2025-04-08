@@ -79,16 +79,50 @@ classdef VelocityField < handle & matlab.mixin.Copyable
             obj.w = obj.w + obj2.w;            
         end
         
-        function velocity = getFluctuations(obj, rho)
+        function velocity = getFluctuations(obj, varargin)
             % Compute fluctuating velocity components
             %
             % Args:
             %     obj (VelocityField): VelocityField instance with fields (u, v, w) containing the velocity components
-            %     rho (float): Density field
+            %
+            % Optional Name-Pair Args:
+            %     * density (float): Density field
+            %     * weighted (bool): Flag to indicate if the velocity should be weighted by sqrt(density)
             %
             % Returns:
             %     velocity (VelocityField): Struct with fields (u, v, w) containing the fluctuating velocity components (fluctuations)
+            %
+            % Notes:
+            %     * The velocity field is assumed to be periodic in all three dimensions.
+            %     * By default, the velocity is weighted by density, if provided.
+            %
+            % Shortcuts:
+            %     * velocity = getFluctuations(obj, rho);
+            %
+            % Examples:
+            %     * velocity = getFluctuations(obj);
+            %     * velocity = getFluctuations(obj, rho);
+            %     * velocity = getFluctuations(obj, 'density', rho);
+            %     * velocity = getFluctuations(obj, 'density', rho, 'weighted', true);
             
+            % Default
+            defaultDensity = [];
+            defaultWeighted = true;
+
+            % Shortcut: getFluctuations(obj, rho)
+            if isscalar(varargin)
+                varargin = {'density', varargin{1}};
+            end
+
+            % Parse input arguments
+            p = inputParser;
+            addParameter(p, 'density', defaultDensity, @(x) isnumeric(x));
+            addParameter(p, 'weighted', defaultWeighted, @(x) islogical(x));
+            parse(p, varargin{:});
+            
+            rho = p.Results.density;
+            FLAG_WEIGHTED = p.Results.weighted;
+
             % Shallow copy of the velocity field
             velocity = obj.copy();
 
@@ -99,9 +133,16 @@ classdef VelocityField < handle & matlab.mixin.Copyable
                 rhov = mean(rho .* velocity.v, 'all') / rhoMean;
                 rhow = mean(rho .* velocity.w, 'all') / rhoMean;
 
-                velocity.u = sqrt(rho) .* (velocity.u - rhou);
-                velocity.v = sqrt(rho) .* (velocity.v - rhov);
-                velocity.w = sqrt(rho) .* (velocity.w - rhow);
+                velocity.u = velocity.u - rhou;
+                velocity.v = velocity.v - rhov;
+                velocity.w = velocity.w - rhow;
+
+                if FLAG_WEIGHTED
+                    velocity.u = sqrt(rho) .* velocity.u;
+                    velocity.v = sqrt(rho) .* velocity.v;
+                    velocity.w = sqrt(rho) .* velocity.w;
+                end
+
                 return
             end
 
@@ -111,17 +152,54 @@ classdef VelocityField < handle & matlab.mixin.Copyable
             velocity.w = velocity.w - mean(velocity.w, 'all');
         end
 
-        function velocity = getCrossplaneFluctuations(obj, rho, axisType)
+        function velocity = getCrossplaneFluctuations(obj, varargin)
             % Compute fluctuating velocity components
             %
             % Args:
             %     obj (VelocityField): VelocityField instance with fields (u, v, w) containing the velocity components
-            %     rho (float): Density field
-            %     axisType (char): Axis for cross-plane averaging ('x', 'y', or 'z')
+            %     axis (char): Axis for cross-plane averaging ('x', 'y', or 'z')
+            %
+            % Optional Name-Pair Args:
+            %     * density (float): Density field
+            %     * weighted (bool): Flag to indicate if the velocity should be weighted by sqrt(density)
             %
             % Returns:
             %     velocity (VelocityField): Struct with fields (u, v, w) containing the fluctuating velocity components (fluctuations)
+            %
+            % Notes:
+            %     * The velocity field is assumed to be periodic in the direction perpendicular to the axis.
+            %     * By default, the velocity is weighted by density, if provided.
+            %
+            % Shortcuts:
+            %     * velocity = getCrossplaneFluctuations(obj, 'x');
+            %
+            % Examples:
+            %     * velocity = getCrossplaneFluctuations(obj, 'x');
+            %     * velocity = getCrossplaneFluctuations(obj, 'axis', 'x');
+            %     * velocity = getCrossplaneFluctuations(obj, 'axis', 'x', 'density', rho);
+            %     * velocity = getCrossplaneFluctuations(obj, 'axis', 'x', 'density', rho, 'weighted', true);
+
+            % Default
+            defaultDensity = [];
+            defaultAxis = [];
+            defaultWeighted = true;
+
+            % Shortcut: getCrossplaneFluctuations(obj, 'x')
+            if isscalar(varargin)
+                varargin = {'axis', varargin{1}};
+            end
+
+            % Parse input arguments
+            p = inputParser;
+            addRequired(p, 'axis', defaultAxis, @(x) ischar(x) && ismember(lower(x), {'x', 'y', 'z'}))
+            addParameter(p, 'density', defaultDensity, @(x) isnumeric(x));
+            addParameter(p, 'weighted', defaultWeighted, @(x) islogical(x));
+            parse(p, varargin{:});
             
+            axisType = p.Results.axis;
+            rho = p.Results.density;
+            FLAG_WEIGHTED = p.Results.weighted;
+
             % Shallow copy of the velocity field
             velocity = obj.copy();
 
@@ -137,9 +215,16 @@ classdef VelocityField < handle & matlab.mixin.Copyable
                 rhov = mean(rho .* velocity.v, homogeneousDims) ./ rhoMean;
                 rhow = mean(rho .* velocity.w, homogeneousDims) ./ rhoMean;
 
-                velocity.u = sqrt(rho) .* (velocity.u - rhou);
-                velocity.v = sqrt(rho) .* (velocity.v - rhov);
-                velocity.w = sqrt(rho) .* (velocity.w - rhow);
+                velocity.u = velocity.u - rhou;
+                velocity.v = velocity.v - rhov;
+                velocity.w = velocity.w - rhow;
+
+                if FLAG_WEIGHTED
+                    velocity.u = sqrt(rho) .* velocity.u;
+                    velocity.v = sqrt(rho) .* velocity.v;
+                    velocity.w = sqrt(rho) .* velocity.w;
+                end
+
                 return
             end
 

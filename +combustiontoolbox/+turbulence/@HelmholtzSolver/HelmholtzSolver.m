@@ -29,6 +29,7 @@ classdef HelmholtzSolver < handle
 
     properties
         tol0 = 1e-3             % Tolerance for checks
+        FLAG_WEIGHTED = true    % Flag to compute weighted velocity field as u * sqrt(rho)
         FLAG_CHECKS = true      % Flag to perform checks
         FLAG_TIME = true        % Flag to print elapsed time
         FLAG_REPORT = false     % Flag to print predefined plots
@@ -45,6 +46,7 @@ classdef HelmholtzSolver < handle
             % Parse input arguments
             p = inputParser;
             addParameter(p, 'tol0', obj.tol0, @(x) isnumeric(x));
+            addParameter(p, 'FLAG_WEIGHTED', obj.FLAG_WEIGHTED, @(x) islogical(x));
             addParameter(p, 'FLAG_CHECKS', obj.FLAG_CHECKS, @(x) islogical(x));
             addParameter(p, 'FLAG_TIME', obj.FLAG_TIME, @(x) islogical(x));
             addParameter(p, 'FLAG_REPORT', obj.FLAG_REPORT, @(x) islogical(x));
@@ -53,6 +55,7 @@ classdef HelmholtzSolver < handle
 
             % Set properties
             obj.tol0 = p.Results.tol0;
+            obj.FLAG_WEIGHTED = p.Results.FLAG_WEIGHTED;
             obj.FLAG_CHECKS = p.Results.FLAG_CHECKS;
             obj.FLAG_TIME = p.Results.FLAG_TIME;
             obj.FLAG_REPORT = p.Results.FLAG_REPORT;
@@ -98,35 +101,44 @@ classdef HelmholtzSolver < handle
             %     velocity (VelocityField): Velocity field as a VelocityField object, struct, or 4D matrix
             %
             % Optional Args:
-            %     * rho (float): Density field
+            %     * density (float): Density field
             %
             % Returns:
-            %     solenoidal (VelocityField): Struct with fields (u, v, w) containing the solenoidal velocity components (fluctuations)
-            %     dilatational (VelocityField): Struct with fields (u, v, w) containing the dilatational velocity components (fluctuations)
-            %     velocity (VelocityField): Struct with fields (u, v, w) containing the velocity components (fluctuations)
+            %     solenoidal (VelocityField): VelocityField object with fields (u, v, w) containing the solenoidal velocity components (fluctuations)
+            %     dilatational (VelocityField): VelocityField with fields (u, v, w) containing the dilatational velocity components (fluctuations)
+            %     velocity (VelocityField): VelocityField with fields (u, v, w) containing the velocity components (fluctuations)
             %     STOP (float): Relative error doing the decomposition
+            %
+            % Shortcuts:
+            %     * [solenoidal, dilatational, velocity, STOP] = solve(obj, velocity, rho)
             %
             % Examples:
             %     * [solenoidal, dilatational, velocity, STOP] = solve(obj, velocity)
-            %     * [solenoidal, dilatational, velocity, STOP] = solve(obj, velocity, 'rho', rho)
+            %     * [solenoidal, dilatational, velocity, STOP] = solve(obj, velocity, rho)
+            %     * [solenoidal, dilatational, velocity, STOP] = solve(obj, velocity, 'density', rho)
             
             % Import packages
             import combustiontoolbox.common.Units.convertData2VelocityField
 
             % Timer
             obj.time = tic;
+            
+            % Shortcut: solve(obj, velocity, 'x')
+            if isscalar(varargin)
+                varargin = {'density', varargin{1}};
+            end
 
             % Parse input arguments
             p = inputParser;
-            addOptional(p, 'rho', [], @(x) isnumeric(x));
+            addOptional(p, 'density', [], @(x) isnumeric(x));
             parse(p, varargin{:});
 
             % Set properties
-            rho = p.Results.rho;
+            rho = p.Results.density;
             
             % Reshape velocity input and compute fluctuations
             velocity = convertData2VelocityField(velocity);
-            velocity = getFluctuations(velocity, rho);
+            velocity = getFluctuations(velocity, 'density', rho, 'weighted', obj.FLAG_WEIGHTED);
 
             % Solve the Helmholtz equation
             [solenoidal, dilatational] = obj.decomposition(velocity);

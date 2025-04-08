@@ -41,7 +41,7 @@ velocity = VelocityField(u, v, w);
 solver = HelmholtzSolver();
 
 % Perform Helmholtz decomposition
-[solenoidal, dilatational, STOP] = solver.solve(velocity, 'rho', rho);
+[solenoidal, dilatational, STOP] = solver.solve(velocity, 'density', rho);
 
 % Compute turbulent kinetic energy (TKE)
 K_solenoidal = solenoidal.getTurbulentKineticEnergy(rho);

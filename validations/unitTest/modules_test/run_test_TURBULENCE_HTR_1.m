@@ -20,7 +20,7 @@ function [max_rel_error_decomposition, max_rel_error_spectra] = run_test_TURBULE
     solver = HelmholtzSolver();
     
     % Perform Helmholtz decomposition
-    [solenoidal, dilatational, velocity] = solver.solve(velocity, 'rho', rho);
+    [solenoidal, dilatational, velocity] = solver.solve(velocity, 'density', rho);
     
     % Analyze turbulence spectra using TurbulenceSpectra
     analyzer = TurbulenceSpectra();
@@ -31,5 +31,8 @@ function [max_rel_error_decomposition, max_rel_error_spectra] = run_test_TURBULE
     [EK3, k3] = analyzer.getEnergySpectraVelocity(dilatational);  % Dilatational component
 
     % Compare results
-    
+    figure; hold on; set(gca, 'XScale', 'log');
+    plot(k1, EK1(1:length(k1)), 'k-', 'LineWidth', 1.6);
+    plot(k2, EK2(1:length(k2)), 'k--', 'LineWidth', 1.6);
+    plot(k3, EK3(1:length(k3)), 'k:', 'LineWidth', 1.6);
 end

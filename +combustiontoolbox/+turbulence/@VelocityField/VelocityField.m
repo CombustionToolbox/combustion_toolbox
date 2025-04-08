@@ -152,7 +152,7 @@ classdef VelocityField < handle & matlab.mixin.Copyable
             velocity.w = velocity.w - mean(velocity.w, 'all');
         end
 
-        function velocity = getCrossplaneFluctuations(obj, varargin)
+        function velocity = getCrossplaneFluctuations(obj, axisType, varargin)
             % Compute fluctuating velocity components
             %
             % Args:
@@ -170,31 +170,21 @@ classdef VelocityField < handle & matlab.mixin.Copyable
             %     * The velocity field is assumed to be periodic in the direction perpendicular to the axis.
             %     * By default, the velocity is weighted by density, if provided.
             %
-            % Shortcuts:
-            %     * velocity = getCrossplaneFluctuations(obj, 'x');
-            %
             % Examples:
             %     * velocity = getCrossplaneFluctuations(obj, 'x');
-            %     * velocity = getCrossplaneFluctuations(obj, 'axis', 'x');
-            %     * velocity = getCrossplaneFluctuations(obj, 'axis', 'x', 'density', rho);
-            %     * velocity = getCrossplaneFluctuations(obj, 'axis', 'x', 'density', rho, 'weighted', true);
+            %     * velocity = getCrossplaneFluctuations(obj, 'x', 'density', rho);
+            %     * velocity = getCrossplaneFluctuations(obj, 'x', 'density', rho, 'weighted', true);
 
             % Default
             defaultDensity = [];
-            defaultAxis = [];
             defaultWeighted = true;
-
-            % Shortcut: getCrossplaneFluctuations(obj, 'x')
-            if isscalar(varargin)
-                varargin = {'axis', varargin{1}};
-            end
 
             % Parse input arguments
             p = inputParser;
-            addRequired(p, 'axis', defaultAxis, @(x) ischar(x) && ismember(lower(x), {'x', 'y', 'z'}))
+            addRequired(p, 'axis', @(x) ischar(x) && ismember(lower(x), {'x', 'y', 'z'}))
             addParameter(p, 'density', defaultDensity, @(x) isnumeric(x));
             addParameter(p, 'weighted', defaultWeighted, @(x) islogical(x));
-            parse(p, varargin{:});
+            parse(p, axisType, varargin{:});
             
             axisType = p.Results.axis;
             rho = p.Results.density;

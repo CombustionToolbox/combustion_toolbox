@@ -15,6 +15,11 @@ classdef VelocityField < handle & matlab.mixin.Copyable
         size   % Size of the velocity field
     end
 
+    properties(Access = private)
+        defaultLenght = 2 * pi % Default length of the domain in each direction
+        gridChecked = false    % Flag to check if the grid is defined
+    end
+
     methods
         
         function obj = VelocityField(u, v, w, varargin)
@@ -64,19 +69,55 @@ classdef VelocityField < handle & matlab.mixin.Copyable
             sz = size(obj.u); % Assume all components (u, v, w) have the same size
         end
 
-        function obj = plus(obj, obj2)
-            % Overload the plus operator to add the velocity field from two VelocityField objects
+        function set.x(obj, value)
+            % Set x-component field
             %
             % Args:
             %     obj (VelocityField): VelocityField object
+            %     value (float): x-component field
+            
+            obj.x = value;
+            obj.gridChecked = false;
+        end
+
+        function set.y(obj, value)
+            % Set y-component field
+            %
+            % Args:
+            %     obj (VelocityField): VelocityField object
+            %     value (float): y-component field
+            
+            obj.y = value;
+            obj.gridChecked = false;
+        end
+
+        function set.z(obj, value)
+            % Set z-component field
+            %
+            % Args:
+            %     obj (VelocityField): VelocityField object
+            %     value (float): z-component field
+            
+            obj.z = value;
+            obj.gridChecked = false;
+        end
+
+        function obj = plus(obj1, obj2)
+            % Overload the plus operator to add the velocity field from two VelocityField objects
+            %
+            % Args:
+            %     obj1 (VelocityField): VelocityField object
             %     obj2 (VelocityField): VelocityField object
             %
             % Returns:
             %     obj (VelocityField): VelocityField object 
 
-            obj.u = obj.u + obj2.u;
-            obj.v = obj.v + obj2.v;
-            obj.w = obj.w + obj2.w;            
+            obj = combustiontoolbox.turbulence.VelocityField(...
+                    obj1.u + obj2.u, ...
+                    obj1.v + obj2.v, ...
+                    obj1.w + obj2.w, ...
+                    obj1.x, obj1.y, obj1.z ...
+                );
         end
         
         function velocity = getFluctuations(obj, varargin)
@@ -293,6 +334,95 @@ classdef VelocityField < handle & matlab.mixin.Copyable
             error('Method not implemented');
         end
 
+        function omega_mag = getVorticity(obj)
+            % Compute vorticity using FFT-based spectral differentiation
+            %
+            % Args:
+            %     obj (VelocityField): VelocityField object with fields u, v, w
+            %
+            % Returns:
+            %     omega_mag (float): 3D Array with the vorticity field
+            %
+            % Example:
+            %     omega_mag = getVorticity(velocity)
+        
+            % Check if the grid is defined
+            checkGridDefined(obj);
+
+            % Get velocity FFTs
+            [U, V, W] = getFFT(obj);
+        
+            % Get wave numbers
+            [KX, KY, KZ] = getAngularWaveNumbers(obj);
+        
+            % Compute vorticity components
+            omega_x = ifftn(1i * (KY .* W - KZ .* V), 'symmetric');
+            omega_y = ifftn(1i * (KZ .* U - KX .* W), 'symmetric');
+            omega_z = ifftn(1i * (KX .* V - KY .* U), 'symmetric');
+        
+            % Compute vorticity magnitude
+            omega_mag = sqrt(omega_x.^2 + omega_y.^2 + omega_z.^2);
+        end
+
+        function div_u = getDivergence(obj)
+            % Compute both divergence using FFT-based spectral differentiation
+            %
+            % Args:
+            %     obj (VelocityField): VelocityField object with fields u, v, w
+            %
+            % Returns:
+            %     div_u (float): 3D Array with the divergence of the velocity field
+            %
+            % Example:
+            %     div_u = getDivergence(velocity)
+        
+            % Check if the grid is defined
+            checkGridDefined(obj);
+
+            % Get velocity FFTs
+            [U, V, W] = getFFT(obj);
+        
+            % Get wave numbers
+            [KX, KY, KZ] = getAngularWaveNumbers(obj);
+        
+            % Compute divergence
+            div_u = ifftn(1i * (KX .* U + KY .* V + KZ .* W), 'symmetric');
+        end
+
+        function [omega_mag, div_u] = getVorticityDivergence(obj)
+            % Compute both vorticity and divergence using FFT-based spectral differentiation
+            %
+            % Args:
+            %     obj (VelocityField): VelocityField object with fields u, v, w
+            %
+            % Returns:
+            %     omega_mag (float): 3D Array with the vorticity field
+            %     div_u (float): 3D Array with the divergence of the velocity field
+            %
+            % Example:
+            %     [omega_mag, div_u] = getVorticityDivergence(velocity)
+
+            % Check if the grid is defined
+            checkGridDefined(obj);
+
+            % Get velocity FFTs
+            [U, V, W] = getFFT(obj);
+        
+            % Get wave numbers
+            [KX, KY, KZ] = getAngularWaveNumbers(obj);
+        
+            % Compute divergence
+            div_u = ifftn(1i * (KX .* U + KY .* V + KZ .* W), 'symmetric');
+        
+            % Compute vorticity components
+            omega_x = ifftn(1i * (KY .* W - KZ .* V), 'symmetric');
+            omega_y = ifftn(1i * (KZ .* U - KX .* W), 'symmetric');
+            omega_z = ifftn(1i * (KX .* V - KY .* U), 'symmetric');
+        
+            % Compute vorticity magnitude
+            omega_mag = sqrt(omega_x.^2 + omega_y.^2 + omega_z.^2);
+        end
+
         function magnitudeField = pointwiseMagnitude(obj)
             % Compute the pointwise magnitude of the velocity field
             %
@@ -329,7 +459,7 @@ classdef VelocityField < handle & matlab.mixin.Copyable
             % Returns:
             %     obj: Normalized velocity field
             
-            magnitude = obj.computeMagnitude();
+            magnitude = obj.pointwiseMagnitude();
             obj.u = obj.u ./ magnitude;
             obj.v = obj.v ./ magnitude;
             obj.w = obj.w ./ magnitude;
@@ -347,6 +477,238 @@ classdef VelocityField < handle & matlab.mixin.Copyable
             obj.u = obj.u * factor;
             obj.v = obj.v * factor;
             obj.w = obj.w * factor;
+        end
+
+        function [U, V, W] = getFFT(obj)
+            % Get velocity FFTs
+            %
+            % Args:
+            %     obj (VelocityField): VelocityField object with fields u, v, w
+            %
+            % Returns:
+            %     U (float): FFT of the u component
+            %     V (float): FFT of the v component
+            %     W (float): FFT of the w component
+            %
+            % Example:
+            %     [U, V, W] = getFFT(obj)
+            
+            U = fftn(obj.u);
+            V = fftn(obj.v);
+            W = fftn(obj.w);
+        end
+
+        function ax = plotVorticity(obj, axisType, slices, varargin)
+            % Plot vorticity magnitude
+            %
+            % Args:
+            %     obj (VelocityField): VelocityField object
+            %     axisType (char): Axis for slicing ('x', 'y', or 'z')
+            %     slices (vector): Slices to plot
+            % 
+            % Optional Args:
+            %     * omega_mag (float): 3D array with the vorticity magnitude
+            %
+            % Returns:
+            %     ax: Axes handle of the plot
+            
+            % Import packages
+            import combustiontoolbox.utils.extensions.brewermap
+
+            % Check if omega_mag is provided
+            if nargin < 4
+                omega_mag = obj.getVorticity();
+            else
+                omega_mag = varargin{1};
+            end
+
+            % Clip at 99th percentile to avoid spurious peak values
+            clip = prctile(omega_mag(:), 99);
+
+            % Set color limits
+            climits = [0, clip];
+            
+            % Plot 2D slices
+            ax = obj.plotContour(omega_mag, axisType, slices, '$\nabla \times \mathbf{u}$', climits);
+        end
+
+        function ax = plotDivergence(obj, axisType, slices, varargin)
+            % Plot divergence
+            %
+            % Args:
+            %     obj (VelocityField): VelocityField object
+            %     axisType (char): Axis for slicing ('x', 'y', or 'z')
+            %     slices (vector): Slices to plot
+            %
+            % Optional Args:
+            %     * div_u (float): 3D array with the divergence field
+            %
+            % Returns:
+            %     ax: Axes handle of the plot
+            
+            % Check if div_u is provided
+            if nargin < 4
+                div_u = obj.getDivergence();
+            else
+                div_u = varargin{1};
+            end
+
+            % Normalize colormap
+            absDiv = abs(div_u(:));
+            clip = prctile(absDiv, 99);
+
+            % Set color limits
+            climits = [-clip, clip];
+            
+            % Plot 2D slices
+            ax = obj.plotContour(div_u, axisType, slices, '$\nabla \cdot \mathbf{u}$', climits);
+        end
+
+    end
+    
+    methods (Access = private)
+
+        function [Lx, Ly, Lz] = getDomainLengths(obj)
+            % Get the lengths of the domain in each direction
+            %
+            % Args:
+            %     obj (VelocityField): VelocityField object
+            %
+            % Returns:
+            %     Lx (float): Length in the x-direction
+            %     Ly (float): Length in the y-direction
+            %     Lz (float): Length in the z-direction
+            
+            % Check if the grid is defined
+            checkGridDefined(obj);
+            
+            % Definitions
+            Lx = obj.x(end) - obj.x(1);
+            Ly = obj.y(end) - obj.y(1);
+            Lz = obj.z(end) - obj.z(1);
+        end
+
+        function [KX, KY, KZ] = getAngularWaveNumbers(obj)
+            % Compute angular wave numbers for FFT
+            %
+            % Args:
+            %     sz (float): Size of the 3D array
+            %     Lx (float): Length in the x-direction
+            %     Ly (float): Length in the y-direction
+            %     Lz (float): Length in the z-direction
+            %
+            % Returns:
+            %     KX (float): 3D array with the angular wave number in the x-direction
+            %     KY (float): 3D array with the angular wave number in the y-direction
+            %     KZ (float): 3D array with the angular wave number in the z-direction
+            %
+            % Example:
+            %     [KX, KY, KZ] = getAngularWaveNumbers(velocity)
+
+            % Check if the grid is defined
+            checkGridDefined(obj);
+
+            % Definitions
+            sz = obj.size;
+            [Lx, Ly, Lz] = getDomainLengths(obj);
+
+            % Compute wave numbers
+            kx = 2 * pi * ifftshift( -floor(sz(1)/2):ceil(sz(1)/2)-1 ) / Lx;
+            ky = 2 * pi * ifftshift( -floor(sz(2)/2):ceil(sz(2)/2)-1 ) / Ly;
+            kz = 2 * pi * ifftshift( -floor(sz(3)/2):ceil(sz(3)/2)-1 ) / Lz;
+
+            % Create meshgrid for wave numbers
+            [KX, KY, KZ] = ndgrid(kx, ky, kz);
+        end
+        
+        function checkGridDefined(obj)
+            % Check if the grid is defined
+            %
+            % Args:
+            %     obj (VelocityField): VelocityField object
+            %
+            % Raises:
+            %     error: If the grid is not defined
+            
+            if obj.gridChecked
+                return
+            end
+
+            if isempty(obj.x) || isempty(obj.y) || isempty(obj.z)
+                obj.x = linspace(0, obj.defaultLenght, obj.size(1));
+                obj.y = linspace(0, obj.defaultLenght, obj.size(2));
+                obj.z = linspace(0, obj.defaultLenght, obj.size(3));
+
+                warning('VelocityField:GridDefaultUsed', ...
+                        ['Grid coordinates (x, y, z) were not defined. ', ...
+                         'Default uniform grids in [0, 2π] were used. ', ...
+                         'It is recommended to provide physical grid coordinates.']);
+            end
+
+            % Update flag
+            obj.gridChecked = true;
+        end
+
+    end
+
+    methods (Access = private, Static)
+
+        function ax = plotContour(field, axisType, slices, cLabel, climits)
+            % Plot contour of a 2D slice of the velocity field
+            %
+            % Args:
+            %     field (float): 3D array with the field to plot
+            %     axisType (char): Axis for slicing ('x', 'y', or 'z')
+            %     slices (vector): Slices to plot
+            %     cLabel (string): Label for the colorbar
+            %     climits (vector): Color limits for the plot
+            %
+            % Returns:
+            %     ax: Axes handle of the plot
+            %
+            % Examples:
+            %     * ax = VelocityField.plotContour(omega_mag, 'x', 1:10, '$\nabla \times \mathbf{u}$', [0, 10]);
+            %     * ax = VelocityField.plotContour(div_u, 'x', 1:10, '$\nabla \cdot \mathbf{u}$, [-3, 3]);
+            
+             % Import packages
+            import combustiontoolbox.utils.extensions.brewermap
+
+            % Definitions
+            numSlices = length(slices);
+            map = brewermap(40, 'spectral');
+            map = flip(map);
+            fps = 1/300;
+
+            % Map axis to slicing dimension
+            sliceDim = find('xyz' == axisType);
+            dims = 1:3;
+            plotDims = setdiff(dims, sliceDim);
+
+            % Permute dimensions to bring slice dimension last
+            permutedField = permute(field, [sliceDim, plotDims]);
+            
+            ax = figure;
+
+            for i = 1:numSlices
+                slice = slices(i);
+                contourf(squeeze(permutedField(slice, :, :)), 'LineColor', 'none');
+                % imagesc(squeeze(permutedField(slice, :, :)));
+                title( sprintf('Slice %d', slice), 'Interpreter', 'latex', 'FontSize', 20);
+                axis equal off;
+                clim(climits);
+                colormap(map);
+
+                % Add and customize colorbar
+                cb = colorbar;
+                cb.Label.Interpreter = 'latex';
+                cb.Label.String = cLabel;
+                cb.Label.FontSize = 18;
+                cb.TickLabelInterpreter = 'latex';
+                cb.FontSize = 16;
+
+                pause(fps);
+            end
+
         end
 
     end

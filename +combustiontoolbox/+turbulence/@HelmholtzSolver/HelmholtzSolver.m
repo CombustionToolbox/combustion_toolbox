@@ -167,9 +167,7 @@ classdef HelmholtzSolver < handle
             import combustiontoolbox.turbulence.VelocityField
 
             % Get N-D fast Fourier transform (fft)
-            U = fftn(velocity.u);
-            V = fftn(velocity.v);
-            W = fftn(velocity.w);
+            [U, V, W] = getFFT(velocity);
 
             % Compute wave numbers
             [KX, KY, KZ] = obj.getWaveNumbers(size(velocity.u));
@@ -262,8 +260,8 @@ classdef HelmholtzSolver < handle
                                  (wRecon(:) - velocity.w(:)).^2)) / velocityMagnitude;
             
             if diffError > obj.tol0
-                fprintf('Error!\nReconstructed field does not match original field: %.2e\n', diffMax);
-                STOP = diffMax;
+                fprintf('Error!\nReconstructed field does not match original field: %.2e\n', diffError);
+                STOP = diffError;
                 return;
             end
 
@@ -355,7 +353,7 @@ classdef HelmholtzSolver < handle
             chi = - mean(solenoidal.u .* delta_rho_entropic, 'all') /  mean(delta_u_solenoidal.^2, 'all') * sound_mean / rho_mean;
             chiVariance = (delta_rho_entropic_rms ./ delta_u_solenoidal_rms * sound_mean / rho_mean)^2;
         end
-        
+
     end
 
 end

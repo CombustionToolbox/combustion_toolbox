@@ -1,4 +1,46 @@
 classdef JumpConditionsSolver < handle
+    % The :mat:func:`JumpConditionsSolver` class computes the Rankine–Hugoniot 
+    % jump conditions and associated amplification parameters for gas mixtures 
+    % across a shock wave. It supports calorically perfect, thermally perfect, and 
+    % calorically imperfect models. In addition to post-shock thermodynamic properties, 
+    % the class evaluates the dimensionless slopes of the Hugoniot curve—``Gammas2`` 
+    % (``\Gamma``), ``Gammas1`` (``\Gamma_\rho``), and ``Gammas3`` (``\Gamma_p``)—which 
+    % quantify the local sensitivity of the post-shock density to changes in downstream 
+    % pressure (``\Gamma``), and the influence of upstream density and pressure 
+    % perturbations on the post-shock state (``\Gamma_\rho``, ``\Gamma_p``), 
+    % as formalized in Ref. [1, 2].
+    %
+    % The :mat:func:`JumpConditionsSolver` object can be initialized as follows: ::
+    %
+    %       solver = JumpConditionsSolver('equilibriumSolver', eqSolver, ...)
+    %
+    % Optional name-value arguments can be specified to customize tolerances, 
+    % interpolation settings, plotting options, and solver behavior. Default 
+    % objects for :mat:func:`EquilibriumSolver` and :mat:func:`ShockSolver` 
+    % are created automatically if not provided.
+    %
+    % Flags:
+    %     * ``FLAG_FAST``: Use previous state as initial guess for equilibrium solver
+    %     * ``FLAG_INTERPOLATE``: Interpolate results on a reduced Mach number grid
+    %     * ``FLAG_PLOT``: Plot results
+    %     * ``FLAG_PAPER``: Apply the normalization and notation conventions described in Cuadra2025a
+    %     * ``FLAG_RESULTS``: Print computed values to console
+    %     * ``FLAG_TIME``: Print elapsed computation time
+    %     * ``FLAG_REPORT``: Generate predefined plots for diagnostic analysis
+    %
+    % See also: :mat:func:`ShockSolver`, :mat:func:`EquilibriumSolver`, 
+    % :mat:func:`solve`, :mat:func:`report`, :mat:func:`plot`, :mat:func:`plotGammas`
+    %
+    % References:
+    %
+    %      [1] Cuadra, A., Di Renzo, M., Hoste, J. J. O., Williams, C. T., Vera, M., & Huete, C. (2025).
+    %          Review of shock-turbulence interaction with a focus on hypersonic flow. Physics of Fluids, 37(4).
+    %          DOI: 10.1063/5.0255816.
+    %
+    %      [2] Cuadra, A., Williams, C. T., Di Renzo, M. & Huete, C. (2024). Compressibility
+    %          and vibrational-excitation effects in hypersonic shock-turbulence interaction.
+    %          Tech. Rep. Summer Program Proceedings, Center for Turbulence Research,
+    %          Stanford University.
 
     properties
         equilibriumSolver              % EquilibriumSolver object
@@ -12,7 +54,7 @@ classdef JumpConditionsSolver < handle
         FLAG_FAST = false              % Flag to use fast equilibrium solver (guess from previous state)
         FLAG_INTERPOLATE = false       % Flag to interpolate results
         FLAG_PLOT = false              % Flag to plot results
-        FLAG_PAPER = false             % Flag to plot results in paper format
+        FLAG_PAPER = false             % Flag to apply the normalization and notation conventions described in Cuadra2025a
         FLAG_RESULTS = true            % Flag to print results
         FLAG_TIME = true               % Flag to print elapsed time
         FLAG_REPORT = false            % Flag to print predefined plots

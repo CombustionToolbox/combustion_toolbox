@@ -11,6 +11,7 @@ classdef PlotConfig < handle
     %     fontsize (float): Set fontsize
     %     colorpalette (char): Set Color palette (see brewermap function for more options)
     %     colorpaletteLenght (float): Set Maximum number of colors to use in the color palette
+    %     cmap (float): Color map for plotting
     %     box (char): Display axes outline
     %     grid (char): Display or hide axes grid lines
     %     hold (char): Retain current plot when adding new plots
@@ -40,14 +41,19 @@ classdef PlotConfig < handle
     
     properties
         position                              % Default figure position [pixels]
-        innerposition = [0.05 0.05 0.9 0.9]   % Set figure inner position [normalized]
-        outerposition = [0.05 0.05 0.9 0.9]   % Set figure outer position [normalized]
+        innerposition = [0.15 0.15 0.35 0.45] % Set figure inner position [normalized]
+        outerposition = [0.15 0.15 0.35 0.45] % Set figure outer position [normalized]
+        innerpositionLayout = [0.15 0.05 0.7 0.9] % Set figure inner position [normalized]
+        outerpositionLayout = [0.15 0.05 0.7 0.9] % Set figure outer position [normalized]
         linestyle = '-'                       % Set line style for plots
         symbolstyle = 'o'                     % Set symbol style for plots
+        lineStyles = {'-', '--', ':', '-.'}   % Line styles for plotting
+        symbolStyles = {'d', 'o', 's', '<'}   % Symbol styles for plotting
         linewidth = 1.8                       % Set line width for plots
         fontsize = 22                         % Set fontsize
         colorpalette = 'Seaborn'              % Set Color palette (see brewermap function for more options)
         colorpaletteLenght = 11               % Set Maximum number of colors to use in the color palette
+        cmap = []                             % Color map for plotting
         box = 'off'                           % Display axes outline
         grid = 'off'                          % Display or hide axes grid lines
         hold = 'on'                           % Retain current plot when adding new plots
@@ -57,6 +63,8 @@ classdef PlotConfig < handle
         yscale = 'linear'                     % Set y-axis scale (linear or log)
         xdir = 'normal'                       % Set x-axis direction (normal or reverse)
         ydir = 'normal'                       % Set y-axis direction (normal or reverse)
+        padding = 'loose'                   % Set padding for tiled layout ('none', 'tight', 'loose', 'compact')
+        tilespacing = 'loose'               % Set tile spacing for tiled layout ('none', 'tight', 'loose', 'compact')
         title = []                            % Set title
         label_type = 'short'                  % Set label with variable (short), name (medium), or name and variable (long)
         labelx = []                           % Set x label
@@ -84,13 +92,21 @@ classdef PlotConfig < handle
     end
 
     properties (Dependent)
+        numStyles % Number of line styles available
         numPlotProperties
     end
 
     methods
+
         function value = get.numPlotProperties(obj)
             value = length(obj.plotProperties);
         end
+
+        function numStyles = get.numStyles(obj)
+            % Get the number of line styles available
+            numStyles = length(obj.lineStyles);
+        end
+
     end
 
     methods (Access = public)
@@ -175,6 +191,9 @@ classdef PlotConfig < handle
             obj.id_polar1 = ip.Results.id_polar1;
             obj.id_polar2 = ip.Results.id_polar2;
             obj.id_polar3 = ip.Results.id_polar3;
+
+            % Get cmap
+            obj.cmap = combustiontoolbox.utils.extensions.brewermap(obj.colorpaletteLenght, obj.colorpalette);
         end
 
     end

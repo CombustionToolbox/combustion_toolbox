@@ -48,10 +48,10 @@ function [ax, fig] = plotComposition(obj, x_var, x_field, y_field, varargin)
     results2 = [];
     nfrec = 1;
     FLAG_PLOT_VALIDATION = false;
-    % config = self.Misc.config;
     config.labelx = interpreterLabel(x_field, config.label_type);
     config.labely = interpreterLabel(y_field, config.label_type);
-    % mintol_display = self.C.mintol_display;
+    config.innerposition = [0.15, 0.15, 0.65, 0.75];
+    config.outerposition = [0.15, 0.15, 0.65, 0.75];
     config.yscale = 'log';
     y_var = x_var;
 
@@ -281,6 +281,7 @@ function [species, index_pass] = clean_displaySpecies(molar_fractions, species, 
 
     index_all_pass = find(any(molar_fractions > mintolDisplay, 2));
     FLAG_PASS = ismember(index_species, index_all_pass);
+    
     % Update species
     index_pass = index_species(FLAG_PASS);
     species = species(index_pass);

@@ -492,6 +492,34 @@ function [property_name, property_latex, property_unit] = property_names(propert
             property_name = 'Ratio grid spacing to Kolmogorov length';
             property_latex = '\Delta x / \ell_{k}';
             property_unit = '';
+        case {'rratio'}
+            property_name = 'Density ratio';
+            property_latex = '\mathcal{R}';
+            property_unit = '';
+        case {'pratio'}
+            property_name = 'Pressure ratio';
+            property_latex = '\mathcal{P}';
+            property_unit = '';
+        case {'tratio'}
+            property_name = 'Temperature ratio';
+            property_latex = '\mathcal{T}';
+            property_unit = '';
+        case {'gammas1'}
+            property_name = 'Dimensionless slope RH';
+            property_latex = '\Gamma_\rho';
+            property_unit = '';
+        case {'-gammas1'}
+                property_name = 'Dimensionless slope RH';
+                property_latex = '-\Gamma_\rho';
+                property_unit = '';
+        case {'gammas2', 'gammas'}
+            property_name = 'Dimensionless slope RH';
+            property_latex = '\Gamma';
+            property_unit = '';
+        case {'gammas3'}
+            property_name = 'Dimensionless slope RH';
+            property_latex = '\Gamma_p';
+            property_unit = '';
         otherwise
             property_unit = '';
 

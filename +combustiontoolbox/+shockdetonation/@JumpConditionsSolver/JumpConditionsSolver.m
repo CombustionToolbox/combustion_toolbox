@@ -4,10 +4,10 @@ classdef JumpConditionsSolver < handle
     % across a shock wave. It supports calorically perfect, thermally perfect, and 
     % calorically imperfect models. In addition to post-shock thermodynamic properties, 
     % the class evaluates the dimensionless slopes of the Hugoniot curve—``Gammas2`` 
-    % (``\Gamma``), ``Gammas1`` (``\Gamma_\rho``), and ``Gammas3`` (``\Gamma_p``)—which 
+    % (:math:`\Gamma`), ``Gammas1`` (:math:`\Gamma_\rho`), and ``Gammas3`` (:math:`\Gamma_p`)—which 
     % quantify the local sensitivity of the post-shock density to changes in downstream 
-    % pressure (``\Gamma``), and the influence of upstream density and pressure 
-    % perturbations on the post-shock state (``\Gamma_\rho``, ``\Gamma_p``), 
+    % pressure (:math:`\Gamma`), and the influence of upstream density and pressure 
+    % perturbations on the post-shock state (:math:`\Gamma_\rho`, :math:`\Gamma_p`), 
     % as formalized in Ref. [1, 2].
     %
     % The :mat:func:`JumpConditionsSolver` object can be initialized as follows: ::

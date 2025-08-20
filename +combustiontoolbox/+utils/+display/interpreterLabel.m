@@ -476,9 +476,21 @@ function [property_name, property_latex, property_unit] = property_names(propert
             property_name = 'Transverse Reynolds stress';
             property_latex = 'R_{\rm TT}';
             property_unit = '';
-        case {'tke', 'tke_f'}
+        case {'k', 'tke', 'tke_f'}
             property_name = 'Turbulent kinetic energy';
             property_latex = 'K';
+            property_unit = '';
+        case {'enstrophy33'}
+            property_name = 'z-component of enstrophy';
+            property_latex = 'W_z';
+            property_unit = '';
+        case {'enstrophytt'}
+            property_name = 'Transverse enstrophy';
+            property_latex = 'W_\perp';
+            property_unit = '';
+        case {'enstrophy'}
+            property_name = 'Enstrophy';
+            property_latex = 'W';
             property_unit = '';
         case {'lengthkolmogorov'}
             property_name = 'Kolmogorov length';

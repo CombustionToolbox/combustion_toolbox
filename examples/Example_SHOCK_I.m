@@ -2,33 +2,27 @@
 % EXAMPLE: SHOCK_I
 %
 % Compute pre-shock and post-shock state for a planar incident shock wave
-% at standard conditions, a set of 16 species considered and a set of
-% pre-shock velocities contained in (400, 12000)
-%    
-% Air == {'O2','N2','O','O3','N','NO','NO2','NO3','N2O','N2O3','N2O4',...
-%         'N3','C','CO','CO2','Ar'}
+% at standard conditions (T1 = 300 K, p1 = 1 atm), and a set of pre-shock
+% velocities contained in (400, 12000) [m/s]
 %   
-% See wiki or setListspecies method from ChemicalSystem class for more
-% predefined sets of species
+% See wiki or setListspecies method from ChemicalSystem class for predefined
+% sets of species
 %
 % @author: Alberto Cuadra Lara
-%          Postdoctoral researcher - Group Fluid Mechanics
-%          Universidad Carlos III de Madrid
 %                 
-% Last update April 02 2024
+% Last update October 06 2025
 % -------------------------------------------------------------------------
 
 % Import packages
 import combustiontoolbox.databases.NasaDatabase
 import combustiontoolbox.core.*
 import combustiontoolbox.shockdetonation.*
-import combustiontoolbox.utils.display.*
 
 % Get Nasa database
 DB = NasaDatabase();
 
 % Define chemical system
-system = ChemicalSystem(DB, 'air');
+system = ChemicalSystem(DB);
 
 % Initialize mixture
 mix = Mixture(system);
@@ -45,11 +39,5 @@ solver = ShockSolver('problemType', 'SHOCK_I');
 % Solve problem
 [mixArray1, mixArray2] = solver.solveArray(mixArray1);
 
-% Plot Hugoniot curve
-plotFigure('\rho_1 / \rho_2', [mixArray1.rho] ./ [mixArray2.rho], 'p_2 / p_1', [mixArray2.p] ./ [mixArray1.p], 'xScale', 'log', 'yScale', 'log');
-
-% Plot post-shock temperature
-plotFigure('u', mixArray2, 'T', mixArray2);
-
-% Plot molar fractions
-plotComposition(mixArray2(1), mixArray1, 'u', 'Xi', 'mintol', 1e-3, 'y_var', mixArray2);
+% Generate report
+report(solver, mixArray1, mixArray2);

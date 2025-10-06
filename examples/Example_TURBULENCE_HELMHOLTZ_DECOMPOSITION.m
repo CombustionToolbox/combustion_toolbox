@@ -17,8 +17,6 @@
 %
 %
 % @author: Alberto Cuadra Lara
-%          Postdoctoral researcher - Group Fluid Mechanics
-%          Universidad Carlos III de Madrid
 %                 
 % Last update Nov 23 2024
 % -------------------------------------------------------------------------

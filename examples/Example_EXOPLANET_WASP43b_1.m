@@ -7,8 +7,6 @@
 % https://github.com/dzesmin/RRC-BlecicEtal-2015a-ApJS-TEA/tree/master/Fig6/WASP43b-solar
 %
 % @author: Alberto Cuadra Lara
-%          Postdoctoral researcher - Group Fluid Mechanics
-%          Universidad Carlos III de Madrid
 %                 
 % Last update April 02 2024
 % -------------------------------------------------------------------------

@@ -2,34 +2,27 @@
 % EXAMPLE: HP PROPELLANTS
 %
 % Compute adiabatic temperature and equilibrium composition at constant
-% pressure (e.g., 1.01325 bar) for lean to rich LH2-LOX mixtures at
-% standard conditions, a set of 24 species considered and a set of
-% equivalence ratios phi contained in (0.5, 5) [-]
-%   
-% HYDROGEN_L == {'H','H2O','OH','H2','O','O3','O2','HO2','H2O2',...
-%                'H2bLb','O2bLb'}
-%   
-% See wiki or setListspecies method from ChemicalSystem class for more
-% predefined sets of species
+% pressure (p = 1.01325 bar) for lean to rich LH2-LOX mixtures at T = 300 K,
+% and a set of equivalence ratios phi contained in (0.5, 5) [-]
+%
+% See wiki or setListspecies method from ChemicalSystem class for predefined
+% sets of species
 %
 % @author: Alberto Cuadra Lara
-%          Postdoctoral researcher - Group Fluid Mechanics
-%          Universidad Carlos III de Madrid
 %                 
-% Last update April 02 2024
+% Last update October 06 2025
 % -------------------------------------------------------------------------
 
 % Import packages
 import combustiontoolbox.databases.NasaDatabase
 import combustiontoolbox.core.*
 import combustiontoolbox.equilibrium.*
-import combustiontoolbox.utils.display.*
 
 % Get Nasa database
 DB = NasaDatabase();
 
 % Define chemical system
-system = ChemicalSystem(DB, 'HYDROGEN_L');
+system = ChemicalSystem(DB);
 
 % Initialize mixture
 mix = Mixture(system);
@@ -47,8 +40,5 @@ solver = EquilibriumSolver('problemType', 'HP');
 % Solve problem
 solver.solveArray(mixArray);
 
-% Plot adiabatic flame temperature
-plotFigure('phi', [mixArray.equivalenceRatio], 'T', [mixArray.T]);
-
-% Plot molar fractions
-plotComposition(mixArray(1), mixArray, 'equivalenceRatio', 'Xi', 'mintol', 1e-14);
+% Generate report
+report(solver, mixArray);

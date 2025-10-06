@@ -81,11 +81,6 @@ function mix2 = equilibrateT(obj, mix1, mix2, T, varargin)
         % Clean chemical system
         system.clean;
         
-        % Check if problemType is at constant volume
-        if strfind(obj.problemType, 'V') == 2
-            mix.p = computePressure(mix, T, N, system);
-        end
-        
         % Get indexSpecies from indexProducts
         indexSpecies = findIndex(system.listSpecies, systemProducts.listSpecies(indexProducts));
 
@@ -104,12 +99,6 @@ function [N, dNi_T, dN_T, dNi_p, dN_p, indexProducts, STOP, STOP_ions, h0] = sel
     end
     
     [N, dNi_T, dN_T, dNi_p, dN_p, indexProducts, STOP, STOP_ions, h0] = equilibriumHelmholtz(obj, system, mix2.v, T, mix1, molesGuess);
-end
-
-function pP = computePressure(mix, T, moles, system)
-    % Compute pressure [bar] of product mixture
-    vMolar = vSpecific2vMolar(mix, mix.vSpecific, moles, sum(moles(system.indexGas)), [system.indexGas, system.indexCondensed]);
-    pP = mix.equationState.getPressure(T, vMolar, system.listSpecies, mix.Xi) * 1e-5;
 end
 
 function vector = reshapeVector(system, index, indexModified, vectorModified)

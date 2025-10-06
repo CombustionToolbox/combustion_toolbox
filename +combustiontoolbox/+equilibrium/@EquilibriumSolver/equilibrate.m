@@ -39,7 +39,7 @@ function mix2 = equilibrate(obj, mix2, varargin)
     equilibrateT(obj, mix1, mix2, T, molesGuess);
 
     % Check convergence in case the problemType is TP (defined Temperature and Pressure)
-    print_convergence(mix2.errorMoles, obj.tolGibbs, mix2.errorMolesIons, obj.tolMultiplierIons, obj.problemType)
+    checkConvergence(mix2.errorMoles, obj.tolGibbs, mix2.errorMolesIons, obj.tolMultiplierIons, obj.problemType)
 
     % Save error from root finding algorithm
     mix2.errorProblem = STOP;
@@ -92,31 +92,19 @@ function [x, STOP, molesGuess] = rootFinding(obj, mix1, mix2, attributeName, x0,
     [x, STOP, molesGuess] = obj.rootMethod(obj, mix1, mix2, attributeName, x0, molesGuess);
 end
 
-function print_convergence(STOP, TOL, STOP_ions, TOL_ions, ProblemType)
-    % Print tolerance error if the convergence criteria was not satisfied
+function checkConvergence(STOP, TOL, STOP_ions, TOL_ions, problemType)
+    % Check tolerance error if the convergence criteria was not satisfied
 
-    if ~strcmpi(ProblemType, 'TP')
+    if ~strcmpi(problemType, 'TP')
         return
     end
 
     if STOP > TOL
-        fprintf('***********************************************************\n')
-        fprintf('Convergence error number of moles:   %1.2e\n', STOP);
+        warning('Convergence error number of moles:   %1.2e\n', STOP);
     end
 
     if STOP_ions > TOL_ions
-        fprintf('***********************************************************\n')
-        fprintf('Convergence error in charge balance: %1.2e\n', STOP_ions);
+        warning('Convergence error in charge balance: %1.2e\n', STOP_ions);
     end
 
-end
-
-function mix = set_volume_SV(obj, mix)
-    % If the problem type is SV, the product's volume is based on the given v_P/v_R ratio
-    if ~strcmpi(obj.problemType, 'SV')
-        return
-    end
-
-    %mix.v = mix.v * obj.PD.vP_vR.value;
-    fprintf('\nto be clarified\n')
 end

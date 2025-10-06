@@ -94,8 +94,11 @@ function [N, dNi_T, dN_T, dNi_p, dN_p, index, STOP, STOP_ions, h0] = equilibrium
     % Molar Gibbs energy [J/mol]
     g0([indexGas_0, indexCondensed_0]) = set_g0(system.listSpecies([indexGas_0, indexCondensed_0]), T, system.species);
     
+    % Dimensionless Gibbs energy
+    g0RT = g0/RT;
+
     % Dimensionless chemical potential
-    muRT = g0/RT;
+    muRT = g0RT;
     
     % Construction of part of matrix J
     A0_T = A0';
@@ -141,7 +144,7 @@ function [N, dNi_T, dN_T, dNi_p, dN_p, index, STOP, STOP_ions, h0] = equilibrium
         while STOP > obj.tolGibbs && it < itMax
             it = it + 1;
             % Chemical potential
-            muRT(indexGas) =  g0(indexGas) / RT + log(N(indexGas) * RT / v * 1e-5);
+            muRT(indexGas) =  g0RT(indexGas) + log(N(indexGas) * RT / v * 1e-5);
             
             % Compute total number of moles
             NP = sum(N(indexGas));
@@ -393,5 +396,5 @@ end
 
 function Delta_ln_nj = update_Delta_ln_nj(A0, pi_i, muRT, indexGas)
     % Compute correction moles of gases
-    Delta_ln_nj = sum(A0(indexGas, :)' .* pi_i, 1)' - muRT(indexGas);
+    Delta_ln_nj = A0(indexGas, :) * pi_i - muRT(indexGas);
 end

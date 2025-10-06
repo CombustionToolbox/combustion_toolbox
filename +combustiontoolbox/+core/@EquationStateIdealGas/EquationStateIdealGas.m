@@ -24,7 +24,10 @@ classdef EquationStateIdealGas < combustiontoolbox.core.EquationState
             % Example:
             %     P = getPressure(obj, 300, 0.024)
 
+            % Definitions
             R0 = combustiontoolbox.common.Constants.R0; % Universal gas constant [J/(K mol)]
+
+            % Compute pressure [Pa]
             pressure = (R0 .* temperature) ./ molarVolume;
         end
         
@@ -41,7 +44,10 @@ classdef EquationStateIdealGas < combustiontoolbox.core.EquationState
             % Example:
             %     V = getVolume(obj, 300, 1e5)
 
+            % Definitions
             R0 = combustiontoolbox.common.Constants.R0; % Universal gas constant [J/(K mol)]
+
+            % Compute molar volume [m3/mol]
             molarVolume = R0 * temperature ./ pressure;
         end
 

@@ -18,8 +18,6 @@
 %     technica, 19(4), 364-370.
 %
 % @author: Alberto Cuadra Lara
-%          Postdoctoral researcher - Group Fluid Mechanics
-%          Universidad Carlos III de Madrid
 %                 
 % Last update Aug 05 2024
 % -------------------------------------------------------------------------

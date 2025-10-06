@@ -18,8 +18,6 @@
 %      reactions in equilibrium.
 %
 % @author: Alberto Cuadra Lara
-%          Postdoctoral researcher - Group Fluid Mechanics
-%          Universidad Carlos III de Madrid
 %                  
 % Last update Sep 05 2024
 % -------------------------------------------------------------------------

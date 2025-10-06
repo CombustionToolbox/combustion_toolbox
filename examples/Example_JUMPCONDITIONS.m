@@ -45,4 +45,4 @@ solver = JumpConditionsSolver('FLAG_TCHEM_FROZEN', FLAG_TCHEM_FROZEN, 'FLAG_FROZ
 jumpData = solver.solve(mixArray);
 
 % Generate report
-solver.report(jumpData);
+report(solver, jumpData);

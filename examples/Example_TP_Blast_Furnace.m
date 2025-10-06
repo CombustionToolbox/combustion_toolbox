@@ -18,8 +18,6 @@
 % Contrasted with Reaktoro [2] and RAND method from [1].
 %
 % @author: Alberto Cuadra Lara
-%          Postdoctoral researcher - Group Fluid Mechanics
-%          Universidad Carlos III de Madrid
 %                 
 % Last update Jun 08 2024
 % -------------------------------------------------------------------------
@@ -59,7 +57,6 @@ indexSpecies = findIndex(system.listSpecies, displaySpecies);
 moles_CT = mixArray.Xi(indexSpecies) * mixArray.N;
 moles_REAKTORO = [1.9405e-19; 1.8719e+02; 4.2795e-01; 5.1310e-03; 8.1013e+01; 6.9767e+00; 5.8476e+00; 9.6823e-11; 4.2827e+01; 7.5620e-01];
 moles_RAND = [1.793e-19; 1.871e2; 2.377e-1; 1.97e-3; 8.143e1; 6.865; 6.641; 8.414e-11; 4.283e1; 7.562e-1];
-
 
 % Display table with species and molar coposition
 T = table(system.listSpecies(indexSpecies)', moles_CT, moles_REAKTORO, moles_RAND, (moles_REAKTORO - moles_CT) ./ moles_CT * 100, (moles_RAND - moles_CT) ./ moles_CT * 100);

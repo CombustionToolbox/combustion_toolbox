@@ -248,6 +248,123 @@ classdef Mixture < handle & matlab.mixin.Copyable
             updateThermodynamics(obj);
         end
 
+        function obj = setEntropy(obj, entropy, varargin)
+            % Set entropy [J/K] and compute the corresponding temperature at fixed p, composition
+            %
+            % Args:
+            %     obj (Mixture): Mixture object
+            %     entropy (float): Entropy [J/K]
+            %
+            % Optional Args:
+            %     units (char): Units of entropy (default: 'J/K')
+            %
+            % Returns:
+            %     obj (Mixture): Mixture object with updated temperature and properties
+            %
+            % Example:
+            %     setEntropy(obj, 1000)
+
+            % Default units
+            defaultUnits = 'J/K';
+
+            % Parse inputs
+            ip = inputParser;
+            addRequired(ip, 'entropy', @(x) isnumeric(x) && isscalar(x));
+            addOptional(ip, 'units', defaultUnits, @(x) ischar(x));
+            parse(ip, entropy, varargin{:});
+
+            % Unit conversion if needed
+            if ~strcmpi(ip.Results.units, 'J/K')
+                error('Only entropy in [J/K] is currently supported');
+            end
+
+            % Set solver
+            solver = combustiontoolbox.equilibrium.EquilibriumSolver;
+            solver.set('problemType', 'SP', 'FLAG_FROZEN', true, 'FLAG_RESULTS', false);
+            
+            % Set entropy
+            obj.s = entropy;
+            solver.solve(obj);
+        end
+
+        function obj = setEnthalpy(obj, enthalpy, varargin)
+            % Set enthalpy [J] and compute the corresponding temperature at fixed p, composition
+            %
+            % Args:
+            %     obj (Mixture): Mixture object
+            %     enthalpy (float): Enthalpy [J]
+            %
+            % Optional Args:
+            %     units (char): Units of enthalpy (default: 'J')
+            %
+            % Returns:
+            %     obj (Mixture): Mixture object with updated temperature and properties
+            %
+            % Example:
+            %     setEnthalpy(obj, 1000)
+
+            % Default units
+            defaultUnits = 'J';
+
+            % Parse inputs
+            ip = inputParser;
+            addRequired(ip, 'enthalpy', @(x) isnumeric(x) && isscalar(x));
+            addOptional(ip, 'units', defaultUnits, @(x) ischar(x));
+            parse(ip, enthalpy, varargin{:});
+
+            % Unit conversion if needed
+            if ~strcmpi(ip.Results.units, 'J')
+                error('Only enthalpy in [J] is currently supported');
+            end
+
+            % Set solver
+            solver = combustiontoolbox.equilibrium.EquilibriumSolver;
+            solver.set('problemType', 'HP', 'FLAG_FROZEN', true, 'FLAG_RESULTS', false);
+
+            % Set enthalpy
+            obj.h = enthalpy;
+            solver.solve(obj);
+        end
+
+        function obj = setInternalEnergy(obj, internalEnergy, varargin)
+            % Set internal energy [J] and compute the corresponding temperature at fixed p, composition
+            %
+            % Args:
+            %     obj (Mixture): Mixture object
+            %     internalEnergy (float): Internal energy [J]
+            %
+            % Optional Args:
+            %     units (char): Units of internal energy (default: 'J')
+            %
+            % Returns:
+            %     obj (Mixture): Mixture object with updated temperature and properties
+            %
+            % Example:
+            %     setInternalEnergy(obj, 1000)
+
+            % Default units
+            defaultUnits = 'J';
+
+            % Parse inputs
+            ip = inputParser;
+            addRequired(ip, 'internalEnergy', @(x) isnumeric(x) && isscalar(x));
+            addOptional(ip, 'units', defaultUnits, @(x) ischar(x));
+            parse(ip, internalEnergy, varargin{:});
+
+            % Unit conversion if needed
+            if ~strcmpi(ip.Results.units, 'J')
+                error('Only internal energy in [J] is currently supported');
+            end
+
+            % Set solver
+            solver = combustiontoolbox.equilibrium.EquilibriumSolver;
+            solver.set('problemType', 'EV', 'FLAG_FROZEN', true, 'FLAG_RESULTS', false);
+
+            % Set internal energy
+            obj.e = internalEnergy;
+            solver.solve(obj);
+        end
+
         function obj = set(obj, listSpecies, varargin)
             % Set species and quantity and compute thermodynamic properties
             %
@@ -498,7 +615,10 @@ classdef Mixture < handle & matlab.mixin.Copyable
             
             % Initialization
             FLAG_MACH = false;
-            
+            FLAG_ENTROPY = false;
+            FLAG_ENTHALPY = false;
+            FLAG_INTERNAL_ENERGY = false;
+
             % Assign value to the property
             properties = {property, varargin{1:2:end}};
             values = {value, varargin{2:2:end}};
@@ -578,6 +698,15 @@ classdef Mixture < handle & matlab.mixin.Copyable
                         case {'volume', 'vspecific', 'v'}
                             objArray(j).vSpecific = values{i}(j);
                             objArray(j).FLAG_VOLUME = true;
+                        case {'entropy', 's', 's0'}
+                            entropy = values{i}(j);
+                            FLAG_ENTROPY = true;
+                        case {'enthalpy', 'h', 'h0'}
+                            enthalpy = values{i}(j);
+                            FLAG_ENTHALPY = true;
+                        case {'internalenergy', 'e', 'e0'}
+                            internalEnergy = values{i}(j);
+                            FLAG_INTERNAL_ENERGY = true;
                         case {'equivalenceratio', 'phi'}
                             objArray(j).equivalenceRatio = values{i}(j);
                             objArray(j).updateComposition();
@@ -603,7 +732,19 @@ classdef Mixture < handle & matlab.mixin.Copyable
                 end
 
                 % Compute thermodynamic state of the mixture
-                objArray(j).updateThermodynamics();
+                if FLAG_ENTROPY
+                    % Compute thermodynamic state of the mixture S and P/V
+                    objArray(j).setEntropy(entropy);
+                elseif FLAG_ENTHALPY
+                    % Compute thermodynamic state of the mixture H and P/V
+                    objArray(j).setEnthalpy(enthalpy);
+                elseif FLAG_INTERNAL_ENERGY
+                    % Compute thermodynamic state of the mixture E and P/V
+                    objArray(j).setInternalEnergy(internalEnergy);
+                else
+                    % Compute thermodynamic state of the mixture T and P/V
+                    objArray(j).updateThermodynamics();
+                end
 
                 % Additional inputs
                 if FLAG_MACH
@@ -631,8 +772,8 @@ classdef Mixture < handle & matlab.mixin.Copyable
             if obj.FLAG_VOLUME
                 % Compute molar volume [m3/mol] from specific volume [m3/kg]
                 vMolar = vSpecific2vMolar(obj, obj.vSpecific, obj.quantity, obj.quantity(obj.indexGas));
-                % Compute pressure in Pascals using the equationState
-                pressure = obj.equationState.getPressure(obj.T, vMolar, obj.chemicalSystem.listSpecies, obj.quantity / sum(obj.quantity)); % [Pa]
+                % Compute pressure in Pascals [Pa] using the equationState
+                pressure = obj.equationState.getPressure(obj.T, vMolar, obj.chemicalSystem.listSpecies, obj.quantity / sum(obj.quantity));
                 % Convert pressure to [bar]
                 obj.p = pressure * combustiontoolbox.common.Units.Pa2bar;
             end
@@ -721,9 +862,12 @@ classdef Mixture < handle & matlab.mixin.Copyable
             
             % Compute Mean Molecular Weight [kg/mol]
             MW = computeMeanMolecularWeight(obj, moles, index);
+            
+            % Compute Molecular Weight of the gas phase [kg/mol]
+            W = MW * sum(moles) / sum(molesGas);
 
             % Compute specific volume [m3/mol]
-            vMolar = vSpecific * MW * sum(moles) / sum(molesGas);
+            vMolar = vSpecific * W;
         end
 
         function typeSpecies = getTypeSpecies(obj)
@@ -740,7 +884,7 @@ classdef Mixture < handle & matlab.mixin.Copyable
             typeInert = repmat({'Inert'}, size(obj.listSpeciesInert));
             typeSpecies = [typeInert, typeOxidizer, typeFuel];
         end
-        
+
     end
     
     methods(Access = protected)
@@ -823,7 +967,7 @@ classdef Mixture < handle & matlab.mixin.Copyable
             obj.MW = dot(Ni, propertiesMatrix(:, system.ind_W)) / obj.N;
 
             % Compute mass mixture [kg]
-            obj.mi = obj.MW * obj.N; % [kg]
+            obj.mi = obj.MW * obj.N;
 
             % Compute mass fractions [-]
             obj.Yi = (Ni .* propertiesMatrix(:, system.ind_W)) ./ obj.mi;
@@ -874,13 +1018,14 @@ classdef Mixture < handle & matlab.mixin.Copyable
 
             % Get non zero species
             FLAG_NONZERO = obj.Xi > 0;
-            
+
             % Compute volume [m3]
-            if N_gas
-                obj.v = obj.equationState.getVolume(temperature, pressure * combustiontoolbox.common.Units.bar2Pa, obj.chemicalSystem.listSpecies, obj.Xi) * N_gas;
-            else
-                % Mixture that only has condensed species
+            if obj.FLAG_VOLUME
                 obj.v = obj.vSpecific * obj.mi;
+                % Update pressure [bar] if specific volume is given
+                obj.p = obj.equationState.getPressure(temperature, obj.v / N_gas, obj.chemicalSystem.listSpecies, obj.Xi) * combustiontoolbox.common.Units.Pa2bar;
+            else
+                obj.v = obj.equationState.getVolume(temperature, pressure * combustiontoolbox.common.Units.bar2Pa, obj.chemicalSystem.listSpecies, obj.Xi) * N_gas;
             end
 
             % Compute specific volume [m3/kg]
@@ -932,7 +1077,7 @@ classdef Mixture < handle & matlab.mixin.Copyable
                     obj.gamma_s = -obj.gamma / obj.dVdp_T;
 
                     % Compute sound velocity [m/s]
-                    obj.sound = sqrt(obj.gamma_s * combustiontoolbox.common.Units.bar2Pa * pressure / obj.rho);
+                    obj.sound = sqrt(obj.gamma_s * R0 * obj.T / obj.W);
 
                     % Compute Mach number
                     if ~isempty(obj.u)
@@ -962,7 +1107,7 @@ classdef Mixture < handle & matlab.mixin.Copyable
             obj.gamma_s = obj.gamma;
 
             % Compute sound velocity [m/s]
-            obj.sound = sqrt(obj.gamma * combustiontoolbox.common.Units.bar2Pa * pressure / obj.rho);
+            obj.sound = sqrt(obj.gamma * R0 * obj.T / obj.W);
             
             % Compute Mach number
             if ~isempty(obj.u)

@@ -23,7 +23,7 @@ import combustiontoolbox.shockdetonation.*
 DB = NasaDatabase();
 
 % Define chemical system
-system = ChemicalSystem(DB, 'hydrogen');
+system = ChemicalSystem(DB);
 
 % Initialize mixture
 mix = Mixture(system);

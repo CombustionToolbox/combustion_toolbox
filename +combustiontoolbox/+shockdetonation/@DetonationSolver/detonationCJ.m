@@ -45,35 +45,52 @@ function [mix1, mix2] = detonationCJ(obj, mix1, varargin)
     
     % Save state
     [mix1, mix2] = save_state(mix1, mix2, STOP);
-    % mix2.T_guess = T_guess;
-    % mix2.p_guess = p2_guess;
 
     % NESTED-FUNCTIONS
     function [T2, p2, STOP, it, T_guess, p2_guess] = solve_cj_detonation(FLAG_FAST)
         % Miscellaneous
         it = 0; itMax = obj.itMax;
+
         % Initial estimates of p2/p1 and T2/T1
         [p2, T2, p2p1, T2T1, STOP] = get_guess(obj, mix1, mix2);
         T_guess = T2; p2_guess = p2;
+
+        % Check STOP
+        if STOP < obj.tol0
+            % Set pressure and temperature of mix2
+            mix2.p = p2; mix2.T = T2;
+        
+            % Calculate state given T & p
+            mix2 = state(obj.equilibriumSolver, mix1, mix2, []);
+        end
+
         % Check FLAG
         if ~FLAG_FAST, guess_moles = []; end
+
         % Loop
         while STOP > obj.tol0 && it < itMax
             % Update iteration
             it = it + 1;
+
             % Construction of the Jacobian matrix and vector b
             [J, b, guess_moles] = update_system(obj.equilibriumSolver, mix1, mix2, p2, T2, R0, guess_moles, FLAG_FAST);
+
             % Solve of the linear system J*x = b
             x = linsolve(J, b);
+
             % Calculate correction factor
             lambda = relax_factor(x);
+
             % Apply correction
             [log_p2p1, log_T2T1] = apply_correction(x, p2p1, T2T1, lambda);
+
             % Apply antilog
             [p2, T2] = apply_antilog(mix1, log_p2p1, log_T2T1); % [bar] and [K]
+
             % Update ratios
             p2p1 = p2 / mix1.p;
             T2T1 = T2 / mix1.T;
+            
             % Compute STOP criteria
             STOP = compute_STOP(x);
         end
@@ -131,7 +148,7 @@ function [J, b, guess_moles] = update_system(equilibriumSolver, mix1, mix2, p2, 
     % Set pressure and temperature of mix2
     mix2.p = p2; mix2.T = T2;
 
-    % Calculate frozen state given T & p
+    % Calculate state given T & p
     [mix2, r2, dVdT_p, dVdp_T] = state(equilibriumSolver, mix1, mix2, guess_moles);
 
     r2r1 = r2 / r1; % [-]

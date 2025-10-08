@@ -113,7 +113,39 @@ classdef Mixture < handle & matlab.mixin.Copyable
         FLAG_INERT = false     % Flag to indicate inert species are defined (initial mixture)
         FLAG_REACTION = false  % Flag to indicate chemical reaction is defined
     end
-    
+
+    properties (Access = private, Hidden)
+        equilibriumSolver_ % Equilibrium solver object
+    end
+
+    properties (Dependent, Access = private)
+        equilibriumSolver % Equilibrium solver object
+    end
+
+    methods
+
+        function value = get.equilibriumSolver(obj)
+            % Get equilibrium solver object
+            if isempty(obj.equilibriumSolver_)
+                value = combustiontoolbox.equilibrium.EquilibriumSolver('FLAG_FROZEN', true, 'FLAG_RESULTS', false);
+                obj.equilibriumSolver_ = value;
+                return
+            end
+
+            value = obj.equilibriumSolver_;
+        end
+
+        function set.equilibriumSolver(obj, value)
+            % Set equilibrium solver object
+            if ~isa(value, 'combustiontoolbox.equilibrium.EquilibriumSolver')
+                error('equilibriumSolver must be an EquilibriumSolver object');
+            end
+
+            obj.equilibriumSolver_ = value;
+        end
+
+    end
+
     methods
         
         mix = setStagnation(mix, varargin)
@@ -127,7 +159,7 @@ classdef Mixture < handle & matlab.mixin.Copyable
             defaultPressure = 1;      % [bar]
             defaultEoS = combustiontoolbox.core.EquationStateIdealGas();
             defaultConfig = combustiontoolbox.core.MixtureConfig();
-
+            
             % Parse inputs
             ip = inputParser;
             addRequired(ip, 'chemicalSystem', @(x) isa(x, 'combustiontoolbox.core.ChemicalSystem'));
@@ -279,12 +311,49 @@ classdef Mixture < handle & matlab.mixin.Copyable
             end
 
             % Set solver
-            solver = combustiontoolbox.equilibrium.EquilibriumSolver;
-            solver.set('problemType', 'SP', 'FLAG_FROZEN', true, 'FLAG_RESULTS', false);
+            solver = obj.equilibriumSolver;
+            solver.problemType = 'SP';
             
             % Set entropy
             obj.s = entropy;
             solver.solve(obj);
+        end
+
+        function obj = setEntropySpecific(obj, entropySpecific, varargin)
+            % Set specific entropy [J/kg-K] and compute the corresponding temperature at fixed p, composition
+            %
+            % Args:
+            %     obj (Mixture): Mixture object
+            %     entropySpecific (float): Specific entropy [J/kg-K]
+            %
+            % Optional Args:
+            %     units (char): Units of specific entropy (default: 'J/kg-K')
+            %
+            % Returns:
+            %     obj (Mixture): Mixture object with updated temperature and properties
+            %
+            % Example:
+            %     setEntropySpecific(obj, 1000)
+
+            % Default units
+            defaultUnits = 'J/kg-K';
+
+            % Parse inputs
+            ip = inputParser;
+            addRequired(ip, 'entropySpecific', @(x) isnumeric(x) && isscalar(x));
+            addOptional(ip, 'units', defaultUnits, @(x) ischar(x));
+            parse(ip, entropySpecific, varargin{:});
+
+            % Unit conversion if needed
+            if ~strcmpi(ip.Results.units, 'J/kg-K')
+                error('Only specific entropy in [J/kg-K] is currently supported');
+            end
+
+            % Convert to total entropy
+            entropy = entropySpecific * obj.mi;
+
+            % Set entropy
+            obj = setEntropy(obj, entropy);
         end
 
         function obj = setEnthalpy(obj, enthalpy, varargin)
@@ -318,12 +387,49 @@ classdef Mixture < handle & matlab.mixin.Copyable
             end
 
             % Set solver
-            solver = combustiontoolbox.equilibrium.EquilibriumSolver;
-            solver.set('problemType', 'HP', 'FLAG_FROZEN', true, 'FLAG_RESULTS', false);
+            solver = obj.equilibriumSolver;
+            solver.problemType = 'HP';
 
             % Set enthalpy
             obj.h = enthalpy;
             solver.solve(obj);
+        end
+
+        function obj = setEnthalpySpecific(obj, enthalpySpecific, varargin)
+            % Set specific enthalpy [J/kg] and compute the corresponding temperature at fixed p, composition
+            %
+            % Args:
+            %     obj (Mixture): Mixture object
+            %     enthalpySpecific (float): Specific enthalpy [J/kg]
+            %
+            % Optional Args:
+            %     units (char): Units of specific enthalpy (default: 'J/kg')
+            %
+            % Returns:
+            %     obj (Mixture): Mixture object with updated temperature and properties
+            %
+            % Example:
+            %     setEnthalpySpecific(obj, 1000)
+
+            % Default units
+            defaultUnits = 'J/kg';
+
+            % Parse inputs
+            ip = inputParser;
+            addRequired(ip, 'enthalpySpecific', @(x) isnumeric(x) && isscalar(x));
+            addOptional(ip, 'units', defaultUnits, @(x) ischar(x));
+            parse(ip, enthalpySpecific, varargin{:});
+
+            % Unit conversion if needed
+            if ~strcmpi(ip.Results.units, 'J/kg')
+                error('Only specific enthalpy in [J/kg] is currently supported');
+            end
+
+            % Convert to total enthalpy
+            enthalpy = enthalpySpecific * obj.mi;
+
+            % Set enthalpy
+            obj = setEnthalpy(obj, enthalpy);
         end
 
         function obj = setInternalEnergy(obj, internalEnergy, varargin)
@@ -357,12 +463,49 @@ classdef Mixture < handle & matlab.mixin.Copyable
             end
 
             % Set solver
-            solver = combustiontoolbox.equilibrium.EquilibriumSolver;
-            solver.set('problemType', 'EV', 'FLAG_FROZEN', true, 'FLAG_RESULTS', false);
+            solver = obj.equilibriumSolver;
+            solver.problemType = 'EV';
 
             % Set internal energy
             obj.e = internalEnergy;
             solver.solve(obj);
+        end
+
+        function obj = setInternalEnergySpecific(obj, internalEnergySpecific, varargin)
+            % Set specific internal energy [J/kg] and compute the corresponding temperature at fixed p, composition
+            %
+            % Args:
+            %     obj (Mixture): Mixture object
+            %     internalEnergySpecific (float): Specific internal energy [J/kg]
+            %
+            % Optional Args:
+            %     units (char): Units of specific internal energy (default: 'J/kg')
+            %
+            % Returns:
+            %     obj (Mixture): Mixture object with updated temperature and properties
+            %
+            % Example:
+            %     setInternalEnergySpecific(obj, 1000)
+
+            % Default units
+            defaultUnits = 'J/kg';
+
+            % Parse inputs
+            ip = inputParser;
+            addRequired(ip, 'internalEnergySpecific', @(x) isnumeric(x) && isscalar(x));
+            addOptional(ip, 'units', defaultUnits, @(x) ischar(x));
+            parse(ip, internalEnergySpecific, varargin{:});
+
+            % Unit conversion if needed
+            if ~strcmpi(ip.Results.units, 'J/kg')
+                error('Only specific internal energy in [J/kg] is currently supported');
+            end
+
+            % Convert to total internal energy
+            internalEnergy = internalEnergySpecific * obj.mi;
+
+            % Set internal energy
+            obj = setInternalEnergy(obj, internalEnergy);
         end
 
         function obj = set(obj, listSpecies, varargin)
@@ -699,13 +842,22 @@ classdef Mixture < handle & matlab.mixin.Copyable
                             objArray(j).vSpecific = values{i}(j);
                             objArray(j).FLAG_VOLUME = true;
                         case {'entropy', 's', 's0'}
-                            entropy = values{i}(j);
+                            objArray(j).s = values{i}(j);
+                            FLAG_ENTROPY = true;
+                        case {'entropyspecific', 'sspecific', 'smass'}
+                            objArray(j).s = values{i}(j) * objArray(j).mi;
                             FLAG_ENTROPY = true;
                         case {'enthalpy', 'h', 'h0'}
-                            enthalpy = values{i}(j);
+                            objArray(j).h = values{i}(j);
+                            FLAG_ENTHALPY = true;
+                        case {'enthalpySpecific', 'hspecific', 'hmass'}
+                            objArray(j).h = values{i}(j) * objArray(j).mi;
                             FLAG_ENTHALPY = true;
                         case {'internalenergy', 'e', 'e0'}
-                            internalEnergy = values{i}(j);
+                            objArray(j).e = values{i}(j);
+                            FLAG_INTERNAL_ENERGY = true;
+                        case {'internalenergyspecific', 'especific', 'emass'}
+                            objArray(j).e = values{i}(j) * objArray(j).mi;
                             FLAG_INTERNAL_ENERGY = true;
                         case {'equivalenceratio', 'phi'}
                             objArray(j).equivalenceRatio = values{i}(j);
@@ -714,6 +866,7 @@ classdef Mixture < handle & matlab.mixin.Copyable
                             objArray(j).u = values{i}(j);
                         case {'mach', 'm1'}
                             objArray(j).mach = values{i}(j);
+                            objArray(j).u = [];
                             FLAG_MACH = true;
                         case {'wave angle', 'waveangle', 'wave', 'beta'}
                             objArray(j).beta = values{i}(j);
@@ -734,13 +887,13 @@ classdef Mixture < handle & matlab.mixin.Copyable
                 % Compute thermodynamic state of the mixture
                 if FLAG_ENTROPY
                     % Compute thermodynamic state of the mixture S and P/V
-                    objArray(j).setEntropy(entropy);
+                    objArray(j).setEntropy(objArray(j).s);
                 elseif FLAG_ENTHALPY
                     % Compute thermodynamic state of the mixture H and P/V
-                    objArray(j).setEnthalpy(enthalpy);
+                    objArray(j).setEnthalpy(objArray(j).h);
                 elseif FLAG_INTERNAL_ENERGY
                     % Compute thermodynamic state of the mixture E and P/V
-                    objArray(j).setInternalEnergy(internalEnergy);
+                    objArray(j).setInternalEnergy(objArray(j).e);
                 else
                     % Compute thermodynamic state of the mixture T and P/V
                     objArray(j).updateThermodynamics();

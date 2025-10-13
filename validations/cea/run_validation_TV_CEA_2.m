@@ -38,7 +38,7 @@ function metadata = run_validation_TV_CEA_2(varargin)
     displaySpecies = {'CO2', 'CO', 'H2O', 'H2', 'O2', 'N2', 'Ar',...
                       'HCN','H','OH','O','CN','NH3','CH4','C2H4', 'CH3',...
                       'NO', 'HCO', 'NH2', 'NH','N', 'CH', 'Cbgrb'};
-    tolMoles = 1e-30;
+    tolMoles = 1e-14;
 
     % Get Nasa database
     DB = NasaDatabase('FLAG_BENCHMARK', FLAG_BENCHMARK);

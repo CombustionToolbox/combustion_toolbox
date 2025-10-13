@@ -40,7 +40,7 @@ function metadata = run_validation_ROCKET_CEA_22(varargin)
           'C2H4','C2H6','CH2CO_ketene','CH3','CH3CHO_ethanal','CH3OH',...
           'CH4','COOH','H','H2O2','HCHO_formaldehy','HCO','HCOOH','HO2',...
           'O','OH','Cbgrb'};
-    tolMoles = 1e-18;
+    tolMoles = 1e-14;
 
     % Get Nasa database
     DB = NasaDatabase('FLAG_BENCHMARK', FLAG_BENCHMARK);

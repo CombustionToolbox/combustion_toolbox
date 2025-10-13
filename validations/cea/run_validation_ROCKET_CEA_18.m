@@ -27,7 +27,7 @@ function run_validation_ROCKET_CEA_18
     filename = {strcat(prefixDataName, '_LOX_ROCKET_FAC1.out'), strcat(prefixDataName, '_LOX_ROCKET_FAC2.out')};
     listSpecies = 'HYDROGEN_L';
     displaySpecies = {'H2O','H2','O2','H','OH','O','O3','HO2','H2O2'};
-    tolMoles = 1e-18;
+    tolMoles = 1e-14;
 
     % Get Nasa database
     DB = NasaDatabase('FLAG_BENCHMARK', FLAG_BENCHMARK);

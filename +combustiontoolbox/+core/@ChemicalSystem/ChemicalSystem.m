@@ -898,10 +898,7 @@ classdef ChemicalSystem < handle & matlab.mixin.Copyable
                     cachedSpecies{end+1} = species;
                     cachedCPcurves{end+1} = obj.species.(species).cpcurve;
                     cachedS0curves{end+1} = obj.species.(species).s0curve;
-
-                    if FLAG_H0
-                        cachedH0curves{end+1} = obj.species.(species).h0curve;
-                    end
+                    cachedH0curves{end+1} = obj.species.(species).h0curve;
 
                     indexCache = length(cachedSpecies);
                 end

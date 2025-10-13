@@ -1,4 +1,4 @@
-classdef SolarAbundances
+classdef SolarAbundances < handle
     % The :mat:class:`SolarAbundances` class is used to read solar abundances and compute the 
     % initial molar composition of the mixture
     %

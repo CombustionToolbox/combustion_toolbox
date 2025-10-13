@@ -109,13 +109,16 @@ classdef Benchmark < handle
             % Examples:
             %     * bench = bench.run();
 
+            % Import packages
+            import combustiontoolbox.utils.timeFunction
+
             for i = 1:obj.numTest
                 testFunc = obj.tests{i};
                 testName = func2str(testFunc);
                 
                 fprintf('Running test: %s...\n', testName);
 
-                [avgTime, ~, metadata] = combustiontoolbox.utils.timeFunction(testFunc, obj.numIterations, 'FLAG_BENCHMARK', true); %#ok<PROP>
+                [avgTime, ~, metadata] = timeFunction(testFunc, obj.numIterations, 'FLAG_BENCHMARK', true); %#ok<PROP>
                 
                 obj.metadata(end + 1) = metadata; %#ok<PROP>
                 obj.metadata(end) = obj.metadata(end).setTime(avgTime);

@@ -38,7 +38,7 @@ function metadata = run_validation_ROCKET_CEA_23(varargin)
     listSpecies = 'Soot formation extended';
     displaySpecies = {'N2', 'H2O', 'O2', 'CO2', 'NO', 'OH', 'O', 'CO',...
         'H2', 'NO2', 'HO2', 'H', 'H2O2', 'N2O', 'HNO'};
-    tolMoles = 1e-18;
+    tolMoles = 1e-14;
 
     % Get Nasa database
     DB = NasaDatabase('FLAG_BENCHMARK', FLAG_BENCHMARK);

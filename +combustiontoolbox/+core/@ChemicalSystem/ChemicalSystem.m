@@ -280,7 +280,7 @@ classdef ChemicalSystem < handle & matlab.mixin.Copyable
         end
 
         function obj = setPropertiesMatrix(obj, species, moles, T, varargin)
-            % Fill the properties matrix with the data of the mixture
+            % Update the properties matrix with the data of the mixture
             %
             % Args:
             %     obj (ChemicalSystem): ChemicalSystem object
@@ -289,59 +289,59 @@ classdef ChemicalSystem < handle & matlab.mixin.Copyable
             %     T (float): Temperature [K]
             %
             % Optional Args:
-            %     index (float): Vector with the indexes of the species to fill the properties matrix   
+            %     index (float): Vector with the indexes of the species to update the properties matrix   
             %
             % Returns:
-            %     obj (ChemicalSystem): ChemicalSystem object with the properties matrix filled
+            %     obj (ChemicalSystem): ChemicalSystem object with updated properties
             %
             % Examples:
             %     * setPropertiesMatrix(obj, {'N2', 'O2'}, [3.76, 1], 300)
             %     * setPropertiesMatrix(obj, {'N2', 'O2'}, [3.76, 1], 300, [1, 2])
             
-            % Fill properties matrix
+            % Update properties matrix
             if nargin < 5
-                obj.propertiesMatrix = obj.fillPropertiesMatrix(obj, obj.propertiesMatrix, species, moles, T);
+                obj = updatePropertiesMatrix(obj, species, moles, T);
                 return
             elseif nargin < 6
                 index = varargin{1};
-                obj.propertiesMatrix = obj.fillPropertiesMatrixFast(obj, obj.propertiesMatrix, species(index), moles(index), T, index);
+                obj = updatePropertiesMatrixFast(obj, species(index), moles(index), T, index);
                 return
             end
     
             index = varargin{1};
             h0 = varargin{2};
-            obj.propertiesMatrix = obj.fillPropertiesMatrixFastH0(obj, obj.propertiesMatrix, species(index), moles(index), T, index, h0(index));
+            obj = updatePropertiesMatrixFastH0(obj, species(index), moles(index), T, index, h0(index));
         end
 
         function obj = setPropertiesMatrixInitialIndex(obj, species, moles, T, index, varargin)
-            % Fill the properties matrix with the data of the mixture
+            % Update the properties matrix with the data of the mixture
             %
             % Args:
             %     obj (ChemicalSystem): ChemicalSystem object
             %     species (cell): Species contained in the system
             %     moles (float): Moles of the species in the mixture [mol]
             %     T (float): Temperature [K]
-            %     index (float): Vector with the indexes of the species to fill the properties matrix   
+            %     index (float): Vector with the indexes of the species to update the properties matrix   
             %
             % Returns:
-            %     obj (ChemicalSystem): ChemicalSystem object with the properties matrix filled
+            %     obj (ChemicalSystem): ChemicalSystem object with updated properties matrix
             %
             % Examples:
             %     * setPropertiesMatrix(obj, {'N2', 'O2'}, [3.76, 1], 300)
             %     * setPropertiesMatrix(obj, {'N2', 'O2'}, [3.76, 1], 300, [1, 2])
             
-            % Fill properties matrix
+            % Update properties matrix
             if nargin < 6
-                obj.propertiesMatrix = obj.fillPropertiesMatrixFast(obj, obj.propertiesMatrix, species, moles, T, index);
+                obj = updatePropertiesMatrixFast(obj, species, moles, T, index);
                 return
             end
    
             h0 = varargin{1};
-            obj.propertiesMatrix = obj.fillPropertiesMatrixFastH0(obj, obj.propertiesMatrix, species, moles, T, index, h0);
+            obj = updatePropertiesMatrixFastH0(obj, species, moles, T, index, h0);
         end
 
         function obj = setPropertiesMatrixComposition(obj, species, moles, varargin)
-            % Fill the properties matrix with the data of the mixture
+            % Update the properties matrix with the data of the mixture
             %
             % Args:
             %     obj (ChemicalSystem): ChemicalSystem object
@@ -350,43 +350,43 @@ classdef ChemicalSystem < handle & matlab.mixin.Copyable
             %     T (float): Temperature [K]
             %
             % Optional Args:
-            %     index (float): Vector with the indexes of the species to fill the properties matrix   
+            %     index (float): Vector with the indexes of the species to update the properties matrix   
             %
             % Returns:
-            %     obj (ChemicalSystem): ChemicalSystem object with the properties matrix filled
+            %     obj (ChemicalSystem): ChemicalSystem object with updated properties matrix
             %
             % Examples:
             %     * setPropertiesMatrixComposition(obj, {'N2', 'O2'}, [3.76, 1])
             %     * setPropertiesMatrixComposition(obj, {'N2', 'O2'}, [3.76, 1], [1, 2])
             
-            % Fill properties matrix
+            % Update properties matrix
             if nargin < 4
-                obj.propertiesMatrix = obj.fillPropertiesMatrixComposition(obj, obj.propertiesMatrix, species, moles);
+                obj = updatePropertiesMatrixComposition(obj, species, moles);
                 return
             end
 
             index = varargin{1};
-            obj.propertiesMatrix = obj.fillPropertiesMatrixCompositionFast(obj, obj.propertiesMatrix, species(index), moles(index), index);
+            obj = updatePropertiesMatrixCompositionFast(obj, moles(index), index);
         end
 
         function obj = setPropertiesMatrixCompositionInitialIndex(obj, species, moles, index)
-            % Fill the properties matrix with the data of the mixture
+            % Update the properties matrix with the data of the mixture
             %
             % Args:
             %     obj (ChemicalSystem): ChemicalSystem object
             %     species (cell): Species contained in the system
             %     moles (float): Moles of the species in the mixture [mol]
             %     T (float): Temperature [K]
-            %     index (float): Vector with the indexes of the species to fill the properties matrix   
+            %     index (float): Vector with the indexes of the species to update the properties matrix   
             %
             % Returns:
-            %     obj (ChemicalSystem): ChemicalSystem object with the properties matrix filled
+            %     obj (ChemicalSystem): ChemicalSystem object with updated properties matrix
             %
             % Example:
             %     setPropertiesMatrixCompositionInitialIndex(obj, {'N2', 'O2'}, [3.76, 1], [1, 2])
             
-            % Fill properties matrix
-            obj.propertiesMatrix = obj.fillPropertiesMatrixCompositionFast(obj, obj.propertiesMatrix, species, moles, index);
+            % Update properties matrix
+            obj = updatePropertiesMatrixCompositionFast(obj, moles, index);
         end
 
         function obj = clean(obj)
@@ -579,6 +579,8 @@ classdef ChemicalSystem < handle & matlab.mixin.Copyable
 
     methods (Access = private)
         
+        obj = updatePropertiesMatrixThermo(obj, listSpecies, T, index, FLAG_H0);
+
         function obj = setContainedElements(obj)
             % Obtain containted elements from the given set of species (reactants and products)
             %
@@ -752,7 +754,7 @@ classdef ChemicalSystem < handle & matlab.mixin.Copyable
             % Get index species
             index = obj.indexSpecies;
 
-            % Fill properties matrix
+            % Update properties matrix
             for i = obj.numSpecies:-1:1
                 M0(index(i), obj.ind_W) = obj.species.(obj.listSpecies{i}).W; % [g/mol]
                 M0(index(i), obj.ind_hfi) = obj.species.(obj.listSpecies{i}).hf; % [J/mol]
@@ -766,121 +768,95 @@ classdef ChemicalSystem < handle & matlab.mixin.Copyable
             % Set properties matrix
             obj.propertiesMatrix = M0;
         end
-
-    end
-
-    methods (Access = private, Static)
         
-        function propertiesMatrix = fillPropertiesMatrix(obj, propertiesMatrix, species, moles, T)
-            % Fill the properties matrix with the data of the mixture
+        function obj = updatePropertiesMatrix(obj, species, moles, T)
+            % Update the properties matrix with the data of the mixture
             %
             % Args:
             %     obj (ChemicalSystem): ChemicalSystem object
-            %     propertiesMatrix (float): Properties matrix
             %     species (cell): Species contained in the system
             %     moles (float): Moles of the species in the mixture [mol]
             %     T (float): Temperature [K]
             %
             % Returns:
-            %     propertiesMatrix (float): Properties matrix filled
+            %     obj (ChemicalSystem): ChemicalSystem object with updated properties matrix
 
             % Get index species
             index = combustiontoolbox.utils.findIndex(obj.listSpecies, species);
 
-            % Fill properties matrix
-            propertiesMatrix(index, obj.ind_ni) = moles; % [mol]
-
-            for i = length(moles):-1:1
-                propertiesMatrix(index(i), obj.ind_hi) = getEnthalpy(obj.species.(species{i}), T); % [J/mol]
-                propertiesMatrix(index(i), obj.ind_cpi) = getHeatCapacityPressure(obj.species.(species{i}), T); % [J/mol-K]
-                propertiesMatrix(index(i), obj.ind_si) = getEntropy(obj.species.(species{i}), T); % [J/mol-K]
-            end
-
+            % Update properties matrix
+            obj.propertiesMatrix(index, obj.ind_ni) = moles; % [mol]
+            obj = updatePropertiesMatrixThermo(obj, species, T, index, true);
         end
             
-        function propertiesMatrix = fillPropertiesMatrixFast(obj, propertiesMatrix, species, moles, T, index)
-            % Fill properties matrix with the data of the mixture
+        function obj = updatePropertiesMatrixFast(obj, species, moles, T, index)
+            % Update properties matrix with the data of the mixture
             %
             % Args:
             %     obj (ChemicalSystem): ChemicalSystem object
-            %     propertiesMatrix (float): Properties matrix
             %     species (cell): Species contained in the system
             %     moles (float): Moles of the species in the mixture [mol]
             %     T (float): Temperature [K]
-            %     index (float): Vector with the indexes of the species to fill the properties matrix
+            %     index (float): Vector with the indexes of the species to update the properties matrix
             %
             % Returns:
-            %     propertiesMatrix (float): Properties matrix filled
+            %     obj (ChemicalSystem): ChemicalSystem object with updated properties matrix
 
-            propertiesMatrix(index, obj.ind_ni) = moles; % [mol]
-
-            for i = length(index):-1:1
-                propertiesMatrix(index(i), obj.ind_hi) = getEnthalpy(obj.species.(species{i}), T); % [J/mol]
-                propertiesMatrix(index(i), obj.ind_cpi) = getHeatCapacityPressure(obj.species.(species{i}), T); % [J/mol-K]
-                propertiesMatrix(index(i), obj.ind_si) = getEntropy(obj.species.(species{i}), T); % [J/mol-K]
-            end
-
+            obj.propertiesMatrix(index, obj.ind_ni) = moles; % [mol]
+            obj = updatePropertiesMatrixThermo(obj, species, T, index, true);
         end
 
-        function propertiesMatrix = fillPropertiesMatrixFastH0(obj, propertiesMatrix, species, moles, T, index, h0)
-            % Fill properties matrix with the data of the mixture
+        function obj = updatePropertiesMatrixFastH0(obj, species, moles, T, index, h0)
+            % Update properties matrix with the data of the mixture
             %
             % Args:
             %     obj (ChemicalSystem): ChemicalSystem object
-            %     propertiesMatrix (float): Properties matrix
             %     species (cell): Species contained in the system
             %     moles (float): Moles of the species in the mixture [mol]
             %     T (float): Temperature [K]
-            %     index (float): Vector with the indexes of the species to fill the properties matrix
+            %     index (float): Vector with the indexes of the species to update the properties matrix
             %     h0 (float): Enthalpy of formation vector [J/mol]
             %
             % Returns:
-            %     propertiesMatrix (float): Properties matrix filled
+            %     obj (ChemicalSystem): ChemicalSystem object with updated properties matrix
 
-            propertiesMatrix(index, obj.ind_ni) = moles; % [mol]
-            propertiesMatrix(index, obj.ind_hi) = h0; % [J/mol]
-
-            for i = length(index):-1:1
-                propertiesMatrix(index(i), obj.ind_cpi) = getHeatCapacityPressure(obj.species.(species{i}), T); % [J/mol-K]
-                propertiesMatrix(index(i), obj.ind_si) = getEntropy(obj.species.(species{i}), T); % [J/mol-K]
-            end
-
+            obj.propertiesMatrix(index, obj.ind_ni) = moles; % [mol]
+            obj.propertiesMatrix(index, obj.ind_hi) = h0; % [J/mol]
+            obj = updatePropertiesMatrixThermo(obj, species, T, index, false);
         end
 
-        function propertiesMatrix = fillPropertiesMatrixComposition(obj, propertiesMatrix, species, moles)
-            % Fill the properties matrix with the data of the mixture
+        function obj = updatePropertiesMatrixComposition(obj, species, moles)
+            % Update the properties matrix with the data of the mixture
             %
             % Args:
             %     obj (ChemicalSystem): ChemicalSystem object
-            %     propertiesMatrix (float): Properties matrix
             %     species (cell): Species contained in the system
             %     moles (float): Moles of the species in the mixture [mol]
             %
             % Returns:
-            %     propertiesMatrix (float): Properties matrix filled
+            %     obj (ChemicalSystem): ChemicalSystem object with updated properties matrix
 
             % Get index species
             index = combustiontoolbox.utils.findIndex(obj.listSpecies, species);
 
-            % Fill properties matrix
-            propertiesMatrix(index, obj.ind_ni) = moles; % [mol]
+            % Update properties matrix
+            obj.propertiesMatrix(index, obj.ind_ni) = moles; % [mol]
         end
             
-        function propertiesMatrix = fillPropertiesMatrixCompositionFast(obj, propertiesMatrix, species, moles, index)
-            % Fill properties matrix with the data of the mixture
+        function obj = updatePropertiesMatrixCompositionFast(obj, moles, index)
+            % Update properties matrix with the data of the mixture
             %
             % Args:
             %     obj (ChemicalSystem): ChemicalSystem object
-            %     propertiesMatrix (float): Properties matrix
-            %     species (cell): Species contained in the system
             %     moles (float): Moles of the species in the mixture [mol]
-            %     index (float): Vector with the indexes of the species to fill the properties matrix
+            %     index (float): Vector with the indexes of the species to update the properties matrix
             %
             % Returns:
-            %     propertiesMatrix (float): Properties matrix filled
+            %     obj (ChemicalSystem): ChemicalSystem object with updated properties matrix
 
-            propertiesMatrix(index, obj.ind_ni) = moles; % [mol]
+            obj.propertiesMatrix(index, obj.ind_ni) = moles; % [mol]
         end
+
 
     end
 

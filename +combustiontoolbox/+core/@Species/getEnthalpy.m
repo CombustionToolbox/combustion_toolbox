@@ -12,26 +12,27 @@ function h0 = getEnthalpy(obj, T)
     % Example:
     %     h0 = getEnthalpy(obj, 300)
     
-    persistent cachedSpecies;
-    persistent cachedH0curves;
+    persistent cachedID cachedH0curves
     
-    if isempty(cachedSpecies)
-        cachedSpecies = {};
+    % Get id
+    id = obj.id_;
+
+    % Preallocate cache if empty
+    if isempty(cachedID)
+        cachedID = zeros(0, 1, 'double');
         cachedH0curves = {};
     end
     
     % Check if species data is already cached
-    index = find(strcmp(cachedSpecies, obj.name), 1);
+    index = find( cachedID == id, 1 );
+
     if isempty(index)
         % Load species data and cache it
-        h0curve = obj.h0curve;
-        cachedSpecies{end+1} = obj.name;
-        cachedH0curves{end+1} = h0curve;
-    else
-        % Retrieve cached data
-        h0curve = cachedH0curves{index};
+        index = length(cachedID) + 1;
+        cachedID(index) = id;
+        cachedH0curves{index} = obj.h0curve;
     end
     
     % Compute enthalpy [J/mol]
-    h0 = h0curve(T);
+    h0 = cachedH0curves{index}(T);
 end

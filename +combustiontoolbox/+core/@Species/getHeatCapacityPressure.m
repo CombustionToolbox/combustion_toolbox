@@ -13,26 +13,27 @@ function cp = getHeatCapacityPressure(obj, T)
     % Example:
     %     cp = getHeatCapacityPressure(obj, 300)
     
-    persistent cachedSpecies;
-    persistent cachedCPcurves;
+    persistent cachedID cachedCPcurves
     
-    if isempty(cachedSpecies)
-        cachedSpecies = {};
+    % Get id
+    id = obj.id_;
+
+    % Preallocate cache if empty
+    if isempty(cachedID)
+        cachedID = zeros(0, 1, 'double');
         cachedCPcurves = {};
     end
     
     % Check if species data is already cached
-    index = find(strcmp(cachedSpecies, obj.name), 1);
+    index = find( cachedID == id, 1 );
+
     if isempty(index)
         % Load species data and cache it
-        cpcurve = obj.cpcurve;
-        cachedSpecies{end+1} = obj.name;
-        cachedCPcurves{end+1} = cpcurve;
-    else
-        % Retrieve cached data
-        cpcurve = cachedCPcurves{index};
+        index = length(cachedID) + 1;
+        cachedID(index) = id;
+        cachedCPcurves{index} = obj.cpcurve;
     end
-    
+
     % Compute specific heat at constant pressure [J/(mol-K)]
-    cp = cpcurve(T);
+    cp = cachedCPcurves{index}(T);
 end

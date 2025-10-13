@@ -12,26 +12,27 @@ function s0 = getEntropy(obj, T)
     % Example:
     %     s0 = getEntropy(obj, 300)
     
-    persistent cachedSpecies;
-    persistent cachedS0curves;
+    persistent cachedID cachedS0curves
     
-    if isempty(cachedSpecies)
-        cachedSpecies = {};
+    % Get id
+    id = obj.id_;
+
+    % Preallocate cache if empty
+    if isempty(cachedID)
+        cachedID = zeros(0, 1, 'double');
         cachedS0curves = {};
     end
     
     % Check if species data is already cached
-    index = find(strcmp(cachedSpecies, obj.name), 1);
+    index = find( cachedID == id, 1 );
+
     if isempty(index)
         % Load species data and cache it
-        s0curve = obj.s0curve;
-        cachedSpecies{end+1} = obj.name;
-        cachedS0curves{end+1} = s0curve;
-    else
-        % Retrieve cached data
-        s0curve = cachedS0curves{index};
+        index = length(cachedID) + 1;
+        cachedID(index) = id;
+        cachedS0curves{index} = obj.s0curve;
     end
-    
+
     % Compute entropy [J/(mol-K)]
-    s0 = s0curve(T);
+    s0 = cachedS0curves{index}(T);
 end

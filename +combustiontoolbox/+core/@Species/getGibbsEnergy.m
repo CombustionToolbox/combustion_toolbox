@@ -12,26 +12,27 @@ function g0 = getGibbsEnergy(obj, T)
     % Example:
     %     g0 = getGibbsEnergy(obj, 300)
     
-    persistent cachedSpecies;
-    persistent cachedG0curves;
+    persistent cachedID cachedG0curves
     
-    if isempty(cachedSpecies)
-        cachedSpecies = {};
+    % Get id
+    id = obj.id_;
+
+    % Preallocate cache if empty
+    if isempty(cachedID)
+        cachedID = zeros(0, 1, 'double');
         cachedG0curves = {};
     end
     
     % Check if species data is already cached
-    index = find(strcmp(cachedSpecies, obj.name), 1);
+    index = find( cachedID == id, 1 );
+
     if isempty(index)
         % Load species data and cache it
-        g0curve = obj.g0curve;
-        cachedSpecies{end+1} = obj.name;
-        cachedG0curves{end+1} = g0curve;
-    else
-        % Retrieve cached data
-        g0curve = cachedG0curves{index};
+        index = length(cachedID) + 1;
+        cachedID(index) = id;
+        cachedG0curves{index} = obj.g0curve;
     end
-    
+
     % Compute Gibbs energy [J/mol]
-    g0 = g0curve(T);
+    g0 = cachedG0curves{index}(T);
 end

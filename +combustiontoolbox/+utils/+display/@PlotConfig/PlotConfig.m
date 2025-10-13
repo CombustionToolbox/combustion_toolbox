@@ -39,7 +39,6 @@ classdef PlotConfig < handle
     %     id_polar3 (float): Axes id for velocity polar diagrams
     
     properties
-        position                              % Default figure position [pixels]
         innerposition = [0.05 0.05 0.9 0.9]   % Set figure inner position [normalized]
         outerposition = [0.05 0.05 0.9 0.9]   % Set figure outer position [normalized]
         linestyle = '-'                       % Set line style for plots
@@ -84,97 +83,81 @@ classdef PlotConfig < handle
     end
 
     properties (Dependent)
-        numPlotProperties
+        position          % Figure position [pixels]
+        numPlotProperties % Number of properties to plot
+    end
+
+    properties (Access = private)
+        position_
     end
 
     methods
         function value = get.numPlotProperties(obj)
             value = length(obj.plotProperties);
         end
+
+        function value = get.position(obj)
+            % Get figure position
+            if ~isempty(obj.position)
+                value = combustiontoolbox.utils.display.getMonitorPositions(2);
+                obj.position_ = value;
+                return
+            end
+
+            value = obj.position_;
+        end
+
+        function set.position(obj, value)
+            % Set figure position
+            if ~isempty(value)
+                obj.position_ = value;
+            end
+            
+        end
+
     end
 
-    methods (Access = public)
+    methods
+        
         function obj = PlotConfig(varargin)
             % Class constructor
-            
-            % Default values
-            defaultPostion = combustiontoolbox.utils.display.getMonitorPositions(2);
-
-            % Create input parser
-            ip = inputParser;
-            addParameter(ip, 'position', defaultPostion, @isnumeric);
-            addParameter(ip, 'innerposition', obj.innerposition, @isnumeric);
-            addParameter(ip, 'outerposition', obj.outerposition, @isnumeric);
-            addParameter(ip, 'linestyle', obj.linestyle, @ischar);
-            addParameter(ip, 'symbolstyle', obj.symbolstyle, @ischar);
-            addParameter(ip, 'linewidth', obj.linewidth, @isnumeric);
-            addParameter(ip, 'fontsize', obj.fontsize, @isnumeric);
-            addParameter(ip, 'colorpalette', obj.colorpalette, @ischar);
-            addParameter(ip, 'colorpaletteLenght', obj.colorpaletteLenght, @isnumeric);
-            addParameter(ip, 'box', obj.box, @ischar);
-            addParameter(ip, 'grid', obj.grid, @ischar);
-            addParameter(ip, 'hold', obj.hold, @ischar);
-            addParameter(ip, 'axis_x', obj.axis_x, @ischar);
-            addParameter(ip, 'axis_y', obj.axis_y, @ischar);
-            addParameter(ip, 'xscale', obj.xscale, @ischar);
-            addParameter(ip, 'yscale', obj.yscale, @ischar);
-            addParameter(ip, 'xdir', obj.xdir, @ischar);
-            addParameter(ip, 'ydir', obj.ydir, @ischar);
-            addParameter(ip, 'title', obj.title, @ischar);
-            addParameter(ip, 'label_type', obj.label_type, @ischar);
-            addParameter(ip, 'labelx', obj.labelx, @ischar);
-            addParameter(ip, 'labely', obj.labely, @ischar);
-            addParameter(ip, 'legend_name', obj.legend_name, @ischar);
-            addParameter(ip, 'legend_location', obj.legend_location, @ischar);
-            addParameter(ip, 'colorline', obj.colorline, @isnumeric);
-            addParameter(ip, 'colorlines', obj.colorlines, @isnumeric);
-            addParameter(ip, 'blue', obj.blue, @isnumeric);
-            addParameter(ip, 'gray', obj.gray, @isnumeric);
-            addParameter(ip, 'red', obj.red, @isnumeric);
-            addParameter(ip, 'orange', obj.orange, @isnumeric);
-            addParameter(ip, 'brown', obj.brown, @isnumeric);
-            addParameter(ip, 'brown2', obj.brown2, @isnumeric);
-            addParameter(ip, 'id_polar1', obj.id_polar1, @isnumeric);
-            addParameter(ip, 'id_polar2', obj.id_polar2, @isnumeric);
-            addParameter(ip, 'id_polar3', obj.id_polar3, @isnumeric);
-            parse(ip, varargin{:});
 
             % Set properties
-            obj.position = ip.Results.position;
-            obj.innerposition = ip.Results.innerposition;
-            obj.outerposition = ip.Results.outerposition;
-            obj.linestyle = ip.Results.linestyle;
-            obj.symbolstyle = ip.Results.symbolstyle;
-            obj.linewidth = ip.Results.linewidth;
-            obj.fontsize = ip.Results.fontsize;
-            obj.colorpalette = ip.Results.colorpalette;
-            obj.colorpaletteLenght = ip.Results.colorpaletteLenght;
-            obj.box = ip.Results.box;
-            obj.grid = ip.Results.grid;
-            obj.hold = ip.Results.hold;
-            obj.axis_x = ip.Results.axis_x;
-            obj.axis_y = ip.Results.axis_y;
-            obj.xscale = ip.Results.xscale;
-            obj.yscale = ip.Results.yscale;
-            obj.xdir = ip.Results.xdir;
-            obj.ydir = ip.Results.ydir;
-            obj.title = ip.Results.title;
-            obj.label_type = ip.Results.label_type;
-            obj.labelx = ip.Results.labelx;
-            obj.labely = ip.Results.labely;
-            obj.legend_name = ip.Results.legend_name;
-            obj.legend_location = ip.Results.legend_location;
-            obj.colorline = ip.Results.colorline;
-            obj.colorlines = ip.Results.colorlines;
-            obj.blue = ip.Results.blue;
-            obj.gray = ip.Results.gray;
-            obj.red = ip.Results.red;
-            obj.orange = ip.Results.orange;
-            obj.brown = ip.Results.brown;
-            obj.brown2 = ip.Results.brown2;
-            obj.id_polar1 = ip.Results.id_polar1;
-            obj.id_polar2 = ip.Results.id_polar2;
-            obj.id_polar3 = ip.Results.id_polar3;
+            if nargin > 0
+                obj = set(obj, varargin{:});
+            end
+
+        end
+
+        function obj = set(obj, property, value, varargin)
+            % Set properties of the PlotConfig object
+            %
+            % Args:
+            %     obj (PlotConfig): PlotConfig object
+            %     property (char): Property name
+            %     value (float): Property value
+            %
+            % Optional Args:
+            %     * property (char): Property name
+            %     * value (float): Property value
+            %
+            % Returns:
+            %     obj (PlotConfig): PlotConfig object with updated properties
+            %
+            % Examples:
+            %     * set(PlotConfig(), 'fontsize', 18)
+            %     * set(PlotConfig(), 'fontsize', 18, 'linewidth', 2)
+            
+            varargin = [{property, value}, varargin{:}];
+
+            for i = 1:2:length(varargin)
+                % Assert that the property exists
+                assert(isprop(obj, varargin{i}), 'Property not found');
+
+                % Set property
+                obj.(varargin{i}) = varargin{i + 1};
+            end
+
         end
 
     end

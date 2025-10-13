@@ -5,6 +5,10 @@ classdef Constants < handle
     %     R0 (float): Universal gas constant [J/(K mol)]
     %     G (float): Standard gravity [m/s2]
     %     NA (float): Avogadro's number [molecule/mol]
+    %     KB (float): Boltzmann constant [J/K]
+    %     HBAR (float): Planck constant [J-s]
+    %     E (float): Electron charge [C]
+    %     E0 (float): Vacuum permittivity [F/m]
     %     release (char): Release of the Combustion Toolbox
     %     date (char): Date of the release
     %
@@ -19,8 +23,11 @@ classdef Constants < handle
         NA      = 6.0221415e23     % Avogadro's number [molecule/mol]
         KB      = 1.38064852e-23   % Boltzmann constant [J/K]
         HBAR    = 6.626070041e-34  % Planck constant [J-s]
-        release = 'v1.2.3'         % Release version
-        date    = '8 Oct 2025'     % Release date
+        E       = 1.602176634e-19  % Electron charge [C]
+        E0      = 8.854187818e-12  % Vacuum permittivity [F/m]
+        ME      = 9.10938356e-31   % Electron mass [kg]
+        release = 'v1.2.5'         % Release version
+        date    = '13 Oct 2025'    % Release date
     end
     
 end

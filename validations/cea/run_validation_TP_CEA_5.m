@@ -1,4 +1,4 @@
-function run_validation_TP_CEA_5
+function metadata = run_validation_TP_CEA_5(varargin)
     % Run test validation_TP_CEA_5:
     % Contrasted with: NASA's Chemical Equilibrium with Applications software
     % Problem type: Equilibrium composition at defined T and p
@@ -6,7 +6,7 @@ function run_validation_TP_CEA_5
     % Pressure    [bar] = 1;
     % Equivalence ratio [-] = 1.1
     % Initial mixture: C6H6 + AIR_IDEAL (79% N2 + 21% O2)
-    % List of species considered: list_species('NASA ALL IONS')
+    % List of species considered: All + Ions (see method findProducts from ChemicalSystem class)
 
     % Import packages
     import combustiontoolbox.databases.NasaDatabase
@@ -14,14 +14,24 @@ function run_validation_TP_CEA_5
     import combustiontoolbox.equilibrium.*
     import combustiontoolbox.utils.display.*
     
-    % Benchmark?
-    FLAG_BENCHMARK = false;
+    % Default values
+    metadata = [];
+    DEFAULT_FLAG_BENCHMARK = false;
+    DEFAULT_FLAG_EXPORT = false;
+
+    % Input parser
+    p = inputParser;
+    addOptional(p, 'FLAG_BENCHMARK', DEFAULT_FLAG_BENCHMARK, @(x) islogical(x));
+    addParameter(p, 'FLAG_EXPORT', DEFAULT_FLAG_EXPORT, @(x) islogical(x));
+    parse(p, varargin{:});
+    FLAG_BENCHMARK = p.Results.FLAG_BENCHMARK;
+    FLAG_EXPORT = p.Results.FLAG_EXPORT;
 
     % Definitions
     fuel = 'C6H6';
     prefixDataName = fuel;
     filename = {strcat(prefixDataName, '_air_T_TP1.out'), strcat(prefixDataName, '_air_T_TP2.out')};
-    listSpecies = 'NASA ALL IONS';
+    listSpecies = [];
     displaySpecies = {'CO2', 'CO', 'H2O', 'H2', 'O2', 'N2', 'He', 'Ar',...
                       'HCN','H','OH','O','CN','NH3','CH4','C2H4','CH3',...
                       'NO','HCO','NH2','NH','N','CH','Cbgrb'};
@@ -31,7 +41,8 @@ function run_validation_TP_CEA_5
     DB = NasaDatabase('FLAG_BENCHMARK', FLAG_BENCHMARK);
     
     % Define chemical system
-    system = ChemicalSystem(DB, listSpecies);
+    system = ChemicalSystem(DB);
+    system.FLAG_ION = true;
     
     % Initialize mixture
     mix = Mixture(system);
@@ -50,6 +61,8 @@ function run_validation_TP_CEA_5
     solver.solveArray(mixArray);
     
     if FLAG_BENCHMARK
+        stackTrace = dbstack; functionname = stackTrace.name;
+        metadata = combustiontoolbox.utils.BenchmarkMetadata(solver, mixArray, functionname);
         return
     end
 
@@ -63,9 +76,19 @@ function run_validation_TP_CEA_5
     fig2 = plotProperties(repmat({'equivalenceRatio'}, 1, 10), mixArray, {'rho', 'h', 'e', 'g', 's', 'cp', 'cv', 'gamma_s', 'dVdp_T', 'dVdT_p'}, mixArray, 'basis', {[], 'mi', 'mi', 'mi', 'mi', 'mi', 'mi', [], [], []}, 'validation', resultsCEA);
 
     % Save plots
+    if ~FLAG_EXPORT
+        return
+    end
+
     folderpath = fullfile(pwd, 'validations', 'figures');
-    stack_trace = dbstack;
-    filename = stack_trace.name;
+
+    % Check if folder exists, otherwise create it
+    if ~exist(folderpath, 'dir')
+        mkdir(folderpath);
+    end
+
+    stackTrace = dbstack;
+    filename = stackTrace.name;
     saveas(fig1, fullfile(folderpath, strcat(filename, '_molar')), 'svg');
     saveas(fig2, fullfile(folderpath, strcat(filename, '_properties')), 'svg');
 end

@@ -27,6 +27,10 @@ classdef Species < handle
         g0curve       % Gridded interpolant object with Gibbs free energy of the individual species
     end
 
+    properties (Access = ?combustiontoolbox.databases.Database)
+        id_ % Internal id for caching purposes
+    end
+
     properties (Hidden)
         elementMatrix % Element matrix
         FLAG_REFERENCE = false % Flag indicating if this species is a reference element/species
@@ -85,6 +89,34 @@ classdef Species < handle
                 elementMatrix(2, i) = sscanf(obj.formula(start0:end0), '%f');
             end
         
+        end
+
+    end
+
+methods (Access = ?combustiontoolbox.databases.Database)
+
+        function obj = setID(obj)
+            % Set internal id for caching purposes
+            value =  [obj.name, ...
+                      obj.formula, ...
+                      num2str( obj.W ), ...
+                      num2str( obj.hf ), ...
+                      num2str( obj.ef ), ...
+                      obj.phase, ...
+                      num2str( obj.Tref ), ...
+                      num2str( obj.Tintervals ), ...
+                      ];
+
+            obj.id_ = combustiontoolbox.utils.generateID(value);
+        end
+
+    end
+
+    methods (Access = private)
+
+        function id = getID(obj)
+            % Get internal id for caching purposes
+            id = obj.id_;
         end
 
     end

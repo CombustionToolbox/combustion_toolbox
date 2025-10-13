@@ -1,4 +1,4 @@
-function run_validation_TV_CEA_1
+function metadata = run_validation_TV_CEA_1(varargin)
     % Run test validation_TV_CEA_1:
     % Contrasted with: NASA's Chemical Equilibrium with Applications software
     % Problem type: Equilibrium composition at defined T and v
@@ -14,8 +14,18 @@ function run_validation_TV_CEA_1
     import combustiontoolbox.equilibrium.*
     import combustiontoolbox.utils.display.*
     
-    % Benchmark?
-    FLAG_BENCHMARK = false;
+    % Default values
+    metadata = [];
+    DEFAULT_FLAG_BENCHMARK = false;
+    DEFAULT_FLAG_EXPORT = false;
+
+    % Input parser
+    p = inputParser;
+    addOptional(p, 'FLAG_BENCHMARK', DEFAULT_FLAG_BENCHMARK, @(x) islogical(x));
+    addParameter(p, 'FLAG_EXPORT', DEFAULT_FLAG_EXPORT, @(x) islogical(x));
+    parse(p, varargin{:});
+    FLAG_BENCHMARK = p.Results.FLAG_BENCHMARK;
+    FLAG_EXPORT = p.Results.FLAG_EXPORT;
 
     % Definitions
     fuel = 'CH4';
@@ -54,6 +64,8 @@ function run_validation_TV_CEA_1
     solver.solveArray(mixArray);
     
     if FLAG_BENCHMARK
+        stackTrace = dbstack; functionname = stackTrace.name;
+        metadata = combustiontoolbox.utils.BenchmarkMetadata(solver, mixArray, functionname);
         return
     end
 
@@ -67,9 +79,19 @@ function run_validation_TV_CEA_1
     fig2 = plotProperties(repmat({'equivalenceRatio'}, 1, 9), mixArray, {'p', 'h', 'e', 'g', 'cp', 's', 'gamma_s', 'sound'}, mixArray, 'basis', {[], 'mi', 'mi', 'mi', 'mi', 'mi', [], []}, 'validation', resultsCEA);
 
     % Save plots
+    if ~FLAG_EXPORT
+        return
+    end
+
     folderpath = fullfile(pwd, 'validations', 'figures');
-    stack_trace = dbstack;
-    filename = stack_trace.name;
+
+    % Check if folder exists, otherwise create it
+    if ~exist(folderpath, 'dir')
+        mkdir(folderpath);
+    end
+
+    stackTrace = dbstack;
+    filename = stackTrace.name;
     saveas(fig1, fullfile(folderpath, strcat(filename, '_molar')), 'svg');
     saveas(fig2, fullfile(folderpath, strcat(filename, '_properties')), 'svg');
 end

@@ -1,10 +1,11 @@
-function metadata = run_validation_SHOCK_POLAR_SDToolbox_1(varargin)
-    % Run test validation_SHOCK_POLAR_SDToolbox_1
+function metadata = run_validation_DET_POLAR_SDToolbox_1(varargin)
+    % Run test validation_DET_POLAR_SDToolbox_1
     % Contrasted with: Caltech's SD Toolbox and CANTERA
-    % Problem type: Shock polar
+    % Problem type: Detonation polar
     % Temperature [K]   = 300
     % Pressure    [bar] = 1.01325
-    % Initial mixture: AIR (79% N2 + 21% O2)
+    % Initial mixture: H2 + AIR (79% N2 + 21% O2)
+    % Overdrive factor = [1.0382, 1.2458, 1.4534, 1.6611, 2.0763]
     % List of species considered: list_species('AIR_IONS')
     
     % Import packages
@@ -27,15 +28,16 @@ function metadata = run_validation_SHOCK_POLAR_SDToolbox_1(varargin)
     FLAG_EXPORT = p.Results.FLAG_EXPORT;
 
     % Definitions
+    fuel = 'H2';
     prefixDataName = 'airNASA_incident_shocks_ionization';
 
     for i = 6:-1:1
         filename{i} = sprintf('%s%d.out', prefixDataName, i);
     end
 
-    listSpecies = {'O2', 'O', 'N2', 'N', 'NO', 'eminus', 'Nplus', 'NOplus',...
-          'N2plus', 'Oplus', 'O2plus'};
-    M1 = [2, 3, 5, 14];
+    listSpecies = 'hydrogen';
+    equivalenceRatio = 1;
+    driveFactor = [1.0382, 1.2458, 1.4534, 1.6611, 2.0763];
     numPointsPolar = 300;
     filename = 'shock_polar_equilwithions_SDToolbox';
     
@@ -49,13 +51,14 @@ function metadata = run_validation_SHOCK_POLAR_SDToolbox_1(varargin)
     mix = Mixture(system);
     
     % Define chemical state
-    set(mix, {'N2', 'O2'}, [79, 21] / 21);
+    set(mix, {fuel}, 'fuel', 1);
+    set(mix, {'N2', 'O2'}, 'oxidizer', [79, 21] / 21);
     
     % Define properties
-    mixArray1 = setProperties(mix, 'temperature', 300, 'pressure', 1, 'M1', M1);
+    mixArray1 = setProperties(mix, 'temperature', 300, 'pressure', 1.01325, 'equivalenceRatio', equivalenceRatio, 'driveFactor', driveFactor);
     
     % Initialize solver
-    solver = ShockSolver('problemType', 'SHOCK_POLAR', 'numPointsPolar', numPointsPolar, 'FLAG_RESULTS', false);
+    solver = DetonationSolver('problemType', 'DET_POLAR', 'numPointsPolar', numPointsPolar, 'FLAG_RESULTS', false);
     
     % Solve problem
     [mixArray1, mixArray2] = solver.solveArray(mixArray1);
@@ -66,26 +69,26 @@ function metadata = run_validation_SHOCK_POLAR_SDToolbox_1(varargin)
         return
     end
 
-    % Load results SDToolbox 
-    resultsSDToolbox = load_struct(filename, 'data');
+    % % Load results SDToolbox 
+    % resultsSDToolbox = load_struct(filename, 'data');
 
-    % Plot polars
-    [ax1, ax2] = plot_validation_shock_polar_SDToolbox(mixArray1, mixArray2, resultsSDToolbox, PlotConfig());
+    % % Plot polars
+    % [ax1, ax2] = plot_validation_shock_polar_SDToolbox(mixArray1, mixArray2, resultsSDToolbox, PlotConfig());
 
-    % Save plots
-    if ~FLAG_EXPORT
-        return
-    end
+    % % Save plots
+    % if ~FLAG_EXPORT
+    %     return
+    % end
 
-    folderpath = fullfile(pwd, 'validations', 'figures');
+    % folderpath = fullfile(pwd, 'validations', 'figures');
 
-    % Check if folder exists, otherwise create it
-    if ~exist(folderpath, 'dir')
-        mkdir(folderpath);
-    end
+    % % Check if folder exists, otherwise create it
+    % if ~exist(folderpath, 'dir')
+    %     mkdir(folderpath);
+    % end
 
-    stackTrace = dbstack;
-    filename = stackTrace.name;
-    saveas(ax1, fullfile(folderpath, strcat(filename, '_properties_1')), 'svg');
-    saveas(ax2, fullfile(folderpath, strcat(filename, '_properties_2')), 'svg');
+    % stackTrace = dbstack;
+    % filename = stackTrace.name;
+    % saveas(ax1, fullfile(folderpath, strcat(filename, '_properties_1')), 'svg');
+    % saveas(ax2, fullfile(folderpath, strcat(filename, '_properties_2')), 'svg');
 end

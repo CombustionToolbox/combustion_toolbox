@@ -56,7 +56,7 @@ classdef (Abstract) Database < handle
             % Parse function inputs
             ip = inputParser;
             addParameter(ip, 'name', defaultName, @ischar);
-            addParameter(ip, 'species', [], @iscell);
+            addParameter(ip, 'species', struct(), @isstruct);
             addParameter(ip, 'filename', defaultFilename, @ischar);
             addParameter(ip, 'interpolationMethod', defaultInterpolationMethod, @ischar);
             addParameter(ip, 'extrapolationMethod', defaultExtrapolationMethod, @ischar);
@@ -199,7 +199,7 @@ classdef (Abstract) Database < handle
 
         function obj = setID(obj)
             % Concatenate input arguments to create a unique identifier string
-            value =  [obj.name, num2str(obj.species), obj.filename, ...
+            value =  [obj.name, obj.numSpecies, obj.filename, ...
                       obj.interpolationMethod, obj.extrapolationMethod, obj.units, ...
                       num2str(obj.pointsTemperature), num2str(obj.temperatureReference),...
                       obj.thermoFile];
@@ -235,7 +235,10 @@ classdef (Abstract) Database < handle
                 % Handle species with temperature intervals
                 species = obj.computeVariableTemperatureSpecies(species, speciesName, Trange, Tintervals, DB_master);
             end
-    
+            
+            % Set id for caching purposes
+            species.setID();
+
             % Store the species data in the species struct property
             obj.species.(speciesName) = species;
         end

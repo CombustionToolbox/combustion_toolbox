@@ -92,7 +92,7 @@ function [N, dNi_T, dN_T, dNi_p, dN_p, index, STOP, STOP_ions, h0] = equilibrium
     h0 = system.propertyVector;
 
     % Molar Gibbs energy [J/mol]
-    g0([indexGas_0, indexCondensed_0]) = set_g0(system.listSpecies([indexGas_0, indexCondensed_0]), T, system.species);
+    g0([indexGas_0, indexCondensed_0]) = combustiontoolbox.utils.thermo.getGibbsEnergyArray(system.listSpecies([indexGas_0, indexCondensed_0]), T, system.species);
     
     % Dimensionless Gibbs energy
     g0RT = g0/RT;
@@ -122,7 +122,7 @@ function [N, dNi_T, dN_T, dNi_p, dN_p, index, STOP, STOP_ions, h0] = equilibrium
     J(end, end) = 0;
 
     % Molar enthalpy [J/mol]
-    h0(index) = set_h0(system.listSpecies(index), T, system.species);
+    h0(index) = combustiontoolbox.utils.thermo.getEnthalpyArray(system.listSpecies(index), T, system.species);
     
     % Dimensionless enthalpy
     H0RT = h0 / RT;

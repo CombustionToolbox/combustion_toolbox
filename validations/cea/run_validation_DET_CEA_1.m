@@ -1,4 +1,4 @@
-function run_validation_DET_CEA_1
+function metadata = run_validation_DET_CEA_1(varargin)
     % Run test validation_DET_CEA_1:
     % Contrasted with: NASA's Chemical Equilibrium with Applications software
     % Problem type: Chapman-Jouguet Detonation
@@ -14,8 +14,18 @@ function run_validation_DET_CEA_1
     import combustiontoolbox.shockdetonation.*
     import combustiontoolbox.utils.display.*
 
-    % Benchmark?
-    FLAG_BENCHMARK = false;
+    % Default values
+    metadata = [];
+    DEFAULT_FLAG_BENCHMARK = false;
+    DEFAULT_FLAG_EXPORT = false;
+
+    % Input parser
+    p = inputParser;
+    addOptional(p, 'FLAG_BENCHMARK', DEFAULT_FLAG_BENCHMARK, @(x) islogical(x));
+    addParameter(p, 'FLAG_EXPORT', DEFAULT_FLAG_EXPORT, @(x) islogical(x));
+    parse(p, varargin{:});
+    FLAG_BENCHMARK = p.Results.FLAG_BENCHMARK;
+    FLAG_EXPORT = p.Results.FLAG_EXPORT;
 
     % Definitions
     fuel = 'C2H2_acetylene';
@@ -44,7 +54,7 @@ function run_validation_DET_CEA_1
     set(mix, {'N2', 'O2'}, 'oxidizer', [79, 21] / 21);
     
     % Define properties
-    mixArray1 = setProperties(mix, 'temperature', 300, 'pressure', 1, 'equivalenceRatio',  0.5:0.01:4);
+    mixArray1 = setProperties(mix, 'temperature', 300, 'pressure', 1, 'equivalenceRatio', 0.5:0.01:4);
     
     % Initialize solver
     solver = DetonationSolver('problemType', 'DET', 'FLAG_RESULTS', false);
@@ -53,6 +63,8 @@ function run_validation_DET_CEA_1
     [mixArray1, mixArray2] = solver.solveArray(mixArray1);
     
     if FLAG_BENCHMARK
+        stackTrace = dbstack; functionname = stackTrace.name;
+        metadata = combustiontoolbox.utils.BenchmarkMetadata(solver, mixArray1, functionname);
         return
     end
     
@@ -76,9 +88,19 @@ function run_validation_DET_CEA_1
     fig3 = plotProperties(repmat({'equivalenceRatio'}, 1, 7), [mixArray1.equivalenceRatio], {'cp', 'cv', 'dVdT_p', 'dVdp_T', 'sound', 'W', 'uShock'}, mixArray2, 'basis', {'mi', 'mi', [], [], [], [], []}, 'validation', resultsCEA);
 
     % Save plots
+    if ~FLAG_EXPORT
+        return
+    end
+
     folderpath = fullfile(pwd, 'validations', 'figures');
-    stack_trace = dbstack;
-    filename = stack_trace.name;
+
+    % Check if folder exists, otherwise create it
+    if ~exist(folderpath, 'dir')
+        mkdir(folderpath);
+    end
+
+    stackTrace = dbstack;
+    filename = stackTrace.name;
     saveas(fig1, fullfile(folderpath, strcat(filename, '_molar')), 'svg');
     saveas(fig2, fullfile(folderpath, strcat(filename, '_properties_1')), 'svg');
     saveas(fig3, fullfile(folderpath, strcat(filename, '_properties_2')), 'svg');

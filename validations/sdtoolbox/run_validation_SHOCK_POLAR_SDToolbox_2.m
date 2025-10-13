@@ -1,4 +1,4 @@
-function run_validation_SHOCK_POLAR_SDToolbox_2
+function metadata = run_validation_SHOCK_POLAR_SDToolbox_2(varargin)
     % Run test validation_SHOCK_POLAR_SDToolbox_2
     % Contrasted with: Caltech's SD Toolbox and CANTERA
     % Problem type: Shock polar
@@ -13,8 +13,18 @@ function run_validation_SHOCK_POLAR_SDToolbox_2
     import combustiontoolbox.shockdetonation.*
     import combustiontoolbox.utils.display.*
 
-    % Benchmark?
-    FLAG_BENCHMARK = false;
+    % Default values
+    metadata = [];
+    DEFAULT_FLAG_BENCHMARK = false;
+    DEFAULT_FLAG_EXPORT = false;
+
+    % Input parser
+    p = inputParser;
+    addOptional(p, 'FLAG_BENCHMARK', DEFAULT_FLAG_BENCHMARK, @(x) islogical(x));
+    addParameter(p, 'FLAG_EXPORT', DEFAULT_FLAG_EXPORT, @(x) islogical(x));
+    parse(p, varargin{:});
+    FLAG_BENCHMARK = p.Results.FLAG_BENCHMARK;
+    FLAG_EXPORT = p.Results.FLAG_EXPORT;
 
     % Definitions
     prefixDataName = 'shock_polar_equilwithions_ar_SDToolbox';
@@ -51,6 +61,8 @@ function run_validation_SHOCK_POLAR_SDToolbox_2
     [mixArray1, mixArray2] = solver.solveArray(mixArray1);
     
     if FLAG_BENCHMARK
+        stackTrace = dbstack; functionname = stackTrace.name;
+        metadata = combustiontoolbox.utils.BenchmarkMetadata(solver, mixArray1, functionname);
         return
     end
 
@@ -61,9 +73,19 @@ function run_validation_SHOCK_POLAR_SDToolbox_2
     [ax1, ax2] = plot_validation_shock_polar_SDToolbox(mixArray1, mixArray2, resultsSDToolbox, PlotConfig());
 
     % Save plots
-    folderpath = strcat(fullfile(pwd, 'validations', 'figures'));
-    stack_trace = dbstack;
-    filename = stack_trace.name;
+    if ~FLAG_EXPORT
+        return
+    end
+
+    folderpath = fullfile(pwd, 'validations', 'figures');
+
+    % Check if folder exists, otherwise create it
+    if ~exist(folderpath, 'dir')
+        mkdir(folderpath);
+    end
+
+    stackTrace = dbstack;
+    filename = stackTrace.name;
     saveas(ax1, fullfile(folderpath, strcat(filename, '_properties_1')), 'svg');
     saveas(ax2, fullfile(folderpath, strcat(filename, '_properties_2')), 'svg');
 end

@@ -1038,6 +1038,236 @@ classdef Mixture < handle & matlab.mixin.Copyable
             typeSpecies = [typeInert, typeOxidizer, typeFuel];
         end
 
+        function numberDensity = getNumberDensity(obj)
+            % Compute total number density of the mixture
+            %
+            % Args:
+            %     obj (Mixture): Mixture object
+            %
+            % Returns:
+            %     numberDensity (float): Total number density of the mixture [1/m3]
+            
+            % Definitions
+            NA = combustiontoolbox.common.Constants.NA; % Avogadro's number [molecule/mol]
+            KB = combustiontoolbox.common.Constants.KB; % Boltzmann constant [J/K]
+            pressure = obj.p;                           % Pressure [bar]
+
+            % Compute total number density [1/m3]
+            numberDensity = pressure / (KB * obj.T) * 1e5;
+        end
+
+        function [speciesNumberDensity, numberDensity] = getSpeciesNumberDensity(obj)
+            % Compute species number density of the mixture
+            %
+            % Args:
+            %     obj (Mixture): Mixture object
+            %
+            % Returns:
+            %    speciesNumberDensity (float): Species number density of the mixture [1/m3]
+            %    numberDensity (float): Total number density of the mixture [1/m3]
+            %
+            % Example:
+            %     [speciesNumberDensity, numberDensity] = getSpeciesNumberDensity(obj)
+
+            % Definitions
+            Xi = obj.Xi; % Molar fractions [-]
+            numberDensity = obj.getNumberDensity(); % Total number density [1/m3]
+
+            % Compute species number density [1/m3]
+            speciesNumberDensity = Xi * numberDensity;
+        end
+
+        function neutralNumberDensity = getNeutralNumberDensity(obj)
+            % Compute neutral number density of the mixture
+            %
+            % Args:
+            %     obj (Mixture): Mixture object
+            %
+            % Returns:
+            %     neutralNumberDensity (float): Neutral number density of the mixture [1/m3]
+            
+            % Definitions
+            isIonized = obj.chemicalSystem.isIonized;
+            [speciesNumberDensity, ~] = getSpeciesNumberDensity(obj); % Species number density [1/m3]
+
+            % Compute neutral number density [1/m3]
+            neutralNumberDensity = sum( speciesNumberDensity(~isIonized) );
+        end
+
+        function electronNumberDensity = getElectronNumberDensity(obj)
+            % Compute electron number density of the mixture
+            %
+            % Args:
+            %     obj (Mixture): Mixture object
+            %
+            % Returns:
+            %     electronNumberDensity (float): Electron number density of the mixture [1/m3]
+            
+            % Definitions
+            indexElectron = combustiontoolbox.utils.findIndex(obj.chemicalSystem.listSpecies, 'eminus'); % Index of electron species
+            speciesNumberDensity = getSpeciesNumberDensity(obj); % Species number density [1/m3]
+            
+            % Check if electron is in the mixture
+            if isempty(indexElectron)
+                electronNumberDensity = 0;
+                return
+            end
+
+            % Compute electron number density [1/m3]
+            electronNumberDensity = speciesNumberDensity( indexElectron );
+        end
+
+        function ionNumberDensity = getIonNumberDensity(obj)
+            % Compute ion number density of the mixture of charged heavy species (ions) excluding electrons
+            %
+            % Args:
+            %     obj (Mixture): Mixture object
+            %
+            % Returns:
+            %     ionNumberDensity (float): Ion number density of the mixture [1/m3]
+            
+            % Definitions
+            indexElectron = combustiontoolbox.utils.findIndex(obj.chemicalSystem.listSpecies, 'eminus'); % Index of electron species
+            speciesNumberDensity = getSpeciesNumberDensity(obj); % Species number density [1/m3]
+            charges = obj.chemicalSystem.getCharges;  % Charge of ion species
+            
+            % Check if electron is in the mixture
+            if isempty(indexElectron)
+                ionNumberDensity = 0;
+                return
+            end
+
+            % Compute electron number density [1/m3]
+            electronNumberDensity = speciesNumberDensity( indexElectron );
+
+            % Compute ion number density [1/m3]
+            ionNumberDensity = abs(sum( charges .* speciesNumberDensity ) -  electronNumberDensity);
+        end
+
+        function degreeIonization = getDegreeIonization(obj)
+            % Compute degree of ionization of the mixture
+            %
+            % Args:
+            %     obj (Mixture): Mixture object
+            %
+            % Returns:
+            %     degreeIonization (float): Degree of ionization of the mixture [-]
+            %
+            % Note: 
+            %     * A degree of ionization << 1 indicates a weakly ionized plasma, while a degree of ionization close to 1 indicates a fully ionized plasma.
+            
+            % Definitions
+            neutralNumberDensity = getNeutralNumberDensity(obj);
+            electronNumberDensity = getElectronNumberDensity(obj);          
+
+            % Compute degree of ionization [-]
+            degreeIonization = electronNumberDensity / (electronNumberDensity + neutralNumberDensity);
+        end
+
+        function debyeLength = getDebyeLength(obj)
+            % Compute Debye length of the mixture
+            %
+            % Args:
+            %     obj (Mixture): Mixture object
+            %
+            % Returns:
+            %     lengthDebye (float): Debye length of the mixture [m]
+            
+            % Definitions
+            epsilon0 = combustiontoolbox.common.Constants.E0;       % Vacuum permittivity [F/m]
+            kB = combustiontoolbox.common.Constants.KB;             % Boltzmann constant [J/K]
+            e = combustiontoolbox.common.Constants.E;               % Elementary charge [C]
+            T = obj.T;                                              % Temperature [K]
+            electronNumberDensity = obj.getElectronNumberDensity(); % Electron number density [1/m3]
+
+            % Compute Debye length [m]
+            debyeLength = sqrt( epsilon0 * kB * T / (electronNumberDensity * e^2) );
+        end
+
+        function electronsDebyeSphere = getElectronsDebyeSphere(obj)
+            % Compute number of electrons in Debye sphere
+            %
+            % Args:
+            %     obj (Mixture): Mixture object
+            %
+            % Returns:
+            %     electronsDebyeSphere (float): Number of electrons in Debye sphere [-]
+            
+            % Definitions
+            debyeLength = obj.getDebyeLength();                     % Debye length [m]
+            electronNumberDensity = obj.getElectronNumberDensity(); % Electron number density [1/m3]
+
+            % Compute number of electrons in Debye sphere [-]
+            electronsDebyeSphere = 4 / 3 * pi * electronNumberDensity * debyeLength^3;
+        end
+
+        function [plasmaCoupling, plasmaCouplingSpecies] = getPlasmaCoupling(obj)
+            % Compute the plasma coupling parameter of the mixture.
+            %
+            % The plasma coupling parameter :math:`\Gamma` is a dimensionless
+            % measure of the strength of Coulomb interactions relative to the
+            % average thermal energy of particles in the plasma. It is defined as:
+            %
+            % .. math::
+            %
+            %     \Gamma = \frac{e^2}{4 \pi \epsilon_0 a k_B T},
+            %
+            % where :math:`e` is the elementary charge, :math:`\epsilon_0` the
+            % vacuum permittivity, :math:`a` the average inter-particle distance,
+            % :math:`k_B` the Boltzmann constant, and :math:`T` the temperature.
+            %
+            % Note: A plasma coupling parameter much less than 1 indicates a weakly coupled plasma, whereas
+            % a plasma coupling parameter close to or greater than 1 indicates a strongly coupled plasma.
+            %
+            % Args:
+            %     obj (Mixture): Mixture object
+            %
+            % Returns:
+            %     plasmaCoupling (float): Plasma coupling of the mixture [-]
+            %     plasmaCouplingSpecies (float): Plasma coupling of each species in the mixture [-]
+            
+            % Definitions
+            charges = obj.chemicalSystem.getCharges();               % Charge of ion species
+            epsilon0 = combustiontoolbox.common.Constants.E0;        % Vacuum permittivity [F/m]
+            electronNumberDensity = obj.getElectronNumberDensity();  % Electron number density [1/m3]
+            speciesNumberDensity = obj.getSpeciesNumberDensity();    % Electron number density [1/m3]
+            kb = combustiontoolbox.common.Constants.KB;              % Boltzmann constant [J/K]
+            e = combustiontoolbox.common.Constants.E;                % Elementary charge [C]
+            T = obj.T;                                               % Temperature [K]
+
+            % Compute average inter-particle distance [m]
+            distance = (3 / (4 * pi * electronNumberDensity))^(1/3); 
+            
+            % Compute plasma coupling electron [-]
+            plasmaCouplingElectron = e.^2./ (4 * pi * epsilon0 * distance * kb * T);
+
+            % Compute plasma coupling species [-]
+            plasmaCouplingSpecies = plasmaCouplingElectron .* abs(charges).^(5/3);
+
+            % Compute average charge of ions
+            chargesAverage = sqrt( sum( abs(charges).^(5/3) .* speciesNumberDensity ) / sum(speciesNumberDensity) );
+
+            % Compute plasma coupling [-]
+            plasmaCoupling = plasmaCouplingElectron .* chargesAverage;
+        end
+
+        function [value, plasmaCoupling] = isWeaklyCoupledPlasma(obj)
+            % Check if the mixture is weakly coupled plasma
+            %
+            % Args:
+            %     obj (Mixture): Mixture object
+            %
+            % Returns:
+            %     value (bool): True if the mixture is weakly coupled plasma, false otherwise
+            %     plasmaCoupling (float): Plasma coupling of the mixture [-]
+
+            % Definitions
+            plasmaCoupling = obj.getPlasmaCoupling(); % Plasma coupling parameter [-]
+
+            % Check if the mixture is a weakly coupled plasma
+            value = plasmaCoupling < 0.2; % Plasma coupling << 1
+        end
+
     end
     
     methods(Access = protected)

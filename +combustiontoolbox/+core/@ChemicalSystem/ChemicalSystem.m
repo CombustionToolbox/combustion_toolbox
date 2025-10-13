@@ -79,8 +79,8 @@ classdef ChemicalSystem < handle & matlab.mixin.Copyable
     end
     
     properties (Access = private, Hidden)
-        listSpeciesFormula
-        FLAG_INITIALIZE = true
+        listSpeciesFormula     % List of species formulas
+        FLAG_INITIALIZE = true % Flag indicating if the chemical system is initialized
     end
 
     methods
@@ -519,6 +519,62 @@ classdef ChemicalSystem < handle & matlab.mixin.Copyable
 
         end
 
+        function value = isIonized(obj, varargin)
+            % Get boolean value indicating if the species is ionized
+            %
+            % Args:
+            %     species (char): Chemical species
+            %
+            % Returns:
+            %     value (bool): Boolean value indicating if the species is ionized
+        
+            % Definitions
+            species = obj.listSpecies;
+
+            % Check additional inputs
+            if nargin > 1
+                species = varargin{1};
+            end
+
+            % Check if species are ionized
+            value = (contains(species, 'minus') | contains(species, 'plus')) & ~contains(species, 'cyclominus');
+        end
+
+        function charges = getCharges(obj)
+            % Get charges of the species in the chemical system
+            %
+            % Args:
+            %     obj (ChemicalSystem): ChemicalSystem object
+            %
+            % Returns:
+            %     charges (float): Charges of the species in the chemical system
+
+            charges = -obj.stoichiometricMatrix(:, obj.ind_E);
+        end
+
+        function [chargeIons, indexIons] = getChargeIons(obj)
+            % Get charges of the ion species in the chemical system
+            %
+            % Args:
+            %     obj (ChemicalSystem): ChemicalSystem object
+            %
+            % Returns:
+            %     chargeIons (float): Charges of the ion species in the chemical system
+
+            % Default
+            indexIons = [];
+
+            % Get charges of the species
+            charges = getCharges(obj);
+            chargeIons = charges( isIonized(obj) );
+
+            % Get index of ions
+            if nargout > 1
+                indexIons = obj.getIndexIons(obj.listSpecies);
+            end
+
+        end
+
     end
 
     methods (Access = private)
@@ -581,9 +637,9 @@ classdef ChemicalSystem < handle & matlab.mixin.Copyable
             % Returns:
             %     index (float): Index of ions
         
-            index = (contains(species, 'minus') | contains(species, 'plus')) & ~contains(species, 'cyclominus');
+            index = find( isIonized(obj, species) );
         end
-        
+
         function obj = setIndexPhaseSpecies(obj)
             % Get index of gaseous, condensed and cryogenic species
             %
@@ -757,12 +813,6 @@ classdef ChemicalSystem < handle & matlab.mixin.Copyable
             %     propertiesMatrix (float): Properties matrix filled
 
             propertiesMatrix(index, obj.ind_ni) = moles; % [mol]
-            
-            % for i = length(index):-1:1
-            %     propertiesMatrix(index(i), obj.ind_hi) = obj.species.(species{i}).get_h0(T); % [J/mol]
-            %     propertiesMatrix(index(i), obj.ind_cpi) = obj.species.(species{i}).get_cp(T); % [J/mol-K]
-            %     propertiesMatrix(index(i), obj.ind_si) = obj.species.(species{i}).get_s0(T); % [J/mol-K]
-            % end
 
             for i = length(index):-1:1
                 propertiesMatrix(index(i), obj.ind_hi) = getEnthalpy(obj.species.(species{i}), T); % [J/mol]

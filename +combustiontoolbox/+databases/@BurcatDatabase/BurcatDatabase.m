@@ -24,7 +24,7 @@ classdef BurcatDatabase < combustiontoolbox.databases.Database & handle
 
     methods (Access = public, Static)
 
-        function thermoMillennium_2_thermoNASA9(filenameInput, varargin)
+        function thermoMillennium2thermoNASA9(filenameInput, varargin)
             % Read Extended Third Millennium Thermodynamic Database of New NASA
             % Polynomials with Active Thermochemical Tables update and write a new
             % file compatible with thermo NASA 9 format
@@ -32,6 +32,14 @@ classdef BurcatDatabase < combustiontoolbox.databases.Database & handle
             % Args:
             %     filenameInput (char): Filename of the thermoMillennium data
             %     filenameOutput (char): Filename of the thermoMillennium data as NASA9
+            %
+            % Optional args:
+            %     * outDir (char): Output directory (default: 'databases')
+            %     * suffix (char): Suffix to add to species names (default: '_M')
+            %
+            % Examples:
+            %     * BurcatDatabase.thermoMillennium2thermoNASA9('thermo_millennium.inp')
+            %     * BurcatDatabase.thermoMillennium2thermoNASA9('thermo_millennium.inp', 'filenameOutput', 'thermo_millennium_2_thermoNASA9.inp', 'outDir', 'databases', 'suffix', '_M')
             
             % CONSTANTS
             % MAX_CHAR = 80;

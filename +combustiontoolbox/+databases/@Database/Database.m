@@ -63,8 +63,8 @@ classdef (Abstract) Database < handle & matlab.mixin.Copyable
             addParameter(ip, 'units', defaultUnits, @ischar);
             addParameter(ip, 'pointsTemperature', defaultPointsTemperature, @isnumeric);
             addParameter(ip, 'temperatureReference', defaultTemperatureReference, @(x) isnumeric(x) && isscalar(x) && (x >= 0));
-            addParameter(ip, 'thermoFile', defaultThermoFile);
-            addParameter(ip, 'FLAG_BENCHMARK', obj.FLAG_BENCHMARK);
+            addParameter(ip, 'thermoFile', defaultThermoFile, @ischar);
+            addParameter(ip, 'FLAG_BENCHMARK', obj.FLAG_BENCHMARK, @islogical);
             parse(ip, varargin{:});
             
             % Set properties
@@ -88,7 +88,17 @@ classdef (Abstract) Database < handle & matlab.mixin.Copyable
             end
 
             persistent cachedDatabase;
-            
+
+            if ~any(strcmp('thermoFile', ip.UsingDefaults))
+                % Generate database
+                generateDatabase(obj);
+                % Status
+                fprintf('OK!\n');
+                % Cache database
+                cachedDatabase = obj;
+                return
+            end
+
             if ~isempty(cachedDatabase) && isequal(cachedDatabase.id, obj.id)
                 obj = cachedDatabase;
             else
@@ -171,6 +181,8 @@ classdef (Abstract) Database < handle & matlab.mixin.Copyable
                     error('Invalid conflict policy. Options are: (1: prefer DB1, 2: prefer DB2)');
             end
 
+            % Set ID
+            setID(obj);
         end
 
         function obj = load(obj, varargin)

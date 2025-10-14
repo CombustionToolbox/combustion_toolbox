@@ -33,21 +33,54 @@ classdef BurcatDatabase < combustiontoolbox.databases.Database & handle
             %     filenameInput (char): Filename of the thermoMillennium data
             %     filenameOutput (char): Filename of the thermoMillennium data as NASA9
             
-            % Default values
-            filenameOutput = 'thermo_millennium_2_thermoNASA9.inp';
+            % CONSTANTS
+            % MAX_CHAR = 80;
 
-            if nargin > 1
-                filenameOutput = varargin{1};
+            % Default values
+            defaultFilenameOutput = 'thermo_millennium_2_thermoNASA9.inp';
+            defaultOutDir = 'databases';
+            defaultSuffix = '_M';
+            
+            % Input parser
+            p = inputParser;
+            addRequired(p, 'filenameInput', @(x) ischar(x) || isstring(x));
+            addOptional(p, 'filenameOutput', defaultFilenameOutput, @(x) ischar(x) || isstring(x));
+            addParameter(p, 'outDir', defaultOutDir, @(x) ischar(x) || isstring(x));
+            addParameter(p, 'suffix', defaultSuffix, @(x) ischar(x) || isstring(x));
+            parse(p, filenameInput, varargin{:});
+
+            % Set variables
+            filenameInput = p.Results.filenameInput;
+            filenameOutput = p.Results.filenameOutput;
+            outDir = p.Results.outDir;
+            SUFFIX = p.Results.suffix;
+
+            % Definitions
+            outPath = fullfile(outDir, filenameOutput);
+
+            % Ensure output directory exists
+            if ~exist(outDir, 'dir') && ~isempty(outDir)
+                mkdir(outDir);
             end
 
-            
-            fid = fopen(filenameInput, 'r');
-            fid_new = fopen(strcat('databases/', filenameOutput), 'w');
+            % Open source file
+            [fid, msg] = fopen(filenameInput, 'r');
+            if fid == -1
+                error('Could not open input file: %s\nReason: %s', filenameInput, msg);
+            end
+
+            % Open destination file
+            [fid_new, msg] = fopen(outPath, 'w');
+            if fid_new == -1
+                fclose(fid);
+                error('Could not open output file: %s\nReason: %s', outPath, msg);
+            end
+
+            % Initialization
             tline = 1;
             FLAG_NEW_SPECIES = true;
-            MAX_CHAR = 80;
-            SUFFIX = '_M';
             N_SUFFIX = length(SUFFIX);
+            speciesMap = containers.Map('KeyType', 'char', 'ValueType', 'double');
         
             while tline ~= -1
                 tline = fgetl(fid);
@@ -58,31 +91,38 @@ classdef BurcatDatabase < combustiontoolbox.databases.Database & handle
                     FLAG_NEW_SPECIES = true;
                     tline = 1;
                     continue
-                end
-        
-                if tline(1) == '!'
+                elseif tline(1) == '!'
                     continue
+                elseif contains(tline, 'see')
+                    continue
+                elseif ~isempty(regexp(tline, '^[A-Za-z][^\s]*\s+', 'once'))
+                    FLAG_NEW_SPECIES = true;
                 end
-        
+
+                % Extract species data
                 if FLAG_NEW_SPECIES
                     ind_space = regexp(tline, '\s');
                     ind_next = regexp(tline(ind_space(1):end), '\S');
                     N = 18 - ind_space(1) - 1 - N_SUFFIX;
                     white_spaces = blanks(N);
-                    species = strcat(tline(1:ind_space(1) - 1), SUFFIX);
-        
-                    if contains(tline, 'excited', 'IgnoreCase')
-                        species = replace(species, SUFFIX, strcat('bexb', SUFFIX));
+                    species = tline(1:ind_space(1) - 1);
+
+                    if contains(tline, ' cr ', 'IgnoreCase', true)
+                        species = strcat(species, '(cr)');
+                    elseif contains(tline, ' liq ', 'IgnoreCase', false) && ~contains(species, '(l)', 'IgnoreCase', true)
+                        species = strcat(species, '(L)');
                     end
-        
-                    if contains(tline, 'singlet', 'IgnoreCase')
-                        species = replace(species, SUFFIX, strcat('bsingletb', SUFFIX));
-                    elseif contains(tline, 'doublet', 'IgnoreCase')
-                        species = replace(species, SUFFIX, strcat('bdoubletb', SUFFIX));
-                    elseif contains(tline, 'triplet', 'IgnoreCase')
-                        species = replace(species, SUFFIX, strcat('btripletb', SUFFIX));
-                    elseif contains(tline, 'quartet', 'IgnoreCase')
-                        species = replace(species, SUFFIX, strcat('bquartetb', SUFFIX));
+
+                    if contains(tline, 'excited', 'IgnoreCase', true)
+                        species = strcat(species, '(exc)');
+                    elseif contains(tline, 'singlet', 'IgnoreCase', true)
+                        species = strcat(species, '(slet)');
+                    elseif contains(tline, 'doublet', 'IgnoreCase', true)
+                        species = strcat(species, '(dlet)');
+                    elseif contains(tline, 'triplet', 'IgnoreCase', true)
+                        species = strcat(species, '(tlet)');
+                    elseif contains(tline, 'quartet', 'IgnoreCase', true)
+                        species = strcat(species, '(qtet)');
                     end
         
                     species = replace(species, '*', ' ');
@@ -91,6 +131,23 @@ classdef BurcatDatabase < combustiontoolbox.databases.Database & handle
                     species = replace(species, 'Cl', 'CL');
                     species = replace(species, 'Tl', 'TL');
                     species = replace(species, 'Fl', 'FL');
+                    species = replace(species, '(liq)', 'liq');
+                    species = replace(species, 'liq', '(liq)');
+                    species = replace(species, '(l)', '(L)');
+                    
+                    % Check container
+                    if isKey(speciesMap, species)
+                        % Repeated species in the container
+                        speciesMap(species) = speciesMap(species) + 1;
+                        species = sprintf('%s_num%d', species, speciesMap(species));
+                    else
+                        % Add species to the container
+                        speciesMap(species) = 1;
+                    end
+                    
+                    % Add suffix
+                    species = strcat(species, SUFFIX);
+                    
                     fprintf(fid_new, '%s%s%s\n', species, white_spaces, tline(ind_next(1) + ind_space(1) - 1:end));
                     FLAG_NEW_SPECIES = false;
                 else

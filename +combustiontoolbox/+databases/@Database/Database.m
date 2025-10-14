@@ -1,4 +1,4 @@
-classdef (Abstract) Database < handle
+classdef (Abstract) Database < handle & matlab.mixin.Copyable
     % The :mat:class:`Database` abstract class contains the common methods between database objects.
     % This class is used as a base class for the :mat:class:`NasaDatabase` and :mat:class:`BurcatDatabase` classes.
     %
@@ -96,6 +96,79 @@ classdef (Abstract) Database < handle
                 obj = obj.load();
                 % Cache database
                 cachedDatabase = obj;
+            end
+
+        end
+
+        function obj = plus(DB1, DB2, varargin)
+            % Overload + operator to merge two databases
+            %
+            % Args:
+            %     DB1 (Database): First database
+            %     DB2 (Database): Second database
+            %
+            % Optional name-pairs:
+            %     * conflictPolicy (char): Policy to handle species name conflicts. Options are: (1: prefer DB1, 2: prefer DB2)
+            %
+            % Returns:
+            %     obj (Database): Merged database
+            %
+            % Example:
+            %     DB = NasaDatabase() + BurcatDatabase()
+
+            % Default values
+            defaultConflictPolicy = 1;
+            
+            % Input parser
+            p = inputParser;
+            addRequired(p, 'DB1', @(x) isa(x, 'combustiontoolbox.databases.Database'));
+            addRequired(p, 'DB2', @(x) isa(x, 'combustiontoolbox.databases.Database'));
+            addOptional(p, 'conflictPolicy', defaultConflictPolicy, @(x) isnumeric(x) && ismember(x, [1, 2]));
+            parse(p, DB1, DB2, varargin{:});
+
+            % Set inputs
+            DB1 = p.Results.DB1;
+            DB2 = p.Results.DB2;
+            conflictPolicy = p.Results.conflictPolicy;
+
+            % Definitions
+            listSpecies1 = DB1.listSpecies;
+            listSpecies2 = DB2.listSpecies;
+            mergeStructs = @(DB1, DB2, listSpecies1, listSpecies2) cell2struct( [struct2cell(DB1); struct2cell(DB2)], [listSpecies1; listSpecies2] );
+
+
+            % Create new database object
+            switch conflictPolicy
+                case 1 % Prefer DB1
+                    % Create new database object
+                    obj = copy(DB1);
+
+                    % Get species from DB2 not in DB1
+                    listSpeciesAdd = setdiff(listSpecies2, listSpecies1, 'stable');
+
+                    % Check 
+                    if isempty(listSpeciesAdd)
+                        return
+                    end
+                    
+                    % Add species from DB2 that are not in DB1
+                    obj.species = mergeStructs( DB1.species, DB2.species, listSpecies1, listSpeciesAdd );
+                case 2 % Prefer DB2
+                    % Create new database object
+                    obj = copy(DB2);
+                    
+                    % Get species from DB1 not in DB2
+                    listSpeciesAdd = setdiff(listSpecies1, listSpecies2, 'stable');
+
+                    % Check 
+                    if isempty(listSpeciesAdd)
+                        return
+                    end
+
+                    % Add species from DB1 that are not in DB2
+                    obj.species = mergeStructs( DB2.species, DB1.species, listSpecies2, listSpeciesAdd );
+                otherwise
+                    error('Invalid conflict policy. Options are: (1: prefer DB1, 2: prefer DB2)');
             end
 
         end

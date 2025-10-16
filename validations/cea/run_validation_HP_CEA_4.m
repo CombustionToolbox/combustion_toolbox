@@ -68,9 +68,6 @@ function metadata = run_validation_HP_CEA_4(varargin)
     resultsCEA = data_CEA(filename, displaySpecies);
     
     % Plot molar fractions
-    plotComposition(mixArray(1), mixArray, 'equivalenceRatio', 'Xi', 'displaySpecies', displaySpecies, 'mintol', 1e-14, 'validation', resultsCEA);
-    
-    % Plot molar fractions
     fig1 = plotComposition(mixArray(1), mixArray, 'equivalenceRatio', 'Xi', 'displaySpecies', displaySpecies, 'mintol', 1e-14, 'validation', resultsCEA);
 
     % Plot properties

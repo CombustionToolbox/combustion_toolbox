@@ -1,5 +1,5 @@
 % -------------------------------------------------------------------------
-% COMBUSTION TOOLBOX @v1.2.7
+% COMBUSTION TOOLBOX @v1.2.8
 % A MATLAB-GUI based open-source tool for solving gaseous combustion problems
 %
 % Type of problems:
@@ -17,6 +17,7 @@
 %   * SHOCK_POLAR_R -------> Shock polar diagrams for incident and reflected states
 %   * SHOCK_POLAR_LIMITRR -> Shock polar diagrams in the limit of regular reflection
 %   * SHOCK_IDEAL_GAS -----> Planar incident shock wave for a fixed adiabatic index
+%   * SHOCK_PRANDTL_MEYER -> Prandtl-Meyer expansion wave
 %   * DET -----------------> Chapman-Jouguet Detonation
 %   * DET_R ---------------> Reflected Chapman-Jouguet Detonation
 %   * DET_OBLIQUE ---------> Oblique Detonation
@@ -49,7 +50,7 @@
 %
 % @author: Alberto Cuadra Lara
 %                  
-% Last update October 14 2025
+% Last update October 16 2025
 % -------------------------------------------------------------------------
 help CONTENTS.m
 

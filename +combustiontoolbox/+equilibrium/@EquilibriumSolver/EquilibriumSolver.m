@@ -32,6 +32,7 @@ classdef EquilibriumSolver < handle
         tolTau = 1e-25             % Tolerance of the slack variables for condensed species
         itMaxGibbs = 70            % Max number of iterations - Gibbs/Helmholtz minimization method
         itMaxIons = 30             % Max number of iterations - charge balance (ions)
+        itMaxRecursion = 30        % Max number of recursion iterations - e.g., re-check condendensed species
         slackGuess = 1e-14         % Initial guess of the slack variables for condensed species
         temperatureIons = 0        % Minimum temperature [K] to consider ionized species
         tol0 = 1e-3                % Tolerance of the root finding algorithm
@@ -578,7 +579,7 @@ classdef EquilibriumSolver < handle
             try
                 obj.equilibrateT(mix1, mix2, x, molesGuess);
             catch
-                obj.equilibrateT(mix1, mix2, x);
+                obj.equilibrateT(mix1, mix2, x, []);
             end
         
             % Calculate residual of f = 0
@@ -783,13 +784,13 @@ classdef EquilibriumSolver < handle
             if g_l * g_r < 0
                 x0 = obj.getPoint([x_l, x_r], [g_l, g_r]);
             elseif g_l * g_r > 0 && abs(g_l) < abs(g_r)
-                x0 = x_l - 50;
+                x0 = max(x_l - 50, 300); 
             elseif g_l * g_r > 0 || (isnan(g_l) && isnan(g_r))
-                x0 = x_r + 50;
+                x0 = max(x_r + 50, 300);
             elseif isnan(g_l) && ~isnan(g_r)
-                x0 = x_r - 100;
+                x0 = max(x_r - 100, 300);
             elseif ~isnan(g_l) && isnan(g_r)
-                x0 = x_l + 100;
+                x0 = max(x_l + 100, 300);
             else
                 x0 = obj.root_T0;
             end

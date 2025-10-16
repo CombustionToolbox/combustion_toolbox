@@ -62,8 +62,23 @@ function [mix1, mix2] = shockPrandtlMeyer(obj, mix1, u1, theta2, varargin)
 
     % Solve problem assuming a calorically perfect gaseous mixture
     if obj.equilibriumSolver.FLAG_TCHEM_FROZEN
-        % To be implemented based on gamma
-        warning('Prandtl-Meyer expansion for thermochemical frozen gas not implemented yet.');
+        % Definitions
+        gamma = mix1.gamma;
+
+        % Isentropic relations for calorically perfect gas (T and p)
+        T2 = mix1.T * ( (1 + 0.5 * (gamma - 1) * mix1.mach^2) / (1 + 0.5 * (gamma - 1) * mach2Guess^2) );
+        p2 = mix1.p * ( T2 / mix1.T )^(gamma / (gamma - 1));
+
+        % Set state
+        mix2.p = p2; mix2.T = T2;
+        mix2 = equilibrateT(obj.equilibriumSolver, mix1, mix2, T2);
+
+        % Final state
+        mix2.mach = mach2Guess;          % [-]
+        mix2.u = mix2.mach * mix2.sound; % [m/s]
+        mix2.uShock = mix2.u;            % [m/s]
+        mix2.theta = theta2 * 180 / pi;  % [deg]
+        mix2.problemType = problemType;
         return
     end
 
@@ -72,7 +87,7 @@ function [mix1, mix2] = shockPrandtlMeyer(obj, mix1, u1, theta2, varargin)
         mix2 = setProperties(mix2, 'entropySpecific', mix1.sSpecific, 'volume', 1/rho2Guess, 'mach', mach2Guess);
 
         % Final state
-        mix2.uShock = mix2.u; % [m/s]
+        mix2.uShock = mix2.u;           % [m/s]
         mix2.theta = theta2 * 180 / pi; % [deg]
         mix2.problemType = problemType;
         return

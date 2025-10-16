@@ -6,7 +6,7 @@ function metadata = run_validation_SHOCK_PRANDTL_MEYER_SDToolbox_1(varargin)
     % Pressure    [bar] = 1
     % Initial mixture: AIR (79% N2 + 21% O2)
     % Free-stream Mach number = 1
-    % Wave angle = 0:90
+    % Wave angle = 0:82
     % List of species considered: list_species('AIR_IONS')
     
     % Import packages

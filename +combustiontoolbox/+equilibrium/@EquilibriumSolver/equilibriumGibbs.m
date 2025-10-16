@@ -270,10 +270,10 @@ function [N, dNi_T, dN_T, dNi_p, dN_p, index, STOP, STOP_ions, h0] = equilibrium
         FLAG_RULE = false; % Include only up to NC_max condensed species that satisfies the vapour pressure test with and gives the most negative values of dL_dnj
         
         % Initialization
-        j = 0;
+        it = 0; itMaxRecursion = obj.itMaxRecursion;
         while indexCondensed_check
             % Update iteration
-            j = j + 1;
+            it = it + 1;
 
             % Check Gibbs phase rule
             if length(indexCondensed) > NC_max
@@ -348,6 +348,12 @@ function [N, dNi_T, dN_T, dNi_p, dN_p, index, STOP, STOP_ions, h0] = equilibrium
             [~, indexCondensed, indexGas, indexIons, NG, NS] = obj.updateTemp(N, index, indexCondensed, indexGas, indexIons, NP, NG, NS, SIZE);
             N(indexCondensed(1:end)) = 0;
             indexCondensed_check = indexCondensed;
+        end
+
+        % Check recursion limit
+        if it > itMaxRecursion
+            warning('equilibriumLoopCondensed: Recursion limit %d', it);
+            return
         end
 
         % Check if there were species not considered

@@ -16,7 +16,7 @@ function metadata = run_validation_HP_CEA_1(varargin)
     
     % Default values
     metadata = [];
-    DEFAULT_FLAG_BENCHMARK = true;
+    DEFAULT_FLAG_BENCHMARK = false;
     DEFAULT_FLAG_EXPORT = false;
 
     % Input parser

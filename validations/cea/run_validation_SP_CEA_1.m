@@ -1,12 +1,12 @@
-function metadata = run_validation_HP_CEA_4(varargin)
-    % Run test validation_HP_CEA_4:
+function metadata = run_validation_SP_CEA_1(varargin)
+    % Run test validation_SP_CEA_1:
     % Contrasted with: NASA's Chemical Equilibrium with Applications software
-    % Problem type: Adiabatic T and composition at constant p
-    % Temperature [K]   = 300;
-    % Pressure    [bar] = 1;
+    % Problem type: Defined specific entropy and pressure (SP)
+    % entropySpecific [J/kg-K] = 7.5088e3;
+    % Pressure [bar] = 10.1325;
     % Equivalence ratio [-] = 0.5:0.01:4
-    % Initial mixture: CH4 + O2
-    % List of species considered: list_species('Soot Formation Extended')
+    % Initial mixture: CH4 + AIR (78.084% N2 + 20.9476% O2 + 0.9365% Ar + 0.0319% CO2)
+    % List of species considered: listSpecies('Soot Formation Extended')
 
     % Import packages
     import combustiontoolbox.databases.NasaDatabase
@@ -28,12 +28,16 @@ function metadata = run_validation_HP_CEA_4(varargin)
     FLAG_EXPORT = p.Results.FLAG_EXPORT;
 
     % Definitions
-    fuel = 'CH4';
-    prefixDataName = fuel;
-    filename = {strcat(prefixDataName, '_O2_HP.out'), strcat(prefixDataName, '_O2_HP2.out'), strcat(prefixDataName, '_O2_HP3.out')};
+    prefixDataName = 'CH4_air_SP';
+
+    for i = 2:-1:1
+        filename{i} = sprintf('%s%d.out', prefixDataName, i);
+    end
+
     listSpecies =  'Soot Formation Extended';
-    displaySpecies = {'CO2', 'CO', 'H2O', 'H2', 'O2', 'H','OH','O',...
-                      'CH4','C2H4','CH3','HCO','CH','Cbgrb'};
+    displaySpecies = {'CO2', 'CO', 'H2O', 'H2', 'O2', 'N2',...
+                      'HCN','OH','O','NH3','CH4','C2H4','NO',...
+                      'Cbgrb','H2ObLb'};
     tolMoles = 1e-14;
 
     % Get Nasa database
@@ -46,15 +50,15 @@ function metadata = run_validation_HP_CEA_4(varargin)
     mix = Mixture(system);
     
     % Define chemical state
-    set(mix, {fuel}, 'fuel', 1);
-    set(mix, {'O2'}, 'oxidizer', 1);
-    
+    set(mix, {'CH4'}, 'fuel', 1);
+    set(mix, {'N2', 'O2', 'Ar', 'CO2'}, 'oxidizer', [78.084, 20.9476, 0.9365, 0.0319] / 20.9476);
+
     % Define properties
-    mixArray = setProperties(mix, 'temperature', 300, 'pressure', 1, 'equivalenceRatio', 0.5:0.01:4);
-    
+    mixArray = setProperties(mix, 'entropySpecific', 7.5088e3, 'pressure', 10 * 1.01325, 'equivalenceRatio', 0.5:0.01:4);
+
     % Initialize solver
-    solver = EquilibriumSolver('problemType', 'HP', 'tolMoles', tolMoles, 'FLAG_RESULTS', false);
-    
+    solver = EquilibriumSolver('problemType', 'SP', 'tolMoles', tolMoles, 'FLAG_RESULTS', false);
+
     % Solve problem
     solver.solveArray(mixArray);
     

@@ -240,6 +240,10 @@ function [property_name, property_latex, property_unit] = property_names(propert
             property_name = 'Specific heat ratio';
             property_latex = '\gamma';
             property_unit = '';
+        case 'gamma_f'
+            property_name = 'Frozen specific heat ratio';
+            property_latex = '\gamma_f';
+            property_unit = '';
         case 'gamma_s'
             property_name = 'Adiabatic index';
             property_latex = '\gamma_s';

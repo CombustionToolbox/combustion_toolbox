@@ -594,24 +594,39 @@ classdef EquilibriumSolver < handle
             molesGuess = mix2.N * mix2.Xi;
         end
 
+        function attributeName = getAttribute(obj)
+            % Get attribute of the problem type
+            switch upper(obj.problemType)
+                case {'TP', 'TV'}
+                    attributeName = 'T';
+                case 'HP'
+                    attributeName = 'hSpecific';
+                case 'EV'
+                    attributeName = 'eSpecific';
+                case {'SP', 'SV'}
+                    attributeName = 'sSpecific';
+            end
+
+        end
+
         function value = getPartialDerivative(obj, mix)
-            % Get value of the partial derivative for the set problem type [J/K] (HP, EV) or [J/K^2] (SP, SV)
+            % Get value of the partial derivative for the set problem type [J/kg-K] (HP, EV) or [J/kg-K^2] (SP, SV)
             %
             % Args:
             %     obj (EquilibriumSolver): EquilibriumSolver object
             %     mix (Mixture): Mixture object
             %
             % Returns:
-            %     value (float): Value of the partial derivative for the set problem type [J/K] (HP, EV) or [J/K^2] (SP, SV)
+            %     value (float): Value of the partial derivative for the set problem type [J/kg-K] (HP, EV) or [J/kg-K^2] (SP, SV)
         
             if strcmpi(obj.problemType, 'HP')
-                value = mix.cp;
+                value = mix.cpSpecific;
             elseif strcmpi(obj.problemType, 'EV')
-                value = mix.cv;
+                value = mix.cvSpecific;
             elseif strcmpi(obj.problemType, 'SP')
-                value = mix.cp / mix.T;
+                value = mix.cpSpecific / mix.T;
             elseif strcmpi(obj.problemType, 'SV')
-                value = mix.cv / mix.T;
+                value = mix.cvSpecific / mix.T;
             end
         
         end

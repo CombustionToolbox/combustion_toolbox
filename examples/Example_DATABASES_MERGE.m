@@ -13,8 +13,6 @@
 
 % Import packages
 import combustiontoolbox.databases.*
-import combustiontoolbox.core.*
-import combustiontoolbox.equilibrium.*
 
 % Get Nasa database
 DB_NASA = NasaDatabase('thermoFile', 'thermo_NASA.inp');

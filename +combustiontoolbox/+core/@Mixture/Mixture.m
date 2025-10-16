@@ -83,13 +83,25 @@ classdef Mixture < handle & matlab.mixin.Copyable
         FLAG_TSPECIES = false  % Flag to indicate species-specific initial temperatures are defined (initial mixture)
         FLAG_VOLUME = false    % Flag to indicate specific volume is defined (initial mixture)
     end
+
+    properties (Dependent)
+        cp_r                   % Reactive component of the specific heat at constant pressure
+        cv_r                   % Reactive component of the specific heat at constant volume
+        gamma_f                % Frozen adiabatic index [-]
+        cpSpecific             % Mass specific heat at constant pressure [J/(kg-K)]
+        cvSpecific             % Mass specific heat at constant volume [J/(kg-K)]
+        hSpecific              % Mass specific enthalpy [J/kg]
+        eSpecific              % Mass specific internal energy [J/kg]
+        gSpecific              % Mass specific Gibbs energy [J/kg]
+        sSpecific              % Mass specific entropy [J/(kg-K)]
+    end
     
     properties (Hidden)
         errorMoles = 0         % Relative error in the moles calculation [-]
         errorMolesIons = 0     % Relative error in the moles of ions calculation [-]
         errorProblem = 0       % Relative error in the problem [-]
         cp_f                   % Frozen component of the specific heat at constant pressure
-        cp_r                   % Reactive component of the specific heat at constant pressure
+        cv_f                   % Frozen component of the specific heat at constant volume
         dNi_T                  % Partial derivative of the number of moles with respect to temperature
         dN_T                   % Partial derivative of the total number of moles with respect to temperature
         dNi_p                  % Partial derivative of the number of moles with respect to pressure
@@ -175,6 +187,51 @@ classdef Mixture < handle & matlab.mixin.Copyable
             obj.p = ip.Results.p;
             obj.equationState = ip.Results.eos;
             obj.config = ip.Results.config;
+        end
+
+        function value = get.cp_r(obj)
+            % Get reactive component of the specific heat at constant pressure [J/K]
+            value = obj.cp - obj.cp_f;
+        end
+
+        function value = get.cv_r(obj)
+            % Get reactive component of the specific heat at constant volume [J/K]
+            value = obj.cv - obj.cv_f;
+        end
+
+        function value = get.gamma_f(obj)
+            % Get frozen specific heat ratio [-]
+            value = obj.cp_f / obj.cv_f;
+        end
+
+        function value = get.cpSpecific(obj)
+            % Get mass specific heat at constant pressure [J/(kg-K)]
+            value = obj.cp / obj.mi;
+        end
+
+        function value = get.cvSpecific(obj)
+            % Get mass specific heat at constant volume [J/(kg-K)]
+            value = obj.cv / obj.mi;
+        end
+
+        function value = get.hSpecific(obj)
+            % Get mass specific enthalpy [J/kg]
+            value = obj.h / obj.mi;
+        end
+
+        function value = get.eSpecific(obj)
+            % Get mass specific internal energy [J/kg]
+            value = obj.e / obj.mi;
+        end
+
+        function value = get.gSpecific(obj)
+            % Get mass specific Gibbs energy [J/kg]
+            value = obj.g / obj.mi;
+        end
+
+        function value = get.sSpecific(obj)
+            % Get mass specific entropy [J/(kg-K)]
+            value = obj.s / obj.mi;
         end
 
         function obj = setTemperature(obj, T, varargin)
@@ -765,6 +822,13 @@ classdef Mixture < handle & matlab.mixin.Copyable
             % Assign value to the property
             properties = {property, varargin{1:2:end}};
             values = {value, varargin{2:2:end}};
+
+            % Reorder if equivalence ratio is not the first property
+            index = find(strcmpi(properties, 'equivalenceRatio') | strcmpi(properties, 'phi'), 1);
+            if ~isempty(index) && index ~= 1
+                properties = [{properties{index}}, {properties{1:index-1}}, {properties{index+1:end}}];
+                values = [{values{index}}, {values{1:index-1}}, {values{index+1:end}}];
+            end
             
             % Definitions
             numProperties = min(length(properties), length(values));
@@ -850,7 +914,7 @@ classdef Mixture < handle & matlab.mixin.Copyable
                         case {'enthalpy', 'h', 'h0'}
                             objArray(j).h = values{i}(j);
                             FLAG_ENTHALPY = true;
-                        case {'enthalpySpecific', 'hspecific', 'hmass'}
+                        case {'enthalpyspecific', 'hspecific', 'hmass'}
                             objArray(j).h = values{i}(j) * objArray(j).mi;
                             FLAG_ENTHALPY = true;
                         case {'internalenergy', 'e', 'e0'}
@@ -1435,6 +1499,10 @@ classdef Mixture < handle & matlab.mixin.Copyable
             % Compute Gibbs energy [J]
             obj.g = obj.h - obj.T * obj.s;
             
+            % Compute frozen component of the specific heats [J/K]
+            obj.cp_f = obj.cp;
+            obj.cv_f = obj.cp_f - R0 * N_gas;
+
             % Compute thermodynamic derivatives, cp, cv, gamma, and speed
             % of sound considering chemical reaction
             if obj.FLAG_REACTION
@@ -1448,9 +1516,7 @@ classdef Mixture < handle & matlab.mixin.Copyable
                     h0_j = propertiesMatrix(:, system.ind_hi); % [J/mol]
 
                     % Compute specific heat at constant pressure [J/K]
-                    obj.cp_r = sum(h0_j / temperature .* (1 + delta .* (Ni - 1)) .* obj.dNi_T, 'omitnan');
-                    obj.cp_f = obj.cp;
-                    obj.cp = obj.cp_f + obj.cp_r;
+                    obj.cp = obj.cp_f + sum(h0_j / temperature .* (1 + delta .* (Ni - 1)) .* obj.dNi_T, 'omitnan');
 
                     % Compute specific heat at constant volume [J/K]
                     obj.cv = obj.cp + (N_gas * R0 * obj.dVdT_p^2) / obj.dVdp_T;
@@ -1485,7 +1551,7 @@ classdef Mixture < handle & matlab.mixin.Copyable
             % Compute specific heat at constant volume [J/K]
             obj.cv = obj.cp - R0 * N_gas;
 
-            % Compute Adibatic index [-]
+            % Compute adibatic index [-]
             obj.gamma = obj.cp / obj.cv;
             obj.gamma_s = obj.gamma;
 

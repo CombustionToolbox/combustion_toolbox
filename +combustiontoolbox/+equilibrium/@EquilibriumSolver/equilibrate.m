@@ -46,21 +46,6 @@ function mix2 = equilibrate(obj, mix2, varargin)
 end
 
 % SUB-PASS FUNCTIONS
-function attributeName = getAttribute(obj)
-    % Get attribute of the problem type
-    switch upper(obj.problemType)
-        case {'TP', 'TV'}
-            attributeName = 'T';
-        case 'HP'
-            attributeName = 'h';
-        case 'EV'
-            attributeName = 'e';
-        case {'SP', 'SV'}
-            attributeName = 's';
-    end
-
-end
-
 function [TGuess, molesGuess] = getGuess(obj, mix1, mix2, mixGuess, attributeName)
     % Get initial estimates for temperature and molar composition
 

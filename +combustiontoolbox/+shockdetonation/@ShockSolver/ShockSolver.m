@@ -18,26 +18,28 @@ classdef ShockSolver < handle
     %     * ``SHOCK_POLAR``: Shock polar diagrams
     %     * ``SHOCK_POLAR_R``: Shock polar diagrams for incident and reflected states
     %     * ``SHOCK_POLAR_LIMITRR``: Shock polar within the limit of regular reflection
+    %     * ``SHOCK_PRANDTL_MEYER``: Prandtl-Meyer expansion wave
     %
     % See also: :mat:func:`Mixture`, :mat:func:`EquilibriumSolver`, :mat:func:`DetonationSolver`, :mat:func:`solve`, :mat:func:`solveArray`, :mat:func:`report`
 
     properties
-        problemType             % Problem type
-        equilibriumSolver       % EquilibriumSolver object
-        tol0 = 1e-5             % Tolerance of shocks/detonations kernel
-        itMax = 50              % Max number of iterations - shocks and detonations
-        machThermo = 2          % Pre-shock Mach number above which T2_guess will be computed considering h2 = h1 + u1^2 / 2
-        tolOblique = 1e-3       % Tolerance oblique shocks algorithm
-        itOblique = 20          % Max number of iterations - oblique shocks
-        numPointsPolar = 100    % Number of points to compute shock/detonation polar curves
-        tolLimitRR = 1e-4       % Tolerance to calculate the limit of regular reflections
-        itLimitRR = 10          % Max number of iterations - limit of regular reflections
-        FLAG_RESULTS = true     % Flag to print results
-        FLAG_TIME = true        % Flag to print elapsed time
-        FLAG_REPORT = false     % Flag to print predefined plots
-        FLAG_CACHE = true       % Flag to clear cache after calculations
-        time                    % Elapsed time
-        plotConfig              % PlotConfig object
+        problemType                 % Problem type
+        equilibriumSolver           % EquilibriumSolver object
+        tol0 = 1e-5                 % Tolerance of shocks/detonations kernel
+        itMax = 50                  % Max number of iterations - shocks and detonations
+        machThermo = 2              % Pre-shock Mach number above which T2_guess will be computed considering h2 = h1 + u1^2 / 2
+        tolOblique = 1e-3           % Tolerance oblique shocks algorithm
+        itOblique = 20              % Max number of iterations - oblique shocks
+        numPointsPolar = 100        % Number of points to compute shock/detonation polar curves
+        numPointsPrandtlMeyer = 100 % Number of points to compute Prandtl-Meyer curves
+        tolLimitRR = 1e-4           % Tolerance to calculate the limit of regular reflections
+        itLimitRR = 10              % Max number of iterations - limit of regular reflections
+        FLAG_RESULTS = true         % Flag to print results
+        FLAG_TIME = true            % Flag to print elapsed time
+        FLAG_REPORT = false         % Flag to print predefined plots
+        FLAG_CACHE = true           % Flag to clear cache after calculations
+        time                        % Elapsed time
+        plotConfig                  % PlotConfig object
     end
 
     methods
@@ -49,6 +51,7 @@ classdef ShockSolver < handle
         [mix1, mix2, mix5_1, mix5_2] = shockObliqueReflectedTheta(obj, mix1, u2, theta, mix2, varargin)
         [mix1, mix2] = shockPolar(obj, mix1, u1)
         [mix1, mix2, mix2_1, mix3] = shockPolarLimitRR(obj, mix1, u1)
+        [mix1, mix2] = shockPrandtlMeyer(obj, mix1, u1, theta2, varargin)
         [R, P, T, Gammas, M1] = shockIncidentIdeal(obj, gamma, M1)
 
         function obj = ShockSolver(varargin)
@@ -61,7 +64,7 @@ classdef ShockSolver < handle
             
             % Parse input arguments
             p = inputParser;
-            addOptional(p, 'problemType', defaultProblemType, @(x) ischar(x) && any(strcmpi(x, {'SHOCK_I', 'SHOCK_R', 'SHOCK_OBLIQUE', 'SHOCK_OBLIQUE_R', 'SHOCK_POLAR', 'SHOCK_POLAR_R', 'SHOCK_POLAR_LIMITRR'})));
+            addOptional(p, 'problemType', defaultProblemType, @(x) ischar(x) && any(strcmpi(x, {'SHOCK_I', 'SHOCK_R', 'SHOCK_OBLIQUE', 'SHOCK_OBLIQUE_R', 'SHOCK_POLAR', 'SHOCK_POLAR_R', 'SHOCK_POLAR_LIMITRR', 'SHOCK_PRANDTL_MEYER'})));
             addParameter(p, 'equilibriumSolver', defaultEquilibriumSolver);
             addParameter(p, 'tol0', obj.tol0, @(x) isnumeric(x) && x > 0);
             addParameter(p, 'itMax', obj.itMax, @(x) isnumeric(x) && x > 0);
@@ -69,6 +72,7 @@ classdef ShockSolver < handle
             addParameter(p, 'tolOblique', obj.tolOblique, @(x) isnumeric(x) && x > 0);
             addParameter(p, 'itOblique', obj.itOblique, @(x) isnumeric(x) && x > 0);
             addParameter(p, 'numPointsPolar', obj.numPointsPolar, @(x) isnumeric(x) && x > 0);
+            addParameter(p, 'numPointsPrandtlMeyer', obj.numPointsPrandtlMeyer, @(x) isnumeric(x) && x > 0);
             addParameter(p, 'tolLimitRR', obj.tolLimitRR, @(x) isnumeric(x) && x > 0);
             addParameter(p, 'itLimitRR', obj.itLimitRR, @(x) isnumeric(x) && x > 0);
             addParameter(p, 'FLAG_RESULTS', obj.FLAG_RESULTS, @(x) islogical(x));
@@ -89,6 +93,7 @@ classdef ShockSolver < handle
             obj.tolOblique = p.Results.tolOblique;
             obj.itOblique = p.Results.itOblique;
             obj.numPointsPolar = p.Results.numPointsPolar;
+            obj.numPointsPrandtlMeyer = p.Results.numPointsPrandtlMeyer;
             obj.tolLimitRR = p.Results.tolLimitRR;
             obj.itLimitRR = p.Results.itLimitRR;
             obj.FLAG_RESULTS = p.Results.FLAG_RESULTS;
@@ -344,6 +349,26 @@ classdef ShockSolver < handle
 
                     % Set output
                     varargout = {mix1, mix2, mix2_1, mix3};
+
+                case 'SHOCK_PRANDTL_MEYER'
+                    % Solve problem
+                    if nargin > 2
+                        [mix1, mix2] = obj.shockPrandtlMeyer(mix1, u1, theta, varargin{1});
+                    else
+                        [mix1, mix2] = obj.shockPrandtlMeyer(mix1, u1, theta);
+                    end
+                    
+                    % Set problemType
+                    mix1.problemType = obj.problemType;
+                    mix2.problemType = obj.problemType;
+
+                    % Print results
+                    if obj.FLAG_RESULTS
+                        print(mix1, mix2);
+                    end
+
+                    % Set output
+                    varargout = {mix1, mix2};
             end
 
         end
@@ -389,6 +414,16 @@ classdef ShockSolver < handle
                     
                     for i = n-1:-1:1
                         [mixArray1(i), mixArray2(i)] = obj.solve(mixArray1(i), mixArray2(i + 1));
+                    end
+
+                    % Set output
+                    varargout = {mixArray1, mixArray2};
+
+                case {'SHOCK_PRANDTL_MEYER_THETA'}
+                    [mixArray1(1), mixArray2(1)] = obj.solve(mixArray1(1));
+                    
+                    for i = 2:n
+                        [mixArray1(i), mixArray2(i)] = obj.solve(mixArray1(i), mixArray2(i - 1));
                     end
 
                     % Set output

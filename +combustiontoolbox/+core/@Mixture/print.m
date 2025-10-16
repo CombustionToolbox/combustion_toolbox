@@ -174,6 +174,10 @@ function print_properties(ProblemType, numberMixtures, mix)
             fprintf(['sonic def.[deg]|                 |', string_value_2], get_properties('thetaSonic', numberMixtures - 1, mix(2:end)));
         end
 
+    elseif contains(ProblemType, 'PRANDTL_MEYER')
+        fprintf('------------------------------------------------------------------------------------------------------------\n');
+        fprintf('PARAMETERS\n');
+        fprintf(['deflection[deg]|                 |', string_value_2], get_properties('theta', numberMixtures - 1, mix(2:end)));
     elseif contains(ProblemType, 'ROCKET')
         string_value_3 = set_string_value(numberMixtures - 2);
 

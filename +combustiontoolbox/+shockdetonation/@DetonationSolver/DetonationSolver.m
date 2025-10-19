@@ -61,6 +61,7 @@ classdef DetonationSolver < handle
         function obj = DetonationSolver(varargin)
             % Constructor
             defaultProblemType = 'DET';
+            defaultCaloricGasModel = combustiontoolbox.core.CaloricGasModel.imperfect;
             defaultPlotConfig = combustiontoolbox.utils.display.PlotConfig();
             defaultEquilibriumSolver = combustiontoolbox.equilibrium.EquilibriumSolver('plotConfig', defaultPlotConfig);
             defaultShockSolver = combustiontoolbox.shockdetonation.ShockSolver('plotConfig', defaultPlotConfig);
@@ -70,6 +71,7 @@ classdef DetonationSolver < handle
             % Parse input arguments
             p = inputParser;
             addOptional(p, 'problemType', defaultProblemType, @(x) ischar(x) && any(strcmpi(x, {'DET', 'DET_R', 'DET_OVERDRIVEN', 'DET_OVERDRIVEN_R', 'DET_UNDERDRIVEN', 'DET_UNDERDRIVEN_R', 'DET_OBLIQUE', 'DET_OBLIQUE_R', 'DET_POLAR', 'DET_POLAR_R'})));
+            addParameter(p, 'caloricGasModel', defaultCaloricGasModel, @(x) isa(x, 'combustiontoolbox.core.CaloricGasModel'));
             addParameter(p, 'equilibriumSolver', defaultEquilibriumSolver);
             addParameter(p, 'shockSolver', defaultShockSolver);
             addParameter(p, 'tol0', obj.tol0, @(x) isnumeric(x) && x > 0);
@@ -109,6 +111,7 @@ classdef DetonationSolver < handle
             obj.plotConfig = p.Results.plotConfig;
 
             if sum(contains(p.UsingDefaults, 'equilibriumSolver'))
+                obj.equilibriumSolver.caloricGasModel = p.Results.caloricGasModel;
                 obj.equilibriumSolver.FLAG_TCHEM_FROZEN = p.Results.FLAG_TCHEM_FROZEN;
                 obj.equilibriumSolver.FLAG_FROZEN = p.Results.FLAG_FROZEN;
                 obj.equilibriumSolver.tolMoles = p.Results.tolMoles;
@@ -123,6 +126,15 @@ classdef DetonationSolver < handle
             obj.shockSolver.FLAG_CACHE = false;
             obj.plotConfig.plotProperties{end + 1} = 'uShock';
             obj.plotConfig.plotPropertiesBasis{end + 1} = [];
+
+            % Display warning if deprecated flags are used
+            if ~ismember('FLAG_TCHEM_FROZEN', p.UsingDefaults) || ~ismember('FLAG_FROZEN', p.UsingDefaults)
+                warning(['The flags ''FLAG_TCHEM_FROZEN'' and ''FLAG_FROZEN'' are deprecated. ', ...
+                         'Please use the ''caloricGasModel'' parameter with values from the CaloricGasModel enumeration instead.']);
+            
+                obj.equilibriumSolver.caloricGasModel = obj.equilibriumSolver.caloricGasModel.fromFlag(obj.equilibriumSolver.FLAG_TCHEM_FROZEN, obj.equilibriumSolver.FLAG_FROZEN);
+            end
+
         end
 
         function obj = set(obj, property, value, varargin)

@@ -36,8 +36,8 @@ function [mix1, mix2] = shockPrandtlMeyer(obj, mix1, u1, theta2, varargin)
         error('flow is subsonic with Mach %.4f', mix1.mach);
     end
 
-    % Check caloric model
-    if ~obj.equilibriumSolver.FLAG_TCHEM_FROZEN || ~obj.equilibriumSolver.FLAG_FROZEN
+    % Check if caloric gas model is imperfect
+    if obj.equilibriumSolver.caloricGasModel.isImperfect()
         obj.equilibriumSolver.problemType = 'TP';
         mach1 = mix1.mach;
         mix1 = solve(obj.equilibriumSolver, mix1);
@@ -61,7 +61,7 @@ function [mix1, mix2] = shockPrandtlMeyer(obj, mix1, u1, theta2, varargin)
     [mach2Guess, rho2Guess] = getGuess(mix1, mix2, theta2);
 
     % Solve problem assuming a calorically perfect gaseous mixture
-    if obj.equilibriumSolver.FLAG_TCHEM_FROZEN
+    if obj.equilibriumSolver.caloricGasModel.isPerfect()
         % Definitions
         gamma = mix1.gamma;
 
@@ -83,7 +83,7 @@ function [mix1, mix2] = shockPrandtlMeyer(obj, mix1, u1, theta2, varargin)
     end
 
     % Solve problem assuming a thermally perfect gaseous mixture
-    if obj.equilibriumSolver.FLAG_FROZEN
+    if obj.equilibriumSolver.caloricGasModel.isThermallyPerfect()
         mix2 = setProperties(mix2, 'entropySpecific', mix1.sSpecific, 'volume', 1/rho2Guess, 'mach', mach2Guess);
 
         % Final state

@@ -36,7 +36,8 @@ function metadata = run_validation_ROCKET_CEA_25(varargin)
     listSpecies = 'HYDROGEN_L';
     displaySpecies = {'H2O','H2','O2','H','OH','O','O3','HO2','H2O2'};
     tolMoles = 1e-14;
-
+    caloricGasModel = combustiontoolbox.core.CaloricGasModel.thermallyPerfect;
+    
     % Get Nasa database
     DB = NasaDatabase('FLAG_BENCHMARK', FLAG_BENCHMARK);
     
@@ -54,7 +55,7 @@ function metadata = run_validation_ROCKET_CEA_25(varargin)
     mixArray1 = setProperties(mix, 'temperature', 90, 'pressure', 101.325, 'equivalenceRatio', 0.5:0.01:4, 'areaRatio', areaRatio);
     
     % Initialize solver
-    solver = RocketSolver('problemType', 'ROCKET_IAC', 'FLAG_FROZEN', true, 'tolMoles', tolMoles, 'FLAG_RESULTS', false);
+    solver = RocketSolver('problemType', 'ROCKET_IAC', 'caloricGasModel', caloricGasModel, 'tolMoles', tolMoles, 'FLAG_RESULTS', false);
 
     % Solve problem
     [~, ~, ~, mixArray4] = solver.solveArray(mixArray1);

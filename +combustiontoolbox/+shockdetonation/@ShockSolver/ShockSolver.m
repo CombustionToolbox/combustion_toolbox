@@ -57,6 +57,7 @@ classdef ShockSolver < handle
         function obj = ShockSolver(varargin)
             % Constructor
             defaultProblemType = 'SHOCK_I';
+            defaultCaloricGasModel = combustiontoolbox.core.CaloricGasModel.imperfect;
             defaultEquilibriumSolver = combustiontoolbox.equilibrium.EquilibriumSolver();
             defaultPlotConfig = combustiontoolbox.utils.display.PlotConfig();
             defaultFLAG_TCHEM_FROZEN = false;
@@ -65,6 +66,7 @@ classdef ShockSolver < handle
             % Parse input arguments
             p = inputParser;
             addOptional(p, 'problemType', defaultProblemType, @(x) ischar(x) && any(strcmpi(x, {'SHOCK_I', 'SHOCK_R', 'SHOCK_OBLIQUE', 'SHOCK_OBLIQUE_R', 'SHOCK_POLAR', 'SHOCK_POLAR_R', 'SHOCK_POLAR_LIMITRR', 'SHOCK_PRANDTL_MEYER'})));
+            addParameter(p, 'caloricGasModel', defaultCaloricGasModel, @(x) isa(x, 'combustiontoolbox.core.CaloricGasModel'));
             addParameter(p, 'equilibriumSolver', defaultEquilibriumSolver);
             addParameter(p, 'tol0', obj.tol0, @(x) isnumeric(x) && x > 0);
             addParameter(p, 'itMax', obj.itMax, @(x) isnumeric(x) && x > 0);
@@ -103,6 +105,7 @@ classdef ShockSolver < handle
             obj.plotConfig = p.Results.plotConfig;
 
             if sum(contains(p.UsingDefaults, 'equilibriumSolver'))
+                obj.equilibriumSolver.caloricGasModel = p.Results.caloricGasModel;
                 obj.equilibriumSolver.FLAG_TCHEM_FROZEN = p.Results.FLAG_TCHEM_FROZEN;
                 obj.equilibriumSolver.FLAG_FROZEN = p.Results.FLAG_FROZEN;
             end
@@ -111,6 +114,15 @@ classdef ShockSolver < handle
             obj.equilibriumSolver.FLAG_RESULTS = false;
             obj.equilibriumSolver.FLAG_TIME = false;
             obj.equilibriumSolver.FLAG_CACHE = false;
+
+            % Display warning if deprecated flags are used
+            if ~ismember('FLAG_TCHEM_FROZEN', p.UsingDefaults) || ~ismember('FLAG_FROZEN', p.UsingDefaults)
+                warning(['The flags ''FLAG_TCHEM_FROZEN'' and ''FLAG_FROZEN'' are deprecated. ', ...
+                         'Please use the ''caloricGasModel'' parameter with values from the CaloricGasModel enumeration instead.']);
+            
+                obj.equilibriumSolver.caloricGasModel = obj.equilibriumSolver.caloricGasModel.fromFlag(obj.equilibriumSolver.FLAG_TCHEM_FROZEN, obj.equilibriumSolver.FLAG_FROZEN);
+            end
+
         end
 
         function obj = set(obj, property, value, varargin)

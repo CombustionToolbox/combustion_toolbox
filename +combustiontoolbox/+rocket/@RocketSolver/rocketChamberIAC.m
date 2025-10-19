@@ -17,11 +17,11 @@ function mix = rocketChamberIAC(obj, mix, mix_guess)
     %     mix = rocketChamberIAC(obj, mix, mix_guess)
     
     % Temporal value
-    TEMP_FLAG_FROZEN = obj.equilibriumSolver.FLAG_FROZEN;
+    tempCaloricGasModel = obj.equilibriumSolver.caloricGasModel;
 
     % Definitions
     obj.equilibriumSolver.problemType = 'HP';
-    obj.equilibriumSolver.FLAG_FROZEN = false;
+    obj.equilibriumSolver.caloricGasModel = obj.equilibriumSolver.caloricGasModel.setImperfect;
 
     % Compute chemical equilibria at the exit of the chamber (HP)
     if isempty(mix_guess)
@@ -35,5 +35,5 @@ function mix = rocketChamberIAC(obj, mix, mix_guess)
     
     % Restore problemType and FLAG_FROZEN values;
     mix.problemType = 'ROCKET_IAC';
-    obj.equilibriumSolver.FLAG_FROZEN = TEMP_FLAG_FROZEN;
+    obj.equilibriumSolver.caloricGasModel = tempCaloricGasModel;
 end

@@ -1,4 +1,4 @@
-function run_validation_ROCKET_CEA_17
+function metadata = run_validation_ROCKET_CEA_17(varargin)
     % Run test validation_ROCKET_CEA_1:
     % Contrasted with: NASA's Chemical Equilibrium with Applications software
     % Problem type: Equilibrium composition at exit of the rocket nozzle
@@ -15,8 +15,18 @@ function run_validation_ROCKET_CEA_17
     import combustiontoolbox.rocket.*
     import combustiontoolbox.utils.display.*
     
-    % Benchmark?
-    FLAG_BENCHMARK = false;
+    % Default values
+    metadata = [];
+    DEFAULT_FLAG_BENCHMARK = false;
+    DEFAULT_FLAG_EXPORT = false;
+
+    % Input parser
+    p = inputParser;
+    addOptional(p, 'FLAG_BENCHMARK', DEFAULT_FLAG_BENCHMARK, @(x) islogical(x));
+    addParameter(p, 'FLAG_EXPORT', DEFAULT_FLAG_EXPORT, @(x) islogical(x));
+    parse(p, varargin{:});
+    FLAG_BENCHMARK = p.Results.FLAG_BENCHMARK;
+    FLAG_EXPORT = p.Results.FLAG_EXPORT;
 
     % Definitions
     fuel = 'H2bLb';
@@ -50,6 +60,8 @@ function run_validation_ROCKET_CEA_17
     [~, ~, ~, mixArray4] = solver.solveArray(mixArray1);
 
     if FLAG_BENCHMARK
+        stackTrace = dbstack; functionname = stackTrace.name;
+        metadata = combustiontoolbox.utils.BenchmarkMetadata(solver, mixArray1, functionname);
         return
     end
     
@@ -63,7 +75,18 @@ function run_validation_ROCKET_CEA_17
     fig2 = plotProperties(repmat({'equivalenceRatio'}, 1, 12), mixArray4, {'T', 'rho', 'h', 'e', 'g', 'cp', 's', 'gamma_s', 'sound', 'u', 'I_sp', 'I_vac'}, mixArray4, 'basis', {[], [], 'mi', 'mi', 'mi', 'mi', 'mi', [], [], [], [], []}, 'validation', resultsCEA);
 
     % Save plots
+    if ~FLAG_EXPORT
+        return
+    end
+
     folderpath = fullfile(pwd, 'validations', 'figures');
+
+    % Check if folder exists, otherwise create it
+    if ~exist(folderpath, 'dir')
+        mkdir(folderpath);
+    end
+
+    % Save plots
     stack_trace = dbstack;
     filename = stack_trace.name;
     saveas(fig1, fullfile(folderpath, strcat(filename, '_molar')), 'svg');

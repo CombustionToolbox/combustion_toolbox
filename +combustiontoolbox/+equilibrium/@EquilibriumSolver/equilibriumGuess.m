@@ -64,6 +64,7 @@ function N = getSimplex(N, A0, muRT, b0, index, indexIons, NG)
         FLAG_MAXMIN = Nmajor > 0;
         indexPass = unique([1:NG, NG + index(FLAG_MAXMIN(NG + 1:end))]);
         [Nminor(indexPass), Nmin] = combustiontoolbox.utils.optimization.simplexDual(A0(:, indexPass), b0');
+        Nmin = Nmin + 1e-10;
     end
     
     % Merge solutions

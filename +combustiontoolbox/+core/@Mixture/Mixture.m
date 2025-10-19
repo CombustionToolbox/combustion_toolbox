@@ -128,6 +128,7 @@ classdef Mixture < handle & matlab.mixin.Copyable
 
     properties (Access = private, Hidden)
         equilibriumSolver_ % Equilibrium solver object
+        listSpecies_       % Original immutable species list (initial mixture)
     end
 
     properties (Dependent, Access = private)
@@ -139,7 +140,8 @@ classdef Mixture < handle & matlab.mixin.Copyable
         function value = get.equilibriumSolver(obj)
             % Get equilibrium solver object
             if isempty(obj.equilibriumSolver_)
-                value = combustiontoolbox.equilibrium.EquilibriumSolver('FLAG_FROZEN', true, 'FLAG_RESULTS', false);
+                caloricGasModel = combustiontoolbox.core.CaloricGasModel.thermallyPerfect;
+                value = combustiontoolbox.equilibrium.EquilibriumSolver('caloricGasModel', caloricGasModel, 'FLAG_RESULTS', false);
                 obj.equilibriumSolver_ = value;
                 return
             end
@@ -635,6 +637,9 @@ classdef Mixture < handle & matlab.mixin.Copyable
             obj.quantity = [obj.quantity, quantity];
             obj.numSpecies = length(obj.listSpecies);
 
+            % Set listSpecies_
+            obj.listSpecies_ = obj.listSpecies;
+
             % Check if species are contained in the chemical system
             obj.chemicalSystem.checkSpecies(listSpecies);
             
@@ -1037,6 +1042,9 @@ classdef Mixture < handle & matlab.mixin.Copyable
                 obj.quantity = [obj.molesFuel, obj.molesOxidizer, obj.molesInert];
             end
             
+            % Merge duplicate species
+            mergeDuplicateSpecies(obj);
+
             % Assign values to the propertiesMatrix
             obj.chemicalSystem.setPropertiesMatrixCompositionInitialIndex(obj.listSpecies, obj.quantity, obj.indexSpecies);
 
@@ -1335,24 +1343,24 @@ classdef Mixture < handle & matlab.mixin.Copyable
     end
     
     methods(Access = protected)
-      
-      function objCopy = copyElement(obj)
-         % Override copyElement method:
+    
+        function objCopy = copyElement(obj)
+            % Override copyElement method:
 
-         % Make a shallow copy of all properties
-         objCopy = copyElement@matlab.mixin.Copyable(obj);
-      end
+            % Make a shallow copy of all properties
+            objCopy = copyElement@matlab.mixin.Copyable(obj);
+        end
 
-      function objCopy = copyDeep(obj)
-         % Make a deep copy of obj
+        function objCopy = copyDeep(obj)
+            % Make a deep copy of obj
 
-         % Make a shallow copy of all properties
-         objCopy = copyElement(obj);
+            % Make a shallow copy of all properties
+            objCopy = copyElement(obj);
 
-         % Make a deep copy of the ChemicalSystem object
-         objCopy.chemicalSystem = obj.chemicalSystem.copy();
-      end
-      
+            % Make a deep copy of the ChemicalSystem object
+            objCopy.chemicalSystem = obj.chemicalSystem.copy();
+        end
+
     end
 
     methods (Access = private)
@@ -1453,12 +1461,12 @@ classdef Mixture < handle & matlab.mixin.Copyable
             propertiesMatrix = system.propertiesMatrix; % Properties matrix
             
             % Unpack propertiesMatrix
-            Ni = propertiesMatrix(:, system.ind_ni); % [mol]
+            Ni = propertiesMatrix(:, system.ind_ni);               % [mol]
             obj.hf = dot(propertiesMatrix(:, system.ind_hfi), Ni); % [J]
-            obj.h = dot(propertiesMatrix(:, system.ind_hi), Ni); % [J]
+            obj.h = dot(propertiesMatrix(:, system.ind_hi), Ni);   % [J]
             obj.ef = dot(propertiesMatrix(:, system.ind_efi), Ni); % [J]
             obj.cp = dot(propertiesMatrix(:, system.ind_cpi), Ni); % [J/K]
-            obj.s0 = dot(propertiesMatrix(:, system.ind_si), Ni); % [J/K]
+            obj.s0 = dot(propertiesMatrix(:, system.ind_si), Ni);  % [J/K]
 
             % Compute total composition of gas species [mol]
             N_gas = sum(Ni(~obj.phase));
@@ -1793,6 +1801,27 @@ classdef Mixture < handle & matlab.mixin.Copyable
                 value(i) = fun(species, temperatures(i));
             end
 
+        end
+
+        function mergeDuplicateSpecies(obj)
+            % Merge quantities for repeated species names.
+            %
+            % This method detects duplicate species in obj.listSpecies and
+            % sums their corresponding quantities in obj.quantity. The result
+            % keeps the original order of appearance (`stable`).
+
+            % Definitions
+            [uniqueSpecies, ~, index] = unique(obj.listSpecies_, 'stable');
+
+            % Check for duplicate species
+            if obj.numSpecies == length(uniqueSpecies)
+                return;
+            end
+            
+            combinedQuantity = accumarray(index(:), obj.quantity(:), [], @sum);
+
+            obj.listSpecies = uniqueSpecies;
+            obj.quantity = combinedQuantity.';
         end
 
     end

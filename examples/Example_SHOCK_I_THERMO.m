@@ -19,7 +19,7 @@
 %
 % @author: Alberto Cuadra Lara
 %                  
-% Last update Sep 05 2024
+% Last update Oct 19 2025
 % -------------------------------------------------------------------------
 
 % Import packages
@@ -51,18 +51,16 @@ ax3 = setFigure(plotConfig);
 % Calculations
 for i = 1:3
 
+    % Define caloric model and linestyle
     switch i
         case 1
-            FLAG_TCHEM_FROZEN = true;
-            FLAG_FROZEN = false;
+            caloricGasModel = CaloricGasModel.perfect;
             linestyle = ':';
         case 2
-            FLAG_TCHEM_FROZEN = false;
-            FLAG_FROZEN = true;
+            caloricGasModel = CaloricGasModel.thermallyPerfect;
             linestyle = '--';
         case 3
-            FLAG_TCHEM_FROZEN = false;
-            FLAG_FROZEN = false;
+            caloricGasModel = CaloricGasModel.imperfect;
             linestyle = '-';
     end
 
@@ -70,7 +68,7 @@ for i = 1:3
     mixArray1 = setProperties(mix, 'temperature', 300, 'pressure', 1, 'M1', 1:0.1:10);
 
     % Initialize solver
-    solver = ShockSolver('problemType', 'SHOCK_I', 'FLAG_TCHEM_FROZEN', FLAG_TCHEM_FROZEN, 'FLAG_FROZEN', FLAG_FROZEN);
+    solver = ShockSolver('problemType', 'SHOCK_I', 'caloricGasModel', caloricGasModel);
 
     % Solve problem
     [mixArray1, mixArray2] = solver.solveArray(mixArray1);

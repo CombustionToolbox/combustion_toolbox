@@ -16,9 +16,8 @@ import combustiontoolbox.core.*
 import combustiontoolbox.shockdetonation.*
 import combustiontoolbox.utils.display.*
 
-% Definitions
-FLAG_TCHEM_FROZEN = false;
-FLAG_FROZEN = false;
+% Define caloric gas model
+caloricGasModel = CaloricGasModel.imperfect;
 
 % Get Nasa database
 DB = NasaDatabase();
@@ -36,7 +35,7 @@ set(mix, {'N2', 'O2'}, [79, 21]/21);
 mixArray1 = setProperties(mix, 'temperature', 3000, 'pressure', 1, 'M1', 1, 'theta', 80);
 
 % Initialize solver
-solver = ShockSolver('problemType', 'SHOCK_PRANDTL_MEYER', 'FLAG_TCHEM_FROZEN', FLAG_TCHEM_FROZEN, 'FLAG_FROZEN', FLAG_FROZEN, 'numPointsPrandtlMeyer', 300);
+solver = ShockSolver('problemType', 'SHOCK_PRANDTL_MEYER', 'caloricGasModel', caloricGasModel, 'numPointsPrandtlMeyer', 300);
 
 % Solve problem
 [mixArray1, mixArray2] = solver.solveArray(mixArray1);

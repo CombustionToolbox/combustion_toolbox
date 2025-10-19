@@ -20,20 +20,21 @@ function mix2 = equilibrateT(obj, mix1, mix2, T, varargin)
     
     % Import packages
     import combustiontoolbox.utils.findIndex
-    
-    % Check if calculations are for a thermochemical frozen gas (calorically perfect gas)
-    if obj.FLAG_TCHEM_FROZEN
+
+    % Check if calculations are for a calorically perfect gas
+    if obj.caloricGasModel.isPerfect()
         mix2 = equilibrateTPerfect(mix1, mix2, T);
         return
     end
 
-    % Check if calculations are for a calorically imperfect gas with frozen chemistry (thermally perfect gas)
-    if obj.FLAG_FROZEN
+    % Check if calculations are for a thermally perfect gas
+    if obj.caloricGasModel.isThermallyPerfect()
         mix2 = equilibrateTFrozen(mix2, T);
         return
     end
 
     % Definitions
+    molesGuess = [];
     N_mix0 = moles(mix1); % Get moles of inert species
     system = mix2.chemicalSystem;
     systemProducts = mix2.chemicalSystemProducts;

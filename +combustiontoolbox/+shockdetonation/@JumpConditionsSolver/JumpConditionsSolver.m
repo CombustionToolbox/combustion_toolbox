@@ -95,6 +95,7 @@ classdef JumpConditionsSolver < handle
             %     obj = JumpConditionsSolver('param1', value1, 'param2', value2, ...);
 
             % Default values
+            defaultCaloricGasModel = combustiontoolbox.core.CaloricGasModel.imperfect;
             defaultEquilibriumSolver = combustiontoolbox.equilibrium.EquilibriumSolver();
             defaultShockSolver = combustiontoolbox.shockdetonation.ShockSolver('equilibriumSolver', defaultEquilibriumSolver);
             defaultFLAG_TCHEM_FROZEN = false;
@@ -106,6 +107,7 @@ classdef JumpConditionsSolver < handle
 
             % Parse input arguments
             p = inputParser;
+            addParameter(p, 'caloricGasModel', defaultCaloricGasModel, @(x) isa(x, 'combustiontoolbox.core.CaloricGasModel'));
             addParameter(p, 'equilibriumSolver', defaultEquilibriumSolver, @(x) isa(x, 'combustiontoolbox.equilibrium.EquilibriumSolver'));
             addParameter(p, 'shockSolver', defaultShockSolver, @(x) isa(x, 'combustiontoolbox.shockdetonation.ShockSolver'));
             addParameter(p, 'tolGammas1', obj.tolGammas1, @(x) isnumeric(x) && isscalar(x) && x > 0);
@@ -127,6 +129,7 @@ classdef JumpConditionsSolver < handle
             parse(p, varargin{:});
 
             % Set parameters
+            obj.caloricGasModel = p.Results.caloricGasModel;
             obj.equilibriumSolver = p.Results.equilibriumSolver;
             obj.shockSolver = p.Results.shockSolver;
             obj.tolGammas1 = p.Results.tolGammas1;
@@ -158,6 +161,15 @@ classdef JumpConditionsSolver < handle
             obj.equilibriumSolver.FLAG_TIME = false;
             obj.equilibriumSolver.FLAG_CACHE = false;
             obj.shockSolver.FLAG_TIME = false;
+
+            % Display warning if deprecated flags are used
+            if ~ismember('FLAG_TCHEM_FROZEN', p.UsingDefaults) || ~ismember('FLAG_FROZEN', p.UsingDefaults)
+                warning(['The flags ''FLAG_TCHEM_FROZEN'' and ''FLAG_FROZEN'' are deprecated. ', ...
+                         'Please use the ''caloricGasModel'' parameter with values from the CaloricGasModel enumeration instead.']);
+            
+                obj.equilibriumSolver.caloricGasModel = obj.equilibriumSolver.caloricGasModel.fromFlag(obj.equilibriumSolver.FLAG_TCHEM_FROZEN, obj.equilibriumSolver.FLAG_FROZEN);
+            end
+
         end
 
         function value = get.MIN_MACH(obj)
@@ -266,7 +278,7 @@ classdef JumpConditionsSolver < handle
             jumpConditions = getJumpData(obj);
 
             % Solve Gammas (calorically perfect gas)
-            if obj.equilibriumSolver.FLAG_TCHEM_FROZEN
+            if obj.caloricGasModel.isPerfect()
                 [jumpConditions.Gammas1, jumpConditions.Gammas2, jumpConditions.Gammas3] = obj.getGammasPerfect(jumpConditions.gamma1, jumpConditions.M1);
 
                 % Interpolate results into a smaller grid

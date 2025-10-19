@@ -35,6 +35,7 @@ classdef RocketSolver < handle
         function obj = RocketSolver(varargin)
             % Constructor
             defaultProblemType = 'ROCKET_IAC';
+            defaultCaloricGasModel = combustiontoolbox.core.CaloricGasModel.imperfect;
             defaultEquilibriumSolver = combustiontoolbox.equilibrium.EquilibriumSolver();
             defaultPlotConfig = combustiontoolbox.utils.display.PlotConfig();
             defaultFLAG_TCHEM_FROZEN = false;
@@ -43,6 +44,7 @@ classdef RocketSolver < handle
             % Parse input arguments
             p = inputParser;
             addOptional(p, 'problemType', defaultProblemType, @(x) ischar(x) && any(strcmpi(x, {'ROCKET_IAC', 'ROCKET_FAC'})));
+            addParameter(p, 'caloricGasModel', defaultCaloricGasModel, @(x) isa(x, 'combustiontoolbox.core.CaloricGasModel'));
             addParameter(p, 'equilibriumSolver', defaultEquilibriumSolver);
             addParameter(p, 'FLAG_TCHEM_FROZEN', defaultFLAG_TCHEM_FROZEN, @(x) islogical(x))
             addParameter(p, 'FLAG_FROZEN', defaultFLAG_FROZEN, @(x) islogical(x));
@@ -64,6 +66,7 @@ classdef RocketSolver < handle
             obj.FLAG_CACHE = p.Results.FLAG_CACHE;
             
             if sum(contains(p.UsingDefaults, 'equilibriumSolver'))
+                obj.equilibriumSolver.caloricGasModel = p.Results.caloricGasModel;
                 obj.equilibriumSolver.FLAG_TCHEM_FROZEN = p.Results.FLAG_TCHEM_FROZEN;
                 obj.equilibriumSolver.FLAG_FROZEN = p.Results.FLAG_FROZEN;
                 obj.equilibriumSolver.tolMoles = p.Results.tolMoles;
@@ -75,6 +78,15 @@ classdef RocketSolver < handle
             obj.equilibriumSolver.FLAG_CACHE = false;
             obj.plotConfig.plotProperties = [obj.plotConfig.plotProperties, {'u', 'I_sp', 'I_vac'}];
             obj.plotConfig.plotPropertiesBasis = [obj.plotConfig.plotPropertiesBasis, {[], [], []}];
+
+            % Display warning if deprecated flags are used
+            if ~ismember('FLAG_TCHEM_FROZEN', p.UsingDefaults) || ~ismember('FLAG_FROZEN', p.UsingDefaults)
+                warning(['The flags ''FLAG_TCHEM_FROZEN'' and ''FLAG_FROZEN'' are deprecated. ', ...
+                         'Please use the ''caloricGasModel'' parameter with values from the CaloricGasModel enumeration instead.']);
+            
+                obj.equilibriumSolver.caloricGasModel = obj.equilibriumSolver.caloricGasModel.fromFlag(obj.equilibriumSolver.FLAG_TCHEM_FROZEN, obj.equilibriumSolver.FLAG_FROZEN);
+            end
+            
         end
 
         function obj = set(obj, property, value, varargin)

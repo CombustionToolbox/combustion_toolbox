@@ -24,6 +24,7 @@ classdef EquilibriumSolver < handle
     
     properties
         problemType                % Problem type [TP, TV, HP, EV, SP, SV]
+        caloricGasModel            % Caloric gas model (perfect, thermallyPerfect, imperfect)
         tolGibbs = 1e-6            % Tolerance of the Gibbs/Helmholtz minimization method
         tolE = 1e-6                % Tolerance of the mass balance
         tolMoles = 1e-14           % Tolerance of the composition of the mixture                       
@@ -63,10 +64,12 @@ classdef EquilibriumSolver < handle
             % Constructor
             defaultProblemType = 'TP';
             defaultPlotConfig = combustiontoolbox.utils.display.PlotConfig();
+            defaultCaloricGasModel = combustiontoolbox.core.CaloricGasModel.imperfect;
 
             % Parse input arguments
             p = inputParser;
             addOptional(p, 'problemType', defaultProblemType, @(x) ischar(x) && any(strcmpi(x, {'TP', 'TV', 'HP', 'EV', 'SP', 'SV'})));
+            addParameter(p, 'caloricGasModel', defaultCaloricGasModel, @(x) isa(x, 'combustiontoolbox.core.CaloricGasModel'));
             addParameter(p, 'tolGibbs', obj.tolGibbs, @(x) isnumeric(x) && x > 0);
             addParameter(p, 'tolE', obj.tolE, @(x) isnumeric(x) && x > 0);
             addParameter(p, 'tolMoles', obj.tolMoles, @(x) isnumeric(x) && x > 0);
@@ -97,6 +100,7 @@ classdef EquilibriumSolver < handle
 
             % Set properties
             obj.problemType = upper(p.Results.problemType);
+            obj.caloricGasModel = p.Results.caloricGasModel;
             obj.tolGibbs = p.Results.tolGibbs;
             obj.tolE = p.Results.tolE;
             obj.tolMoles = p.Results.tolMoles;
@@ -123,6 +127,15 @@ classdef EquilibriumSolver < handle
             obj.FLAG_REPORT = p.Results.FLAG_REPORT;
             obj.FLAG_CACHE = p.Results.FLAG_CACHE;
             obj.plotConfig = p.Results.plotConfig;
+
+            % Display warning if deprecated flags are used
+            if ~ismember('FLAG_TCHEM_FROZEN', p.UsingDefaults) || ~ismember('FLAG_FROZEN', p.UsingDefaults)
+                warning(['The flags ''FLAG_TCHEM_FROZEN'' and ''FLAG_FROZEN'' are deprecated. ', ...
+                         'Please use the ''caloricGasModel'' parameter with values from the CaloricGasModel enumeration instead.']);
+            
+                obj.caloricGasModel = obj.caloricGasModel.fromFlag(obj.FLAG_TCHEM_FROZEN, obj.FLAG_FROZEN);
+            end
+
         end
 
         function obj = set(obj, property, value, varargin)

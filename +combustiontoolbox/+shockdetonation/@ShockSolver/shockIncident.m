@@ -25,7 +25,8 @@ function [mix1, mix2] = shockIncident(obj, mix1, u1, varargin)
     % Unpack input data
     [mix1, mix2, guess_moles] = unpack(mix1, u1, varargin{:});
 
-    if obj.equilibriumSolver.FLAG_TCHEM_FROZEN
+    % Check if calculations are for a calorically perfect gaseous mixture
+    if obj.equilibriumSolver.caloricGasModel.isPerfect()
         STOP = 0;
         [~, p2p1, T2T1, ~, ~] = obj.shockIncidentIdeal(mix1.gamma, mix1.mach);
         T2 = T2T1 * mix1.T; % [K]

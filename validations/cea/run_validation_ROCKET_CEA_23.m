@@ -7,7 +7,7 @@ function metadata = run_validation_ROCKET_CEA_23(varargin)
     % Area ratio A_c/A_t = 2;
     % Area ratio A_e/A_t = 3;
     % Equivalence ratio [-] = 0.5:0.01:4
-    % Initial mixture: CH6N2bLb + MMH
+    % Initial mixture: MMH + N2O4
     % List of species considered: list_species('Soot formation extended')
 
     % Import packages

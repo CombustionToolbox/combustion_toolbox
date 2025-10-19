@@ -100,7 +100,7 @@ function [main_ax, main_figure] = plotProperties(x_field, x_var, y_field, y_var,
     % Create main figure
     if isempty(main_ax)
         main_figure = figure;
-        set(main_figure, 'units', 'normalized', 'innerposition', config.innerposition, 'outerposition', config.outerposition);
+        set(main_figure, 'units', 'normalized', 'innerposition', config.innerpositionLayout, 'outerposition', config.outerpositionLayout);
         main_ax = tiledlayout(main_figure, 'flow');
     else
         main_figure = gcf;
@@ -146,5 +146,4 @@ function [main_ax, main_figure] = plotProperties(x_field, x_var, y_field, y_var,
 
     end
     
-
 end

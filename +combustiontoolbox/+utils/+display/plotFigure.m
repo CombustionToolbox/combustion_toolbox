@@ -156,12 +156,12 @@ function [ax, dline] = plotFigure(x_field, x_var, y_field, y_var, varargin)
 
     % Set title
     if ~isempty(config.title)
-        title(ax, config.title, 'Interpreter', 'latex', 'FontSize', config.fontsize + 4);
+        title(ax, config.title, 'Interpreter', 'latex', 'FontSize', config.fontsize + 2);
     end
 
     % Legend
     if ~isempty(config.legend_name)
-        legend(ax, config.legend_name, 'FontSize', config.fontsize - 2, 'Location', config.legend_location, 'interpreter', 'latex');
+        legend(ax, config.legend_name, 'FontSize', config.fontsize - 4, 'Location', config.legend_location, 'interpreter', 'latex');
     end
 
 end

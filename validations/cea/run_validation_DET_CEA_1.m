@@ -82,10 +82,10 @@ function metadata = run_validation_DET_CEA_1(varargin)
     fig1 = plotComposition(mixArray2(1), mixArray1, 'equivalenceRatio', 'Xi', 'mintol', 1e-14, 'y_var', mixArray2, 'validation', resultsCEA, 'display_species', displaySpecies);
 
     % Properties mixture 2 - 1
-    fig2 = plotProperties(repmat({'equivalenceRatio'}, 1, 8), [mixArray1.equivalenceRatio], {'T', 'p', 'rho', 'h', 'e', 'g', 's', 'gamma_s'}, mixArray2, 'basis', {[], [], [], 'mi', 'mi', 'mi', 'mi', []}, 'validation', resultsCEA);
+    fig2 = plotProperties(repmat({'equivalenceRatio'}, 1, 8), mixArray1, {'T', 'p', 'rho', 'h', 'e', 'g', 's', 'gamma_s'}, mixArray2, 'basis', {[], [], [], 'mi', 'mi', 'mi', 'mi', []}, 'validation', resultsCEA);
 
     % Properties mixture 2 - 2
-    fig3 = plotProperties(repmat({'equivalenceRatio'}, 1, 7), [mixArray1.equivalenceRatio], {'cp', 'cv', 'dVdT_p', 'dVdp_T', 'sound', 'W', 'uShock'}, mixArray2, 'basis', {'mi', 'mi', [], [], [], [], []}, 'validation', resultsCEA);
+    fig3 = plotProperties(repmat({'equivalenceRatio'}, 1, 7), mixArray1, {'cp', 'cv', 'dVdT_p', 'dVdp_T', 'sound', 'W', 'uShock'}, mixArray2, 'basis', {'mi', 'mi', [], [], [], [], []}, 'validation', resultsCEA);
 
     % Save plots
     if ~FLAG_EXPORT

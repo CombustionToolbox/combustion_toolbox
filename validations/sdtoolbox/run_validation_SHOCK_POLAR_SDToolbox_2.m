@@ -4,7 +4,7 @@ function metadata = run_validation_SHOCK_POLAR_SDToolbox_2(varargin)
     % Problem type: Shock polar
     % Temperature [K]   = 300
     % Pressure    [bar] = 1.01325
-    % Initial mixture: AIR (79% N2 + 21% O2)
+    % Initial mixture: AIR (78% N2 + 21% O2 + 1% Ar)
     % List of species considered: list_species('AIR_IONS')
 
     % Import packages

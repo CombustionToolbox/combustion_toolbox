@@ -48,10 +48,10 @@ function [ax, fig] = plotComposition(obj, x_var, x_field, y_field, varargin)
     results2 = [];
     nfrec = 1;
     FLAG_PLOT_VALIDATION = false;
-    % config = self.Misc.config;
     config.labelx = interpreterLabel(x_field, config.label_type);
     config.labely = interpreterLabel(y_field, config.label_type);
-    % mintol_display = self.C.mintol_display;
+    config.innerposition = [0.15 0.05 0.7 0.9];
+    config.outerposition = [0.15 0.05 0.7 0.9];
     config.yscale = 'log';
     y_var = x_var;
 
@@ -247,7 +247,7 @@ function [ax, fig] = plotComposition(obj, x_var, x_field, y_field, varargin)
         legendname{i} = species2latex(species{i});
     end
 
-    legend(h, legendname, 'FontSize', config.fontsize - 2, 'Location', 'northeastoutside', 'interpreter', 'latex');
+    legend(h, legendname, 'FontSize', config.fontsize - 4, 'Location', 'northeastoutside', 'interpreter', 'latex');
     
     % Set title
     if isempty(config.title)
@@ -256,7 +256,7 @@ function [ax, fig] = plotComposition(obj, x_var, x_field, y_field, varargin)
         config.title = sprintf('%s - %s', config.title, getTitle(obj));
     end
     
-    title(config.title, 'Interpreter', 'latex', 'FontSize', config.fontsize + 4);
+    title(config.title, 'Interpreter', 'latex', 'FontSize', config.fontsize + 2);
 end
 
 % SUB-PASS FUNCTIONS
@@ -281,6 +281,7 @@ function [species, index_pass] = clean_displaySpecies(molar_fractions, species, 
 
     index_all_pass = find(any(molar_fractions > mintolDisplay, 2));
     FLAG_PASS = ismember(index_species, index_all_pass);
+    
     % Update species
     index_pass = index_species(FLAG_PASS);
     species = species(index_pass);

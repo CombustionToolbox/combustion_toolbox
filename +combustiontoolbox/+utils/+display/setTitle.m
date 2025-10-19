@@ -6,5 +6,5 @@ function setTitle(ax, varargin)
         config = varargin{1};
     end
 
-    title(ax, config.title, 'Interpreter', 'latex', 'FontSize', config.fontsize + 4);
+    title(ax, config.title, 'Interpreter', 'latex', 'FontSize', config.fontsize + 2);
 end

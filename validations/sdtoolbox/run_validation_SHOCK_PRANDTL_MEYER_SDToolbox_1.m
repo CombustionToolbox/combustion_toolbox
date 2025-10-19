@@ -35,7 +35,7 @@ function metadata = run_validation_SHOCK_PRANDTL_MEYER_SDToolbox_1(varargin)
     M1 = 1;
     theta = 82;
     numPointsPrandtlMeyer = 100;
-    FLAG_FROZEN = false;
+    caloricGasModel = CaloricGasModel.imperfect;
 
     % Get Nasa database
     DB = NasaDatabase('FLAG_BENCHMARK', FLAG_BENCHMARK);
@@ -53,7 +53,7 @@ function metadata = run_validation_SHOCK_PRANDTL_MEYER_SDToolbox_1(varargin)
     mixArray1 = setProperties(mix, 'temperature', 3000, 'pressure', 1, 'M1', M1, 'theta', theta);
     
     % Initialize solver
-    solver = ShockSolver('problemType', 'SHOCK_PRANDTL_MEYER', 'numPointsPrandtlMeyer', numPointsPrandtlMeyer, 'FLAG_FROZEN', FLAG_FROZEN, 'FLAG_RESULTS', false);
+    solver = ShockSolver('problemType', 'SHOCK_PRANDTL_MEYER', 'numPointsPrandtlMeyer', numPointsPrandtlMeyer, 'caloricGasModel', caloricGasModel, 'FLAG_RESULTS', false);
     
     % Solve problem
     [mixArray1, mixArray2] = solver.solveArray(mixArray1);
@@ -90,5 +90,4 @@ function metadata = run_validation_SHOCK_PRANDTL_MEYER_SDToolbox_1(varargin)
     stackTrace = dbstack;
     filename = stackTrace.name;
     saveas(ax1, fullfile(folderpath, strcat(filename, '_properties_1')), 'svg');
-    saveas(ax2, fullfile(folderpath, strcat(filename, '_properties_2')), 'svg');
 end

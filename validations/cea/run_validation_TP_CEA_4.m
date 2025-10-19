@@ -28,7 +28,7 @@ function metadata = run_validation_TP_CEA_4(varargin)
     FLAG_EXPORT = p.Results.FLAG_EXPORT;
 
     % Definitions
-    fuel = 'C6H6';
+    fuel = 'CH3OH';
     prefixDataName = fuel;
     filename = {strcat(prefixDataName, '_O2_TP.out'), strcat(prefixDataName, '_O2_TP2.out'), strcat(prefixDataName, '_O2_TP3.out')};
     listSpecies =  'Soot Formation Extended';

@@ -36,10 +36,7 @@ function metadata = run_validation_ROCKET_CEA_22(varargin)
     prefixDataName = 'H2';
     filename = {strcat(prefixDataName, '_LOX_A2_ROCKET_FAC1.out'), strcat(prefixDataName, '_LOX_A2_ROCKET_FAC2.out')};
     listSpecies = 'HYDROGEN_L';
-    displaySpecies = {'CO2','CO','H2O','H2','O2','C2H2_acetylene',...
-          'C2H4','C2H6','CH2CO_ketene','CH3','CH3CHO_ethanal','CH3OH',...
-          'CH4','COOH','H','H2O2','HCHO_formaldehy','HCO','HCOOH','HO2',...
-          'O','OH','Cbgrb'};
+    displaySpecies = {'H2O', 'H2', 'O2', 'H', 'H2O2', 'HO2', 'O', 'OH', 'O3'};
     tolMoles = 1e-14;
 
     % Get Nasa database

@@ -745,21 +745,18 @@ classdef ChemicalSystem < handle & matlab.mixin.Copyable
             %     obj (ChemicalSystem): ChemicalSystem object with the properties matrix initialized
             
             % Definitions
-            if isempty(obj.propertiesMatrix)
-                M0 = zeros(obj.numSpecies, obj.numProperties);
-            else
-                M0 = obj.propertiesMatrix;
-            end
+            M0 = zeros(obj.numSpecies, obj.numProperties);
 
             % Get index species
             index = obj.indexSpecies;
 
             % Update properties matrix
-            for i = obj.numSpecies:-1:1
-                M0(index(i), obj.ind_W) = obj.species.(obj.listSpecies{i}).W; % [g/mol]
-                M0(index(i), obj.ind_hfi) = obj.species.(obj.listSpecies{i}).hf; % [J/mol]
-                M0(index(i), obj.ind_efi) = obj.species.(obj.listSpecies{i}).ef; % [J/mol]
-                M0(index(i), obj.ind_phase) = obj.species.(obj.listSpecies{i}).phase; % [bool]
+            for i = 1:obj.numSpecies
+                species = obj.species.(obj.listSpecies{i});
+                M0(index(i), obj.ind_W) = species.W;         % [kg/mol]
+                M0(index(i), obj.ind_hfi) = species.hf;      % [J/mol]
+                M0(index(i), obj.ind_efi) = species.ef;      % [J/mol]
+                M0(index(i), obj.ind_phase) = species.phase; % [bool]
             end
 
             % Initialize propertyVector
@@ -856,7 +853,6 @@ classdef ChemicalSystem < handle & matlab.mixin.Copyable
 
             obj.propertiesMatrix(index, obj.ind_ni) = moles; % [mol]
         end
-
 
     end
 

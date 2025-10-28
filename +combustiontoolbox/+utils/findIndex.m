@@ -19,9 +19,12 @@ function index = findIndex(LS, species)
         [species, FLAG_2] = check_iscell(species);
         % Find index
         if FLAG_1 && FLAG_2
+            % Optimized: ismember already returns the locations we need
+            % Second output loc(i) contains the index in species where LS(i) appears
             [bool_index, loc] = ismember(LS, species);
-            [~, index_sort] = sort(loc(bool_index));
+            % Only get indices where species was found and sort by location
             index = find(bool_index);
+            [~, index_sort] = sort(loc(bool_index));
             index = index(index_sort);
         end
 

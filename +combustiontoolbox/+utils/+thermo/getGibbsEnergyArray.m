@@ -13,12 +13,14 @@ function g0 = getGibbsEnergyArray(listSpecies, T, DB)
     % Example:
     %     g0 = getGibbsEnergyArray({'H2O', 'CO2'}, 298.15, DB)
 
-    persistent cachedSpecies cachedG0curves
+    persistent cachedSpecies cachedG0curves cachedMap
 
     % Initialization
     if isempty(cachedG0curves)
         cachedSpecies = {};
         cachedG0curves = {};
+        % Use containers.Map for O(1) lookup instead of O(n) find
+        cachedMap = containers.Map('KeyType', 'char', 'ValueType', 'double');
     end
 
     % Definitions
@@ -32,14 +34,15 @@ function g0 = getGibbsEnergyArray(listSpecies, T, DB)
         % Definitions
         species = listSpecies{i};
 
-        % Check if species data is already cached
-        index = find(strcmp(cachedSpecies, species), 1);
-
-        % Load species data and cache it
-        if isempty(index)
+        % Check if species data is already cached using Map for O(1) lookup
+        if isKey(cachedMap, species)
+            index = cachedMap(species);
+        else
+            % Load species data and cache it
             cachedSpecies{end+1} = species;
             cachedG0curves{end+1} = DB.(species).g0curve;
             index = length(cachedSpecies);
+            cachedMap(species) = index;
         end
 
         % Compute Gibbs free energy [J/mol]

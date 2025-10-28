@@ -15,7 +15,7 @@ function obj = updatePropertiesMatrixThermo(obj, listSpecies, T, index, FLAG_H0)
     % Example:
     %     obj = updatePropertiesMatrixThermo(obj, {'H2O', 'CO2'}, 298.15, index, true)
 
-    persistent cachedSpecies cachedCPcurves cachedH0curves cachedS0curves
+    persistent cachedSpecies cachedCPcurves cachedH0curves cachedS0curves cachedMap
 
     % Definitions
     numSpecies = length(listSpecies);
@@ -26,6 +26,8 @@ function obj = updatePropertiesMatrixThermo(obj, listSpecies, T, index, FLAG_H0)
         cachedCPcurves = {};
         cachedH0curves = {};
         cachedS0curves = {};
+        % Use containers.Map for O(1) lookup instead of O(n) find
+        cachedMap = containers.Map('KeyType', 'char', 'ValueType', 'double');
     end
 
     % Get thermodynamic array
@@ -33,17 +35,18 @@ function obj = updatePropertiesMatrixThermo(obj, listSpecies, T, index, FLAG_H0)
         % Definitions
         species = listSpecies{i};
 
-        % Check if species data is already cached
-        indexCache = find(strcmp(cachedSpecies, species), 1);
-
-        % Load species data and cache it
-        if isempty(indexCache)
+        % Check if species data is already cached using Map for O(1) lookup
+        if isKey(cachedMap, species)
+            indexCache = cachedMap(species);
+        else
+            % Load species data and cache it
             cachedSpecies{end+1} = species;
             cachedCPcurves{end+1} = obj.species.(species).cpcurve;
             cachedS0curves{end+1} = obj.species.(species).s0curve;
             cachedH0curves{end+1} = obj.species.(species).h0curve;
 
             indexCache = length(cachedSpecies);
+            cachedMap(species) = indexCache;
         end
 
         % Compute thermodynamic properties

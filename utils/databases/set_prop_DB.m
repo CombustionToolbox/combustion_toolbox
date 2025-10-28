@@ -13,13 +13,17 @@ function value = set_prop_DB(listSpecies, property, DB)
     % Example:
     %     value = set_prop_DB({'H2O', 'CO2'}, 'hf', DB)
 
-    for i = length(listSpecies):-1:1
+    % Preallocate for better performance
+    numSpecies = length(listSpecies);
+    value = zeros(1, numSpecies);
+    
+    for i = 1:numSpecies
         species = listSpecies{i};
 
         try
-            value(1, i) = DB.(species).(property);
+            value(i) = DB.(species).(property);
         catch
-            value(1, i) = 0;
+            value(i) = 0;
         end
 
     end

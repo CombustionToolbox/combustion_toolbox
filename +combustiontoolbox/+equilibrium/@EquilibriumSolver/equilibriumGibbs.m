@@ -419,9 +419,14 @@ function b = update_vector_b(A0, N, NP, NatomE, ind_E, index, indexGas, indexCon
         bi(ind_E) = NatomE(ind_E);
     end
     
-    b1 = (NatomE - bi + sum(A0(indexGas, :) .* N(indexGas) .* muRT(indexGas)))';
+    % Optimized: compute N_gas .* muRT_gas once and reuse
+    N_gas = N(indexGas);
+    muRT_gas = muRT(indexGas);
+    N_gas_muRT = N_gas .* muRT_gas;
+    
+    b1 = (NatomE - bi + sum(A0(indexGas, :) .* N_gas_muRT))';
     b2 = muRT(indexCondensed) - tau ./ N(indexCondensed);
-    b3 = NP + sum(N(indexGas) .* muRT(indexGas) - N(indexGas));
+    b3 = NP + sum(N_gas_muRT - N_gas);
     
     b = [b1; b2; b3];
 end

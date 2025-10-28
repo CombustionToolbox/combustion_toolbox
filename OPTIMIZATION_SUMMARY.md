@@ -53,8 +53,8 @@ To manually validate these changes:
 INSTALL('install', 'path');
 results = unitTest().run;
 
-% Performance benchmark (if needed)
-% Note: Define LS (list of species) and other parameters as needed
+% Performance benchmark example
+% Define a list of species for the benchmark
 LS = {'CO2', 'CO', 'H2O', 'H2', 'O2', 'N2', 'Ar', 'CH4', 'C2H2', 'HCN'};
 run_computation_time('DET', 'C2H2_acetylene', LS, 9, 1, 3);
 ```

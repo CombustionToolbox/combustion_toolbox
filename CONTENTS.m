@@ -3,32 +3,36 @@
 % A MATLAB-GUI based open-source tool for solving gaseous combustion problems
 %
 % Type of problems:
-%   * TP ------------------> Equilibrium composition at defined T and p
-%   * HP ------------------> Adiabatic T and composition at constant p
-%   * SP ------------------> Isentropic compression/expansion to a specified p
-%   * TV ------------------> Equilibrium composition at defined T and constant v
-%   * EV ------------------> Adiabatic T and composition at constant v
-%   * SV ------------------> Isentropic compression/expansion to a specified v
-%   * SHOCK_I -------------> Planar incident shock wave
-%   * SHOCK_R -------------> Planar reflected shock wave
-%   * SHOCK_OBLIQUE -------> Oblique incident shock wave
-%   * SHOCK_OBLIQUE_R -----> Oblique incident and reflected states
-%   * SHOCK_POLAR ---------> Shock polar diagrams
-%   * SHOCK_POLAR_R -------> Shock polar diagrams for incident and reflected states
-%   * SHOCK_POLAR_LIMITRR -> Shock polar diagrams in the limit of regular reflection
-%   * SHOCK_IDEAL_GAS -----> Planar incident shock wave for a fixed adiabatic index
-%   * SHOCK_PRANDTL_MEYER -> Prandtl-Meyer expansion wave
-%   * DET -----------------> Chapman-Jouguet Detonation
-%   * DET_R ---------------> Reflected Chapman-Jouguet Detonation
-%   * DET_OBLIQUE ---------> Oblique Detonation
-%   * DET_POLAR -----------> Detonation polar diagrams
-%   * DET_OVERDRIVEN ------> Over-driven Detonation    
-%   * DET_OVERDRIVEN_R ----> Over-driven reflected Detonation
-%   * DET_UNDERDRIVEN -----> Under-driven Detonation
-%   * DET_UNDERDRIVEN_R ---> Under-driven reflected Detonation
-%   * ROCKET --------------> Propellant rocket performance
-%   * HELMHOLTZ -----------> Helmholtz-Hodge decomposition of a velocity field
-%   * SPECTRA -------------> Turbulence spectra analysis
+%   * TP --------------------------------> Equilibrium composition at defined T and p
+%   * HP --------------------------------> Adiabatic T and composition at constant p
+%   * SP --------------------------------> Isentropic compression/expansion to a specified p
+%   * TV --------------------------------> Equilibrium composition at defined T and constant v
+%   * EV --------------------------------> Adiabatic T and composition at constant v
+%   * SV --------------------------------> Isentropic compression/expansion to a specified v
+%   * SHOCK_I ---------------------------> Planar incident shock wave
+%   * SHOCK_R ---------------------------> Planar reflected shock wave
+%   * SHOCK_OBLIQUE ---------------------> Oblique incident shock wave
+%   * SHOCK_OBLIQUE_R -------------------> Oblique incident and reflected states
+%   * SHOCK_POLAR -----------------------> Shock polar diagrams
+%   * SHOCK_POLAR_R ---------------------> Shock polar diagrams for incident and reflected states
+%   * SHOCK_POLAR_LIMITRR ---------------> Shock polar diagrams in the limit of regular reflection
+%   * SHOCK_IDEAL_GAS -------------------> Planar incident shock wave for a fixed adiabatic index
+%   * SHOCK_PRANDTL_MEYER ---------------> Prandtl-Meyer expansion wave
+%   * DET -------------------------------> Chapman-Jouguet Detonation
+%   * DET_R -----------------------------> Reflected Chapman-Jouguet Detonation
+%   * DET_OBLIQUE -----------------------> Oblique Detonation
+%   * DET_POLAR -------------------------> Detonation polar diagrams
+%   * DET_OVERDRIVEN --------------------> Over-driven Detonation    
+%   * DET_OVERDRIVEN_R ------------------> Over-driven reflected Detonation
+%   * DET_UNDERDRIVEN -------------------> Under-driven Detonation
+%   * DET_UNDERDRIVEN_R -----------------> Under-driven reflected Detonation
+%   * ROCKET ----------------------------> Propellant rocket performance
+%   * SHOCKTURBULENCE_VORTICAL ----------> Vortical Shock-Turbulence Interaction using LIA
+%   * SHOCKTURBULENCE_VORTICAL_ENTROPIC -> Vortical and Entropic Shock-Turbulence Interaction using LIA
+%   * SHOCKTURBULENCE_ACOUSTIC ----------> Acoustic Shock-Turbulence Interaction using LIA
+%   * SHOCKTURBULENCE_COMPRESSIBLE ------> Compressible Shock-Turbulence Interaction using LIA
+%   * HELMHOLTZ -------------------------> Helmholtz-Hodge decomposition of a velocity field
+%   * SPECTRA ---------------------------> Turbulence spectra analysis
 %
 % SEE THE EXAMPLES OR WEBSITE TO KNOW HOW TO START USING THE COMBUSTION TOOLBOX
 %
@@ -50,7 +54,7 @@
 %
 % @author: Alberto Cuadra Lara
 %                  
-% Last update October 16 2025
+% Last update Dec 16 2025
 % -------------------------------------------------------------------------
 help CONTENTS.m
 

@@ -264,7 +264,7 @@ classdef HTRDataAverage < handle & combustiontoolbox.utils.HTRDataReader
             obj.averages.Mt = Mt;
         end
 
-        function dissipation = getDissipation(obj)
+        function [dissipation, dissipationVolumetric] = getDissipation(obj)
             % Compute dissipation rate from the data
             %
             % Args:
@@ -273,11 +273,15 @@ classdef HTRDataAverage < handle & combustiontoolbox.utils.HTRDataReader
             % Returns:
             %     dissipation (float): Dissipation rate
 
-            % Compute dissipation rate
-            dissipation = abs(obj.averages.tauGradU(1, :) + obj.averages.tauGradU(2, :) + obj.averages.tauGradU(3, :));
+            % Compute volumetric dissipation rate
+            dissipationVolumetric = obj.averages.tauGradU(1, :) + obj.averages.tauGradU(2, :) + obj.averages.tauGradU(3, :);
+
+            % Compute dissipation rate per unit mass
+            dissipation = dissipationVolumetric ./ obj.averages.rho_avg;
 
             % Assign properties
             obj.averages.dissipation = dissipation;
+            obj.averages.dissipationVolumetric = dissipationVolumetric;
         end
 
         function [lengthKolmogorov, ratioGridLengthKolmogorov] = getKolmogorovLength(obj)
@@ -292,11 +296,12 @@ classdef HTRDataAverage < handle & combustiontoolbox.utils.HTRDataReader
 
             % Definitions
             nu = obj.averages.mu_avg ./ obj.averages.rho_avg;
-            dissipation = getDissipation(obj);
+            dissipation = abs( getDissipation(obj) );
+            dx = obj.averages.dx;
 
             % Remove normalization if k0 is provided
-            if ~isempty(obj.k0)
-                dx  = obj.averages.dx / obj.k0;
+            if obj.FLAG_K0
+                dx  = dx / obj.k0;
             end
 
             % Compute Kolmogorov length scale
@@ -307,8 +312,10 @@ classdef HTRDataAverage < handle & combustiontoolbox.utils.HTRDataReader
 
             % Assign properties
             obj.averages.lengthKolmogorov = lengthKolmogorov;
+            obj.averages.lengthKolmogorovk0 = lengthKolmogorov * obj.k0;
             obj.averages.ratioLengthKolmogorov = lengthKolmogorov / lengthKolmogorov(obj.indexPreShock);
             obj.averages.ratioGridLengthKolmogorov = ratioGridLengthKolmogorov;
+            obj.averages.ratioKolmogorovGridLength = 1 ./ ratioGridLengthKolmogorov;
         end
 
         function [TKE_f, R11_f, R22_f, R33_f, RTT_f] = getTurbulentKineticEnergy(obj)

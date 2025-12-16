@@ -44,8 +44,6 @@ classdef EquilibriumSolver < handle
         root_T0   = 3000           % Temperature guess [K] if it's outside previous range - root finding method
         FLAG_EXTRAPOLATE = true    % Flag indicating linear extrapolation of the polynomials fits
         FLAG_FAST = true           % Flag indicating use guess composition of the previous computation
-        FLAG_TCHEM_FROZEN = false  % Flag to consider a thermochemically frozen gas (calorically perfect gas)
-        FLAG_FROZEN = false        % Flag to consider a calorically imperfect gas with frozen chemistry
         FLAG_EOS = false           % Flag to use non-ideal Equation of States (EoS)
         FLAG_RESULTS = true        % Flag to print results
         FLAG_TIME = true           % Flag to print elapsed time
@@ -65,6 +63,8 @@ classdef EquilibriumSolver < handle
             defaultProblemType = 'TP';
             defaultPlotConfig = combustiontoolbox.utils.display.PlotConfig();
             defaultCaloricGasModel = combustiontoolbox.core.CaloricGasModel.imperfect;
+            defaultFLAG_TCHEM_FROZEN = false;
+            defaultFLAG_FROZEN = false;
 
             % Parse input arguments
             p = inputParser;
@@ -88,8 +88,8 @@ classdef EquilibriumSolver < handle
             addParameter(p, 'root_T0', obj.root_T0, @(x) isnumeric(x) && x > 0);
             addParameter(p, 'FLAG_EXTRAPOLATE', obj.FLAG_EXTRAPOLATE, @(x) islogical(x));
             addParameter(p, 'FLAG_FAST', obj.FLAG_FAST, @(x) islogical(x));
-            addParameter(p, 'FLAG_TCHEM_FROZEN', obj.FLAG_TCHEM_FROZEN, @(x) islogical(x));
-            addParameter(p, 'FLAG_FROZEN', obj.FLAG_FROZEN, @(x) islogical(x));
+            addParameter(p, 'FLAG_TCHEM_FROZEN', defaultFLAG_TCHEM_FROZEN, @(x) islogical(x));
+            addParameter(p, 'FLAG_FROZEN', defaultFLAG_FROZEN, @(x) islogical(x));
             addParameter(p, 'FLAG_EOS', obj.FLAG_EOS, @(x) islogical(x));
             addParameter(p, 'FLAG_RESULTS', obj.FLAG_RESULTS, @(x) islogical(x));
             addParameter(p, 'FLAG_TIME', obj.FLAG_TIME, @(x) islogical(x));
@@ -119,8 +119,6 @@ classdef EquilibriumSolver < handle
             obj.root_T0 = p.Results.root_T0;
             obj.FLAG_EXTRAPOLATE = p.Results.FLAG_EXTRAPOLATE;
             obj.FLAG_FAST = p.Results.FLAG_FAST;
-            obj.FLAG_TCHEM_FROZEN = p.Results.FLAG_TCHEM_FROZEN;
-            obj.FLAG_FROZEN = p.Results.FLAG_FROZEN;
             obj.FLAG_EOS = p.Results.FLAG_EOS;
             obj.FLAG_RESULTS = p.Results.FLAG_RESULTS;
             obj.FLAG_TIME = p.Results.FLAG_TIME;
@@ -133,7 +131,7 @@ classdef EquilibriumSolver < handle
                 warning(['The flags ''FLAG_TCHEM_FROZEN'' and ''FLAG_FROZEN'' are deprecated. ', ...
                          'Please use the ''caloricGasModel'' parameter with values from the CaloricGasModel enumeration instead.']);
             
-                obj.caloricGasModel = obj.caloricGasModel.fromFlag(obj.FLAG_TCHEM_FROZEN, obj.FLAG_FROZEN);
+                obj.caloricGasModel = obj.caloricGasModel.fromFlag(p.Results.FLAG_TCHEM_FROZEN, p.Results.FLAG_FROZEN);
             end
 
         end

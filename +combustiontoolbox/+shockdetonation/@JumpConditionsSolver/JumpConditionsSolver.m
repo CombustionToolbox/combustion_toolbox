@@ -146,8 +146,6 @@ classdef JumpConditionsSolver < handle
             obj.plotConfig = p.Results.plotConfig;
 
             if sum(contains(p.UsingDefaults, 'equilibriumSolver'))
-                obj.equilibriumSolver.FLAG_TCHEM_FROZEN = p.Results.FLAG_TCHEM_FROZEN;
-                obj.equilibriumSolver.FLAG_FROZEN = p.Results.FLAG_FROZEN;
                 obj.equilibriumSolver.FLAG_FAST = p.Results.FLAG_FAST;
                 obj.equilibriumSolver.caloricGasModel = p.Results.caloricGasModel;
             end
@@ -167,7 +165,7 @@ classdef JumpConditionsSolver < handle
                 warning(['The flags ''FLAG_TCHEM_FROZEN'' and ''FLAG_FROZEN'' are deprecated. ', ...
                          'Please use the ''caloricGasModel'' parameter with values from the CaloricGasModel enumeration instead.']);
             
-                obj.equilibriumSolver.caloricGasModel = obj.equilibriumSolver.caloricGasModel.fromFlag(obj.equilibriumSolver.FLAG_TCHEM_FROZEN, obj.equilibriumSolver.FLAG_FROZEN);
+                obj.equilibriumSolver.caloricGasModel = obj.equilibriumSolver.caloricGasModel.fromFlag(p.Results.FLAG_TCHEM_FROZEN, p.Results.FLAG_FROZEN);
             end
 
             % Assign equilibriumSolver to shockSolver

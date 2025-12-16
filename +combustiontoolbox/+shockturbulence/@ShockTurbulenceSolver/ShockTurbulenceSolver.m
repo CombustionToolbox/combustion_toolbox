@@ -43,11 +43,14 @@ classdef ShockTurbulenceSolver < handle
         shockTurbulenceModel       % ShockTurbulenceModel object
         FLAG_RESULTS = false;      % Flag to show results in the command window
         FLAG_INTERPOLATE = true;   % Flag to interpolate data in a smaller grid
-        FLAG_PAPER = false;        % Flag to compute Gammas_i as in Cuadra2024b
         FLAG_TIME = true           % Flag to print elapsed time
         FLAG_REPORT = false        % Flag to print predefined plots
         time                       % Elapsed time
         plotConfig                 % PlotConfig object
+    end
+
+    properties (Constant, Access = private)
+        FLAG_PAPER = false;        % Flag to compute Gammas_i as in Cuadra2024b
     end
 
     methods
@@ -57,10 +60,11 @@ classdef ShockTurbulenceSolver < handle
 
             % Default values
             defaultProblemType = 'VORTICAL';
-            defaultEquilibriumSolver = combustiontoolbox.equilibrium.EquilibriumSolver('FLAG_FAST', false, 'FLAG_TCHEM_FROZEN', obj.FLAG_TCHEM_FROZEN, 'FLAG_FROZEN', obj.FLAG_FROZEN); % FLAG_FAST is set to false to reduce numerical error
+            defaultEquilibriumSolver = combustiontoolbox.equilibrium.EquilibriumSolver('FLAG_FAST', false); % FLAG_FAST is set to false to reduce numerical error
             defaultShockSolver = combustiontoolbox.shockdetonation.ShockSolver('equilibriumSolver', defaultEquilibriumSolver, 'FLAG_RESULTS', false);
             defaultJumpConditionsSolver = combustiontoolbox.shockdetonation.JumpConditionsSolver('equilibriumSolver', defaultEquilibriumSolver, 'shockSolver', defaultShockSolver,'FLAG_RESULTS', false);
             defaultShockTurbulenceModel = combustiontoolbox.shockturbulence.ShockTurbulenceModelVortical();
+            defaultCaloricGasModel = combustiontoolbox.core.CaloricGasModel.imperfect;
             defaultFLAG_TCHEM_FROZEN = false;
             defaultFLAG_FROZEN = false;
             defaultPlotConfig = combustiontoolbox.utils.display.PlotConfig();
@@ -75,7 +79,6 @@ classdef ShockTurbulenceSolver < handle
             addParameter(p, 'shockTurbulenceModel', defaultShockTurbulenceModel, @(x) isa(x, 'combustiontoolbox.shockturbulence.ShockTurbulenceModel'));
             addParameter(p, 'caloricGasModel', defaultCaloricGasModel, @(x) isa(x, 'combustiontoolbox.core.CaloricGasModel'));
             addParameter(p, 'FLAG_INTERPOLATE', obj.FLAG_INTERPOLATE, @islogical);
-            addParameter(p, 'FLAG_PAPER', obj.FLAG_PAPER, @islogical);
             addParameter(p, 'FLAG_TIME', obj.FLAG_TIME, @(x) islogical(x));
             addParameter(p, 'FLAG_REPORT', obj.FLAG_REPORT, @(x) islogical(x));
             addParameter(p, 'FLAG_TCHEM_FROZEN', defaultFLAG_TCHEM_FROZEN, @(x) islogical(x) && isscalar(x));
@@ -90,14 +93,11 @@ classdef ShockTurbulenceSolver < handle
             obj.jumpConditionsSolver = p.Results.jumpConditionsSolver;
             obj.shockTurbulenceModel = p.Results.shockTurbulenceModel;
             obj.FLAG_INTERPOLATE = p.Results.FLAG_INTERPOLATE;
-            obj.FLAG_PAPER = p.Results.FLAG_PAPER;
             obj.FLAG_TIME = p.Results.FLAG_TIME;
             obj.FLAG_REPORT = p.Results.FLAG_REPORT;
             obj.plotConfig = p.Results.plotConfig;
 
-            if ~sum(contains(p.UsingDefaults, 'equilibriumSolver'))
-                obj.equilibriumSolver.FLAG_TCHEM_FROZEN = p.Results.FLAG_TCHEM_FROZEN;
-                obj.equilibriumSolver.FLAG_FROZEN = p.Results.FLAG_FROZEN;
+            if sum(contains(p.UsingDefaults, 'equilibriumSolver'))
                 obj.equilibriumSolver.caloricGasModel = p.Results.caloricGasModel;
             end
 
@@ -106,7 +106,7 @@ classdef ShockTurbulenceSolver < handle
                 warning(['The flags ''FLAG_TCHEM_FROZEN'' and ''FLAG_FROZEN'' are deprecated. ', ...
                          'Please use the ''caloricGasModel'' parameter with values from the CaloricGasModel enumeration instead.']);
             
-                obj.equilibriumSolver.caloricGasModel = obj.equilibriumSolver.caloricGasModel.fromFlag(obj.equilibriumSolver.FLAG_TCHEM_FROZEN, obj.equilibriumSolver.FLAG_FROZEN);
+                obj.equilibriumSolver.caloricGasModel = obj.equilibriumSolver.caloricGasModel.fromFlag(p.Results.FLAG_TCHEM_FROZEN, p.Results.FLAG_FROZEN);
             end
 
             % Assign equilibriumSolver to shockSolver and jumpConditionsSolver
@@ -115,6 +115,11 @@ classdef ShockTurbulenceSolver < handle
 
             % Assign shockSolver to jumpConditionsSolver
             obj.jumpConditionsSolver.shockSolver = obj.shockSolver;
+
+            % if jumpConditionsSolver is not default
+            if ~sum(contains(p.UsingDefaults, 'jumpConditionsSolver'))
+                obj.jumpConditionsSolver.FLAG_PAPER = obj.FLAG_PAPER;
+            end
 
             % If problemType is different from the default, set the corresponding shockTurbulenceModel
             if ~sum(contains(p.UsingDefaults, 'shockTurbulenceModel'))

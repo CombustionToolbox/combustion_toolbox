@@ -42,8 +42,6 @@ classdef ShockTurbulenceSolver < handle
         jumpConditionsSolver       % JumpConditionsSolver object
         shockTurbulenceModel       % ShockTurbulenceModel object
         FLAG_RESULTS = false;      % Flag to show results in the command window
-        FLAG_TCHEM_FROZEN = false; % Flag to indicate if the thermodynamic properties are thermochemically frozen (calorically perfect gas)
-        FLAG_FROZEN = false;       % Flag to indicate if frozen chemistry (calorically imperfect gas with frozen chemistry)
         FLAG_INTERPOLATE = true;   % Flag to interpolate data in a smaller grid
         FLAG_PAPER = false;        % Flag to compute Gammas_i as in Cuadra2024b
         FLAG_TIME = true           % Flag to print elapsed time
@@ -63,8 +61,10 @@ classdef ShockTurbulenceSolver < handle
             defaultShockSolver = combustiontoolbox.shockdetonation.ShockSolver('equilibriumSolver', defaultEquilibriumSolver, 'FLAG_RESULTS', false);
             defaultJumpConditionsSolver = combustiontoolbox.shockdetonation.JumpConditionsSolver('equilibriumSolver', defaultEquilibriumSolver, 'shockSolver', defaultShockSolver,'FLAG_RESULTS', false);
             defaultShockTurbulenceModel = combustiontoolbox.shockturbulence.ShockTurbulenceModelVortical();
+            defaultFLAG_TCHEM_FROZEN = false;
+            defaultFLAG_FROZEN = false;
             defaultPlotConfig = combustiontoolbox.utils.display.PlotConfig();
-            defaultPlotConfig.plotProperties = {'K', 'R11', 'RTT', 'Ka', 'Kr'};
+            defaultPlotConfig.plotProperties = {'K', 'R11', 'RTT', 'Ka', 'Kr', 'enstrophy'};
 
             % Parse inputs
             p = inputParser;
@@ -73,12 +73,13 @@ classdef ShockTurbulenceSolver < handle
             addParameter(p, 'shockSolver', defaultShockSolver, @(x) isa(x, 'combustiontoolbox.shockdetonation.ShockSolver'));
             addParameter(p, 'jumpConditionsSolver', defaultJumpConditionsSolver, @(x) isa(x, 'combustiontoolbox.shockdetonation.JumpConditionsSolver'));
             addParameter(p, 'shockTurbulenceModel', defaultShockTurbulenceModel, @(x) isa(x, 'combustiontoolbox.shockturbulence.ShockTurbulenceModel'));
-            addParameter(p, 'FLAG_TCHEM_FROZEN', obj.FLAG_TCHEM_FROZEN, @islogical);
-            addParameter(p, 'FLAG_FROZEN', obj.FLAG_FROZEN, @islogical);
+            addParameter(p, 'caloricGasModel', defaultCaloricGasModel, @(x) isa(x, 'combustiontoolbox.core.CaloricGasModel'));
             addParameter(p, 'FLAG_INTERPOLATE', obj.FLAG_INTERPOLATE, @islogical);
             addParameter(p, 'FLAG_PAPER', obj.FLAG_PAPER, @islogical);
             addParameter(p, 'FLAG_TIME', obj.FLAG_TIME, @(x) islogical(x));
             addParameter(p, 'FLAG_REPORT', obj.FLAG_REPORT, @(x) islogical(x));
+            addParameter(p, 'FLAG_TCHEM_FROZEN', defaultFLAG_TCHEM_FROZEN, @(x) islogical(x) && isscalar(x));
+            addParameter(p, 'FLAG_FROZEN', defaultFLAG_FROZEN, @(x) islogical(x) && isscalar(x));
             addParameter(p, 'plotConfig', defaultPlotConfig, @(x) isa(x, 'combustiontoolbox.utils.display.PlotConfig'));
             parse(p, varargin{:});
 
@@ -88,8 +89,6 @@ classdef ShockTurbulenceSolver < handle
             obj.shockSolver = p.Results.shockSolver;
             obj.jumpConditionsSolver = p.Results.jumpConditionsSolver;
             obj.shockTurbulenceModel = p.Results.shockTurbulenceModel;
-            obj.FLAG_TCHEM_FROZEN = p.Results.FLAG_TCHEM_FROZEN;
-            obj.FLAG_FROZEN = p.Results.FLAG_FROZEN;
             obj.FLAG_INTERPOLATE = p.Results.FLAG_INTERPOLATE;
             obj.FLAG_PAPER = p.Results.FLAG_PAPER;
             obj.FLAG_TIME = p.Results.FLAG_TIME;
@@ -97,11 +96,25 @@ classdef ShockTurbulenceSolver < handle
             obj.plotConfig = p.Results.plotConfig;
 
             if ~sum(contains(p.UsingDefaults, 'equilibriumSolver'))
-                obj.shockSolver.equilibriumSolver = obj.equilibriumSolver;
-            else
-                obj.equilibriumSolver.FLAG_TCHEM_FROZEN = obj.FLAG_TCHEM_FROZEN;
-                obj.equilibriumSolver.FLAG_FROZEN = obj.FLAG_FROZEN;
+                obj.equilibriumSolver.FLAG_TCHEM_FROZEN = p.Results.FLAG_TCHEM_FROZEN;
+                obj.equilibriumSolver.FLAG_FROZEN = p.Results.FLAG_FROZEN;
+                obj.equilibriumSolver.caloricGasModel = p.Results.caloricGasModel;
             end
+
+            % Display warning if deprecated flags are used
+            if ~ismember('FLAG_TCHEM_FROZEN', p.UsingDefaults) || ~ismember('FLAG_FROZEN', p.UsingDefaults)
+                warning(['The flags ''FLAG_TCHEM_FROZEN'' and ''FLAG_FROZEN'' are deprecated. ', ...
+                         'Please use the ''caloricGasModel'' parameter with values from the CaloricGasModel enumeration instead.']);
+            
+                obj.equilibriumSolver.caloricGasModel = obj.equilibriumSolver.caloricGasModel.fromFlag(obj.equilibriumSolver.FLAG_TCHEM_FROZEN, obj.equilibriumSolver.FLAG_FROZEN);
+            end
+
+            % Assign equilibriumSolver to shockSolver and jumpConditionsSolver
+            obj.shockSolver.equilibriumSolver = obj.equilibriumSolver;
+            obj.jumpConditionsSolver.equilibriumSolver = obj.equilibriumSolver;
+
+            % Assign shockSolver to jumpConditionsSolver
+            obj.jumpConditionsSolver.shockSolver = obj.shockSolver;
 
             % If problemType is different from the default, set the corresponding shockTurbulenceModel
             if ~sum(contains(p.UsingDefaults, 'shockTurbulenceModel'))
@@ -214,7 +227,7 @@ classdef ShockTurbulenceSolver < handle
             % Print execution time
             %
             % Args:
-            %     obj (EquilibriumSolver): Object of the class EquilibriumSolver
+            %     obj (ShockTurbulenceSolver()): Object of the class ShockTurbulenceSolver
             
             if ~obj.FLAG_TIME
                 return
@@ -253,17 +266,36 @@ classdef ShockTurbulenceSolver < handle
             % Postprocess all the results with predefined plots
             %
             % Args:
-            %     obj (ShockSolver): ShockSolver object
-            %     mixArray1 (Mixture): Array of Mixture objects (pre-shock state)
-            %     mixArray2 (Mixture): Array of Mixture objects (post-shock state)
-            %
-            % Optional args:
-            %     * mixArray_i (Mixture): Array of Mixture objects
+            %     obj (ShockTurbulenceSolver): ShockTurbulenceSolver object
+            %     results (struct): Results from the Linear Interaction Analysis
             %
             % Example:
             %     * report(ShockTurbulenceSolver(), results);
 
             obj.plot(results);
+        end
+
+        function kolmogorovLengthRatio = getKolmogorovLength(obj, results)
+            % Estimate Kolmogorov length scale ratio across the shock
+            %
+            % Args:
+            %     obj (ShockTurbulenceSolver): ShockTurbulenceSolver object
+            %     results (struct): Struct with results from LIA
+            %
+            % Returns:
+            %     kolmogorovLengthRatio (float): Kolmogorov length scale ratio
+            %
+            % Example:
+            %     kolmogorovLengthRatio = getKolmogorovLength(ShockTurbulenceSolver(), results);
+
+
+            % Definitions
+            Rratio = results.Rratio;
+            TRatio = results.Tratio;
+            enstrophyRatio = results.enstrophy;
+
+            % Kolmogorov length scale ratio 
+            kolmogorovLengthRatio = Rratio.^(-1/2) .* TRatio.^(3/8) .* enstrophyRatio.^(-1/4);
         end
 
     end

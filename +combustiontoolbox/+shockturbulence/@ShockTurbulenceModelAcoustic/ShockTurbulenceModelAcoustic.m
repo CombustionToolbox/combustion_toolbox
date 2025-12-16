@@ -122,6 +122,8 @@ classdef ShockTurbulenceModelAcoustic < combustiontoolbox.shockturbulence.ShockT
                 averages.Krl(i)   = Krl(obj, R(i), M2(i), Gammas(i), Gammas1(i), Gammas3(i), beta(i));
                 averages.Krs(i)   = Krs(obj, R(i), M2(i), Gammas(i), Gammas1(i), Gammas3(i), beta(i));
                 averages.Ka(i)    = Ka(obj, R(i), M2(i), Gammas(i), Gammas1(i), Gammas3(i), beta(i));
+                averages.enstrophyl(i) = enstrophyl(obj, R(i), M2(i), Gammas(i), Gammas1(i), Gammas3(i), beta(i));
+                averages.enstrophys(i) = enstrophys(obj, R(i), M2(i), Gammas(i), Gammas1(i), Gammas3(i), beta(i));
             end
 
             % Compute longitudinal contribution of the turbulent kinetic energy (TKE) amplification
@@ -136,6 +138,10 @@ classdef ShockTurbulenceModelAcoustic < combustiontoolbox.shockturbulence.ShockT
             averages.K = averages.Krl + averages.Krs + averages.Ka;
             averages.Kr = averages.Krl + averages.Krs;
 
+            % Compute enstrophy amplification
+            averages.enstrophy = averages.enstrophyl + averages.enstrophys;
+            averages.enstrophyTT = 0; % There is not transverse contribution to enstrophy in acoustic case
+            
             % Compute anisotropy
             averages.anisotropy = 1 - (4 * averages.R11) ./ (averages.K + averages.R11);
 
@@ -215,6 +221,24 @@ classdef ShockTurbulenceModelAcoustic < combustiontoolbox.shockturbulence.ShockT
         function value = RTT(obj, R, M2, Gammas, Gammas1, Gammas3, beta)
             % Compute the total transverse TKE amplification ratio (rotational + acoustic)
             value = 1.5 * (RTTrl(obj, R, M2, Gammas, Gammas1, Gammas3, beta) + RTTrs(obj, R, M2, Gammas, Gammas1, Gammas3, beta) + RTTa(obj, R, M2, Gammas, Gammas1, Gammas3, beta));
+        end
+
+        function value = enstrophyl(obj, R, M2, Gammas, Gammas1, Gammas3, beta)
+            % Compute the longwave contribution of the enstrophy amplification ratio (longwave: zeta < 1)
+            fun = @(zeta) ( (obj.b01(R, M2, Gammas, Gammas1, Gammas3, beta, zeta) - 1).^2 + obj.b02(R, M2, Gammas, Gammas1, Gammas3, beta, zeta).^2 ) .* abs( obj.pdf(R, M2, beta, zeta).^3 );
+            value = 0.5 * beta.^2 .* obj.Omega_2(R, M2, Gammas).^2 .* (obj.integrate(fun, -1, 0) + obj.integrate(fun, 0, 1));
+        end
+        
+        function value = enstrophys(obj, R, M2, Gammas, Gammas1, Gammas3, beta)
+            % Compute the shortwave contribution of the enstrophy amplification ratio (shortwave: zeta > 1)
+            funPos = @(zeta) ( obj.pe0(R, M2, Gammas, Gammas1, Gammas3, beta, zeta) - 1).^2 .* abs( obj.pdf(R, M2, beta, zeta).^3 );
+            funNeg = @(zeta) ( obj.ne0(R, M2, Gammas, Gammas1, Gammas3, beta, zeta) - 1).^2 .* abs( obj.pdf(R, M2, beta, zeta).^3 );
+            value = 0.5 * beta.^2 .* obj.Omega_2(R, M2, Gammas).^2 .* (obj.integrate(funNeg, -Inf, -1) + obj.integrate(funPos, 1, Inf));
+        end
+
+        function value = enstrophy(obj, R, M2, Gammas, Gammas1, Gammas3, beta)
+            % Compute the total enstrophy amplification ratio (longwave + shortwave)
+            value = enstrophyl(obj, R, M2, Gammas, Gammas1, Gammas3, beta) + enstrophys(obj, R, M2, Gammas, Gammas1, Gammas3, beta);
         end
         
         function printCheck(obj, R, M2, Gammas, Gammas1, Gammas3, beta, zeta)

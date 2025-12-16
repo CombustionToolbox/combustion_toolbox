@@ -5,7 +5,9 @@ function gui_update_frozen(app)
     %     app (object): Combustion Toolbox app object
     
     % Update equilibriumSolver
-    set(app.equilibriumSolver, 'FLAG_FROZEN', app.FrozenchemistryCheckBox.Value);
+    if  app.FrozenchemistryCheckBox.Value
+        app.equilibriumSolver.caloricGasModel = app.equilibriumSolver.caloricGasModel.setThermallyPerfect();
+    end
     
     % Check if frozen chemistry is selected
     if ~app.FrozenchemistryCheckBox.Value

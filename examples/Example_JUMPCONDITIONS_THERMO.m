@@ -20,7 +20,7 @@
 % 
 % @author: Alberto Cuadra Lara
 %                 
-% Last update April 19 2025
+% Last update Dec 16 2025
 % -------------------------------------------------------------------------
 
 % Import packages
@@ -30,8 +30,6 @@ import combustiontoolbox.shockdetonation.*
 import combustiontoolbox.utils.display.*
 
 % Definitions
-FLAG_TCHEM_FROZEN = false;
-FLAG_FROZEN = false;
 FLAG_PAPER = true;
 
 % Get Nasa database
@@ -59,16 +57,13 @@ for i = 1:3
 
     switch i
         case 1
-            FLAG_TCHEM_FROZEN = true;
-            FLAG_FROZEN = false;
+            caloricGasModel = CaloricGasModel.perfect;
             linestyle = ':';
         case 2
-            FLAG_TCHEM_FROZEN = false;
-            FLAG_FROZEN = true;
+            caloricGasModel = CaloricGasModel.thermallyPerfect;
             linestyle = '--';
         case 3
-            FLAG_TCHEM_FROZEN = false;
-            FLAG_FROZEN = false;
+            caloricGasModel = CaloricGasModel.imperfect;
             linestyle = '-';
     end
 
@@ -76,7 +71,7 @@ for i = 1:3
     mixArray1 = setProperties(mix, 'temperature', 300, 'pressure', 1, 'M1', 1:0.05:20);
 
     % Initialize solver
-    solver = JumpConditionsSolver('FLAG_TCHEM_FROZEN', FLAG_TCHEM_FROZEN, 'FLAG_FROZEN', FLAG_FROZEN, 'FLAG_PAPER', FLAG_PAPER, 'FLAG_RESULTS', false);
+    solver = JumpConditionsSolver('caloricGasModel', caloricGasModel, 'FLAG_PAPER', FLAG_PAPER, 'FLAG_RESULTS', false);
 
     % Solve problem
     jumpData = solver.solve(mixArray1);

@@ -170,6 +170,8 @@ classdef JumpConditionsSolver < handle
                 obj.equilibriumSolver.caloricGasModel = obj.equilibriumSolver.caloricGasModel.fromFlag(obj.equilibriumSolver.FLAG_TCHEM_FROZEN, obj.equilibriumSolver.FLAG_FROZEN);
             end
 
+            % Assign equilibriumSolver to shockSolver
+            obj.shockSolver.equilibriumSolver = obj.equilibriumSolver;
         end
 
         function value = get.MIN_MACH(obj)

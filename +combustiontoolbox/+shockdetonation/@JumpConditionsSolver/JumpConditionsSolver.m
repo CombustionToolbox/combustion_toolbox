@@ -129,7 +129,6 @@ classdef JumpConditionsSolver < handle
             parse(p, varargin{:});
 
             % Set parameters
-            obj.caloricGasModel = p.Results.caloricGasModel;
             obj.equilibriumSolver = p.Results.equilibriumSolver;
             obj.shockSolver = p.Results.shockSolver;
             obj.tolGammas1 = p.Results.tolGammas1;
@@ -150,6 +149,7 @@ classdef JumpConditionsSolver < handle
                 obj.equilibriumSolver.FLAG_TCHEM_FROZEN = p.Results.FLAG_TCHEM_FROZEN;
                 obj.equilibriumSolver.FLAG_FROZEN = p.Results.FLAG_FROZEN;
                 obj.equilibriumSolver.FLAG_FAST = p.Results.FLAG_FAST;
+                obj.equilibriumSolver.caloricGasModel = p.Results.caloricGasModel;
             end
 
             if sum(contains(p.UsingDefaults, 'shockSolver'))
@@ -278,7 +278,7 @@ classdef JumpConditionsSolver < handle
             jumpConditions = getJumpData(obj);
 
             % Solve Gammas (calorically perfect gas)
-            if obj.caloricGasModel.isPerfect()
+            if obj.equilibriumSolver.caloricGasModel.isPerfect()
                 [jumpConditions.Gammas1, jumpConditions.Gammas2, jumpConditions.Gammas3] = obj.getGammasPerfect(jumpConditions.gamma1, jumpConditions.M1);
 
                 % Interpolate results into a smaller grid
@@ -450,7 +450,7 @@ classdef JumpConditionsSolver < handle
             % Get properties
             rho1 = [mixArray1.rho]; rho2 = [mixArray2.rho];
             p1 = [mixArray1.p]; p2 = [mixArray2.p];
-            T1 = [mixArray1.p]; T2 = [mixArray2.p];
+            T1 = [mixArray1.T]; T2 = [mixArray2.T];
             M1 = [mixArray1.mach]; M2 = [mixArray2.mach];
             a1 = [mixArray1.sound]; a2 = [mixArray2.sound];
             u1 = [mixArray1.u]; u2 = [mixArray2.uShock];

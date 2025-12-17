@@ -354,6 +354,46 @@ classdef HelmholtzSolver < handle
             chiVariance = (delta_rho_entropic_rms ./ delta_u_solenoidal_rms * sound_mean / rho_mean)^2;
         end
 
+        function [omega_mag, div_u] = getVorticityDivergence(velocity)
+            % Compute both vorticity and divergence using FFT-based
+            % spectral differentiation
+            %
+            % Args:
+            %     velocity (VelocityField): VelocityField object with fields u, v, w
+            %
+            % Returns:
+            %     omega_mag (float): 3D Array with the vorticity field
+            %     div_u (float): 3D Array with the divergence of the velocity field
+        
+            % Definitions
+            sz = velocity.size;
+            Lx = velocity.x(end) - velocity.x(1);
+            Ly = velocity.y(end) - velocity.y(1);
+            Lz = velocity.z(end) - velocity.z(1);
+
+            % Get FFTs
+            U = fftn(velocity.u);
+            V = fftn(velocity.v);
+            W = fftn(velocity.w);
+        
+            % Get wave numbers
+            kx = 2 * pi * ifftshift( -floor(sz(1)/2):ceil(sz(1)/2)-1 ) / Lx;
+            ky = 2 * pi * ifftshift( -floor(sz(2)/2):ceil(sz(2)/2)-1 ) / Ly;
+            kz = 2 * pi * ifftshift( -floor(sz(3)/2):ceil(sz(3)/2)-1 ) / Lz;
+            [KX, KY, KZ] = ndgrid(kx, ky, kz);
+        
+            % Compute divergence
+            div_u = ifftn(1i * (KX .* U + KY .* V + KZ .* W), 'symmetric');
+        
+            % Compute vorticity components
+            omega_x = ifftn(1i * (KY .* W - KZ .* V), 'symmetric');
+            omega_y = ifftn(1i * (KZ .* U - KX .* W), 'symmetric');
+            omega_z = ifftn(1i * (KX .* V - KY .* U), 'symmetric');
+        
+            % Compute vorticity magnitude
+            omega_mag = sqrt(omega_x.^2 + omega_y.^2 + omega_z.^2);
+        end
+
     end
 
 end

@@ -225,15 +225,15 @@ classdef ShockTurbulenceModelAcoustic < combustiontoolbox.shockturbulence.ShockT
 
         function value = enstrophyl(obj, R, M2, Gammas, Gammas1, Gammas3, beta)
             % Compute the longwave contribution of the enstrophy amplification ratio (longwave: zeta < 1)
-            fun = @(zeta) ( (obj.b01(R, M2, Gammas, Gammas1, Gammas3, beta, zeta) - 1).^2 + obj.b02(R, M2, Gammas, Gammas1, Gammas3, beta, zeta).^2 ) .* abs( obj.pdf(R, M2, beta, zeta).^3 );
-            value = 0.5 * beta.^2 .* obj.Omega_2(R, M2, Gammas).^2 .* (obj.integrate(fun, -1, 0) + obj.integrate(fun, 0, 1));
+            fun = @(zeta) ( (obj.b01(R, M2, Gammas, Gammas1, Gammas3, beta, zeta) - 1).^2 + obj.b02(R, M2, Gammas, Gammas1, Gammas3, beta, zeta).^2 ) .* obj.sintheta(R, M2, beta, zeta).^2 .* abs( obj.pdf(R, M2, beta, zeta) );
+            value = 0.5 * obj.Omega_2(R, M2, Gammas).^2 .* (obj.integrate(fun, -1, 0) + obj.integrate(fun, 0, 1));
         end
         
         function value = enstrophys(obj, R, M2, Gammas, Gammas1, Gammas3, beta)
             % Compute the shortwave contribution of the enstrophy amplification ratio (shortwave: zeta > 1)
-            funPos = @(zeta) ( obj.pe0(R, M2, Gammas, Gammas1, Gammas3, beta, zeta) - 1).^2 .* abs( obj.pdf(R, M2, beta, zeta).^3 );
-            funNeg = @(zeta) ( obj.ne0(R, M2, Gammas, Gammas1, Gammas3, beta, zeta) - 1).^2 .* abs( obj.pdf(R, M2, beta, zeta).^3 );
-            value = 0.5 * beta.^2 .* obj.Omega_2(R, M2, Gammas).^2 .* (obj.integrate(funNeg, -Inf, -1) + obj.integrate(funPos, 1, Inf));
+            funPos = @(zeta) ( obj.pe0(R, M2, Gammas, Gammas1, Gammas3, beta, zeta) - 1).^2 .* obj.sintheta(R, M2, beta, zeta).^2 .* abs( obj.pdf(R, M2, beta, zeta) );
+            funNeg = @(zeta) ( obj.ne0(R, M2, Gammas, Gammas1, Gammas3, beta, zeta) - 1).^2 .* obj.sintheta(R, M2, beta, zeta).^2 .* abs( obj.pdf(R, M2, beta, zeta) );
+            value = 0.5 * obj.Omega_2(R, M2, Gammas).^2 .* (obj.integrate(funNeg, -Inf, -1) + obj.integrate(funPos, 1, Inf));
         end
 
         function value = enstrophy(obj, R, M2, Gammas, Gammas1, Gammas3, beta)

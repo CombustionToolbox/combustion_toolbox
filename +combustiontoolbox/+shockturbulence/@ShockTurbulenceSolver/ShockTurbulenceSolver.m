@@ -215,6 +215,9 @@ classdef ShockTurbulenceSolver < handle
             results.M2 = M2;
             results.beta = beta;
 
+            % Compute Kolmogorov length scale ratio across the shock
+            results.kolmogorovLengthRatio = obj.getKolmogorovLength(results);
+
             % Timer
             obj.time = toc(obj.time);
 
@@ -292,7 +295,6 @@ classdef ShockTurbulenceSolver < handle
             %
             % Example:
             %     kolmogorovLengthRatio = getKolmogorovLength(ShockTurbulenceSolver(), results);
-
 
             % Definitions
             Rratio = results.Rratio;

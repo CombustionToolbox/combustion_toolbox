@@ -107,8 +107,8 @@ classdef ShockTurbulenceModelCompressible < combustiontoolbox.shockturbulence.Sh
             averages.RTT = (averagesVorticalEntropic.RTT + eta .* averagesAcoustic.RTT) ./ (1 + eta);
             averages.Ka = (averagesVorticalEntropic.Ka + eta .* averagesAcoustic.Ka) ./ (1 + eta);
             averages.Kr = (averagesVorticalEntropic.Kr + eta .* averagesAcoustic.Kr) ./ (1 + eta);
-            averages.enstrophy = (averagesVorticalEntropic.enstrophy + eta .* averagesAcoustic.enstrophy) ./ (1 + eta);
-            averages.enstrophyTT = (averagesVorticalEntropic.enstrophyTT + eta .* averagesAcoustic.enstrophyTT) ./ (1 + eta);
+            averages.enstrophy = (averagesVorticalEntropic.enstrophy + eta .* beta.^2 .* averagesAcoustic.enstrophy);
+            averages.enstrophyTT = (averagesVorticalEntropic.enstrophyTT + eta .* beta.^2 .* averagesAcoustic.enstrophyTT);
         end
 
         function obj = setPDF(obj)

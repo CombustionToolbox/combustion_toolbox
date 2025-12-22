@@ -140,7 +140,7 @@ classdef ShockTurbulenceModelAcoustic < combustiontoolbox.shockturbulence.ShockT
 
             % Compute enstrophy amplification
             averages.enstrophy = averages.enstrophyl + averages.enstrophys;
-            averages.enstrophyTT = 0; % There is not transverse contribution to enstrophy in acoustic case
+            averages.enstrophyTT = averages.enstrophy;
             
             % Compute anisotropy
             averages.anisotropy = 1 - (4 * averages.R11) ./ (averages.K + averages.R11);

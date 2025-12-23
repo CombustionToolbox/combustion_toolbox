@@ -131,7 +131,7 @@ classdef ShockTurbulenceModelVortical < combustiontoolbox.shockturbulence.ShockT
             averages.Kr = 1/3 * (averages.R11r + 2 * averages.RTTr);
             
             % Compute enstrophy
-            averages.enstrophyTT = 1/4 * (R + 3 * averages.enstrophy33);
+            averages.enstrophyTT = 1/4 * (R.^2 + 3 * averages.enstrophy33);
             averages.enstrophy = 1/3 * (1 + 2 * averages.enstrophyTT);
 
             % Compute anisotropy
@@ -204,13 +204,13 @@ classdef ShockTurbulenceModelVortical < combustiontoolbox.shockturbulence.ShockT
         function value = enstrophy33l(obj, R, M2, Gammas)
             % Compute the longwave contribution of the enstrophy amplification ratio (longwave: zeta < 1)
             fun = @(zeta) (obj.Delta_Omega_l1(R, M2, Gammas, zeta).^2 + obj.Delta_Omega_l2(R, M2, Gammas, zeta).^2 ) .* sin(obj.thetaOfzeta(R, M2, zeta)).^2 .* obj.pdf(R, M2, zeta);
-            value = obj.integrate(fun, 0, 1);
+            value = 2/3 * obj.integrate(fun, 0, 1);
         end
         
         function value = enstrophy33s(obj, R, M2, Gammas)
             % Compute the shortwave contribution of the enstrophy amplification ratio (shortwave: zeta > 1)
             fun = @(zeta) obj.Delta_Omega_s(R, M2, Gammas, zeta).^2 .* sin(obj.thetaOfzeta(R, M2, zeta)).^2 .* obj.pdf(R, M2, zeta);
-            value = obj.integrate(fun, 1, Inf);
+            value = 2/3 * obj.integrate(fun, 1, Inf);
         end
 
         function value = enstrophy33(obj, R, M2, Gammas)

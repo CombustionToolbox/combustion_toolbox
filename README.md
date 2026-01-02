@@ -21,10 +21,11 @@
 
 The Combustion Toolbox is a MATLAB-based thermochemical framework designed to solve problems involving chemical equilibrium for both gas- and condensed-phase species. The toolbox is composed of several modules, each of which is designed to solve a specific class of problems:
 
-- **CT-EQUIL** computes the equilibrium composition of multi-component gas mixtures undergoing thermochemical transformations. The final equilibrium state is determined by a predefined set of chemical species (gaseous—including ions—or condensed phases) and two thermodynamic state functions, such as enthalpy and pressure, e.g., for isobaric combustion processes.
+- **CT-EQUIL** computes the thermochemical equilibrium composition of multi-component gas mixtures for prescribed set of chemical species (gaseous—including ions—or condensed phases) and thermodynamic constraints (e.g. pressure–enthalpy).
 - **CT-SD** solves steady-state shock and detonation wave problems for both normal and oblique incidence.  
 - **CT-ROCKET** estimates the theoretical performance of rocket engines under highly idealized conditions.
-- **CT-TURBULENCE** performs detailed analyses of turbulent flows, including turbulent statistics computations, Helmholtz decomposition, and spectral analyses.
+- **CT-LIA** predicts shock-turbulence interaction statistics using linear theory, accounting for thermochemical effects.
+- **CT-TURBULENCE** performs spectral and statistical analysis of turbulent flows, including energy spectra, Helmholtz decomposition, and turbulence diagnostics.
 
 The framework also includes an intuitive **graphical user interface (GUI)**, with a **royalty-free standalone version** available for Windows, macOS, and Linux.
 
@@ -35,21 +36,21 @@ The framework also includes an intuitive **graphical user interface (GUI)**, wit
 
 If you use the Combustion Toolbox in a publication, please cite it using the following references:
 
-* *Cuadra, A., Huete, C., & Vera, M. (2024). Combustion Toolbox: An open-source thermochemical code for gas- and condensed-phase problems involving chemical equilibrium. [arXiv:2409.15086](https://doi.org/10.48550/arXiv.2409.15086).*
+* *Cuadra, A., Huete, C., & Vera, M. (2026). Combustion Toolbox: An open-source thermochemical code for gas-and condensed-phase problems involving chemical equilibrium. Computer Physics Communications 320, 110004. [doi:10.1016/j.cpc.2025.110004.](https://doi.org/10.1016/j.cpc.2025.110004).*
 * *Cuadra, A., Huete, C., & Vera, M. (2025). Combustion Toolbox: A MATLAB-GUI based open-source tool for solving gaseous combustion problems. Version 1.2.7. Zenodo. [doi:10.5281/zenodo.5554911](https://doi.org/10.5281/zenodo.5554911).*
 
 It can be handy the BibTeX format:
 
 ```bibtex
-@article{cuadra2024a_preprint,
-    title         = {{Combustion Toolbox: An open-source thermochemical code for gas- and condensed-phase problems involving chemical equilibrium}},
-    author        = {Cuadra, A. and Huete, C. and Vera, M.},
-    journal       = {{arXiv preprint arXiv:2409.15086}},
-    year          = {2024},
-    eprint        = {2409.15086},
-    archivePrefix = {arXiv},
-    primaryClass  = {physics.chem-ph},
-    doi           = {10.48550/arXiv.2409.15086}
+@article{cuadra2026a,
+    title   = {{Combustion Toolbox: An open-source thermochemical code for gas- and condensed-phase problems involving chemical equilibrium}},
+    journal = {Computer Physics Communications},
+    volume  = {320},
+    pages   = {110004},
+    year    = {2026},
+    issn    = {0010-4655},
+    doi     = {https://doi.org/10.1016/j.cpc.2025.110004},
+    author  = {A. Cuadra and C. Huete and M. Vera},
 }
 
 @misc{combustiontoolbox,

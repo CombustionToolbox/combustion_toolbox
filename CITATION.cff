@@ -5,22 +5,25 @@ message: "If you use this software, please cite it using these metadata."
 type: misc
 license: "GPL-3.0"
 title: "Combustion Toolbox: A MATLAB-GUI based open-source tool for solving gaseous combustion problems"
-version: 1.2.7
+version: 1.2.8
 doi: 10.5281/zenodo.5554911
-date-released: 2025-10-14
+date-released: 2026-01-08
 url: "https://combustion-toolbox-website.readthedocs.io"
 repository-code: "https://github.com/CombustionToolbox/combustion_toolbox"
 abstract:
-    "The Combustion Toolbox is a MATLAB-based thermochemical framework designed to solve problems involving chemical equilibrium for both gas- and condensed-phase species. The toolbox is composed of several modules, each of which is designed to solve a specific class of problems:
+    "
+    The Combustion Toolbox is a MATLAB-based thermochemical framework designed to solve problems involving chemical equilibrium for both gas- and condensed-phase species. The toolbox is composed of several modules, each of which is designed to solve a specific class of problems:
 
-    - **CT-EQUIL** computes the equilibrium composition of multi-component gas mixtures undergoing thermochemical transformations. The final equilibrium state is determined by a predefined set of chemical species (gaseous—including ions—or condensed phases) and two thermodynamic state functions, such as enthalpy and pressure, e.g., for isobaric combustion processes.
-    - **CT-SD** solves steady-state shock and detonation wave problems for both normal and oblique incidence.  
-    - **CT-ROCKET** estimates the theoretical performance of rocket engines under highly idealized conditions.
-    - **CT-TURBULENCE** performs detailed analyses of turbulent flows, including turbulent statistics computations, Helmholtz decomposition, and spectral analyses.
+      - **CT-EQUIL** computes the thermochemical equilibrium composition of multi-component gas mixtures for prescribed set of chemical species (gaseous—including ions—or condensed phases) and thermodynamic constraints (e.g. pressure-enthalpy).
+      - **CT-SD** solves steady-state shock and detonation wave problems for both normal and oblique incidence.  
+      - **CT-ROCKET** estimates the theoretical performance of rocket engines under highly idealized conditions.
+      - **CT-LIA** predicts shock-turbulence interaction statistics using linear theory, accounting for thermochemical effects.
+      - **CT-TURBULENCE** performs spectral and statistical analysis of turbulent flows, including energy spectra, Helmholtz decomposition, and turbulence diagnostics.
 
-    The framework also features a **user-friendly graphical user interface (GUI)**.
+    The framework also includes an intuitive **graphical user interface (GUI)**, with a **royalty-free standalone version** available for Windows, macOS, and Linux.
 
-    > For installation instructions and usage guidelines, visit the [Combustion Toolbox website](https://combustion-toolbox-website.readthedocs.io)."
+    > For installation instructions and usage guidelines, visit the [Combustion Toolbox website](https://combustion-toolbox-website.readthedocs.io).
+    "
 authors: 
   -
     family-names: "Cuadra"

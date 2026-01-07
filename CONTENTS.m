@@ -1,6 +1,6 @@
 % -------------------------------------------------------------------------
 % COMBUSTION TOOLBOX v1.2.8
-% A MATLAB-GUI based open-source tool for solving gaseous combustion problems
+% A MATLAB-based framework for solving combustion and high-speed flow problems
 %
 % Type of problems:
 %   * TP --------------------------------> Equilibrium composition at defined T and p
@@ -44,17 +44,18 @@
 % Thank you for using the Combustion Toolbox!
 %
 % Citing:
-%     Cuadra, A., Huete, C., & Vera, M. (2024). Combustion Toolbox: An
-%     open-source thermochemical code for gas- and condensed-phase
-%     problems involving chemical equilibrium. arXiv:2409.15086.
+%     Cuadra, A., Huete, C., & Vera, M. (2026). Combustion Toolbox: An
+%     open-source thermochemical code for gas-and condensed-phase problems
+%     involving chemical equilibrium. Computer Physics Communications 320,
+%     110004. doi:10.1016/j.cpc.2025.110004.
 %
-%     Cuadra, A., Huete, C., & Vera, M. (2025). Combustion Toolbox: A
+%     Cuadra, A., Huete, C., & Vera, M. (2026). Combustion Toolbox: A
 %     MATLAB-GUI based open-source tool for solving gaseous combustion
-%     problems. (v1.2.7). Zenodo. https://doi.org/10.5281/zenodo.5554911.
+%     problems. (v1.2.8). Zenodo. https://doi.org/10.5281/zenodo.5554911.
 %
 % @author: Alberto Cuadra Lara
 %                  
-% Last update Dec 16 2025
+% Last update Jan 08 2026
 % -------------------------------------------------------------------------
 help CONTENTS.m
 

@@ -1,6 +1,6 @@
 classdef (Abstract) Canvas < handle
     % The :mat:func:`Canvas` class is an abstract base class used to manage 
-    % figure creation and plotting layout configuration in the :mat:pkg:`+display` module.
+    % figure creation and plotting layout configuration in the `+display` subpackage.
     %
     % The :mat:func:`Canvas` class standardizes figure and axis formatting, 
     % provides tiled layout management, and offers utilities for axis selection and cycling.

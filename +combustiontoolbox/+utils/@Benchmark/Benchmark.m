@@ -26,7 +26,7 @@ classdef Benchmark < handle
     %     % Generate and display the report
     %     bench.report();
     %
-    % See also: :mat:func:`combustiontoolbox.utils.timeFunction`, :mat:func:`combustiontoolbox.utils.extensions.cpuinfo`
+    % See also: :mat:func:`timeFunction`, :mat:func:`cpuinfo`
 
 
     properties

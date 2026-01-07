@@ -9,7 +9,7 @@ classdef BenchmarkMetadata < handle
     % Here the parameters specify various metadata attributes such as the module name,
     % problem type, filename, test name, number of cases, number of species, and tolerance.
     %
-    % See also: :mat:func:`combustiontoolbox.utils.Benchmark`
+    % See also: :mat:func:`Benchmark`
 
     properties
         module       % Name of the module being benchmarked

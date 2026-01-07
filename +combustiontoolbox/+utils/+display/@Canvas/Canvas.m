@@ -1,16 +1,16 @@
 classdef (Abstract) Canvas < handle
-    % The :mat:class:`Canvas` class is an abstract base class used to manage 
+    % The :mat:func:`Canvas` class is an abstract base class used to manage 
     % figure creation and plotting layout configuration in the :mat:pkg:`+display` module.
     %
-    % The :mat:class:`Canvas` class standardizes figure and axis formatting, 
+    % The :mat:func:`Canvas` class standardizes figure and axis formatting, 
     % provides tiled layout management, and offers utilities for axis selection and cycling.
     %
-    % A :mat:class:`Canvas` subclass can be initialized as follows: ::
+    % A :mat:func:`Canvas` subclass can be initialized as follows: ::
     %
     %      config = combustiontoolbox.utils.display.PlotConfig();
     %      fig = combustiontoolbox.utils.display.PlotFigure(config);
     %
-    % See also: :mat:class:`PlotConfig`, :mat:class:`PlotFigure`, :mat:class:`PlotComposition`
+    % See also: :mat:func:`PlotConfig`, :mat:func:`PlotFigure`, :mat:func:`PlotComposition`
 
     properties
         ax matlab.graphics.axis.Axes                             % Axis handle

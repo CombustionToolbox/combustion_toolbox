@@ -1,5 +1,5 @@
 classdef (Abstract) ShockTurbulenceModel < handle
-    % The :mat:class:`ShockTurbulenceModel` abstract class defines the interface 
+    % The :mat:func:`ShockTurbulenceModel` abstract class defines the interface 
     % for modeling turbulence amplification across a shock wave interacting with 
     % weak turbulence using linear interaction analysis. It serves as the base class 
     % for specific shock–turbulence interaction models.

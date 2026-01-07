@@ -1,8 +1,8 @@
 classdef PlotComposition < combustiontoolbox.utils.display.Canvas
-    % The :mat:class:`PlotComposition` class extends :mat:class:`Canvas` to generate
+    % The :mat:func:`PlotComposition` class extends :mat:func:`Canvas` to generate
     % species composition plots (e.g., molar fractions `Xi`) against an independent variable.
     %
-    % A :mat:class:`PlotComposition` object can be initialized as follows: ::
+    % A :mat:func:`PlotComposition` object can be initialized as follows: ::
     %
     %      config = combustiontoolbox.utils.display.PlotConfig();
     %      fig = combustiontoolbox.utils.display.PlotComposition(config);
@@ -10,7 +10,7 @@ classdef PlotComposition < combustiontoolbox.utils.display.Canvas
     %
     % This creates a formatted figure with species composition plotted over the selected parameter.
     %
-    % See also: :mat:class:`Canvas`, :mat:class:`PlotFigure`, :mat:class:`PlotConfig`
+    % See also: :mat:func:`Canvas`, :mat:func:`PlotFigure`, :mat:func:`PlotConfig`
 
     properties (Access = private)
         FLAG_PLOT_VALIDATION = false; % Flag to indicate to plot validation data

@@ -1,17 +1,17 @@
 classdef PlotFigure < combustiontoolbox.utils.display.Canvas
-    % The :mat:class:`PlotFigure` class extends :mat:class:`Canvas` to provide a unified
+    % The :mat:func:`PlotFigure` class extends :mat:func:`Canvas` to provide a unified
     % plotting interface for thermodynamic and transport properties (e.g., `cp`, `h`, `Xi`)
     % against an arbitrary independent variable.
     %
-    % A :mat:class:`PlotFigure` object can be initialized as follows: ::
+    % A :mat:func:`PlotFigure` object can be initialized as follows: ::
     %
     %      config = combustiontoolbox.utils.display.PlotConfig();
     %      fig = combustiontoolbox.utils.display.PlotFigure(config);
     %      fig.plot('equivalenceRatio', mixArray, 'T', mixArray);
     %
-    % This creates a formatted plot with consistent styling using :mat:class:`PlotConfig`.
+    % This creates a formatted plot with consistent styling using :mat:func:`PlotConfig`.
     %
-    % See also: :mat:class:`Canvas`, :mat:class:`PlotComposition`, :mat:class:`PlotConfig`
+    % See also: :mat:func:`Canvas`, :mat:func:`PlotComposition`, :mat:func:`PlotConfig`
 
     properties (Access = private)
         colorIndex = 1; % Index for color cycling

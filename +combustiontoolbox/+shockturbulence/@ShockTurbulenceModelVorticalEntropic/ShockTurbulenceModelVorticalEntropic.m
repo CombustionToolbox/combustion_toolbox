@@ -1,5 +1,5 @@
 classdef ShockTurbulenceModelVorticalEntropic < combustiontoolbox.shockturbulence.ShockTurbulenceModel
-    % The :mat:class:`ShockTurbulenceModelVorticalEntropic` class characterizes 
+    % The :mat:func:`ShockTurbulenceModelVorticalEntropic` class characterizes 
     % turbulence amplification across a shock wave interacting with weak turbulence
     % comprised of vortical-entropic disturbances using linear theory.
     %

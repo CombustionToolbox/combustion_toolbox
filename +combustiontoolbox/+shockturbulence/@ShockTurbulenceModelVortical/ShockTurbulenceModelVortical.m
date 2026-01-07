@@ -1,5 +1,5 @@
 classdef ShockTurbulenceModelVortical < combustiontoolbox.shockturbulence.ShockTurbulenceModel
-    % The :mat:class:`ShockTurbulenceModelVortical` class characterizes 
+    % The :mat:func:`ShockTurbulenceModelVortical` class characterizes 
     % turbulence amplification across a shock wave interacting with weak turbulence
     % comprised of vortical disturbances using linear theory.
     %

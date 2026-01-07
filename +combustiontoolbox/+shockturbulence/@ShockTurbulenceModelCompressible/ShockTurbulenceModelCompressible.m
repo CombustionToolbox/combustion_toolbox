@@ -1,5 +1,5 @@
 classdef ShockTurbulenceModelCompressible < combustiontoolbox.shockturbulence.ShockTurbulenceModel
-    % The :mat:class:`ShockTurbulenceModelCompressible` class characterizes 
+    % The :mat:func:`ShockTurbulenceModelCompressible` class characterizes 
     % turbulence amplification across a shock wave interacting with weak turbulence
     % comprised of vortical-entropic and acoustic disturbances using linear theory.
     %

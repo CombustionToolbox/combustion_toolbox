@@ -1,5 +1,5 @@
 classdef ShockTurbulenceModelAcoustic < combustiontoolbox.shockturbulence.ShockTurbulenceModel
-    % The :mat:class:`ShockTurbulenceModelAcoustic` class characterizes 
+    % The :mat:func:`ShockTurbulenceModelAcoustic` class characterizes 
     % turbulence amplification across a shock wave interacting with weak turbulence
     % comprised of acoustic disturbances using linear theory.
     %

@@ -1,5 +1,5 @@
 classdef ShockTurbulenceSolver < handle
-    % The :mat:class:`ShockTurbulenceSolver` class characterizes turbulence 
+    % The :mat:func:`ShockTurbulenceSolver` class characterizes turbulence 
     % amplification across a shock wave interacting with weak turbulence using 
     % linear interaction analysis.
     %

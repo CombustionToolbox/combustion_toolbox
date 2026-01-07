@@ -1,8 +1,5 @@
 classdef Integrator < handle
-    % Integrator - Abstract base class for numerical integration
-    %
     % This class provides a framework for numerical integration methods.
-    % It is intended to be subclassed for specific integration techniques.
     %
     % Example:
     %   integrator = Integrator();

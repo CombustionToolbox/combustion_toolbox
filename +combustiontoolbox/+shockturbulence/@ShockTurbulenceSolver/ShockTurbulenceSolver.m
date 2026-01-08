@@ -9,29 +9,47 @@ classdef ShockTurbulenceSolver < handle
     %   * vortical + entropic (shockTurbulenceModelVorticalEntropic)
     %   * vortical + entropic + acoustic (shockTurbulenceModelCompressible)
     % 
-    % These models are based on our previous theoretical work [1]
-    % and have been extended to multi-component mixtures [2-4] using the
-    % Combustion Toolbox [5].
+    % These models are based on our previous theoretical works [1-3]
+    % and have been extended to multi-component mixtures [4-7] using the
+    % Combustion Toolbox [8-9].
     %
     % References:
     %     [1] Huete, C., Cuadra, A., Vera, M., Urzay, & J. (2021). Thermochemical
     %         effects on hypersonic shock waves interacting with weak turbulence.
     %         Physics of Fluids 33, 086111 (featured article). DOI: 10.1063/5.0059948.
     %
-    %     [2] Cuadra, A., Vera, M., Di Renzo, M., & Huete, C. (2023). Linear Theory
+    %     [2] Huete, C., Velikovich, A. L., & Wouchuk, J. G. (2011). Analytical linear theory
+    %         for the interaction of a planar shock wave with a two-or three-dimensional
+    %         random isotropic density field. Physical Review E—Statistical, Nonlinear, and
+    %         Soft Matter Physics, 83(5), 056320. DOI: 10.1103/PhysRevE.83.056320.
+    %
+    %     [3] Huete, C., Wouchuk, J. G., & Velikovich, A. L. (2012). Analytical linear theory
+    %         for the interaction of a planar shock wave with a two-or three-dimensional random
+    %         isotropic acoustic wave field. Physical Review E—Statistical, Nonlinear, and Soft
+    %         Matter Physics, 85(2), 026312. DOI: 10.1063/5.0059948.
+    %
+    %     [4] Cuadra, A., Vera, M., Di Renzo, M., & Huete, C. (2023). Linear Theory
     %         of Hypersonic Shocks Interacting with Turbulence in Air. In 2023 AIAA
     %         SciTech Forum, National Harbor, USA. DOI: 10.2514/6.2023-0075.
     %
-    %     [3] Cuadra, A., Williams, C. T., Di Renzo, M. & Huete, C. (2024). Compressibility
+    %     [5] Cuadra, A., Williams, C. T., Di Renzo, M. & Huete, C. (2024). Compressibility
     %         and vibrational-excitation effects in hypersonic shock-turbulence interaction.
     %         Tech. Rep. Summer Program Proceedings, Center for Turbulence Research,
     %         Stanford University.
     %
-    %     [4] Cuadra, A., Di Renzo, M., Hoste, J. J. O., Williams, C. T., Vera, M., & Huete, C. (2025).
+    %     [6] Cuadra, A., Williams, C. T., Di Renzo, M., & Huete, C. The role of compressibility
+    %         and vibrational-excitation in hypersonic shock–turbulence interactions.
+    %         Journal of Fluid Mechanics (under review).
+    %
+    %     [7] Cuadra, A., Di Renzo, M., Hoste, J. J. O., Williams, C. T., Vera, M., & Huete, C. (2025).
     %         Review of shock-turbulence interaction with a focus on hypersonic flow. Physics of Fluids, 37(4).
     %         DOI: 10.1063/5.0255816.
     %
-    %     [5] Cuadra, A., Huete, C., Vera, M. (2022). Combustion Toolbox:
+    %     [8] Cuadra, A., Huete, C., & Vera, M. (2026). Combustion Toolbox: An open-source
+    %         thermochemical code for gas-and condensed-phase problems involving chemical equilibrium. 
+    %         Computer Physics Communications 320, 110004. DOI:10.1016/j.cpc.2025.110004.
+    %
+    %     [9] Cuadra, A., Huete, C., Vera, M. (2022). Combustion Toolbox:
     %         A MATLAB-GUI based open-source tool for solving gaseous
     %         combustion problems. Zenodo. DOI: 10.5281/zenodo.5554911.
 
@@ -156,8 +174,10 @@ classdef ShockTurbulenceSolver < handle
             
             % Default
             eta = 0;
+            etaVorticity = 0;
             chi = 0;
             jumpConditions = [];
+            viscosityModel = obj.shockTurbulenceModel.viscosityModel;
 
             % Unpack additional inputs
             for i = 1:2:nargin-2
@@ -169,6 +189,10 @@ classdef ShockTurbulenceSolver < handle
                         eta = varargin{i + 1};
                     case {'vortical_entropic', 'chi'}
                         chi = varargin{i + 1};
+                    case {'etavorticity', 'eta_varpi'}
+                        etaVorticity = varargin{i + 1};
+                    case {'viscositymodel'}
+                        viscosityModel = varargin{i + 1};
                 end
 
             end
@@ -201,22 +225,19 @@ classdef ShockTurbulenceSolver < handle
                 case {'acoustic'}
                     results = obj.shockTurbulenceModel.getAverages(Rratio, M2, Gammas2, Gammas1, Gammas3, beta);
                 case {'compressible'}
-                    results = obj.shockTurbulenceModel.getAverages(Rratio, M2, Gammas2, Gammas1, Gammas3, beta, eta, chi);
+                    results = obj.shockTurbulenceModel.getAverages(Rratio, M2, Gammas2, Gammas1, Gammas3, beta, eta, chi, etaVorticity);
             end
 
             % Add jump conditions
-            results.Gammas1 = Gammas1;
-            results.Gammas2 = Gammas2;
-            results.Gammas3 = Gammas3;
-            results.Rratio = Rratio;
-            results.Pratio = Pratio;
-            results.Tratio = Tratio;
-            results.M1 = M1;
-            results.M2 = M2;
-            results.beta = beta;
+            names = fieldnames(jumpConditions);
+            for k = 1:length(names)
+                results.(names{k}) = jumpConditions.(names{k});
+            end
 
             % Compute Kolmogorov length scale ratio across the shock
-            results.kolmogorovLengthRatio = obj.getKolmogorovLength(results);
+            if ~strcmpi(obj.problemType, 'acoustic')
+                results.kolmogorovLengthRatio = obj.getKolmogorovLength(results, 'viscosityModel', viscosityModel);
+            end
 
             % Timer
             obj.time = toc(obj.time);
@@ -283,26 +304,93 @@ classdef ShockTurbulenceSolver < handle
             obj.plot(results);
         end
 
-        function kolmogorovLengthRatio = getKolmogorovLength(obj, results)
+        function kolmogorovLengthRatio = getKolmogorovLength(obj, results, varargin)
             % Estimate Kolmogorov length scale ratio across the shock
             %
             % Args:
             %     obj (ShockTurbulenceSolver): ShockTurbulenceSolver object
             %     results (struct): Struct with results from LIA
             %
+            % Optional name-value pairs:
+            %     * viscosityModel (char): Viscosity model to compute dynamic viscosity ratio across the shock ('powerlaw' or 'sutherland')
+            %
             % Returns:
             %     kolmogorovLengthRatio (float): Kolmogorov length scale ratio
             %
             % Example:
             %     kolmogorovLengthRatio = getKolmogorovLength(ShockTurbulenceSolver(), results);
+            %
+            % Note: The calculation of the dynamic viscosity ratio is based on temporal functions and will be overriden with a specific TransportProperties class in future releases.
+
+            % Check STI model
+            if strcmpi(obj.problemType, 'acoustic')
+                error('Kolmogorov length scale ratio can only be computed for vortical, vortical-entropic or compressible disturbances');
+            end
 
             % Definitions
+            T1 = results.T1;
             Rratio = results.Rratio;
             TRatio = results.Tratio;
             enstrophyRatio = results.enstrophy;
+            defaultViscosityModel = 'powerlaw';
+
+            % Select viscosity model
+            p = inputParser;
+            addParameter(p, 'viscosityModel', defaultViscosityModel, @(x) ischar(x) && any(strcmpi(x, {'powerlaw', 'sutherland'})));
+            parse(p, varargin{:});
+            viscosityModel = p.Results.viscosityModel;
+            
+            % Compute dynamic viscosity ratio across the shock
+            switch lower(viscosityModel)
+                case 'powerlaw'
+                    muRatio = obj.getDynamicViscosityPowerLawRatio(T1, TRatio .* T1);
+                case 'sutherland'
+                    muRatio = obj.getDynamicViscositySutherlandRatio(T1, TRatio .* T1);
+                otherwise
+                    error('Unknown viscosity model: %s', viscosityModel);
+            end
 
             % Kolmogorov length scale ratio 
-            kolmogorovLengthRatio = Rratio.^(-1/2) .* TRatio.^(3/8) .* enstrophyRatio.^(-1/4);
+            kolmogorovLengthRatio = Rratio.^(-1/2) .* muRatio.^(1/2) .* enstrophyRatio.^(-1/4);
+        end
+
+    end
+
+    methods (Access = private, Static)
+    
+        function muRatio = getDynamicViscosityPowerLawRatio(T1, T2)
+            % Get dynamic viscosity ratio using a power-law model
+            %
+            % Args:
+            %     T1 (float): Pre-shock temperature [K]
+            %     T2 (float): Post-shock temperature [K]
+            %
+            % Returns:
+            %     muRatio (float): Dynamic viscosity ratio mu2/mu1
+            %
+            % Note: This is a temporal function and will be overriden with a specific TransportProperties class in future releases.
+
+            % Compute dynamic viscosity ratio using power-law
+            muRatio = (T2 ./ T1).^(3/4);
+        end
+
+        function muRatio = getDynamicViscositySutherlandRatio(T1, T2)
+            % Get dynamic viscosity ratio using Sutherland's law model
+            %
+            % Args:
+            %     T1 (float): Pre-shock temperature [K]
+            %     T2 (float): Post-shock temperature [K]
+            %
+            % Returns:
+            %     muRatio (float): Dynamic viscosity ratio mu2/mu1
+            %
+            % Note: This is a temporal function and will be overriden with a specific TransportProperties class in future releases.
+
+            % Definitions
+            S = 110.4; % Sutherland's constant [K]
+
+            % Compute dynamic viscosity ratio using Sutherland's law
+            muRatio = (T2 ./ T1).^(3/2) .* (T1 + S) ./ (T2 + S);
         end
 
     end

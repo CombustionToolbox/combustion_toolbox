@@ -85,7 +85,7 @@ mixArray = setProperties(mix, 'temperature', 300, 'pressure', 1 * 1.01325, 'mach
 shockTurbulence = ShockTurbulenceSolver('problemType', 'compressible', 'caloricGasModel', caloricGasModel);
 
 % Solve LIA
-results = shockTurbulence.solve(mixArray, 'eta', 0.1, 'chi', 0);
+results = shockTurbulence.solve(mixArray, 'eta', 0.1, 'chi', 0, 'etaVorticity', 0.04, 'viscosityModel', 'sutherland');
 
 % Report results
 shockTurbulence.report(results);

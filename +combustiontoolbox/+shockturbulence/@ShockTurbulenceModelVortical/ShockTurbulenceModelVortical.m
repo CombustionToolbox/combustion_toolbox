@@ -4,8 +4,8 @@ classdef ShockTurbulenceModelVortical < combustiontoolbox.shockturbulence.ShockT
     % comprised of vortical disturbances using linear theory.
     %
     % These models are based on our previous theoretical work [1]
-    % and have been extended to multi-component mixtures [2-4] using the
-    % Combustion Toolbox [5].
+    % and have been extended to multi-component mixtures [2-5] using the
+    % Combustion Toolbox [6-7].
     %
     % References:
     %     [1] Huete, C., Cuadra, A., Vera, M., Urzay, & J. (2021). Thermochemical
@@ -21,11 +21,19 @@ classdef ShockTurbulenceModelVortical < combustiontoolbox.shockturbulence.ShockT
     %         Tech. Rep. Summer Program Proceedings, Center for Turbulence Research,
     %         Stanford University.
     %
-    %     [4] Cuadra, A., Di Renzo, M., Hoste, J. J. O., Williams, C. T., Vera, M., & Huete, C. (2025).
+    %     [4] Cuadra, A., Williams, C. T., Di Renzo, M., & Huete, C. The role of compressibility
+    %         and vibrational-excitation in hypersonic shock–turbulence interactions.
+    %         Journal of Fluid Mechanics (under review).
+    %
+    %     [5] Cuadra, A., Di Renzo, M., Hoste, J. J. O., Williams, C. T., Vera, M., & Huete, C. (2025).
     %         Review of shock-turbulence interaction with a focus on hypersonic flow. Physics of Fluids, 37(4).
     %         DOI: 10.1063/5.0255816.
     %
-    %     [5] Cuadra, A., Huete, C., Vera, M. (2022). Combustion Toolbox:
+    %     [6] Cuadra, A., Huete, C., & Vera, M. (2026). Combustion Toolbox: An open-source
+    %         thermochemical code for gas-and condensed-phase problems involving chemical equilibrium. 
+    %         Computer Physics Communications 320, 110004. DOI:10.1016/j.cpc.2025.110004.
+    %
+    %     [7] Cuadra, A., Huete, C., Vera, M. (2022). Combustion Toolbox:
     %         A MATLAB-GUI based open-source tool for solving gaseous
     %         combustion problems. Zenodo. DOI: 10.5281/zenodo.5554911.
     
@@ -77,9 +85,7 @@ classdef ShockTurbulenceModelVortical < combustiontoolbox.shockturbulence.ShockT
         end
 
         function averages = getAverages(obj, R, M2, Gammas)
-            % getAverages Compute the amplification ratios.
-            %
-            %   results = getAverages(obj, R, M2, Gammas)
+            % Compute the post-shock turbulence statistics for vortical disturbances
             %
             % Args:
             %     obj (ShockTurbulenceModelVortical): ShockTurbulenceModelVortical object
@@ -88,7 +94,7 @@ classdef ShockTurbulenceModelVortical < combustiontoolbox.shockturbulence.ShockT
             %     Gammas (float): Inverse normalized Hugoniot slope
             %
             % Returns:
-            %   averages (struct): Structure with computed averages (K, L, T, etc.)
+            %     averages (struct): Structure with averages of post-shock turbulence statistics (e.g., Reynolds stresses, turbulent kinetic energy, enstrophy, etc.)
             %
             % Example:
             %     averages = getAverages(ShockTurbulenceModelVortical(), R, M2, Gammas);

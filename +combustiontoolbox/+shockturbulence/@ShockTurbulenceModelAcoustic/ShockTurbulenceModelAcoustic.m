@@ -4,8 +4,8 @@ classdef ShockTurbulenceModelAcoustic < combustiontoolbox.shockturbulence.ShockT
     % comprised of acoustic disturbances using linear theory.
     %
     % These models are based on our previous theoretical work [1]
-    % and have been extended to multi-component mixtures [2] using the
-    % Combustion Toolbox [3].
+    % and have been extended to multi-component mixtures [2-3] using the
+    % Combustion Toolbox [4-5].
     %
     % References:
     %     [1] Huete, C., Wouchuk, J. G., & Velikovich, A. L. (2012). Analytical linear theory
@@ -18,7 +18,15 @@ classdef ShockTurbulenceModelAcoustic < combustiontoolbox.shockturbulence.ShockT
     %         Tech. Rep. Summer Program Proceedings, Center for Turbulence Research,
     %         Stanford University.
     %
-    %     [3] Cuadra, A., Huete, C., Vera, M. (2022). Combustion Toolbox:
+    %     [3] Cuadra, A., Williams, C. T., Di Renzo, M., & Huete, C. The role of compressibility
+    %         and vibrational-excitation in hypersonic shock–turbulence interactions.
+    %         Journal of Fluid Mechanics (under review).
+    %
+    %     [4] Cuadra, A., Huete, C., & Vera, M. (2026). Combustion Toolbox: An open-source
+    %         thermochemical code for gas-and condensed-phase problems involving chemical equilibrium. 
+    %         Computer Physics Communications 320, 110004. DOI:10.1016/j.cpc.2025.110004.
+    %
+    %     [5] Cuadra, A., Huete, C., Vera, M. (2022). Combustion Toolbox:
     %         A MATLAB-GUI based open-source tool for solving gaseous
     %         combustion problems. Zenodo. DOI: 10.5281/zenodo.5554911.
     
@@ -70,20 +78,18 @@ classdef ShockTurbulenceModelAcoustic < combustiontoolbox.shockturbulence.ShockT
         end
             
         function averages = getAverages(obj, R, M2, Gammas, Gammas1, Gammas3, beta)
-            % getAverages Compute the amplification ratios.
-            %
-            %   results = getAverages(R, M2, Gammas, Gammas1, Gammas3, beta)
+            % Compute the post-shock turbulence statistics for acoustic disturbances
             %
             % Args:
             %     obj (ShockTurbulenceModelAcoustic): ShockTurbulenceModelAcoustic object
             %     R (float): Density ratio rho_2 / rho_1
             %     M2 (float): Post-shock Mach number
-            %     Gammas (float): Inverse normalized Hugonito slope, see Eq. (22) in [1] (Eq. (4) in [2])
-            %     Gammas3 (float): Inverse normalized Hugonito slope
+            %     Gammas (float): Inverse normalized Hugoniot slope, see Eq. (22) in [1] (Eq. (4) in [2])
+            %     Gammas3 (float): Inverse normalized Hugoniot slope
             %     beta (float): Ratio of speed of sound in the post-shock state to the pre-shock state
             %
             % Returns:
-            %     averages (struct): Structure with computed averages (K, L, T, etc.)
+            %     averages (struct): Structure with averages of post-shock turbulence statistics (e.g., Reynolds stresses, turbulent kinetic energy, enstrophy, etc.)
             %
             % Example:
             %     averages = getAverages(ShockTurbulenceModelAcoustic(), R, M2, Gammas, Gammas3, beta);

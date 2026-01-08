@@ -3,25 +3,42 @@ classdef ShockTurbulenceModelVorticalEntropic < combustiontoolbox.shockturbulenc
     % turbulence amplification across a shock wave interacting with weak turbulence
     % comprised of vortical-entropic disturbances using linear theory.
     %
-    % These models are based on our previous theoretical work [1]
-    % and have been extended to multi-component mixtures [2, 3] using the
-    % Combustion Toolbox [4].
+    % These models are based on our previous theoretical works [1-2]
+    % and have been extended to multi-component mixtures [3-6] using the
+    % Combustion Toolbox [7-8].
     %
     % References:
     %     [1] Huete, C., Cuadra, A., Vera, M., Urzay, & J. (2021). Thermochemical
     %         effects on hypersonic shock waves interacting with weak turbulence.
     %         Physics of Fluids 33, 086111 (featured article). DOI: 10.1063/5.0059948.
     %
-    %     [2] Cuadra, A., Williams, C. T., Di Renzo, M. & Huete, C. (2024). Compressibility
+    %     [2] Huete, C., Velikovich, A. L., & Wouchuk, J. G. (2011). Analytical linear theory
+    %         for the interaction of a planar shock wave with a two-or three-dimensional
+    %         random isotropic density field. Physical Review E—Statistical, Nonlinear, and
+    %         Soft Matter Physics, 83(5), 056320. DOI: 10.1103/PhysRevE.83.056320.
+    %
+    %     [3] Cuadra, A., Vera, M., Di Renzo, M., & Huete, C. (2023). Linear Theory
+    %         of Hypersonic Shocks Interacting with Turbulence in Air. In 2023 AIAA
+    %         SciTech Forum, National Harbor, USA. DOI: 10.2514/6.2023-0075.
+    %
+    %     [4] Cuadra, A., Williams, C. T., Di Renzo, M. & Huete, C. (2024). Compressibility
     %         and vibrational-excitation effects in hypersonic shock-turbulence interaction.
     %         Tech. Rep. Summer Program Proceedings, Center for Turbulence Research,
     %         Stanford University.
     %
-    %     [3] Cuadra, A., Di Renzo, M., Hoste, J. J. O., Williams, C. T., Vera, M., & Huete, C. (2025).
+    %     [5] Cuadra, A., Williams, C. T., Di Renzo, M., & Huete, C. The role of compressibility
+    %         and vibrational-excitation in hypersonic shock–turbulence interactions.
+    %         Journal of Fluid Mechanics (under review).
+    %
+    %     [6] Cuadra, A., Di Renzo, M., Hoste, J. J. O., Williams, C. T., Vera, M., & Huete, C. (2025).
     %         Review of shock-turbulence interaction with a focus on hypersonic flow. Physics of Fluids, 37(4).
     %         DOI: 10.1063/5.0255816.
     %
-    %     [4] Cuadra, A., Huete, C., Vera, M. (2022). Combustion Toolbox:
+    %     [7] Cuadra, A., Huete, C., & Vera, M. (2026). Combustion Toolbox: An open-source
+    %         thermochemical code for gas-and condensed-phase problems involving chemical equilibrium. 
+    %         Computer Physics Communications 320, 110004. DOI:10.1016/j.cpc.2025.110004.
+    %
+    %     [8] Cuadra, A., Huete, C., Vera, M. (2022). Combustion Toolbox:
     %         A MATLAB-GUI based open-source tool for solving gaseous
     %         combustion problems. Zenodo. DOI: 10.5281/zenodo.5554911.
     
@@ -115,21 +132,19 @@ classdef ShockTurbulenceModelVorticalEntropic < combustiontoolbox.shockturbulenc
         end
             
         function averages = getAverages(obj, R, M2, Gammas, Gammas1, beta, chi)
-            % getAverages Compute the amplification ratios.
-            %
-            %   results = getAverages(obj, R, M2, Gammas, Gammas1, beta, chi)
+            % Compute the post-shock turbulence statistics for vortical-entropic disturbances
             %
             % Args:
             %     obj (ShockTurbulenceModelVorticalEntropic): ShockTurbulenceModelVorticalEntropic object
             %     R (float): Density ratio rho_2 / rho_1
             %     M2 (float): Post-shock Mach number
-            %     Gammas (float): Inverse normalized Hugonito slope, see Eq. (22) in [1] (Eq. (4) in [2])
-            %     Gammas1 (float): Inverse normalized Hugonito slope
+            %     Gammas (float): Inverse normalized Hugoniot slope, see Eq. (22) in [1] (Eq. (4) in [2])
+            %     Gammas1 (float): Inverse normalized Hugoniot slope
             %     beta (float): Ratio of speed of sound in the post-shock state to the pre-shock state
             %     chi (float): mean correlation coefficient between the vortical and entropic modes
             %
             % Returns:
-            %     averages (struct): Structure with computed averages (K, L, T, etc.)
+            %     averages (struct): Structure with averages of post-shock turbulence statistics (e.g., Reynolds stresses, turbulent kinetic energy, enstrophy, etc.)
             %
             % Example:
             %     averages = getAverages(ShockTurbulenceModelVorticalEntropic(), R, M2, Gammas, Gammas1, beta, chi);

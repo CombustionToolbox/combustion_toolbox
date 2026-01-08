@@ -86,7 +86,7 @@ classdef ShockTurbulenceSolver < handle
             defaultFLAG_TCHEM_FROZEN = false;
             defaultFLAG_FROZEN = false;
             defaultPlotConfig = combustiontoolbox.utils.display.PlotConfig();
-            defaultPlotConfig.plotProperties = {'K', 'R11', 'RTT', 'Ka', 'Kr', 'enstrophy'};
+            defaultPlotConfig.plotProperties = {'K', 'R11', 'RTT', 'Ka', 'Kr', 'enstrophy', 'kolmogorovLengthRatio'};
 
             % Parse inputs
             p = inputParser;
@@ -117,6 +117,11 @@ classdef ShockTurbulenceSolver < handle
 
             if sum(contains(p.UsingDefaults, 'equilibriumSolver'))
                 obj.equilibriumSolver.caloricGasModel = p.Results.caloricGasModel;
+            end
+
+            % Remove kolmogorovLengthRatio from plotConfig.plotProperties if problemType is 'acoustic'
+            if strcmpi(obj.problemType, 'acoustic')
+                obj.plotConfig.plotProperties = setdiff(obj.plotConfig.plotProperties, 'kolmogorovLengthRatio');
             end
 
             % Display warning if deprecated flags are used

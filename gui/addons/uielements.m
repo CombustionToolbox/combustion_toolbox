@@ -334,7 +334,11 @@ classdef uielements < matlab.apps.AppBase
                 try
                     listSpecies = findProducts(app.chemicalSystem, app.listElementsSelected, 'ind', app.indexElementsDatabase);
                 catch
-                    listSpecies = {};
+                    try
+                        listSpecies = findProducts(app.chemicalSystem, strcat(app.listElementsSelected, '_M'), 'ind', app.indexElementsDatabase);
+                    catch
+                        listSpecies = {};
+                    end
                 end
 
                 app.listbox_LS_DB.Items = listSpecies;

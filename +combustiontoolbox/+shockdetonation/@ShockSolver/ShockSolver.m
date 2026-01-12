@@ -159,7 +159,7 @@ classdef ShockSolver < handle
             %
             % Args:
             %     obj (EquilibriumSolver): EquilibriumSolver object
-            %     mix1 (Mixture): initial Mixture object
+            %     mix1 (Mixture): Initial Mixture object
             %
             % Optional Args:
             %     * mixGuess_i (Mixture): Mixture object from previous calculation

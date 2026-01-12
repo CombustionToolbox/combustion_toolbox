@@ -251,7 +251,7 @@ classdef JumpConditionsSolver < handle
 
         end
 
-        function jumpConditions = solve(obj, mixArray, varargin)
+        function [jumpConditions, mixArray1, mixArray2] = solve(obj, mixArray, varargin)
             % Solve the jump conditions for the given mixture
             %
             % Args:
@@ -275,14 +275,16 @@ classdef JumpConditionsSolver < handle
             obj.time = tic;
             
             % Compute jump conditions
-            jumpConditions = getJumpData(obj);
+            [jumpConditions, mixArray1, mixArray2] = getJumpData(obj);
 
             % Solve Gammas (calorically perfect gas)
             if obj.equilibriumSolver.caloricGasModel.isPerfect()
                 [jumpConditions.Gammas1, jumpConditions.Gammas2, jumpConditions.Gammas3] = obj.getGammasPerfect(jumpConditions.gamma1, jumpConditions.M1);
 
-                % Interpolate results into a smaller grid
-                reduceSize(obj, jumpConditions);
+                % Interpolate results into a smaller grid (only if nargout == 1)
+                if nargout == 1
+                    jumpConditions = reduceSize(obj, jumpConditions);
+                end
 
                 % Timer
                 obj.time = toc(obj.time);
@@ -297,8 +299,10 @@ classdef JumpConditionsSolver < handle
             jumpConditions.Gammas1 = getGammas1(obj, jumpConditions);
             jumpConditions.Gammas3 = getGammas3(obj, jumpConditions);
 
-            % Interpolate results into a smaller grid
-            jumpConditions = reduceSize(obj, jumpConditions);
+            % Interpolate results into a smaller grid (only if nargout == 1)
+            if nargout == 1
+                jumpConditions = reduceSize(obj, jumpConditions);
+            end
             
             % Clean instabilities close to 0/0
             jumpConditions = obj.cleanInstabilities(jumpConditions);
@@ -422,7 +426,7 @@ classdef JumpConditionsSolver < handle
 
     methods (Access = private)
 
-        function jumpConditions = getJumpData(obj)
+        function [jumpConditions, mixArray1, mixArray2] = getJumpData(obj)
             % Get jump conditions
             %
             % Args:
@@ -432,6 +436,8 @@ classdef JumpConditionsSolver < handle
             %
             % Returns:
             %     jumpConditions (struct): Structure containing the jump conditions
+            %     mixArray1 (Mixture): Mixture object for the pre-shock state
+            %     mixArray2 (Mixture): Mixture object for the post-shock state
 
             % Print status
             fprintf('Solving jump conditions... ');

@@ -251,7 +251,7 @@ classdef JumpConditionsSolver < handle
 
         end
 
-        function [jumpConditions, mixArray1, mixArray2] = solve(obj, mixArray, varargin)
+        function [jumpConditions, mixArray1, mixArray2] = solve(obj, mixArray1, varargin)
             % Solve the jump conditions for the given mixture
             %
             % Args:
@@ -265,17 +265,17 @@ classdef JumpConditionsSolver < handle
             %     jumpConditions = solve(JumpConditionsSolver(), mixArray);
             
             % Definitions
-            obj.mixArray = mixArray;
-            obj.temperature = [mixArray.T];
-            obj.pressure = [mixArray.p];
-            obj.mach = [mixArray.mach];
-            obj.mix = copy(mixArray(1)); obj.mix.u = [];
+            obj.mixArray = mixArray1;
+            obj.temperature = [mixArray1.T];
+            obj.pressure = [mixArray1.p];
+            obj.mach = [mixArray1.mach];
+            obj.mix = copy(mixArray1(1)); obj.mix.u = [];
             
             % Timer
             obj.time = tic;
             
             % Compute jump conditions
-            [jumpConditions, mixArray1, mixArray2] = getJumpData(obj);
+            [jumpConditions, mixArray1, mixArray2] = getJumpData(obj, mixArray1);
 
             % Solve Gammas (calorically perfect gas)
             if obj.equilibriumSolver.caloricGasModel.isPerfect()
@@ -426,13 +426,12 @@ classdef JumpConditionsSolver < handle
 
     methods (Access = private)
 
-        function [jumpConditions, mixArray1, mixArray2] = getJumpData(obj)
+        function [jumpConditions, mixArray1, mixArray2] = getJumpData(obj, mixArray1)
             % Get jump conditions
             %
             % Args:
             %     obj (JumpConditionsSolver): JumpConditionsSolver object
             %     mixArray1 (Mixture): Mixture object for the pre-shock state
-            %     mixArray2 (Mixture): Mixture object for the post-shock state
             %
             % Returns:
             %     jumpConditions (struct): Structure containing the jump conditions
@@ -446,9 +445,6 @@ classdef JumpConditionsSolver < handle
             Gammas1 = [];
             Gammas2 = [];
             Gammas3 = [];
-
-            % Definitions
-            mixArray1 = setProperties(obj.mix, 'M1', obj.mach);
 
             % Solve jump conditions
             [mixArray1, mixArray2] = obj.shockSolver.solveArray(mixArray1);

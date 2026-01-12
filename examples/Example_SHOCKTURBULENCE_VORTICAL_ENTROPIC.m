@@ -43,7 +43,7 @@
 %
 % @author: Alberto Cuadra Lara
 %
-% Last update: December 16, 2025
+% Last update: January 12, 2026
 % -------------------------------------------------------------------------
 
 % Import packages
@@ -71,13 +71,13 @@ mix = Mixture(system);
 set(mix, {'N2', 'O2'}, [79/21, 1]);
 
 % Define propertiescle
-mixArray = setProperties(mix, 'temperature', 300, 'pressure', 1 * 1.01325, 'mach', mach);
+mixArray = setProperties(mix, 'temperature', 300, 'pressure', 1 * 1.01325, 'mach', mach, 'chi', -0.1);
 
 % Invoke ShockTurbulenceSolver and select problem
 shockTurbulence = ShockTurbulenceSolver('problemType', 'vortical_entropic', 'caloricGasModel', caloricGasModel);
 
 % Solve LIA
-results = shockTurbulence.solve(mixArray, 'chi', -0.1);
+results = shockTurbulence.solve(mixArray);
 
 % Report results
 shockTurbulence.report(results);

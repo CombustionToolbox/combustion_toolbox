@@ -53,7 +53,7 @@
 %
 % @author: Alberto Cuadra Lara
 %                 
-% Last update Dec 16 2025
+% Last update January 12, 2026
 % -------------------------------------------------------------------------
 
 % Import packages
@@ -78,14 +78,17 @@ mix = Mixture(system);
 % Define chemical state
 set(mix, {'N2', 'O2'}, [79/21, 1]);
 
-% Define propertiescle
-mixArray = setProperties(mix, 'temperature', 300, 'pressure', 1 * 1.01325, 'mach', mach);
+% Define properties
+mixArray = setProperties(mix, 'temperature', 300, 'pressure', 1 * 1.01325, 'mach', mach, 'eta', 0.1);
 
 % Invoke ShockTurbulenceSolver and select problem
 shockTurbulence = ShockTurbulenceSolver('problemType', 'compressible', 'caloricGasModel', caloricGasModel);
 
+% Update viscosity model
+shockTurbulence.shockTurbulenceModel.viscosityModel = 'sutherland';
+
 % Solve LIA
-results = shockTurbulence.solve(mixArray, 'eta', 0.1, 'chi', 0, 'etaVorticity', 0.04, 'viscosityModel', 'sutherland');
+results = shockTurbulence.solve(mixArray);
 
 % Report results
 shockTurbulence.report(results);

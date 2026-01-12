@@ -165,7 +165,7 @@ classdef ShockTurbulenceSolver < handle
         end
 
         function obj = set(obj, property, value, varargin)
-            % Set properties of the RocketSolver object
+            % Set properties of the ShockTurbulenceSolver object
             %
             % Args:
             %     obj (ShockTurbulenceSolver): ShockTurbulenceSolver object

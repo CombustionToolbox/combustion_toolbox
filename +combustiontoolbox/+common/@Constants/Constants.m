@@ -26,8 +26,8 @@ classdef Constants < handle
         E       = 1.602176634e-19  % Electron charge [C]
         E0      = 8.854187818e-12  % Vacuum permittivity [F/m]
         ME      = 9.10938356e-31   % Electron mass [kg]
-        release = 'v1.2.8'         % Release version
-        date    = '08 Jan 2026'    % Release date
+        release = 'v1.2.9'         % Release version
+        date    = '13 Jan 2026'    % Release date
     end
     
 end

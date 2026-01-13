@@ -100,6 +100,26 @@ function value = get_properties(property, numberMixtures, mix)
 
 end
 
+function value = get_propertiesLIA(property, numberMixtures, mix)
+    % Get properties of the given mixtures
+    %
+    % Args:
+    %     property (function/char): Function/char to get the property
+    %     numberMixtures (float): Number of mixtures
+    %     mix (cell): Cell with the properties of the N mixtures
+    %
+    % Returns:
+    %     value (float): Value of the property
+    %
+    % Examples:
+    %     * get_propertiesLIA('K', 1, mix)
+    %     * get_propertiesLIA('R11', 1, mix)
+
+    for i = numberMixtures:-1:1
+        value(i) = mix{i}.lia.(property);
+    end
+end
+
 function line = set_string_value(Nmixtures, varargin)
     % Set the char to print the properties
     %
@@ -188,6 +208,32 @@ function print_properties(ProblemType, numberMixtures, mix)
         fprintf(['CF [-]         |                 |                 |', string_value_3], get_properties('cf', numberMixtures - 2, mix(3:end)));
         fprintf(['Ivac [s]       |                 |                 |', string_value_3], get_properties('I_vac', numberMixtures - 2, mix(3:end)));
         fprintf(['Isp  [s]       |                 |                 |', string_value_3], get_properties('I_sp', numberMixtures - 2, mix(3:end)));
+    elseif contains(ProblemType, 'SHOCKTURBULENCE')
+        string_value_1 = set_string_value(2); string_value_1 = strrep(string_value_1, '|   %12.4f', '|');
+
+        fprintf('------------------------------------------------------------------------------------------------------------\n');
+        fprintf('TURBULENCE STATISTICS\n');
+        if contains(ProblemType, 'COMPRESSIBLE')
+            fprintf(['eta [-]        |', string_value_1], get_properties('eta', 1, mix(1)));
+            fprintf(['etaVorticity[-]|', string_value_1], get_properties('etaVorticity', 1, mix(1)));
+        end
+        
+        if contains(ProblemType, 'VORTICAL_ENTROPIC')
+            fprintf(['chi [-]        |', string_value_1], get_properties('chi', 1, mix(1)));
+        end
+        
+        fprintf(['TKE [-]        |                 |', string_value_2], get_propertiesLIA('K', numberMixtures - 1, mix(2:end)));
+        fprintf(['R11 [-]        |                 |', string_value_2], get_propertiesLIA('R11', numberMixtures - 1, mix(2:end)));
+        fprintf(['RTT [-]        |                 |', string_value_2], get_propertiesLIA('RTT', numberMixtures - 1, mix(2:end)));
+        fprintf(['Enstrophy [-]  |                 |', string_value_2], get_propertiesLIA('enstrophy', numberMixtures - 1, mix(2:end)));
+        fprintf(['EnstrophyTT [-]|                 |', string_value_2], get_propertiesLIA('enstrophyTT', numberMixtures - 1, mix(2:end)));
+        fprintf(['TKEa [-]       |                 |', string_value_2], get_propertiesLIA('Ka', numberMixtures - 1, mix(2:end)));
+        fprintf(['R11a [-]       |                 |', string_value_2], get_propertiesLIA('R11a', numberMixtures - 1, mix(2:end)));
+        fprintf(['RTTa [-]       |                 |', string_value_2], get_propertiesLIA('RTTa', numberMixtures - 1, mix(2:end)));
+        fprintf(['TKEr [-]       |                 |', string_value_2], get_propertiesLIA('Kr', numberMixtures - 1, mix(2:end)));
+        fprintf(['R11r [-]       |                 |', string_value_2], get_propertiesLIA('R11r', numberMixtures - 1, mix(2:end)));
+        fprintf(['RTTr [-]       |                 |', string_value_2], get_propertiesLIA('RTTr', numberMixtures - 1, mix(2:end)));
+        fprintf(['Kolmogorov l.r.|                 |', string_value_2], get_propertiesLIA('kolmogorovLengthRatio', numberMixtures - 1, mix(2:end)));
     end
 
     fprintf('------------------------------------------------------------------------------------------------------------\n');

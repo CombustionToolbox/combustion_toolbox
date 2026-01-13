@@ -131,45 +131,35 @@ classdef ShockTurbulenceModelVorticalEntropic < combustiontoolbox.shockturbulenc
             
         end
             
-        function averages = getAverages(obj, R, M2, Gammas, Gammas1, beta, chi)
+        function [averages, mixArray1, mixArray2] = getAverages(obj, jumpConditions, mixArray1, mixArray2)
             % Compute the post-shock turbulence statistics for vortical-entropic disturbances
             %
             % Args:
             %     obj (ShockTurbulenceModelVorticalEntropic): ShockTurbulenceModelVorticalEntropic object
-            %     R (float): Density ratio rho_2 / rho_1
-            %     M2 (float): Post-shock Mach number
-            %     Gammas (float): Inverse normalized Hugoniot slope, see Eq. (22) in [1] (Eq. (4) in [2])
-            %     Gammas1 (float): Inverse normalized Hugoniot slope
-            %     beta (float): Ratio of speed of sound in the post-shock state to the pre-shock state
-            %     chi (float): mean correlation coefficient between the vortical and entropic modes
+            %     jumpConditions (struct): Structure with jump conditions across the shock wave
+            %     mixArray1 (Mixture): Pre-shock Mixture objects
+            %     mixArray2 (Mixture): Post-shock Mixture objects
             %
             % Returns:
-            %     averages (struct): Structure with averages of post-shock turbulence statistics (e.g., Reynolds stresses, turbulent kinetic energy, enstrophy, etc.)
+            %     Tuple containing:
+            %
+            %     * averages (struct): Structure with averages of post-shock turbulence statistics (e.g., Reynolds stresses, turbulent kinetic energy, enstrophy, etc.)
+            %     * mixArray1 (Mixture): Pre-shock Mixture objects
+            %     * mixArray2 (Mixture): Post-shock Mixture objects
             %
             % Example:
-            %     averages = getAverages(ShockTurbulenceModelVorticalEntropic(), R, M2, Gammas, Gammas1, beta, chi);
-            
-            % Parse input arguments
-            p = inputParser;
-            addRequired(p, 'R', @(x) isnumeric(x));
-            addRequired(p, 'M2', @(x) isnumeric(x));
-            addRequired(p, 'Gammas', @(x) isnumeric(x));
-            addRequired(p, 'Gammas1', @(x) isnumeric(x));
-            addRequired(p, 'beta', @(x) isnumeric(x));
-            addRequired(p, 'chi', @(x) isnumeric(x));
-            parse(p, R, M2, Gammas, Gammas1, beta, chi);
+            %     [averages, mixArray1, mixArray2] = getAverages(ShockTurbulenceModelVorticalEntropic(), jumpConditions, mixArray1, mixArray2);
 
             % Set properties
-            R = p.Results.R;
-            M2 = p.Results.M2;
-            Gammas = p.Results.Gammas;
-            Gammas1 = p.Results.Gammas1;
-            beta = p.Results.beta;
-            chi = p.Results.chi;
+            R = jumpConditions.Rratio;        % Density ratio (rho2/rho1)
+            M2 = jumpConditions.M2;           % Post-shock Mach number
+            Gammas = jumpConditions.Gammas2;  % Dimensionless slope of the Hugoniot curve (partial derivative at constant rho1, p1)
+            Gammas1 = jumpConditions.Gammas1; % Dimensionless slope of the Hugoniot curve (partial derivative at constant rho2, p1)
+            beta = jumpConditions.beta;       % Ratio of speed of sound across the shock
+            chi = [mixArray1.chi];            % Mean correlation coefficient between the vortical and entropic modes
 
             % Definitions
-            N = length(R);
-            if isscalar(chi), chi = chi * ones(1, N); end
+            numCases = length(R);
             
             % Evaluate chi in acordance with the selected chi function
             chiEval = obj.chiFunction(R, M2, beta, chi);
@@ -177,7 +167,7 @@ classdef ShockTurbulenceModelVorticalEntropic < combustiontoolbox.shockturbulenc
             % Compute acoustic and vortical modes of the longitudinal and
             % transverse components of the turbulent kinetic energy (TKE)
             % amplification
-            for i = N:-1:1
+            for i = numCases:-1:1
                 averages.R11r(i) = R11r(obj, R(i), M2(i), Gammas(i), Gammas1(i), beta(i), chiEval(i));
                 averages.R11a(i) = R11a(obj, R(i), M2(i), Gammas(i), Gammas1(i), beta(i), chiEval(i));
                 averages.RTTr(i) = RTTr(obj, R(i), M2(i), Gammas(i), Gammas1(i), beta(i), chiEval(i));
@@ -203,8 +193,11 @@ classdef ShockTurbulenceModelVorticalEntropic < combustiontoolbox.shockturbulenc
             % Compute anisotropy
             averages.anisotropy = 1 - (4 * averages.R11) ./ (3 * averages.K + averages.R11);
 
-            % Return the averages structure as output.
-            obj.averages = averages;
+            % Get Kolmogorov length scale ratio across the shock
+            averages.kolmogorovLengthRatio = obj.getKolmogorovLength(averages, mixArray1, mixArray2);
+            
+            % Set the post-shock turbulence statistics in the Mixture array
+            mixArray2 = obj.setAverages2MixArray(averages, mixArray2);
         end
 
     end

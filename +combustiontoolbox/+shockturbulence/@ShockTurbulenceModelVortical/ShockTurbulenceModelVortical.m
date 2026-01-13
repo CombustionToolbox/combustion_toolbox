@@ -84,40 +84,37 @@ classdef ShockTurbulenceModelVortical < combustiontoolbox.shockturbulence.ShockT
 
         end
 
-        function averages = getAverages(obj, R, M2, Gammas)
+        function [averages, mixArray1, mixArray2] = getAverages(obj, jumpConditions, mixArray1, mixArray2)
             % Compute the post-shock turbulence statistics for vortical disturbances
             %
             % Args:
             %     obj (ShockTurbulenceModelVortical): ShockTurbulenceModelVortical object
-            %     R (float): Density ratio (rho2/rho1)
-            %     M2 (float): Post-shock Mach number
-            %     Gammas (float): Inverse normalized Hugoniot slope
+            %     jumpConditions (struct): Structure with jump conditions across the shock wave
+            %     mixArray1 (Mixture): Pre-shock Mixture objects
+            %     mixArray2 (Mixture): Post-shock Mixture objects
             %
             % Returns:
-            %     averages (struct): Structure with averages of post-shock turbulence statistics (e.g., Reynolds stresses, turbulent kinetic energy, enstrophy, etc.)
+            %     Tuple containing:
+            %
+            %     * averages (struct): Structure with averages of post-shock turbulence statistics (e.g., Reynolds stresses, turbulent kinetic energy, enstrophy, etc.)
+            %     * mixArray1 (Mixture): Pre-shock Mixture objects
+            %     * mixArray2 (Mixture): Post-shock Mixture objects
             %
             % Example:
-            %     averages = getAverages(ShockTurbulenceModelVortical(), R, M2, Gammas);
-            
-            % Parse input arguments
-            p = inputParser;
-            addRequired(p, 'R', @(x) isnumeric(x));
-            addRequired(p, 'M2', @(x) isnumeric(x));
-            addRequired(p, 'Gammas', @(x) isnumeric(x));
-            parse(p, R, M2, Gammas);
+            %     [averages, mixArray1, mixArray2] = getAverages(ShockTurbulenceModelVortical(), jumpConditions, mixArray1, mixArray2);
 
             % Set properties
-            R = p.Results.R;
-            M2 = p.Results.M2;
-            Gammas = p.Results.Gammas;
+            R = jumpConditions.Rratio;       % Density ratio (rho2/rho1)
+            M2 = jumpConditions.M2;          % Post-shock Mach number
+            Gammas = jumpConditions.Gammas2; % Dimensionless slope of the Hugoniot curve (partial derivative at constant rho1, p1)
 
             % Definitions
-            N = length(R);
+            numCases = length(R);
 
             % Compute acoustic and vortical modes of the longitudinal and
             % transverse components of the turbulent kinetic energy (TKE)
             % amplification
-            for i = N:-1:1
+            for i = numCases:-1:1
                 averages.R11r(i) = R11r(obj, R(i), M2(i), Gammas(i));
                 averages.R11a(i) = R11a(obj, R(i), M2(i), Gammas(i));
                 averages.RTTr(i) = RTTr(obj, R(i), M2(i), Gammas(i));
@@ -143,8 +140,11 @@ classdef ShockTurbulenceModelVortical < combustiontoolbox.shockturbulence.ShockT
             % Compute anisotropy
             averages.anisotropy = 1 - (4 * averages.R11) ./ (3 * averages.K + averages.R11);
 
-            % Return the averages structure as output.
-            obj.averages = averages;
+            % Get Kolmogorov length scale ratio across the shock
+            averages.kolmogorovLengthRatio = obj.getKolmogorovLength(averages, mixArray1, mixArray2);
+            
+            % Set the post-shock turbulence statistics in the Mixture array
+            mixArray2 = obj.setAverages2MixArray(averages, mixArray2);
         end
 
     end

@@ -434,9 +434,11 @@ classdef JumpConditionsSolver < handle
             %     mixArray1 (Mixture): Mixture object for the pre-shock state
             %
             % Returns:
-            %     jumpConditions (struct): Structure containing the jump conditions
-            %     mixArray1 (Mixture): Mixture object for the pre-shock state
-            %     mixArray2 (Mixture): Mixture object for the post-shock state
+            %     Tuple containing:
+            %
+            %     * jumpConditions (struct): Structure containing the jump conditions
+            %     * mixArray1 (Mixture): Mixture object for the pre-shock state
+            %     * mixArray2 (Mixture): Mixture object for the post-shock state
 
             % Print status
             fprintf('Solving jump conditions... ');
@@ -499,10 +501,12 @@ classdef JumpConditionsSolver < handle
             %     p1 (float): Pressure of the mixture
             %
             % Returns:
-            %     p2Gridded (cell array): Cell array of gridded interpolants
-            %     p2 (float): Pressure of the mixture
-            %     mixArray1 (Mixture): Mixture object for the pre-shock state
-            %     mixArray2 (Mixture): Mixture object for the post-shock state
+            %     Tuple containing:
+            %
+            %     * p2Gridded (cell array): Cell array of gridded interpolants
+            %     * p2 (float): Pressure of the mixture
+            %     * mixArray1 (Mixture): Mixture object for the pre-shock state
+            %     * mixArray2 (Mixture): Mixture object for the post-shock state
 
             % Definitions
             M1 = obj.mach;
@@ -557,9 +561,11 @@ classdef JumpConditionsSolver < handle
             %     mach (float): mach number
             %
             % Returns:
-            %     Gammas1 (float): Dimensionless slope of the Hugoniot curve (partial derivative at constant rho2, p1)
-            %     Gammas2 (float): Dimensionless slope of the Hugoniot curve (partial derivative at constant rho1, p1)
-            %     Gammas3 (float): Dimensionless slope of the Hugoniot curve (partial derivative at constant rho1, rho2)
+            %     Tuple containing:
+            %
+            %     * Gammas1 (float): Dimensionless slope of the Hugoniot curve (partial derivative at constant rho2, p1)
+            %     * Gammas2 (float): Dimensionless slope of the Hugoniot curve (partial derivative at constant rho1, p1)
+            %     * Gammas3 (float): Dimensionless slope of the Hugoniot curve (partial derivative at constant rho1, rho2)
             
             % Definitions
             R = obj.getDensityRatioPerfect(gamma, mach);

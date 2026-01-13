@@ -76,6 +76,7 @@ classdef Mixture < handle & matlab.mixin.Copyable
         eta = 0               % Dilatational-to-solenoidal TKE ratio [-]
         chi = 0               % Entropic–vortical correlation parameter [-]
         etaVorticity = 0      % Vorticity generated at the shock due to acoustic disturbances normalized by the upstream vorticity [-]
+        lia                   % Properties for Linear Interaction Analysis (LIA)
         config                % Mixture configuration object
     end
 

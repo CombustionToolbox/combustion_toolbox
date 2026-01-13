@@ -88,7 +88,7 @@ shockTurbulence = ShockTurbulenceSolver('problemType', 'compressible', 'caloricG
 shockTurbulence.shockTurbulenceModel.viscosityModel = 'sutherland';
 
 % Solve LIA
-results = shockTurbulence.solve(mixArray);
+[averages, mixArray1, mixArray2] = shockTurbulence.solve(mixArray);
 
 % Report results
-shockTurbulence.report(results);
+shockTurbulence.report(averages, mixArray1, mixArray2);

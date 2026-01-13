@@ -69,13 +69,13 @@ mix = Mixture(system);
 set(mix, {'N2', 'O2'}, [79/21, 1]);
 
 % Define propertiescle
-mixArray = setProperties(mix, 'temperature', 300, 'pressure', 1 * 1.01325, 'mach', mach);
+mixArray1 = setProperties(mix, 'temperature', 300, 'pressure', 1 * 1.01325, 'mach', mach);
 
 % Invoke ShockTurbulenceSolver and select problem
 shockTurbulence = ShockTurbulenceSolver('problemType', 'vortical', 'caloricGasModel', caloricGasModel);
 
 % Solve LIA
-results = shockTurbulence.solve(mixArray);
+[averages, mixArray1, mixArray2] = shockTurbulence.solve(mixArray1);
 
 % Report results
-shockTurbulence.report(results);
+shockTurbulence.report(averages, mixArray1, mixArray2);

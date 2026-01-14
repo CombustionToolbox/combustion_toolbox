@@ -55,7 +55,7 @@
 %
 % @author: Alberto Cuadra Lara
 %                  
-% Last update Jan 13 2026
+% Last update Jan 14 2026
 % -------------------------------------------------------------------------
 help CONTENTS.m
 

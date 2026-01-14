@@ -216,12 +216,11 @@ function print_properties(ProblemType, numberMixtures, mix)
         if contains(ProblemType, 'COMPRESSIBLE')
             fprintf(['eta [-]        |', string_value_1], get_properties('eta', 1, mix(1)));
             fprintf(['etaVorticity[-]|', string_value_1], get_properties('etaVorticity', 1, mix(1)));
-        end
-        
-        if contains(ProblemType, 'VORTICAL_ENTROPIC')
+            fprintf(['chi [-]        |', string_value_1], get_properties('chi', 1, mix(1)));
+        elseif contains(ProblemType, 'VORTICAL_ENTROPIC')
             fprintf(['chi [-]        |', string_value_1], get_properties('chi', 1, mix(1)));
         end
-        
+
         fprintf(['TKE [-]        |                 |', string_value_2], get_propertiesLIA('K', numberMixtures - 1, mix(2:end)));
         fprintf(['R11 [-]        |                 |', string_value_2], get_propertiesLIA('R11', numberMixtures - 1, mix(2:end)));
         fprintf(['RTT [-]        |                 |', string_value_2], get_propertiesLIA('RTT', numberMixtures - 1, mix(2:end)));

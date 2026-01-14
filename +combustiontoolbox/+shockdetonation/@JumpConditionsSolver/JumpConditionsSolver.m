@@ -240,11 +240,6 @@ classdef JumpConditionsSolver < handle
             if obj.equilibriumSolver.caloricGasModel.isPerfect()
                 [jumpConditions.Gammas1, jumpConditions.Gammas2, jumpConditions.Gammas3] = obj.getGammasPerfect(jumpConditions.gamma1, jumpConditions.M1);
 
-                % Interpolate results into a smaller grid (only if nargout == 1)
-                if nargout == 1
-                    jumpConditions = reduceSize(obj, jumpConditions);
-                end
-
                 % Timer
                 obj.time = toc(obj.time);
 
@@ -257,11 +252,6 @@ classdef JumpConditionsSolver < handle
             jumpConditions.Gammas2 = getGammas2(obj, jumpConditions);
             jumpConditions.Gammas1 = getGammas1(obj, jumpConditions);
             jumpConditions.Gammas3 = getGammas3(obj, jumpConditions);
-
-            % Interpolate results into a smaller grid (only if nargout == 1)
-            if nargout == 1
-                jumpConditions = reduceSize(obj, jumpConditions);
-            end
 
             % Timer
             obj.time = toc(obj.time);

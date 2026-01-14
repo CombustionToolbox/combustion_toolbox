@@ -363,7 +363,6 @@ classdef ShockTurbulenceSolver < handle
 
             % Check that mixArray is not evaluated at the same upstream conditions (T, p, and mach)
             if length(unique([mixArray1.T])) ~= 1 || length(unique([mixArray1.p])) ~= 1 || length(unique([mixArray1.mach])) ~= 1
-                
                 [jumpConditions, mixArray1, mixArray2] = obj.jumpConditionsSolver.solve(mixArray1, varargin{:});
                 return
             end

@@ -396,8 +396,10 @@ classdef VelocityField < handle & matlab.mixin.Copyable
             %     obj (VelocityField): VelocityField object with fields u, v, w
             %
             % Returns:
-            %     omega_mag (float): 3D Array with the vorticity field
-            %     div_u (float): 3D Array with the divergence of the velocity field
+            %     Tuple containing:
+            %
+            %     * omega_mag (float): 3D Array with the vorticity field
+            %     * div_u (float): 3D Array with the divergence of the velocity field
             %
             % Example:
             %     [omega_mag, div_u] = getVorticityDivergence(velocity)
@@ -486,9 +488,11 @@ classdef VelocityField < handle & matlab.mixin.Copyable
             %     obj (VelocityField): VelocityField object with fields u, v, w
             %
             % Returns:
-            %     U (float): FFT of the u component
-            %     V (float): FFT of the v component
-            %     W (float): FFT of the w component
+            %     Tuple containing:
+            %
+            %     * U (float): FFT of the u component
+            %     * V (float): FFT of the v component
+            %     * W (float): FFT of the w component
             %
             % Example:
             %     [U, V, W] = getFFT(obj)
@@ -575,9 +579,11 @@ classdef VelocityField < handle & matlab.mixin.Copyable
             %     obj (VelocityField): VelocityField object
             %
             % Returns:
-            %     Lx (float): Length in the x-direction
-            %     Ly (float): Length in the y-direction
-            %     Lz (float): Length in the z-direction
+            %     Tuple containing:
+            %
+            %     * Lx (float): Length in the x-direction
+            %     * Ly (float): Length in the y-direction
+            %     * Lz (float): Length in the z-direction
             
             % Check if the grid is defined
             checkGridDefined(obj);
@@ -593,14 +599,13 @@ classdef VelocityField < handle & matlab.mixin.Copyable
             %
             % Args:
             %     sz (float): Size of the 3D array
-            %     Lx (float): Length in the x-direction
-            %     Ly (float): Length in the y-direction
-            %     Lz (float): Length in the z-direction
             %
             % Returns:
-            %     KX (float): 3D array with the angular wave number in the x-direction
-            %     KY (float): 3D array with the angular wave number in the y-direction
-            %     KZ (float): 3D array with the angular wave number in the z-direction
+            %     Tuple containing:
+            %
+            %     * KX (float): 3D array with the angular wave number in the x-direction
+            %     * KY (float): 3D array with the angular wave number in the y-direction
+            %     * KZ (float): 3D array with the angular wave number in the z-direction
             %
             % Example:
             %     [KX, KY, KZ] = getAngularWaveNumbers(velocity)

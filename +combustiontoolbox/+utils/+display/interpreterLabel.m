@@ -484,6 +484,30 @@ function [property_name, property_latex, property_unit] = property_names(propert
             property_name = 'Turbulent kinetic energy';
             property_latex = 'K';
             property_unit = '';
+        case {'ka', 'tkea'}
+            property_name = 'Acoustic turbulent kinetic energy';
+            property_latex = 'K_a';
+            property_unit = '';
+        case {'r11a'}
+            property_name = 'Acoustic streamwise Reynolds stress';
+            property_latex = 'R_{11, a}';
+            property_unit = '';
+        case {'rtta'}
+            property_name = 'Acoustic transverse Reynolds stress';
+            property_latex = 'R_{{\rm TT}, a}';
+            property_unit = '';
+        case {'kr', 'tker'}
+            property_name = 'Rotational turbulent kinetic energy';
+            property_latex = 'K_r';
+            property_unit = '';
+        case {'r11r'}
+            property_name = 'Rotational streamwise Reynolds stress';
+            property_latex = 'R_{11, r}';
+            property_unit = '';
+        case {'rttr'}
+            property_name = 'Rotational transverse Reynolds stress';
+            property_latex = 'R_{{\rm TT}, r}';
+            property_unit = '';
         case {'enstrophy33'}
             property_name = 'z-component of enstrophy';
             property_latex = 'W_z';
@@ -499,6 +523,10 @@ function [property_name, property_latex, property_unit] = property_names(propert
         case {'lengthkolmogorov'}
             property_name = 'Kolmogorov length';
             property_latex = '\ell_{k}';
+            property_unit = '';
+        case {'kolmogorovlengthratio'}
+            property_name = 'Normalized Kolmogorov length';
+            property_latex = '\ell_{k, 2} / \ell_{k, 1}';
             property_unit = '';
         case {'ratiolengthkolmogorov'}
             property_name = 'Normalized Kolmogorov length';

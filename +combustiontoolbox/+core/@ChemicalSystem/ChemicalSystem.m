@@ -298,6 +298,9 @@ classdef ChemicalSystem < handle & matlab.mixin.Copyable
             %     * setPropertiesMatrix(obj, {'N2', 'O2'}, [3.76, 1], 300)
             %     * setPropertiesMatrix(obj, {'N2', 'O2'}, [3.76, 1], 300, [1, 2])
             
+            % Clean properties matrix
+            obj.clean();
+
             % Update properties matrix
             if nargin < 5
                 obj = updatePropertiesMatrix(obj, species, moles, T);
@@ -330,6 +333,9 @@ classdef ChemicalSystem < handle & matlab.mixin.Copyable
             %     * setPropertiesMatrix(obj, {'N2', 'O2'}, [3.76, 1], 300)
             %     * setPropertiesMatrix(obj, {'N2', 'O2'}, [3.76, 1], 300, [1, 2])
             
+            % Clean properties matrix
+            obj.clean();
+
             % Update properties matrix
             if nargin < 6
                 obj = updatePropertiesMatrixFast(obj, species, moles, T, index);
@@ -359,6 +365,9 @@ classdef ChemicalSystem < handle & matlab.mixin.Copyable
             %     * setPropertiesMatrixComposition(obj, {'N2', 'O2'}, [3.76, 1])
             %     * setPropertiesMatrixComposition(obj, {'N2', 'O2'}, [3.76, 1], [1, 2])
             
+            % Clean composition in properties matrix
+            obj.cleanMoles();
+
             % Update properties matrix
             if nargin < 4
                 obj = updatePropertiesMatrixComposition(obj, species, moles);
@@ -384,6 +393,9 @@ classdef ChemicalSystem < handle & matlab.mixin.Copyable
             %
             % Example:
             %     setPropertiesMatrixCompositionInitialIndex(obj, {'N2', 'O2'}, [3.76, 1], [1, 2])
+            
+            % Clean composition in properties matrix
+            obj.cleanMoles();
             
             % Update properties matrix
             obj = updatePropertiesMatrixCompositionFast(obj, moles, index);

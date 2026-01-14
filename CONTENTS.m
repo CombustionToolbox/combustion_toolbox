@@ -1,5 +1,5 @@
 % -------------------------------------------------------------------------
-% COMBUSTION TOOLBOX v1.2.8
+% COMBUSTION TOOLBOX v1.2.9
 % A MATLAB-based framework for solving combustion and high-speed flow problems
 %
 % Type of problems:
@@ -55,7 +55,7 @@
 %
 % @author: Alberto Cuadra Lara
 %                  
-% Last update Jan 08 2026
+% Last update Jan 14 2026
 % -------------------------------------------------------------------------
 help CONTENTS.m
 

@@ -59,8 +59,7 @@ classdef ShockTurbulenceSolver < handle
         shockSolver                % ShockSolver object
         jumpConditionsSolver       % JumpConditionsSolver object
         shockTurbulenceModel       % ShockTurbulenceModel object
-        FLAG_RESULTS = false;      % Flag to show results in the command window
-        FLAG_INTERPOLATE = true;   % Flag to interpolate data in a smaller grid
+        FLAG_RESULTS = true        % Flag to show results in the command window
         FLAG_TIME = true           % Flag to print elapsed time
         FLAG_REPORT = false        % Flag to print predefined plots
         time                       % Elapsed time
@@ -71,6 +70,10 @@ classdef ShockTurbulenceSolver < handle
         FLAG_PAPER = false;        % Flag to compute Gammas_i as in Cuadra2024b
     end
 
+    properties (Dependent) 
+        problemTypeMixArray        % Accronym to set problemType in mixArray1 and mixArray2
+    end
+
     methods
 
         function obj = ShockTurbulenceSolver(varargin)
@@ -78,7 +81,7 @@ classdef ShockTurbulenceSolver < handle
 
             % Default values
             defaultProblemType = 'VORTICAL';
-            defaultEquilibriumSolver = combustiontoolbox.equilibrium.EquilibriumSolver('FLAG_FAST', false); % FLAG_FAST is set to false to reduce numerical error
+            defaultEquilibriumSolver = combustiontoolbox.equilibrium.EquilibriumSolver('FLAG_FAST', true);
             defaultShockSolver = combustiontoolbox.shockdetonation.ShockSolver('equilibriumSolver', defaultEquilibriumSolver, 'FLAG_RESULTS', false);
             defaultJumpConditionsSolver = combustiontoolbox.shockdetonation.JumpConditionsSolver('equilibriumSolver', defaultEquilibriumSolver, 'shockSolver', defaultShockSolver,'FLAG_RESULTS', false);
             defaultShockTurbulenceModel = combustiontoolbox.shockturbulence.ShockTurbulenceModelVortical();
@@ -96,7 +99,7 @@ classdef ShockTurbulenceSolver < handle
             addParameter(p, 'jumpConditionsSolver', defaultJumpConditionsSolver, @(x) isa(x, 'combustiontoolbox.shockdetonation.JumpConditionsSolver'));
             addParameter(p, 'shockTurbulenceModel', defaultShockTurbulenceModel, @(x) isa(x, 'combustiontoolbox.shockturbulence.ShockTurbulenceModel'));
             addParameter(p, 'caloricGasModel', defaultCaloricGasModel, @(x) isa(x, 'combustiontoolbox.core.CaloricGasModel'));
-            addParameter(p, 'FLAG_INTERPOLATE', obj.FLAG_INTERPOLATE, @islogical);
+            addParameter(p, 'FLAG_RESULTS', obj.FLAG_RESULTS, @(x) islogical(x));
             addParameter(p, 'FLAG_TIME', obj.FLAG_TIME, @(x) islogical(x));
             addParameter(p, 'FLAG_REPORT', obj.FLAG_REPORT, @(x) islogical(x));
             addParameter(p, 'FLAG_TCHEM_FROZEN', defaultFLAG_TCHEM_FROZEN, @(x) islogical(x) && isscalar(x));
@@ -110,7 +113,7 @@ classdef ShockTurbulenceSolver < handle
             obj.shockSolver = p.Results.shockSolver;
             obj.jumpConditionsSolver = p.Results.jumpConditionsSolver;
             obj.shockTurbulenceModel = p.Results.shockTurbulenceModel;
-            obj.FLAG_INTERPOLATE = p.Results.FLAG_INTERPOLATE;
+            obj.FLAG_RESULTS = p.Results.FLAG_RESULTS;
             obj.FLAG_TIME = p.Results.FLAG_TIME;
             obj.FLAG_REPORT = p.Results.FLAG_REPORT;
             obj.plotConfig = p.Results.plotConfig;
@@ -164,84 +167,111 @@ classdef ShockTurbulenceSolver < handle
 
         end
 
-        function results = solve(obj, mixArray, varargin)
-            % Solve shock waves problems
+        function value = get.problemTypeMixArray(obj)
+            % Get method for problemTypeMixArray property
+            value = strcat('SHOCKTURBULENCE_', upper(obj.problemType));
+        end
+
+        function obj = set(obj, property, value, varargin)
+            % Set properties of the ShockTurbulenceSolver object
             %
             % Args:
             %     obj (ShockTurbulenceSolver): ShockTurbulenceSolver object
-            %     mixArray (Mixture): Initial Mixture objects
+            %     property (char): Property name
+            %     value (float): Property value
+            %
+            % Optional Args:
+            %     * property (char): Property name
+            %     * value (float): Property value
             %
             % Returns:
-            %     results (struct): Struct with results from LIA
+            %     obj (ShockTurbulenceSolver): ShockTurbulenceSolver object with updated properties
             %
             % Example:
-            %     * results = solve(ShockTurbulenceSolver(), mixArray);
+            %     set(ShockTurbulenceSolver(), 'problemType', 'compressible');
             
-            % Default
-            eta = 0;
-            etaVorticity = 0;
-            chi = 0;
-            jumpConditions = [];
-            viscosityModel = obj.shockTurbulenceModel.viscosityModel;
+            varargin = [{property, value}, varargin{:}];
 
-            % Unpack additional inputs
-            for i = 1:2:nargin-2
+            for i = 1:2:length(varargin)
+                % Assert that the property exists
+                assert(isprop(obj, varargin{i}), 'Property not found');
 
-                switch lower(varargin{i})
-                    case {'jumpconditions'}
-                        jumpConditions = varargin{i + 1};
-                    case {'compressibility', 'eta'}
-                        eta = varargin{i + 1};
-                    case {'vortical_entropic', 'chi'}
-                        chi = varargin{i + 1};
-                    case {'etavorticity', 'eta_varpi'}
-                        etaVorticity = varargin{i + 1};
-                    case {'viscositymodel'}
-                        viscosityModel = varargin{i + 1};
-                end
-
+                % Set property
+                obj.(varargin{i}) = varargin{i + 1};
             end
 
+        end
+
+        function obj = setShockTurbulenceModel(obj, shockTurbulenceModel)
+            % Set the ShockTurbulenceModel object or the name of the model
+            %
+            % Args:
+            %     obj (ShockTurbulenceSolver): ShockTurbulenceSolver object
+            %     shockTurbulenceModel (ShockTurbulenceModel or char): ShockTurbulenceModel object or name of the model
+            %
+            % Returns:
+            %     obj (ShockTurbulenceSolver): ShockTurbulenceSolver object with updated ShockTurbulenceModel
+
+            if isa(shockTurbulenceModel, 'combustiontoolbox.shockturbulence.ShockTurbulenceModel')
+                obj.shockTurbulenceModel = shockTurbulenceModel;
+                return
+            end
+                
+            switch lower(shockTurbulenceModel)
+                case 'vortical'
+                    obj.shockTurbulenceModel = combustiontoolbox.shockturbulence.ShockTurbulenceModelVortical();
+                case 'vortical_entropic'
+                    obj.shockTurbulenceModel = combustiontoolbox.shockturbulence.ShockTurbulenceModelVorticalEntropic();
+                case 'acoustic'
+                    obj.shockTurbulenceModel = combustiontoolbox.shockturbulence.ShockTurbulenceModelAcoustic();
+                case 'compressible'
+                    obj.shockTurbulenceModel = combustiontoolbox.shockturbulence.ShockTurbulenceModelCompressible();
+                otherwise
+                    error('Unknown shock turbulence model: %s', shockTurbulenceModel);
+            end
+            
+        end
+
+        function [averages, mixArray1, mixArray2] = solve(obj, mixArray1, varargin)
+            % Solve array of shock waves problems
+            %
+            % Args:
+            %     obj (ShockTurbulenceSolver): ShockTurbulenceSolver object
+            %     mixArray1 (Mixture): Initial Mixture objects
+            %
+            % Returns:
+            %     Tuple containing:
+            %
+            %     * averages (struct): Struct with averages from LIA
+            %     * mixArray1 (Mixture): Pre-shock Mixture objects
+            %     * mixArray2 (Mixture): Post-shock Mixture objects
+            %
+            % Example:
+            %     * [averages, mixArray1, mixArray2] = solve(ShockTurbulenceSolver(), mixArray1);
+            
+            % Definitions
+            numCases = length(mixArray1);
+            
             % Timer
  	        obj.time = tic;
 
             % Compute jump conditions
-            if isempty(jumpConditions)
-                jumpConditions = obj.jumpConditionsSolver.solve(mixArray, varargin{:});
-            end
-
-            % Get jump conditions
-            Gammas1 = jumpConditions.Gammas1;
-            Gammas2 = jumpConditions.Gammas2;
-            Gammas3 = jumpConditions.Gammas3;
-            Rratio = jumpConditions.Rratio;
-            Pratio = jumpConditions.Pratio;
-            Tratio = jumpConditions.Tratio;
-            M1 = jumpConditions.M1;
-            M2 = jumpConditions.M2;
-            beta = jumpConditions.beta;
+            [jumpConditions, mixArray1, mixArray2] = obj.getJumpConditions(mixArray1, varargin{:});
 	    
 	        % Solve problem
-            switch lower(obj.problemType)
-                case {'vortical'}
-                    results = obj.shockTurbulenceModel.getAverages(Rratio, M2, Gammas2);
-                case {'vortical_entropic'}
-                    results = obj.shockTurbulenceModel.getAverages(Rratio, M2, Gammas2, Gammas1, beta, chi);
-                case {'acoustic'}
-                    results = obj.shockTurbulenceModel.getAverages(Rratio, M2, Gammas2, Gammas1, Gammas3, beta);
-                case {'compressible'}
-                    results = obj.shockTurbulenceModel.getAverages(Rratio, M2, Gammas2, Gammas1, Gammas3, beta, eta, chi, etaVorticity);
-            end
+            [averages, mixArray1, mixArray2] = obj.shockTurbulenceModel.getAverages(jumpConditions, mixArray1, mixArray2);
+            
+            % Set problemType
+            [mixArray1.problemType] = deal(obj.problemTypeMixArray);
+            [mixArray2.problemType] = deal(obj.problemTypeMixArray);
 
-            % Add jump conditions
-            names = fieldnames(jumpConditions);
-            for k = 1:length(names)
-                results.(names{k}) = jumpConditions.(names{k});
-            end
+            % Print results
+            if obj.FLAG_RESULTS
 
-            % Compute Kolmogorov length scale ratio across the shock
-            if ~strcmpi(obj.problemType, 'acoustic')
-                results.kolmogorovLengthRatio = obj.getKolmogorovLength(results, 'viscosityModel', viscosityModel);
+                for i = numCases:-1:1
+                    print(mixArray1(i), mixArray2(i));
+                end
+
             end
 
             % Timer
@@ -252,7 +282,7 @@ classdef ShockTurbulenceSolver < handle
 
             % Postprocess all the results with predefined plots
             if obj.FLAG_REPORT
-                report(obj, results);
+                report(obj, averages, mixArray1, mixArray2);
             end
 
         end
@@ -270,15 +300,17 @@ classdef ShockTurbulenceSolver < handle
             fprintf('\nElapsed time is %.5f seconds\n', obj.time);
         end
 
-        function ax1 = plot(obj, results)
+        function ax1 = plot(obj, averages, mixArray1, mixArray2)
             % Plot results
             %
             % Args:
             %     obj (ShockTurbulenceSolver): ShockTurbulenceSolver object
-            %     results (struct): Results from the Linear Interaction Analysis
+            %     averages (struct): Struct with averages from LIA
+            %     mixArray1 (Mixture): Pre-shock Mixture objects
+            %     mixArray2 (Mixture): Post-shock Mixture objects
             %
             % Example:
-            %     * plot(ShockTurbulenceSolver(), results);
+            %     plot(ShockTurbulenceSolver(), mixArray1, mixArray2);
             
             % Import packages
             import combustiontoolbox.utils.display.*
@@ -287,115 +319,69 @@ classdef ShockTurbulenceSolver < handle
             numPlotProperties = obj.plotConfig.numPlotProperties;
 
             % Check if is a scalar value
-            if isscalar(results.K)
+            if isscalar(mixArray1)
                 ax1 = [];
                 return
             end
             
             % Plot properties
-            ax1 = plotProperties(repmat({'M1'}, 1, numPlotProperties), results, obj.plotConfig.plotProperties, results, 'config', obj.plotConfig);
+            ax1 = plotProperties(repmat({mixArray1(1).rangeName}, 1, numPlotProperties), mixArray1, obj.plotConfig.plotProperties, averages, 'config', obj.plotConfig);
         end
 
-        function report(obj, results)
+        function report(obj, averages, mixArray1, mixArray2)
             % Postprocess all the results with predefined plots
             %
             % Args:
             %     obj (ShockTurbulenceSolver): ShockTurbulenceSolver object
-            %     results (struct): Results from the Linear Interaction Analysis
+            %     averages (struct): Struct with averages from LIA
+            %     mixArray1 (Mixture): Pre-shock Mixture objects
+            %     mixArray2 (Mixture): Post-shock Mixture objects
             %
             % Example:
             %     * report(ShockTurbulenceSolver(), results);
 
-            obj.plot(results);
-        end
-
-        function kolmogorovLengthRatio = getKolmogorovLength(obj, results, varargin)
-            % Estimate Kolmogorov length scale ratio across the shock
-            %
-            % Args:
-            %     obj (ShockTurbulenceSolver): ShockTurbulenceSolver object
-            %     results (struct): Struct with results from LIA
-            %
-            % Optional name-value pairs:
-            %     * viscosityModel (char): Viscosity model to compute dynamic viscosity ratio across the shock ('powerlaw' or 'sutherland')
-            %
-            % Returns:
-            %     kolmogorovLengthRatio (float): Kolmogorov length scale ratio
-            %
-            % Example:
-            %     kolmogorovLengthRatio = getKolmogorovLength(ShockTurbulenceSolver(), results);
-            %
-            % Note: The calculation of the dynamic viscosity ratio is based on temporal functions and will be overriden with a specific TransportProperties class in future releases.
-
-            % Check STI model
-            if strcmpi(obj.problemType, 'acoustic')
-                error('Kolmogorov length scale ratio can only be computed for vortical, vortical-entropic or compressible disturbances');
-            end
-
-            % Definitions
-            T1 = results.T1;
-            Rratio = results.Rratio;
-            TRatio = results.Tratio;
-            enstrophyRatio = results.enstrophy;
-            defaultViscosityModel = 'powerlaw';
-
-            % Select viscosity model
-            p = inputParser;
-            addParameter(p, 'viscosityModel', defaultViscosityModel, @(x) ischar(x) && any(strcmpi(x, {'powerlaw', 'sutherland'})));
-            parse(p, varargin{:});
-            viscosityModel = p.Results.viscosityModel;
-            
-            % Compute dynamic viscosity ratio across the shock
-            switch lower(viscosityModel)
-                case 'powerlaw'
-                    muRatio = obj.getDynamicViscosityPowerLawRatio(T1, TRatio .* T1);
-                case 'sutherland'
-                    muRatio = obj.getDynamicViscositySutherlandRatio(T1, TRatio .* T1);
-                otherwise
-                    error('Unknown viscosity model: %s', viscosityModel);
-            end
-
-            % Kolmogorov length scale ratio 
-            kolmogorovLengthRatio = Rratio.^(-1/2) .* muRatio.^(1/2) .* enstrophyRatio.^(-1/4);
+            obj.plot(averages, mixArray1, mixArray2);
         end
 
     end
 
-    methods (Access = private, Static)
-    
-        function muRatio = getDynamicViscosityPowerLawRatio(T1, T2)
-            % Get dynamic viscosity ratio using a power-law model
+    methods (Access = private)
+
+        function [jumpConditions, mixArray1, mixArray2] = getJumpConditions(obj, mixArray1, varargin)
+            % Get jump conditions across the shock for an array of Mixture objects
             %
             % Args:
-            %     T1 (float): Pre-shock temperature [K]
-            %     T2 (float): Post-shock temperature [K]
+            %     obj (ShockTurbulenceSolver): ShockTurbulenceSolver object
+            %     mixArray1 (Mixture): Initial Mixture objects
             %
             % Returns:
-            %     muRatio (float): Dynamic viscosity ratio mu2/mu1
+            %     Tuple containing:
             %
-            % Note: This is a temporal function and will be overriden with a specific TransportProperties class in future releases.
+            %     * jumpConditions (struct): Struct with jump conditions across the shock
+            %     * mixArray1 (Mixture): Pre-shock Mixture objects
+            %     * mixArray2 (Mixture): Post-shock Mixture objects
 
-            % Compute dynamic viscosity ratio using power-law
-            muRatio = (T2 ./ T1).^(3/4);
-        end
+            % Check that mixArray is not evaluated at the same upstream conditions (T, p, and mach)
+            if length(unique([mixArray1.T])) ~= 1 || length(unique([mixArray1.p])) ~= 1 || length(unique([mixArray1.mach])) ~= 1
+                [jumpConditions, mixArray1, mixArray2] = obj.jumpConditionsSolver.solve(mixArray1, varargin{:});
+                return
+            end
 
-        function muRatio = getDynamicViscositySutherlandRatio(T1, T2)
-            % Get dynamic viscosity ratio using Sutherland's law model
-            %
-            % Args:
-            %     T1 (float): Pre-shock temperature [K]
-            %     T2 (float): Post-shock temperature [K]
-            %
-            % Returns:
-            %     muRatio (float): Dynamic viscosity ratio mu2/mu1
-            %
-            % Note: This is a temporal function and will be overriden with a specific TransportProperties class in future releases.
+            [jumpConditions, ~, mix2] = obj.jumpConditionsSolver.solve(mixArray1(1), varargin{:});
 
-            % Definitions
-            S = 110.4; % Sutherland's constant [K]
+            % Copy all fields inside jumpConditions to match size of mixArray
+            jumpConditionsFields = fieldnames(jumpConditions);
+            for i = length(jumpConditionsFields):-1:1
+                name = jumpConditionsFields{i};
+                jumpConditions.(name) = repmat(jumpConditions.(name), size(mixArray1));
+            end
+            
+            % Copy all entries to match size of mixArray
+            mixArray2 = repmat(mix2, size(mixArray1));
+            for i = length(mixArray1):-1:1
+                mixArray2(i) = mix2.copy();
+            end
 
-            % Compute dynamic viscosity ratio using Sutherland's law
-            muRatio = (T2 ./ T1).^(3/2) .* (T1 + S) ./ (T2 + S);
         end
 
     end

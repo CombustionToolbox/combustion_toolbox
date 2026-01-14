@@ -62,7 +62,7 @@ mixArray = setProperties(mix, 'temperature', 300, 'pressure', 1 * 1.01325, 'mach
 shockTurbulence = ShockTurbulenceSolver('problemType', 'acoustic', 'caloricGasModel', caloricGasModel);
 
 % Solve LIA
-results = shockTurbulence.solve(mixArray);
+[averages, mixArray1, mixArray2] = shockTurbulence.solve(mixArray);
 
 % Report results
-shockTurbulence.report(results);
+shockTurbulence.report(averages, mixArray1, mixArray2);

@@ -73,6 +73,10 @@ classdef Mixture < handle & matlab.mixin.Copyable
         cf                    % Thrust coefficient [-]
         I_sp                  % Specific impulse [s]
         I_vac                 % Vacuum impulse [s]
+        eta = 0               % Dilatational-to-solenoidal TKE ratio [-]
+        chi = 0               % Entropic–vortical correlation parameter [-]
+        etaVorticity = 0      % Vorticity generated at the shock due to acoustic disturbances normalized by the upstream vorticity [-]
+        lia                   % Properties for Linear Interaction Analysis (LIA)
         config                % Mixture configuration object
     end
 
@@ -854,7 +858,7 @@ classdef Mixture < handle & matlab.mixin.Copyable
                 obj.rangeName = properties{FLAG_VECTOR_FIRST};
                 
                 % Check rangeName to match Mixture's property
-                if any(~strcmpi({'T', 'p', 'vspecific', 'phi', 'u', 'mach', 'beta', 'theta', 'drive_factor', 'aratio', 'aratio_c'}, obj.rangeName))
+                if any(~strcmpi({'T', 'p', 'vspecific', 'phi', 'u', 'mach', 'beta', 'theta', 'drive_factor', 'aratio', 'aratio_c', 'compressibility'}, obj.rangeName))
 
                     switch lower(obj.rangeName)
                         case {'temperature'}
@@ -879,6 +883,8 @@ classdef Mixture < handle & matlab.mixin.Copyable
                             obj.rangeName = 'areaRatio';
                         case {'aratio_c'}
                             obj.rangeName = 'areaRatioChamber';
+                        case {'compressibility'}
+                            obj.rangeName = 'eta';
                     end
 
                 end
@@ -947,6 +953,12 @@ classdef Mixture < handle & matlab.mixin.Copyable
                             objArray(j).areaRatio = values{i}(j);
                         case {'arearatiochamber', 'aratio_c'}
                             objArray(j).areaRatioChamber = values{i}(j);
+                        case {'compressibility', 'eta'}
+                            objArray(j).eta = values{i}(j);
+                        case {'chi'}
+                            objArray(j).chi = values{i}(j);
+                        case {'etavorticity'}
+                            objArray(j).etaVorticity = values{i}(j);
                         otherwise
                             error('Property not found');
                     end

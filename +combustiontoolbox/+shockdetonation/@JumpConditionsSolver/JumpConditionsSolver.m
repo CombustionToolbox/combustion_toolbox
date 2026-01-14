@@ -21,7 +21,6 @@ classdef JumpConditionsSolver < handle
     %
     % Flags:
     %     * ``FLAG_FAST``: Use previous state as initial guess for equilibrium solver
-    %     * ``FLAG_INTERPOLATE``: Interpolate results on a reduced Mach number grid
     %     * ``FLAG_PLOT``: Plot results
     %     * ``FLAG_PAPER``: Apply the normalization and notation conventions described in Cuadra2025a
     %     * ``FLAG_RESULTS``: Print computed values to console
@@ -48,11 +47,6 @@ classdef JumpConditionsSolver < handle
         tolGammas1 = 1e-4;             % Tolerance for the calculation of the dimensionless RH slope Gammas1
         tolGammas2 = 1e-4;             % Tolerance for the calculation of the dimensionless RH slope Gammas2
         tolGammas3 = 1e-4;             % Tolerance for the calculation of the dimensionless RH slope Gammas3
-        tolInstabilities = 1e-2        % Values of Gammas below this threshold are considered prone to instabilities
-        numPointsInterp = 100          % Number of points for interpolation
-        interpolationMethod = 'spline' % Interpolation method
-        FLAG_FAST = false              % Flag to use fast equilibrium solver (guess from previous state)
-        FLAG_INTERPOLATE = false       % Flag to interpolate results
         FLAG_PLOT = false              % Flag to plot results
         FLAG_PAPER = false             % Flag to apply the normalization and notation conventions described in Cuadra2025a
         FLAG_RESULTS = true            % Flag to print results
@@ -64,17 +58,14 @@ classdef JumpConditionsSolver < handle
 
     properties (Access = private)
         mix                            % Mixture object for initialization
-        mixArray                       % Mixture objects
         temperature                    % Temperature array of the array of Mixture objects
         pressure                       % Pressure array of the array of Mixture objects
         mach                           % Mach number array of the array of Mixture objects
-        turningPoints                  % Turning points for interpolation
-        numTurningPoints               % Number of turning points 
+        dp2dM1                         % Derivative of p2 with respect to M1
+        drho2dM1                       % Derivative of rho2 with respect to M1
     end
 
     properties (Dependent, Access = private)
-        MIN_MACH
-        MAX_MACH
         numCases
         FLAG_SCALAR
     end
@@ -100,6 +91,7 @@ classdef JumpConditionsSolver < handle
             defaultShockSolver = combustiontoolbox.shockdetonation.ShockSolver('equilibriumSolver', defaultEquilibriumSolver);
             defaultFLAG_TCHEM_FROZEN = false;
             defaultFLAG_FROZEN = false;
+            defaultFLAG_FAST = true;
             defaultPlotConfig = combustiontoolbox.utils.display.PlotConfig();
             defaultPlotConfig.innerposition = [0.15 0.15 0.35 0.45];
             defaultPlotConfig.outerposition = [0.15 0.15 0.35 0.45];
@@ -113,11 +105,7 @@ classdef JumpConditionsSolver < handle
             addParameter(p, 'tolGammas1', obj.tolGammas1, @(x) isnumeric(x) && isscalar(x) && x > 0);
             addParameter(p, 'tolGammas2', obj.tolGammas2, @(x) isnumeric(x) && isscalar(x) && x > 0);
             addParameter(p, 'tolGammas3', obj.tolGammas3, @(x) isnumeric(x) && isscalar(x) && x > 0);
-            addParameter(p, 'tolInstabilities', obj.tolInstabilities, @(x) isnumeric(x) && isscalar(x) && x > 0);
-            addParameter(p, 'numPointsInterp', obj.numPointsInterp, @(x) isnumeric(x) && isscalar(x) && x > 100);
-            addParameter(p, 'interpolationMethod', obj.interpolationMethod, @(x) ischar(x) || isstring(x) && any(strcmpi(x, {'linear', 'spline', 'pchip', 'cubic'})));
-            addParameter(p, 'FLAG_FAST', obj.FLAG_FAST, @(x) islogical(x) && isscalar(x));
-            addParameter(p, 'FLAG_INTERPOLATE', obj.FLAG_INTERPOLATE, @(x) islogical(x) && isscalar(x));
+            addParameter(p, 'FLAG_FAST', defaultFLAG_FAST, @(x) islogical(x) && isscalar(x));
             addParameter(p, 'FLAG_PLOT', obj.FLAG_PLOT, @(x) islogical(x) && isscalar(x));
             addParameter(p, 'FLAG_PAPER', obj.FLAG_PAPER, @(x) islogical(x) && isscalar(x));
             addParameter(p, 'FLAG_RESULTS', obj.FLAG_RESULTS, @(x) islogical(x) && isscalar(x));
@@ -134,10 +122,6 @@ classdef JumpConditionsSolver < handle
             obj.tolGammas1 = p.Results.tolGammas1;
             obj.tolGammas2 = p.Results.tolGammas2;
             obj.tolGammas3 = p.Results.tolGammas3;
-            obj.tolInstabilities = p.Results.tolInstabilities;
-            obj.numPointsInterp = p.Results.numPointsInterp;
-            obj.interpolationMethod = p.Results.interpolationMethod;
-            obj.FLAG_INTERPOLATE = p.Results.FLAG_INTERPOLATE;
             obj.FLAG_PLOT = p.Results.FLAG_PLOT;
             obj.FLAG_PAPER = p.Results.FLAG_PAPER;
             obj.FLAG_RESULTS = p.Results.FLAG_RESULTS;
@@ -170,30 +154,6 @@ classdef JumpConditionsSolver < handle
 
             % Assign equilibriumSolver to shockSolver
             obj.shockSolver.equilibriumSolver = obj.equilibriumSolver;
-        end
-
-        function value = get.MIN_MACH(obj)
-            % Get minimum Mach number of the array of Mixture objects
-            %
-            % Args:
-            %     obj (JumpConditionsSolver): JumpConditionsSolver object
-            %
-            % Returns:
-            %     value (float): Minimum Mach number
-            
-            value = min(obj.mach);
-        end
-
-        function value = get.MAX_MACH(obj)
-            % Get maximum Mach number of the array of Mixture objects
-            %
-            % Args:
-            %     obj (JumpConditionsSolver): JumpConditionsSolver object
-            %
-            % Returns:
-            %     value (float): Maximum Mach number
-            
-            value = max(obj.mach);
         end
 
         function value = get.numCases(obj)
@@ -236,7 +196,7 @@ classdef JumpConditionsSolver < handle
             %     obj (JumpConditionsSolver): JumpConditionsSolver object with updated properties
             %
             % Examples:
-            %     * set(JumpConditionsSolver(), 'numPointsInterp', 5e2);
+            %     * set(JumpConditionsSolver(), 'tolGammas1', 1e-5);
             %     * set(JumpConditionsSolver(), 'FLAG_PAPER', true);
             
             varargin = [{property, value}, varargin{:}];
@@ -251,7 +211,7 @@ classdef JumpConditionsSolver < handle
 
         end
 
-        function [jumpConditions, mixArray1, mixArray2] = solve(obj, mixArray, varargin)
+        function [jumpConditions, mixArray1, mixArray2] = solve(obj, mixArray1, varargin)
             % Solve the jump conditions for the given mixture
             %
             % Args:
@@ -265,26 +225,20 @@ classdef JumpConditionsSolver < handle
             %     jumpConditions = solve(JumpConditionsSolver(), mixArray);
             
             % Definitions
-            obj.mixArray = mixArray;
-            obj.temperature = [mixArray.T];
-            obj.pressure = [mixArray.p];
-            obj.mach = [mixArray.mach];
-            obj.mix = copy(mixArray(1)); obj.mix.u = [];
+            obj.temperature = [mixArray1.T];
+            obj.pressure = [mixArray1.p];
+            obj.mach = [mixArray1.mach];
+            obj.mix = copy(mixArray1(1)); obj.mix.u = [];
             
             % Timer
             obj.time = tic;
             
             % Compute jump conditions
-            [jumpConditions, mixArray1, mixArray2] = getJumpData(obj);
+            [jumpConditions, mixArray1, mixArray2] = getJumpData(obj, mixArray1);
 
             % Solve Gammas (calorically perfect gas)
             if obj.equilibriumSolver.caloricGasModel.isPerfect()
                 [jumpConditions.Gammas1, jumpConditions.Gammas2, jumpConditions.Gammas3] = obj.getGammasPerfect(jumpConditions.gamma1, jumpConditions.M1);
-
-                % Interpolate results into a smaller grid (only if nargout == 1)
-                if nargout == 1
-                    jumpConditions = reduceSize(obj, jumpConditions);
-                end
 
                 % Timer
                 obj.time = toc(obj.time);
@@ -298,14 +252,6 @@ classdef JumpConditionsSolver < handle
             jumpConditions.Gammas2 = getGammas2(obj, jumpConditions);
             jumpConditions.Gammas1 = getGammas1(obj, jumpConditions);
             jumpConditions.Gammas3 = getGammas3(obj, jumpConditions);
-
-            % Interpolate results into a smaller grid (only if nargout == 1)
-            if nargout == 1
-                jumpConditions = reduceSize(obj, jumpConditions);
-            end
-            
-            % Clean instabilities close to 0/0
-            jumpConditions = obj.cleanInstabilities(jumpConditions);
 
             % Timer
             obj.time = toc(obj.time);
@@ -426,18 +372,19 @@ classdef JumpConditionsSolver < handle
 
     methods (Access = private)
 
-        function [jumpConditions, mixArray1, mixArray2] = getJumpData(obj)
+        function [jumpConditions, mixArray1, mixArray2] = getJumpData(obj, mixArray1)
             % Get jump conditions
             %
             % Args:
             %     obj (JumpConditionsSolver): JumpConditionsSolver object
             %     mixArray1 (Mixture): Mixture object for the pre-shock state
-            %     mixArray2 (Mixture): Mixture object for the post-shock state
             %
             % Returns:
-            %     jumpConditions (struct): Structure containing the jump conditions
-            %     mixArray1 (Mixture): Mixture object for the pre-shock state
-            %     mixArray2 (Mixture): Mixture object for the post-shock state
+            %     Tuple containing:
+            %
+            %     * jumpConditions (struct): Structure containing the jump conditions
+            %     * mixArray1 (Mixture): Mixture object for the pre-shock state
+            %     * mixArray2 (Mixture): Mixture object for the post-shock state
 
             % Print status
             fprintf('Solving jump conditions... ');
@@ -446,9 +393,6 @@ classdef JumpConditionsSolver < handle
             Gammas1 = [];
             Gammas2 = [];
             Gammas3 = [];
-
-            % Definitions
-            mixArray1 = setProperties(obj.mix, 'M1', obj.mach);
 
             % Solve jump conditions
             [mixArray1, mixArray2] = obj.shockSolver.solveArray(mixArray1);
@@ -494,7 +438,7 @@ classdef JumpConditionsSolver < handle
             fprintf('OK!\n');
         end
 
-        function [p2Gridded, p2, mixArray1, mixArray2] = solveShock(obj, T1, p1)
+        function [rho1, rho2, p2] = solveShock(obj, T1, p1)
             % Solve shock problem for the given temperature and pressure
             %
             % Args:
@@ -503,10 +447,11 @@ classdef JumpConditionsSolver < handle
             %     p1 (float): Pressure of the mixture
             %
             % Returns:
-            %     p2Gridded (cell array): Cell array of gridded interpolants
-            %     p2 (float): Pressure of the mixture
-            %     mixArray1 (Mixture): Mixture object for the pre-shock state
-            %     mixArray2 (Mixture): Mixture object for the post-shock state
+            %     Tuple containing:
+            %
+            %     * rho1 (float): Density of the mixture in the pre-shock state
+            %     * rho2 (float): Density of the mixture in the post-shock state
+            %     * p2 (float): Pressure of the mixture in the post-shock state
 
             % Definitions
             M1 = obj.mach;
@@ -516,40 +461,11 @@ classdef JumpConditionsSolver < handle
         
             % Solve problem
             [mixArray1, mixArray2] = obj.shockSolver.solveArray(mixArray1);
-            
-            % Extract data
-            p2 = [mixArray2.p];
+
+            % Get properties
+            rho1 = [mixArray1.rho];
             rho2 = [mixArray2.rho];
-        
-            % Find all local maxima and minima (turning points)
-            setTurningPoints(obj, rho2);
-            turningPoints = obj.turningPoints;
-            numTurningPoints = obj.numTurningPoints;
-
-            % Create gridded interpolants for each segment
-            p2Gridded = cell(numTurningPoints - 1, 1);
-            
-            % If M1 is scalar
-            if obj.FLAG_SCALAR
-                p2Gridded = {griddedInterpolant([rho2, 2 * rho2], [p2, p2], 'linear', 'linear')};
-                return
-            end
-
-            for i = 1:numTurningPoints - 1
-                % Extract the current segment
-                segmentIndices = turningPoints(i):turningPoints(i + 1);
-                rho2Segment = rho2(segmentIndices);
-                p2Segment = p2(segmentIndices);
-                
-                % Ensure monotonicity by flipping data if necessary
-                if rho2Segment(1) > rho2Segment(end)
-                    rho2Segment = flip(rho2Segment);
-                    p2Segment = flip(p2Segment);
-                end
-                
-                % Create gridded interpolant for the segment
-                p2Gridded{i} = griddedInterpolant(rho2Segment, p2Segment, obj.interpolationMethod, 'linear');
-            end
+            p2 = [mixArray2.p];
         
         end
 
@@ -561,9 +477,11 @@ classdef JumpConditionsSolver < handle
             %     mach (float): mach number
             %
             % Returns:
-            %     Gammas1 (float): Dimensionless slope of the Hugoniot curve (partial derivative at constant rho2, p1)
-            %     Gammas2 (float): Dimensionless slope of the Hugoniot curve (partial derivative at constant rho1, p1)
-            %     Gammas3 (float): Dimensionless slope of the Hugoniot curve (partial derivative at constant rho1, rho2)
+            %     Tuple containing:
+            %
+            %     * Gammas1 (float): Dimensionless slope of the Hugoniot curve (partial derivative at constant rho2, p1)
+            %     * Gammas2 (float): Dimensionless slope of the Hugoniot curve (partial derivative at constant rho1, p1)
+            %     * Gammas3 (float): Dimensionless slope of the Hugoniot curve (partial derivative at constant rho1, rho2)
             
             % Definitions
             R = obj.getDensityRatioPerfect(gamma, mach);
@@ -595,7 +513,6 @@ classdef JumpConditionsSolver < handle
             
             % Import packages
             import combustiontoolbox.common.Units
-            import combustiontoolbox.utils.math.computeFirstDerivative
 
             % Print status
             fprintf('Solving Gammas1... ');
@@ -608,19 +525,25 @@ classdef JumpConditionsSolver < handle
             Gammas2 = jumpConditions.Gammas2;
 
             % Perturb temperature
-            T1_Gammas1 = obj.temperature * (1 + obj.tolGammas1);
+            T1_Gammas1 = obj.temperature .* (1 + obj.tolGammas1);
 
             % Calculate jump conditions for the perturbed temperature
-            [p2Gridded, ~, mixArray1] = obj.solveShock(T1_Gammas1, obj.pressure);
-            
-            % Get properties
-            rho1_Gammas1 = [mixArray1.rho];
+            [rho1_Gammas1, rho2_Gammas1, p2_Gammas1] = obj.solveShock(T1_Gammas1, obj.pressure);
 
-            % Interpolate p2 to obtain its value for constant rho2
-            p2_Gammas1 = evaluateGriddedInterpolant(obj, p2Gridded, rho2);
+            % Get derivates of p2 and rho2 with respect to M1
+            dp2dM1 = obj.dp2dM1;
+            drho2dM1 = obj.drho2dM1;
+
+            % Compute derivatives with respect to T1
+            dT1 = (T1_Gammas1 - obj.temperature);
+            dp2dT1 = Units.bar2Pa * (p2_Gammas1 - p2) ./ dT1;
+            drho2dT1 = (rho2_Gammas1 - rho2) ./ dT1;
+
+            % Compute dp2/dT1 at constant rho2 using the chain rule
+            dp2dT1_rho2 = dp2dT1 - dp2dM1 .* (drho2dT1 ./ drho2dM1);
 
             % Compute Gammas1
-            Gammas1 = u1.^2 .* (rho1_Gammas1 - rho1) ./ ( Units.bar2Pa * (p2_Gammas1 - p2) );
+            Gammas1 = u1.^2 .* (rho1_Gammas1 - rho1) ./ (dp2dT1_rho2 .* dT1);
 
             if obj.FLAG_PAPER
                 Gammas1 = Gammas2 ./ Gammas1;
@@ -642,7 +565,6 @@ classdef JumpConditionsSolver < handle
             
             % Import packages
             import combustiontoolbox.common.Units
-            import combustiontoolbox.utils.math.computeFirstDerivative
 
             % Print status
             fprintf('Solving Gammas2... ');
@@ -653,7 +575,7 @@ classdef JumpConditionsSolver < handle
             M1 = obj.mach;
 
             % Perturb Mach number
-            M1_Gammas2 = M1.* (1 + obj.tolGammas2);
+            M1_Gammas2 = M1 .* (1 + obj.tolGammas2);
 
             % Define new mixture
             mixArray1 = setProperties(obj.mix, 'temperature', T1, 'pressure', p1, 'M1', M1_Gammas2);
@@ -667,16 +589,15 @@ classdef JumpConditionsSolver < handle
             u2 = obj.reshapeVector(jumpConditions.u2, [mixArray2.uShock]);
             
             % Compute Gammas2
-            p2_bar = p2 * Units.bar2Pa;
+            p2_Pa = p2 * Units.bar2Pa;
+            indexBase = 1:2:numel(p2_Pa)-1;
+            indexPert = indexBase + 1;
+            Gammas2 = u2(indexBase).^2 .* (rho2(indexPert) - rho2(indexBase)) ./ (p2_Pa(indexPert) - p2_Pa(indexBase));
 
-            for i = length(M1):-1:1
-                j = i * 2 - 1;
-                Gammas2(j) = u2(j).^2 .* ( rho2(j + 1) - rho2(j) ) ./ ( p2_bar(j + 1) - p2_bar(j) );
-            end
+            % Compute derivatives of p2 and rho2 with respect to M1
+            obj.dp2dM1 = (p2_Pa(indexPert) - p2_Pa(indexBase)) ./ (M1_Gammas2 - M1);
+            obj.drho2dM1 = (rho2(indexPert) - rho2(indexBase)) ./ (M1_Gammas2 - M1);
 
-            % Remove temporal values
-            Gammas2 = Gammas2(1:2:end);
-            
             % Print status
             fprintf('OK!\n');
         end
@@ -693,7 +614,6 @@ classdef JumpConditionsSolver < handle
             
             % Import packages
             import combustiontoolbox.common.Units
-            import combustiontoolbox.utils.math.computeFirstDerivative
 
             % Print status
             fprintf('Solving Gammas3... ');
@@ -709,19 +629,27 @@ classdef JumpConditionsSolver < handle
             Gammas2 = jumpConditions.Gammas2;
 
             % Perturb pressure
-            p1_Gammas3 = obj.pressure * (1 + obj.tolGammas3);
+            p1_Gammas3 = obj.pressure .* (1 + obj.tolGammas3);
 
             % Correct temperature to remain the density constant
-            T1_Gammas3 = p1_Gammas3 * Units.bar2Pa ./ (rho1 .* Rg1);
+            T1_Gammas3 = p1_Gammas3 .* Units.bar2Pa ./ (rho1 .* Rg1);
 
             % Calculate jump conditions for the perturbed temperature
-            p2Gridded = obj.solveShock(T1_Gammas3, p1_Gammas3);
+            [~, rho2_Gammas3, p2_Gammas3] = obj.solveShock(T1_Gammas3, p1_Gammas3);
 
-            % Interpolate p2 to obtain its value for constant rho2
-            p2_Gammas3 = evaluateGriddedInterpolant(obj, p2Gridded, rho2);
+            % Get derivates of p2 and rho2 with respect to M1
+            dp2dM1 = obj.dp2dM1;
+            drho2dM1 = obj.drho2dM1;
+
+            % Compute derivatives with respect to p1
+            dp2dp1 = (p2_Gammas3 - p2) ./ (p1_Gammas3 - p1);
+            drho2dp1 = (rho2_Gammas3 - rho2) ./ (Units.bar2Pa * (p1_Gammas3 - p1));
+
+            % Compute dp2/dp1 at constant rho2 using the chain rule
+            dp2dp1_rho2 = dp2dp1 - dp2dM1 .* (drho2dp1 ./ drho2dM1);
 
             % Compute Gammas3
-            Gammas3 = Gammas2 .* Rratio .* beta.^2 .* ( (p2_Gammas3 - p2) ./ (p1_Gammas3 - p1) ).^(-1);
+            Gammas3 = Gammas2 .* Rratio .* beta.^2 .* dp2dp1_rho2.^(-1);
 
             if obj.FLAG_PAPER
                 Gammas3 = Gammas2 ./ Gammas3 .* (Gammas2 .* Rratio .* beta.^2);
@@ -731,121 +659,6 @@ classdef JumpConditionsSolver < handle
             fprintf('OK!\n');
         end
 
-        function obj = setTurningPoints(obj, parameter)
-            % Set turning points for interpolation
-            %
-            % Args:
-            %     obj (JumpConditionsSolver): JumpConditionsSolver object
-            %     jumpConditions (struct): Structure containing the jump conditions
-
-            obj.turningPoints = combustiontoolbox.shockdetonation.JumpConditionsSolver.getTurningPoints(parameter);
-            obj.numTurningPoints = length(obj.turningPoints);
-        end
-
-        function yInterp = evaluateGriddedInterpolant(obj, griddedCurves, x)
-            % Evaluate the gridded interpolant
-            %
-            % Args:
-            %     obj (JumpConditionsSolver): JumpConditionsSolver object
-            %     griddedCurves (cell array): Cell array of gridded interpolants
-            %     x (float): Points at which to evaluate the interpolants
-            %
-            % Returns:
-            %     value (float): Interpolated values
-            
-            % Definitions
-            turningPoints = obj.turningPoints;
-            numTurningPoints = obj.numTurningPoints;
-            
-            % If numTurningPoints is scalar, griddedCurves is constant
-            if obj.FLAG_SCALAR
-                yInterp = griddedCurves{1}.Values(1);
-                return
-            end
-            
-            % Initialization
-            yInterp = zeros(size(x));
-
-            % Loop through each segment
-            for i = 1:numTurningPoints - 1
-                % Get the indices for the current segment
-                segmentIndices = turningPoints(i):turningPoints(i + 1);
-                
-                % Extract the relevant interpolants for this segment
-                griddedCurve = griddedCurves{i};
-                
-                % Evaluate interpolants for the current segment
-                yInterp(segmentIndices) = griddedCurve( x(segmentIndices) );
-            end
-
-        end
-
-        function jumpConditions = reduceSize(obj, jumpConditions)
-            % Interpolate data in a smaller grid
-            %
-            % Args:
-            %     obj (JumpConditionsSolver): JumpConditionsSolver object
-            %     jumpConditions (struct): Structure containing the jump conditions
-            %
-            % Returns:
-            %     jumpConditions (struct): Structure containing the jump conditions with reduced size
-
-            if ~obj.FLAG_INTERPOLATE || obj.FLAG_SCALAR
-                return
-            end
-        
-            % Definitions
-            fields = fieldnames(jumpConditions); fields(strcmp(fields, 'M1')) = [];
-            numFields = length(fields);
-            M1 = jumpConditions.M1;
-            MIN_MACH = obj.MIN_MACH;
-            MAX_MACH = obj.MAX_MACH;
-            numPointsInterp = obj.numPointsInterp;
-            numPointsFirst = round(numPointsInterp / 1.5);
-            interpolationMethod = obj.interpolationMethod;
-            
-            % New grid
-            if MAX_MACH <= 10
-                M1_interp = linspace(MIN_MACH, MAX_MACH, numPointsInterp);
-                M1_interp = sort([M1_interp, 5]);
-            else
-                M1_1_interp = logspace(log10(1.002), log10(max(2, MIN_MACH)), numPointsFirst);
-                M1_2_interp = linspace(max(M1_1_interp), max(M1), numPointsInterp - numPointsFirst); M1_1_interp(end) = [];
-                M1_interp = sort([M1_1_interp, M1_2_interp, 5]);
-            end
-        
-            % Interpolate data
-            jumpConditions.M1 = M1_interp;
-
-            for i = 1:numFields
-                fieldName = fields{i};
-                jumpConditions.(fieldName) = interp1(M1, jumpConditions.(fieldName), M1_interp, interpolationMethod, 'extrap');
-            end
-
-        end
-
-        function jumpConditions = cleanInstabilities(obj, jumpConditions)
-            % Remove the values that are prone to numerical instabilities
-
-            % Check scalar
-            if obj.FLAG_SCALAR
-                return
-            end
-            
-            % Definitions
-            fields = fieldnames(jumpConditions);
-            numFields = length(fields);
-            indexRemove = abs(jumpConditions.Gammas1) < obj.tolInstabilities | ...
-                          abs(jumpConditions.Gammas2) < obj.tolInstabilities | ...
-                          abs(jumpConditions.Gammas3) < obj.tolInstabilities;
-
-            % Remove the values that are prone to numerical instabilities
-            for i = 1:numFields
-                field = fields{i};
-                jumpConditions.(field)(indexRemove) = [];
-            end
-            
-        end
 
     end
 
@@ -884,22 +697,6 @@ classdef JumpConditionsSolver < handle
     end
 
     methods (Static, Access = private)
-
-        function turningPoints = getTurningPoints(parameter)
-            % Get the turning points
-            %
-            % Args:
-            %     jumpConditions (struct): Structure containing the jump conditions
-            %
-            % Returns:
-            %     turningPoints (array): Turning points
-
-            % Find all turning points
-            turningPoints = find(diff( sign( diff(parameter) ) ) ~= 0) + 1;
-            
-            % Add start and end points to handle boundary cases
-            turningPoints = unique( [1, turningPoints, numel(parameter)] );
-        end
 
         function vector = reshapeVector(x, y, varargin)
             % Reshape vectors to be column vectors of the form

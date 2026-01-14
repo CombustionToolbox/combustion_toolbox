@@ -104,10 +104,12 @@ classdef HelmholtzSolver < handle
             %     * density (float): Density field
             %
             % Returns:
-            %     solenoidal (VelocityField): VelocityField object with fields (u, v, w) containing the solenoidal velocity components (fluctuations)
-            %     dilatational (VelocityField): VelocityField with fields (u, v, w) containing the dilatational velocity components (fluctuations)
-            %     velocity (VelocityField): VelocityField with fields (u, v, w) containing the velocity components (fluctuations)
-            %     STOP (float): Relative error doing the decomposition
+            %     Tuple containing:
+            %
+            %     * solenoidal (VelocityField): VelocityField object with fields (u, v, w) containing the solenoidal velocity components (fluctuations)
+            %     * dilatational (VelocityField): VelocityField with fields (u, v, w) containing the dilatational velocity components (fluctuations)
+            %     * velocity (VelocityField): VelocityField with fields (u, v, w) containing the velocity components (fluctuations)
+            %     * STOP (float): Relative error doing the decomposition
             %
             % Shortcuts:
             %     * [solenoidal, dilatational, velocity, STOP] = solve(obj, velocity, rho)
@@ -160,8 +162,9 @@ classdef HelmholtzSolver < handle
             %     velocity (VelocityField): VelocityField instance with fields (u, v, w) containing the velocity components (fluctuations)
             %
             % Returns:
-            %     solenoidal (VelocityField): VelocityField instance with fields (u, v, w) containing the solenoidal velocity components (fluctuations)
-            %     dilatational (VelocityField): VelocityField instance with fields (u, v, w) containing the dilatational velocity components (fluctuations)
+            %     Tuple containing:
+            %     * solenoidal (VelocityField): VelocityField instance with fields (u, v, w) containing the solenoidal velocity components (fluctuations)
+            %     * dilatational (VelocityField): VelocityField instance with fields (u, v, w) containing the dilatational velocity components (fluctuations)
             
             % Import packages
             import combustiontoolbox.turbulence.VelocityField
@@ -206,8 +209,9 @@ classdef HelmholtzSolver < handle
             %     dilatational (VelocityField): VelocityField instance with fields (u, v, w) containing the dilatational velocity components (fluctuations)
             %
             % Returns:
-            %     STOP (float): Relative error doing the decomposition
-            %     status (bool): Flag indicating if the checks passed
+            %     Tuple containing:
+            %     * STOP (float): Relative error doing the decomposition
+            %     * status (bool): Flag indicating if the checks passed
 
             if ~obj.FLAG_CHECKS
                 status = [];
@@ -299,9 +303,11 @@ classdef HelmholtzSolver < handle
             %     sz (float): Size of the 3D array
             %
             % Returns:
-            %     KX (float): 3D array with the wave number in the x-direction
-            %     KY (float): 3D array with the wave number in the y-direction
-            %     KZ (float): 3D array with the wave number in the z-direction
+            %     Tuple containing:
+            %
+            %     * KX (float): 3D array with the wave number in the x-direction
+            %     * KY (float): 3D array with the wave number in the y-direction
+            %     * KZ (float): 3D array with the wave number in the z-direction
             %
             % Example:
             %     [KX, KY, KZ] = getWaveNumbers(sz)
@@ -325,8 +331,10 @@ classdef HelmholtzSolver < handle
             %     sound_mean (float): Mean speed of sound
             %
             % Returns:
-            %     chi (float): Correlation between the entropic density and the soleonidal part of the velocity field
-            %     chiVariance (float): Variance of the correlation
+            %     Tuple containing:
+            %
+            %     * chi (float): Correlation between the entropic density and the soleonidal part of the velocity field
+            %     * chiVariance (float): Variance of the correlation
             %
             % Note: The components of solenoidal refer to the fluctuations of the density weighted velocity field, i.e.,
             %       u_weighted = u * sqrt(rho), v_weighted = v * sqrt(rho), w_weighted = w * sqrt(rho).
@@ -362,8 +370,10 @@ classdef HelmholtzSolver < handle
             %     velocity (VelocityField): VelocityField object with fields u, v, w
             %
             % Returns:
-            %     omega_mag (float): 3D Array with the vorticity field
-            %     div_u (float): 3D Array with the divergence of the velocity field
+            %     Tuple containing:
+            %
+            %     * omega_mag (float): 3D Array with the vorticity field
+            %     * div_u (float): 3D Array with the divergence of the velocity field
         
             % Definitions
             sz = velocity.size;

@@ -86,10 +86,12 @@ classdef TurbulenceSpectra < handle
             %     fluctuation (float): 3D fluctuation field
             %
             % Returns:
-            %     EK_avg (float): Averaged energy spectra
-            %     k (float): Wavenumber along the homogeneous direction ('spherical', 'spherical2D', 'crossplane', 'crossplane2D')
-            %     kParalell (float): Wavenumber along the parallel direction ('spherical2dPerp')
-            %     kPerp (float): Wavenumber along the perpendicular direction ('spherical2dPerp')
+            %     Tuple containing:
+            %
+            %     * EK_avg (float): Averaged energy spectra
+            %     * k (float): Wavenumber along the homogeneous direction ('spherical', 'spherical2D', 'crossplane', 'crossplane2D')
+            %     * kParalell (float): Wavenumber along the parallel direction ('spherical2dPerp')
+            %     * kPerp (float): Wavenumber along the perpendicular direction ('spherical2dPerp')
             %
             % Examples:
             %     * [EK_avg, k] = getEnergySpectra(TurbulenceSpectra(), fluctuation);
@@ -172,10 +174,12 @@ classdef TurbulenceSpectra < handle
             %     velocity (VelocityField): Velocity field as a VelocityField object, struct, or 4D matrix
             %
             % Returns:
-            %     EK_avg (float): Averaged energy spectra
-            %     k (float): Wavenumber along the homogeneous direction ('spherical', 'spherical2D', 'crossplane', 'crossplane2D')
-            %     kParalell (float): Wavenumber along the parallel direction ('spherical2dPerp')
-            %     kPerp (float): Wavenumber along the perpendicular direction ('spherical2dPerp')
+            %     Tuple containing:
+            %
+            %     * EK_avg (float): Averaged energy spectra
+            %     * k (float): Wavenumber along the homogeneous direction ('spherical', 'spherical2D', 'crossplane', 'crossplane2D')
+            %     * kParalell (float): Wavenumber along the parallel direction ('spherical2dPerp')
+            %     * kPerp (float): Wavenumber along the perpendicular direction ('spherical2dPerp')
             %
             % Examples:
             %     * [EK_avg, k] = getEnergySpectraVelocity(TurbulenceSpectra(), velocity);
@@ -444,8 +448,10 @@ classdef TurbulenceSpectra < handle
             %     fluctuation (float): 3D fluctuation field
             %
             % Returns:
-            %     pdf (float): Probability density function
-            %     edges (float): Bin edges
+            %     Tuple containing:
+            %
+            %     * pdf (float): Probability density function
+            %     * edges (float): Bin edges
             %
             % Example:
             %     pdf = getPDF(TurbulenceSpectra(), fluctuation);
@@ -465,9 +471,11 @@ classdef TurbulenceSpectra < handle
             %     fluctuationY (float): 3D fluctuation field 
             %
             % Returns:
-            %     pdf (float): Joint probability density function
-            %     edgesX (float): Bin edges for fluctuationX
-            %     edgesY (float): Bin edges for fluctuationY
+            %     Tuple containing:
+            %
+            %     * pdf (float): Joint probability density function
+            %     * edgesX (float): Bin edges for fluctuationX
+            %     * edgesY (float): Bin edges for fluctuationY
             %
             % Example:
             %     pdf = getJointPDF(TurbulenceSpectra(), fluctuationX, fluctuationY);
@@ -519,20 +527,20 @@ classdef TurbulenceSpectra < handle
             % Compute 2D FFT on homogeneous planes based on axisType
             %
             % Args:
-            %   fluctuation (float): 3D fluctuation field
-            %   axisType (char): Axis for cross-plane averaging ('x', 'y', 'z')
+            %     fluctuation (float): 3D fluctuation field
+            %     axisType (char): Axis for cross-plane averaging ('x', 'y', 'z')
             %
             % Returns:
-            %   EK (float): 3D array representing the 2D energy spectra computed on the
-            %               homogeneous planes, sliced along the inhomogeneous axis.
-            %               The first two dimensions correspond to the homogeneous plane,
-            %               while the third dimension represents the slices along the
-            %               inhomogeneous axis.
+            %     EK (float): 3D array representing the 2D energy spectra computed on the
+            %                 homogeneous planes, sliced along the inhomogeneous axis.
+            %                 The first two dimensions correspond to the homogeneous plane,
+            %                 while the third dimension represents the slices along the
+            %                 inhomogeneous axis.
             %
             % Examples:
-            %   * EK = getCrossplaneFFT(fluctuation, 'x');
-            %   * EK = getCrossplaneFFT(fluctuation, 'y');
-            %   * EK = getCrossplaneFFT(fluctuation, 'z');
+            %     * EK = getCrossplaneFFT(fluctuation, 'x');
+            %     * EK = getCrossplaneFFT(fluctuation, 'y');
+            %     * EK = getCrossplaneFFT(fluctuation, 'z');
             
             % Map axis to slicing dimension
             sliceDim = find('xyz' == axisType);
@@ -561,22 +569,22 @@ classdef TurbulenceSpectra < handle
             % Compute 2D FFT on homogeneous planes based on axisType
             %
             % Args:
-            %   u (float): 3D velocity field in the x-direction
-            %   v (float): 3D velocity field in the y-direction
-            %   w (float): 3D velocity field in the z-direction
-            %   axisType (char): Axis for cross-plane averaging ('x', 'y', 'z')
+            %     u (float): 3D velocity field in the x-direction
+            %     v (float): 3D velocity field in the y-direction
+            %     w (float): 3D velocity field in the z-direction
+            %     axisType (char): Axis for cross-plane averaging ('x', 'y', 'z')
             %
             % Returns:
-            %   EK (float): 3D array representing the 2D energy spectra computed on the
-            %               homogeneous planes, sliced along the inhomogeneous axis.
-            %               The first two dimensions correspond to the homogeneous plane,
-            %               while the third dimension represents the slices along the
-            %               inhomogeneous axis.
+            %     EK (float): 3D array representing the 2D energy spectra computed on the
+            %                 homogeneous planes, sliced along the inhomogeneous axis.
+            %                 The first two dimensions correspond to the homogeneous plane,
+            %                 while the third dimension represents the slices along the
+            %                 inhomogeneous axis.
             %
             % Examples:
-            %   * EK = getCrossplaneFFTVelocity(velocity, 'x');
-            %   * EK = getCrossplaneFFTVelocity(velocity, 'y');
-            %   * EK = getCrossplaneFFTVelocity(velocity, 'z');
+            %     * EK = getCrossplaneFFTVelocity(velocity, 'x');
+            %     * EK = getCrossplaneFFTVelocity(velocity, 'y');
+            %     * EK = getCrossplaneFFTVelocity(velocity, 'z');
             
             % Map axis to slicing dimension
             sliceDim = find('xyz' == axisType);
@@ -610,14 +618,16 @@ classdef TurbulenceSpectra < handle
             % The homogeneous plane are the first two dimensions of the 3D field.
             %
             % Args:
-            %   EK (float): 3D energy spectra (combined from all velocity components)
+            %     EK (float): 3D energy spectra (combined from all velocity components)
             %
             % Returns:
-            %   EK_avg (float): Radially averaged energy spectra for the slices
-            %   k (float): Wavenumber along the homogeneous direction
+            %     Tuple containing:
+            %     
+            %     * EK_avg (float): Radially averaged energy spectra for the slices
+            %     * k (float): Wavenumber along the homogeneous direction
             %
             % Example:
-            %   [EK_avg, k] = getCrossplaneAveragedSpectra(EK);
+            %     [EK_avg, k] = getCrossplaneAveragedSpectra(EK);
                 
             % Get the center of the homogeneous plane
             [NX, NY, numSlices] = size(EK);
@@ -650,14 +660,16 @@ classdef TurbulenceSpectra < handle
             % The homogeneous plane corresponds to the first two dimensions.
             %
             % Args:
-            %   EK (float): 3D energy spectra (combined from all velocity components)
+            %     EK (float): 3D energy spectra (combined from all velocity components)
             %
             % Returns:
-            %   EK_avg2D (float): 2D radially averaged energy spectra
-            %   k (float): Wavenumber along homogeneous directions
+            %     Tuple containing:
+            %
+            %     * EK_avg2D (float): 2D radially averaged energy spectra
+            %     * k (float): Wavenumber along homogeneous directions
             %
             % Example:
-            %   [EK_avg2D, k] = getCrossplaneAveragedSpectra2D(EK);
+            %     [EK_avg2D, k] = getCrossplaneAveragedSpectra2D(EK);
         
             % Get the size of the homogeneous plane
             [NX, NY, numSlices] = size(EK);
@@ -697,13 +709,13 @@ classdef TurbulenceSpectra < handle
             % Compute the spherically averaged energy spectra of a 3D field
             %
             % Args:
-            %   EK (float): 3D energy spectra
+            %     EK (float): 3D energy spectra
             %
             % Returns:
-            %   EK_avg (float): Spherically averaged energy spectra
+            %     EK_avg (float): Spherically averaged energy spectra
             %
             % Example:
-            %   EK_avg = getSphericallyAveragedSpectra(EK);
+            %     EK_avg = getSphericallyAveragedSpectra(EK);
         
             % Get the center of the 3D field
             [NX, NY, NZ] = size(EK);
@@ -770,16 +782,18 @@ classdef TurbulenceSpectra < handle
             % from the two dimensions orthogonal to the specified axis.
             %
             % Args:
-            %   EK (float): 3D energy spectra
-            %   axisType (char): Axis for cross-plane averaging ('x', 'y', 'z')
+            %     EK (float): 3D energy spectra
+            %     axisType (char): Axis for cross-plane averaging ('x', 'y', 'z')
             %
             % Returns:
-            %   EK_avg2D (float): Spherically averaged 2D energy spectra E(kParalell, kPerp)
-            %   kParalell (float): Wavenumber along the parallel direction
-            %   kPerp (float): Wavenumber along the perpendicular direction
+            %     Tuple containing:
+            %
+            %     * EK_avg2D (float): Spherically averaged 2D energy spectra E(kParalell, kPerp)
+            %     * kParalell (float): Wavenumber along the parallel direction
+            %     * kPerp (float): Wavenumber along the perpendicular direction
             %
             % Example:
-            %   [EK_avg2D, kParalell, kPerp] = getSphericallyAveragedSpectra2DPerp(EK, 'x');
+            %     [EK_avg2D, kParalell, kPerp] = getSphericallyAveragedSpectra2DPerp(EK, 'x');
 
             % Map axis to slicing dimension
             sliceDim = find('xyz' == axisType);

@@ -60,7 +60,6 @@ classdef ShockTurbulenceSolver < handle
         jumpConditionsSolver       % JumpConditionsSolver object
         shockTurbulenceModel       % ShockTurbulenceModel object
         FLAG_RESULTS = true        % Flag to show results in the command window
-        FLAG_INTERPOLATE = true    % Flag to interpolate data in a smaller grid
         FLAG_TIME = true           % Flag to print elapsed time
         FLAG_REPORT = false        % Flag to print predefined plots
         time                       % Elapsed time
@@ -82,7 +81,7 @@ classdef ShockTurbulenceSolver < handle
 
             % Default values
             defaultProblemType = 'VORTICAL';
-            defaultEquilibriumSolver = combustiontoolbox.equilibrium.EquilibriumSolver('FLAG_FAST', false); % FLAG_FAST is set to false to reduce numerical error
+            defaultEquilibriumSolver = combustiontoolbox.equilibrium.EquilibriumSolver('FLAG_FAST', true);
             defaultShockSolver = combustiontoolbox.shockdetonation.ShockSolver('equilibriumSolver', defaultEquilibriumSolver, 'FLAG_RESULTS', false);
             defaultJumpConditionsSolver = combustiontoolbox.shockdetonation.JumpConditionsSolver('equilibriumSolver', defaultEquilibriumSolver, 'shockSolver', defaultShockSolver,'FLAG_RESULTS', false);
             defaultShockTurbulenceModel = combustiontoolbox.shockturbulence.ShockTurbulenceModelVortical();
@@ -100,7 +99,7 @@ classdef ShockTurbulenceSolver < handle
             addParameter(p, 'jumpConditionsSolver', defaultJumpConditionsSolver, @(x) isa(x, 'combustiontoolbox.shockdetonation.JumpConditionsSolver'));
             addParameter(p, 'shockTurbulenceModel', defaultShockTurbulenceModel, @(x) isa(x, 'combustiontoolbox.shockturbulence.ShockTurbulenceModel'));
             addParameter(p, 'caloricGasModel', defaultCaloricGasModel, @(x) isa(x, 'combustiontoolbox.core.CaloricGasModel'));
-            addParameter(p, 'FLAG_INTERPOLATE', obj.FLAG_INTERPOLATE, @islogical);
+            addParameter(p, 'FLAG_RESULTS', obj.FLAG_RESULTS, @(x) islogical(x));
             addParameter(p, 'FLAG_TIME', obj.FLAG_TIME, @(x) islogical(x));
             addParameter(p, 'FLAG_REPORT', obj.FLAG_REPORT, @(x) islogical(x));
             addParameter(p, 'FLAG_TCHEM_FROZEN', defaultFLAG_TCHEM_FROZEN, @(x) islogical(x) && isscalar(x));
@@ -114,7 +113,7 @@ classdef ShockTurbulenceSolver < handle
             obj.shockSolver = p.Results.shockSolver;
             obj.jumpConditionsSolver = p.Results.jumpConditionsSolver;
             obj.shockTurbulenceModel = p.Results.shockTurbulenceModel;
-            obj.FLAG_INTERPOLATE = p.Results.FLAG_INTERPOLATE;
+            obj.FLAG_RESULTS = p.Results.FLAG_RESULTS;
             obj.FLAG_TIME = p.Results.FLAG_TIME;
             obj.FLAG_REPORT = p.Results.FLAG_REPORT;
             obj.plotConfig = p.Results.plotConfig;

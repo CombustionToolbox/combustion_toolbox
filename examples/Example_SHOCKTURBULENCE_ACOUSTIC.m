@@ -1,5 +1,5 @@
 % -------------------------------------------------------------------------
-% Example of an acoustic Shock–Turbulence Interaction using LIA
+% EXAMPLE: SHOCKTURBULENCE_ACOUSTIC
 %
 % This example computes the Linear Interaction Analysis (LIA) solution for
 % a shock–turbulence interaction involving upstream acoustic fluctuations

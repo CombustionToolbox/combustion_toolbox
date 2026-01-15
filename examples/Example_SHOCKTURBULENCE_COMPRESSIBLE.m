@@ -1,5 +1,5 @@
 % -------------------------------------------------------------------------
-% Example of compressible Shock-Turbulence Interaction using LIA
+% EXAMPLE: SHOCKTURBULENCE_COMPRESSIBLE
 %
 % This example computes the Linear Interaction Analysis (LIA) solution for 
 % a compressible shock–turbulence interaction involving upstream vortical

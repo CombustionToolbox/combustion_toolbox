@@ -29,6 +29,8 @@ function gui_ProblemTypeValueChanged(app)
             gui_visible_oblique(app, false);
             % Set invisible rocket items
             gui_visible_rocket(app, false);
+            % Set invisible shock-turbulence items
+            gui_visible_shockturbulence(app, false)
         case 'HP' % * HP: Adiabatic T and composition at constant p
             % Visible flags
             app.FLAG_IAC.Visible = 'off';
@@ -62,6 +64,8 @@ function gui_ProblemTypeValueChanged(app)
             gui_visible_oblique(app, false);
             % Set invisible rocket items
             gui_visible_rocket(app, false);
+            % Set invisible shock-turbulence items
+            gui_visible_shockturbulence(app, false)
         case 'SP' % * SP: Isentropic (i.e., adiabatic) compression/expansion to a specified p
             % Visible flags
             app.FLAG_IAC.Visible = 'off';
@@ -95,6 +99,8 @@ function gui_ProblemTypeValueChanged(app)
             gui_visible_oblique(app, false);
             % Set invisible rocket items
             gui_visible_rocket(app, false);
+            % Set invisible shock-turbulence items
+            gui_visible_shockturbulence(app, false)
         case 'TV' % * TV: Equilibrium composition at defined T and constant v
             % Visible flags
             app.FLAG_IAC.Visible = 'off';
@@ -123,6 +129,8 @@ function gui_ProblemTypeValueChanged(app)
             gui_visible_oblique(app, false);
             % Set invisible rocket items
             gui_visible_rocket(app, false);
+            % Set invisible shock-turbulence items
+            gui_visible_shockturbulence(app, false)
         case 'EV' % * EV: Equilibrium composition at Adiabatic T and constant v
             % Visible flags
             app.FLAG_IAC.Visible = 'off';
@@ -156,6 +164,8 @@ function gui_ProblemTypeValueChanged(app)
             gui_visible_oblique(app, false);
             % Set invisible rocket items
             gui_visible_rocket(app, false);
+            % Set invisible shock-turbulence items
+            gui_visible_shockturbulence(app, false)
         case 'SV' % * SV: Isentropic (i.e., fast adiabatic) compression/expansion to a specified v
             % Visible flags
             app.FLAG_IAC.Visible = 'off';
@@ -190,6 +200,8 @@ function gui_ProblemTypeValueChanged(app)
             gui_visible_oblique(app, false);
             % Set invisible rocket items
             gui_visible_rocket(app, false);
+            % Set invisible shock-turbulence items
+            gui_visible_shockturbulence(app, false)
         case 'SHOCK_I' % * SHOCK_I: CALCULATE PLANAR INCIDENT SHOCK WAVE
             % Visible flags
             app.FLAG_IAC.Visible = 'off';
@@ -224,6 +236,8 @@ function gui_ProblemTypeValueChanged(app)
             gui_visible_oblique(app, false);
             % Set invisible rocket items
             gui_visible_rocket(app, false);
+            % Set invisible shock-turbulence items
+            gui_visible_shockturbulence(app, false)
         case 'SHOCK_R' % * SHOCK_R: CALCULATE PLANAR POST-REFLECTED SHOCK STATE
             % Visible flags
             app.FLAG_IAC.Visible = 'off';
@@ -258,6 +272,8 @@ function gui_ProblemTypeValueChanged(app)
             gui_visible_oblique(app, false);
             % Set invisible rocket items
             gui_visible_rocket(app, false);
+            % Set invisible shock-turbulence items
+            gui_visible_shockturbulence(app, false)
         case {'SHOCK_OBLIQUE'}
             % Visible flags
             app.FLAG_IAC.Visible = 'off';
@@ -295,6 +311,8 @@ function gui_ProblemTypeValueChanged(app)
             gui_visible_oblique(app, true);
             % Set invisible rocket items
             gui_visible_rocket(app, false);
+            % Set invisible shock-turbulence items
+            gui_visible_shockturbulence(app, false)
         case 'SHOCK_POLAR'
             % Visible flags
             app.FLAG_IAC.Visible = 'off';
@@ -329,6 +347,8 @@ function gui_ProblemTypeValueChanged(app)
             gui_visible_oblique(app, false);
             % Set invisible rocket items
             gui_visible_rocket(app, false);
+            % Set invisible shock-turbulence items
+            gui_visible_shockturbulence(app, false)
         case 'SHOCK_POLAR_R'
             % Visible flags
             app.FLAG_IAC.Visible = 'off';
@@ -366,6 +386,8 @@ function gui_ProblemTypeValueChanged(app)
             gui_visible_oblique(app, false);
             % Set invisible rocket items
             gui_visible_rocket(app, false);
+            % Set invisible shock-turbulence items
+            gui_visible_shockturbulence(app, false)
         case {'DET', 'DET_R'} % * DET: CALCULATE CHAPMAN-JOUGUET STATE
             % Visible flags
             app.FLAG_IAC.Visible = 'off';
@@ -390,6 +412,8 @@ function gui_ProblemTypeValueChanged(app)
             gui_visible_shocks(app, true);
             % Set invisible rocket items
             gui_visible_rocket(app, false);
+            % Set invisible shock-turbulence items
+            gui_visible_shockturbulence(app, false)
         case {'DET_OVERDRIVEN', 'DET_OVERDRIVEN_R','DET_UNDERDRIVEN', 'DET_UNDERDRIVEN_R'} % * DET_OVERDRIVEN and DET_UNDERDRIVEN
             % Visible flags
             app.FLAG_IAC.Visible = 'off';
@@ -427,6 +451,8 @@ function gui_ProblemTypeValueChanged(app)
             gui_visible_oblique(app, false);
             % Set invisible rocket items
             gui_visible_rocket(app, false);
+            % Set invisible shock-turbulence items
+            gui_visible_shockturbulence(app, false)
         case {'DET_OBLIQUE'}
             % Visible flags
             app.FLAG_IAC.Visible = 'off';
@@ -463,6 +489,8 @@ function gui_ProblemTypeValueChanged(app)
             gui_visible_oblique(app, true);
             % Set invisible rocket items
             gui_visible_rocket(app, false);
+            % Set invisible shock-turbulence items
+            gui_visible_shockturbulence(app, false)
         case {'DET_POLAR'}
             % Visible flags
             app.FLAG_IAC.Visible = 'off';
@@ -496,6 +524,8 @@ function gui_ProblemTypeValueChanged(app)
             gui_visible_oblique(app, false);
             % Set invisible rocket items
             gui_visible_rocket(app, false);
+            % Set invisible shock-turbulence items
+            gui_visible_shockturbulence(app, false)
         case {'ROCKET', 'ROCKET_IAC', 'ROCKET_FAC'}
             % Visible flags
             app.FLAG_IAC.Visible = 'on';
@@ -527,8 +557,118 @@ function gui_ProblemTypeValueChanged(app)
             gui_visible_oblique(app, false);
             % Set visible rocket items
             gui_visible_rocket(app, true);
-         case {'SHOCK_OBLIQUE_R', 'DET_OBLIQUE_R', 'DET_POLAR_R'}
+            % Set invisible shock-turbulence items
+            gui_visible_shockturbulence(app, false)
+        case {'SHOCK_OBLIQUE_R', 'DET_OBLIQUE_R', 'DET_POLAR_R'}
             uialert(app.UIFigure, 'Problem not included yet. Sorry for the inconvinience.', 'Error')
+        case {'SHOCKTURBULENCE_VORTICAL', 'SHOCKTURBULENCE_ACOUSTIC'}
+            % Visible flags
+            app.FLAG_IAC.Visible = 'off';
+            app.FLAG_IAC.Value = true;
+            gui_FLAG_IACValueChanged(app);
+            % Update input items
+            app.PP1.Visible = 'off'; app.PP2.Visible = 'off';
+            app.PR3.Visible = 'on'; app.PR4.Visible = 'on';
+            app.PP3.Visible = 'off'; app.PP4.Visible = 'off';
+            app.PR5.Visible = 'off'; app.PP5.Visible = 'off';
+            app.text_P1.Visible = 'on';
+            app.text_RP2.Text = 'Pressure [bar]';
+            % Visible flags
+            app.FLAG_IAC.Visible = 'off';
+            % Update Additional constraints panel
+            app.AdditionalconstraintsPanel.Visible = 'on';
+            app.AdditionalconstraintsPanel.Title = 'Additional constraints';
+            app.text_RP.Visible ='off'; app.text_RP.Text = 'Products';
+            app.text_R2.Visible = 'on'; app.text_P2.Visible = 'off';
+            app.text_R2.Text = 'Reactants'; app.text_P2.Text = 'Products';
+            app.text_RP3.Text = 'Shock velocity [m/s]'; 
+            app.text_RP4.Visible = 'on'; app.text_RP4.Text = 'Mach number [-]';
+            app.text_RP5.Visible = 'off'; 
+            % Set default input values
+            app.PR1.Value = '300';
+            app.PR2.Value = '1';
+            app.PR4.Value = '2';
+            gui_compute_mach_or_velocity(app, 'Mach');
+            % Set visible shock/detonation items
+            gui_visible_shocks(app, true);
+            % Set invisible oblique shock/detontions items
+            gui_visible_oblique(app, false);
+            % Set invisible rocket items
+            gui_visible_rocket(app, false);
+            % Set visible shock-turbulence items
+            gui_visible_shockturbulence(app, true, strrep(app.ProblemType.Value, 'SHOCKTURBULENCE_', ''));
+        case {'SHOCKTURBULENCE_VORTICAL_ENTROPIC'}
+            % Visible flags
+            app.FLAG_IAC.Visible = 'off';
+            app.FLAG_IAC.Value = true;
+            gui_FLAG_IACValueChanged(app);
+            % Update input items
+            app.PP1.Visible = 'off'; app.PP2.Visible = 'off';
+            app.PR3.Visible = 'on'; app.PR4.Visible = 'on';
+            app.PP3.Visible = 'off'; app.PP4.Visible = 'off';
+            app.PR5.Visible = 'off'; app.PP5.Visible = 'off';
+            app.text_P1.Visible = 'on';
+            app.text_RP2.Text = 'Pressure [bar]';
+            % Visible flags
+            app.FLAG_IAC.Visible = 'off';
+            % Update Additional constraints panel
+            app.AdditionalconstraintsPanel.Visible = 'on';
+            app.AdditionalconstraintsPanel.Title = 'Additional constraints';
+            app.text_RP.Visible ='off'; app.text_RP.Text = 'Products';
+            app.text_R2.Visible = 'on'; app.text_P2.Visible = 'off';
+            app.text_R2.Text = 'Reactants'; app.text_P2.Text = 'Products';
+            app.text_RP3.Text = 'Shock velocity [m/s]'; 
+            app.text_RP4.Visible = 'on'; app.text_RP4.Text = 'Mach number [-]';
+            app.text_RP5.Visible = 'off'; 
+            % Set default input values
+            app.PR1.Value = '300';
+            app.PR2.Value = '1';
+            app.PR4.Value = '2';
+            gui_compute_mach_or_velocity(app, 'Mach');
+            % Set visible shock/detonation items
+            gui_visible_shocks(app, true);
+            % Set invisible oblique shock/detontions items
+            gui_visible_oblique(app, false);
+            % Set invisible rocket items
+            gui_visible_rocket(app, false);
+            % Set visible shock-turbulence items
+            gui_visible_shockturbulence(app, true, 'VORTICAL_ENTROPIC');
+        case {'SHOCKTURBULENCE_COMPRESSIBLE'}
+            % Visible flags
+            app.FLAG_IAC.Visible = 'off';
+            app.FLAG_IAC.Value = true;
+            gui_FLAG_IACValueChanged(app);
+            % Update input items
+            app.PP1.Visible = 'off'; app.PP2.Visible = 'off';
+            app.PR3.Visible = 'on'; app.PR4.Visible = 'on';
+            app.PP3.Visible = 'off'; app.PP4.Visible = 'off';
+            app.PR5.Visible = 'off'; app.PP5.Visible = 'off';
+            app.text_P1.Visible = 'on';
+            app.text_RP2.Text = 'Pressure [bar]';
+            % Visible flags
+            app.FLAG_IAC.Visible = 'off';
+            % Update Additional constraints panel
+            app.AdditionalconstraintsPanel.Visible = 'on';
+            app.AdditionalconstraintsPanel.Title = 'Additional constraints';
+            app.text_RP.Visible ='off'; app.text_RP.Text = 'Products';
+            app.text_R2.Visible = 'on'; app.text_P2.Visible = 'off';
+            app.text_R2.Text = 'Reactants'; app.text_P2.Text = 'Products';
+            app.text_RP3.Text = 'Shock velocity [m/s]'; 
+            app.text_RP4.Visible = 'on'; app.text_RP4.Text = 'Mach number [-]';
+            app.text_RP5.Visible = 'off'; 
+            % Set default input values
+            app.PR1.Value = '300';
+            app.PR2.Value = '1';
+            app.PR4.Value = '2';
+            gui_compute_mach_or_velocity(app, 'Mach');
+            % Set visible shock/detonation items
+            gui_visible_shocks(app, true);
+            % Set invisible oblique shock/detontions items
+            gui_visible_oblique(app, false);
+            % Set invisible rocket items
+            gui_visible_rocket(app, false);
+            % Set visible shock-turbulence items
+            gui_visible_shockturbulence(app, true, 'COMPRESSIBLE');
     end
 
     % Update temperature 
@@ -583,4 +723,57 @@ function gui_visible_rocket(app, value)
     app.text_Isp.Visible = value;
     app.Panel_extra_3.Visible = value;
     app.Panel_extra_4.Visible = value;
+end
+
+function gui_visible_shockturbulence(app, value, varargin)
+
+    % Default
+    RP1_2_text = 'Area ratio A_c/A_t';
+    RP2_2_text = 'Mass flux [kg/s]';
+    RP3_2_text = 'etaVorticity [-]';
+    P2_value = value;
+    PP6_value = '';
+    
+    if value
+        value = 'on';
+        P1_text = 'Upstream turbulence';
+        PP1_value = '';
+        PP2_value = '';
+        % Set ShockTurbulenceModel property
+        setShockTurbulenceModel(app.shockTurbulenceSolver, varargin{:}); 
+        % Set visibility of Turbulence statistics tab
+        app.showTab('TurbulenceStatistics');
+    else
+        value = 'off';
+        P1_text = 'Products';
+        PP1_value = '2500';
+        PP2_value = '1';
+        % Set visibility of Turbulence statistics tab
+        app.hideTab(app.TurbulencestatisticsTab);
+    end
+
+    if nargin == 3
+
+        switch varargin{1}
+            case {'VORTICAL', 'ACOUSTIC'}
+                value = 'off';
+                P2_value = 'off';
+            case 'VORTICAL_ENTROPIC'
+                RP1_2_text = 'chi [-]'; PP1_value = '-0.1';
+                P2_value = 'off';
+            case 'COMPRESSIBLE'
+                RP1_2_text = 'eta [-]'; PP1_value = '0.1';
+                RP2_2_text = 'chi [-]'; PP2_value = '0';
+                RP3_2_text = 'etaVorticity [-]'; PP6_value = '0.04';          
+        end
+
+    end
+
+    app.text_P1.Text = P1_text;
+    app.text_P1.Visible = value;
+    app.text_RP1_2.Visible = value; app.text_RP1_2.Text = RP1_2_text;
+    app.text_RP2_2.Visible = P2_value; app.text_RP2_2.Text = RP2_2_text;
+    app.text_RP3_2.Visible = P2_value; app.text_RP3_2.Text = RP3_2_text;
+    app.PP1.Visible = value; app.PP2.Visible = P2_value; app.PP6.Visible = P2_value;
+    app.PP1.Value = PP1_value; app.PP2.Value = PP2_value; app.PP6.Value = PP6_value;
 end

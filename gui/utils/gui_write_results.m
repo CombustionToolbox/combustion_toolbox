@@ -16,6 +16,8 @@ function gui_write_results(app, results, i, varargin)
     update_mixtures(app, results, i, FLAG_REACTANTS);
     % Update equivalence ratio
     update_equivalence_ratio(app, results, i);
+    % Update upstream turbulence properties
+    update_upstream_turbulence(app, results, i);
 end
 
 % SUB-PASS FUNCTIONS
@@ -30,6 +32,11 @@ function update_properties(app, results, i)
         app.text_error_problem.Value = mix2.errorMoles;
     else
         app.text_error_problem.Value = mix2.errorProblem;
+    end
+
+    % Update LIA properties in GUI
+    if contains(results(i).ProblemType, 'SHOCKTURBULENCE', 'IgnoreCase', true)
+        update_properties_lia(app, mix2, '_2');
     end
 
     if contains(results(i).ProblemType, 'SHOCK', 'IgnoreCase', true) || contains(results(i).ProblemType, 'DET', 'IgnoreCase', true) || contains(results(i).ProblemType, 'ROCKET', 'IgnoreCase', true)
@@ -167,6 +174,22 @@ function update_properties_oblique(app, mix, suffix)
     app.(['text_theta', suffix]).Value = mix.theta;
 end
 
+function update_properties_lia(app, mix, suffix)
+    % Update linear interaction analysis properties
+    app.(['text_K', suffix]).Value = mix.lia.K;
+    app.(['text_R11', suffix]).Value = mix.lia.R11;
+    app.(['text_RTT', suffix]).Value = mix.lia.RTT;
+    app.(['text_Enstrophy', suffix]).Value = mix.lia.enstrophy;
+    app.(['text_EnstrophyTT', suffix]).Value = mix.lia.enstrophyTT;
+    app.(['text_Ka', suffix]).Value = mix.lia.Ka;
+    app.(['text_R11a', suffix]).Value = mix.lia.R11a;
+    app.(['text_RTTa', suffix]).Value = mix.lia.RTTa;
+    app.(['text_Kr', suffix]).Value = mix.lia.Kr;
+    app.(['text_R11r', suffix]).Value = mix.lia.R11r;
+    app.(['text_RTTr', suffix]).Value = mix.lia.RTTr;
+    app.(['text_Kolmogorov', suffix]).Value = mix.lia.kolmogorovLengthRatio;
+end
+
 function update_error_method()
     % Update error of the method employed
 
@@ -217,4 +240,15 @@ function update_equivalence_ratio(app, results, i)
     app.edit_phi3.Value = equivalenceRatio;
     app.edit_OF.Value = results(i).mix1.oxidizerFuelMassRatio;
     app.edit_F.Value = results(i).mix1.percentageFuel;
+end
+
+function update_upstream_turbulence(app, results, i)
+    % Update GUI: upstream turbulence properties (eta, etaVorticity, chi)
+    if isempty(results(i).mix2.lia)
+        return
+    end
+
+    app.edit_eta.Value = sprintf('%.5g', round(results(i).mix1.eta, 5));
+    app.edit_chi.Value = sprintf('%.5g', round(results(i).mix1.chi, 5));
+    app.edit_etaVorticity.Value = sprintf('%.5g', round(results(i).mix1.etaVorticity, 5));
 end

@@ -1,5 +1,5 @@
 % -------------------------------------------------------------------------
-% Example of a vortical Shock–Turbulence Interaction using LIA
+% EXAMPLE: SHOCKTURBULENCE_VORTICAL
 %
 % This example computes the Linear Interaction Analysis (LIA) solution for
 % a shock–turbulence interaction involving upstream vortical fluctuations

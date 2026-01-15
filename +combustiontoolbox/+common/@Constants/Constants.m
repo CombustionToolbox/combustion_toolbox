@@ -27,7 +27,7 @@ classdef Constants < handle
         E0      = 8.854187818e-12  % Vacuum permittivity [F/m]
         ME      = 9.10938356e-31   % Electron mass [kg]
         release = 'v1.2.9'         % Release version
-        date    = '14 Jan 2026'    % Release date
+        date    = '15 Jan 2026'    % Release date
     end
     
 end

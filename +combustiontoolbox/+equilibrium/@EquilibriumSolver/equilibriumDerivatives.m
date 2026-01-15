@@ -1,4 +1,4 @@
-function [dNi_T, dN_T, dNi_p, dN_p] = equilibriumDerivatives(J, N, A0, NE, indexGas, indexCondensed, indexElements, H0RT)
+function [dNi_T, dN_T, dNi_p, dN_p] = equilibriumDerivatives(J, N, A0, NE, indexGas, indexCondensed, H0RT)
     % Obtain thermodynamic derivative of the moles of the species and of the moles of the mixture
     % respect to temperature and pressure from a given composition [moles] at equilibrium
     %
@@ -9,7 +9,6 @@ function [dNi_T, dN_T, dNi_p, dN_p] = equilibriumDerivatives(J, N, A0, NE, index
     %     NE (float): Temporal total number of elements
     %     indexGas (float): Temporal index of gaseous species in the final mixture
     %     indexCondensed (float): Temporal index of condensed species in the final mixture
-    %     indexElements (float): Temporal index of elements in the final mixture
     %     H0RT (float): Dimensionless enthalpy
     %
     % Returns:
@@ -21,16 +20,16 @@ function [dNi_T, dN_T, dNi_p, dN_p] = equilibriumDerivatives(J, N, A0, NE, index
     %     * dN_p (float):  Thermodynamic derivative of the moles of the mixture respect to pressure
     %
     % Example:
-    %     [dNi_T, dN_T, dNi_p, dN_p] = equilibriumDerivatives(J, N, A0, NE, ind, indexGas, indexCondensed, indexElements, H0RT)
+    %     [dNi_T, dN_T, dNi_p, dN_p] = equilibriumDerivatives(J, N, A0, NE, ind, indexGas, indexCondensed, H0RT)
     
     % Equilibrium derivative respect temperature
-    [dNi_T, dN_T] = equilibrium_dT(J, N, A0, NE, indexGas, indexCondensed, indexElements, H0RT);
+    [dNi_T, dN_T] = equilibrium_dT(J, N, A0, NE, indexGas, indexCondensed, H0RT);
 
     % Equilibrium derivative respect pressure
-    [dNi_p, dN_p] = equilibrium_dp(J, N, A0, NE, indexGas, indexCondensed, indexElements);
+    [dNi_p, dN_p] = equilibrium_dp(J, N, A0, NE, indexGas, indexCondensed);
 end
 
-function [dNi_T, dN_T] = equilibrium_dT(J, N, A0, NE, indexGas, indexCondensed, indexElements, H0RT)
+function [dNi_T, dN_T] = equilibrium_dT(J, N, A0, NE, indexGas, indexCondensed, H0RT)
     % Obtain thermodynamic derivative of the moles of the species and of the moles of the mixture
     % respect to temperature from a given composition [moles] at equilibrium
     %
@@ -41,7 +40,6 @@ function [dNi_T, dN_T] = equilibrium_dT(J, N, A0, NE, indexGas, indexCondensed, 
     %     NE (float): Temporal total number of elements
     %     indexGas (float): Temporal index of gaseous species in the final mixture
     %     indexCondensed (float): Temporal index of condensed species in the final mixture
-    %     indexElements (float): Temporal index of elements in the final mixture
     %     H0RT (float): Dimensionless enthalpy
     %
     % Returns:
@@ -51,11 +49,10 @@ function [dNi_T, dN_T] = equilibrium_dT(J, N, A0, NE, indexGas, indexCondensed, 
     %     * dN_T (float):  Thermodynamic derivative of the moles of the mixture respect to temperature
     %
     % Example:
-    %     [dNi_T, dN_T] = equilibrium_dT(J, N, A0, NE, ind, indexGas, indexCondensed, indexElements, H0RT)
+    %     [dNi_T, dN_T] = equilibrium_dT(J, N, A0, NE, ind, indexGas, indexCondensed, H0RT)
 
     % Definitions
     opts.SYM = true; % Options linsolve method: real symmetric
-    A0 = A0(:, indexElements);
 
     % Initialization
     dNi_T = zeros(length(N), 1);
@@ -83,7 +80,7 @@ function [dNi_T, dN_T] = equilibrium_dT(J, N, A0, NE, indexGas, indexCondensed, 
 
 end
 
-function [dNi_p, dN_p] = equilibrium_dp(J, N, A0, NE, indexGas, indexCondensed, indexElements)
+function [dNi_p, dN_p] = equilibrium_dp(J, N, A0, NE, indexGas, indexCondensed)
     % Obtain thermodynamic derivative of the moles of the species and of the moles of the mixture
     % respect to pressure from a given composition [moles] at equilibrium
     %
@@ -94,7 +91,6 @@ function [dNi_p, dN_p] = equilibrium_dp(J, N, A0, NE, indexGas, indexCondensed, 
     %     NE (float): Temporal total number of elements
     %     indexGas (float): Temporal index of gaseous species in the final mixture
     %     indexCondensed (float): Temporal index of condensed species in the final mixture
-    %     indexElements (float): Temporal index of elements in the final mixture
     %
     % Returns:
     %     Tuple containing
@@ -107,7 +103,6 @@ function [dNi_p, dN_p] = equilibrium_dp(J, N, A0, NE, indexGas, indexCondensed, 
 
     % Definitions
     opts.SYM = true; % Options linsolve method: real symmetric
-    A0 = A0(:, indexElements);
 
     % Initialization
     dNi_p = zeros(length(N), 1);

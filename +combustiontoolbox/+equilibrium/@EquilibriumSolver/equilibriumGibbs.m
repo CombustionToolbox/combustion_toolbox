@@ -64,9 +64,15 @@ function [N, dNi_T, dN_T, dNi_p, dN_p, index, STOP, STOP_ions, h0] = equilibrium
     % Find indeces of the species/elements that we have to remove from the stoichiometric matrix A0
     % for the sum of elements whose value is <= tolMoles
     [A0, indexRemoveSpecies, ind_E, NatomE] = obj.removeElements(NatomE, A0, system.ind_E, obj.tolMoles);
+
+    % Check if element E (electron) is present
+    FLAG_E = ~isempty(ind_E);
     
     % List of indices with nonzero values
     [index, indexGas, indexCondensed, indexIons, indexElements, NE, NG, NS] = obj.tempValues(system, NatomE);
+    
+    % Remove elements with zero atoms from the stoichiometric matrix A0
+    A0 = A0(:, indexElements);
     
     % Update temp values
     if ~isempty(indexRemoveSpecies)
@@ -105,7 +111,7 @@ function [N, dNi_T, dN_T, dNi_p, dN_p, index, STOP, STOP_ions, h0] = equilibrium
     A0_T = A0';
 
     % Initialize composition vector N
-    [N, NP] = obj.equilibriumGuess(N, NP, A0_T(indexElements, index0), muRT(index0), NatomE, index0, indexGas_0, indexIons, NG, molesGuess);
+    [N, NP] = obj.equilibriumGuess(N, NP, A0_T(:, index0), muRT(index0), NatomE, index0, indexGas_0, indexIons, NG, molesGuess);
 
     % Initialization 
     psi_j = system.propertyVector;
@@ -118,7 +124,7 @@ function [N, dNi_T, dN_T, dNi_p, dN_p, index, STOP, STOP_ions, h0] = equilibrium
     x = equilibriumLoopCondensed(x);
     
     % Update matrix J (jacobian) to compute the thermodynamic derivatives
-    J = update_matrix_J(A0_T(indexElements, :), J22, N, NP, indexGas, indexCondensed, NS - NG, psi_j);
+    J = update_matrix_J(A0_T, J22, N, NP, indexGas, indexCondensed, NS - NG, psi_j);
     J(end, end) = 0;
 
     % Molar enthalpy [J/mol]
@@ -128,7 +134,7 @@ function [N, dNi_T, dN_T, dNi_p, dN_p, index, STOP, STOP_ions, h0] = equilibrium
     H0RT = h0 / RT;
 
     % Compute thermodynamic derivates
-    [dNi_T, dN_T, dNi_p, dN_p] = obj.equilibriumDerivatives(J, N, A0, NE, indexGas, indexCondensed, indexElements, H0RT);
+    [dNi_T, dN_T, dNi_p, dN_p] = obj.equilibriumDerivatives(J, N, A0, NE, indexGas, indexCondensed, H0RT);
 
     % NESTED FUNCTION
     function x = equilibriumLoop
@@ -156,6 +162,18 @@ function [N, dNi_T, dN_T, dNi_p, dN_p, index, STOP, STOP_ions, h0] = equilibrium
             
             % Check singular matrix
             if any(isnan(x) | isinf(x))
+
+                % Check if index of electron element is defined
+                if FLAG_E
+
+                    % Check residual of charge balance
+                    if max( [norm(J(ind_E, :), 1), norm(J(:, ind_E), 1), abs(b(ind_E))] ) < obj.tolE
+                        % Remove element E from matrix
+                        removeElementElectron();
+                        continue
+                    end
+
+                end
 
                 % Update temp indeces
                 indexGas = indexGas_0;
@@ -242,8 +260,10 @@ function [N, dNi_T, dN_T, dNi_p, dN_p, index, STOP, STOP_ions, h0] = equilibrium
         end
         
         % Remove element E from matrix
-        indexElements(ind_E) = [];
-        NE = NE - 1;
+        removeElementElectron();
+        
+        % Recompute chemical equilibrium without ions
+        x = equilibriumLoop;
     end
 
     function x = equilibriumLoopCondensed(x)
@@ -281,7 +301,7 @@ function [N, dNi_T, dN_T, dNi_p, dN_p, index, STOP, STOP_ions, h0] = equilibrium
             end
 
             % Check condensed species
-            [indexCondensed_add, FLAG_CONDENSED, ~] = obj.equilibriumCheckCondensed(A0(:, indexElements), x(1:NE), W(indexCondensed_check), indexCondensed_check, muRT, NC_max, FLAG_ONE, FLAG_RULE);
+            [indexCondensed_add, FLAG_CONDENSED, ~] = obj.equilibriumCheckCondensed(A0, x(1:NE), W(indexCondensed_check), indexCondensed_check, muRT, NC_max, FLAG_ONE, FLAG_RULE);
             
             if ~FLAG_CONDENSED
                 break
@@ -357,13 +377,27 @@ function [N, dNi_T, dN_T, dNi_p, dN_p, index, STOP, STOP_ions, h0] = equilibrium
         end
 
         % Check if there were species not considered
-        [~, FLAG_CONDENSED, dL_dnj] = obj.equilibriumCheckCondensed(A0(:, indexElements), x(1:NE), W(indexCondensed_0), indexCondensed_0, muRT, NC_max, FLAG_ONE, FLAG_RULE);
+        [~, FLAG_CONDENSED, dL_dnj] = obj.equilibriumCheckCondensed(A0, x(1:NE), W(indexCondensed_0), indexCondensed_0, muRT, NC_max, FLAG_ONE, FLAG_RULE);
         
         % Recompute if there are condensed species that may appear at chemical equilibrium
         if FLAG_CONDENSED && any(abs(dL_dnj) > 1e-4)
             x = equilibriumLoopCondensed(x);
         end
         
+    end
+
+    function removeElementElectron()
+        % Remove element E from matrix
+        A0(:, ind_E) = []; A0_T(ind_E, :) = [];
+        indexIons = []; indexElements(ind_E) = [];
+        NatomE(ind_E) = [];
+        NE = NE - 1;
+
+        % Update FLAG_E
+        FLAG_E = false;
+
+        % Update indeces
+        [~, indexCondensed, indexGas, indexIons, NG, NS] = obj.updateTemp(N, index, indexCondensed, indexGas, indexIons, NP, NG, NS, SIZE);
     end
 
 end

@@ -46,33 +46,33 @@ function app = gui_CalculateButtonPushed(app, event)
                 propertyR4 = gui_get_prop(app.PR4.Value);
                 additionalInputsR = [additionalInputsR, 'mach', propertyR4];
             case {'SHOCK_OBLIQUE', 'SHOCK_POLAR_R'}
-                    propertyR4 = gui_get_prop(app.PR4.Value);
-                    propertyR5 = gui_get_prop(app.PR5.Value);
-                    propertyP5 = gui_get_prop(app.PP5.Value);
+                propertyR4 = gui_get_prop(app.PR4.Value);
+                propertyR5 = gui_get_prop(app.PR5.Value);
+                propertyP5 = gui_get_prop(app.PP5.Value);
 
-                    if ~isempty(propertyR5)
-                        FLAG_BETA = true;
-                        additionalInputsR = [additionalInputsR, 'mach', propertyR4, 'beta', propertyR5];
-                    else
-                        FLAG_THETA = true;
-                        additionalInputsR = [additionalInputsR, 'mach', propertyR4, 'theta', propertyP5];
-                    end
+                if ~isempty(propertyR5)
+                    FLAG_BETA = true;
+                    additionalInputsR = [additionalInputsR, 'mach', propertyR4, 'beta', propertyR5];
+                else
+                    FLAG_THETA = true;
+                    additionalInputsR = [additionalInputsR, 'mach', propertyR4, 'theta', propertyP5];
+                end
                     
             case {'DET_OVERDRIVEN', 'DET_UNDERDRIVEN', 'DET_OVERDRIVEN_R', 'DET_UNDERDRIVEN_R', 'DET_POLAR'}
                 propertyR3 = gui_get_prop(app.PR3.Value);
                 additionalInputsR = [additionalInputsR, 'driveFactor', propertyR3];
             case {'DET_OBLIQUE', 'DET_POLAR_R'}
-                    propertyR3 = gui_get_prop(app.PR3.Value);
-                    propertyR4 = gui_get_prop(app.PR4.Value);
-                    propertyP4 = gui_get_prop(app.PP4.Value);
+                propertyR3 = gui_get_prop(app.PR3.Value);
+                propertyR4 = gui_get_prop(app.PR4.Value);
+                propertyP4 = gui_get_prop(app.PP4.Value);
 
-                    if ~isempty(propertyR4)
-                        FLAG_BETA = true;
-                        additionalInputsR = [additionalInputsR, 'driveFactor', propertyR3, 'beta', propertyR4];
-                    else
-                        FLAG_THETA = true;
-                        additionalInputsR = [additionalInputsR, 'driveFactor', propertyR3, 'theta', propertyP4];
-                    end
+                if ~isempty(propertyR4)
+                    FLAG_BETA = true;
+                    additionalInputsR = [additionalInputsR, 'driveFactor', propertyR3, 'beta', propertyR4];
+                else
+                    FLAG_THETA = true;
+                    additionalInputsR = [additionalInputsR, 'driveFactor', propertyR3, 'theta', propertyP4];
+                end
             case {'ROCKET'}
                 propertyP1 = gui_get_prop(app.PP1.Value);
                 propertyR3 = gui_get_prop(app.PR3.Value);
@@ -96,6 +96,21 @@ function app = gui_CalculateButtonPushed(app, event)
                     FLAG_ARATIO = true;
                 end
 
+            case {'SHOCKTURBULENCE_VORTICAL', 'SHOCKTURBULENCE_ACOUSTIC'}
+                propertyP1 = 0; propertyP2 = 0;
+                propertyR4 = gui_get_prop(app.PR4.Value);
+                additionalInputsR = [additionalInputsR, 'mach', propertyR4];
+            case {'SHOCKTURBULENCE_VORTICAL_ENTROPIC'}
+                propertyP1 = 0;
+                propertyP2 = gui_get_prop(app.PP1.Value);
+                propertyR4 = gui_get_prop(app.PR4.Value);
+                additionalInputsR = [additionalInputsR, 'mach', propertyR4, 'chi', propertyP2];
+            case {'SHOCKTURBULENCE_COMPRESSIBLE'}
+                propertyP1 = gui_get_prop(app.PP1.Value);
+                propertyP2 = gui_get_prop(app.PP2.Value);
+                propertyP6 = gui_get_prop(app.PP6.Value);
+                propertyR4 = gui_get_prop(app.PR4.Value);
+                additionalInputsR = [additionalInputsR, 'mach', propertyR4, 'eta', propertyP1, 'chi', propertyP2, 'etaVorticity', propertyP6];
             otherwise
                 propertyP1 = propertyR1;
                 propertyP2 = propertyR2;
@@ -175,6 +190,8 @@ function app = gui_CalculateButtonPushed(app, event)
                 problemType = strrep(problemType, '_BETA', '');
                 % Select solver
                 solver = set(app.shockSolver, 'problemType', problemType, 'FLAG_RESULTS', FLAG_RESULTS);
+                % Turn off FLAG_RESULTS of subsolvers
+                solver.equilibriumSolver.FLAG_RESULTS = false;
                 % Solve problem
                 [mixArray1, mixArray2] = solver.solveArray(mixArray1);
                 % Set output
@@ -187,6 +204,8 @@ function app = gui_CalculateButtonPushed(app, event)
                 problemType = strrep(problemType, '_THETA', '');
                 % Select solver
                 solver = set(app.shockSolver, 'problemType', problemType, 'FLAG_RESULTS', FLAG_RESULTS);
+                % Turn off FLAG_RESULTS of subsolvers
+                solver.equilibriumSolver.FLAG_RESULTS = false;
                 % Solve problem
                 [mixArray1, mixArray2, mixArray3] = solver.solveArray(mixArray1);
                 % Set output
@@ -200,6 +219,8 @@ function app = gui_CalculateButtonPushed(app, event)
                 problemType = strrep(problemType, '_THETA', '');
                 % Select solver
                 solver = set(app.shockSolver, 'problemType', problemType, 'FLAG_RESULTS', FLAG_RESULTS);
+                % Turn off FLAG_RESULTS of subsolvers
+                solver.equilibriumSolver.FLAG_RESULTS = false;
                 % Solve problem
                 [mixArray1, mixArray2, mixArray3, mix4Array] = solver.solveArray(mixArray1);
                 % Set output
@@ -212,6 +233,8 @@ function app = gui_CalculateButtonPushed(app, event)
                 problemType = strrep(problemType, '_BETA', '');
                 % Select solver
                 solver = set(app.shockSolver, 'problemType', problemType, 'FLAG_RESULTS', FLAG_RESULTS);
+                % Turn off FLAG_RESULTS of subsolvers
+                solver.equilibriumSolver.FLAG_RESULTS = false;
                 % Solve problem
                 [mixArray1, mixArray2, mixArray3, mix4Array, mix5Array] = solver.solveArray(mixArray1);
                 % Set output
@@ -224,6 +247,8 @@ function app = gui_CalculateButtonPushed(app, event)
                 problemType = strrep(problemType, '_THETA', '');
                 % Select solver
                 solver = set(app.shockSolver, 'problemType', problemType, 'FLAG_RESULTS', FLAG_RESULTS);
+                % Turn off FLAG_RESULTS of subsolvers
+                solver.equilibriumSolver.FLAG_RESULTS = false;
                 % Solve problem
                 [mixArray1, mixArray2, mixArray3, mix4Array, mix5Array, mix6Array] = solver.solveArray(mixArray1);
                 % Set output
@@ -234,6 +259,8 @@ function app = gui_CalculateButtonPushed(app, event)
             case {'DET', 'DET_OVERDRIVEN', 'DET_UNDERDRIVEN', 'DET_POLAR'}
                 % Select solver
                 solver = set(app.detonationSolver, 'problemType', problemType, 'FLAG_RESULTS', FLAG_RESULTS);
+                % Turn off FLAG_RESULTS of subsolvers
+                solver.equilibriumSolver.FLAG_RESULTS = false;
                 % Solve problem
                 [mixArray1, mixArray2] = solver.solveArray(mixArray1);
                 % Set output
@@ -247,6 +274,8 @@ function app = gui_CalculateButtonPushed(app, event)
                 problemType = strrep(problemType, '_THETA', '');
                 % Select solver
                 solver = set(app.detonationSolver, 'problemType', problemType, 'FLAG_RESULTS', FLAG_RESULTS);
+                % Turn off FLAG_RESULTS of subsolvers
+                solver.equilibriumSolver.FLAG_RESULTS = false;
                 % Solve problem
                 [mixArray1, mixArray2, mixArray3] = solver.solveArray(mixArray1);
                 % Set output
@@ -257,6 +286,8 @@ function app = gui_CalculateButtonPushed(app, event)
             case {'DET_POLAR_LIMITRR'}
                 % Select solver
                 solver = set(app.detonationSolver, 'problemType', problemType, 'FLAG_RESULTS', FLAG_RESULTS);
+                % Turn off FLAG_RESULTS of subsolvers
+                solver.equilibriumSolver.FLAG_RESULTS = false;
                 % Solve problem
                 [mixArray1, mixArray2, mixArray3, mixArray4] = solver.solveArray(mixArray1);
                 % Set output
@@ -269,6 +300,8 @@ function app = gui_CalculateButtonPushed(app, event)
                 problemType = strrep(problemType, '_BETA', '');
                 % Select solver
                 solver = set(app.detonationSolver, 'problemType', problemType, 'FLAG_RESULTS', FLAG_RESULTS);
+                % Turn off FLAG_RESULTS of subsolvers
+                solver.equilibriumSolver.FLAG_RESULTS = false;
                 % Solve problem
                 [mixArray1, mixArray2, mixArray3, mixArray4, mixArray5] = solver.solveArray(mixArray1);
                 % Set output
@@ -277,7 +310,10 @@ function app = gui_CalculateButtonPushed(app, event)
                 solver.plotConfig.plotProperties = {'T', 'rho', 'h', 'e', 'g', 'cp', 's', 'gamma_s', 'sound', 'uShock'};
                 solver.plotConfig.plotPropertiesBasis = {[], [], 'mi', 'mi', 'mi', 'mi', 'mi', [], [], []};
             case {'DET_POLAR_R_THETA'}
+                % Select solver
                 solver = set(app.detonationSolver, 'problemType', problemType, 'FLAG_RESULTS', FLAG_RESULTS);
+                % Turn off FLAG_RESULTS of subsolvers
+                solver.equilibriumSolver.FLAG_RESULTS = false;
                 % Solve problem
                 [mixArray1, mixArray2, mixArray3, mixArray4, mixArray5, mixArray6] = solver.solveArray(mixArray1);
                 % Set output
@@ -288,6 +324,8 @@ function app = gui_CalculateButtonPushed(app, event)
             case {'ROCKET_IAC'}
                 % Select solver
                 solver = set(app.rocketSolver, 'problemType', problemType, 'FLAG_RESULTS', FLAG_RESULTS);
+                % Turn off FLAG_RESULTS of subsolvers
+                solver.equilibriumSolver.FLAG_RESULTS = false;
                 % Solve problem
                 [mixArray1, mixArray2, mixArray3] = solver.solveArray(mixArray1);
                 % Set output
@@ -301,6 +339,8 @@ function app = gui_CalculateButtonPushed(app, event)
                 problemType = strrep(problemType, '_ARATIO', '');
                 % Select solver
                 solver = set(app.rocketSolver, 'problemType', problemType, 'FLAG_RESULTS', FLAG_RESULTS);
+                % Turn off FLAG_RESULTS of subsolvers
+                solver.equilibriumSolver.FLAG_RESULTS = false;
                 % Solve problem
                 [mixArray1, mixArray2, mixArray3, mixArray4] = solver.solveArray(mixArray1);
                 % Set output
@@ -316,6 +356,8 @@ function app = gui_CalculateButtonPushed(app, event)
             case {'ROCKET_FAC'}
                 % Select solver
                 solver = set(app.rocketSolver, 'problemType', problemType, 'FLAG_RESULTS', FLAG_RESULTS);
+                % Turn off FLAG_RESULTS of subsolvers
+                solver.equilibriumSolver.FLAG_RESULTS = false;
                 % Solve problem
                 [mixArray1, mixArray2, mixArray3, mixArray4] = solver.solveArray(mixArray1);
                 % Set output
@@ -329,6 +371,8 @@ function app = gui_CalculateButtonPushed(app, event)
                 problemType = strrep(problemType, '_ARATIO', '');
                 % Select solver
                 solver = set(app.rocketSolver, 'problemType', problemType, 'FLAG_RESULTS', FLAG_RESULTS);
+                % Turn off FLAG_RESULTS of subsolvers
+                solver.equilibriumSolver.FLAG_RESULTS = false;
                 % Solve problem
                 [mixArray1, mixArray2, mixArray3, mixArray4, mixArray5] = solver.solveArray(mixArray1);
                 % Set output
@@ -341,6 +385,22 @@ function app = gui_CalculateButtonPushed(app, event)
                 % Set plot properties
                 solver.plotConfig.plotProperties = {'T', 'rho', 'h', 'e', 'g', 'cp', 's', 'gamma_s', 'sound', 'u', 'I_sp', 'I_vac'};
                 solver.plotConfig.plotPropertiesBasis = {[], [], 'mi', 'mi', 'mi', 'mi', 'mi', [], [], [], [], []};
+            case {'SHOCKTURBULENCE_VORTICAL', 'SHOCKTURBULENCE_VORTICAL_ENTROPIC', 'SHOCKTURBULENCE_ACOUSTIC', 'SHOCKTURBULENCE_COMPRESSIBLE'}
+                % Select solver
+                solver = set(app.shockTurbulenceSolver, 'problemType', strrep(problemType, 'SHOCKTURBULENCE_', ''), 'FLAG_RESULTS', FLAG_RESULTS);
+                % Turn off FLAG_RESULTS of subsolvers
+                solver.equilibriumSolver.FLAG_RESULTS = false;
+                solver.shockSolver.FLAG_RESULTS = false;
+                solver.jumpConditionsSolver.FLAG_RESULTS = false;
+                % Solve problem
+                [resultsLIA, mixArray1, mixArray2] = solver.solve(mixArray1);
+
+                % Set output
+                varargout = {resultsLIA, mixArray1, mixArray2};
+
+                % Set plot properties
+                solver.plotConfig.plotProperties = {'K', 'R11', 'RTT', 'Ka', 'Kr', 'enstrophy', 'kolmogorovLengthRatio'};
+                solver.plotConfig.plotPropertiesBasis = {[], [], [], [], [], [], []};
             otherwise
                 error('Problem type %s is not found', problemType);
         end
@@ -351,6 +411,9 @@ function app = gui_CalculateButtonPushed(app, event)
         % Save results
         if contains(problemType, 'ROCKET')
             [results, app.temp_results] = save_results(app, problemType, varargout{:});
+        elseif contains(problemType, 'SHOCKTURBULENCE')
+            results = save_results(app, problemType, mixArray1, mixArray2);
+            app.temp_results = results;
         else
             [results, app.temp_results] = save_results(app, problemType, mixArray1, varargout{end});
         end

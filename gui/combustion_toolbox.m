@@ -27,6 +27,8 @@ classdef combustion_toolbox < matlab.apps.AppBase
         Console                         matlab.ui.control.TextArea
         Tab_lateral_bar                 matlab.ui.container.TabGroup
         SetupTab                        matlab.ui.container.Tab
+        text_RP3_2                      matlab.ui.control.Label
+        PP6                             matlab.ui.control.EditField
         TabGroup2                       matlab.ui.container.TabGroup
         InputsTab                       matlab.ui.container.Tab
         SelectProblemTypePanel          matlab.ui.container.Panel
@@ -239,6 +241,46 @@ classdef combustion_toolbox < matlab.apps.AppBase
         text_s                          matlab.ui.control.Label
         text_phi_3                      matlab.ui.control.Label
         edit_phi3                       matlab.ui.control.EditField
+        TurbulencestatisticsTab         matlab.ui.container.Tab
+        Panel_parameters_2              matlab.ui.container.Panel
+        edit_eta                        matlab.ui.control.EditField
+        text_phi_6                      matlab.ui.control.Label
+        text_phi_5                      matlab.ui.control.Label
+        edit_etaVorticity               matlab.ui.control.EditField
+        text_Isp_7                      matlab.ui.control.NumericEditField
+        text_Ivac_7                     matlab.ui.control.NumericEditField
+        text_Cstar_7                    matlab.ui.control.NumericEditField
+        text_Isp_6                      matlab.ui.control.Label
+        text_Ivac_6                     matlab.ui.control.Label
+        text_Cstar_6                    matlab.ui.control.Label
+        text_Aratio_7                   matlab.ui.control.NumericEditField
+        text_Aratio_6                   matlab.ui.control.Label
+        text_K_2                        matlab.ui.control.NumericEditField
+        text_K                          matlab.ui.control.Label
+        text_R11_2                      matlab.ui.control.NumericEditField
+        text_R11                        matlab.ui.control.Label
+        text_RTT_2                      matlab.ui.control.NumericEditField
+        text_RTT                        matlab.ui.control.Label
+        text_Enstrophy_2                matlab.ui.control.NumericEditField
+        text_Enstrophy                  matlab.ui.control.Label
+        text_R11a_2                     matlab.ui.control.NumericEditField
+        text_R11a                       matlab.ui.control.Label
+        text_Kr_2                       matlab.ui.control.NumericEditField
+        text_Kr                         matlab.ui.control.Label
+        text_R11r_2                     matlab.ui.control.NumericEditField
+        text_R11r                       matlab.ui.control.Label
+        text_EnstrophyTT_2              matlab.ui.control.NumericEditField
+        text_EnstrophyTT                matlab.ui.control.Label
+        text_RTTr_2                     matlab.ui.control.NumericEditField
+        text_RTTr                       matlab.ui.control.Label
+        text_Kolmogorov_2               matlab.ui.control.NumericEditField
+        text_Kolmogorov                 matlab.ui.control.Label
+        text_RTTa_2                     matlab.ui.control.NumericEditField
+        text_RTTa                       matlab.ui.control.Label
+        text_Ka_2                       matlab.ui.control.NumericEditField
+        text_Ka                         matlab.ui.control.Label
+        text_phi_4                      matlab.ui.control.Label
+        edit_chi                        matlab.ui.control.EditField
         MixturecompositionTab           matlab.ui.container.Tab
         text_phi_2                      matlab.ui.control.Label
         edit_phi2                       matlab.ui.control.EditField
@@ -246,7 +288,7 @@ classdef combustion_toolbox < matlab.apps.AppBase
         text_P3                         matlab.ui.control.Label
         UITable_P                       matlab.ui.control.Table
         UITable_R2                      matlab.ui.control.Table
-        CustomFiguresTab                matlab.ui.container.Tab
+        CustomfiguresTab                matlab.ui.container.Tab
         DefaultsettingsCheckBox         matlab.ui.control.CheckBox
         figure_settings                 matlab.ui.control.Button
         figure_size                     matlab.ui.control.Button
@@ -281,9 +323,10 @@ classdef combustion_toolbox < matlab.apps.AppBase
         shockSolver       % ShockSolver object
         detonationSolver  % DetonationSolver object
         rocketSolver      % RocketSolver object
+        shockTurbulenceSolver % ShockTurbulenceSolver
         plotConfig        % PlotConfig object
         export            % Export object
-        displaySpecies    % Checmial species to be shown in plotComposition
+        displaySpecies    % Chemical species to be shown in plotComposition
         fig               % Auxiliary figure
         default           % Struct with default values of some components in the GUI
         N_flags           % Number of flags active
@@ -317,8 +360,9 @@ classdef combustion_toolbox < matlab.apps.AppBase
         current_history    % Current history of commands
         temp_index         % Temporal index to get current position of command history
         dynamic_components % Struct with all the dynamic components
-        welcome_message = 'Welcome to Combustion Toolbox %s --- A MATLAB-GUI based open-source tool for solving gaseous combustion problems.';
+        welcome_message = 'Welcome to Combustion Toolbox %s --- A MATLAB-based framework for solving combustion and high-speed flow problems.';
         maxRelativeError = 2e-2; % Relative error threshold to change color (2 %)
+        hiddenTabs         % Hidden tabs
     end
     
     properties (Dependent)
@@ -402,6 +446,107 @@ classdef combustion_toolbox < matlab.apps.AppBase
 
         function public_matMenuSelected(app, event)
             matMenuSelected(app, event);
+        end
+
+        function hideTab(app, tabObj)
+            % Hide a tab by removing it from its parent TabGroup
+            if isempty(tabObj) || ~isvalid(tabObj)
+                return
+            end
+        
+            % Store original parent and index so we can restore position later
+            tg = tabObj.Parent;
+            if isempty(tg) || ~isvalid(tg)
+                return
+            end
+        
+            key = matlab.lang.makeValidName(tabObj.Title);
+        
+            app.hiddenTabs.(key).Tab   = tabObj;
+            app.hiddenTabs.(key).Group = tg;
+        
+            % store the order index
+            children = tg.Children;
+            app.hiddenTabs.(key).Index = find(children == tabObj, 1, 'first');
+        
+            % if currently selected, move selection away first
+            if tg.SelectedTab == tabObj
+                otherTabs = children(children ~= tabObj);
+                if ~isempty(otherTabs)
+                    tg.SelectedTab = otherTabs(1);
+                end
+            end
+        
+            % remove tab (this hides it)
+            tabObj.Parent = [];
+        end
+        
+        function showTab(app, tabTitle, positionMode)
+            % showTab(app, tabTitle)
+            % showTab(app, tabTitle, 'original')  -> restores original position (default)
+            % showTab(app, tabTitle, 'end')       -> puts tab at the end
+            
+            if nargin < 3 || isempty(positionMode)
+                positionMode = 'original';
+            end
+
+            positionMode = lower(string(positionMode));
+        
+            key = matlab.lang.makeValidName(tabTitle);
+        
+            if ~isfield(app.hiddenTabs, key)
+                return
+            end
+        
+            tabObj = app.hiddenTabs.(key).Tab;
+            tg     = app.hiddenTabs.(key).Group;
+            idx0   = app.hiddenTabs.(key).Index;
+        
+            if isempty(tabObj) || ~isvalid(tabObj) || isempty(tg) || ~isvalid(tg)
+                return
+            end
+        
+            % Restore parent (tab becomes part of tg.Children)
+            tabObj.Parent = tg;
+        
+            ch = tg.Children;
+            n  = numel(ch);
+        
+            % Find current index of the restored tab
+            k = find(ch == tabObj, 1, 'first');
+            if isempty(k)
+                return
+            end
+        
+            switch positionMode
+                case 'original'
+                    idx = min(max(idx0, 1), n);
+        
+                    if k ~= idx
+                        % Remove and insert at original idx
+                        ch(k) = [];
+                        ch = [ch(1:idx-1); tabObj; ch(idx:end)];
+                        tg.Children = ch;
+                    end
+        
+                case 'end'
+                    % "end" = last position in Children order
+                    if k ~= n
+                        ch(k) = [];
+                        ch = [ch; tabObj];
+                        tg.Children = ch;
+                    end
+        
+                otherwise
+                    error('showTab:InvalidPositionMode', ...
+                          'positionMode must be "original" or "end".');
+            end
+        
+            % Optional: select it (comment out if you want less flicker)
+            tg.SelectedTab = tabObj;
+        
+            % Remove from hidden list
+            app.hiddenTabs = rmfield(app.hiddenTabs, key);
         end
 
     end
@@ -513,7 +658,7 @@ classdef combustion_toolbox < matlab.apps.AppBase
             end
 
         end
-        
+
     end
 
     % Callbacks that handle component events
@@ -562,6 +707,7 @@ classdef combustion_toolbox < matlab.apps.AppBase
             app.shockSolver = combustiontoolbox.shockdetonation.ShockSolver('plotConfig', app.plotConfig, 'equilibriumSolver', app.equilibriumSolver);
             app.detonationSolver = combustiontoolbox.shockdetonation.DetonationSolver('plotConfig', app.plotConfig, 'equilibriumSolver', app.equilibriumSolver);
             app.rocketSolver = combustiontoolbox.rocket.RocketSolver('plotConfig', app.plotConfig, 'equilibriumSolver', app.equilibriumSolver);
+            app.shockTurbulenceSolver = combustiontoolbox.shockturbulence.ShockTurbulenceSolver('plotConfig', app.plotConfig, 'equilibriumSolver', app.equilibriumSolver, 'shockSolver', app.shockSolver);
             % Initialize export object
             app.export = combustiontoolbox.utils.Export();
             % Initialize List box species DataBase master
@@ -585,6 +731,8 @@ classdef combustion_toolbox < matlab.apps.AppBase
             public_get_current_history(app);
             % Make app visible
             app.UIFigure.Visible = 'on';
+            % Hide Turbulence statistics tab
+            app.hideTab(app.TurbulencestatisticsTab);
             % Delete splash
             if FLAG_SPLASH
                 delete(splash_obj);
@@ -847,7 +995,7 @@ classdef combustion_toolbox < matlab.apps.AppBase
                 % Delete UIAxes
                 delete(app.UIAxes);
                 % Create new UIAxes
-                app.UIAxes = uiaxes(app.CustomFiguresTab, 'Position', app.default.UIAxes_position);
+                app.UIAxes = uiaxes(app.CustomfiguresTab, 'Position', app.default.UIAxes_position);
                 % Change name button
                 app.figure_size.Text = 'Maximize';
                 % Replot
@@ -1438,7 +1586,7 @@ classdef combustion_toolbox < matlab.apps.AppBase
             app.text_phi = uilabel(app.DefinereactantsandspeciestobeconsideredPanel);
             app.text_phi.HorizontalAlignment = 'right';
             app.text_phi.Position = [445 183 26 25];
-            app.text_phi.Text = 'Phi';
+            app.text_phi.Text = 'phi';
 
             % Create FuelEditFieldLabel
             app.FuelEditFieldLabel = uilabel(app.DefinereactantsandspeciestobeconsideredPanel);
@@ -1501,7 +1649,7 @@ classdef combustion_toolbox < matlab.apps.AppBase
             app.PP2.ValueChangedFcn = createCallbackFcn(app, @PP2ValueChanged, true);
             app.PP2.HorizontalAlignment = 'center';
             app.PP2.FontWeight = 'bold';
-            app.PP2.Position = [347 13 91 19];
+            app.PP2.Position = [347 14 91 19];
             app.PP2.Value = '1';
 
             % Create PP1
@@ -1696,8 +1844,8 @@ classdef combustion_toolbox < matlab.apps.AppBase
 
             % Create ProblemType
             app.ProblemType = uidropdown(app.SelectProblemTypePanel);
-            app.ProblemType.Items = {'TP:  Equilibrium composition at defined T and P', 'HP: Adiabatic T and composition at constant P', 'SP:  Isentropic compression/expansion to a specified P', 'TV: Equilibrium composition at defined T and constant V', 'EV: Adiabatic T and composition at constant V', 'SV: Isentropic compresion/expansion to a specified V', 'SHOCK_I: Planar incident shock wave', 'SHOCK_R: Planar reflected shock wave', 'SHOCK_OBLIQUE: Oblique incident shock wave', 'SHOCK_OBLIQUE_R: Oblique reflected shock wave', 'SHOCK_POLAR: Polar shocks', 'SHOCK_POLAR_R: Polar shocks (regular reflections)', 'DET: Chapman-Jouguet Detonation', 'DET_OVERDRIVEN: Overdriven detonation', 'DET_UNDERDRIVEN: Underdriven detonation', 'DET_R: Reflected Chapman-Jouguet detonation', 'DET_OVERDRIVEN_R: Overdriven reflected detonation', 'DET_UNDERDRIVEN_R: Underdriven reflected detonation', 'DET_OBLIQUE: Oblique incident detonation', 'DET_POLAR: Polar detonations', 'ROCKET: Rocket propellant  performance'};
-            app.ProblemType.ItemsData = {'TP', 'HP', 'SP', 'TV', 'EV', 'SV', 'SHOCK_I', 'SHOCK_R', 'SHOCK_OBLIQUE', 'SHOCK_OBLIQUE_R', 'SHOCK_POLAR', 'SHOCK_POLAR_R', 'DET', 'DET_OVERDRIVEN', 'DET_UNDERDRIVEN', 'DET_R', 'DET_OVERDRIVEN_R', 'DET_UNDERDRIVEN_R', 'DET_OBLIQUE', 'DET_POLAR', 'ROCKET'};
+            app.ProblemType.Items = {'TP:  Equilibrium composition at defined T and P', 'HP: Adiabatic T and composition at constant P', 'SP:  Isentropic compression/expansion to a specified P', 'TV: Equilibrium composition at defined T and constant V', 'EV: Adiabatic T and composition at constant V', 'SV: Isentropic compresion/expansion to a specified V', 'SHOCK_I: Planar incident shock wave', 'SHOCK_R: Planar reflected shock wave', 'SHOCK_OBLIQUE: Oblique incident shock wave', 'SHOCK_OBLIQUE_R: Oblique reflected shock wave', 'SHOCK_POLAR: Polar shocks', 'SHOCK_POLAR_R: Polar shocks (regular reflections)', 'DET: Chapman-Jouguet Detonation', 'DET_OVERDRIVEN: Overdriven detonation', 'DET_UNDERDRIVEN: Underdriven detonation', 'DET_R: Reflected Chapman-Jouguet detonation', 'DET_OVERDRIVEN_R: Overdriven reflected detonation', 'DET_UNDERDRIVEN_R: Underdriven reflected detonation', 'DET_OBLIQUE: Oblique incident detonation', 'DET_POLAR: Polar detonations', 'ROCKET: Rocket propellant performance', 'SHOCKTURBULENCE_VORTICAL: Vortical shock-turbulence interaction', 'SHOCKTURBULENCE_VORTICAL_ENTROPIC: Vortical-entropic shock-turbulence interaction', 'SHOCKTURBULENCE_ACOUSTIC: Acoustic shock-turbulence interaction', 'SHOCKTURBULENCE_COMPRESSIBLE: Compressible shock-turbulence interaction'};
+            app.ProblemType.ItemsData = {'TP', 'HP', 'SP', 'TV', 'EV', 'SV', 'SHOCK_I', 'SHOCK_R', 'SHOCK_OBLIQUE', 'SHOCK_OBLIQUE_R', 'SHOCK_POLAR', 'SHOCK_POLAR_R', 'DET', 'DET_OVERDRIVEN', 'DET_UNDERDRIVEN', 'DET_R', 'DET_OVERDRIVEN_R', 'DET_UNDERDRIVEN_R', 'DET_OBLIQUE', 'DET_POLAR', 'ROCKET', 'SHOCKTURBULENCE_VORTICAL', 'SHOCKTURBULENCE_VORTICAL_ENTROPIC', 'SHOCKTURBULENCE_ACOUSTIC', 'SHOCKTURBULENCE_COMPRESSIBLE'};
             app.ProblemType.ValueChangedFcn = createCallbackFcn(app, @ProblemTypeValueChanged, true);
             app.ProblemType.Position = [10 18 403 25];
             app.ProblemType.Value = 'TP';
@@ -2035,6 +2183,21 @@ classdef combustion_toolbox < matlab.apps.AppBase
             app.PrintresultsCheckBox = uicheckbox(app.ReportPanel);
             app.PrintresultsCheckBox.Text = 'Print results';
             app.PrintresultsCheckBox.Position = [6 40 115 22];
+
+            % Create PP6
+            app.PP6 = uieditfield(app.SetupTab, 'text');
+            app.PP6.HorizontalAlignment = 'center';
+            app.PP6.FontWeight = 'bold';
+            app.PP6.Visible = 'off';
+            app.PP6.Position = [356 215 91 19];
+            app.PP6.Value = '0';
+
+            % Create text_RP3_2
+            app.text_RP3_2 = uilabel(app.SetupTab);
+            app.text_RP3_2.HorizontalAlignment = 'center';
+            app.text_RP3_2.Visible = 'off';
+            app.text_RP3_2.Position = [456 215 102 19];
+            app.text_RP3_2.Text = 'etaVorticity [-]';
 
             % Create ResultsTab
             app.ResultsTab = uitab(app.Tab_lateral_bar);
@@ -2840,6 +3003,279 @@ classdef combustion_toolbox < matlab.apps.AppBase
             app.text_theta_2.Visible = 'off';
             app.text_theta_2.Position = [293 26 91 19];
 
+            % Create TurbulencestatisticsTab
+            app.TurbulencestatisticsTab = uitab(app.Tab_results);
+            app.TurbulencestatisticsTab.AutoResizeChildren = 'off';
+            app.TurbulencestatisticsTab.Title = 'Turbulence statistics';
+            app.TurbulencestatisticsTab.BackgroundColor = [0.9098 0.9098 0.8902];
+            app.TurbulencestatisticsTab.Scrollable = 'on';
+
+            % Create Panel_parameters_2
+            app.Panel_parameters_2 = uipanel(app.TurbulencestatisticsTab);
+            app.Panel_parameters_2.AutoResizeChildren = 'off';
+            app.Panel_parameters_2.BorderType = 'none';
+            app.Panel_parameters_2.BackgroundColor = [0.9098 0.9098 0.8902];
+            app.Panel_parameters_2.Position = [75 6 448 441];
+
+            % Create edit_chi
+            app.edit_chi = uieditfield(app.Panel_parameters_2, 'text');
+            app.edit_chi.Editable = 'off';
+            app.edit_chi.HorizontalAlignment = 'center';
+            app.edit_chi.Position = [162 407 64 19];
+            app.edit_chi.Value = '-';
+
+            % Create text_phi_4
+            app.text_phi_4 = uilabel(app.Panel_parameters_2);
+            app.text_phi_4.HorizontalAlignment = 'center';
+            app.text_phi_4.FontWeight = 'bold';
+            app.text_phi_4.Position = [177 422 35 22];
+            app.text_phi_4.Text = 'chi';
+
+            % Create text_Ka
+            app.text_Ka = uilabel(app.Panel_parameters_2);
+            app.text_Ka.HorizontalAlignment = 'center';
+            app.text_Ka.Position = [6 251 338 22];
+            app.text_Ka.Text = 'Acoustic TKE amplification ratio, Ka [-]';
+
+            % Create text_Ka_2
+            app.text_Ka_2 = uieditfield(app.Panel_parameters_2, 'numeric');
+            app.text_Ka_2.ValueDisplayFormat = '%.4g';
+            app.text_Ka_2.Editable = 'off';
+            app.text_Ka_2.HorizontalAlignment = 'center';
+            app.text_Ka_2.Position = [354 254 91 19];
+
+            % Create text_RTTa
+            app.text_RTTa = uilabel(app.Panel_parameters_2);
+            app.text_RTTa.HorizontalAlignment = 'center';
+            app.text_RTTa.Position = [33 200 286 22];
+            app.text_RTTa.Text = 'Acoustic transverse TKE amplification ratio, RTTa [-]';
+
+            % Create text_RTTa_2
+            app.text_RTTa_2 = uieditfield(app.Panel_parameters_2, 'numeric');
+            app.text_RTTa_2.ValueDisplayFormat = '%.4g';
+            app.text_RTTa_2.Editable = 'off';
+            app.text_RTTa_2.HorizontalAlignment = 'center';
+            app.text_RTTa_2.Position = [354 203 91 19];
+
+            % Create text_Kolmogorov
+            app.text_Kolmogorov = uilabel(app.Panel_parameters_2);
+            app.text_Kolmogorov.HorizontalAlignment = 'center';
+            app.text_Kolmogorov.Position = [6 97 338 22];
+            app.text_Kolmogorov.Text = 'Kolmogorov length scale ratio, L [-]';
+
+            % Create text_Kolmogorov_2
+            app.text_Kolmogorov_2 = uieditfield(app.Panel_parameters_2, 'numeric');
+            app.text_Kolmogorov_2.ValueDisplayFormat = '%.4g';
+            app.text_Kolmogorov_2.Editable = 'off';
+            app.text_Kolmogorov_2.HorizontalAlignment = 'center';
+            app.text_Kolmogorov_2.Position = [354 100 91 19];
+
+            % Create text_RTTr
+            app.text_RTTr = uilabel(app.Panel_parameters_2);
+            app.text_RTTr.HorizontalAlignment = 'center';
+            app.text_RTTr.Position = [6 122 338 22];
+            app.text_RTTr.Text = 'Rotational transverse TKE amplification ratio, RTTr [-]';
+
+            % Create text_RTTr_2
+            app.text_RTTr_2 = uieditfield(app.Panel_parameters_2, 'numeric');
+            app.text_RTTr_2.ValueDisplayFormat = '%.4g';
+            app.text_RTTr_2.Editable = 'off';
+            app.text_RTTr_2.HorizontalAlignment = 'center';
+            app.text_RTTr_2.Position = [354 125 91 19];
+
+            % Create text_EnstrophyTT
+            app.text_EnstrophyTT = uilabel(app.Panel_parameters_2);
+            app.text_EnstrophyTT.HorizontalAlignment = 'center';
+            app.text_EnstrophyTT.Position = [6 277 338 22];
+            app.text_EnstrophyTT.Text = 'Transverse enstrophy amplification ratio, WTT [-]';
+
+            % Create text_EnstrophyTT_2
+            app.text_EnstrophyTT_2 = uieditfield(app.Panel_parameters_2, 'numeric');
+            app.text_EnstrophyTT_2.ValueDisplayFormat = '%.4g';
+            app.text_EnstrophyTT_2.Editable = 'off';
+            app.text_EnstrophyTT_2.HorizontalAlignment = 'center';
+            app.text_EnstrophyTT_2.Position = [354 280 91 19];
+
+            % Create text_R11r
+            app.text_R11r = uilabel(app.Panel_parameters_2);
+            app.text_R11r.HorizontalAlignment = 'center';
+            app.text_R11r.Position = [6 148 338 22];
+            app.text_R11r.Text = 'Rotational streamwise TKE amplification ratio, R11r [-]';
+
+            % Create text_R11r_2
+            app.text_R11r_2 = uieditfield(app.Panel_parameters_2, 'numeric');
+            app.text_R11r_2.ValueDisplayFormat = '%.4g';
+            app.text_R11r_2.Editable = 'off';
+            app.text_R11r_2.HorizontalAlignment = 'center';
+            app.text_R11r_2.Position = [354 151 91 19];
+
+            % Create text_Kr
+            app.text_Kr = uilabel(app.Panel_parameters_2);
+            app.text_Kr.HorizontalAlignment = 'center';
+            app.text_Kr.Position = [6 174 338 22];
+            app.text_Kr.Text = 'Rotational TKE amplification ratio, Kr [-]';
+
+            % Create text_Kr_2
+            app.text_Kr_2 = uieditfield(app.Panel_parameters_2, 'numeric');
+            app.text_Kr_2.ValueDisplayFormat = '%.4g';
+            app.text_Kr_2.Editable = 'off';
+            app.text_Kr_2.HorizontalAlignment = 'center';
+            app.text_Kr_2.Position = [354 177 91 19];
+
+            % Create text_R11a
+            app.text_R11a = uilabel(app.Panel_parameters_2);
+            app.text_R11a.HorizontalAlignment = 'center';
+            app.text_R11a.Position = [6 225 338 22];
+            app.text_R11a.Text = 'Acoustic streamwise TKE amplification ratio, R11a [-]';
+
+            % Create text_R11a_2
+            app.text_R11a_2 = uieditfield(app.Panel_parameters_2, 'numeric');
+            app.text_R11a_2.ValueDisplayFormat = '%.4g';
+            app.text_R11a_2.Editable = 'off';
+            app.text_R11a_2.HorizontalAlignment = 'center';
+            app.text_R11a_2.Position = [354 228 91 19];
+
+            % Create text_Enstrophy
+            app.text_Enstrophy = uilabel(app.Panel_parameters_2);
+            app.text_Enstrophy.HorizontalAlignment = 'center';
+            app.text_Enstrophy.Position = [6 302 338 22];
+            app.text_Enstrophy.Text = 'Enstrophy amplification ratio, W [-]';
+
+            % Create text_Enstrophy_2
+            app.text_Enstrophy_2 = uieditfield(app.Panel_parameters_2, 'numeric');
+            app.text_Enstrophy_2.ValueDisplayFormat = '%.4g';
+            app.text_Enstrophy_2.Editable = 'off';
+            app.text_Enstrophy_2.HorizontalAlignment = 'center';
+            app.text_Enstrophy_2.Position = [354 305 91 19];
+
+            % Create text_RTT
+            app.text_RTT = uilabel(app.Panel_parameters_2);
+            app.text_RTT.HorizontalAlignment = 'center';
+            app.text_RTT.Position = [6 328 338 22];
+            app.text_RTT.Text = 'Transverse turbulent kinetic energy amplification ratio, RTT [-]';
+
+            % Create text_RTT_2
+            app.text_RTT_2 = uieditfield(app.Panel_parameters_2, 'numeric');
+            app.text_RTT_2.ValueDisplayFormat = '%.4g';
+            app.text_RTT_2.Editable = 'off';
+            app.text_RTT_2.HorizontalAlignment = 'center';
+            app.text_RTT_2.Position = [354 331 91 19];
+
+            % Create text_R11
+            app.text_R11 = uilabel(app.Panel_parameters_2);
+            app.text_R11.HorizontalAlignment = 'center';
+            app.text_R11.Position = [4 354 343 22];
+            app.text_R11.Text = 'Streamwise turbulent kinetic energy amplification ratio, R11 [-]';
+
+            % Create text_R11_2
+            app.text_R11_2 = uieditfield(app.Panel_parameters_2, 'numeric');
+            app.text_R11_2.Limits = [0 Inf];
+            app.text_R11_2.ValueDisplayFormat = '%.4g';
+            app.text_R11_2.Editable = 'off';
+            app.text_R11_2.HorizontalAlignment = 'center';
+            app.text_R11_2.Position = [354 357 91 19];
+
+            % Create text_K
+            app.text_K = uilabel(app.Panel_parameters_2);
+            app.text_K.HorizontalAlignment = 'center';
+            app.text_K.Position = [6 380 338 22];
+            app.text_K.Text = 'Turbulent kinetic energy amplification ratio, K [-]';
+
+            % Create text_K_2
+            app.text_K_2 = uieditfield(app.Panel_parameters_2, 'numeric');
+            app.text_K_2.ValueDisplayFormat = '%.4g';
+            app.text_K_2.Editable = 'off';
+            app.text_K_2.HorizontalAlignment = 'center';
+            app.text_K_2.Position = [354 383 91 19];
+
+            % Create text_Aratio_6
+            app.text_Aratio_6 = uilabel(app.Panel_parameters_2);
+            app.text_Aratio_6.HorizontalAlignment = 'center';
+            app.text_Aratio_6.Visible = 'off';
+            app.text_Aratio_6.Position = [190 75 136 19];
+            app.text_Aratio_6.Text = 'Area ratio A/A_t [-]';
+
+            % Create text_Aratio_7
+            app.text_Aratio_7 = uieditfield(app.Panel_parameters_2, 'numeric');
+            app.text_Aratio_7.ValueDisplayFormat = '%.4g';
+            app.text_Aratio_7.Editable = 'off';
+            app.text_Aratio_7.HorizontalAlignment = 'center';
+            app.text_Aratio_7.Visible = 'off';
+            app.text_Aratio_7.Position = [354 75 91 19];
+
+            % Create text_Cstar_6
+            app.text_Cstar_6 = uilabel(app.Panel_parameters_2);
+            app.text_Cstar_6.HorizontalAlignment = 'center';
+            app.text_Cstar_6.Visible = 'off';
+            app.text_Cstar_6.Position = [198 51 120 19];
+            app.text_Cstar_6.Text = 'Charac. velocity [m/s]';
+
+            % Create text_Ivac_6
+            app.text_Ivac_6 = uilabel(app.Panel_parameters_2);
+            app.text_Ivac_6.HorizontalAlignment = 'center';
+            app.text_Ivac_6.Visible = 'off';
+            app.text_Ivac_6.Position = [193 26 130 19];
+            app.text_Ivac_6.Text = 'Specific impulse vac [s]';
+
+            % Create text_Isp_6
+            app.text_Isp_6 = uilabel(app.Panel_parameters_2);
+            app.text_Isp_6.HorizontalAlignment = 'center';
+            app.text_Isp_6.Visible = 'off';
+            app.text_Isp_6.Position = [204 1 108 19];
+            app.text_Isp_6.Text = 'Specific impulse [s]';
+
+            % Create text_Cstar_7
+            app.text_Cstar_7 = uieditfield(app.Panel_parameters_2, 'numeric');
+            app.text_Cstar_7.ValueDisplayFormat = '%.4g';
+            app.text_Cstar_7.Editable = 'off';
+            app.text_Cstar_7.HorizontalAlignment = 'center';
+            app.text_Cstar_7.Visible = 'off';
+            app.text_Cstar_7.Position = [354 50 91 19];
+
+            % Create text_Ivac_7
+            app.text_Ivac_7 = uieditfield(app.Panel_parameters_2, 'numeric');
+            app.text_Ivac_7.ValueDisplayFormat = '%.4g';
+            app.text_Ivac_7.Editable = 'off';
+            app.text_Ivac_7.HorizontalAlignment = 'center';
+            app.text_Ivac_7.Visible = 'off';
+            app.text_Ivac_7.Position = [354 26 91 19];
+
+            % Create text_Isp_7
+            app.text_Isp_7 = uieditfield(app.Panel_parameters_2, 'numeric');
+            app.text_Isp_7.ValueDisplayFormat = '%.4g';
+            app.text_Isp_7.Editable = 'off';
+            app.text_Isp_7.HorizontalAlignment = 'center';
+            app.text_Isp_7.Visible = 'off';
+            app.text_Isp_7.Position = [354 1 91 19];
+
+            % Create edit_etaVorticity
+            app.edit_etaVorticity = uieditfield(app.Panel_parameters_2, 'text');
+            app.edit_etaVorticity.Editable = 'off';
+            app.edit_etaVorticity.HorizontalAlignment = 'center';
+            app.edit_etaVorticity.Position = [252 407 64 19];
+            app.edit_etaVorticity.Value = '-';
+
+            % Create text_phi_5
+            app.text_phi_5 = uilabel(app.Panel_parameters_2);
+            app.text_phi_5.HorizontalAlignment = 'center';
+            app.text_phi_5.FontWeight = 'bold';
+            app.text_phi_5.Position = [250 422 70 22];
+            app.text_phi_5.Text = 'etaVorticity';
+
+            % Create text_phi_6
+            app.text_phi_6 = uilabel(app.Panel_parameters_2);
+            app.text_phi_6.HorizontalAlignment = 'center';
+            app.text_phi_6.FontWeight = 'bold';
+            app.text_phi_6.Position = [87 422 35 22];
+            app.text_phi_6.Text = 'eta';
+
+            % Create edit_eta
+            app.edit_eta = uieditfield(app.Panel_parameters_2, 'text');
+            app.edit_eta.Editable = 'off';
+            app.edit_eta.HorizontalAlignment = 'center';
+            app.edit_eta.Position = [72 407 64 19];
+            app.edit_eta.Value = '-';
+
             % Create MixturecompositionTab
             app.MixturecompositionTab = uitab(app.Tab_results);
             app.MixturecompositionTab.AutoResizeChildren = 'off';
@@ -2888,14 +3324,14 @@ classdef combustion_toolbox < matlab.apps.AppBase
             app.text_phi_2.Position = [265 419 40 25];
             app.text_phi_2.Text = 'phi';
 
-            % Create CustomFiguresTab
-            app.CustomFiguresTab = uitab(app.Tab_results);
-            app.CustomFiguresTab.AutoResizeChildren = 'off';
-            app.CustomFiguresTab.Title = 'Custom Figures';
-            app.CustomFiguresTab.BackgroundColor = [0.9098 0.9098 0.8902];
+            % Create CustomfiguresTab
+            app.CustomfiguresTab = uitab(app.Tab_results);
+            app.CustomfiguresTab.AutoResizeChildren = 'off';
+            app.CustomfiguresTab.Title = 'Custom figures';
+            app.CustomfiguresTab.BackgroundColor = [0.9098 0.9098 0.8902];
 
             % Create UIAxes
-            app.UIAxes = uiaxes(app.CustomFiguresTab);
+            app.UIAxes = uiaxes(app.CustomfiguresTab);
             zlabel(app.UIAxes, 'Z')
             app.UIAxes.LabelFontSizeMultiplier = 1;
             app.UIAxes.LineWidth = 1.2;
@@ -2904,7 +3340,7 @@ classdef combustion_toolbox < matlab.apps.AppBase
             app.UIAxes.Position = [8 10 552 260];
 
             % Create Tree_mixtures
-            app.Tree_mixtures = uitree(app.CustomFiguresTab, 'checkbox');
+            app.Tree_mixtures = uitree(app.CustomfiguresTab, 'checkbox');
             app.Tree_mixtures.Position = [12 317 150 125];
 
             % Create Mixtures
@@ -2912,7 +3348,7 @@ classdef combustion_toolbox < matlab.apps.AppBase
             app.Mixtures.Text = 'Mixtures';
 
             % Create Tree_variable_x
-            app.Tree_variable_x = uitree(app.CustomFiguresTab, 'checkbox');
+            app.Tree_variable_x = uitree(app.CustomfiguresTab, 'checkbox');
             app.Tree_variable_x.Position = [181 317 180 125];
 
             % Create Variable_x
@@ -2923,7 +3359,7 @@ classdef combustion_toolbox < matlab.apps.AppBase
             app.Tree_variable_x.CheckedNodesChangedFcn = createCallbackFcn(app, @Tree_variable_xCheckedNodesChanged, true);
 
             % Create Tree_variable_y
-            app.Tree_variable_y = uitree(app.CustomFiguresTab, 'checkbox');
+            app.Tree_variable_y = uitree(app.CustomfiguresTab, 'checkbox');
             app.Tree_variable_y.Position = [379 317 180 125];
 
             % Create Variable_y
@@ -2934,31 +3370,31 @@ classdef combustion_toolbox < matlab.apps.AppBase
             app.Tree_variable_y.CheckedNodesChangedFcn = createCallbackFcn(app, @Tree_variable_yCheckedNodesChanged, true);
 
             % Create figure_plot
-            app.figure_plot = uibutton(app.CustomFiguresTab, 'push');
+            app.figure_plot = uibutton(app.CustomfiguresTab, 'push');
             app.figure_plot.ButtonPushedFcn = createCallbackFcn(app, @figure_plotButtonPushed, true);
             app.figure_plot.Position = [411 279 70 25];
             app.figure_plot.Text = 'Plot';
 
             % Create figure_clear
-            app.figure_clear = uibutton(app.CustomFiguresTab, 'push');
+            app.figure_clear = uibutton(app.CustomfiguresTab, 'push');
             app.figure_clear.ButtonPushedFcn = createCallbackFcn(app, @figure_clearButtonPushed, true);
             app.figure_clear.Position = [488 279 70 25];
             app.figure_clear.Text = 'Clear';
 
             % Create figure_size
-            app.figure_size = uibutton(app.CustomFiguresTab, 'push');
+            app.figure_size = uibutton(app.CustomfiguresTab, 'push');
             app.figure_size.ButtonPushedFcn = createCallbackFcn(app, @figure_sizeButtonPushed, true);
             app.figure_size.Position = [333 279 70 25];
             app.figure_size.Text = 'Maximize';
 
             % Create figure_settings
-            app.figure_settings = uibutton(app.CustomFiguresTab, 'push');
+            app.figure_settings = uibutton(app.CustomfiguresTab, 'push');
             app.figure_settings.ButtonPushedFcn = createCallbackFcn(app, @figure_settingsButtonPushed, true);
             app.figure_settings.Position = [13 279 70 25];
             app.figure_settings.Text = 'Settings';
 
             % Create DefaultsettingsCheckBox
-            app.DefaultsettingsCheckBox = uicheckbox(app.CustomFiguresTab);
+            app.DefaultsettingsCheckBox = uicheckbox(app.CustomfiguresTab);
             app.DefaultsettingsCheckBox.Text = 'Default settings';
             app.DefaultsettingsCheckBox.Position = [93 281 105 22];
             app.DefaultsettingsCheckBox.Value = true;
@@ -2990,7 +3426,7 @@ classdef combustion_toolbox < matlab.apps.AppBase
             % Create Console_text
             app.Console_text = uitextarea(app.UIFigure);
             app.Console_text.Position = [78 30 554 57];
-            app.Console_text.Value = {'Welcome to Combustion Toolbox vXX.XX.XX --- A MATLAB-GUI based open-source tool for solving gaseous combustion problems.'};
+            app.Console_text.Value = {'Welcome to Combustion Toolbox vXX.XX.XX --- A MATLAB-based framework for solving combustion and high-speed flow problems'};
 
             % Create ContextMenu_CommandWindow
             app.ContextMenu_CommandWindow = uicontextmenu(app.UIFigure);

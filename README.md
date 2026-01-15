@@ -37,7 +37,7 @@ The framework also includes an intuitive **graphical user interface (GUI)**, wit
 If you use the Combustion Toolbox in a publication, please cite it using the following references:
 
 * *Cuadra, A., Huete, C., & Vera, M. (2026). Combustion Toolbox: An open-source thermochemical code for gas-and condensed-phase problems involving chemical equilibrium. Computer Physics Communications 320, 110004. [doi:10.1016/j.cpc.2025.110004.](https://doi.org/10.1016/j.cpc.2025.110004).*
-* *Cuadra, A., Huete, C., & Vera, M. (2026). Combustion Toolbox: A MATLAB-GUI based open-source tool for solving gaseous combustion problems. Version 1.2.8. Zenodo. [doi:10.5281/zenodo.5554911](https://doi.org/10.5281/zenodo.5554911).*
+* *Cuadra, A., Huete, C., & Vera, M. (2026). Combustion Toolbox: A MATLAB-GUI based open-source tool for solving gaseous combustion problems. Version 1.2.9. Zenodo. [doi:10.5281/zenodo.5554911](https://doi.org/10.5281/zenodo.5554911).*
 
 It can be handy the BibTeX format:
 
@@ -57,7 +57,7 @@ It can be handy the BibTeX format:
     title   = "{{Combustion Toolbox: A MATLAB-GUI based open-source tool for solving gaseous combustion problems}}",
     author  = {A. Cuadra and C. Huete and M. Vera},
     year    = {2026},
-    note    = {Version 1.2.8},
+    note    = {Version 1.2.9},
     doi     = {https://doi.org/10.5281/zenodo.5554911}
 }
 ```

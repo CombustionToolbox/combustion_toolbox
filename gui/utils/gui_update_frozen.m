@@ -7,6 +7,8 @@ function gui_update_frozen(app)
     % Update equilibriumSolver
     if  app.FrozenchemistryCheckBox.Value
         app.equilibriumSolver.caloricGasModel = app.equilibriumSolver.caloricGasModel.setThermallyPerfect();
+    else
+        app.equilibriumSolver.caloricGasModel = app.equilibriumSolver.caloricGasModel.setImperfect();
     end
     
     % Check if frozen chemistry is selected

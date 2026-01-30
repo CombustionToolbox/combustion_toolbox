@@ -26,12 +26,12 @@ classdef ChemicalSystem < handle & matlab.mixin.Copyable
         propertiesMatrix       % Properties matrix
         propertyVector         % Property vector
         indexSpecies           % Index of species
-        indexGas               % Indeces gaseous species
-        indexCondensed         % Indeces condensed species
-        indexCryogenic         % Indeces cryogenic liquified species
-        indexIons              % Indeces ionized species in species
-        indexReact             % Indeces react species
-        indexFrozen            % Indeces inert/frozen species
+        indexGas               % Indices gaseous species
+        indexCondensed         % Indices condensed species
+        indexCryogenic         % Indices cryogenic liquified species
+        indexIons              % Indices ionized species in species
+        indexReact             % Indices react species
+        indexFrozen            % Indices inert/frozen species
         listSpeciesLean = {'CO2', 'H2O', 'N2', 'Ar', 'O2'}       % List of species for a lean complete combustion (equivalence ratio < 1)
         listSpeciesRich = {'CO2', 'H2O', 'N2', 'Ar', 'CO', 'H2'} % List of species for a rich complete combustion (equivalence ratio > 1)
         listSpeciesSoot = {'N2', 'Ar', 'CO', 'H2', 'Cbgrb'}      % List of species for a roch complete combustion with soot formation  (equivalence ratio > equivalence ratio soot)
@@ -585,6 +585,49 @@ classdef ChemicalSystem < handle & matlab.mixin.Copyable
                 indexIons = obj.getIndexIons(obj.listSpecies);
             end
 
+        end
+
+        function [index, numSpecies] = filterSpeciesTemperatureRange(obj, T, index, numSpecies, FLAG_EXTRAPOLATE)
+            % Remove species indices out of the temperature range if FLAG_EXTRAPOLATE = false,
+            % e.g., extrapolation of the polynomial fits is not allowed.
+            %
+            % Args:
+            %     obj (ChemicalSystem): Chemical system object
+            %     T (float): Temperature
+            %     index (float): Vector with the species indices
+            %     numSpecies (float): Number of species
+            %     FLAG_EXTRAPOLATE (bool): Flag indicating extrapolation of the polynomials fits is allowed
+            %
+            % Returns:
+            %     Tuple containing:
+            %
+            %     * index (float): Updated vector with the species indices
+            %     * numSpecies (float): Update number of species
+            
+            % Check if FLAG_EXTRAPOLATE is true
+            if FLAG_EXTRAPOLATE
+                return
+            end
+            
+            % Definitions
+            DB = obj.species;
+
+            % Initialization
+            temperatureMatrix = zeros(numSpecies, 2);
+
+            % Remove species outside the bounds
+            for i = numSpecies:-1:1
+                species = obj.listSpecies{index(i)};
+                temperatureMatrix(i, 1) = DB.(species).T(1);
+                temperatureMatrix(i, 2) = DB.(species).T(end);
+            end
+
+            % Identify species to remove
+            FLAG_REMOVE = (T < temperatureMatrix(:, 1)) | (T > temperatureMatrix(:, 2));
+
+            % Update index and numSpecies
+            index = index(~FLAG_REMOVE);
+            numSpecies = length(index);
         end
 
     end

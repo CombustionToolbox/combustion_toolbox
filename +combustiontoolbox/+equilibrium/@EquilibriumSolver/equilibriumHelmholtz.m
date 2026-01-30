@@ -80,10 +80,10 @@ function [N, dNi_T, dN_T, dNi_p, dN_p, index, STOP, STOP_ions, h0] = equilibrium
     end
 
     % Remove condensed species with temperature out of bounds
-    indexCondensed = check_temperature_range(system, T, indexCondensed, NS - NG, false);
+    indexCondensed = system.filterSpeciesTemperatureRange(T, indexCondensed, NS - NG, false);
 
     % Remove gas species with temperature out of bounds
-    [indexGas, NG] = check_temperature_range(obj, T, indexGas, NG, obj.FLAG_EXTRAPOLATE);
+    [indexGas, NG] = system.filterSpeciesTemperatureRange(T, indexGas, NG, obj.FLAG_EXTRAPOLATE);
 
     % First, compute chemical equilibrium with only gaseous species
     indexGas_0 = indexGas;

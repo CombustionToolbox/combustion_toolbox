@@ -11,8 +11,8 @@ function [FLAG_UPDATE, message] = checkUpdate(varargin)
     %    * message (char): Message displayed 
     %
     % Examples:
-    %    * [FLAG_UPDATE, message] = check_update();
-    %    * [FLAG_UPDATE, message] = check_update(UIFigure);
+    %    * [FLAG_UPDATE, message] = checkUpdate();
+    %    * [FLAG_UPDATE, message] = checkUpdate(UIFigure);
 
     % Definitions
     user = 'CombustionToolbox';
@@ -29,7 +29,7 @@ function [FLAG_UPDATE, message] = checkUpdate(varargin)
     date_current = combustiontoolbox.common.Constants.date;
 
     % Get latest version of CT on Github
-    [tag_repo, git_data] = get_latest_version_github(user, repo_name);
+    [tag_repo, git_data] = getLatestVersionGithub(user, repo_name);
     date_repo = git_data.published_at(1:end - 1);
     
     % Format date
@@ -38,12 +38,12 @@ function [FLAG_UPDATE, message] = checkUpdate(varargin)
     date_repo.Format = 'dd MMM yyyy';
 
     % Check latest version
-    if date_repo > date_current
+    if dateshift(date_repo, 'start', 'day') > dateshift(date_current, 'start', 'day')
         FLAG_UPDATE = true;
     end
 
     % Get display message
-    [message, title, icon] = get_message(tag_current, tag_repo, date_repo, FLAG_UPDATE);
+    [message, title, icon] = getMessage(tag_current, tag_repo, date_repo, FLAG_UPDATE);
 
     % Display modal dialog
     if isa(fig, 'matlab.ui.Figure')
@@ -76,12 +76,12 @@ function fig = unpack(varargin)
 
 end
 
-function value = get_tag_id(tag)
+function value = getTag(tag)
     ind = regexp(tag, '\d');
     value = tag(ind);
 end
 
-function [message, title, icon] = get_message(tag_1, tag_2, date_2, FLAG_UPDATE)
+function [message, title, icon] = getMessage(tag_1, tag_2, date_2, FLAG_UPDATE)
     % Get display message
     if FLAG_UPDATE
         msg_1 = 'There is a new release of Combustion Toolbox.';
@@ -95,9 +95,38 @@ function [message, title, icon] = get_message(tag_1, tag_2, date_2, FLAG_UPDATE)
 
     message = sprintf(['%s\n\n',...
                        'Current release: %s\n',...
-                       'Latest relase: %s\n',...
+                       'Latest release: %s\n',...
                        'Date: %s'], msg_1, tag_1, tag_2, date_2);
 
     % Print message in the command window
     disp(message);
+end
+
+function [release, git_data] = getLatestVersionGithub(user, repo_name)
+    % Get latest version from a repository from Github
+    %
+    % Args:
+    %     user (char): Username of the owner of the repository
+    %     repo_name (char): Name of the repository
+    %
+    % Returns:
+    %     Tuple containing
+    %
+    %     * release (char): Release tag (latest)
+    %     * git_data (struct): Body data of the request
+    %
+    % Example:
+    %     [release, git_data] = getLatestVersionGithub('CombustionToolbox', 'combustion_toolbox')
+
+    % Define request
+    git_api = 'https://api.github.com/repos/';
+    url = [git_api, user, '/', repo_name, '/releases/latest'];
+    request = matlab.net.http.RequestMessage;
+    uri = matlab.net.URI(url);
+    % Send request
+    response = send(request, uri);
+    % Get data
+    git_data = response.Body.Data;
+    % Get latest release tag
+    release = git_data.tag_name;
 end

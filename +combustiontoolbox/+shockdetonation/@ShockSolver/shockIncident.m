@@ -176,7 +176,7 @@ function [J, b, guess_moles] = update_system(equilibriumSolver, mix1, mix2, p2, 
     h2 = mix2.h / mix2.mi; % [J/kg]
     cp2 = mix2.cp / mix2.mi; % [J/(K-kg)]
 
-    alpha = (W1 * u1^2) / (R0 * T1);
+    alpha = (r1 * u1^2) / (p1 * 1e5);
     J1 = -r1r2 * alpha * dVdp_T - p2p1;
     J2 = -r1r2 * alpha * dVdT_p;
     b1 = p2p1 - 1 + alpha * (r1 / r2 - 1);

@@ -1007,7 +1007,7 @@ classdef Mixture < handle & matlab.mixin.Copyable
                 % Compute molar volume [m3/mol] from specific volume [m3/kg]
                 vMolar = vSpecific2vMolar(obj, obj.vSpecific, obj.quantity, obj.quantity(obj.indexGas));
                 % Compute pressure in Pascals [Pa] using the equationState
-                pressure = obj.equationState.getPressure(obj.T, vMolar, obj.chemicalSystem.listSpecies, obj.quantity / sum(obj.quantity));
+                pressure = obj.equationState.getPressure(obj.T, vMolar, obj.quantity / sum(obj.quantity), obj.chemicalSystem);
                 % Convert pressure to [bar]
                 obj.p = pressure * combustiontoolbox.common.Units.Pa2bar;
             end
@@ -1467,7 +1467,7 @@ classdef Mixture < handle & matlab.mixin.Copyable
             
             % Definitions
             temperature = obj.T;
-            pressure = obj.p;
+            pressure = obj.p; pressure_Pa = pressure * combustiontoolbox.common.Units.bar2Pa;
             R0 = combustiontoolbox.common.Constants.R0; % Universal gas constant [J/(K mol)]
             system = obj.chemicalSystem;
             propertiesMatrix = system.propertiesMatrix; % Properties matrix
@@ -1489,10 +1489,13 @@ classdef Mixture < handle & matlab.mixin.Copyable
             % Compute volume [m3]
             if obj.FLAG_VOLUME
                 obj.v = obj.vSpecific * obj.mi;
-                % Update pressure [bar] if specific volume is given
-                obj.p = obj.equationState.getPressure(temperature, obj.v / N_gas, obj.chemicalSystem.listSpecies, obj.Xi) * combustiontoolbox.common.Units.Pa2bar;
+                molarVolume = obj.v / N_gas;
+                % Update pressure if specific volume is given
+                obj.p = obj.equationState.getPressure(temperature, molarVolume, obj.Xi, obj.chemicalSystem) * combustiontoolbox.common.Units.Pa2bar;
+                pressure_Pa = obj.p * combustiontoolbox.common.Units.bar2Pa;
             else
-                obj.v = obj.equationState.getVolume(temperature, pressure * combustiontoolbox.common.Units.bar2Pa, obj.chemicalSystem.listSpecies, obj.Xi) * N_gas;
+                molarVolume = obj.equationState.getVolume(temperature, pressure_Pa, obj.Xi, obj.chemicalSystem);
+                obj.v = molarVolume * N_gas;
             end
 
             % Compute specific volume [m3/kg]
@@ -1501,8 +1504,16 @@ classdef Mixture < handle & matlab.mixin.Copyable
             % Compute density [kg/m3]
             obj.rho = 1 / obj.vSpecific;
 
+            % Compute thermodynamic departure (real gas effects) [psiDeparture = psiNonIdealGas - psiDepartureIdealGas]
+            [cp_dep_molar, h_dep_molar, s_dep_molar] = obj.equationState.getDepartureFunctions(...
+                temperature, pressure_Pa, molarVolume, obj.Xi, obj.chemicalSystem);
+
+            obj.cp = obj.cp + cp_dep_molar * N_gas;
+            obj.h = obj.h + h_dep_molar * N_gas;
+            obj.s0 = obj.s0 + s_dep_molar * N_gas;
+
             % Compute internal energy [J]
-            obj.e = obj.h - N_gas * R0 * temperature;
+            obj.e = obj.h - pressure_Pa * obj.v;
 
             % Compute thermal internal energy [J]
             obj.DeT = obj.e - obj.ef;
@@ -1518,17 +1529,21 @@ classdef Mixture < handle & matlab.mixin.Copyable
             
             % Compute Gibbs energy [J]
             obj.g = obj.h - obj.T * obj.s;
-            
+
+            % Retrieve frozen dimensionless derivatives: (dlnV/dlnT)_p, (dlnV/dlnP)_T
+            [dVdT_p_frozen, dVdp_T_frozen] = obj.equationState.getVolumeDerivatives(...
+                temperature, pressure_Pa, molarVolume, obj.Xi, obj.chemicalSystem);
+
             % Compute frozen component of the specific heats [J/K]
             obj.cp_f = obj.cp;
-            obj.cv_f = obj.cp_f - R0 * N_gas;
+            obj.cv_f = obj.cp_f + (pressure_Pa * obj.v / temperature) * (dVdT_p_frozen^2) / dVdp_T_frozen;
 
             % Compute thermodynamic derivatives, cp, cv, gamma, and speed
             % of sound considering chemical reaction
             if obj.FLAG_REACTION
                 % Set thermodynamic derivatives
-                obj.dVdT_p = obj.dN_T + 1; % [-]
-                obj.dVdp_T = obj.dN_p - 1; % [-]
+                obj.dVdT_p = obj.dN_T + dVdT_p_frozen; % [-]
+                obj.dVdp_T = obj.dN_p + dVdp_T_frozen; % [-]
         
                 if ~any(isnan(obj.dNi_T)) && ~any(isinf(obj.dNi_T))
                     % Definitions
@@ -1539,14 +1554,14 @@ classdef Mixture < handle & matlab.mixin.Copyable
                     obj.cp = obj.cp_f + sum(h0_j / temperature .* (1 + delta .* (Ni - 1)) .* obj.dNi_T, 'omitnan');
 
                     % Compute specific heat at constant volume [J/K]
-                    obj.cv = obj.cp + (N_gas * R0 * obj.dVdT_p^2) / obj.dVdp_T;
+                    obj.cv = obj.cp + (pressure_Pa * obj.v / temperature) * (obj.dVdT_p^2) / obj.dVdp_T;
 
                     % Compute Adibatic index [-]
                     obj.gamma = obj.cp / obj.cv;
                     obj.gamma_s = -obj.gamma / obj.dVdp_T;
 
                     % Compute sound velocity [m/s]
-                    obj.sound = sqrt(obj.gamma_s * R0 * obj.T / obj.W);
+                    obj.sound = sqrt(obj.gamma_s * pressure_Pa * obj.vSpecific);
 
                     % Compute Mach number
                     if ~isempty(obj.u)
@@ -1565,19 +1580,18 @@ classdef Mixture < handle & matlab.mixin.Copyable
             % of sound considering frozen chemistry
             
             % Set thermodynamic derivatives [-]
-            obj.dVdT_p = 1;
-            obj.dVdp_T = -1;
+            obj.dVdT_p = dVdT_p_frozen;
+            obj.dVdp_T = dVdp_T_frozen;
 
             % Compute specific heat at constant volume [J/K]
-            obj.cv = obj.cp - R0 * N_gas;
+            obj.cv = obj.cv_f;
 
             % Compute adibatic index [-]
             obj.gamma = obj.cp / obj.cv;
-            obj.gamma_s = obj.gamma;
+            obj.gamma_s = -obj.gamma / obj.dVdp_T;
 
             % Compute sound velocity [m/s]
-            obj.sound = sqrt(obj.gamma * R0 * obj.T / obj.W);
-            
+            obj.sound = sqrt(obj.gamma_s * pressure_Pa * obj.vSpecific);
             % Compute Mach number
             if ~isempty(obj.u)
                 obj.mach = obj.u / obj.sound;

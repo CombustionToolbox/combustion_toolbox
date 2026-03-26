@@ -4,25 +4,117 @@ classdef (Abstract) EquationState < handle
     % mixture using a specified equation of state.
     %
     % Subclasses must implement the following abstract methods:
-    %     * getPressure(obj,temperature, molarVolume, varargin)
-    %     * getVolume(obj, temperature, pressure, varargin)
-    %     * getDepartureFunctions(obj, temperature, pressure, varargin)
-    %     * getVolumeDerivatives(obj, temperature, pressure, molarVolume, varargin)
+    %     * getPressure(obj,temperature, molarVolume, molarFractions, chemicalSystem, varargin)
+    %     * getVolume(obj, temperature, pressure, molarFractions, chemicalSystem, varargin)
+    %     * getDepartureFunctions(obj, temperature, pressure, molarVolume, molarFractions, chemicalSystem, varargin)
+    %     * getPressureDerivativesDimensional(obj, temperature, pressure, molarVolume, molarFractions, chemicalSystem, varargin)
     %
     % See also: :mat:func:`EquationStateIdealGas`, :mat:func:`Mixture`
 
     methods (Abstract)
         % Compute pressure [Pa] given the temperature and molar volume.
-        pressure = getPressure(obj, temperature, pressure, molarVolume, molarFractions, chemicalSystem, varargin)
+        pressure = getPressure(obj, temperature, molarVolume, molarFractions, chemicalSystem, varargin)
         
         % Compute molar volume [m3/mol] given the temperature and pressure.
-        molarVolume = getVolume(obj, temperature, pressure, molarVolume, molarFractions, chemicalSystem, varargin)
+        molarVolume = getVolume(obj, temperature, pressure, molarFractions, chemicalSystem, varargin)
 
         % Compute thermodynamic departure functions
         [heatCapacityPressureDeparture, enthalpyDeparture, entropyDeparture] = getDepartureFunctions(obj, temperature, pressure, molarVolume, molarFractions, chemicalSystem, varargin)
 
-        % Compute dimensionless volume derivatives: (dlnV/dlnT)_p and (dlnV/dlnP)_T
-        [dlnVdT_p, dlnVdp_T] = getVolumeDerivatives(obj, temperature, pressure, molarVolume, molarFractions, chemicalSystem, varargin)
+        % Compute dimensional pressure derivatives: (dP/dV)_T and (dP/dT)_V
+        [dPdV_T, dPdT_V] = getPressureDerivativesDimensional(obj, temperature, pressure, molarVolume, molarFractions, chemicalSystem, varargin);
+    end
+
+    methods (Access = public)
+
+        function [dPdV_T, dPdT_V] = getPressureDerivatives(obj, temperature, pressure, molarVolume, molarFractions, chemicalSystem, varargin)
+            % Compute dimensionless (logarithmic) partial pressure derivatives for the mixture
+            %
+            % Args:
+            %     obj (EquationState): Equation of state object
+            %     temperature (float): Temperature of the mixture [K]
+            %     pressure (float): Pressure of the mixture [Pa]
+            %     molarVolume (float): Molar volume of the mixture [m3/mol]
+            %     molarFractions (float): Molar fractions of the species in the mixture
+            %     chemicalSystem (ChemicalSystem): Chemical system object containing species data
+            %
+            % Returns:
+            %     Tuple containing
+            %
+            %     * dPdV_T (float): Logarithmic derivative of pressure with respect to volume at constant temperature [-]
+            %     * dPdT_V (float): Logarithmic derivative of pressure with respect to temperature at constant volume [-]
+
+            % Get dimensional pressure derivatives from the specific EoS implementation
+            [dPdV_T, dPdT_V] = obj.getPressureDerivativesDimensional(temperature, pressure, molarVolume, molarFractions, chemicalSystem, varargin{:});
+            
+            % Convert to dimensionless (logarithmic) pressure derivatives
+            % (dlnP/dlnV)_T = (V/P) * (dP/dV)_T
+            % (dlnP/dlnT)_V = (T/P) * (dP/dT)_V
+            dPdV_T = (molarVolume / pressure) * dPdV_T;
+            dPdT_V = (temperature / pressure) * dPdT_V;
+        end
+
+        function [dVdT_p, dVdp_T] = getVolumeDerivatives(obj, temperature, pressure, molarVolume, molarFractions, chemicalSystem, varargin)
+            % Compute dimensionless (logarithmic) volume derivatives for the mixture assuming frozen chemistry
+            %
+            % Args:
+            %     obj (EquationStatePengRobinson): Equation of state object
+            %     temperature (float): Temperature of the mixture [K]
+            %     pressure (float): Pressure of the mixture [Pa]
+            %     molarVolume (float): Molar volume of the mixture [m3/mol]
+            %     molarFractions (float): Molar fractions of the species in the mixture
+            %     chemicalSystem (ChemicalSystem): Chemical system object containing species data
+            %
+            % Returns:
+            %     Tuple containing
+            %
+            %     * dVdT_p (float): Logarithmic derivative of volume with respect to temperature at constant pressure [-]
+            %     * dVdp_T (float): Logarithmic derivative of volume with respect to pressure at constant temperature [-]
+            %
+            % Example:
+            %     [dVdT_p, dVdp_T] = getVolumeDerivatives(obj, 300, 1e5, 0.024, [0.5, 0.5], chemicalSystem)
+
+            % Compute dimensional pressure derivatives
+            [dPdV_T, dPdT_V] = obj.getPressureDerivativesDimensional(temperature, pressure, molarVolume, molarFractions, chemicalSystem, varargin{:});
+            
+            % Convert to volume derivatives using the chain rule:
+            %
+            %   (dlnV/dlnT)_p = -(T/V) * (dP/dT)_V / (dP/dV)_T 
+            %   (dlnV/dlnP)_T =  (P/V) * (1 / (dP/dV)_T)
+            dVdT_p = (temperature / molarVolume) * (-dPdT_V / dPdV_T);
+            dVdp_T = (pressure / molarVolume) * (1 / dPdV_T);
+        end
+
+        function [dVdT_p, dVdp_T] = getVolumeDerivativesDimensional(obj, temperature, pressure, molarVolume, molarFractions, chemicalSystem, varargin)
+            % Compute dimensional volume derivatives for the mixture assuming frozen chemistry
+            %
+            % Args:
+            %     obj (EquationState): Equation of state object
+            %     temperature (float): Temperature of the mixture [K]
+            %     pressure (float): Pressure of the mixture [Pa]
+            %     molarVolume (float): Molar volume of the mixture [m3/mol]
+            %     molarFractions (float): Molar fractions of the species in the mixture
+            %     chemicalSystem (ChemicalSystem): Chemical system object containing species data
+            %
+            % Returns:
+            %     Tuple containing
+            %
+            %     * dVdT_p (float): Partial derivative of volume with respect to temperature at constant pressure [m3/(mol-K)]
+            %     * dVdp_T (float): Partial derivative of volume with respect to pressure at constant temperature [m3/(mol-Pa)]
+            %
+            % Example:
+            %     [dVdT_p, dVdp_T] = getVolumeDerivativesDimensional(obj, 300, 1e5, 0.024, [0.5, 0.5], chemicalSystem)
+
+            % Get dimensional pressure derivatives from the specific EoS implementation
+            [dPdV_T, dPdT_V] = obj.getPressureDerivativesDimensional(temperature, pressure, molarVolume, molarFractions, chemicalSystem, varargin{:});
+            
+            % Compute dimensional volume derivatives
+            % (dV/dT)_p = -(dP/dT)_V / (dP/dV)_T
+            % (dV/dp)_T = 1 / (dP/dV)_T
+            dVdT_p = -dPdT_V / dPdV_T;
+            dVdp_T = 1 / dPdV_T;
+        end
+
     end
 
     methods (Access = public, Static)

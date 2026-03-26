@@ -50,6 +50,29 @@ classdef EquationStateIdealGas < combustiontoolbox.core.EquationState
             molarVolume = obj.R0 * temperature ./ pressure;
         end
 
+        function [dPdV_T, dPdT_V] = getPressureDerivativesDimensional(obj, temperature, ~, molarVolume, ~, ~, varargin)
+            % Compute dimensional partial pressure derivatives for an ideal gas
+            %
+            % Args:
+            %     obj (EquationStateIdealGas): Equation of state object
+            %     temperature (float): Temperature of the mixture [K]
+            %     pressure (float): Pressure of the mixture [Pa]
+            %     molarVolume (float): Molar volume of the mixture [m3/mol]
+            %
+            % Returns:
+            %     Tuple containing
+            %
+            %     * dPdV_T (float): Partial derivative of pressure with respect to volume at constant temperature [Pa/(m3/mol)]
+            %     * dPdT_V (float): Partial derivative of pressure with respect to temperature at constant volume [Pa/K]
+            %
+            % Example:
+            %     [dPdV_T, dPdT_V] = getPressureDerivativesDimensional(obj, 300, 1e5, 0.024)
+
+            % Compute dimensional pressure derivatives for Ideal Gas: P = R0*T/V
+            dPdV_T = -(obj.R0 * temperature) / (molarVolume^2);
+            dPdT_V = obj.R0 / molarVolume;
+        end
+
         function [dVdT_p, dVdp_T] = getVolumeDerivatives(~, ~, ~, ~, ~, ~, varargin)
             % Compute dimensionless volume derivatives for the mixture assuming frozen chemistry.
             %

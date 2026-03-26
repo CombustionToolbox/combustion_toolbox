@@ -1490,8 +1490,9 @@ classdef Mixture < handle & matlab.mixin.Copyable
             if obj.FLAG_VOLUME
                 obj.v = obj.vSpecific * obj.mi;
                 molarVolume = obj.v / N_gas;
-                % Update pressure [bar] if specific volume is given
-                obj.p = obj.equationState.getPressure(temperature, obj.v / N_gas, obj.Xi, obj.chemicalSystem) * combustiontoolbox.common.Units.Pa2bar;
+                % Update pressure if specific volume is given
+                obj.p = obj.equationState.getPressure(temperature, molarVolume, obj.Xi, obj.chemicalSystem) * combustiontoolbox.common.Units.Pa2bar;
+                pressure_Pa = obj.p * combustiontoolbox.common.Units.bar2Pa;
             else
                 molarVolume = obj.equationState.getVolume(temperature, pressure_Pa, obj.Xi, obj.chemicalSystem);
                 obj.v = molarVolume * N_gas;

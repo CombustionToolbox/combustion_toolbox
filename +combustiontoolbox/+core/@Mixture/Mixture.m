@@ -37,8 +37,8 @@ classdef Mixture < handle & matlab.mixin.Copyable
         Xi                    % Molar fractions [-]
         Yi                    % Mass fractions [-]
         phase                 % Phase vector [-]
-        dVdT_p                % Derivative of volume with respect to temperature at constant pressure [-]
-        dVdp_T                % Derivative of volume with respect to pressure at constant temperature [-]
+        dVdT_p                % Dimensionless derivative of volume with respect to temperature at constant pressure [-]
+        dVdp_T                % Dimensionless derivative of volume with respect to pressure at constant temperature [-]
         equivalenceRatio      % Equivalence ratio [-]
         equivalenceRatioSoot  % Theoretical equivalence ratio at which soot may appear [-]
         stoichiometricMoles   % Theoretical moles of the oxidizer of reference for a stoichiometric combustion
@@ -89,6 +89,7 @@ classdef Mixture < handle & matlab.mixin.Copyable
     end
 
     properties (Dependent)
+        N_gas                  % Total number of moles of gas species [mol]
         cp_r                   % Reactive component of the specific heat at constant pressure
         cv_r                   % Reactive component of the specific heat at constant volume
         gamma_f                % Frozen adiabatic index [-]
@@ -98,6 +99,8 @@ classdef Mixture < handle & matlab.mixin.Copyable
         eSpecific              % Mass specific internal energy [J/kg]
         gSpecific              % Mass specific Gibbs energy [J/kg]
         sSpecific              % Mass specific entropy [J/(kg-K)]
+        dPdV_T                 % Dimensionless derivative of pressure with respect to volume at constant temperature [-]
+        dPdT_V                 % Dimensionless derivative of pressure with respect to temperature at constant volume [-]
     end
     
     properties (Hidden)
@@ -195,6 +198,11 @@ classdef Mixture < handle & matlab.mixin.Copyable
             obj.config = ip.Results.config;
         end
 
+        function value = get.N_gas(obj)
+            % Get total number of moles of gas species [mol]
+            value = obj.N * sum(obj.Xi(~obj.phase));
+        end
+
         function value = get.cp_r(obj)
             % Get reactive component of the specific heat at constant pressure [J/K]
             value = obj.cp - obj.cp_f;
@@ -238,6 +246,20 @@ classdef Mixture < handle & matlab.mixin.Copyable
         function value = get.sSpecific(obj)
             % Get mass specific entropy [J/(kg-K)]
             value = obj.s / obj.mi;
+        end
+
+        function value = get.dPdV_T(obj)
+            % Get dimensionless derivative of pressure with respect to volume at constant temperature [-]
+            [dPdV_T, ~] = obj.equationState.getPressureDerivatives(obj.T, obj.p * 1e5, obj.v / obj.N_gas, obj.Xi, obj.chemicalSystem);
+
+            value = dPdV_T;
+        end
+
+        function value = get.dPdT_V(obj)
+            % Get dimensionless derivative of pressure with respect to temperature at constant volume [-]
+            [~, dPdT_V] = obj.equationState.getPressureDerivatives(obj.T, obj.p * 1e5, obj.v / obj.N_gas, obj.Xi, obj.chemicalSystem);
+
+            value = dPdT_V;
         end
 
         function obj = setTemperature(obj, T, varargin)
@@ -1489,13 +1511,13 @@ classdef Mixture < handle & matlab.mixin.Copyable
             % Compute volume [m3]
             if obj.FLAG_VOLUME
                 obj.v = obj.vSpecific * obj.mi;
-                molarVolume = obj.v / N_gas;
+                vMolar = obj.v / N_gas;
                 % Update pressure if specific volume is given
-                obj.p = obj.equationState.getPressure(temperature, molarVolume, obj.Xi, obj.chemicalSystem) * combustiontoolbox.common.Units.Pa2bar;
+                obj.p = obj.equationState.getPressure(temperature, vMolar, obj.Xi, obj.chemicalSystem) * combustiontoolbox.common.Units.Pa2bar;
                 pressure_Pa = obj.p * combustiontoolbox.common.Units.bar2Pa;
             else
-                molarVolume = obj.equationState.getVolume(temperature, pressure_Pa, obj.Xi, obj.chemicalSystem);
-                obj.v = molarVolume * N_gas;
+                vMolar = obj.equationState.getVolume(temperature, pressure_Pa, obj.Xi, obj.chemicalSystem);
+                obj.v = vMolar * N_gas;
             end
 
             % Compute specific volume [m3/kg]
@@ -1506,7 +1528,7 @@ classdef Mixture < handle & matlab.mixin.Copyable
 
             % Compute thermodynamic departure (real gas effects) [psiDeparture = psiNonIdealGas - psiDepartureIdealGas]
             [cp_dep_molar, h_dep_molar, s_dep_molar] = obj.equationState.getDepartureFunctions(...
-                temperature, pressure_Pa, molarVolume, obj.Xi, obj.chemicalSystem);
+                temperature, pressure_Pa, vMolar, obj.Xi, obj.chemicalSystem);
 
             obj.cp = obj.cp + cp_dep_molar * N_gas;
             obj.h = obj.h + h_dep_molar * N_gas;
@@ -1532,7 +1554,7 @@ classdef Mixture < handle & matlab.mixin.Copyable
 
             % Retrieve frozen dimensionless derivatives: (dlnV/dlnT)_p, (dlnV/dlnP)_T
             [dVdT_p_frozen, dVdp_T_frozen] = obj.equationState.getVolumeDerivatives(...
-                temperature, pressure_Pa, molarVolume, obj.Xi, obj.chemicalSystem);
+                temperature, pressure_Pa, vMolar, obj.Xi, obj.chemicalSystem);
 
             % Compute frozen component of the specific heats [J/K]
             obj.cp_f = obj.cp;

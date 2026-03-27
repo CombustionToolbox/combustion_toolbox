@@ -19,6 +19,7 @@ classdef unitTest < matlab.unittest.TestCase
 
     properties (TestParameter)
         temperature = num2cell(200:100:5000);
+        pressure = num2cell(linspace(1, 100, 10) * 1.01325);
         vSpecific = num2cell(round([0.2202, 0.4404, 0.6605, 0.8807], 4));
         equivalenceRatio = num2cell(round(0.5:0.1:4, 4));
         velocityPreshock = {505, 3140, 7830, 11862};
@@ -37,6 +38,11 @@ classdef unitTest < matlab.unittest.TestCase
 
             % Get database
             obj.database = combustiontoolbox.databases.NasaDatabase();
+        end
+
+        function test_TP_Cantera_1(testCase, pressure)
+            [~, act_max_rel_error_prop] = run_test_TP_Cantera_1(pressure, testCase.database);
+            verifyLessThanOrEqual(testCase, act_max_rel_error_prop, testCase.max_rel_error);
         end
 
         function test_TP_CEA_1(testCase, temperature)

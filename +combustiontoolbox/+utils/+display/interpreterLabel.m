@@ -380,6 +380,14 @@ function [property_name, property_latex, property_unit] = property_names(propert
             property_name = '';
             property_latex = '(\rm{d\,ln}v/\rm{d\,ln}p)_T';
             property_unit = '';
+        case {'dpdvt', 'dpdv_t'}
+            property_name = '';
+            property_latex = '(\rm{d\,ln}p/\rm{d\,ln}v)_T';
+            property_unit = '';
+        case {'dpdtv', 'dpdt_v'}
+            property_name = '';
+            property_latex = '(\rm{d\,ln}p/\rm{d\,ln}T)_V';
+            property_unit = '';
         case 'theta'
             property_name = 'Deflection angle';
             property_latex = '\theta';

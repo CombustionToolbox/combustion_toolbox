@@ -67,7 +67,7 @@ function metadata = run_validation_TP_Cantera_1(varargin)
         return
     end
 
-    % Load results CEA 
+    % Load results Cantera 
     resultsCantera = readtable(filename, 'PreserveVariableNames', true);
 
     % Properties mixture

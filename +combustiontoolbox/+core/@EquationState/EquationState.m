@@ -115,6 +115,62 @@ classdef (Abstract) EquationState < handle
             dVdp_T = 1 / dPdV_T;
         end
 
+        function temperature = getTemperature(obj, pressure, molarVolume, molarFractions, chemicalSystem, varargin)
+            % Compute temperature [K] given the pressure and molar volume using a numerical root-finder
+            %
+            % Args:
+            %     obj (EquationState): Equation of state object
+            %     pressure (float): Pressure of the mixture [Pa]
+            %     molarVolume (float): Molar volume of the mixture [m3/mol]
+            %     molarFractions (float): Molar fractions of the species in the mixture
+            %     chemicalSystem (ChemicalSystem): Chemical system object containing species data
+            %
+            % Returns:
+            %     temperature (float): Temperature of the mixture [K]
+
+            % Definitions
+            temperatureGuess = 300; % [K]
+
+            % Set options for fzero
+            options = optimset('Display', 'off');
+            
+            % Determine output size and expand scalars if necessary
+            if isscalar(pressure)
+                sizeStates = size(molarVolume);
+                pressure = repmat(pressure, sizeStates);
+            elseif isscalar(molarVolume)
+                sizeStates = size(pressure);
+                molarVolume = repmat(molarVolume, sizeStates);
+            else
+                sizeStates = size(pressure);
+                assert(isequal(size(pressure), size(molarVolume)), 'pressure and molarVolume must have the same size unless one is scalar.');
+            end
+
+            numStates = prod(sizeStates);
+
+            % Vectorize for faster linear indexing
+            pressure = pressure(:);
+            molarVolume = molarVolume(:);
+            
+            % Loop over all target states
+            for i = numStates:-1:1
+                pTarget = pressure(i);
+                vTarget = molarVolume(i);
+
+                % Objective function: difference between EOS pressure and target pressure
+                pressure_error = @(T) obj.getPressure(T, vTarget, molarFractions, chemicalSystem, varargin{:}) - pTarget;
+                
+                % Solve for T using fzero
+                temperature(i) = fzero(pressure_error, temperatureGuess, options);
+
+                % Update guess for next iteration
+                temperatureGuess = temperature(i);
+            end
+
+            % Reshape output to match input size
+            temperature = reshape(temperature, sizeStates);
+        end
+
     end
 
     methods (Access = public, Static)

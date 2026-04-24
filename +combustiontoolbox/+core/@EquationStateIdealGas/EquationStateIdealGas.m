@@ -108,6 +108,19 @@ classdef EquationStateIdealGas < combustiontoolbox.core.EquationState
             entropyDeparture = 0;
         end
 
+        function temperature = getTemperature(obj, pressure, molarVolume, varargin)
+            % Compute temperature [K] given the pressure and molar volume using the ideal gas law.
+            %
+            % Args:
+            %     pressure (float): Target pressure of the mixture [Pa]
+            %     molarVolume (float): Target molar volume of the mixture [m3/mol]
+            %
+            % Returns:
+            %     temperature (float): Computed temperature of the mixture [K]
+
+            temperature = (pressure .* molarVolume) ./ obj.R0;
+        end
+
     end
 
 end

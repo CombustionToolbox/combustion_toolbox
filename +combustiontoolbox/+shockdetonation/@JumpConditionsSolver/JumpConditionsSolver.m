@@ -632,7 +632,7 @@ classdef JumpConditionsSolver < handle
             p1_Gammas3 = obj.pressure .* (1 + obj.tolGammas3);
 
             % Correct temperature to remain the density constant
-            T1_Gammas3 = p1_Gammas3 .* Units.bar2Pa ./ (rho1 .* Rg1);
+            T1_Gammas3 = obj.mix.equationState.getTemperature(p1_Gammas3 .* 1e5, obj.mix.W ./ rho1, obj.mix.Xi, obj.mix.chemicalSystem, obj.mix.T);
 
             % Calculate jump conditions for the perturbed temperature
             [~, rho2_Gammas3, p2_Gammas3] = obj.solveShock(T1_Gammas3, p1_Gammas3);

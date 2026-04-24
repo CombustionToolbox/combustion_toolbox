@@ -3,7 +3,7 @@
 %
 % Compute jump conditions for a planar incident shock wave using both the
 % ideal gas and Peng-Robinson equations of state. The initial state is
-% diphenyl (C12H10) at T = 746.63996 K and p = 11.637175 bar, with
+% biphenyl (C12H10_biphenyl) at T = 746.63996 K and p = 11.637175 bar, with
 % pre-shock Mach numbers in the range M1 = [1, 5].
 %
 % @author: Alberto Cuadra Lara
@@ -22,7 +22,7 @@ import combustiontoolbox.utils.display.*
 temperature = 746.63996; % [K]
 pressure = 1163717.5e-5; % [bar]
 mach = 1:0.01:5;
-species = {'C12H10'};
+species = {'C12H10_biphenyl'};
 moles = 1;
 
 % Definitions

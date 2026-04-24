@@ -115,7 +115,7 @@ classdef (Abstract) EquationState < handle
             dVdp_T = 1 / dPdV_T;
         end
 
-        function temperature = getTemperature(obj, pressure, molarVolume, molarFractions, chemicalSystem, varargin)
+        function temperature = getTemperature(obj, pressure, molarVolume, molarFractions, chemicalSystem, temperatureGuess, varargin)
             % Compute temperature [K] given the pressure and molar volume using a numerical root-finder
             %
             % Args:
@@ -125,11 +125,18 @@ classdef (Abstract) EquationState < handle
             %     molarFractions (float): Molar fractions of the species in the mixture
             %     chemicalSystem (ChemicalSystem): Chemical system object containing species data
             %
+            % Optional Args:
+            %     temperatureGuess (float): Initial guess for the temperature [K] (default: 300 K)
+            %
             % Returns:
             %     temperature (float): Temperature of the mixture [K]
 
             % Definitions
-            temperatureGuess = 300; % [K]
+            DefaultTemperatureGuess = 300; % [K]
+
+            if nargin < 6 || isempty(temperatureGuess)
+                temperatureGuess = DefaultTemperatureGuess;
+            end
 
             % Set options for fzero
             options = optimset('Display', 'off');

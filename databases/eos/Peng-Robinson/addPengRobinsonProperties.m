@@ -29,6 +29,7 @@ function speciesArray = addPengRobinsonProperties(speciesArray)
     speciesArray = addSpecies(speciesArray, 'H2', 33.19,  13.13, -0.219);
     speciesArray = addSpecies(speciesArray, 'H2O', 647.14, 220.64, 0.344);  
     speciesArray = addSpecies(speciesArray, 'H2ObLb', 647.14, 220.64, 0.344);
+    speciesArray = addSpecies(speciesArray, 'C12H10', 789.26, 38.47, 0.3720);
 end
 
 % SUB-PASS FUNCTIONS

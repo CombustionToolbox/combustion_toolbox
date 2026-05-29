@@ -73,10 +73,16 @@ function [N, dNi_T, dN_T, dNi_p, dN_p, index, STOP, STOP_ions, h0] = equilibrium
     
     % Remove elements with zero atoms from the stoichiometric matrix A0
     A0 = A0(:, indexElements);
+    A0_T = A0';
 
     % Update temp values
     if ~isempty(indexRemoveSpecies)
         [index, indexCondensed, indexGas, indexIons, NG, NS] = obj.updateTemp(N, indexRemoveSpecies, indexCondensed, indexGas, indexIons, NP, NG, NS, SIZE);
+    end
+
+    % Remove ionized species below the configured temperature threshold
+    if FLAG_E && ~isempty(indexIons) && T < obj.temperatureIons
+        removeIons();
     end
 
     % Remove condensed species with temperature out of bounds
@@ -105,9 +111,6 @@ function [N, dNi_T, dN_T, dNi_p, dN_p, index, STOP, STOP_ions, h0] = equilibrium
 
     % Dimensionless chemical potential
     muRT = g0RT;
-    
-    % Construction of part of matrix J
-    A0_T = A0';
     
     % Initialize composition matrix N [mol, FLAG_CONDENSED]
     [N, NP] = obj.equilibriumGuess(N, NP, A0_T(:, index0), muRT(index0), NatomE, index0, indexGas_0, indexIons, NG, molesGuess);
@@ -172,8 +175,8 @@ function [N, dNi_T, dN_T, dNi_p, dN_p, index, STOP, STOP_ions, h0] = equilibrium
 
                     % Check residual of charge balance
                     if max( [norm(J(ind_E, :), 1), norm(J(:, ind_E), 1), abs(b(ind_E))] ) < obj.tolE
-                        % Remove element E from matrix
-                        removeElementElectron();
+                        % Remove ionized species and element E from matrix
+                        removeIons();
                         continue
                     end
 
@@ -253,8 +256,8 @@ function [N, dNi_T, dN_T, dNi_p, dN_p, index, STOP, STOP_ions, h0] = equilibrium
             return
         end
         
-        % Remove element E from matrix
-        removeElementElectron();
+        % Remove ionized species and element E from matrix
+        removeIons();
         
         % Recompute chemical equilibrium without ions
         x = equilibriumLoop;
@@ -370,18 +373,25 @@ function [N, dNi_T, dN_T, dNi_p, dN_p, index, STOP, STOP_ions, h0] = equilibrium
 
     end
 
-    function removeElementElectron()
-        % Remove element E from matrix
-        A0(:, ind_E) = []; A0_T(ind_E, :) = [];
-        indexIons = []; indexElements(ind_E) = [];
-        NatomE(ind_E) = [];
-        NE = NE - 1;
+    function removeIons()
+        % Remove ionized species and the electron element from the active set
+        if ~isempty(indexIons)
+            N(indexIons) = 0;
+            indexGas(ismember(indexGas, indexIons)) = [];
+            indexIons = [];
+        end
 
-        % Update FLAG_E
-        FLAG_E = false;
+        if FLAG_E
+            A0(:, ind_E) = []; A0_T(ind_E, :) = [];
+            indexElements(ind_E) = [];
+            NatomE(ind_E) = [];
+            NE = NE - 1;
+            FLAG_E = false;
+        end
 
-        % Update indeces
-        [~, indexCondensed, indexGas, indexIons, NG, NS] = obj.updateTemp(N, index, indexCondensed, indexGas, indexIons, NP, NG, NS, SIZE);
+        index = [indexGas, indexCondensed];
+        NG = length(indexGas);
+        NS = length(index);
     end
 
 end

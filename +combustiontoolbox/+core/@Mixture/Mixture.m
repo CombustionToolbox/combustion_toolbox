@@ -1021,21 +1021,24 @@ classdef Mixture < handle & matlab.mixin.Copyable
             %     obj (Mixture): Mixture object with updated properties
             
             % Check if initial state is defined (temperature, pressure/volume, and composition)
-            if ~sum(obj.quantity) && ~obj.T || (~obj.p && ~obj.vSpecific)
+            if ~obj.T || (~obj.p && ~obj.vSpecific)
                 return
             end
 
-            if obj.FLAG_VOLUME
-                % Compute molar volume [m3/mol] from specific volume [m3/kg]
-                vMolar = vSpecific2vMolar(obj, obj.vSpecific, obj.quantity, obj.quantity(obj.indexGas));
-                % Compute pressure in Pascals [Pa] using the equationState
-                pressure = obj.equationState.getPressure(obj.T, vMolar, obj.quantity / sum(obj.quantity), obj.chemicalSystem);
-                % Convert pressure to [bar]
-                obj.p = pressure * combustiontoolbox.common.Units.Pa2bar;
+            % Initialize from the recipe only if no state composition exists yet
+            system = obj.chemicalSystem;
+            currentMoles = system.propertiesMatrix(:, system.ind_ni);
+
+            if sum(currentMoles) > 0
+                system.setPropertiesMatrixThermo(obj.T, find(currentMoles));
+            elseif sum(obj.quantity)
+                system.setPropertiesMatrixInitialIndex(obj.listSpecies, obj.quantity, obj.T, obj.indexSpecies);
+            else
+                return
             end
-            
-            % Assign values to the propertiesMatrix
-            obj.chemicalSystem.setPropertiesMatrixInitialIndex(obj.listSpecies, obj.quantity, obj.T, obj.indexSpecies);
+
+            % Refresh composition properties from the state composition
+            computeComposition(obj);
 
             % Compute thermodynamic properties
             computeThermodynamics(obj);

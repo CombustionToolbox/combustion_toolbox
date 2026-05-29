@@ -63,7 +63,7 @@ function [listSpecies, indexElements_DB] = findProducts(obj, listReactants, vara
 
     % If FLAG_BURCAT == false, then remove the species from Third millenium database (Burcat)
     if ~FLAG_BURCAT
-        listSpecies_DB = findSpecies(listSpecies_DB, {}, 'any', {'_M'}, 'all');
+        listSpecies_DB = listSpecies_DB(~contains(listSpecies_DB, '_M'));
         
         % If indexElements_DB is given, now have to been recalculated
         if FLAG_IND

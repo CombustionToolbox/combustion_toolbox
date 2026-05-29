@@ -278,7 +278,7 @@ function [N, dNi_T, dN_T, dNi_p, dN_p, index, STOP, STOP_ions, h0] = equilibrium
 
         % Get molecular weight species [kg/mol]
         W = system.propertyVector;
-        W(indexCondensed_check) = set_prop_DB(system.listSpecies(indexCondensed_check), 'W', system.species);
+        W(indexCondensed_check) = system.propertiesMatrix(indexCondensed_check, system.ind_W)';
 
         % Definitions
         NC_max = NE - 1;

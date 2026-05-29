@@ -108,7 +108,7 @@ classdef PlotConfig < handle
 
         function value = get.position(obj)
             % Get figure position
-            if ~isempty(obj.position)
+            if isempty(obj.position_)
                 value = combustiontoolbox.utils.display.getMonitorPositions(2);
                 obj.position_ = value;
                 return

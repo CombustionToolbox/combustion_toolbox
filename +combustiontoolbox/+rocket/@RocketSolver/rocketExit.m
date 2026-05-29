@@ -43,6 +43,12 @@ function mix4 = rocketExit(obj, mix2, mix3, mix4_guess, areaRatio, varargin)
     % Compute pressure guess [bar] for Infinite-Area-Chamber (IAC)
     logP = obj.rocketGuessExitIAC(mix2, mix3, areaRatio, obj.FLAG_SUBSONIC);
 
+    % If no initial guess is provided, seed the first guess with a calorically perfect isentropic estimate
+    if isempty(mix4_guess)
+        mix4.p = extractPressure(logP, mix2.p);
+        mix4_guess = estimateExitGuess(mix3, mix4);
+    end
+
     % Initialization
     STOP = 1; it = 0; logP0 = logP;
     
@@ -111,4 +117,14 @@ end
 function pressure = extractPressure(logP, pressure_inf)
     % Extract pressure from log pressure ratio
     pressure = pressure_inf / exp(logP);
+end
+
+function mixGuess = estimateExitGuess(mix3, mix4)
+    % Estimate exit temperature from the throat isentropic relation for a calorically perfect gas
+    mixGuess = copy(mix4);
+
+    T = mix3.T * (mix4.p / mix3.p)^((mix3.gamma_s - 1) / mix3.gamma_s);
+
+    % Update mixture state
+    setTemperature(mixGuess, T);
 end

@@ -401,13 +401,37 @@ classdef ChemicalSystem < handle & matlab.mixin.Copyable
             obj = updatePropertiesMatrixCompositionFast(obj, moles, index);
         end
 
+        function obj = setPropertiesMatrixThermo(obj, T, index)
+            % Update temperature-dependent properties without changing composition
+            %
+            % Args:
+            %     obj (ChemicalSystem): ChemicalSystem object
+            %     T (float): Temperature [K]
+            %     index (float): Vector with the indexes of the species to update
+            %
+            % Returns:
+            %     obj (ChemicalSystem): ChemicalSystem object with updated thermodynamic properties
+
+            if nargin < 3
+                index = find(obj.propertiesMatrix(:, obj.ind_ni));
+            end
+
+            obj.propertiesMatrix(:, obj.ind_hi:obj.numProperties) = 0;
+
+            if isempty(index)
+                return
+            end
+
+            obj = updatePropertiesMatrixThermo(obj, obj.listSpecies(index), T, index, true);
+        end
+
         function obj = clean(obj)
             % Set temperature-dependent matrix properties to zero
             obj.propertiesMatrix(:, 5:end) = 0;
         end
 
         function obj = cleanMoles(obj)
-            % Set temperature-dependent matrix properties to zero
+            % Set moles vector to zero
             obj.propertiesMatrix(:, obj.ind_ni) = 0;
         end
 

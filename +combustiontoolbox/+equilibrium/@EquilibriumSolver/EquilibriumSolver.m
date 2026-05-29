@@ -35,7 +35,7 @@ classdef EquilibriumSolver < handle
         itMaxIons = 30             % Max number of iterations - charge balance (ions)
         itMaxRecursion = 30        % Max number of recursion iterations - e.g., re-check condendensed species
         slackGuess = 1e-14         % Initial guess of the slack variables for condensed species
-        temperatureIons = 0        % Minimum temperature [K] to consider ionized species
+        temperatureIons = 1500     % Minimum temperature [K] to consider ionized species
         tol0 = 1e-3                % Tolerance of the root finding algorithm
         itMax = 30                 % Max number of iterations - root finding method
         rootMethod = @newton       % Root finding method [newton (2nd order), steff (2nd order), or nsteff (3rd order)]
@@ -415,7 +415,7 @@ classdef EquilibriumSolver < handle
             NG = length(indexGas);
             NS = length(index);
         end
-        
+
         function [index, indexCondensed, indexGas, indexIons, NG, NS, N] = updateTemp(N, index, indexCondensed, indexGas, indexIons, NP, NG, NS, SIZE)
             % Update temporal values
 

@@ -9,33 +9,32 @@ function [x, x_min] = simplexDual(A, b)
     %    b (float): Right-hand side vector of the equality constraints
     %
     % Returns:
-    %    x (float): Optimal solution vector
-    %    x_min (float): Minimum value of x
+    %    Tuple containing
+    %
+    %    * x (float): Optimal solution vector
+    %    * x_min (float): Minimum value of x
     %
     % Example:
     %    [x, x_min] = simplexDual(A, b)
 
     % Definitions
-    [m, n] = size(A);
-    
+    [~, n] = size(A);
+    b = b(:);
+    sumA = sum(A, 2);
+
     % Coefficients for the objective function max t -> min -t
-    c = [zeros(n, 1); -1];
-    
-    % Set inequality constraints (x_j - t >= 0)
-    A_ineq = [-eye(n), ones(n, 1)];
-    b_ineq = zeros(n, 1);
-    
-    % Set equality constraints (A * x = b)
-    A_eq = [A, zeros(m, 1)];
-    b_eq = b;
-    
+    c = zeros(n + 1, 1);
+    c(end) = -1;
+
+    % Set equality constraints (A * z + sum(A, 2) * t = b)
+    A_eq = [A, sumA];
+
     % Solve the linear programming problem using the simplex method
-    x = combustiontoolbox.utils.optimization.simplex([A_ineq; A_eq], [b_ineq; b_eq], c);
+    zt = combustiontoolbox.utils.optimization.simplex(A_eq, b, c);
 
-    % Remove t
-    x_min = x(end);
-    x(end) = [];
+    % Recover minimum value
+    x_min = max(zt(end), 0);
 
-    % Check
-    % [x, x_min] = combustiontoolbox.utils.optimization.simplexDualCheck(A_eq, b_eq, c, A_ineq, b_ineq);
+    % Recover solution (x = z + t)
+    x = zt(1:n) + x_min;
 end

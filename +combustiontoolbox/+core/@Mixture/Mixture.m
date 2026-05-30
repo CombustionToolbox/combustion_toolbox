@@ -320,7 +320,7 @@ classdef Mixture < handle & matlab.mixin.Copyable
             
             % Change units to bar
             if ~strcmpi(ip.Results.units, 'bar')
-                p = Units.convert(p, ip.Results.units, 'bar');
+                p = combustiontoolbox.common.Units.convert(p, ip.Results.units, 'bar');
             end
 
             % Assign pressure

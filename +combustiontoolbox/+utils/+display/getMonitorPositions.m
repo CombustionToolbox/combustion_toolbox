@@ -33,7 +33,7 @@ function position = getMonitorPositions(varargin)
                 % Get screen device objects
                 devices = env.getScreenDevices();
                 % Get initial points
-                position = get_monitor_positions_MATLAB(varargin{:});
+                position = combustiontoolbox.utils.display.getMonitorPositionsMATLAB(varargin{:});
                 % Get screen size for the selected monitor
                 position = [position(1), position(2), ...
                     devices(monitor_id).getDisplayMode().getWidth(),...

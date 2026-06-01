@@ -1,4 +1,4 @@
-function [N, dNi_T, dN_T, dNi_p, dN_p, index, STOP, STOP_ions, h0] = equilibriumHelmholtz(obj, system, v, T, mix, molesGuess)
+function [N, dNi_T, dN_T, dNi_p, dN_p, index, STOP, STOP_ions, h0] = equilibriumHelmholtz(obj, system, productSpeciesSet, v, T, mix, molesGuess)
     % Obtain equilibrium composition [moles] for the given temperature [K] and volume [m3].
     % The code stems from the minimization of the free energy of the system by using Lagrange
     % multipliers combined with a Newton-Raphson method, upon condition that initial gas
@@ -16,6 +16,7 @@ function [N, dNi_T, dN_T, dNi_p, dN_p, index, STOP, STOP_ions, h0] = equilibrium
     % Args:
     %     obj (EquilibriumSolver): Equilibrium solver object
     %     system (ChemicalSystem): Chemical system object
+    %     productSpeciesSet (struct): Product species set with ChemicalSystem data and solver-local indices
     %     v (float): Volume [m3]
     %     T (float): Temperature [K]
     %     mix1 (Mixture): Properties of the initial mixture
@@ -44,11 +45,11 @@ function [N, dNi_T, dN_T, dNi_p, dN_p, index, STOP, STOP_ions, h0] = equilibrium
     R0 = combustiontoolbox.common.Constants.R0; % Universal gas constant [J/(K mol)]
 
     % Definitions
-    N = system.propertyVector;         % Composition vector [moles_i]   
-    A0 = system.stoichiometricMatrix;  % Stoichiometric matrix [a_ij]
-    RT = R0 * T;                       % [J/mol]
-    tau0 = obj.tolTau;                 % Tolerance of the slack variables for condensed species
-    opts.SYM = true;                   % Options linsolve method: real symmetric
+    N = zeros(productSpeciesSet.numSpecies, 1);  % Composition vector [moles_i]
+    A0 = productSpeciesSet.stoichiometricMatrix; % Stoichiometric matrix [a_ij]
+    RT = R0 * T;                                 % [J/mol]
+    tau0 = obj.tolTau;                           % Tolerance of the slack variables for condensed species
+    opts.SYM = true;                             % Options linsolve method: real symmetric
 
     % Initialization
     NatomE = mix.natomElementsReact;
@@ -69,7 +70,7 @@ function [N, dNi_T, dN_T, dNi_p, dN_p, index, STOP, STOP_ions, h0] = equilibrium
     FLAG_E = ~isempty(ind_E);
 
     % List of indices with nonzero values
-    [index, indexGas, indexCondensed, indexIons, indexElements, NE, NG, NS] = obj.tempValues(system, NatomE);
+    [index, indexGas, indexCondensed, indexIons, indexElements, NE, NG, NS] = obj.tempValues(productSpeciesSet, NatomE);
     
     % Remove elements with zero atoms from the stoichiometric matrix A0
     A0 = A0(:, indexElements);
@@ -86,10 +87,10 @@ function [N, dNi_T, dN_T, dNi_p, dN_p, index, STOP, STOP_ions, h0] = equilibrium
     end
 
     % Remove condensed species with temperature out of bounds
-    indexCondensed = system.filterSpeciesTemperatureRange(T, indexCondensed, NS - NG, false);
+    indexCondensed = obj.filterSpeciesTemperatureRange(productSpeciesSet, T, indexCondensed, NS - NG, false);
 
     % Remove gas species with temperature out of bounds
-    [indexGas, NG] = system.filterSpeciesTemperatureRange(T, indexGas, NG, obj.FLAG_EXTRAPOLATE);
+    [indexGas, NG] = obj.filterSpeciesTemperatureRange(productSpeciesSet, T, indexGas, NG, obj.FLAG_EXTRAPOLATE);
 
     % First, compute chemical equilibrium with only gaseous species
     indexGas_0 = indexGas;
@@ -100,11 +101,12 @@ function [N, dNi_T, dN_T, dNi_p, dN_p, index, STOP, STOP_ions, h0] = equilibrium
     NS = length(index);
     
     % Initialize vectors g0 (molar Gibbs energy) and h0 (molar enthalpy) with zeros
-    g0 = system.propertyVector;
-    h0 = system.propertyVector;
+    g0 = zeros(productSpeciesSet.numSpecies, 1);
+    h0 = zeros(productSpeciesSet.numSpecies, 1);
     
     % Molar Gibbs energy [J/mol]
-    g0([indexGas_0, indexCondensed_0]) = combustiontoolbox.utils.thermo.getGibbsEnergyArray(system.listSpecies([indexGas_0, indexCondensed_0]), T, system.species);
+    index0Global = productSpeciesSet.indexGlobal([indexGas_0, indexCondensed_0]);
+    g0([indexGas_0, indexCondensed_0]) = system.evaluateSpeciesThermoG(T, index0Global);
     
     % Dimensionless Gibbs energy
     g0RT = g0/RT;
@@ -116,7 +118,7 @@ function [N, dNi_T, dN_T, dNi_p, dN_p, index, STOP, STOP_ions, h0] = equilibrium
     [N, NP] = obj.equilibriumGuess(N, NP, A0_T(:, index0), muRT(index0), NatomE, index0, indexGas_0, indexIons, NG, molesGuess);
 
     % Initialization 
-    psi_j = system.propertyVector;
+    psi_j = zeros(productSpeciesSet.numSpecies, 1);
     tau = tau0 .* min(NatomE);
 
     % Solve system
@@ -132,7 +134,7 @@ function [N, dNi_T, dN_T, dNi_p, dN_p, index, STOP, STOP_ions, h0] = equilibrium
     J = [J, J12_2; J12_2', 0];
 
     % Molar enthalpy [J/mol]
-    h0(index) = combustiontoolbox.utils.thermo.getEnthalpyArray(system.listSpecies(index), T, system.species);
+    h0(index) = system.evaluateSpeciesThermoH(T, productSpeciesSet.indexGlobal(index));
     
     % Dimensionless enthalpy
     H0RT = h0 / RT;
@@ -277,8 +279,7 @@ function [N, dNi_T, dN_T, dNi_p, dN_p, index, STOP, STOP_ions, h0] = equilibrium
         indexCondensed_check = indexCondensed_0;
 
         % Get molecular weight species [kg/mol]
-        W = system.propertyVector;
-        W(indexCondensed_check) = system.propertiesMatrix(indexCondensed_check, system.ind_W)';
+        W = productSpeciesSet.molecularWeight(:);
 
         % Definitions
         NC_max = NE - 1;

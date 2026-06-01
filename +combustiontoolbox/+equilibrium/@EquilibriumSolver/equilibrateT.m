@@ -18,9 +18,6 @@ function mix2 = equilibrateT(obj, mix1, mix2, T, varargin)
     %     mix2 = equilibrateT(EquilibriumSolver(), mix1, mix2, 3000)
     %     mix2 = equilibrateT(EquilibriumSolver(), mix1, mix2, 3000, molesGuess)
     
-    % Import packages
-    import combustiontoolbox.utils.findIndex
-
     % Check if calculations are for a calorically perfect gas
     if obj.caloricGasModel.isPerfect()
         mix2 = equilibrateTPerfect(mix1, mix2, T);
@@ -37,7 +34,7 @@ function mix2 = equilibrateT(obj, mix1, mix2, T, varargin)
     molesGuess = [];
     N_mix0 = moles(mix1); % Get moles of inert species
     system = mix2.chemicalSystem;
-    systemProducts = mix2.chemicalSystemProducts;
+    productSpeciesSet = mix2.productSpeciesSet;
     
     % Unpack addtitional inputs
     if nargin > 4
@@ -46,7 +43,7 @@ function mix2 = equilibrateT(obj, mix1, mix2, T, varargin)
         if system.FLAG_COMPLETE
             molesGuess = [];
         elseif ~isempty(molesGuess)
-            molesGuess = molesGuess(system.indexProducts);
+            molesGuess = molesGuess(productSpeciesSet.indexGlobal);
         end
 
     end
@@ -55,20 +52,21 @@ function mix2 = equilibrateT(obj, mix1, mix2, T, varargin)
     if ~obj.FLAG_FAST, molesGuess = []; end
 
     % Compute number of moles
-    [N, dNi_T, dN_T, dNi_p, dN_p, indexProducts, STOP, STOP_ions, h0] = selectEquilibrium(obj, systemProducts, T, mix1, mix2, molesGuess);
+    [N, dNi_T, dN_T, dNi_p, dN_p, indexProducts, STOP, STOP_ions, h0] = selectEquilibrium(obj, system, productSpeciesSet, T, mix1, mix2, molesGuess);
     
-    % Compute property matrix of the species at chemical equilibrium
+    % Compute mixture state at chemical equilibrium
     setMixture(mix2);
 
     % NESTED FUNCTIONS
     function mix = setMixture(mix)
         % Compute properties of final mixture
-        
-        % Reshape composition matrix N, and partial composition partial derivatives 
-        N = reshapeVector(system, system.indexProducts, systemProducts.indexSpecies, N);
-        dNi_T = reshapeVector(system, system.indexProducts, systemProducts.indexSpecies, dNi_T);
-        dNi_p = reshapeVector(system, system.indexProducts, systemProducts.indexSpecies, dNi_p);
-        h0 = reshapeVector(system, system.indexProducts, systemProducts.indexSpecies, h0);
+
+        % Scatter only the final active equilibrium species; candidate product slots may contain trial values
+        indexActive = productSpeciesSet.indexGlobal(indexProducts);
+        N = productVectorToSystemVector(system.numSpecies, productSpeciesSet, N, indexProducts);
+        dNi_T = productVectorToSystemVector(system.numSpecies, productSpeciesSet, dNi_T, indexProducts);
+        dNi_p = productVectorToSystemVector(system.numSpecies, productSpeciesSet, dNi_p, indexProducts);
+        h0 = productVectorToSystemVector(system.numSpecies, productSpeciesSet, h0, indexProducts);
         N(system.indexFrozen) = N_mix0(system.indexFrozen);
 
         % Assign values
@@ -79,33 +77,27 @@ function mix2 = equilibrateT(obj, mix1, mix2, T, varargin)
         mix.errorMoles = STOP;
         mix.errorMolesIons = STOP_ions;
 
-        % Clean chemical system
-        system.clean;
-        
-        % Get indexSpecies from indexProducts
-        indexSpecies = findIndex(system.listSpecies, systemProducts.listSpecies(indexProducts));
-
         % Compute properties of final mixture
-        setPropertiesMatrixFast(mix, system.listSpecies, N', [indexSpecies, system.indexFrozen], h0);
+        setMolesFast(mix, N, h0, indexActive);
     end
     
 end
 
 % SUB-PASS FUNCTIONS
-function [N, dNi_T, dN_T, dNi_p, dN_p, indexProducts, STOP, STOP_ions, h0] = selectEquilibrium(obj, system, T, mix1, mix2, molesGuess)
+function [N, dNi_T, dN_T, dNi_p, dN_p, indexProducts, STOP, STOP_ions, h0] = selectEquilibrium(obj, system, productSpeciesSet, T, mix1, mix2, molesGuess)
     % Select equilibrium: TP: Gibbs; TV: Helmholtz
     if strfind(obj.problemType, 'P') == 2
-        [N, dNi_T, dN_T, dNi_p, dN_p, indexProducts, STOP, STOP_ions, h0] = equilibriumGibbs(obj, system, mix2.p, T, mix1, molesGuess);
+        [N, dNi_T, dN_T, dNi_p, dN_p, indexProducts, STOP, STOP_ions, h0] = equilibriumGibbs(obj, system, productSpeciesSet, mix2.p, T, mix1, molesGuess);
         return
     end
     
-    [N, dNi_T, dN_T, dNi_p, dN_p, indexProducts, STOP, STOP_ions, h0] = equilibriumHelmholtz(obj, system, mix2.v, T, mix1, molesGuess);
+    [N, dNi_T, dN_T, dNi_p, dN_p, indexProducts, STOP, STOP_ions, h0] = equilibriumHelmholtz(obj, system, productSpeciesSet, mix2.v, T, mix1, molesGuess);
 end
 
-function vector = reshapeVector(system, index, indexModified, vectorModified)
-    % Reshape vector containing all the species
-    vector = system.propertyVector;
-    vector(index) = vectorModified(indexModified);
+function vector = productVectorToSystemVector(numSpecies, productSpeciesSet, vectorProduct, indexProduct)
+    % Map product species vector into ChemicalSystem species order
+    vector = zeros(numSpecies, 1);
+    vector(productSpeciesSet.indexGlobal(indexProduct)) = vectorProduct(indexProduct);
 end
 
 function mix2 = equilibrateTPerfect(mix1, mix2, T)

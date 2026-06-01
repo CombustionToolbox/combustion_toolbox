@@ -50,7 +50,6 @@ function N = getSimplex(N, A0, muRT, b0, index, indexIons, NG)
     FLAG_MINOR = true;
 
     % Initialization
-    Nmin = 1e-2;
     Nminor = 0 * N;
 
     % Get major species
@@ -61,7 +60,15 @@ function N = getSimplex(N, A0, muRT, b0, index, indexIons, NG)
 
     % Get minor species
     if FLAG_MINOR
-        indexPass = unique([1:NG, NG + index(NG + 1:end)]);
+        tol = 1e-4;
+        FLAG_MAXMIN = Nmajor > tol;
+
+        if any(FLAG_MAXMIN(NG + 1:end))
+            indexPass = unique([1:NG, NG + index(NG + 1:end)]);
+        else
+            indexPass = unique([1:NG, NG + index(FLAG_MAXMIN(NG + 1:end))]);
+        end
+
         [Nminor(indexPass), Nmin] = combustiontoolbox.utils.optimization.simplexDual(A0(:, indexPass), b0');
         Nmin = Nmin + 1e-10;
     end

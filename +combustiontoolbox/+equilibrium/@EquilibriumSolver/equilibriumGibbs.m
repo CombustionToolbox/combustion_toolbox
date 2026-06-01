@@ -129,6 +129,9 @@ function [N, dNi_T, dN_T, dNi_p, dN_p, index, STOP, STOP_ions, h0] = equilibrium
 
     % Compute chemical equilibrium with condensed species
     x = equilibriumLoopCondensed(x);
+
+    % Remove guesses for condensed species that do not satisfy the vapor pressure test
+    N(indexCondensed_0(~ismember(indexCondensed_0, indexCondensed))) = 0;
     
     % Update matrix J (jacobian) to compute the thermodynamic derivatives
     J = update_matrix_J(A0_T, J22, N, NP, indexGas, indexCondensed, NS - NG, psi_j);

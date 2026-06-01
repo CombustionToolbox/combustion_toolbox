@@ -19,38 +19,30 @@ classdef ChemicalSystem < handle & matlab.mixin.Copyable
     % See also: :mat:func:`Database`, :mat:func:`NasaDatabase`, :mat:func:`findProducts`, :mat:func:`setListSpecies`
 
     properties
-        species                % Struct with Species objects
-        listSpecies            % List of species
-        listElements           % List of elements
-        stoichiometricMatrix   % Stoichiometric matrix
-        propertiesMatrix       % Properties matrix
-        propertyVector         % Property vector
-        indexSpecies           % Index of species
-        indexGas               % Indices gaseous species
-        indexCondensed         % Indices condensed species
-        indexCryogenic         % Indices cryogenic liquified species
-        indexIons              % Indices ionized species in species
-        indexReact             % Indices react species
-        indexFrozen            % Indices inert/frozen species
+        species                 % Struct with Species objects
+        listSpecies             % List of species
+        listElements            % List of elements
+        stoichiometricMatrix    % Stoichiometric matrix
+        molecularWeight         % Molecular weights of species [kg/mol]
+        phase                   % Phase vector [-]
+        formationEnthalpy       % Enthalpy of formation [J/mol]
+        formationInternalEnergy % Internal energy of formation [J/mol]
+        temperatureMin          % Minimum species temperature [K]
+        temperatureMax          % Maximum species temperature [K]
+        indexSpecies            % Index of species
+        indexGas                % Indices gaseous species
+        indexCondensed          % Indices condensed species
+        indexCryogenic          % Indices cryogenic liquified species
+        indexIons               % Indices ionized species in species
+        indexReact              % Indices react species
+        indexFrozen             % Indices inert/frozen species
         listSpeciesLean = {'CO2', 'H2O', 'N2', 'Ar', 'O2'}       % List of species for a lean complete combustion (equivalence ratio < 1)
         listSpeciesRich = {'CO2', 'H2O', 'N2', 'Ar', 'CO', 'H2'} % List of species for a rich complete combustion (equivalence ratio > 1)
         listSpeciesSoot = {'N2', 'Ar', 'CO', 'H2', 'Cbgrb'}      % List of species for a roch complete combustion with soot formation  (equivalence ratio > equivalence ratio soot)
-        FLAG_COMPLETE = false % Flag indicating to compute chemical equilibrium considering a complete combustion
-        FLAG_BURCAT = false   % Find all the combinations of species from the database (without BURCAT's DB) that can appear as products for the given list of reactants
-        FLAG_ION = false      % Flag indicating to include ionized species in the automatic finder of species
-        FLAG_CONDENSED = true % Flag indicating to include condensed species  
-    end
-
-    properties (Access = public, Constant = true)
-        ind_hfi   = 1 % Index enthalpy of formation
-        ind_efi   = 2 % Index internal energy of formation
-        ind_W     = 3 % Index molecular weight
-        ind_phase = 4 % Index phase
-        ind_ni    = 5 % Index number of moles
-        ind_hi    = 6 % Index enthalpy
-        ind_cpi   = 7 % Index specific heat at constant pressure
-        ind_si    = 8 % Index entropy
-        numProperties = 8 % Number of properties in propertiesMatrix
+        FLAG_COMPLETE = false   % Flag indicating to compute chemical equilibrium considering a complete combustion
+        FLAG_BURCAT = false     % Find all the combinations of species from the database (without BURCAT's DB) that can appear as products for the given list of reactants
+        FLAG_ION = false        % Flag indicating to include ionized species in the automatic finder of species
+        FLAG_CONDENSED = true   % Flag indicating to include condensed species  
     end
 
     properties (Dependent)
@@ -62,10 +54,7 @@ classdef ChemicalSystem < handle & matlab.mixin.Copyable
 
     properties (Hidden)
         database
-        propertiesMatrixFuel
-        propertiesMatrixOxidizer
         listProducts
-        indexProducts
         oxidizerReferenceIndex
         oxidizerReferenceAtomsO
         ind_C         % Index carbon
@@ -123,11 +112,6 @@ classdef ChemicalSystem < handle & matlab.mixin.Copyable
             obj = initialization(obj);
         end
 
-        function obj = plus(obj, obj2)
-            % Overload the plus operator to add propertiesMatrix of two ChemicalSystem objects
-            obj.propertiesMatrix(:, obj.ind_ni:obj.numProperties) = obj.propertiesMatrix(:, obj.ind_ni:obj.numProperties) + obj2.propertiesMatrix(:, obj.ind_ni:obj.numProperties);
-        end
-
         function obj = initialization(obj)
             % Initialize chemical system
 
@@ -146,55 +130,14 @@ classdef ChemicalSystem < handle & matlab.mixin.Copyable
             % Set stoichiometric matrix
             setStoichiometricMatrix(obj);
 
-            % Initialize the properties matrix
-            setPropertiesMatrixInitialize(obj);
+            % Set static species properties
+            setStaticSpeciesProperties(obj);
 
             % Assign listSpecies with the species to be considered in the
             % chemical transformation
             obj.listProducts = obj.listSpecies;
         end
         
-        function system = getSystemProducts(obj)
-            % Set List of Species to List of Products
-            
-            % Check if all species are considered as possible products
-            FLAG_SAME = all(ismember(obj.indexSpecies, obj.indexProducts));
-            
-            % Copy memory reference to the chemical system
-            if FLAG_SAME
-                system = obj;
-                return
-            end
-
-            % Copy chemical system
-            system = obj.copy();
-
-            % Remove ionized species if TP is below T_ions
-            % if any(system.indexIons) && temperature < temperatureIons
-            %     system.indexListProducts(system.indexIons) = [];
-            %     system.indexElements = [];
-            % end
-            
-            % Initialization
-            system.indexGas = []; system.indexCondensed = [];
-            system.indexCryogenic = []; system.indexIons = [];
-
-            % Set list of species for calculations
-            system.listSpecies = system.listSpecies(system.indexProducts);
-
-            % Establish cataloged list of species according to the state of the phase
-            sortListSpecies(system);
-
-            % Update stoichiometric matrix
-            system.stoichiometricMatrix = system.stoichiometricMatrix(system.indexProducts, :);
-
-            % Update property matrix
-            system.propertiesMatrix = system.propertiesMatrix(system.indexProducts, :);
-
-            % Update property vector
-            system.propertyVector = system.propertyVector(system.indexProducts);
-        end
-
         function obj = checkSpecies(obj, species)
             %
             
@@ -247,8 +190,8 @@ classdef ChemicalSystem < handle & matlab.mixin.Copyable
             % Set stoichiometric matrix
             setStoichiometricMatrix(obj);
 
-            % Initialize the properties matrix
-            setPropertiesMatrixInitialize(obj);
+            % Set static species properties
+            setStaticSpeciesProperties(obj);
         end
 
         function value = get.numSpecies(obj)
@@ -279,181 +222,140 @@ classdef ChemicalSystem < handle & matlab.mixin.Copyable
 
         end
 
-        function obj = setPropertiesMatrix(obj, species, moles, T, varargin)
-            % Update the properties matrix with the data of the mixture
+        function thermo = evaluateSpeciesThermo(obj, T, index)
+            % Evaluate all temperature-dependent species properties without mutating the system
             %
             % Args:
-            %     obj (ChemicalSystem): ChemicalSystem object
-            %     species (cell): Species contained in the system
-            %     moles (float): Moles of the species in the mixture [mol]
             %     T (float): Temperature [K]
-            %
-            % Optional Args:
-            %     index (float): Vector with the indexes of the species to update the properties matrix   
+            %     index (float): Species indices to evaluate
             %
             % Returns:
-            %     obj (ChemicalSystem): ChemicalSystem object with updated properties
-            %
-            % Examples:
-            %     * setPropertiesMatrix(obj, {'N2', 'O2'}, [3.76, 1], 300)
-            %     * setPropertiesMatrix(obj, {'N2', 'O2'}, [3.76, 1], 300, [1, 2])
-            
-            % Clean properties matrix
-            obj.clean();
+            %     thermo (struct): Temperature-dependent species properties
 
-            % Update properties matrix
-            if nargin < 5
-                obj = updatePropertiesMatrix(obj, species, moles, T);
-                return
-            elseif nargin < 6
-                index = varargin{1};
-                obj = updatePropertiesMatrixFast(obj, species(index), moles(index), T, index);
-                return
-            end
-    
-            index = varargin{1};
-            h0 = varargin{2};
-            obj = updatePropertiesMatrixFastH0(obj, species(index), moles(index), T, index, h0(index));
-        end
-
-        function obj = setPropertiesMatrixInitialIndex(obj, species, moles, T, index, varargin)
-            % Update the properties matrix with the data of the mixture
-            %
-            % Args:
-            %     obj (ChemicalSystem): ChemicalSystem object
-            %     species (cell): Species contained in the system
-            %     moles (float): Moles of the species in the mixture [mol]
-            %     T (float): Temperature [K]
-            %     index (float): Vector with the indexes of the species to update the properties matrix   
-            %
-            % Returns:
-            %     obj (ChemicalSystem): ChemicalSystem object with updated properties matrix
-            %
-            % Examples:
-            %     * setPropertiesMatrix(obj, {'N2', 'O2'}, [3.76, 1], 300)
-            %     * setPropertiesMatrix(obj, {'N2', 'O2'}, [3.76, 1], 300, [1, 2])
-            
-            % Clean properties matrix
-            obj.clean();
-
-            % Update properties matrix
-            if nargin < 6
-                obj = updatePropertiesMatrixFast(obj, species, moles, T, index);
-                return
-            end
-   
-            h0 = varargin{1};
-            obj = updatePropertiesMatrixFastH0(obj, species, moles, T, index, h0);
-        end
-
-        function obj = setPropertiesMatrixComposition(obj, species, moles, varargin)
-            % Update the properties matrix with the data of the mixture
-            %
-            % Args:
-            %     obj (ChemicalSystem): ChemicalSystem object
-            %     species (cell): Species contained in the system
-            %     moles (float): Moles of the species in the mixture [mol]
-            %     T (float): Temperature [K]
-            %
-            % Optional Args:
-            %     index (float): Vector with the indexes of the species to update the properties matrix   
-            %
-            % Returns:
-            %     obj (ChemicalSystem): ChemicalSystem object with updated properties matrix
-            %
-            % Examples:
-            %     * setPropertiesMatrixComposition(obj, {'N2', 'O2'}, [3.76, 1])
-            %     * setPropertiesMatrixComposition(obj, {'N2', 'O2'}, [3.76, 1], [1, 2])
-            
-            % Clean composition in properties matrix
-            obj.cleanMoles();
-
-            % Update properties matrix
-            if nargin < 4
-                obj = updatePropertiesMatrixComposition(obj, species, moles);
-                return
+            if nargin < 3 || isempty(index)
+                index = 1:obj.numSpecies;
             end
 
-            index = varargin{1};
-            obj = updatePropertiesMatrixCompositionFast(obj, moles(index), index);
+            index = index(:).';
+            T = reshape(T, 1, []);
+            [cpCurves, h0Curves, s0Curves, g0Curves] = combustiontoolbox.core.ChemicalSystem.speciesThermoCurveCache(obj, index, 1);
+            numSpecies = numel(index);
+            numTemperatures = numel(T);
+            thermo.index = index;
+            thermo.enthalpy = zeros(numSpecies, numTemperatures);
+            thermo.heatCapacityPressure = zeros(numSpecies, numTemperatures);
+            thermo.entropy = zeros(numSpecies, numTemperatures);
+            thermo.gibbs = zeros(numSpecies, numTemperatures);
+
+            for i = 1:numSpecies
+                thermo.enthalpy(i, :) = h0Curves{i}(T);
+                thermo.heatCapacityPressure(i, :) = cpCurves{i}(T);
+                thermo.entropy(i, :) = s0Curves{i}(T);
+                thermo.gibbs(i, :) = g0Curves{i}(T);
+            end
         end
 
-        function obj = setPropertiesMatrixCompositionInitialIndex(obj, species, moles, index)
-            % Update the properties matrix with the data of the mixture
-            %
-            % Args:
-            %     obj (ChemicalSystem): ChemicalSystem object
-            %     species (cell): Species contained in the system
-            %     moles (float): Moles of the species in the mixture [mol]
-            %     T (float): Temperature [K]
-            %     index (float): Vector with the indexes of the species to update the properties matrix   
-            %
-            % Returns:
-            %     obj (ChemicalSystem): ChemicalSystem object with updated properties matrix
-            %
-            % Example:
-            %     setPropertiesMatrixCompositionInitialIndex(obj, {'N2', 'O2'}, [3.76, 1], [1, 2])
-            
-            % Clean composition in properties matrix
-            obj.cleanMoles();
-            
-            % Update properties matrix
-            obj = updatePropertiesMatrixCompositionFast(obj, moles, index);
-        end
+        function [enthalpy, heatCapacityPressure, entropy] = evaluateSpeciesThermoHCPS(obj, T, index)
+            % Evaluate h, cp, and s for the requested species
 
-        function obj = setPropertiesMatrixThermo(obj, T, index)
-            % Update temperature-dependent properties without changing composition
-            %
-            % Args:
-            %     obj (ChemicalSystem): ChemicalSystem object
-            %     T (float): Temperature [K]
-            %     index (float): Vector with the indexes of the species to update
-            %
-            % Returns:
-            %     obj (ChemicalSystem): ChemicalSystem object with updated thermodynamic properties
-
-            if nargin < 3
-                index = find(obj.propertiesMatrix(:, obj.ind_ni));
+            if nargin < 3 || isempty(index)
+                index = 1:obj.numSpecies;
             end
 
-            obj.propertiesMatrix(:, obj.ind_hi:obj.numProperties) = 0;
+            index = index(:).';
+            T = reshape(T, 1, []);
+            [cpCurves, h0Curves, s0Curves] = combustiontoolbox.core.ChemicalSystem.speciesThermoCurveCache(obj, index, 2);
+            numSpecies = numel(index);
+            numTemperatures = numel(T);
+            enthalpy = zeros(numSpecies, numTemperatures);
+            heatCapacityPressure = zeros(numSpecies, numTemperatures);
+            entropy = zeros(numSpecies, numTemperatures);
 
-            if isempty(index)
-                return
+            for i = 1:numSpecies
+                enthalpy(i, :) = h0Curves{i}(T);
+                heatCapacityPressure(i, :) = cpCurves{i}(T);
+                entropy(i, :) = s0Curves{i}(T);
             end
-
-            obj = updatePropertiesMatrixThermo(obj, obj.listSpecies(index), T, index, true);
         end
 
-        function obj = clean(obj)
-            % Set temperature-dependent matrix properties to zero
-            obj.propertiesMatrix(:, 5:end) = 0;
+        function [heatCapacityPressure, entropy] = evaluateSpeciesThermoCPS(obj, T, index)
+            % Evaluate cp and s for the requested species
+
+            if nargin < 3 || isempty(index)
+                index = 1:obj.numSpecies;
+            end
+
+            index = index(:).';
+            T = reshape(T, 1, []);
+            [cpCurves, ~, s0Curves] = combustiontoolbox.core.ChemicalSystem.speciesThermoCurveCache(obj, index, 3);
+            numSpecies = numel(index);
+            numTemperatures = numel(T);
+            heatCapacityPressure = zeros(numSpecies, numTemperatures);
+            entropy = zeros(numSpecies, numTemperatures);
+
+            for i = 1:numSpecies
+                heatCapacityPressure(i, :) = cpCurves{i}(T);
+                entropy(i, :) = s0Curves{i}(T);
+            end
         end
 
-        function obj = cleanMoles(obj)
-            % Set moles vector to zero
-            obj.propertiesMatrix(:, obj.ind_ni) = 0;
+        function enthalpy = evaluateSpeciesThermoH(obj, T, index)
+            % Evaluate h for the requested species
+
+            if nargin < 3 || isempty(index)
+                index = 1:obj.numSpecies;
+            end
+
+            index = index(:).';
+            T = reshape(T, 1, []);
+            [~, h0Curves] = combustiontoolbox.core.ChemicalSystem.speciesThermoCurveCache(obj, index, 4);
+            numSpecies = numel(index);
+            numTemperatures = numel(T);
+            enthalpy = zeros(numSpecies, numTemperatures);
+
+            for i = 1:numSpecies
+                enthalpy(i, :) = h0Curves{i}(T);
+            end
         end
 
-        function obj = checkCompleteReaction(obj, equivalenceRatio, equivalenceRatioSoot)
-            % Check if the list of species corresponds to "complete_reaction"
-            % If FLAG_COMPLETE is true, establish the list of species based on the
-            % given equivalence ratio (phi)
-            
-            if ~obj.FLAG_COMPLETE
-                return
+        function [enthalpy, gibbs] = evaluateSpeciesThermoHG(obj, T, index)
+            % Evaluate h and g for the requested species
+
+            if nargin < 3 || isempty(index)
+                index = 1:obj.numSpecies;
             end
-        
-            if equivalenceRatio < 1
-                listSpecies = obj.listSpeciesLean;
-            elseif equivalenceRatio >= 1 && equivalenceRatio <= equivalenceRatioSoot
-                listSpecies = obj.listSpeciesRich;
-            else
-                listSpecies = obj.listSpeciesSoot;
+
+            index = index(:).';
+            T = reshape(T, 1, []);
+            [~, h0Curves, ~, g0Curves] = combustiontoolbox.core.ChemicalSystem.speciesThermoCurveCache(obj, index, 5);
+            numSpecies = numel(index);
+            numTemperatures = numel(T);
+            enthalpy = zeros(numSpecies, numTemperatures);
+            gibbs = zeros(numSpecies, numTemperatures);
+
+            for i = 1:numSpecies
+                enthalpy(i, :) = h0Curves{i}(T);
+                gibbs(i, :) = g0Curves{i}(T);
             end
-        
-            obj.indexProducts = combustiontoolbox.utils.findIndex(obj.listSpecies, listSpecies);
-            obj = obj.sortIndexPhaseSpecies();
+        end
+
+        function gibbs = evaluateSpeciesThermoG(obj, T, index)
+            % Evaluate g for the requested species
+
+            if nargin < 3 || isempty(index)
+                index = 1:obj.numSpecies;
+            end
+
+            index = index(:).';
+            T = reshape(T, 1, []);
+            [~, ~, ~, g0Curves] = combustiontoolbox.core.ChemicalSystem.speciesThermoCurveCache(obj, index, 6);
+            numSpecies = numel(index);
+            numTemperatures = numel(T);
+            gibbs = zeros(numSpecies, numTemperatures);
+
+            for i = 1:numSpecies
+                gibbs(i, :) = g0Curves{i}(T);
+            end
         end
 
         function obj = sortListSpecies(obj)
@@ -611,55 +513,19 @@ classdef ChemicalSystem < handle & matlab.mixin.Copyable
 
         end
 
-        function [index, numSpecies] = filterSpeciesTemperatureRange(obj, T, index, numSpecies, FLAG_EXTRAPOLATE)
-            % Remove species indices out of the temperature range if FLAG_EXTRAPOLATE = false,
-            % e.g., extrapolation of the polynomial fits is not allowed.
-            %
-            % Args:
-            %     obj (ChemicalSystem): Chemical system object
-            %     T (float): Temperature
-            %     index (float): Vector with the species indices
-            %     numSpecies (float): Number of species
-            %     FLAG_EXTRAPOLATE (bool): Flag indicating extrapolation of the polynomials fits is allowed
-            %
-            % Returns:
-            %     Tuple containing:
-            %
-            %     * index (float): Updated vector with the species indices
-            %     * numSpecies (float): Update number of species
-            
-            % Check if FLAG_EXTRAPOLATE is true
-            if FLAG_EXTRAPOLATE
-                return
-            end
-            
-            % Definitions
-            DB = obj.species;
+    end
 
-            % Initialization
-            temperatureMatrix = zeros(numSpecies, 2);
+    methods (Static)
 
-            % Remove species outside the bounds
-            for i = numSpecies:-1:1
-                species = obj.listSpecies{index(i)};
-                temperatureMatrix(i, 1) = DB.(species).T(1);
-                temperatureMatrix(i, 2) = DB.(species).T(end);
-            end
-
-            % Identify species to remove
-            FLAG_REMOVE = (T < temperatureMatrix(:, 1)) | (T > temperatureMatrix(:, 2));
-
-            % Update index and numSpecies
-            index = index(~FLAG_REMOVE);
-            numSpecies = length(index);
+        function clearThermoCache()
+            % Clear the cached species thermo curve handles used by evaluateSpeciesThermo
+            combustiontoolbox.core.ChemicalSystem.speciesThermoCurveCache();
         end
 
     end
 
     methods (Access = private)
         
-        obj = updatePropertiesMatrixThermo(obj, listSpecies, T, index, FLAG_H0);
-
         function obj = setContainedElements(obj)
             % Obtain containted elements from the given set of species (reactants and products)
             %
@@ -814,123 +680,322 @@ classdef ChemicalSystem < handle & matlab.mixin.Copyable
             obj.stoichiometricMatrix = A0;
         end
 
-        function obj = setPropertiesMatrixInitialize(obj)
-            % Initialize properties matrix
+        function obj = setStaticSpeciesProperties(obj)
+            % Set static species properties from Species objects
             %
             % Args:
             %     obj (ChemicalSystem): ChemicalSystem object
             %
             % Returns:
-            %     obj (ChemicalSystem): ChemicalSystem object with the properties matrix initialized
-            
-            % Definitions
-            M0 = zeros(obj.numSpecies, obj.numProperties);
+            %     obj (ChemicalSystem): ChemicalSystem object with formationEnthalpy, formationInternalEnergy,
+            %         molecularWeight, phase, temperatureMin, and temperatureMax set
 
-            % Get index species
-            index = obj.indexSpecies;
+            obj.formationEnthalpy = zeros(obj.numSpecies, 1);
+            obj.formationInternalEnergy = zeros(obj.numSpecies, 1);
+            obj.molecularWeight = zeros(obj.numSpecies, 1);
+            obj.phase = zeros(obj.numSpecies, 1);
+            obj.temperatureMin = zeros(obj.numSpecies, 1);
+            obj.temperatureMax = zeros(obj.numSpecies, 1);
 
-            % Update properties matrix
             for i = 1:obj.numSpecies
                 species = obj.species.(obj.listSpecies{i});
-                M0(index(i), obj.ind_W) = species.W;         % [kg/mol]
-                M0(index(i), obj.ind_hfi) = species.hf;      % [J/mol]
-                M0(index(i), obj.ind_efi) = species.ef;      % [J/mol]
-                M0(index(i), obj.ind_phase) = species.phase; % [bool]
+                obj.formationEnthalpy(i) = species.hf;       % [J/mol]
+                obj.formationInternalEnergy(i) = species.ef; % [J/mol]
+                obj.molecularWeight(i) = species.W;          % [kg/mol]
+                obj.phase(i) = species.phase;                % [-]
+                obj.temperatureMin(i) = species.T(1);         % [K]
+                obj.temperatureMax(i) = species.T(end);       % [K]
+            end
+        end
+
+    end
+
+    methods (Access = private, Static)
+
+        function [cpCurves, h0Curves, s0Curves, g0Curves] = speciesThermoCurveCache(obj, index, mode)
+            % Cache requested species thermo curve handles across stateless evaluations
+
+            persistent cachedListSpecies cachedCPcurves cachedH0curves cachedS0curves cachedG0curves
+            persistent FLAG_CACHE_CP FLAG_CACHE_H FLAG_CACHE_S FLAG_CACHE_G
+
+            if nargin == 0
+                cachedListSpecies = {};
+                cachedCPcurves = {};
+                cachedH0curves = {};
+                cachedS0curves = {};
+                cachedG0curves = {};
+                FLAG_CACHE_CP = false;
+                FLAG_CACHE_H = false;
+                FLAG_CACHE_S = false;
+                FLAG_CACHE_G = false;
+                cpCurves = {};
+                h0Curves = {};
+                s0Curves = {};
+                g0Curves = {};
+                return
             end
 
-            % Initialize propertyVector
-            obj.propertyVector = M0(:, obj.ind_ni);
-            
-            % Set properties matrix
-            obj.propertiesMatrix = M0;
-        end
-        
-        function obj = updatePropertiesMatrix(obj, species, moles, T)
-            % Update the properties matrix with the data of the mixture
-            %
-            % Args:
-            %     obj (ChemicalSystem): ChemicalSystem object
-            %     species (cell): Species contained in the system
-            %     moles (float): Moles of the species in the mixture [mol]
-            %     T (float): Temperature [K]
-            %
-            % Returns:
-            %     obj (ChemicalSystem): ChemicalSystem object with updated properties matrix
+            listSpecies = obj.listSpecies(:).';
 
-            % Get index species
-            index = combustiontoolbox.utils.findIndex(obj.listSpecies, species);
+            if isempty(cachedListSpecies) || ~isequal(cachedListSpecies, listSpecies)
+                cachedListSpecies = listSpecies;
+                numSystemSpecies = obj.numSpecies;
+                cachedCPcurves = cell(1, numSystemSpecies);
+                cachedH0curves = cell(1, numSystemSpecies);
+                cachedS0curves = cell(1, numSystemSpecies);
+                cachedG0curves = cell(1, numSystemSpecies);
+                FLAG_CACHE_CP = false;
+                FLAG_CACHE_H = false;
+                FLAG_CACHE_S = false;
+                FLAG_CACHE_G = false;
+            end
 
-            % Update properties matrix
-            obj.propertiesMatrix(index, obj.ind_ni) = moles; % [mol]
-            obj = updatePropertiesMatrixThermo(obj, species, T, index, true);
-        end
-            
-        function obj = updatePropertiesMatrixFast(obj, species, moles, T, index)
-            % Update properties matrix with the data of the mixture
-            %
-            % Args:
-            %     obj (ChemicalSystem): ChemicalSystem object
-            %     species (cell): Species contained in the system
-            %     moles (float): Moles of the species in the mixture [mol]
-            %     T (float): Temperature [K]
-            %     index (float): Vector with the indexes of the species to update the properties matrix
-            %
-            % Returns:
-            %     obj (ChemicalSystem): ChemicalSystem object with updated properties matrix
+            cpCurves = {};
+            h0Curves = {};
+            s0Curves = {};
+            g0Curves = {};
 
-            obj.propertiesMatrix(index, obj.ind_ni) = moles; % [mol]
-            obj = updatePropertiesMatrixThermo(obj, species, T, index, true);
-        end
+            switch mode
+                case 1 % Full thermo cache: cp, h, s, g
+                    FLAG_UPDATE_CP = ~FLAG_CACHE_CP;
+                    FLAG_UPDATE_H = ~FLAG_CACHE_H;
+                    FLAG_UPDATE_S = ~FLAG_CACHE_S;
+                    FLAG_UPDATE_G = ~FLAG_CACHE_G;
 
-        function obj = updatePropertiesMatrixFastH0(obj, species, moles, T, index, h0)
-            % Update properties matrix with the data of the mixture
-            %
-            % Args:
-            %     obj (ChemicalSystem): ChemicalSystem object
-            %     species (cell): Species contained in the system
-            %     moles (float): Moles of the species in the mixture [mol]
-            %     T (float): Temperature [K]
-            %     index (float): Vector with the indexes of the species to update the properties matrix
-            %     h0 (float): Enthalpy of formation vector [J/mol]
-            %
-            % Returns:
-            %     obj (ChemicalSystem): ChemicalSystem object with updated properties matrix
+                    if FLAG_UPDATE_CP || FLAG_UPDATE_H || FLAG_UPDATE_S || FLAG_UPDATE_G
+                        cacheMode = FLAG_UPDATE_CP + 2 * FLAG_UPDATE_H + 4 * FLAG_UPDATE_S + 8 * FLAG_UPDATE_G;
 
-            obj.propertiesMatrix(index, obj.ind_ni) = moles; % [mol]
-            obj.propertiesMatrix(index, obj.ind_hi) = h0; % [J/mol]
-            obj = updatePropertiesMatrixThermo(obj, species, T, index, false);
-        end
+                        switch cacheMode
+                            case 1 % Update cp
+                                for i = 1:obj.numSpecies
+                                    cachedCPcurves{i} = obj.species.(listSpecies{i}).cpcurve;
+                                end
+                            case 2 % Update h
+                                for i = 1:obj.numSpecies
+                                    cachedH0curves{i} = obj.species.(listSpecies{i}).h0curve;
+                                end
+                            case 3 % Update cp, h
+                                for i = 1:obj.numSpecies
+                                    species = obj.species.(listSpecies{i});
+                                    cachedCPcurves{i} = species.cpcurve;
+                                    cachedH0curves{i} = species.h0curve;
+                                end
+                            case 4 % Update s
+                                for i = 1:obj.numSpecies
+                                    cachedS0curves{i} = obj.species.(listSpecies{i}).s0curve;
+                                end
+                            case 5 % Update cp, s
+                                for i = 1:obj.numSpecies
+                                    species = obj.species.(listSpecies{i});
+                                    cachedCPcurves{i} = species.cpcurve;
+                                    cachedS0curves{i} = species.s0curve;
+                                end
+                            case 6 % Update h, s
+                                for i = 1:obj.numSpecies
+                                    species = obj.species.(listSpecies{i});
+                                    cachedH0curves{i} = species.h0curve;
+                                    cachedS0curves{i} = species.s0curve;
+                                end
+                            case 7 % Update cp, h, s
+                                for i = 1:obj.numSpecies
+                                    species = obj.species.(listSpecies{i});
+                                    cachedCPcurves{i} = species.cpcurve;
+                                    cachedH0curves{i} = species.h0curve;
+                                    cachedS0curves{i} = species.s0curve;
+                                end
+                            case 8 % Update g
+                                for i = 1:obj.numSpecies
+                                    cachedG0curves{i} = obj.species.(listSpecies{i}).g0curve;
+                                end
+                            case 9 % Update cp, g
+                                for i = 1:obj.numSpecies
+                                    species = obj.species.(listSpecies{i});
+                                    cachedCPcurves{i} = species.cpcurve;
+                                    cachedG0curves{i} = species.g0curve;
+                                end
+                            case 10 % Update h, g
+                                for i = 1:obj.numSpecies
+                                    species = obj.species.(listSpecies{i});
+                                    cachedH0curves{i} = species.h0curve;
+                                    cachedG0curves{i} = species.g0curve;
+                                end
+                            case 11 % Update cp, h, g
+                                for i = 1:obj.numSpecies
+                                    species = obj.species.(listSpecies{i});
+                                    cachedCPcurves{i} = species.cpcurve;
+                                    cachedH0curves{i} = species.h0curve;
+                                    cachedG0curves{i} = species.g0curve;
+                                end
+                            case 12 % Update s, g
+                                for i = 1:obj.numSpecies
+                                    species = obj.species.(listSpecies{i});
+                                    cachedS0curves{i} = species.s0curve;
+                                    cachedG0curves{i} = species.g0curve;
+                                end
+                            case 13 % Update cp, s, g
+                                for i = 1:obj.numSpecies
+                                    species = obj.species.(listSpecies{i});
+                                    cachedCPcurves{i} = species.cpcurve;
+                                    cachedS0curves{i} = species.s0curve;
+                                    cachedG0curves{i} = species.g0curve;
+                                end
+                            case 14 % Update h, s, g
+                                for i = 1:obj.numSpecies
+                                    species = obj.species.(listSpecies{i});
+                                    cachedH0curves{i} = species.h0curve;
+                                    cachedS0curves{i} = species.s0curve;
+                                    cachedG0curves{i} = species.g0curve;
+                                end
+                            case 15 % Update cp, h, s, g
+                                for i = 1:obj.numSpecies
+                                    species = obj.species.(listSpecies{i});
+                                    cachedCPcurves{i} = species.cpcurve;
+                                    cachedH0curves{i} = species.h0curve;
+                                    cachedS0curves{i} = species.s0curve;
+                                    cachedG0curves{i} = species.g0curve;
+                                end
+                        end
 
-        function obj = updatePropertiesMatrixComposition(obj, species, moles)
-            % Update the properties matrix with the data of the mixture
-            %
-            % Args:
-            %     obj (ChemicalSystem): ChemicalSystem object
-            %     species (cell): Species contained in the system
-            %     moles (float): Moles of the species in the mixture [mol]
-            %
-            % Returns:
-            %     obj (ChemicalSystem): ChemicalSystem object with updated properties matrix
+                        FLAG_CACHE_CP = true;
+                        FLAG_CACHE_H = true;
+                        FLAG_CACHE_S = true;
+                        FLAG_CACHE_G = true;
+                    end
 
-            % Get index species
-            index = combustiontoolbox.utils.findIndex(obj.listSpecies, species);
+                    cpCurves = cachedCPcurves(index);
+                    h0Curves = cachedH0curves(index);
+                    s0Curves = cachedS0curves(index);
+                    g0Curves = cachedG0curves(index);
+                case 2 % HCPS cache: h, cp, s
+                    FLAG_UPDATE_CP = ~FLAG_CACHE_CP;
+                    FLAG_UPDATE_H = ~FLAG_CACHE_H;
+                    FLAG_UPDATE_S = ~FLAG_CACHE_S;
 
-            % Update properties matrix
-            obj.propertiesMatrix(index, obj.ind_ni) = moles; % [mol]
-        end
-            
-        function obj = updatePropertiesMatrixCompositionFast(obj, moles, index)
-            % Update properties matrix with the data of the mixture
-            %
-            % Args:
-            %     obj (ChemicalSystem): ChemicalSystem object
-            %     moles (float): Moles of the species in the mixture [mol]
-            %     index (float): Vector with the indexes of the species to update the properties matrix
-            %
-            % Returns:
-            %     obj (ChemicalSystem): ChemicalSystem object with updated properties matrix
+                    if FLAG_UPDATE_CP || FLAG_UPDATE_H || FLAG_UPDATE_S
+                        if FLAG_UPDATE_CP && FLAG_UPDATE_H && FLAG_UPDATE_S
+                            for i = 1:obj.numSpecies
+                                species = obj.species.(listSpecies{i});
+                                cachedCPcurves{i} = species.cpcurve;
+                                cachedH0curves{i} = species.h0curve;
+                                cachedS0curves{i} = species.s0curve;
+                            end
+                        elseif FLAG_UPDATE_CP && FLAG_UPDATE_H
+                            for i = 1:obj.numSpecies
+                                species = obj.species.(listSpecies{i});
+                                cachedCPcurves{i} = species.cpcurve;
+                                cachedH0curves{i} = species.h0curve;
+                            end
+                        elseif FLAG_UPDATE_CP && FLAG_UPDATE_S
+                            for i = 1:obj.numSpecies
+                                species = obj.species.(listSpecies{i});
+                                cachedCPcurves{i} = species.cpcurve;
+                                cachedS0curves{i} = species.s0curve;
+                            end
+                        elseif FLAG_UPDATE_H && FLAG_UPDATE_S
+                            for i = 1:obj.numSpecies
+                                species = obj.species.(listSpecies{i});
+                                cachedH0curves{i} = species.h0curve;
+                                cachedS0curves{i} = species.s0curve;
+                            end
+                        elseif FLAG_UPDATE_CP
+                            for i = 1:obj.numSpecies
+                                cachedCPcurves{i} = obj.species.(listSpecies{i}).cpcurve;
+                            end
+                        elseif FLAG_UPDATE_H
+                            for i = 1:obj.numSpecies
+                                cachedH0curves{i} = obj.species.(listSpecies{i}).h0curve;
+                            end
+                        else
+                            for i = 1:obj.numSpecies
+                                cachedS0curves{i} = obj.species.(listSpecies{i}).s0curve;
+                            end
+                        end
 
-            obj.propertiesMatrix(index, obj.ind_ni) = moles; % [mol]
+                        FLAG_CACHE_CP = true;
+                        FLAG_CACHE_H = true;
+                        FLAG_CACHE_S = true;
+                    end
+
+                    cpCurves = cachedCPcurves(index);
+                    h0Curves = cachedH0curves(index);
+                    s0Curves = cachedS0curves(index);
+                case 3 % CPS cache: cp, s
+                    FLAG_UPDATE_CP = ~FLAG_CACHE_CP;
+                    FLAG_UPDATE_S = ~FLAG_CACHE_S;
+
+                    if FLAG_UPDATE_CP || FLAG_UPDATE_S
+                        if FLAG_UPDATE_CP && FLAG_UPDATE_S
+                            for i = 1:obj.numSpecies
+                                species = obj.species.(listSpecies{i});
+                                cachedCPcurves{i} = species.cpcurve;
+                                cachedS0curves{i} = species.s0curve;
+                            end
+                        elseif FLAG_UPDATE_CP
+                            for i = 1:obj.numSpecies
+                                cachedCPcurves{i} = obj.species.(listSpecies{i}).cpcurve;
+                            end
+                        else
+                            for i = 1:obj.numSpecies
+                                cachedS0curves{i} = obj.species.(listSpecies{i}).s0curve;
+                            end
+                        end
+
+                        FLAG_CACHE_CP = true;
+                        FLAG_CACHE_S = true;
+                    end
+
+                    cpCurves = cachedCPcurves(index);
+                    s0Curves = cachedS0curves(index);
+                case 4 % H cache: h
+                    if ~FLAG_CACHE_H
+                        for i = 1:obj.numSpecies
+                            cachedH0curves{i} = obj.species.(listSpecies{i}).h0curve;
+                        end
+
+                        FLAG_CACHE_H = true;
+                    end
+
+                    h0Curves = cachedH0curves(index);
+                case 5 % HG cache: h, g
+                    FLAG_UPDATE_H = ~FLAG_CACHE_H;
+                    FLAG_UPDATE_G = ~FLAG_CACHE_G;
+
+                    if FLAG_UPDATE_H || FLAG_UPDATE_G
+                        if FLAG_UPDATE_H && FLAG_UPDATE_G
+                            for i = 1:obj.numSpecies
+                                species = obj.species.(listSpecies{i});
+                                cachedH0curves{i} = species.h0curve;
+                                cachedG0curves{i} = species.g0curve;
+                            end
+                        elseif FLAG_UPDATE_H
+                            for i = 1:obj.numSpecies
+                                cachedH0curves{i} = obj.species.(listSpecies{i}).h0curve;
+                            end
+                        else
+                            for i = 1:obj.numSpecies
+                                cachedG0curves{i} = obj.species.(listSpecies{i}).g0curve;
+                            end
+                        end
+
+                        FLAG_CACHE_H = true;
+                        FLAG_CACHE_G = true;
+                    end
+
+                    h0Curves = cachedH0curves(index);
+                    g0Curves = cachedG0curves(index);
+                case 6 % G cache: g
+                    if ~FLAG_CACHE_G
+                        for i = 1:obj.numSpecies
+                            cachedG0curves{i} = obj.species.(listSpecies{i}).g0curve;
+                        end
+
+                        FLAG_CACHE_G = true;
+                    end
+
+                    g0Curves = cachedG0curves(index);
+                otherwise
+                    error('Unknown species thermo cache mode.');
+            end
         end
 
     end

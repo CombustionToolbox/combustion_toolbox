@@ -400,7 +400,7 @@ classdef EquilibriumSolver < handle
             indexElements = 1:length(NatomE);
             indexGas = system.indexGas;
             indexCondensed = system.indexCondensed;
-            indexIons = system.indexGas(system.indexIons);
+            indexIons = system.indexIons;
             indexCryogenic = system.indexCryogenic;
             index = [indexGas, indexCondensed];
 
@@ -414,6 +414,34 @@ classdef EquilibriumSolver < handle
             NE = length(NatomE);
             NG = length(indexGas);
             NS = length(index);
+        end
+
+        function [index, numSpecies] = filterSpeciesTemperatureRange(productSpeciesSet, T, index, numSpecies, FLAG_EXTRAPOLATE)
+            % Remove species indices out of the temperature range if FLAG_EXTRAPOLATE = false
+            % e.g., extrapolation of the polynomial fits is not allowed
+            %
+            % Args:
+            %     productSpeciesSet (struct): Product species set with ChemicalSystem data and solver-local indices
+            %     T (float): Temperature [K]
+            %     index (float): Vector with the species indices
+            %     numSpecies (float): Number of species
+            %     FLAG_EXTRAPOLATE (bool): Flag indicating extrapolation of the polynomial fits is allowed
+            %
+            % Returns:
+            %     Tuple containing:
+            %
+            %     * index (float): Updated vector with the species indices
+            %     * numSpecies (float): Updated number of species
+
+            if FLAG_EXTRAPOLATE
+                return
+            end
+
+            temperatureMin = productSpeciesSet.temperatureMin(index);
+            temperatureMax = productSpeciesSet.temperatureMax(index);
+            FLAG_REMOVE = (T < temperatureMin) | (T > temperatureMax);
+            index = index(~FLAG_REMOVE);
+            numSpecies = length(index);
         end
 
         function [index, indexCondensed, indexGas, indexIons, NG, NS, N] = updateTemp(N, index, indexCondensed, indexGas, indexIons, NP, NG, NS, SIZE)
@@ -514,8 +542,8 @@ classdef EquilibriumSolver < handle
 
     methods (Access = private)
         
-        [N, dNi_T, dN_T, dNi_p, dN_p, indexProducts, STOP, STOP_ions, h0] = equilibriumGibbs(obj, system, p, T, mix, molesGuess)
-        [N, dNi_T, dN_T, dNi_p, dN_p, indexProducts, STOP, STOP_ions, h0] = equilibriumHelmholtz(obj, system, v, T, mix, molesGuess)
+        [N, dNi_T, dN_T, dNi_p, dN_p, indexProducts, STOP, STOP_ions, h0] = equilibriumGibbs(obj, system, productSpeciesSet, p, T, mix, molesGuess)
+        [N, dNi_T, dN_T, dNi_p, dN_p, indexProducts, STOP, STOP_ions, h0] = equilibriumHelmholtz(obj, system, productSpeciesSet, v, T, mix, molesGuess)
         [N, STOP_ions, FLAG_ION] = equilibriumCheckIons(obj, N, A0, ind_E, indexGas, indexIons)
 
         function [x, STOP, molesGuess] = newton(obj, mix1, mix2, attributeName, x0, molesGuess)

@@ -124,7 +124,7 @@ classdef NasaDatabase < combustiontoolbox.databases.Database & handle
             % Definitions
             R0 = combustiontoolbox.common.Constants.R0; % Universal gas constant [J/(K mol)]
 
-            % Compute thermodynamic functions included in the propertiesMatrix
+            % Compute core thermodynamic functions
             [cp, hf, h0, ef, s0, g0] = obj.getSpeciesThermo(obj, DB, species, temperature, units);
             
             % Unpack NASA's polynomials coefficients

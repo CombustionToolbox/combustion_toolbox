@@ -23,7 +23,7 @@ function [x, x_min] = simplexDualCheck(A_eq, b_eq, c, A_ineq, b_ineq)
     options = optimoptions('linprog', 'Algorithm', 'dual-simplex', 'Display', 'off');
 
     % Solve the optimization problem
-    [x, ~, ~, ~] = linprog(c, A_ineq, b_ineq, A_eq, b_eq, zeros(n, 1), [], options);
+    [x, ~, ~, ~] = linprog(c(:), A_ineq, b_ineq(:), A_eq, b_eq(:), zeros(n, 1), [], options);
 
     % Remove t
     x_min = x(end);

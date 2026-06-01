@@ -19,5 +19,5 @@ function x = simplexCheck(A, b, c)
     options = optimoptions('linprog', 'Algorithm', 'dual-simplex', 'Display', 'off');
     
     % Solve the optimization problem
-    [x, ~, ~, ~] = linprog(c, [], [], A, b', zeros(length(c), 1), [], options);
+    [x, ~, ~, ~] = linprog(c(:), [], [], A, b(:), zeros(length(c), 1), [], options);
 end

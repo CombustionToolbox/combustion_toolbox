@@ -2,7 +2,7 @@ function [x, x_min] = simplexDual(A, b)
     % Use simplex method to solve the next linear programming problem:
     %     * max(min x) -> max t,
     %     * A * x = b,
-    %     *    x >= 0.
+    %     *    x >= 0
     % 
     % Args:
     %    A (float): Coefficient matrix for the equality constraints (A * x = b)
@@ -18,23 +18,18 @@ function [x, x_min] = simplexDual(A, b)
     %    [x, x_min] = simplexDual(A, b)
 
     % Definitions
-    [~, n] = size(A);
+    A_original = A;
     b = b(:);
-    sumA = sum(A, 2);
+    [~, n] = size(A_original);
 
-    % Coefficients for the objective function max t -> min -t
-    c = zeros(n + 1, 1);
-    c(end) = -1;
+    % Compact max-min formulation with x = z + t, z >= 0, t >= 0
+    A_eq = [A_original, sum(A_original, 2)];
+    c = [zeros(n, 1); -1];
 
-    % Set equality constraints (A * z + sum(A, 2) * t = b)
-    A_eq = [A, sumA];
-
-    % Solve the linear programming problem using the simplex method
+    % Solve equality-form linear program
     zt = combustiontoolbox.utils.optimization.simplex(A_eq, b, c);
 
-    % Recover minimum value
+    % Recover solution
     x_min = max(zt(end), 0);
-
-    % Recover solution (x = z + t)
     x = zt(1:n) + x_min;
 end

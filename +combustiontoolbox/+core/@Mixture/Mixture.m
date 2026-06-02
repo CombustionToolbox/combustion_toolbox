@@ -1614,11 +1614,11 @@ classdef Mixture < handle & matlab.mixin.Copyable
             end
             
             % Combine species thermodynamic properties with state composition.
-            obj.hf = dot(system.formationEnthalpy, Ni);      % [J]
-            obj.h = dot(h0, Ni);                             % [J]
+            obj.hf = dot(system.formationEnthalpy, Ni);       % [J]
+            obj.h = dot(h0, Ni);                              % [J]
             obj.ef = dot(system.formationInternalEnergy, Ni); % [J]
-            obj.cp = dot(cp0, Ni);                           % [J/K]
-            obj.s0 = dot(s0, Ni);                            % [J/K]
+            obj.cp = dot(cp0, Ni);                            % [J/K]
+            obj.s0 = dot(s0, Ni);                             % [J/K]
 
             % Compute total composition of gas species [mol]
             N_gas = sum(Ni(~obj.phase));

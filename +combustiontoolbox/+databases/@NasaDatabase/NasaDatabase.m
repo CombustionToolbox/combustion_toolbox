@@ -419,7 +419,7 @@ classdef NasaDatabase < combustiontoolbox.databases.Database & handle
                 temp.Tintervals = str2double(tline(1:2));
                 temp.refCode = tline(4:9);
                 temp.formula = tline(11:50);
-                temp.phase = str2double(tline(51:52));
+                temp.phase = double(str2double(tline(51:52)) ~= 0);
                 temp.W = str2double(tline(53:65)) * 1e-3; % [kg/mol]
                 temp.hf = str2double(tline(66:80));
         

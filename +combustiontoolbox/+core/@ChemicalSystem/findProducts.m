@@ -77,7 +77,7 @@ function [listSpecies, indexElements_DB] = findProducts(obj, listReactants, vara
         NS = length(listSpecies_DB);
         FLAG_REMOVE = false(NS, 1);
         for i = 1:NS
-            if self.DB.(listSpecies_DB{i}).phase == 1
+            if obj.database.species.(listSpecies_DB{i}).phase ~= 0
                 FLAG_REMOVE(i) = true;
             end
 

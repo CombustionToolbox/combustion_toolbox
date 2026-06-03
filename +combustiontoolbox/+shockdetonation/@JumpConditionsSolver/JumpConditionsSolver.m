@@ -44,6 +44,7 @@ classdef JumpConditionsSolver < handle
     properties
         equilibriumSolver              % EquilibriumSolver object
         shockSolver                    % ShockSolver object
+        tol0 = 1e-6;                   % Default shock solver tolerance used for finite-difference jump sensitivities
         tolGammas1 = 1e-4;             % Tolerance for the calculation of the dimensionless RH slope Gammas1
         tolGammas2 = 1e-4;             % Tolerance for the calculation of the dimensionless RH slope Gammas2
         tolGammas3 = 1e-4;             % Tolerance for the calculation of the dimensionless RH slope Gammas3
@@ -102,6 +103,7 @@ classdef JumpConditionsSolver < handle
             addParameter(p, 'caloricGasModel', defaultCaloricGasModel, @(x) isa(x, 'combustiontoolbox.core.CaloricGasModel'));
             addParameter(p, 'equilibriumSolver', defaultEquilibriumSolver, @(x) isa(x, 'combustiontoolbox.equilibrium.EquilibriumSolver'));
             addParameter(p, 'shockSolver', defaultShockSolver, @(x) isa(x, 'combustiontoolbox.shockdetonation.ShockSolver'));
+            addParameter(p, 'tol0', obj.tol0, @(x) isnumeric(x) && isscalar(x) && x > 0);
             addParameter(p, 'tolGammas1', obj.tolGammas1, @(x) isnumeric(x) && isscalar(x) && x > 0);
             addParameter(p, 'tolGammas2', obj.tolGammas2, @(x) isnumeric(x) && isscalar(x) && x > 0);
             addParameter(p, 'tolGammas3', obj.tolGammas3, @(x) isnumeric(x) && isscalar(x) && x > 0);
@@ -119,6 +121,7 @@ classdef JumpConditionsSolver < handle
             % Set parameters
             obj.equilibriumSolver = p.Results.equilibriumSolver;
             obj.shockSolver = p.Results.shockSolver;
+            obj.tol0 = p.Results.tol0;
             obj.tolGammas1 = p.Results.tolGammas1;
             obj.tolGammas2 = p.Results.tolGammas2;
             obj.tolGammas3 = p.Results.tolGammas3;
@@ -232,6 +235,12 @@ classdef JumpConditionsSolver < handle
             
             % Timer
             obj.time = tic;
+
+            % Jump sensitivities compare nearby shock states, so the shock
+            % residual must be tighter than the finite-difference step
+            tol0Original = obj.shockSolver.tol0;
+            cleanupTolShock = onCleanup(@() obj.restoreShockSolverTolerance(tol0Original));
+            obj.shockSolver.tol0 = min(obj.shockSolver.tol0, obj.tol0);
             
             % Compute jump conditions
             [jumpConditions, mixArray1, mixArray2] = getJumpData(obj, mixArray1);
@@ -657,6 +666,11 @@ classdef JumpConditionsSolver < handle
 
             % Print status
             fprintf('OK!\n');
+        end
+
+        function restoreShockSolverTolerance(obj, tol0)
+            % Restore the caller's shock solver tolerance after sensitivity calculations
+            obj.shockSolver.tol0 = tol0;
         end
 
 

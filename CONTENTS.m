@@ -55,13 +55,13 @@
 %
 % @author: Alberto Cuadra Lara
 %                  
-% Last update Jan 15 2026
+% Last update Jun 03 2026
 % -------------------------------------------------------------------------
 help CONTENTS.m
 
 % Set path
 INSTALL();
 % Display splash
-gui_display_splash('pause', 2);
+combustiontoolbox.utils.display.showSplashScreen('pause', 2);
 % Check for updates
 combustiontoolbox.utils.checkUpdate();

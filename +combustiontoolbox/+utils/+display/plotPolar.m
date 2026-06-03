@@ -83,7 +83,8 @@ function ax = plot_shock_polar_pressure(mix1, mix2, config, mix2_case, mix0)
         plot(ax, [0, 0], y_lim, '-.k', 'LineWidth', config.linewidth)
     end
 
-    plot(ax, xaxis + [- flip(mix2.polar.theta), mix2.polar.theta], [flip(mix2.polar.p), mix2.polar.p] / p1, 'k', 'LineWidth', config.linewidth, 'LineStyle', config.linestyle);
+    [theta, p] = pressure_polar_path(mix2.polar.theta, mix2.polar.p / p1);
+    plot(ax, xaxis + theta, p, 'k', 'LineWidth', config.linewidth, 'LineStyle', config.linestyle);
     % plot(ax, mix2.theta_max, mix2.polar.p(mix2.ind_max), 'kd', 'LineWidth', config.linewidth, 'MarkerFaceColor', 'auto');
     % plot(ax, -mix2.theta_max, mix2.polar.p(mix2.ind_max), 'kd', 'LineWidth', config.linewidth, 'MarkerFaceColor', 'auto');
     % plot(ax, mix2.polar.theta(mix2.ind_sonic), mix2.polar.p(mix2.ind_sonic), 'ks', 'LineWidth', config.linewidth, 'MarkerFaceColor', 'auto');
@@ -93,6 +94,19 @@ function ax = plot_shock_polar_pressure(mix1, mix2, config, mix2_case, mix0)
     xlabel(ax, 'Deflection angle [deg]', 'FontSize', config.fontsize, 'Interpreter', 'latex');
     ylabel(ax, '$p/p_1$', 'FontSize', config.fontsize, 'Interpreter', 'latex');
     % ylim(ax, [1, max(str2.polar.p2)]);
+end
+
+function [theta, p] = pressure_polar_path(thetaPositive, pPositive)
+    % Close the mirrored polar at the high-pressure theta = 0 endpoint when
+    % the stored branch starts there, as in detonation polar diagrams.
+    if pPositive(1) > pPositive(end)
+        theta = [-thetaPositive, flip(thetaPositive)];
+        p = [pPositive, flip(pPositive)];
+        return
+    end
+
+    theta = [-flip(thetaPositive), thetaPositive];
+    p = [flip(pPositive), pPositive];
 end
 
 function ax = plot_shock_polar_wave(mix1, mix2, config)

@@ -30,7 +30,7 @@ classdef EquationStatePengRobinson < combustiontoolbox.core.EquationState
             %
             % .. math::
             % 
-            %       `P = \\frac{RT}{V - b} - \\frac{a}{V^2 + 2bV - b^2},`
+            %       `P = \frac{RT}{V - b} - \frac{a}{V^2 + 2bV - b^2},`
             %
             % where :math:`a` and :math:`b` are mixture parameters computed using 
             % van der Waals one-fluid mixing rules.

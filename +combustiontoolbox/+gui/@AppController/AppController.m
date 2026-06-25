@@ -433,6 +433,12 @@ classdef AppController < handle
             obj.readInput();
         end
 
+        function onCustomProductSpeciesChanged(obj, species)
+            % Update product species selected by an external app panel
+            obj.speciesPanel.setCustomProductSpecies(species);
+            obj.readInput();
+        end
+
         function onReactantsTableEdited(obj, event)
             % Rebuild mixture state after reactants table edits
             %

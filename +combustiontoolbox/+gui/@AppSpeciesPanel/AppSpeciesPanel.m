@@ -73,6 +73,16 @@ classdef AppSpeciesPanel < handle
             obj.updateProductDisplayLists();
         end
 
+        function setCustomProductSpecies(obj, species)
+            % Apply product species selected outside the products dropdown
+            if isempty(species)
+                species = {};
+            end
+
+            obj.setProductItems(unique(species, 'stable'));
+            obj.updateProductDisplayLists();
+        end
+
         function onReactantsTableEdited(obj, ~)
             % Rebuild mixture from edited reactants table
             if isempty(obj.componentData('UITable_R', {}))

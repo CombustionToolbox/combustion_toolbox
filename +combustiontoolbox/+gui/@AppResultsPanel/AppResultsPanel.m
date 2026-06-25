@@ -289,8 +289,10 @@ classdef AppResultsPanel < handle
         function updateResultTabs(obj, result)
             if obj.hasOutputState(result, 'statistics')
                 obj.showTab('TurbulenceStatistics', 'TurbulencestatisticsTab');
+                obj.setVisible('Panel_parameters_2', 'on');
             else
                 obj.hideTab('TurbulencestatisticsTab');
+                obj.setVisible('Panel_parameters_2', 'off');
             end
         end
 
@@ -1435,6 +1437,12 @@ classdef AppResultsPanel < handle
         function setTextValue(obj, componentName, value)
             if isprop(obj.app, componentName) && isprop(obj.app.(componentName), 'Value')
                 obj.app.(componentName).Value = value;
+            end
+        end
+
+        function setVisible(obj, componentName, value)
+            if isprop(obj.app, componentName) && isprop(obj.app.(componentName), 'Visible')
+                obj.app.(componentName).Visible = value;
             end
         end
 

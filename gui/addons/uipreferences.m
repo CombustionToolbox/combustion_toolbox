@@ -520,11 +520,21 @@ classdef uipreferences < matlab.apps.AppBase
         end
 
         function ContextMenuOpening(app, event)
-            gui_SnapshotMenuSelected(app.preferences_UIFigure);
+            app.exportSnapshot(app.preferences_UIFigure);
         end
 
         function SnapshotMenuSelected(app, event)
-            gui_SnapshotMenuSelected(app.preferences_UIFigure);
+            app.exportSnapshot(app.preferences_UIFigure);
+        end
+
+        function exportSnapshot(app, figureHandle) %#ok<INUSL>
+            % Export a figure snapshot
+            filter = {'*.pdf'; '*.jpg'; '*.png'; '*.tif'};
+            [filename, filepath] = uiputfile(filter);
+
+            if ischar(filename)
+                exportapp(figureHandle, [filepath filename]);
+            end
         end
 
     end

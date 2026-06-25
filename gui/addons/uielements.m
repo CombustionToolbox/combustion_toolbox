@@ -201,7 +201,7 @@ classdef uielements < matlab.apps.AppBase
             end
 
             % Read temperature range
-            T = gui_get_prop(app.temperature_range.Value);
+            T = combustiontoolbox.gui.AppInput.parseValue(app.temperature_range.Value);
             numTemperature = length(T);
 
             % Get function
@@ -440,12 +440,12 @@ classdef uielements < matlab.apps.AppBase
 
         % Button pushed function: AddButton1
         function AddButton1Pushed(app, event)
-            app.listbox_LS.Items = gui_value2list(app, app.listbox_LS_DB.Value, app.listbox_LS.Items, 'add');
+            app.listbox_LS.Items = app.updateSpeciesList(app.listbox_LS_DB.Value, app.listbox_LS.Items, 'add');
         end
 
         % Button pushed function: RemoveButton1
         function RemoveButton1Pushed(app, event)
-            app.listbox_LS.Items = gui_value2list(app, app.listbox_LS.Value, app.listbox_LS.Items, 'remove');
+            app.listbox_LS.Items = app.updateSpeciesList(app.listbox_LS.Value, app.listbox_LS.Items, 'remove');
         end
 
         % Value changed function: listbox_LS, listbox_LS_DB
@@ -481,13 +481,13 @@ classdef uielements < matlab.apps.AppBase
                         % Update main GUI
                         for i = 1:length(app.listbox_LS.Items)
                             temp.Value = app.listbox_LS.Items{i};
-                            public_ReactantsValueChanged(app.callerApp, temp)
+                            app.callerApp.appController.onReactantsChanged(temp);
                         end
                         
                     case 'P'
                         % Update main GUI
-                        app.callerApp.listbox_Products.Items = unique([app.callerApp.listbox_Products.Items, app.listbox_LS.Items], 'stable');
-                        public_ProductsValueChanged(app.callerApp)
+                        species = app.updateSpeciesList(app.listbox_LS.Items, app.callerApp.listbox_Products.Items, 'add');
+                        app.callerApp.appController.onCustomProductSpeciesChanged(species);
                     otherwise
                         CopyButtonPushed(app, event);
                 end
@@ -548,7 +548,7 @@ classdef uielements < matlab.apps.AppBase
 
         % Value changing function: edit_seeker
         function edit_seekerValueChanging(app, event)
-            seek_value = gui_seeker_value(app, event, app.chemicalSystem.database.listSpecies);
+            seek_value = app.seekerValue(event, app.chemicalSystem.database.listSpecies);
             % Update Listbox (inputs)
             if ~isempty(seek_value)
                 app.listbox_LS_DB.Items = seek_value;
@@ -601,7 +601,61 @@ classdef uielements < matlab.apps.AppBase
 
         % Menu selected function: SnapshotMenu
         function SnapshotMenuSelected(app, event)
-            gui_SnapshotMenuSelected(app.UIElements)
+            app.exportSnapshot(app.UIElements);
+        end
+
+        function listSpecies = updateSpeciesList(app, value, listSpecies, action) %#ok<INUSL>
+            % Add or remove selected species
+            if isempty(value)
+                return
+            end
+
+            if ischar(value)
+                value = {value};
+            elseif isstring(value)
+                value = cellstr(value(:))';
+            end
+
+            if ischar(listSpecies)
+                listSpecies = {listSpecies};
+            elseif isstring(listSpecies)
+                listSpecies = cellstr(listSpecies(:))';
+            end
+
+            switch lower(action)
+                case 'add'
+                    listSpecies = unique([listSpecies, value], 'stable');
+                case 'remove'
+                    listSpecies(ismember(listSpecies, value)) = [];
+            end
+        end
+
+        function value = seekerValue(app, event, listValues) %#ok<INUSL>
+            % Return entries that start with the typed value
+            seekValue = event.Value;
+
+            if isempty(seekValue)
+                value = [];
+                return
+            end
+
+            index = startsWith(listValues, seekValue, 'IgnoreCase', false);
+
+            if any(index)
+                value = listValues(index);
+            else
+                value = {};
+            end
+        end
+
+        function exportSnapshot(app, figureHandle) %#ok<INUSL>
+            % Export a figure snapshot
+            filter = {'*.pdf'; '*.jpg'; '*.png'; '*.tif'};
+            [filename, filepath] = uiputfile(filter);
+
+            if ischar(filename)
+                exportapp(figureHandle, [filepath filename]);
+            end
         end
     end
 

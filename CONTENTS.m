@@ -62,6 +62,6 @@ help CONTENTS.m
 % Set path
 INSTALL();
 % Display splash
-gui_display_splash('pause', 2);
+combustiontoolbox.utils.display.showSplashScreen('pause', 2);
 % Check for updates
 combustiontoolbox.utils.checkUpdate();

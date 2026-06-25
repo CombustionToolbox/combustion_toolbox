@@ -45,6 +45,16 @@ classdef uivalidations < matlab.apps.AppBase
             diary(app.filename);
             diary on
         end
+
+        function addValidationNodes(app, codeValidationName)
+            % Add validation routines to the selected tree node
+            rootPath = fileparts(fileparts(fileparts(mfilename('fullpath'))));
+            filenames = dir(fullfile(rootPath, 'validations', codeValidationName, '*.m'));
+
+            for i = 1:numel(filenames)
+                uitreenode(app.(codeValidationName), 'Text', filenames(i).name);
+            end
+        end
     end
     
 
@@ -62,10 +72,10 @@ classdef uivalidations < matlab.apps.AppBase
             app.memory.Value = app.system.TotalMemory * 9.313225746154785e-10; % [GB]
             app.cores.Value = app.system.TotalCores;
             % Include validations in the UITree object
-            gui_add_nodes_validations(app, 'CEA');
-            gui_add_nodes_validations(app, 'SDToolbox');
-            gui_add_nodes_validations(app, 'CANTERA');
-            gui_add_nodes_validations(app, 'TEA');
+            app.addValidationNodes('CEA');
+            app.addValidationNodes('SDToolbox');
+            app.addValidationNodes('CANTERA');
+            app.addValidationNodes('TEA');
         end
 
         % Button pushed function: RunButton

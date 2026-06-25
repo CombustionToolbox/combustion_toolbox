@@ -292,6 +292,8 @@ function installPackage(action, type, packageDst)
             genpath_subfolders = genpath(dir_subfolders);
             f_path(genpath_subfolders);
         end
+
+        removeObsoletePaths();
         
         % Save the path permanently
         if strcmpi(action, 'install')
@@ -302,6 +304,17 @@ function installPackage(action, type, packageDst)
         end
 
         fprintf('OK!\n')
+    end
+
+    function removeObsoletePaths()
+        % Remove paths from previous GUI implementations
+        obsoletePaths = {fullfile(dir_code, 'gui', 'utils')};
+
+        for j = 1:numel(obsoletePaths)
+            if contains(path, obsoletePaths{j})
+                rmpath(obsoletePaths{j});
+            end
+        end
     end
 
     function actionApp(f_app, message)

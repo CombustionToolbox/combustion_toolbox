@@ -1,5 +1,5 @@
 classdef AppResultsPanel < handle
-    % Projects solved results onto GUI trees, fields, tables, plots, and exports.
+    % Projects solved results onto GUI trees, fields, tables, plots, and exports
     %
     % Attributes:
     %     app (combustion_toolbox): Main App Designer object
@@ -10,6 +10,7 @@ classdef AppResultsPanel < handle
 
     properties (Access = private)
         app
+        currentResults = struct([])
     end
 
     methods
@@ -36,10 +37,18 @@ classdef AppResultsPanel < handle
             end
 
             results = solution.results;
-            obj.app.currentResults = results;
+            obj.currentResults = results;
             obj.addResultNodes(results);
             obj.updateResult(results(1), false);
             obj.updateCustomFigures(results);
+        end
+
+        function results = currentResultsData(obj)
+            % Return current GUI result data
+            %
+            % Returns:
+            %     results (struct): Current GUI result data
+            results = obj.currentResults;
         end
 
         function onTreeSelectionChanged(obj)
@@ -69,7 +78,7 @@ classdef AppResultsPanel < handle
             import combustiontoolbox.utils.display.*
             import combustiontoolbox.utils.extensions.brewermap
 
-            if isempty(obj.app) || ~isprop(obj.app, 'currentResults') || isempty(obj.app.currentResults)
+            if isempty(obj.app) || isempty(obj.currentResults)
                 return
             end
 
@@ -97,7 +106,7 @@ classdef AppResultsPanel < handle
 
             legendNames = cell(1, numel(mixtureFields) * numel(yFields));
             legendIndex = numel(legendNames);
-            results = obj.app.currentResults;
+            results = obj.currentResults;
 
             for i = numel(mixtureFields):-1:1
                 mixtures = obj.mixtureSeries(results, mixtureFields{i});
@@ -135,11 +144,11 @@ classdef AppResultsPanel < handle
 
         function exportResults(obj, format)
             % Export current mixture output states
-            if isempty(obj.app) || ~isprop(obj.app, 'currentResults') || isempty(obj.app.currentResults)
+            if isempty(obj.app) || isempty(obj.currentResults)
                 return
             end
 
-            mixArrays = obj.mixtureOutputArrays(obj.app.currentResults);
+            mixArrays = obj.mixtureOutputArrays(obj.currentResults);
 
             if isempty(mixArrays) || ~isprop(obj.app, 'export') || isempty(obj.app.export)
                 return
@@ -190,9 +199,7 @@ classdef AppResultsPanel < handle
 
     methods (Access = private)
         function clearCurrentResults(obj)
-            if isprop(obj.app, 'currentResults')
-                obj.app.currentResults = [];
-            end
+            obj.currentResults = struct([]);
         end
 
         function clearAxes(obj)

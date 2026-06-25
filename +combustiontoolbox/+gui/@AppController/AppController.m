@@ -1,5 +1,5 @@
 classdef AppController < handle
-    % Coordinates GUI callbacks, state, panels, solving, and results.
+    % Coordinates GUI callbacks, state, panels, solving, and results
     %
     % Attributes:
     %     app (combustion_toolbox): Main App Designer object
@@ -13,6 +13,7 @@ classdef AppController < handle
     %     problemInputsPanel (AppProblemInputsPanel): Coupled input updater
     %     speciesPanel (AppSpeciesPanel): Reactants/products UI updater
     %     resultsPanel (AppResultsPanel): Results tree, tables, and status updater
+    %     settingsPanel (AppSettingsPanel): Quick settings updater
     %     statusPanel (AppStatusPanel): Status indicator updater
     %     consolePanel (AppConsolePanel): Command-window updater
     %     currentSolution (struct): Last successful solver solution
@@ -34,9 +35,11 @@ classdef AppController < handle
         problemInputsPanel
         speciesPanel
         resultsPanel
+        settingsPanel
         statusPanel
         consolePanel
         currentSolution = []
+        maxRelativeError = 2e-2
     end
 
     methods
@@ -72,9 +75,10 @@ classdef AppController < handle
             obj.results = combustiontoolbox.gui.AppResults();
             obj.problemCatalog = combustiontoolbox.gui.AppProblemCatalog();
             obj.problemInputsPanel = combustiontoolbox.gui.AppProblemInputsPanel(app);
-            obj.problemPanel = combustiontoolbox.gui.AppProblemPanel(app, obj.problemCatalog, obj.problemInputsPanel);
-            obj.speciesPanel = combustiontoolbox.gui.AppSpeciesPanel(app);
+            obj.problemPanel = combustiontoolbox.gui.AppProblemPanel(app, obj.problemCatalog, obj.problemInputsPanel, obj.session);
+            obj.speciesPanel = combustiontoolbox.gui.AppSpeciesPanel(app, obj.session);
             obj.resultsPanel = combustiontoolbox.gui.AppResultsPanel(app);
+            obj.settingsPanel = combustiontoolbox.gui.AppSettingsPanel(app, obj.session);
 
             if ~isempty(app)
                 obj.statusPanel = app.statusPanel;
@@ -154,6 +158,37 @@ classdef AppController < handle
 
             if ischar(filename)
                 exportapp(obj.app.UIFigure, [filepath filename]);
+            end
+        end
+
+        function onPreferencesSelected(obj)
+            % Open GUI preferences
+            uipreferences(obj.app);
+        end
+
+        function onPreferenceChanged(obj, tag, value) %#ok<INUSD>
+            % Refresh main app controls after a preference changes
+            obj.syncSessionFromApp();
+
+            if ~isempty(obj.settingsPanel)
+                obj.settingsPanel.refreshFromPreference(tag);
+            end
+
+            if ~isempty(obj.app)
+                obj.readInput();
+            end
+        end
+
+        function onPreferencesReset(obj)
+            % Refresh main app services and controls after preferences reset
+            obj.syncSessionFromApp();
+
+            if ~isempty(obj.settingsPanel)
+                obj.settingsPanel.refreshAllFromSession();
+            end
+
+            if ~isempty(obj.app)
+                obj.readInput();
             end
         end
 
@@ -279,6 +314,18 @@ classdef AppController < handle
             solution = obj.currentSolution;
         end
 
+        function results = currentResultsData(obj)
+            % Return the current GUI result data
+            %
+            % Returns:
+            %     results (struct): Current GUI result data
+            results = struct([]);
+
+            if ~isempty(obj.resultsPanel)
+                results = obj.resultsPanel.currentResultsData();
+            end
+        end
+
         function loadSolution(obj, solution)
             % Load a solver solution into controller state
             %
@@ -293,12 +340,16 @@ classdef AppController < handle
                 return
             end
 
-            if isprop(obj.app, 'chemicalSystem')
-                obj.session.chemicalSystem = obj.app.chemicalSystem;
-            end
+            propertyNames = {'constants', 'database', 'chemicalSystem', 'mixture', ...
+                'equilibriumSolver', 'shockSolver', 'detonationSolver', ...
+                'rocketSolver', 'shockTurbulenceSolver', 'plotConfig', 'export'};
 
-            if isprop(obj.app, 'mixture')
-                obj.session.mixture = obj.app.mixture;
+            for i = 1:numel(propertyNames)
+                name = propertyNames{i};
+
+                if isprop(obj.app, name) && isprop(obj.session, name)
+                    obj.session.(name) = obj.app.(name);
+                end
             end
         end
 
@@ -520,6 +571,51 @@ classdef AppController < handle
             obj.problemInputsPanel.onShockProductAngleChanging();
         end
 
+        function onTraceToleranceChanged(obj)
+            % Apply equilibrium trace tolerance setting
+            obj.settingsPanel.applyTraceTolerance();
+        end
+
+        function onRootFindingToleranceChanged(obj)
+            % Apply equilibrium root-finding tolerance setting
+            obj.settingsPanel.applyRootFindingTolerance();
+        end
+
+        function onShockDetonationToleranceChanged(obj)
+            % Apply shock and detonation tolerance setting
+            obj.settingsPanel.applyShockDetonationTolerance();
+        end
+
+        function onDisplaySpeciesToleranceChanged(obj)
+            % Apply displayed species tolerance setting
+            obj.settingsPanel.applyDisplaySpeciesTolerance();
+        end
+
+        function onEquilibriumMaxIterationsChanged(obj)
+            % Apply equilibrium maximum iterations setting
+            obj.settingsPanel.applyEquilibriumMaxIterations();
+        end
+
+        function onShockDetonationMaxIterationsChanged(obj)
+            % Apply shock and detonation maximum iterations setting
+            obj.settingsPanel.applyShockDetonationMaxIterations();
+        end
+
+        function onRootTemperatureLeftChanged(obj)
+            % Apply left root temperature bound setting
+            obj.settingsPanel.applyRootTemperatureLeft();
+        end
+
+        function onRootTemperatureRightChanged(obj)
+            % Apply right root temperature bound setting
+            obj.settingsPanel.applyRootTemperatureRight();
+        end
+
+        function onRootTemperatureInitialChanged(obj)
+            % Apply initial root temperature setting
+            obj.settingsPanel.applyRootTemperatureInitial();
+        end
+
     end
 
     methods (Access = private)
@@ -617,7 +713,7 @@ classdef AppController < handle
                     obj.onExportProblemScriptSelected();
                     output = 'Exporting problem script...';
                 case {'settings', 'configuration', 'uipreferences'}
-                    uipreferences(obj.app);
+                    obj.onPreferencesSelected();
                     output = 'Opening uipreferences...';
                 case {'web', 'website', 'webpage'}
                     combustiontoolbox.utils.SystemUtils.websiteCT;
@@ -766,7 +862,7 @@ classdef AppController < handle
 
             problemError = obj.problemErrorValue();
 
-            if problemError > obj.app.maxRelativeError
+            if problemError > obj.maxRelativeError
                 obj.setStatus('error');
                 obj.setProblemErrorStatus();
                 obj.consolePanel.setOutput(sprintf( ...

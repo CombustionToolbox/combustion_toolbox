@@ -1,5 +1,5 @@
 classdef AppProblemPanel < handle
-    % Applies selected-problem metadata to GUI controls and feature panels.
+    % Applies selected-problem metadata to GUI controls and feature panels
     %
     % Attributes:
     %     app (combustion_toolbox): Main App Designer object
@@ -14,16 +14,18 @@ classdef AppProblemPanel < handle
         app
         catalog
         inputsPanel
+        session
     end
 
     methods
-        function obj = AppProblemPanel(app, catalog, inputsPanel)
+        function obj = AppProblemPanel(app, catalog, inputsPanel, session)
             % AppProblemPanel constructor
             %
             % Args:
             %     app (combustion_toolbox): Main App Designer object
             %     catalog (AppProblemCatalog): Problem definitions and metadata
             %     inputsPanel (AppProblemInputsPanel): Coupled input updater
+            %     session (AppSession): Long-lived GUI services
             %
             % Returns:
             %     obj (AppProblemPanel): Initialized problem panel object
@@ -39,9 +41,14 @@ classdef AppProblemPanel < handle
                 inputsPanel = combustiontoolbox.gui.AppProblemInputsPanel(app);
             end
 
+            if nargin < 4
+                session = [];
+            end
+
             obj.app = app;
             obj.catalog = catalog;
             obj.inputsPanel = inputsPanel;
+            obj.session = session;
         end
 
         function definition = applySelectedProblem(obj)
@@ -380,11 +387,11 @@ classdef AppProblemPanel < handle
         end
 
         function setShockTurbulenceModel(obj, varargin)
-            if isempty(varargin) || ~obj.hasComponent('shockTurbulenceSolver')
+            if isempty(varargin) || ~obj.hasShockTurbulenceSolver()
                 return
             end
 
-            obj.app.shockTurbulenceSolver.setShockTurbulenceModel(varargin{1});
+            obj.session.shockTurbulenceSolver.setShockTurbulenceModel(varargin{1});
         end
 
         function showTurbulenceStatisticsTab(obj)
@@ -488,6 +495,11 @@ classdef AppProblemPanel < handle
 
         function value = hasComponent(obj, componentName)
             value = isobject(obj.app) && isprop(obj.app, componentName) && ~isempty(obj.app.(componentName));
+        end
+
+        function value = hasShockTurbulenceSolver(obj)
+            value = ~isempty(obj.session) && isprop(obj.session, 'shockTurbulenceSolver') ...
+                && ~isempty(obj.session.shockTurbulenceSolver);
         end
 
         function value = visibleState(obj, flag) %#ok<INUSD>

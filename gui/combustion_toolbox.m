@@ -332,8 +332,6 @@ classdef combustion_toolbox < matlab.apps.AppBase
         consolePanel             % AppConsolePanel object
         displaySpecies           % Chemical species to be shown in plotComposition
         defaultLayout            % Default GUI component layout and data
-        currentResults           % Last solved GUI result set
-        maxRelativeError = 2e-2; % Relative error threshold to change color (2 %)
     end
 
     properties (Access = private)
@@ -354,50 +352,6 @@ classdef combustion_toolbox < matlab.apps.AppBase
     end
 
     methods (Access = public)
-        % Value changed function: Reactants
-        function public_ReactantsValueChanged(app, event)
-            app.appController.onReactantsChanged(event);
-        end
-
-        % Value changed function: Products
-        function public_ProductsValueChanged(app)
-            % Update Listbox (extended settings)
-            app.listbox_LS.Items = app.listbox_Products.Items;
-            % * Update Title with the number of items contained in the box
-            app.ListofSpeciesPanel.Title = sprintf('List of Species - %d', app.NS_products);
-            % Update Display species (extended settings)
-            app.listbox_LS_2.Items = app.listbox_LS.Items;
-            % Set Display species to all (extended settings)
-            app.listbox_LS_display.Items = app.listbox_LS_2.Items;
-            app.displaySpecies = app.listbox_LS_display.Items;
-            % Update Text with the number of items contained in the box
-            app.text_LS.Text = sprintf('List of Species - %d', app.NS_products);
-            % Update Text with the number of items contained in the box
-            app.text_LS_2.Text = sprintf('List of Species - %d', app.NS_products);
-            % Update Text with the number of items contained in the box
-            app.text_LS_display.Text = sprintf('Display Species - %d', app.NS_display);
-        end
-
-        function public_FLAG_IACValueChanged(app)
-            app.appController.onRocketModelChanged();
-        end
-
-        function public_ClearButtonPushed(app, event)
-            ClearButtonPushed(app, event)
-        end
-        
-        function public_xlsMenuSelected(app, event)
-            xlsMenuSelected(app, event);
-        end
-
-        function public_matMenuSelected(app, event)
-            matMenuSelected(app, event);
-        end
-
-        function public_scriptMenuSelected(app, event)
-            scriptMenuSelected(app, event);
-        end
-
         function hideTab(app, tabObj)
             % Hide a tab by removing it from its parent TabGroup
             if isempty(tabObj) || ~isvalid(tabObj)
@@ -535,8 +489,19 @@ classdef combustion_toolbox < matlab.apps.AppBase
             if ~isdeployed
                 % Get dir app
                 app_info = matlab.apputil.getInstalledAppInfo;
-                FLAG_ID = contains(struct2table(app_info).id, 'combustion_toolbox_app');
-                dir_app =  app_info(FLAG_ID).location;
+                app_info = app_info(:);
+
+                if isempty(app_info) || ~isfield(app_info, 'id') || ~isfield(app_info, 'location')
+                    return
+                end
+
+                FLAG_ID = contains({app_info.id}, 'combustion_toolbox_app');
+
+                if ~any(FLAG_ID)
+                    return
+                end
+
+                dir_app = app_info(find(FLAG_ID, 1)).location;
                 dir_database_app = fullfile(dir_app, 'databases');
         
                 % Generate database
@@ -721,8 +686,8 @@ classdef combustion_toolbox < matlab.apps.AppBase
             if app.runtimeOptions.showSplash
                 try
                     app.splashScreen = combustiontoolbox.utils.display.showSplashScreen('color', app.splashColor);
-                catch
-                    % Continue startup when the splash screen cannot be created
+                catch exception
+                    warning('combustion_toolbox:SplashScreenFailed', '%s', exception.message);
                     closeSplash(app);
                 end
             end
@@ -1012,7 +977,7 @@ classdef combustion_toolbox < matlab.apps.AppBase
 
         % Value changed function: Reactants
         function ReactantsValueChanged(app, event)
-            public_ReactantsValueChanged(app, event);
+            app.appController.onReactantsChanged(event);
         end
 
         % Value changed function: Products
@@ -1058,7 +1023,7 @@ classdef combustion_toolbox < matlab.apps.AppBase
 
         % Value changed function: FLAG_IAC
         function FLAG_IACValueChanged(app, event)
-            public_FLAG_IACValueChanged(app);            
+            app.appController.onRocketModelChanged();
         end
 
         % Value changing function: PR3
@@ -1078,54 +1043,52 @@ classdef combustion_toolbox < matlab.apps.AppBase
 
         % Menu selected function: PreferencesMenu
         function PreferencesMenuSelected(app, event)
-            uipreferences(app);
+            app.appController.onPreferencesSelected();
         end
 
         % Value changed function: TraceoptionEditField
         function TraceoptionEditFieldValueChanged(app, event)
-            app.equilibriumSolver.tolGibbs = app.TraceoptionEditField.Value;
+            app.appController.onTraceToleranceChanged();
         end
 
         % Value changed function: RootFindingMethodEditField
         function RootFindingMethodEditFieldValueChanged(app, event)
-            app.equilibriumSolver.tol0 = app.RootFindingMethodEditField.Value;
+            app.appController.onRootFindingToleranceChanged();
         end
 
         % Value changed function: ShocksandDetonationsEditField
         function ShocksandDetonationsEditFieldValueChanged(app, event)
-            app.shockSolver.tol0 = app.ShocksandDetonationsEditField.Value;
-            app.detonationSolver.tol0 = app.ShocksandDetonationsEditField.Value;
+            app.appController.onShockDetonationToleranceChanged();
         end
 
         % Value changed function: DisplaySpeciesEditField
         function DisplaySpeciesEditFieldValueChanged(app, event)
-            app.plotConfig.mintolDisplay = app.DisplaySpeciesEditField.Value;
+            app.appController.onDisplaySpeciesToleranceChanged();
         end
 
         % Value changed function: MaxiterationsRFMEditField
         function MaxiterationsRFMEditFieldValueChanged(app, event)
-            app.equilibriumSolver.itMax = app.MaxiterationsRFMEditField.Value;
+            app.appController.onEquilibriumMaxIterationsChanged();
         end
 
         % Value changed function: MaxiterationsSDEditField
         function MaxiterationsSDEditFieldValueChanged(app, event)
-            app.shockSolver.itMax = app.MaxiterationsSDEditField.Value;
-            app.detonationSolver.itMax = app.MaxiterationsSDEditField.Value;
+            app.appController.onShockDetonationMaxIterationsChanged();
         end
 
         % Value changed function: RFMT0_LEditField
         function RFMT0_LEditFieldValueChanged(app, event)
-            app.equilibriumSolver.root_T0_l = app.RFMT0_LEditField.Value;
+            app.appController.onRootTemperatureLeftChanged();
         end
 
         % Value changed function: RFMT0_REditField
         function RFMT0_REditFieldValueChanged(app, event)
-            app.equilibriumSolver.root_T0_r = app.RFMT0_REditField.Value;
+            app.appController.onRootTemperatureRightChanged();
         end
 
         % Value changed function: RFMT0EditField
         function RFMT0EditFieldValueChanged(app, event)
-            app.equilibriumSolver.root_T0 = app.RFMT0EditField.Value;
+            app.appController.onRootTemperatureInitialChanged();
         end
 
         % Key press function: UIFigure

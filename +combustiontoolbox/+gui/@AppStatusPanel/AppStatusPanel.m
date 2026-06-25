@@ -1,5 +1,5 @@
 classdef AppStatusPanel < handle
-    % Applies GUI status colors and problem-error highlighting.
+    % Applies GUI status colors and problem-error highlighting
     %
     % Attributes:
     %     app (combustion_toolbox): Main App Designer object

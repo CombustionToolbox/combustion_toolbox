@@ -1,5 +1,5 @@
 classdef AppConsolePanel < handle
-    % Manages GUI console input, output, history, and layout.
+    % Manages GUI console input, output, history, and layout
     %
     % Attributes:
     %     app (combustion_toolbox): Main App Designer object

@@ -1,5 +1,5 @@
 classdef AppSpeciesPanel < handle
-    % Manages GUI species setup, mixture composition, products, and equivalence ratio.
+    % Manages GUI species setup, mixture composition, products, and equivalence ratio
     %
     % Attributes:
     %     app (combustion_toolbox): Main App Designer object
@@ -10,14 +10,16 @@ classdef AppSpeciesPanel < handle
 
     properties (Access = private)
         app
+        session
     end
 
     methods
-        function obj = AppSpeciesPanel(app)
+        function obj = AppSpeciesPanel(app, session)
             % AppSpeciesPanel constructor
             %
             % Args:
             %     app (combustion_toolbox): Main App Designer object
+            %     session (AppSession): Long-lived GUI services
             %
             % Returns:
             %     obj (AppSpeciesPanel): Initialized species panel object
@@ -25,7 +27,12 @@ classdef AppSpeciesPanel < handle
                 app = [];
             end
 
+            if nargin < 2
+                session = [];
+            end
+
             obj.app = app;
+            obj.session = session;
         end
 
         function onReactantsChanged(obj, event)
@@ -139,12 +146,14 @@ classdef AppSpeciesPanel < handle
 
         function onFrozenChemistryChanged(obj)
             % Update frozen chemistry model and product list
-            if obj.componentValue('FrozenchemistryCheckBox', false)
-                obj.app.equilibriumSolver.caloricGasModel = ...
-                    obj.app.equilibriumSolver.caloricGasModel.setThermallyPerfect();
-            else
-                obj.app.equilibriumSolver.caloricGasModel = ...
-                    obj.app.equilibriumSolver.caloricGasModel.setImperfect();
+            if obj.hasEquilibriumSolver()
+                if obj.componentValue('FrozenchemistryCheckBox', false)
+                    obj.session.equilibriumSolver.caloricGasModel = ...
+                        obj.session.equilibriumSolver.caloricGasModel.setThermallyPerfect();
+                else
+                    obj.session.equilibriumSolver.caloricGasModel = ...
+                        obj.session.equilibriumSolver.caloricGasModel.setImperfect();
+                end
             end
 
             obj.updateFrozenProducts();
@@ -797,6 +806,11 @@ classdef AppSpeciesPanel < handle
 
         function value = hasComponent(obj, componentName)
             value = isobject(obj.app) && isprop(obj.app, componentName) && ~isempty(obj.app.(componentName));
+        end
+
+        function value = hasEquilibriumSolver(obj)
+            value = ~isempty(obj.session) && isprop(obj.session, 'equilibriumSolver') ...
+                && ~isempty(obj.session.equilibriumSolver);
         end
 
         function value = cellColumnToRowVector(obj, values) %#ok<INUSD>

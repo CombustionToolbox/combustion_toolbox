@@ -619,10 +619,10 @@ classdef combustion_toolbox < matlab.apps.AppBase
                 return
             end
 
-            if numel(varargin) == 1 && (ischar(varargin{1}) || isstring(varargin{1}))
-                optionName = lower(strtrim(char(varargin{1})));
+            if isscalar(varargin) && (ischar(varargin{1}) || isstring(varargin{1}))
+                optionName = strtrim(char(varargin{1}));
 
-                if any(strcmp(optionName, {'debug', 'debugmode', 'test', 'testing', 'testmode'}))
+                if any(strcmpi(optionName, {'debug', 'debugmode', 'test', 'testing', 'testmode'}))
                     options.debugMode = true;
                     options.showSplash = false;
                     options.showFigure = false;
@@ -630,7 +630,7 @@ classdef combustion_toolbox < matlab.apps.AppBase
                 end
             end
 
-            if numel(varargin) == 1 && isstruct(varargin{1})
+            if isscalar(varargin) && isstruct(varargin{1})
                 settings = varargin{1};
                 names = fieldnames(settings);
 

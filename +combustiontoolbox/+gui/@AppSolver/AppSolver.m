@@ -85,7 +85,7 @@ classdef AppSolver < handle
             solverProblemType = obj.solverProblemType(problem.problemType, route);
 
             obj.configureSolver(solver, solverProblemType, setup.options.printResults, definition.plotConfig, route);
-            solverOutputs = obj.solveProblem(solver, route, problem, layout);
+            solverOutputs = obj.solveWithProblemOptions(solver, route, problem, layout);
             reportOutputs = obj.selectReportOutputs(route, solverOutputs);
             obj.configureReport(solver, setup.options);
 
@@ -172,6 +172,52 @@ classdef AppSolver < handle
 
             solver.plotConfig.mintolDisplay = options.displaySpeciesTolerance;
             solver.plotConfig.displaySpecies = options.displaySpecies;
+        end
+
+        function solverOutputs = solveWithProblemOptions(obj, solver, route, problem, layout)
+            previousModels = obj.applyFrozenChemistryModel(solver, problem);
+            cleanup = onCleanup(@() obj.restoreCaloricGasModels(previousModels));
+            solverOutputs = obj.solveProblem(solver, route, problem, layout);
+        end
+
+        function previousModels = applyFrozenChemistryModel(obj, solver, problem)
+            previousModels = struct('solver', {}, 'caloricGasModel', {});
+
+            if ~obj.problemUsesFrozenChemistry(problem)
+                return
+            end
+
+            previousModels = obj.setThermallyPerfectModel(previousModels, solver);
+
+            if isprop(solver, 'equilibriumSolver') && isobject(solver.equilibriumSolver)
+                previousModels = obj.setThermallyPerfectModel(previousModels, solver.equilibriumSolver);
+            end
+        end
+
+        function value = problemUsesFrozenChemistry(~, problem)
+            value = isfield(problem, 'flags') ...
+                && isfield(problem.flags, 'frozenChemistry') ...
+                && problem.flags.frozenChemistry;
+        end
+
+        function previousModels = setThermallyPerfectModel(~, previousModels, solver)
+            if isempty(solver) || ~isprop(solver, 'caloricGasModel')
+                return
+            end
+
+            previousModels(end + 1).solver = solver;
+            previousModels(end).caloricGasModel = solver.caloricGasModel;
+            solver.caloricGasModel = solver.caloricGasModel.setThermallyPerfect();
+        end
+
+        function restoreCaloricGasModels(~, previousModels)
+            for i = numel(previousModels):-1:1
+                solver = previousModels(i).solver;
+
+                if isvalid(solver) && isprop(solver, 'caloricGasModel')
+                    solver.caloricGasModel = previousModels(i).caloricGasModel;
+                end
+            end
         end
 
         function solverOutputs = solveProblem(obj, solver, route, problem, layout)

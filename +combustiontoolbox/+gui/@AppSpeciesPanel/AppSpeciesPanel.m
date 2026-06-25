@@ -603,6 +603,12 @@ classdef AppSpeciesPanel < handle
             end
 
             listSpecies = [obj.app.mixture.listSpeciesFuel, obj.app.mixture.listSpeciesOxidizer];
+
+            if isempty(listSpecies)
+                value = obj.app.mixture.listSpecies;
+                return
+            end
+
             value = findProducts(obj.app.chemicalSystem, listSpecies, ...
                 'flag_ion', obj.componentValue('IonizedspeciesCheckBox', false));
         end
@@ -729,9 +735,11 @@ classdef AppSpeciesPanel < handle
             elseif ischar(values)
                 values = {values};
             elseif isstring(values)
-                values = cellstr(values);
+                values = cellstr(values(:))';
             elseif ~iscell(values)
                 values = {values};
+            else
+                values = values(:)';
             end
         end
 
@@ -788,6 +796,7 @@ classdef AppSpeciesPanel < handle
 
         function setItems(obj, componentName, value)
             if obj.hasComponent(componentName) && isprop(obj.app.(componentName), 'Items')
+                value = obj.asCell(value);
                 obj.app.(componentName).Items = value;
             end
         end

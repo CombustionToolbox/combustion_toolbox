@@ -112,7 +112,7 @@ classdef AppProblemBuilder < handle
                 'type', obj.productSelectionType(input, reactants, productSpecies), ...
                 'species', {productSpecies});
             setup.productSpecies = productSpecies;
-            setup.flags = obj.defaultFlags(input);
+            setup.flags = obj.defaultFlags(input, reactants);
             setup.options = obj.optionsSetup(input);
             setup.additionalInputsReactants = obj.equivalenceRatioInputs(input, setup.reactants);
             setup.additionalInputsProducts = obj.equivalenceRatioInputs(input, setup.reactants);
@@ -208,6 +208,8 @@ classdef AppProblemBuilder < handle
         function value = productSelectionType(obj, input, reactants, productSpecies)
             if strcmpi(input.products, 'complete reaction')
                 value = 'complete';
+            elseif obj.hasOnlyInertReactants(reactants)
+                value = 'frozen';
             elseif isempty(input.products) ...
                     && obj.matchesAutomaticProductSpecies(input, reactants, productSpecies)
                 value = 'auto';
@@ -252,11 +254,19 @@ classdef AppProblemBuilder < handle
             value = reactants.species(index);
         end
 
-        function flags = defaultFlags(obj, input)
+        function value = hasOnlyInertReactants(~, reactants)
+            value = ~isempty(reactants.species) ...
+                && all(strcmpi(reactants.role, 'Inert'));
+        end
+
+        function flags = defaultFlags(obj, input, reactants)
             printResults = obj.inputFlag(input, 'printResults', false);
+            frozenChemistry = obj.inputFlag(input, 'frozenChemistry', false) ...
+                || obj.hasOnlyInertReactants(reactants);
+
             flags = struct( ...
                 'hasEquivalenceRatio', ~isempty(input.equivalenceRatio), ...
-                'frozenChemistry', obj.inputFlag(input, 'frozenChemistry', false), ...
+                'frozenChemistry', frozenChemistry, ...
                 'ionizedSpecies', obj.inputFlag(input, 'ionizedSpecies', false), ...
                 'idealAir', obj.inputFlag(input, 'idealAir', false), ...
                 'infiniteAreaChamber', obj.inputFlag(input, 'infiniteAreaChamber', true), ...

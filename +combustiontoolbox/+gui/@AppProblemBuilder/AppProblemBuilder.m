@@ -934,6 +934,10 @@ classdef AppProblemBuilder < handle
 
             speciesTemperatures = obj.cellColumnToRowVector(data(:, 5));
 
+            if obj.isBulkTemperatureSweep(mixtures) && obj.isUniformValue(speciesTemperatures)
+                return
+            end
+
             for i = 1:numel(mixtures)
                 mixture = mixtures(i);
                 [~, index] = ismember(mixture.listSpecies, data(:, 1));
@@ -951,6 +955,16 @@ classdef AppProblemBuilder < handle
                 setTemperatureSpecies(mixture, temperatures);
                 updateThermodynamics(mixture);
             end
+        end
+
+        function value = isBulkTemperatureSweep(~, mixtures)
+            value = numel(mixtures) > 1 ...
+                && isprop(mixtures(1), 'rangeName') ...
+                && strcmpi(mixtures(1).rangeName, 'T');
+        end
+
+        function value = isUniformValue(~, values)
+            value = isempty(values) || all(abs(values - values(1)) < 1e-12);
         end
 
         function chemicalSystem = buildChemicalSystem(obj, listSpecies)

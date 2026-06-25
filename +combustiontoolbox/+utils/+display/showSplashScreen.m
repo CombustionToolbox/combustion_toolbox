@@ -1,86 +1,59 @@
 function splashScreen = showSplashScreen(varargin)
-    % Show Combustion Toolbox splash screen
+    % Display the Combustion Toolbox splash screen
     %
-    % Optional Name-Value Pairs Args:
-    %     * color (float): Normalized RGB color
-    %     * pause (float): Time before closing the splash screen [s]
+    % Optional Name-Value Args:
+    %     app (object): Combustion Toolbox app object
+    %     color (double): Normalized RGB text color
+    %     pause (double): Time to pause before deleting the splash [s]
     %
     % Returns:
-    %     splashScreen (matlab.ui.Figure): Splash screen figure
+    %     splashScreen (SplashScreen): Startup splash screen object
 
-    % Parse inputs
-    parser = inputParser;
-    parser.addParameter('color', [0.5098, 0.6039, 0.6745], @(value) isnumeric(value) && numel(value) == 3);
-    parser.addParameter('pause', [], @(value) isempty(value) || (isnumeric(value) && isscalar(value) && value >= 0));
-    parser.parse(varargin{:});
+    color = [0.5098, 0.6039, 0.6745];
+    pauseTime = [];
 
-    color = parser.Results.color;
-    timePause = parser.Results.pause;
+    for i = 1:2:nargin
+        name = lower(char(varargin{i}));
+        value = varargin{i + 1};
 
-    % Get Combustion Toolbox version and published date
-    release = combustiontoolbox.common.Constants.release;
-    date = combustiontoolbox.common.Constants.date;
-
-    % Get splash path
-    splashPath = getSplashPath();
-
-    % Show splash screen
-    [width, height] = getSplashSize(splashPath);
-    position = getSplashPosition(width, height);
-    splashScreen = uifigure(...
-        'Visible', 'off', ...
-        'Name', 'Combustion Toolbox', ...
-        'Resize', 'off', ...
-        'Color', [1, 1, 1], ...
-        'Position', position);
-    uiimage(splashScreen, 'ImageSource', splashPath, 'Position', [1, 1, width, height]);
-    uilabel(splashScreen, ...
-        'Text', [release, ' (', date, ')'], ...
-        'FontName', 'Arial', ...
-        'FontSize', 18, ...
-        'FontColor', color, ...
-        'Position', [110, height - 115, 260, 30]);
-    splashScreen.Visible = 'on';
-    drawnow;
-    figure(splashScreen);
-    drawnow;
-
-    % Close splash after an optional delay
-    if ~isempty(timePause)
-        pause(timePause);
-
-        if isvalid(splashScreen)
-            delete(splashScreen);
+        switch name
+            case 'app'
+                color = appSplashColor(value, color);
+            case 'color'
+                color = value;
+            case 'pause'
+                pauseTime = value;
         end
+    end
 
+    constants = combustiontoolbox.common.Constants;
+    imagePath = splashImagePath();
+    splashScreen = combustiontoolbox.utils.extensions.SplashScreen( ...
+        'Combustion Toolbox', imagePath);
+    splashScreen.addText(110, 100, [constants.release, ' (', constants.date, ')'], ...
+        'FontSize', 18, 'Color', color, 'FontName', 'Arial', 'Shadow', 'off');
+
+    if ~isempty(pauseTime)
+        pause(pauseTime);
+        delete(splashScreen);
         splashScreen = [];
     end
-
 end
 
-function position = getSplashPosition(width, height)
-    % Get centered splash figure position
-    monitorPosition = combustiontoolbox.utils.display.getMonitorPositionsMATLAB();
-    x0 = monitorPosition(1) + (monitorPosition(3) - width) / 2;
-    y0 = monitorPosition(2) + (monitorPosition(4) - height) / 2;
-    position = round([x0, y0, width, height]);
-end
+function color = appSplashColor(app, defaultColor)
+    % Return splash color from the app when available
+    color = defaultColor;
 
-function splashPath = getSplashPath()
-    % Get splash image path
-    toolboxRoot = fileparts(fileparts(fileparts(fileparts(mfilename('fullpath')))));
-    splashPath = fullfile(toolboxRoot, 'gui', 'assets', 'splash', 'splash.png');
-
-    if exist(splashPath, 'file') == 2
-        return
+    if isobject(app) && isprop(app, 'splashColor') && ~isempty(app.splashColor)
+        color = app.splashColor;
     end
-
-    splashPath = fullfile('gui', 'assets', 'splash', 'splash.png');
 end
 
-function [width, height] = getSplashSize(splashPath)
-    % Get splash image size
-    imageInfo = imfinfo(splashPath);
-    width = imageInfo.Width;
-    height = imageInfo.Height;
+function path = splashImagePath()
+    % Return absolute path to the splash image
+    displayFolder = fileparts(mfilename('fullpath'));
+    utilitiesFolder = fileparts(displayFolder);
+    packageFolder = fileparts(utilitiesFolder);
+    repositoryRoot = fileparts(packageFolder);
+    path = fullfile(repositoryRoot, 'gui', 'assets', 'splash', 'splash.png');
 end

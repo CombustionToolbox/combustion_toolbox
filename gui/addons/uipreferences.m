@@ -209,15 +209,16 @@ classdef uipreferences < matlab.apps.AppBase
         end
         
         % Save changes and close app
-        function ok_button_pushed(app, event)
+        function ok_button_pushed(app, ~)
             % Delete app
             delete(app)
         end
     
         % Set parameters to default
-        function cancel_button_pushed(app, event)
+        function cancel_button_pushed(app, ~)
             % Assign default values
             init(app);
+            notifyCallerAppReset(app);
 
             % Delete app
             delete(app)
@@ -227,23 +228,52 @@ classdef uipreferences < matlab.apps.AppBase
         function set_value(app, event, varargin)
             Tag = get_tag(app, event);
             app.caller_app.(Tag{1}).(Tag{2}) = event.Value;
+            notifyCallerApp(app, Tag, event.Value);
         end
 
         % Set value in caller_app
         function set_value_inner(app, event, varargin)
             Tag = get_tag(app, event);
             app.caller_app.(Tag{1}).(Tag{2}).(Tag{3}) = event.Value;
+            notifyCallerApp(app, Tag, event.Value);
         end
 
         % Set value in caller_app
         function set_value_function(app, event, varargin)
             Tag = get_tag(app, event);
             app.caller_app.(Tag{1}).(Tag{2}) = str2func(event.Value);
+            notifyCallerApp(app, Tag, event.Value);
         end
 
         % Get value from caller_app
-        function value = get_tag(app, event)
+        function value = get_tag(~, event)
             value = split(event.Source.Tag, filesep);
+        end
+
+        function notifyCallerApp(app, tag, value)
+            % Notify the caller app after a preference changes
+            if isempty(app.caller_app) || ~isobject(app.caller_app) ...
+                    || ~isprop(app.caller_app, 'appController') ...
+                    || isempty(app.caller_app.appController)
+                return
+            end
+
+            if ismethod(app.caller_app.appController, 'onPreferenceChanged')
+                app.caller_app.appController.onPreferenceChanged(tag, value);
+            end
+        end
+
+        function notifyCallerAppReset(app)
+            % Notify the caller app after preferences are reset
+            if isempty(app.caller_app) || ~isobject(app.caller_app) ...
+                    || ~isprop(app.caller_app, 'appController') ...
+                    || isempty(app.caller_app.appController)
+                return
+            end
+
+            if ismethod(app.caller_app.appController, 'onPreferencesReset')
+                app.caller_app.appController.onPreferencesReset();
+            end
         end
         
         % Delete all objects from object
@@ -490,11 +520,21 @@ classdef uipreferences < matlab.apps.AppBase
         end
 
         function ContextMenuOpening(app, event)
-            gui_SnapshotMenuSelected(app.preferences_UIFigure);
+            app.exportSnapshot(app.preferences_UIFigure);
         end
 
         function SnapshotMenuSelected(app, event)
-            gui_SnapshotMenuSelected(app.preferences_UIFigure);
+            app.exportSnapshot(app.preferences_UIFigure);
+        end
+
+        function exportSnapshot(app, figureHandle) %#ok<INUSL>
+            % Export a figure snapshot
+            filter = {'*.pdf'; '*.jpg'; '*.png'; '*.tif'};
+            [filename, filepath] = uiputfile(filter);
+
+            if ischar(filename)
+                exportapp(figureHandle, [filepath filename]);
+            end
         end
 
     end

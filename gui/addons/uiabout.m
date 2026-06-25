@@ -94,7 +94,6 @@ classdef uiabout < matlab.apps.AppBase
 
         % Code that executes after component creation
         function startupFcn(app)
-%             gui_SnapshotMenuSelected(app.UIAbout);
         end
 
         % Image clicked function: Image_bar_1, Image_bar_2, Image_bar_3, 

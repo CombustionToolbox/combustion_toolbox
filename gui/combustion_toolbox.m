@@ -9,6 +9,7 @@ classdef combustion_toolbox < matlab.apps.AppBase
         SaveasMenu                      matlab.ui.container.Menu
         xlsMenu                         matlab.ui.container.Menu
         matMenu                         matlab.ui.container.Menu
+        scriptMenu                      matlab.ui.container.Menu
         SnapshotMenu                    matlab.ui.container.Menu
         PreferencesMenu                 matlab.ui.container.Menu
         HelpMenu                        matlab.ui.container.Menu
@@ -315,139 +316,42 @@ classdef combustion_toolbox < matlab.apps.AppBase
     end
 
     properties (Access = public)
-        constants         % Constants object
-        database          % Class inhereted from Database superclass
-        chemicalSystem    % Chemical system object
-        mixture           % Mixture object
-        equilibriumSolver % EquilibriumSolver object
-        shockSolver       % ShockSolver object
-        detonationSolver  % DetonationSolver object
-        rocketSolver      % RocketSolver object
-        shockTurbulenceSolver % ShockTurbulenceSolver
-        plotConfig        % PlotConfig object
-        export            % Export object
-        displaySpecies    % Chemical species to be shown in plotComposition
-        fig               % Auxiliary figure
-        default           % Struct with default values of some components in the GUI
-        N_flags           % Number of flags active
-        PR1_vector        % Condition Reactants 1
-        PR2_vector        % Condition Reactants 2
-        PR3_vector        % Condition Reactants 3
-        PP1_vector        % Condition Products 1
-        PP2_vector        % Condition Products 2
-        PR1_var_name      % Variable name for PR1
-        PR2_var_name      % Variable name for PR2
-        PR3_var_name      % Variable name for PR3
-        PP1_var_name      % Variable name for PP1
-        PP2_var_name      % Variable name for PP2
-        flag_PR1          % FLAG for PR1: true-> vector
-        flag_PR2          % FLAG for PR2: true-> vector
-        flag_PR3          % FLAG for PR3: true-> vector
-        flag_PP1          % FLAG for PP1: true-> vector
-        flag_PP2          % FLAG for PP2: true-> vector
-        flag_phi          % FLAG for phi: true-> vector
-        indexFuel         % Index position Fuel species
-        indexOxidizer     % Index position Oxidizer species
-        indexInert        % Index position Inert species
-        LS                % List of species considered (reactants + products)
-        LS_products       % List of species considered as products
-        color_splash       = [0.5098, 0.6039, 0.6745]; % Font color splash
-        color_lamp_nothing = [0.8000, 0.8000, 0.8000]; % Lamp color (rgb): nothing to report
-        color_lamp_working = [0.9961, 0.9804, 0.8314]; % Lamp color (rgb): working
-        color_lamp_done    = [0.5608, 0.7255, 0.6588]; % Lamp color (rgb): done
-        color_lamp_error   = [0.6400, 0.0800, 0.1800]; % Lamp color (rgb): error
-        temp_results       % Temporal variable that contains the last parametric study
-        current_history    % Current history of commands
-        temp_index         % Temporal index to get current position of command history
-        dynamic_components % Struct with all the dynamic components
-        welcome_message = 'Welcome to Combustion Toolbox %s --- A MATLAB-based framework for solving combustion and high-speed flow problems.';
-        maxRelativeError = 2e-2; % Relative error threshold to change color (2 %)
-        hiddenTabs         % Hidden tabs
+        constants                % Constants object
+        database                 % Class inhereted from Database superclass
+        chemicalSystem           % Chemical system object
+        mixture                  % Mixture object
+        equilibriumSolver        % EquilibriumSolver object
+        shockSolver              % ShockSolver object
+        detonationSolver         % DetonationSolver object
+        rocketSolver             % RocketSolver object
+        shockTurbulenceSolver    % ShockTurbulenceSolver
+        plotConfig               % PlotConfig object
+        export                   % Export object
+        appController            % AppController object
+        statusPanel              % AppStatusPanel object
+        consolePanel             % AppConsolePanel object
+        displaySpecies           % Chemical species to be shown in plotComposition
+        defaultLayout            % Default GUI component layout and data
+    end
+
+    properties (Access = private)
+        hiddenTabs                             % Hidden tabs
+        splashColor = [0.5098, 0.6039, 0.6745] % Font color splash
+        splashScreen                           % Startup splash screen
+        welcomeMessage = 'Welcome to Combustion Toolbox %s --- A MATLAB-based framework for solving combustion and high-speed flow problems.'
+        runtimeOptions = struct( ...
+            'debugMode', false, ...
+            'showSplash', true, ...
+            'showFigure', true)                % Runtime startup options
     end
     
     properties (Dependent)
-        NS_products % Number of product species (computations)
-        NS_display  % Number of display species (plots)
+        NS_products  % Number of product species (computations)
+        NS_display   % Number of display species (plots)
         LS_reactants % List of reactants
     end
 
     methods (Access = public)
-        % Value changed function: Reactants
-        function public_ReactantsValueChanged(app, event)
-            gui_ReactantsValueChanged(app, event);
-            % Compute pre-shock velocity (only for shocks)
-            gui_compute_mach_or_velocity(app, 'Mach');
-            % Update Listbox and Display species (extended settings)
-            public_ProductsValueChanged(app);
-        end
-
-        % Value changed function: Products
-        function public_ProductsValueChanged(app)
-            % Update Listbox (extended settings)
-            app.listbox_LS.Items = app.listbox_Products.Items;
-            % * Update Title with the number of items contained in the box
-            app.ListofSpeciesPanel.Title = sprintf('List of Species - %d', app.NS_products);
-            % Update Display species (extended settings)
-            app.listbox_LS_2.Items = app.listbox_LS.Items;
-            % Set Display species to all (extended settings)
-            app.listbox_LS_display.Items = app.listbox_LS_2.Items;
-            app.displaySpecies = app.listbox_LS_display.Items;
-            % Update Text with the number of items contained in the box
-            app.text_LS.Text = sprintf('List of Species - %d', app.NS_products);
-            % Update Text with the number of items contained in the box
-            app.text_LS_2.Text = sprintf('List of Species - %d', app.NS_products);
-            % Update Text with the number of items contained in the box
-            app.text_LS_display.Text = sprintf('Display Species - %d', app.NS_display);
-        end
-
-        function public_FLAG_IACValueChanged(app)
-            if ~app.FLAG_IAC.Value
-                app.text_P1.Text = 'FAC';
-                app.text_P1.Visible = 'on';
-                app.text_RP1_2.Visible = 'on'; app.text_RP2_2.Visible = 'off';
-                app.PP1.Visible = 'on'; app.PP2.Visible = 'off';
-                app.PP1.Value = ''; app.PP2.Value = '';
-                app.Panel_extra_5.Visible = 'on';
-                app.text_Products.Text = 'Injector';
-                app.text_Products_3.Text = 'Outlet Chamber';
-                app.text_Products_4.Text = 'Throat';
-                app.text_Products_5.Text = 'Exit';
-            else
-                app.text_P1.Text = 'Products';
-                app.text_P1.Visible = 'off';
-                app.text_RP1_2.Visible = 'off'; app.text_RP2_2.Visible = 'off';
-                app.PP1.Visible = 'off'; app.PP2.Visible = 'off';
-                app.PP1.Value = '2500'; app.PP2.Value = '1';
-                app.Panel_extra_5.Visible = 'off';
-                app.text_Products.Text = 'Outlet Chamber';
-                app.text_Products_3.Text = 'Throat';
-                app.text_Products_4.Text = 'Exit';
-                app.text_Products_5.Text = 'Exit';
-            end
-        end
-
-        function [current_history, temp_index] = public_get_current_history(app)
-            % Get current history
-            current_history = com.mathworks.mlservices.MLCommandHistoryServices.getSessionHistory;
-            % Get length history
-            temp_index = length(current_history);
-            % Assign values
-            app.current_history = current_history;
-            app.temp_index = temp_index;
-        end
-        
-        function public_ClearButtonPushed(app, event)
-            ClearButtonPushed(app, event)
-        end
-        
-        function public_xlsMenuSelected(app, event)
-            xlsMenuSelected(app, event);
-        end
-
-        function public_matMenuSelected(app, event)
-            matMenuSelected(app, event);
-        end
-
         function hideTab(app, tabObj)
             % Hide a tab by removing it from its parent TabGroup
             if isempty(tabObj) || ~isvalid(tabObj)
@@ -542,9 +446,6 @@ classdef combustion_toolbox < matlab.apps.AppBase
                           'positionMode must be "original" or "end".');
             end
         
-            % Optional: select it (comment out if you want less flicker)
-            tg.SelectedTab = tabObj;
-        
             % Remove from hidden list
             app.hiddenTabs = rmfield(app.hiddenTabs, key);
         end
@@ -561,31 +462,65 @@ classdef combustion_toolbox < matlab.apps.AppBase
         end
 
         function value = get.LS_reactants(app)
-            try
-                value = app.UITable_R.Data(:,1)';
-            catch
+            data = app.UITable_R.Data;
+
+            if isempty(data) || size(data, 2) < 1
                 value = [];
+                return
             end
+
+            value = data(:, 1)';
             
         end
 
     end
 
     methods (Access = private)
-        
-        function create_components(app)
-            % Create additional components
-            
-            % Create toolbar background
-            app.dynamic_components.toolbar_background = uiimage(app.UIFigure, 'Position', [485 746 180 20], 'ImageSource', 'toolbar_background.svg');
-            % Add icons
-            app.dynamic_components.toolbar_button1 = uiimage(app.UIFigure, 'Position', [520 746 20 20], 'ImageSource', 'icon_new.svg', 'Tooltip', 'New (Ctrl + N)', 'ImageClickedFcn', createCallbackFcn(app, @ClearButtonPushed, true));
-            app.dynamic_components.toolbar_button2 = uiimage(app.UIFigure, 'Position', [542 746 20 20], 'ImageSource', 'icon_save.svg', 'Tooltip', 'Save (Ctrl + S)', 'ImageClickedFcn', createCallbackFcn(app, @xlsMenuSelected, true));
-            app.dynamic_components.toolbar_button3 = uiimage(app.UIFigure, 'Position', [564 746 20 20], 'ImageSource', 'icon_play.svg', 'Tooltip', 'Calculate (F5)', 'ImageClickedFcn', createCallbackFcn(app, @CalculateButtonPushed, true));
-            app.dynamic_components.toolbar_button4 = uiimage(app.UIFigure, 'Position', [586 746 20 20], 'ImageSource', 'icon_help.svg', 'Tooltip', 'Help (F1)', 'ImageClickedFcn', @(~,~) system('start https://combustion-toolbox-website.readthedocs.io/_/downloads/en/latest/pdf/'));
-            app.dynamic_components.toolbar_button5 = uiimage(app.UIFigure, 'Position', [608 746 20 20], 'ImageSource', 'icon_github_CT.svg', 'Tooltip', 'GitHub', 'ImageClickedFcn', @(~,~) system('start https://github.com/AlbertoCuadra/combustion_toolbox'));
+
+        function value = customFigureHasCompositionProperty(app, nodes)
+            values = app.customFigureNodeValues(nodes);
+
+            if isempty(values)
+                value = false;
+                return
+            end
+
+            value = any(ismember(lower(string(values)), ...
+                lower(string(app.customFigureCompositionProperties()))));
         end
 
+        function value = customFigureIsCompositionProperty(app, node)
+            values = app.customFigureNodeValues(node);
+            value = ~isempty(values) ...
+                && any(strcmpi(values{1}, app.customFigureCompositionProperties()));
+        end
+
+        function values = customFigureNodeValues(~, nodes)
+            values = {};
+
+            for i = 1:numel(nodes)
+                if ~isempty(nodes(i).Children)
+                    continue
+                end
+
+                value = nodes(i).NodeData;
+
+                if isempty(value)
+                    value = nodes(i).Text;
+                end
+
+                if isstring(value)
+                    value = char(value);
+                end
+
+                values{end + 1} = char(value); %#ok<AGROW>
+            end
+        end
+
+        function value = customFigureCompositionProperties(~)
+            value = {'Xi', 'Yi', 'systemMoles', 'Ni', 'moles', ...
+                'molarFraction', 'massFraction'};
+        end
         
         function installDatabase(app)
             % Check if running in standalone mode
@@ -596,8 +531,19 @@ classdef combustion_toolbox < matlab.apps.AppBase
             if ~isdeployed
                 % Get dir app
                 app_info = matlab.apputil.getInstalledAppInfo;
-                FLAG_ID = contains(struct2table(app_info).id, 'combustion_toolbox_app');
-                dir_app =  app_info(FLAG_ID).location;
+                app_info = app_info(:);
+
+                if isempty(app_info) || ~isfield(app_info, 'id') || ~isfield(app_info, 'location')
+                    return
+                end
+
+                FLAG_ID = contains({app_info.id}, 'combustion_toolbox_app');
+
+                if ~any(FLAG_ID)
+                    return
+                end
+
+                dir_app = app_info(find(FLAG_ID, 1)).location;
                 dir_database_app = fullfile(dir_app, 'databases');
         
                 % Generate database
@@ -659,6 +605,114 @@ classdef combustion_toolbox < matlab.apps.AppBase
 
         end
 
+        function closeSplash(app)
+            % Close the startup splash screen
+            if isempty(app.splashScreen)
+                return
+            end
+
+            if isvalid(app.splashScreen)
+                delete(app.splashScreen);
+            end
+
+            app.splashScreen = [];
+        end
+
+        function options = parseStartupOptions(app, varargin)
+            % Parse app startup options
+            options = app.runtimeOptions;
+
+            if isempty(varargin)
+                return
+            end
+
+            if isscalar(varargin) && (ischar(varargin{1}) || isstring(varargin{1}))
+                optionName = strtrim(char(varargin{1}));
+
+                if any(strcmpi(optionName, {'debug', 'debugmode', 'test', 'testing', 'testmode'}))
+                    options.debugMode = true;
+                    options.showSplash = false;
+                    options.showFigure = false;
+                    return
+                end
+            end
+
+            if isscalar(varargin) && isstruct(varargin{1})
+                settings = varargin{1};
+                names = fieldnames(settings);
+
+                for i = 1:numel(names)
+                    options = app.setStartupOption(options, names{i}, settings.(names{i}));
+                end
+
+            else
+                if mod(numel(varargin), 2) ~= 0
+                    error('combustion_toolbox:InvalidStartupOptions', ...
+                        'Startup options must be provided as name-value pairs');
+                end
+
+                for i = 1:2:numel(varargin)
+                    options = app.setStartupOption(options, varargin{i}, varargin{i + 1});
+                end
+            end
+
+            if options.debugMode
+                options.showSplash = false;
+                options.showFigure = false;
+            end
+        end
+
+        function options = setStartupOption(app, options, name, value)
+            % Set one startup option
+            name = lower(strtrim(char(name)));
+
+            switch name
+                case {'debug', 'debugmode', 'test', 'testing', 'testmode'}
+                    options.debugMode = app.toLogicalOption(value);
+                case {'showsplash', 'splash', 'splashscreen'}
+                    options.showSplash = app.toLogicalOption(value);
+                case {'showfigure', 'showgui', 'visible'}
+                    options.showFigure = app.toLogicalOption(value);
+                otherwise
+                    error('combustion_toolbox:InvalidStartupOption', ...
+                        'Unknown startup option "%s"', char(name));
+            end
+        end
+
+        function value = toLogicalOption(~, value)
+            % Convert startup option values to logical scalars
+            if islogical(value)
+                value = value(1);
+                return
+            end
+
+            if isnumeric(value)
+                value = value(1) ~= 0;
+                return
+            end
+
+            if isstring(value)
+                value = char(value);
+            end
+
+            if ischar(value)
+                switch lower(strtrim(value))
+                    case {'true', 'on', 'yes', '1'}
+                        value = true;
+                    case {'false', 'off', 'no', '0'}
+                        value = false;
+                    otherwise
+                        error('combustion_toolbox:InvalidStartupOptionValue', ...
+                            'Startup option values must be true or false');
+                end
+
+                return
+            end
+
+            error('combustion_toolbox:InvalidStartupOptionValue', ...
+                'Startup option values must be true or false');
+        end
+
     end
 
     % Callbacks that handle component events
@@ -669,17 +723,21 @@ classdef combustion_toolbox < matlab.apps.AppBase
             % Load figure in the background
             app.UIFigure.Visible = 'off';
             % Splash
-            try
-                FLAG_SPLASH = true;
-                splash_obj = gui_display_splash('app', app);
-            catch
-                FLAG_SPLASH = false;
+            app.splashScreen = [];
+
+            if app.runtimeOptions.showSplash
+                try
+                    app.splashScreen = combustiontoolbox.utils.display.showSplashScreen('color', app.splashColor);
+                catch exception
+                    warning('combustion_toolbox:SplashScreenFailed', '%s', exception.message);
+                    closeSplash(app);
+                end
             end
             
             % Install database (only standalone versions)
             installDatabase(app);
             % Add additional components
-            % create_components(app); % Next release
+            % createDynamicComponents(app); % Next release
             % Get screen position
             % position = splash_obj.ScreenPosition;
             position = combustiontoolbox.utils.display.getMonitorPositionsMATLAB();
@@ -710,33 +768,36 @@ classdef combustion_toolbox < matlab.apps.AppBase
             app.shockTurbulenceSolver = combustiontoolbox.shockturbulence.ShockTurbulenceSolver('plotConfig', app.plotConfig, 'equilibriumSolver', app.equilibriumSolver, 'shockSolver', app.shockSolver);
             % Initialize export object
             app.export = combustiontoolbox.utils.Export();
+            % Initialize status panel
+            app.statusPanel = combustiontoolbox.gui.AppStatusPanel(app);
+            % Initialize command window panel
+            app.consolePanel = combustiontoolbox.gui.AppConsolePanel(app);
+            % Initialize GUI controller
+            app.appController = combustiontoolbox.gui.AppController(app);
+            % Refresh problem dropdown from catalog metadata
+            [problemItems, problemItemsData] = app.appController.problemDropdownData();
+            app.ProblemType.Items = problemItems;
+            app.ProblemType.ItemsData = problemItemsData;
             % Initialize List box species DataBase master
             app.listbox_LS_DB.Items = app.database.listSpecies;
             % Initialize table data
             app.UITable_R.ColumnFormat = {[] [] [] {'Fuel', 'Oxidizer', 'Inert'} []};
-            % Initialize for TP
-            app.PR1_var_name = 'TR'; app.PR2_var_name = 'pR';
-            app.PP1_var_name = 'TP'; app.PP2_var_name = 'pP';
-            % Get tolerances
-            % app = gui_get_tolerances(app); % Remove
-            % Save default state GUI
-            app.default.Panel_parameters.Position = app.Panel_parameters.Position;
-            app.default.data_UITable_R = app.UITable_R.Data;
-%             app.UITable_R.ColumnFormat(2:3)  = {'shortE'};
-%             app.UITable_R2.ColumnFormat(2:3) = {'shortE'};
+            % Save default GUI state
+            app.defaultLayout.Panel_parameters.Position = app.Panel_parameters.Position;
+            app.defaultLayout.data_UITable_R = app.UITable_R.Data;
             app.UITable_P.ColumnFormat(2:3)  = {'shortE'};
-            % Update welcome message in the command window
-            app.Console_text.Value = sprintf(app.welcome_message, app.constants.release);
-            % Get current history
-            public_get_current_history(app);
-            % Make app visible
-            app.UIFigure.Visible = 'on';
+            % Initialize command window output and history
+            app.consolePanel.initialize(sprintf(app.welcomeMessage, app.constants.release));
+            % Apply startup visibility
+            if app.runtimeOptions.showFigure
+                app.UIFigure.Visible = 'on';
+            else
+                app.UIFigure.Visible = 'off';
+            end
             % Hide Turbulence statistics tab
             app.hideTab(app.TurbulencestatisticsTab);
             % Delete splash
-            if FLAG_SPLASH
-                delete(splash_obj);
-            end
+            closeSplash(app);
         end
 
         % Menu selected function: AboutMenu
@@ -746,34 +807,37 @@ classdef combustion_toolbox < matlab.apps.AppBase
 
         % Value changed function: Console
         function ConsoleValueChanged(app, event)
-            gui_ConsoleValueChanged(app, event);
+            app.appController.onConsoleValueChanged(event);
+        end
+
+        % Value changed function: Console_text
+        function Console_textValueChanged(app, event)
+            app.consolePanel.restoreOutput(event.PreviousValue);
         end
 
         % Menu selected function: SnapshotMenu
         function SnapshotMenuSelected(app, event)
-            gui_SnapshotMenuSelected(app.UIFigure);
+            app.appController.onSnapshotSelected();
         end
 
         % Menu selected function: MaximizeMenu
         function MaximizeMenuSelected(app, event)
-            app.Console_text.Position = [78, 30, 554, 462];
+            app.consolePanel.maximize();
         end
 
         % Menu selected function: MinimizeMenu
         function MinimizeMenuSelected(app, event)
-            app.Console_text.Position = [78, 30, 554 57];
+            app.consolePanel.minimize();
         end
 
         % Menu selected function: ClearCommandWindowMenu
         function ClearCommandWindowMenuSelected(app, event)
-            app.Console_text.Value = '';
+            app.consolePanel.clearOutput();
         end
 
         % Button pushed function: Calculate
         function CalculateButtonPushed(app, event)
-%             profile on
-            gui_CalculateButtonPushed(app, event);
-%             profile viewer
+            app.appController.onCalculatePushed();
         end
 
         % Menu selected function: SendfeedbackMenu
@@ -783,36 +847,17 @@ classdef combustion_toolbox < matlab.apps.AppBase
 
         % Cell edit callback: UITable_R
         function UITable_RCellEdit(app, event)
-            gui_UITable_RCellEdit(app, event);
+            app.appController.onReactantsTableEdited(event);
         end
 
         % Value changed function: edit_phi
         function edit_phiValueChanged(app, event)
-            gui_edit_phiValueChanged(app, event);
+            app.appController.onEquivalenceRatioChanged(event);
         end
 
         % Value changed function: PR1
         function PR1ValueChanged(app, event)
-            % Update equilibrium temperature of reactants (GUI)            
-            if ~isempty(app.UITable_R.Data)
-                listSpecies = app.UITable_R.Data(:, 1);
-                temperature = {gui_get_prop(app.PR1.Value)};
-                temperature = {temperature{1}(1)};
-                numSpecies = length(app.UITable_R.Data(:, 1));
-                [app, temperature, FLAG] = gui_check_temperature_reactants(app, listSpecies, temperature, numSpecies);
-                
-                if FLAG
-                    app.UITable_R.Data(:, 5) = temperature;
-                    message = sprintf('The species selected as reactants can only be evaluated at its defined temperature.\nThe temperature shown as the temperature of the reactant is a ficticious value! The species are unmixed.');
-                    uialert(app.UIFigure, message, 'Warning', 'Icon', 'warning');
-                else
-                    app.UITable_R.Data(:, 5) = repmat(temperature(1), [1, numSpecies]);
-                end
-
-            end
-
-            % Compute pre-shock velocity (only for shocks)
-            gui_compute_mach_or_velocity(app, 'Mach');
+            app.appController.onReactantsTemperatureChanged();
         end
 
         % Menu selected function: DiscussionsMenu
@@ -832,30 +877,23 @@ classdef combustion_toolbox < matlab.apps.AppBase
 
         % Value changed function: ProblemType
         function ProblemTypeValueChanged(app, event)
-            % Clear GUI results tab (except UITree) and update GUI items for the problem selected
-            gui_ProblemTypeValueChanged(app);
+            % Update GUI items for the selected problem
+            app.appController.onProblemTypeChanged();
         end
 
         % Value changed function: PP2
         function PP2ValueChanged(app, event)
-            if app.ProblemType.Value(2) == 'P' &&  app.ProblemType.Value(1) ~= 'S'
-                app.PR2.Value = event.Value;
-            end
+            app.appController.onProductPressureChanged(event);
         end
 
         % Value changed function: PR2
         function PR2ValueChanged(app, event)
-            if app.ProblemType.Value(2) == 'P' &&  app.ProblemType.Value(1) ~= 'S'
-                app.PP2.Value = event.Value;
-            end
-            % Compute pre-shock velocity (only for shocks)
-            gui_compute_mach_or_velocity(app, 'Mach');
+            app.appController.onReactantPressureChanged(event);
         end
 
         % Value changed function: FrozenchemistryCheckBox
         function FrozenchemistryCheckBoxValueChanged(app, event)
-            % Set frozen chemistry
-            gui_FrozenchemistryCheckBoxValueChanged(app)
+            app.appController.onFrozenChemistryChanged();
         end
 
         % Menu selected function: DocumentationMenu
@@ -865,87 +903,47 @@ classdef combustion_toolbox < matlab.apps.AppBase
 
         % Button pushed function: Clear
         function ClearButtonPushed(app, event)
-            % Clear command window
-            ClearCommandWindowMenuSelected(app, event);
-            % Clear axes
-            cla(app.UIAxes);
-            % Delete nodes uitree
-            delete(app.Node_Results.Children);
-            delete(app.Mixtures.Children);
-            delete(app.Variable_x.Children);
-            delete(app.Variable_y.Children);
-            % Set color lamp to nothing
-            app.Lamp.Color = app.color_lamp_nothing;
+            app.appController.onClearSelected();
         end
 
         % Selection changed function: Tree
         function TreeSelectionChanged(app, event)
-            selectedNodes = app.Tree.SelectedNodes;
-            gui_update_from_uitree(app, selectedNodes(1));
+            app.appController.onResultsTreeSelectionChanged();
         end
 
         % Value changed function: PR4
         function PR4ValueChanged(app, event)
-            % Compute pre-shock velocity (only for shocks)
-            gui_compute_mach_or_velocity(app, 'Mach');
+            app.appController.onReactantMachChanged();
         end
 
         % Value changed function: PR3
         function PR3ValueChanged(app, event)
-            % Compute pre-shock Mach number (only for shocks)
-            gui_compute_mach_or_velocity(app, 'velocity');
+            app.appController.onReactantVelocityChanged();
         end
 
         % Menu selected function: xlsMenu
         function xlsMenuSelected(app, event)
-            % Extract last results
-            mixArray1 = [app.temp_results.mix1];
-            mixArray2 = [app.temp_results.mix2];
-            
-            % Store default format
-            temp = app.export.format;
-
-            % Export results
-            app.export.format = '.xls';
-            app.export.export(mixArray1, mixArray2);
-
-            % Recover default format
-            app.export.format = temp;
+            app.appController.onExportSelected('.xls');
         end
 
         % Menu selected function: matMenu
         function matMenuSelected(app, event)
-            % Extract last results
-            mixArray1 = [app.temp_results.mix1];
-            mixArray2 = [app.temp_results.mix2];
-            
-            % Store default format
-            temp = app.export.format;
+            app.appController.onExportSelected('.mat');
+        end
 
-            % Export results
-            app.export.format = '.mat';
-            app.export.export(mixArray1, mixArray2);
-
-            % Recover default format
-            app.export.format = temp;
+        % Menu selected function: scriptMenu
+        function scriptMenuSelected(app, event)
+            app.appController.onExportProblemScriptSelected();
         end
 
         % Button pushed function: AddButton1
         function AddButton1Pushed(app, event)
-            app.listbox_LS.Items = gui_value2list(app, app.listbox_LS_DB.Value, app.listbox_LS.Items, 'add');
-            % Update Listbox (inputs)
-            app.listbox_Products.Items = app.listbox_LS.Items;
-            % Update counters
-            public_ProductsValueChanged(app);
+            app.appController.onProductSpeciesAdded();
         end
 
         % Button pushed function: RemoveButton1
         function RemoveButton1Pushed(app, event)
-            app.listbox_LS.Items = gui_value2list(app, app.listbox_LS.Value, app.listbox_LS.Items, 'remove');
-            % Update Listbox (inputs)
-            app.listbox_Products.Items = app.listbox_LS.Items;
-            % Update counters
-            public_ProductsValueChanged(app);
+            app.appController.onProductSpeciesRemoved();
         end
 
         % Menu selected function: ValidationsMenu
@@ -970,16 +968,16 @@ classdef combustion_toolbox < matlab.apps.AppBase
 
         % Button pushed function: figure_plot
         function figure_plotButtonPushed(app, event)
-            gui_plot_custom_figures(app);
+            app.appController.onCustomFigurePlotPushed();
         end
 
         % Button pushed function: figure_size
         function figure_sizeButtonPushed(app, event)
             if contains(app.figure_size.Text, 'Max')
                 % Save default values
-                app.default.UIFigure_position = app.UIFigure.Position;
-                app.default.UIAxes_position = app.UIAxes.Position;
-                app.default.Tab_results_position = app.Tab_results.Position;
+                app.defaultLayout.UIFigure_position = app.UIFigure.Position;
+                app.defaultLayout.UIAxes_position = app.UIAxes.Position;
+                app.defaultLayout.Tab_results_position = app.Tab_results.Position;
                 % Maximize UIFigure (width)
                 app.UIFigure.Position([1,3]) = [0.5 * app.UIFigure.Position(1), 2 * app.UIFigure.Position(3)];
                 % Delete UIAxes
@@ -991,11 +989,11 @@ classdef combustion_toolbox < matlab.apps.AppBase
                 % Replot
                 figure_plotButtonPushed(app, event);
             else
-                app.UIFigure.Position = app.default.UIFigure_position;
+                app.UIFigure.Position = app.defaultLayout.UIFigure_position;
                 % Delete UIAxes
                 delete(app.UIAxes);
                 % Create new UIAxes
-                app.UIAxes = uiaxes(app.CustomfiguresTab, 'Position', app.default.UIAxes_position);
+                app.UIAxes = uiaxes(app.CustomfiguresTab, 'Position', app.defaultLayout.UIAxes_position);
                 % Change name button
                 app.figure_size.Text = 'Maximize';
                 % Replot
@@ -1006,7 +1004,7 @@ classdef combustion_toolbox < matlab.apps.AppBase
         % Menu selected function: CheckforupdatesMenu
         function CheckforupdatesMenuSelected(app, event)
             [~, message] = combustiontoolbox.utils.checkUpdate(app.UIFigure);
-            app.Console_text.Value = message;
+            app.consolePanel.setOutput(message);
         end
 
         % Button pushed function: PeriodicTable_R
@@ -1021,62 +1019,32 @@ classdef combustion_toolbox < matlab.apps.AppBase
 
         % Value changed function: Reactants
         function ReactantsValueChanged(app, event)
-            public_ReactantsValueChanged(app, event);
+            app.appController.onReactantsChanged(event);
         end
 
         % Value changed function: Products
         function ProductsValueChanged(app, event)
-            % Update List of species considered as Products
-            gui_ProductsValueChanged(app);
-            % Update Listbox (extended settings)
-            public_ProductsValueChanged(app);
+            app.appController.onProductsChanged();
         end
 
         % Value changing function: edit_seeker_1
         function edit_seeker_1ValueChanging(app, event)
-            seek_value = gui_seeker_value(app, event, app.database.listSpecies);
-            % Update Listbox (inputs)
-            if isempty(event.Value)
-                app.listbox_LS_DB.Items = app.database.listSpecies;
-                return
-            end
-            
-            app.listbox_LS_DB.Items = seek_value;
+            app.appController.onDatabaseSpeciesSearchChanging(event);
         end
 
         % Value changing function: edit_seeker_2
         function edit_seeker_2ValueChanging(app, event)
-            seek_value1 = gui_seeker_value(app, event, app.listbox_LS.Items);
-            seek_value2 = gui_seeker_value(app, event, app.displaySpecies);
-            % Update Listbox (inputs)
-            if isempty(event.Value)
-                app.listbox_LS_2.Items = app.listbox_LS.Items;
-                app.listbox_LS_display.Items = app.displaySpecies;
-                return
-            end
-            
-            app.listbox_LS_2.Items = seek_value1;
-            app.listbox_LS_display.Items = seek_value2;
+            app.appController.onDisplaySpeciesSearchChanging(event);
         end
 
         % Button pushed function: AddButton2
         function AddButton2Pushed(app, event)
-            % Add species from LS to display species
-            app.listbox_LS_display.Items = gui_value2list(app, app.listbox_LS_2.Value, app.listbox_LS_display.Items, 'add');
-            % Update displaySpecies
-            app.displaySpecies = unique([app.displaySpecies, app.listbox_LS_display.Items]);
-            % Update Text with the number of items contained in the box
-            app.text_LS_display.Text = sprintf('Display Species - %d', app.NS_display);
+            app.appController.onDisplaySpeciesAdded();
         end
 
         % Button pushed function: RemoveButton2
         function RemoveButton2Pushed(app, event)
-            % Remove species from display species
-            app.displaySpecies = gui_value2list(app, app.listbox_LS_display.Value, app.displaySpecies, 'remove');
-            % Update items listbox_LS_display
-            app.listbox_LS_display.Items = setdiff(app.listbox_LS_display.Items, app.listbox_LS_display.Value);
-            % Update Text with the number of items contained in the box
-            app.text_LS_display.Text = sprintf('Display Species - %d', app.NS_display);
+            app.appController.onDisplaySpeciesRemoved();
         end
 
         % Menu selected function: property_inspector_menu
@@ -1097,19 +1065,17 @@ classdef combustion_toolbox < matlab.apps.AppBase
 
         % Value changed function: FLAG_IAC
         function FLAG_IACValueChanged(app, event)
-            public_FLAG_IACValueChanged(app);            
+            app.appController.onRocketModelChanged();
         end
 
         % Value changing function: PR3
         function PR3ValueChanging(app, event)
-            % Check only PR3 or PP3 not both (only for ROCKET)
-            gui_keep_last_entry(app, app.PP3)
+            app.appController.onRocketReactantAreaChanging();
         end
 
         % Value changing function: PP3
         function PP3ValueChanging(app, event)
-            % Check only PR4 or PP4 not both (only for ROCKET)
-            gui_keep_last_entry(app, app.PR3)
+            app.appController.onRocketProductAreaChanging();
         end
 
         % Callback function
@@ -1119,67 +1085,70 @@ classdef combustion_toolbox < matlab.apps.AppBase
 
         % Menu selected function: PreferencesMenu
         function PreferencesMenuSelected(app, event)
-            uipreferences(app);
+            app.appController.onPreferencesSelected();
         end
 
         % Value changed function: TraceoptionEditField
         function TraceoptionEditFieldValueChanged(app, event)
-            app.equilibriumSolver.tolGibbs = app.TraceoptionEditField.Value;
+            app.appController.onTraceToleranceChanged();
         end
 
         % Value changed function: RootFindingMethodEditField
         function RootFindingMethodEditFieldValueChanged(app, event)
-            app.equilibriumSolver.tol0 = app.RootFindingMethodEditField.Value;
+            app.appController.onRootFindingToleranceChanged();
         end
 
         % Value changed function: ShocksandDetonationsEditField
         function ShocksandDetonationsEditFieldValueChanged(app, event)
-            app.shockSolver.tol0 = app.ShocksandDetonationsEditField.Value;
-            app.detonationSolver.tol0 = app.ShocksandDetonationsEditField.Value;
+            app.appController.onShockDetonationToleranceChanged();
         end
 
         % Value changed function: DisplaySpeciesEditField
         function DisplaySpeciesEditFieldValueChanged(app, event)
-            app.plotConfig.mintolDisplay = app.DisplaySpeciesEditField.Value;
+            app.appController.onDisplaySpeciesToleranceChanged();
         end
 
         % Value changed function: MaxiterationsRFMEditField
         function MaxiterationsRFMEditFieldValueChanged(app, event)
-            app.equilibriumSolver.itMax = app.MaxiterationsRFMEditField.Value;
+            app.appController.onEquilibriumMaxIterationsChanged();
         end
 
         % Value changed function: MaxiterationsSDEditField
         function MaxiterationsSDEditFieldValueChanged(app, event)
-            app.shockSolver.itMax = app.MaxiterationsSDEditField.Value;
-            app.detonationSolver.itMax = app.MaxiterationsSDEditField.Value;
+            app.appController.onShockDetonationMaxIterationsChanged();
         end
 
         % Value changed function: RFMT0_LEditField
         function RFMT0_LEditFieldValueChanged(app, event)
-            app.equilibriumSolver.root_T0_l = app.RFMT0_LEditField.Value;
+            app.appController.onRootTemperatureLeftChanged();
         end
 
         % Value changed function: RFMT0_REditField
         function RFMT0_REditFieldValueChanged(app, event)
-            app.equilibriumSolver.root_T0_r = app.RFMT0_REditField.Value;
+            app.appController.onRootTemperatureRightChanged();
         end
 
         % Value changed function: RFMT0EditField
         function RFMT0EditFieldValueChanged(app, event)
-            app.equilibriumSolver.root_T0 = app.RFMT0EditField.Value;
+            app.appController.onRootTemperatureInitialChanged();
         end
 
         % Key press function: UIFigure
         function UIFigureKeyPress(app, event)
-            % Definitions
-            FLAG_ENTER = false;
             % Get key
             key = event.Key;
-            try
-                modifier = event.Modifier{:};
-            catch
-                modifier = '';
+
+            % Get first active modifier when present
+            modifier = '';
+
+            if ~isempty(event.Modifier)
+                modifier = event.Modifier;
+
+                if iscell(modifier)
+                    modifier = modifier{1};
+                end
             end
+
             % Read action
 
             % Modifier used (shift + key press)
@@ -1203,14 +1172,14 @@ classdef combustion_toolbox < matlab.apps.AppBase
                     case 'p'
                         PreferencesMenuSelected(app, event);
                     case 'q'
-                        app.Console_text.Value = 'Closing the Combustion Toolbox';
+                        app.consolePanel.setOutput('Closing the Combustion Toolbox');
                         UIFigureCloseRequest(app, event);
                     case 's'
                         xlsMenuSelected(app, event);
                     case 'x'
-                        app.Console_text.Value = 'Taking snapshot...';
+                        app.consolePanel.setOutput('Taking snapshot...');
                         SnapshotMenuSelected(app, event);
-                        app.Console_text.Value = 'Taking snapshot... OK!';
+                        app.consolePanel.setOutput('Taking snapshot... OK!');
                 end
 
                 return
@@ -1218,17 +1187,10 @@ classdef combustion_toolbox < matlab.apps.AppBase
             % No modifier used (one key press)
             else
                 switch lower(key)
-                    case 'uparrow'
-                        app.temp_index = app.temp_index - 1;
-                    case 'downarrow'
-                        app.temp_index = app.temp_index + 1;
-                    case 'rightarrow'
-                        [~, app.temp_index] = public_get_current_history(app);
-                    case 'leftarrow'
-                        app.temp_index = 1;
+                    case {'uparrow', 'downarrow', 'rightarrow', 'leftarrow'}
+                        app.consolePanel.selectHistory(key);
                     case 'return'
-                        FLAG_ENTER = true;
-                        gui_ConsoleValueChanged(app, event);
+                        app.appController.onConsoleValueChanged(event);
                     case 'f1'
                         DocumentationMenuSelected(app, event);
                     case 'f5'
@@ -1237,72 +1199,43 @@ classdef combustion_toolbox < matlab.apps.AppBase
                     otherwise
                         return
                 end
-            
-            end
-            % Print currhistory for that index
-            if ~FLAG_ENTER
-                try
-                    app.Console.Value = char(app.current_history(app.temp_index));
-                catch
-                    app.Console.Value = 'Value out of current command history.';
-                    [~, app.temp_index] = public_get_current_history(app);
-                end
             end
         end
 
         % Menu selected function: NewMenu
         function NewMenuSelected(app, event)
-            ClearButtonPushed(app, event);
+            app.appController.onNewSelected();
         end
 
         % Close request function: UIFigure
         function UIFigureCloseRequest(app, event)
+            closeSplash(app);
             delete(app)
         end
 
         % Value changing function: PR4
         function PR4ValueChanging(app, event)
-            % Only for oblique/polar detonations
-            if ~any(contains(app.ProblemType.Value, 'DET_OBLIQUE', 'IgnoreCase', true) | contains(app.ProblemType.Value, 'DET_POLAR', 'IgnoreCase', true))
-                return
-            end
-
-            app.PP4.Value = '';
+            app.appController.onDetonationReactantAngleChanging();
         end
 
         % Value changing function: PP4
         function PP4ValueChanging(app, event)
-            % Only for oblique/polar detonations
-            if ~any(contains(app.ProblemType.Value, 'DET_OBLIQUE', 'IgnoreCase', true) | contains(app.ProblemType.Value, 'DET_POLAR', 'IgnoreCase', true))
-                return
-            end
-
-            app.PR4.Value = '';
+            app.appController.onDetonationProductAngleChanging();
         end
 
         % Value changing function: PR5
         function PR5ValueChanging(app, event)
-            % Only for oblique/polar shocks
-            if ~any(contains(app.ProblemType.Value, 'SHOCK_OBLIQUE', 'IgnoreCase', true) | contains(app.ProblemType.Value, 'SHOCK_POLAR', 'IgnoreCase', true))
-                return
-            end
-
-            app.PP5.Value = '';
+            app.appController.onShockReactantAngleChanging();
         end
 
         % Value changing function: PP5
         function PP5ValueChanging(app, event)
-            % Only for oblique/polar shocks
-            if ~any(contains(app.ProblemType.Value, 'SHOCK_OBLIQUE', 'IgnoreCase', true) | contains(app.ProblemType.Value, 'SHOCK_POLAR', 'IgnoreCase', true))
-                return
-            end
-
-            app.PR5.Value = '';
+            app.appController.onShockProductAngleChanging();
         end
 
         % Value changed function: IonizedspeciesCheckBox
         function IonizedspeciesCheckBoxValueChanged(app, event)
-            gui_update_ions(app);
+            app.appController.onIonizedSpeciesChanged();
         end
 
         % Callback function: Tree_variable_x
@@ -1328,30 +1261,28 @@ classdef combustion_toolbox < matlab.apps.AppBase
                 return
             end
 
-            if sum(contains([app.Tree_variable_y.CheckedNodes.Text], {'Xi', 'Yi', 'molarFraction', 'massFraction'})) == 0
+            if ~app.customFigureHasCompositionProperty(app.Tree_variable_y.CheckedNodes)
                 return
             end
             
-            if sum(contains([event.PreviousCheckedNodes.Text], {'Xi', 'Yi', 'molarFraction', 'massFraction'}))
-                indexRemove = [];
+            if app.customFigureHasCompositionProperty(event.PreviousCheckedNodes)
+                checkedNodes = app.Tree_variable_y.CheckedNodes;
+                indexRemove = false(size(checkedNodes));
                 
-                for i = 1:length(app.Tree_variable_y.CheckedNodes)
-                    if any(strcmpi(app.Tree_variable_y.CheckedNodes(i).Text, {'Xi', 'Yi', 'molarFraction', 'massFraction'}))
-                        indexRemove = [indexRemove, i];
-                    end
+                for i = 1:numel(checkedNodes)
+                    indexRemove(i) = app.customFigureIsCompositionProperty(checkedNodes(i));
                 end
 
                 app.Tree_variable_y.CheckedNodes(indexRemove) = [];
                 return
             end
 
-            if sum(contains([event.CheckedNodes.Text], {'Xi', 'Yi', 'molarFraction', 'massFraction'}))
-                indexRemove = [];
+            if app.customFigureHasCompositionProperty(event.CheckedNodes)
+                checkedNodes = app.Tree_variable_y.CheckedNodes;
+                indexRemove = false(size(checkedNodes));
                 
-                for i = 1:length(app.Tree_variable_y.CheckedNodes)
-                    if ~strcmpi(app.Tree_variable_y.CheckedNodes(i).Text, {'Xi', 'Yi', 'molarFraction', 'massFraction'})
-                        indexRemove = [indexRemove, i];
-                    end
+                for i = 1:numel(checkedNodes)
+                    indexRemove(i) = ~app.customFigureIsCompositionProperty(checkedNodes(i));
                 end
 
                 app.Tree_variable_y.CheckedNodes(indexRemove) = [];
@@ -1374,7 +1305,7 @@ classdef combustion_toolbox < matlab.apps.AppBase
             event.ContextObject.Data(FLAG_REMOVE, :) = [];
             
             % Update values of the UITable items with the changes made
-            gui_UITable_RCellEdit(app, event)
+            app.appController.onReactantsTableEdited(event);
         end
     end
 
@@ -1427,6 +1358,11 @@ classdef combustion_toolbox < matlab.apps.AppBase
             app.matMenu = uimenu(app.SaveasMenu);
             app.matMenu.MenuSelectedFcn = createCallbackFcn(app, @matMenuSelected, true);
             app.matMenu.Text = '*.mat';
+
+            % Create scriptMenu
+            app.scriptMenu = uimenu(app.SaveasMenu);
+            app.scriptMenu.MenuSelectedFcn = createCallbackFcn(app, @scriptMenuSelected, true);
+            app.scriptMenu.Text = '*.m';
 
             % Create SnapshotMenu
             app.SnapshotMenu = uimenu(app.FileMenu);
@@ -3411,6 +3347,7 @@ classdef combustion_toolbox < matlab.apps.AppBase
             % Create Console
             app.Console = uitextarea(app.UIFigure);
             app.Console.ValueChangedFcn = createCallbackFcn(app, @ConsoleValueChanged, true);
+            app.Console.FontName = 'Monospaced';
             app.Console.Position = [98 6 500 20];
 
             % Create Label_Console
@@ -3425,6 +3362,10 @@ classdef combustion_toolbox < matlab.apps.AppBase
 
             % Create Console_text
             app.Console_text = uitextarea(app.UIFigure);
+            app.Console_text.ValueChangedFcn = createCallbackFcn(app, @Console_textValueChanged, true);
+            app.Console_text.Editable = 'on';
+            app.Console_text.BackgroundColor = [1 1 1];
+            app.Console_text.FontName = 'Monospaced';
             app.Console_text.Position = [78 30 554 57];
             app.Console_text.Value = {'Welcome to Combustion Toolbox vXX.XX.XX --- A MATLAB-based framework for solving combustion and high-speed flow problems'};
 
@@ -3485,8 +3426,10 @@ classdef combustion_toolbox < matlab.apps.AppBase
             % Assign app.ContextMenuUITable_R
             app.UITable_R.ContextMenu = app.ContextMenuUITable_R;
 
-            % Show the figure after all components are created
-            app.UIFigure.Visible = 'on';
+            % Apply construction visibility
+            if app.runtimeOptions.showFigure
+                app.UIFigure.Visible = 'on';
+            end
         end
     end
 
@@ -3494,9 +3437,14 @@ classdef combustion_toolbox < matlab.apps.AppBase
     methods (Access = public)
 
         % Construct app
-        function app = combustion_toolbox
+        function app = combustion_toolbox(varargin)
 
-            runningApp = getRunningApp(app);
+            app.runtimeOptions = parseStartupOptions(app, varargin{:});
+            runningApp = [];
+
+            if ~app.runtimeOptions.debugMode
+                runningApp = getRunningApp(app);
+            end
 
             % Check for running singleton app
             if isempty(runningApp)
@@ -3524,9 +3472,12 @@ classdef combustion_toolbox < matlab.apps.AppBase
 
         % Code that executes before app deletion
         function delete(app)
+            closeSplash(app);
 
             % Delete UIFigure when app is deleted
-            delete(app.UIFigure)
+            if ~isempty(app.UIFigure) && isvalid(app.UIFigure)
+                delete(app.UIFigure)
+            end
         end
     end
 end

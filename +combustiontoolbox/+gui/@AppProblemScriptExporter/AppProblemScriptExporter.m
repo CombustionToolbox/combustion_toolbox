@@ -101,17 +101,34 @@ classdef AppProblemScriptExporter < handle
         end
 
         function lines = chemicalSystemLines(obj, setup)
-            if obj.usesAutomaticProductSpecies(setup)
-                chemicalSystemLine = 'system = ChemicalSystem(DB);';
-            else
-                chemicalSystemLine = sprintf('system = ChemicalSystem(DB, %s);', ...
-                    obj.scriptValue(setup.productSpecies));
-            end
-
             lines = { ...
                 '% Set chemical system', ...
-                chemicalSystemLine, ...
+                sprintf('system = ChemicalSystem(%s);', ...
+                    obj.chemicalSystemArguments(setup)), ...
                 ''};
+        end
+
+        function text = chemicalSystemArguments(obj, setup)
+            tokens = {'DB'};
+            optionTokens = obj.chemicalSystemOptionArguments(setup);
+
+            if ~obj.usesAutomaticProductSpecies(setup)
+                tokens{end + 1} = obj.scriptValue(setup.productSpecies);
+            elseif ~isempty(optionTokens)
+                tokens{end + 1} = '[]';
+            end
+
+            tokens = [tokens, optionTokens];
+            text = strjoin(tokens, ', ');
+        end
+
+        function tokens = chemicalSystemOptionArguments(obj, setup)
+            tokens = {};
+
+            if obj.setupFlag(setup, 'ionizedSpecies', false)
+                tokens = [tokens, {obj.scriptValue('FLAG_ION'), ...
+                    obj.scriptLogical(true)}]; %#ok<AGROW>
+            end
         end
 
         function value = usesAutomaticProductSpecies(~, setup)
@@ -122,6 +139,14 @@ classdef AppProblemScriptExporter < handle
             end
 
             value = strcmpi(setup.products.type, 'auto');
+        end
+
+        function value = setupFlag(~, setup, name, defaultValue)
+            value = defaultValue;
+
+            if isfield(setup, 'flags') && isfield(setup.flags, name)
+                value = setup.flags.(name);
+            end
         end
 
         function lines = mixtureLines(~)

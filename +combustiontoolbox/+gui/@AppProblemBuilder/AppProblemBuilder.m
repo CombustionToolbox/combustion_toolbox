@@ -958,12 +958,26 @@ classdef AppProblemBuilder < handle
         end
 
         function value = isBulkTemperatureSweep(~, mixtures)
+            % Check whether a mixture array was generated from bulk temperature
+            %
+            % Args:
+            %     mixtures (Mixture): Mixture array to inspect
+            %
+            % Returns:
+            %     value (logical): True for parametric bulk temperature studies
             value = numel(mixtures) > 1 ...
                 && isprop(mixtures(1), 'rangeName') ...
                 && strcmpi(mixtures(1).rangeName, 'T');
         end
 
         function value = isUniformValue(~, values)
+            % Check whether all numeric values are equal within tolerance
+            %
+            % Args:
+            %     values (float): Values to inspect
+            %
+            % Returns:
+            %     value (logical): True when values are empty or uniform
             value = isempty(values) || all(abs(values - values(1)) < 1e-12);
         end
 

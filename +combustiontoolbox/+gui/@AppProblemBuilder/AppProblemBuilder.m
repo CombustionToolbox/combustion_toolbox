@@ -1,5 +1,5 @@
 classdef AppProblemBuilder < handle
-    % Builds canonical and solver-ready problem setups from GUI inputs.
+    % Builds canonical and solver-ready problem setups from GUI inputs
     %
     % Attributes:
     %     session (AppSession): Long-lived GUI services
@@ -142,6 +142,16 @@ classdef AppProblemBuilder < handle
 
     methods (Access = private)
         function setup = reactantsSetup(obj, input, varargin)
+            % Build the canonical reactants setup from the GUI table
+            %
+            % Args:
+            %     input (AppInput): Typed GUI input snapshot
+            %
+            % Optional Args:
+            %     mixture (Mixture): Current mixture state from the GUI
+            %
+            % Returns:
+            %     setup (struct): Reactant species, amounts, roles, and temperatures
             setup = struct( ...
                 'selection', input.reactants, ...
                 'species', {{}}, ...
@@ -177,6 +187,10 @@ classdef AppProblemBuilder < handle
         end
 
         function validateReactantsForBuild(~, reactants)
+            % Validate that a problem can be built from the reactants setup
+            %
+            % Args:
+            %     reactants (struct): Canonical reactants setup
             if isempty(reactants.species)
                 error('AppProblemBuilder:MissingReactants', ...
                     'Select at least one reactant before solving the problem.');
@@ -184,6 +198,13 @@ classdef AppProblemBuilder < handle
         end
 
         function options = optionsSetup(~, input)
+            % Build report and display options from GUI inputs
+            %
+            % Args:
+            %     input (AppInput): Typed GUI input snapshot
+            %
+            % Returns:
+            %     options (struct): Report and display options
             printResults = false;
 
             if isfield(input.flags, 'printResults')
@@ -198,6 +219,13 @@ classdef AppProblemBuilder < handle
         end
 
         function value = resolveProductSpecies(~, input)
+            % Resolve the product species representation used by ChemicalSystem
+            %
+            % Args:
+            %     input (AppInput): Typed GUI input snapshot
+            %
+            % Returns:
+            %     value (cell | char): Product species or predefined product-set keyword
             value = input.productSpecies;
 
             if strcmpi(input.products, 'complete reaction')
@@ -206,6 +234,15 @@ classdef AppProblemBuilder < handle
         end
 
         function value = productSelectionType(obj, input, reactants, productSpecies)
+            % Classify the selected product species source
+            %
+            % Args:
+            %     input (AppInput): Typed GUI input snapshot
+            %     reactants (struct): Canonical reactants setup
+            %     productSpecies (cell | char): Product species resolved for the setup
+            %
+            % Returns:
+            %     value (char): Product selection type
             if strcmpi(input.products, 'complete reaction')
                 value = 'complete';
             elseif obj.hasOnlyInertReactants(reactants)
@@ -219,6 +256,15 @@ classdef AppProblemBuilder < handle
         end
 
         function value = matchesAutomaticProductSpecies(obj, input, reactants, productSpecies)
+            % Check whether the current product list matches the automatic list
+            %
+            % Args:
+            %     input (AppInput): Typed GUI input snapshot
+            %     reactants (struct): Canonical reactants setup
+            %     productSpecies (cell | char): Product species resolved for the setup
+            %
+            % Returns:
+            %     value (logical): True when the product species list is automatic
             value = false;
 
             if isempty(productSpecies) || ischar(productSpecies) ...
@@ -231,6 +277,14 @@ classdef AppProblemBuilder < handle
         end
 
         function value = automaticProductSpecies(obj, input, reactants)
+            % Compute the automatic product species for the reactant set
+            %
+            % Args:
+            %     input (AppInput): Typed GUI input snapshot
+            %     reactants (struct): Canonical reactants setup
+            %
+            % Returns:
+            %     value (cell): Automatically detected product species
             value = {};
 
             if isempty(reactants.species)
@@ -249,17 +303,39 @@ classdef AppProblemBuilder < handle
         end
 
         function value = reactiveProductSourceSpecies(~, reactants)
+            % Return reactant species that define automatic equilibrium products
+            %
+            % Args:
+            %     reactants (struct): Canonical reactants setup
+            %
+            % Returns:
+            %     value (cell): Fuel and oxidizer species
             role = reactants.role;
             index = strcmpi(role, 'Fuel') | strcmpi(role, 'Oxidizer');
             value = reactants.species(index);
         end
 
         function value = hasOnlyInertReactants(~, reactants)
+            % Check whether all reactants are inert species
+            %
+            % Args:
+            %     reactants (struct): Canonical reactants setup
+            %
+            % Returns:
+            %     value (logical): True when every reactant role is inert
             value = ~isempty(reactants.species) ...
                 && all(strcmpi(reactants.role, 'Inert'));
         end
 
         function flags = defaultFlags(obj, input, reactants)
+            % Build solver and setup flags from GUI inputs
+            %
+            % Args:
+            %     input (AppInput): Typed GUI input snapshot
+            %     reactants (struct): Canonical reactants setup
+            %
+            % Returns:
+            %     flags (struct): Solver and setup flags
             printResults = obj.inputFlag(input, 'printResults', false);
             frozenChemistry = obj.inputFlag(input, 'frozenChemistry', false) ...
                 || obj.hasOnlyInertReactants(reactants);
@@ -278,6 +354,15 @@ classdef AppProblemBuilder < handle
         end
 
         function value = inputFlag(~, input, name, defaultValue)
+            % Read a boolean flag from an AppInput snapshot
+            %
+            % Args:
+            %     input (AppInput): Typed GUI input snapshot
+            %     name (char): Flag name
+            %     defaultValue: Fallback value
+            %
+            % Returns:
+            %     value: Flag value
             value = defaultValue;
 
             if isfield(input.flags, name)
@@ -286,6 +371,14 @@ classdef AppProblemBuilder < handle
         end
 
         function inputs = equivalenceRatioInputs(~, input, reactants) %#ok<INUSD>
+            % Build name-value inputs for equivalence-ratio dependent calls
+            %
+            % Args:
+            %     input (AppInput): Typed GUI input snapshot
+            %     reactants (struct): Canonical reactants setup
+            %
+            % Returns:
+            %     inputs (cell): Name-value inputs for setProperties
             inputs = {};
 
             if ~isempty(input.equivalenceRatio)
@@ -294,6 +387,13 @@ classdef AppProblemBuilder < handle
         end
 
         function problem = buildBaseProblem(obj, listSpecies)
+            % Build the base problem structure and chemical system
+            %
+            % Optional Args:
+            %     listSpecies (cell | char): Product species or predefined product-set keyword
+            %
+            % Returns:
+            %     problem (struct): Base problem structure
             if nargin < 2
                 listSpecies = {};
             end
@@ -304,6 +404,15 @@ classdef AppProblemBuilder < handle
         end
 
         function properties = makeStateProperties(obj, input, temperature, mechanicalValue)
+            % Build state-property descriptors for a thermodynamic state
+            %
+            % Args:
+            %     input (AppInput): Typed GUI input snapshot
+            %     temperature (float): Temperature input [K]
+            %     mechanicalValue (float): Pressure [bar] or volume [m3/kg]
+            %
+            % Returns:
+            %     properties (struct): State-property descriptors
             mechanicalName = 'pressure';
 
             if obj.isConstantVolumeProblem(input.problemType)
@@ -316,15 +425,36 @@ classdef AppProblemBuilder < handle
         end
 
         function value = isConstantVolumeProblem(obj, problemType)
+            % Check whether a problem type uses volume as mechanical state
+            %
+            % Args:
+            %     problemType (char): Problem type identifier
+            %
+            % Returns:
+            %     value (logical): True for constant-volume problem types
             value = any(strcmpi(char(problemType), obj.constantVolumeProblems));
         end
 
         function value = isEquilibriumProblem(obj, problemType)
+            % Check whether a problem type belongs to equilibrium problems
+            %
+            % Args:
+            %     problemType (char): Problem type identifier
+            %
+            % Returns:
+            %     value (logical): True for equilibrium problem types
             value = any(strcmpi(char(problemType), obj.equilibriumProblems));
         end
 
         function problem = applyProblemTypeInputs(obj, problem, input)
             % Apply inputs and solver variants that depend on the problem type
+            %
+            % Args:
+            %     problem (struct): Canonical problem setup
+            %     input (AppInput): Typed GUI input snapshot
+            %
+            % Returns:
+            %     problem (struct): Setup with problem-specific inputs and variants
             problem.problemType = char(input.problemType);
 
             switch problem.problemType
@@ -349,12 +479,27 @@ classdef AppProblemBuilder < handle
         end
 
         function problem = setupShockProblem(obj, problem, input)
+            % Add incident shock inputs to the problem setup
+            %
+            % Args:
+            %     problem (struct): Canonical problem setup
+            %     input (AppInput): Typed GUI input snapshot
+            %
+            % Returns:
+            %     problem (struct): Shock problem setup
             problem.additionalInputsReactants = [problem.additionalInputsReactants, ...
                 {'mach', obj.additionalPropertyValue(input, 'PR4')}];
         end
 
         function problem = setupShockObliqueProblem(obj, problem, input)
             % Select beta or theta from the active angle field
+            %
+            % Args:
+            %     problem (struct): Canonical problem setup
+            %     input (AppInput): Typed GUI input snapshot
+            %
+            % Returns:
+            %     problem (struct): Oblique shock problem setup
             mach = obj.additionalPropertyValue(input, 'PR4');
             beta = obj.additionalPropertyValue(input, 'PR5');
             theta = obj.additionalPropertyValue(input, 'PP5');
@@ -362,12 +507,27 @@ classdef AppProblemBuilder < handle
         end
 
         function problem = setupDetonationProblem(obj, problem, input)
+            % Add detonation drive-factor inputs to the problem setup
+            %
+            % Args:
+            %     problem (struct): Canonical problem setup
+            %     input (AppInput): Typed GUI input snapshot
+            %
+            % Returns:
+            %     problem (struct): Detonation problem setup
             problem.additionalInputsReactants = [problem.additionalInputsReactants, ...
                 {'driveFactor', obj.additionalPropertyValue(input, 'PR3')}];
         end
 
         function problem = setupDetonationObliqueProblem(obj, problem, input)
             % Select beta or theta for oblique detonation variants
+            %
+            % Args:
+            %     problem (struct): Canonical problem setup
+            %     input (AppInput): Typed GUI input snapshot
+            %
+            % Returns:
+            %     problem (struct): Oblique detonation problem setup
             driveFactor = obj.additionalPropertyValue(input, 'PR3');
             beta = obj.additionalPropertyValue(input, 'PR4');
             theta = obj.additionalPropertyValue(input, 'PP4');
@@ -376,6 +536,13 @@ classdef AppProblemBuilder < handle
 
         function problem = setupRocketProblem(obj, problem, input)
             % Chamber model is encoded in the solver problem type
+            %
+            % Args:
+            %     problem (struct): Canonical problem setup
+            %     input (AppInput): Typed GUI input snapshot
+            %
+            % Returns:
+            %     problem (struct): Rocket problem setup
             infiniteAreaChamber = true;
 
             if isfield(input.flags, 'infiniteAreaChamber')
@@ -412,6 +579,14 @@ classdef AppProblemBuilder < handle
         end
 
         function problem = setupShockTurbulenceProblem(obj, problem, input)
+            % Add base shock-turbulence inputs to the problem setup
+            %
+            % Args:
+            %     problem (struct): Canonical problem setup
+            %     input (AppInput): Typed GUI input snapshot
+            %
+            % Returns:
+            %     problem (struct): Shock-turbulence problem setup
             problem.productStateProperties(1).value = 0;
             problem.productStateProperties(2).value = 0;
             problem.additionalInputsReactants = [problem.additionalInputsReactants, ...
@@ -419,6 +594,14 @@ classdef AppProblemBuilder < handle
         end
 
         function problem = setupShockTurbulenceVorticalEntropicProblem(obj, problem, input)
+            % Add vortical-entropic shock-turbulence inputs to the problem setup
+            %
+            % Args:
+            %     problem (struct): Canonical problem setup
+            %     input (AppInput): Typed GUI input snapshot
+            %
+            % Returns:
+            %     problem (struct): Vortical-entropic shock-turbulence setup
             problem.productStateProperties(1).value = 0;
             problem.productStateProperties(2).value = input.temperatureProducts;
             problem.additionalInputsReactants = [problem.additionalInputsReactants, ...
@@ -427,6 +610,14 @@ classdef AppProblemBuilder < handle
         end
 
         function problem = setupShockTurbulenceCompressibleProblem(obj, problem, input)
+            % Add compressible shock-turbulence inputs to the problem setup
+            %
+            % Args:
+            %     problem (struct): Canonical problem setup
+            %     input (AppInput): Typed GUI input snapshot
+            %
+            % Returns:
+            %     problem (struct): Compressible shock-turbulence setup
             problem.productStateProperties(1).value = input.temperatureProducts;
             problem.productStateProperties(2).value = input.pressureProducts;
             problem.additionalInputsReactants = [problem.additionalInputsReactants, ...
@@ -438,6 +629,15 @@ classdef AppProblemBuilder < handle
 
         function problem = applyAngleVariant(~, problem, leadingInputs, beta, theta)
             % Append beta or theta inputs and tag the solver variant
+            %
+            % Args:
+            %     problem (struct): Canonical problem setup
+            %     leadingInputs (cell): Name-value inputs required before the angle
+            %     beta (float): Wave angle input [deg]
+            %     theta (float): Deflection angle input [deg]
+            %
+            % Returns:
+            %     problem (struct): Problem setup with angle variant metadata
             if ~isempty(beta)
                 problem.flags.beta = true;
                 problem.problemType = [problem.problemType, '_BETA'];
@@ -453,6 +653,12 @@ classdef AppProblemBuilder < handle
 
         function inputs = statePropertiesToInputs(~, stateProperties)
             % Convert state property structs to CT name-value inputs
+            %
+            % Args:
+            %     stateProperties (struct): State-property descriptors
+            %
+            % Returns:
+            %     inputs (cell): Name-value inputs for setProperties
             inputs = cell(1, 2 * numel(stateProperties));
 
             for i = 1:numel(stateProperties)
@@ -462,6 +668,14 @@ classdef AppProblemBuilder < handle
         end
 
         function value = additionalPropertyValue(~, input, name)
+            % Read one additional GUI property by name
+            %
+            % Args:
+            %     input (AppInput): Typed GUI input snapshot
+            %     name (char): Additional property field name
+            %
+            % Returns:
+            %     value: Additional property value or empty
             value = [];
 
             if isfield(input.additionalProperties, name)
@@ -471,6 +685,14 @@ classdef AppProblemBuilder < handle
 
         function mixture = buildMixture(obj, chemicalSystem, input, currentMixture)
             % Build a mixture using current composition or table data
+            %
+            % Args:
+            %     chemicalSystem (ChemicalSystem): Chemical system for the mixture
+            %     input (AppInput): Typed GUI input snapshot
+            %     currentMixture (Mixture): Current GUI mixture state
+            %
+            % Returns:
+            %     mixture (Mixture): Mixture with reactant composition
             mixture = combustiontoolbox.core.Mixture(chemicalSystem);
 
             if ~isempty(input.equivalenceRatio) && obj.hasMixtureComposition(currentMixture)
@@ -483,6 +705,13 @@ classdef AppProblemBuilder < handle
         end
 
         function value = hasMixtureComposition(~, mixture)
+            % Check whether a mixture contains any composition data
+            %
+            % Args:
+            %     mixture (Mixture): Mixture object to inspect
+            %
+            % Returns:
+            %     value (logical): True when fuel, oxidizer, or inert species exist
             value = false;
 
             if ~isobject(mixture)
@@ -502,6 +731,14 @@ classdef AppProblemBuilder < handle
         end
 
         function problem = setupProductStateProperties(obj, problem, input)
+            % Build product state-property descriptors for equilibrium problems
+            %
+            % Args:
+            %     problem (struct): Solver-ready problem setup
+            %     input (AppInput): Typed GUI input snapshot
+            %
+            % Returns:
+            %     problem (struct): Problem setup with product state properties
             productPressure = input.pressureProducts;
 
             if isempty(productPressure)
@@ -538,6 +775,13 @@ classdef AppProblemBuilder < handle
         end
 
         function value = constraintName(~, problemType)
+            % Return the thermodynamic constraint name for equilibrium problems
+            %
+            % Args:
+            %     problemType (char): Problem type identifier
+            %
+            % Returns:
+            %     value (char): Constraint name
             switch upper(char(problemType))
                 case 'TP'
                     value = 'temperaturePressure';
@@ -557,6 +801,13 @@ classdef AppProblemBuilder < handle
         end
 
         function value = problemFamily(~, problemType)
+            % Return the problem family for a problem type
+            %
+            % Args:
+            %     problemType (char): Problem type identifier
+            %
+            % Returns:
+            %     value (char): Problem family name
             problemType = upper(char(problemType));
 
             if any(strcmp(problemType, {'TP', 'HP', 'SP', 'TV', 'EV', 'SV'}))
@@ -576,6 +827,10 @@ classdef AppProblemBuilder < handle
 
         function copyMixtureComposition(~, mixture, source)
             % Copy fuel, oxidizer, and inert composition from an existing mixture
+            %
+            % Args:
+            %     mixture (Mixture): Destination mixture
+            %     source (Mixture): Source mixture
             if ~isempty(source.listSpeciesFuel)
                 set(mixture, source.listSpeciesFuel, 'fuel', source.molesFuel);
             end
@@ -597,6 +852,16 @@ classdef AppProblemBuilder < handle
         end
 
         function amounts = referenceAmountsForSpecies(~, species, roles, mixture, fallbackAmounts)
+            % Return composition amounts from the current mixture when possible
+            %
+            % Args:
+            %     species (cell): Species names from the reactants table
+            %     roles (cell): Species roles from the reactants table
+            %     mixture (Mixture): Current GUI mixture state
+            %     fallbackAmounts (float): Amounts from the reactants table
+            %
+            % Returns:
+            %     amounts (float): Reference amounts aligned with species
             amounts = fallbackAmounts;
             oxidizerAmounts = mixture.ratioOxidizer;
 
@@ -628,6 +893,10 @@ classdef AppProblemBuilder < handle
 
         function applyReactantsTableComposition(obj, mixture, data)
             % Build reactant composition from table data
+            %
+            % Args:
+            %     mixture (Mixture): Destination mixture
+            %     data (cell): Reactants table data
             if isempty(data)
                 return
             end
@@ -655,6 +924,10 @@ classdef AppProblemBuilder < handle
 
         function applySpeciesTemperatures(obj, mixtures, data)
             % Apply species temperatures from the reactants table
+            %
+            % Args:
+            %     mixtures (Mixture): Mixture array to update
+            %     data (cell): Reactants table data
             if isempty(data) || size(data, 2) < 5
                 return
             end
@@ -699,6 +972,9 @@ classdef AppProblemBuilder < handle
 
         function validateSession(obj)
             % Validate services required to create chemical systems
+            %
+            % Args:
+            %     obj (AppProblemBuilder): Problem builder object
             if isempty(obj.session) || isempty(obj.session.database)
                 error('AppProblemBuilder:MissingSession', ...
                     'AppProblemBuilder requires an AppSession with a database.');
@@ -707,6 +983,12 @@ classdef AppProblemBuilder < handle
 
         function value = cellColumnToRowVector(~, values)
             % Convert table column data to a row vector
+            %
+            % Args:
+            %     values (cell | float): Table column values
+            %
+            % Returns:
+            %     value (float): Row vector
             if iscell(values)
                 value = cell2mat(values)';
             else

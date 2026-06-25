@@ -1,5 +1,5 @@
 classdef AppSolver < handle
-    % Dispatches GUI study requests to CT solvers and packages results.
+    % Dispatches GUI study requests to CT solvers and packages results
     %
     % Attributes:
     %     session (AppSession): Long-lived GUI services
@@ -107,6 +107,13 @@ classdef AppSolver < handle
 
     methods (Access = private)
         function solver = solverFromRoute(obj, route)
+            % Return the solver object associated with a catalog route
+            %
+            % Args:
+            %     route (struct): Solver route metadata from AppProblemCatalog
+            %
+            % Returns:
+            %     solver (handle): Solver instance stored in the GUI session
             if isempty(obj.session) || ~isprop(obj.session, route.solver) || isempty(obj.session.(route.solver))
                 error('AppSolver:MissingSolver', ...
                     'The session does not provide the solver "%s".', route.solver);
@@ -116,6 +123,14 @@ classdef AppSolver < handle
         end
 
         function configureSolver(obj, solver, solverProblemType, printResults, plotConfig, route)
+            % Configure a solver before executing the current problem
+            %
+            % Args:
+            %     solver (handle): Solver object used for the current problem
+            %     solverProblemType (char): Solver-level problem type identifier
+            %     printResults (logical): Flag to print solver reports
+            %     plotConfig (struct): Plot configuration metadata from the catalog
+            %     route (struct): Solver route metadata from AppProblemCatalog
             solver.problemType = solverProblemType;
 
             if isprop(solver, 'FLAG_RESULTS')
@@ -137,6 +152,10 @@ classdef AppSolver < handle
         end
 
         function silenceSubsolvers(~, solver)
+            % Disable reports from nested solvers
+            %
+            % Args:
+            %     solver (handle): Solver object that may own nested solvers
             subsolverNames = {'equilibriumSolver', 'shockSolver', 'jumpConditionsSolver'};
 
             for i = 1:numel(subsolverNames)
@@ -149,6 +168,11 @@ classdef AppSolver < handle
         end
 
         function configureShockTurbulenceSolver(~, solver, solverProblemType)
+            % Set properties of the ShockTurbulenceSolver object
+            %
+            % Args:
+            %     solver (ShockTurbulenceSolver): Shock-turbulence solver object
+            %     solverProblemType (char): Shock-turbulence model identifier
             solver.setShockTurbulenceModel(solverProblemType);
 
             % Shock-turbulence is based on planar incident shock jump conditions
@@ -166,6 +190,11 @@ classdef AppSolver < handle
         end
 
         function configureReport(~, solver, options)
+            % Configure result report and plotting options
+            %
+            % Args:
+            %     solver (handle): Solver object used for the current problem
+            %     options (struct): Report and display options from the setup
             if ~isprop(solver, 'plotConfig') || isempty(solver.plotConfig)
                 return
             end
@@ -175,12 +204,30 @@ classdef AppSolver < handle
         end
 
         function solverOutputs = solveWithProblemOptions(obj, solver, route, problem, layout)
+            % Solve a problem with scoped solver options from the setup
+            %
+            % Args:
+            %     solver (handle): Solver object used for the current problem
+            %     route (struct): Solver route metadata from AppProblemCatalog
+            %     problem (struct): Solver-ready problem setup
+            %     layout (struct): Result layout metadata from AppProblemCatalog
+            %
+            % Returns:
+            %     solverOutputs (cell): Raw solver outputs arranged for AppResults
             previousModels = obj.applyFrozenChemistryModel(solver, problem);
             cleanup = onCleanup(@() obj.restoreCaloricGasModels(previousModels));
             solverOutputs = obj.solveProblem(solver, route, problem, layout);
         end
 
         function previousModels = applyFrozenChemistryModel(obj, solver, problem)
+            % Apply the thermally perfect model for frozen-chemistry setups
+            %
+            % Args:
+            %     solver (handle): Solver object used for the current problem
+            %     problem (struct): Solver-ready problem setup
+            %
+            % Returns:
+            %     previousModels (struct): Solver handles and previous caloric gas models
             previousModels = struct('solver', {}, 'caloricGasModel', {});
 
             if ~obj.problemUsesFrozenChemistry(problem)
@@ -195,12 +242,27 @@ classdef AppSolver < handle
         end
 
         function value = problemUsesFrozenChemistry(~, problem)
+            % Check whether a problem setup requires frozen chemistry
+            %
+            % Args:
+            %     problem (struct): Solver-ready problem setup
+            %
+            % Returns:
+            %     value (logical): True when frozen chemistry is active
             value = isfield(problem, 'flags') ...
                 && isfield(problem.flags, 'frozenChemistry') ...
                 && problem.flags.frozenChemistry;
         end
 
         function previousModels = setThermallyPerfectModel(~, previousModels, solver)
+            % Set one solver to thermally perfect and store its previous model
+            %
+            % Args:
+            %     previousModels (struct): Previously stored caloric gas models
+            %     solver (handle): Solver object with a caloricGasModel property
+            %
+            % Returns:
+            %     previousModels (struct): Updated caloric gas model restoration data
             if isempty(solver) || ~isprop(solver, 'caloricGasModel')
                 return
             end
@@ -211,6 +273,10 @@ classdef AppSolver < handle
         end
 
         function restoreCaloricGasModels(~, previousModels)
+            % Restore caloric gas models after a scoped solver option change
+            %
+            % Args:
+            %     previousModels (struct): Solver handles and previous caloric gas models
             for i = numel(previousModels):-1:1
                 solver = previousModels(i).solver;
 
@@ -221,6 +287,16 @@ classdef AppSolver < handle
         end
 
         function solverOutputs = solveProblem(obj, solver, route, problem, layout)
+            % Dispatch a solver call using the configured route
+            %
+            % Args:
+            %     solver (handle): Solver object used for the current problem
+            %     route (struct): Solver route metadata from AppProblemCatalog
+            %     problem (struct): Solver-ready problem setup
+            %     layout (struct): Result layout metadata from AppProblemCatalog
+            %
+            % Returns:
+            %     solverOutputs (cell): Raw solver outputs arranged for AppResults
             switch route.solver
                 case 'equilibriumSolver'
                     solverOutputs = obj.solveEquilibriumProblem(solver, problem);
@@ -234,11 +310,27 @@ classdef AppSolver < handle
         end
 
         function solverOutputs = solveEquilibriumProblem(~, solver, problem)
+            % Solve an equilibrium problem from the products mixture array
+            %
+            % Args:
+            %     solver (EquilibriumSolver): Equilibrium solver object
+            %     problem (struct): Solver-ready problem setup
+            %
+            % Returns:
+            %     solverOutputs (cell): Reactants and products mixture arrays
             solver.solveArray(problem.mixArrayProducts);
             solverOutputs = {problem.mixArrayReactants, problem.mixArrayProducts};
         end
 
         function outputs = selectReportOutputs(~, route, solverOutputs)
+            % Select the solver outputs used for automatic reports
+            %
+            % Args:
+            %     route (struct): Solver route metadata from AppProblemCatalog
+            %     solverOutputs (cell): Raw solver outputs
+            %
+            % Returns:
+            %     outputs (cell): Outputs passed to report generation
             outputs = solverOutputs;
 
             if strcmp(route.solver, 'equilibriumSolver') && numel(solverOutputs) >= 2
@@ -247,6 +339,14 @@ classdef AppSolver < handle
         end
 
         function results = attachSetupMetadata(~, results, setup)
+            % Attach setup metadata to semantic GUI results
+            %
+            % Args:
+            %     results (struct): Semantic result cases from AppResults
+            %     setup (struct): Canonical problem setup
+            %
+            % Returns:
+            %     results (struct): Result cases with setup metadata
             for i = 1:numel(results)
                 results(i).Reactants = combustiontoolbox.gui.AppSolver.textValue(setup.reactants.selection, 'Custom');
                 results(i).Products = combustiontoolbox.gui.AppSolver.productLabel(setup);
@@ -261,11 +361,27 @@ classdef AppSolver < handle
         end
 
         function count = outputCount(obj, layout, variant)
+            % Return the number of outputs expected for a result variant
+            %
+            % Args:
+            %     layout (struct): Result layout metadata from AppProblemCatalog
+            %     variant (char): Solver output variant
+            %
+            % Returns:
+            %     count (float): Number of output states
             outputStates = obj.outputStatesForVariant(layout, variant);
             count = numel(outputStates);
         end
 
         function outputStates = outputStatesForVariant(~, layout, variant)
+            % Return output states for the selected result variant
+            %
+            % Args:
+            %     layout (struct): Result layout metadata from AppProblemCatalog
+            %     variant (char): Solver output variant
+            %
+            % Returns:
+            %     outputStates (struct): Output state descriptors
             outputStates = layout.outputStates;
 
             if ~isfield(layout, 'variantOutputStates')
@@ -286,6 +402,14 @@ classdef AppSolver < handle
         end
 
         function value = solverProblemType(~, problemType, route)
+            % Convert GUI problem type to the solver-level problem type
+            %
+            % Args:
+            %     problemType (char): GUI problem type identifier
+            %     route (struct): Solver route metadata from AppProblemCatalog
+            %
+            % Returns:
+            %     value (char): Solver-level problem type identifier
             if strcmp(route.solver, 'shockTurbulenceSolver')
                 value = lower(char(route.solverProblemType));
                 return
@@ -300,6 +424,14 @@ classdef AppSolver < handle
 
     methods (Static, Access = private)
         function value = textValue(inputValue, defaultValue)
+            % Convert a value to text with a fallback
+            %
+            % Args:
+            %     inputValue: Value to convert
+            %     defaultValue (char): Fallback text
+            %
+            % Returns:
+            %     value (char): Text value
             if isempty(inputValue)
                 value = defaultValue;
                 return
@@ -321,6 +453,13 @@ classdef AppSolver < handle
         end
 
         function value = productLabel(setup)
+            % Return the product-set label shown in result tree nodes
+            %
+            % Args:
+            %     setup (struct): Canonical problem setup
+            %
+            % Returns:
+            %     value (char): Product-set label
             if isfield(setup, 'flags') && isfield(setup.flags, 'frozenChemistry') ...
                     && setup.flags.frozenChemistry
                 value = 'Frozen';

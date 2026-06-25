@@ -69,12 +69,18 @@ classdef AppSpeciesPanel < handle
 
         function onProductsChanged(obj)
             % Handle product preset or custom species selection
+            %
+            % Args:
+            %     obj (AppSpeciesPanel): Species panel object
             obj.updateProductSpecies();
             obj.updateProductDisplayLists();
         end
 
         function setCustomProductSpecies(obj, species)
             % Apply product species selected outside the products dropdown
+            %
+            % Args:
+            %     species (cell | string | char): Custom product species list
             if isempty(species)
                 species = {};
             end
@@ -85,6 +91,9 @@ classdef AppSpeciesPanel < handle
 
         function onReactantsTableEdited(obj, ~)
             % Rebuild mixture from edited reactants table
+            %
+            % Args:
+            %     obj (AppSpeciesPanel): Species panel object
             if isempty(obj.componentData('UITable_R', {}))
                 return
             end
@@ -108,6 +117,9 @@ classdef AppSpeciesPanel < handle
 
         function onEquivalenceRatioChanged(obj, event) %#ok<INUSD>
             % Rebuild reactant composition for a new equivalence ratio
+            %
+            % Args:
+            %     event (object): App Designer callback event
             if strcmp(obj.componentValue('edit_phi', '-'), '-')
                 return
             end
@@ -133,6 +145,9 @@ classdef AppSpeciesPanel < handle
 
         function onReactantsTemperatureChanged(obj)
             % Apply PR1 temperature to all reactants table entries
+            %
+            % Args:
+            %     obj (AppSpeciesPanel): Species panel object
             data = obj.componentData('UITable_R', {});
 
             if isempty(data)
@@ -156,6 +171,9 @@ classdef AppSpeciesPanel < handle
 
         function onFrozenChemistryChanged(obj)
             % Update frozen chemistry model and product list
+            %
+            % Args:
+            %     obj (AppSpeciesPanel): Species panel object
             if obj.hasEquilibriumSolver()
                 if obj.componentValue('FrozenchemistryCheckBox', false)
                     obj.session.equilibriumSolver.caloricGasModel = ...
@@ -171,6 +189,9 @@ classdef AppSpeciesPanel < handle
 
         function onIonizedSpeciesChanged(obj)
             % Update product list after ionized species flag changes
+            %
+            % Args:
+            %     obj (AppSpeciesPanel): Species panel object
             obj.setValue('Products', []);
             obj.setProductItems(obj.findProductsFromReactants());
             obj.updateProductDisplayLists();
@@ -178,6 +199,9 @@ classdef AppSpeciesPanel < handle
 
         function onProductSpeciesAdded(obj)
             % Add selected database species to the products list
+            %
+            % Args:
+            %     obj (AppSpeciesPanel): Species panel object
             items = obj.addToList(obj.componentValue('listbox_LS_DB', {}), ...
                 obj.componentItems('listbox_LS'));
             obj.setItems('listbox_LS', items);
@@ -187,6 +211,9 @@ classdef AppSpeciesPanel < handle
 
         function onProductSpeciesRemoved(obj)
             % Remove selected species from the products list
+            %
+            % Args:
+            %     obj (AppSpeciesPanel): Species panel object
             items = obj.removeFromList(obj.componentValue('listbox_LS', {}), ...
                 obj.componentItems('listbox_LS'));
             obj.setItems('listbox_LS', items);
@@ -196,6 +223,9 @@ classdef AppSpeciesPanel < handle
 
         function onDatabaseSpeciesSearchChanging(obj, event)
             % Filter database species while the search field changes
+            %
+            % Args:
+            %     event (object): App Designer callback event
             searchText = obj.eventValue(event, '');
 
             if isempty(searchText)
@@ -208,6 +238,9 @@ classdef AppSpeciesPanel < handle
 
         function onDisplaySpeciesSearchChanging(obj, event)
             % Filter available and selected display species
+            %
+            % Args:
+            %     event (object): App Designer callback event
             searchText = obj.eventValue(event, '');
 
             if isempty(searchText)
@@ -541,6 +574,10 @@ classdef AppSpeciesPanel < handle
         end
 
         function updateFrozenProducts(obj)
+            % Update product species when frozen chemistry is active
+            %
+            % Args:
+            %     obj (AppSpeciesPanel): Species panel object
             if ~obj.componentValue('FrozenchemistryCheckBox', false)
                 obj.updateProductSpecies();
                 obj.updateProductDisplayLists();
@@ -563,6 +600,10 @@ classdef AppSpeciesPanel < handle
         end
 
         function updateProductSpecies(obj)
+            % Update product species from the selected product source
+            %
+            % Args:
+            %     obj (AppSpeciesPanel): Species panel object
             productValue = obj.componentValue('Products', []);
 
             if isempty(productValue)
@@ -586,6 +627,10 @@ classdef AppSpeciesPanel < handle
         end
 
         function updateCompleteReactionProducts(obj, equivalenceRatio)
+            % Update product species for complete-reaction calculations
+            %
+            % Args:
+            %     equivalenceRatio (float): Current equivalence ratio
             if ~strcmpi(obj.componentValue('Products', []), 'Complete Reaction')
                 return
             end
@@ -597,6 +642,10 @@ classdef AppSpeciesPanel < handle
         end
 
         function value = findProductsFromReactants(obj)
+            % Find products from current fuel and oxidizer reactants
+            %
+            % Returns:
+            %     value (cell): Product species derived from the current reactants
             if isempty(obj.app.mixture.listSpecies)
                 value = {};
                 return
@@ -614,6 +663,10 @@ classdef AppSpeciesPanel < handle
         end
 
         function value = productSpecies(obj)
+            % Return the product species represented by the products controls
+            %
+            % Returns:
+            %     value (cell | char): Product species or complete-reaction keyword
             value = obj.componentItems('listbox_Products');
 
             if strcmpi(obj.componentValue('Products', ''), 'complete reaction')
@@ -622,6 +675,10 @@ classdef AppSpeciesPanel < handle
         end
 
         function value = equivalenceProductSpecies(obj)
+            % Return species used while rebuilding equivalence-ratio mixtures
+            %
+            % Returns:
+            %     value (cell | char): Species list or complete-reaction keyword
             if strcmpi(obj.componentValue('Products', ''), 'complete reaction')
                 value = 'complete';
             else
@@ -631,6 +688,10 @@ classdef AppSpeciesPanel < handle
         end
 
         function rebuildChemicalSystem(obj, listSpecies)
+            % Rebuild the app chemical system for the selected species
+            %
+            % Args:
+            %     listSpecies (cell | char): Product species or predefined product-set keyword
             if isempty(listSpecies)
                 obj.app.chemicalSystem = combustiontoolbox.core.ChemicalSystem(obj.app.database);
             else
@@ -639,6 +700,10 @@ classdef AppSpeciesPanel < handle
         end
 
         function clearReactantsTables(obj)
+            % Clear reactants and product tables after empty reactant selection
+            %
+            % Args:
+            %     obj (AppSpeciesPanel): Species panel object
             obj.setData('UITable_R', {});
             obj.setData('UITable_R2', {});
             obj.setData('UITable_P', {});
@@ -650,6 +715,16 @@ classdef AppSpeciesPanel < handle
         end
 
         function [temperature, FLAG_FIXED] = fixSpeciesTemperatures(obj, listSpecies, temperature, numSpecies)
+            % Replace table temperatures for species with fixed database temperature
+            %
+            % Args:
+            %     listSpecies (cell): Reactant species names
+            %     temperature (cell): Temperature values from the GUI
+            %     numSpecies (float): Number of reactant species
+            %
+            % Returns:
+            %     temperature (cell): Temperature values after fixed-species checks
+            %     FLAG_FIXED (logical): True when any species has fixed temperature
             FLAG_FIXED = false;
 
             for i = 1:numSpecies
@@ -667,6 +742,10 @@ classdef AppSpeciesPanel < handle
         end
 
         function updateProductDisplayLists(obj)
+            % Synchronize product and display species listboxes
+            %
+            % Args:
+            %     obj (AppSpeciesPanel): Species panel object
             items = obj.componentItems('listbox_Products');
             obj.setItems('listbox_LS', items);
             obj.setTitle('ListofSpeciesPanel', sprintf('List of Species - %d', obj.numProductSpecies()));
@@ -679,18 +758,38 @@ classdef AppSpeciesPanel < handle
         end
 
         function value = numProductSpecies(obj)
+            % Return the number of product species in the current list
+            %
+            % Returns:
+            %     value (float): Number of product species
             value = numel(obj.componentItems('listbox_Products'));
         end
 
         function value = numDisplaySpecies(obj)
+            % Return the number of display species in the current list
+            %
+            % Returns:
+            %     value (float): Number of display species
             value = numel(obj.componentItems('listbox_LS_display'));
         end
 
         function updateDisplaySpeciesText(obj)
+            % Update the display-species panel title
+            %
+            % Args:
+            %     obj (AppSpeciesPanel): Species panel object
             obj.setText('text_LS_display', sprintf('Display Species - %d', obj.numDisplaySpecies()));
         end
 
         function values = filterByPrefix(obj, items, searchText) %#ok<INUSD>
+            % Filter a species list by typed prefix
+            %
+            % Args:
+            %     items (cell): Candidate species names
+            %     searchText (char): Typed prefix
+            %
+            % Returns:
+            %     values (cell): Matching species names
             values = {};
 
             if isempty(items)
@@ -708,6 +807,14 @@ classdef AppSpeciesPanel < handle
         end
 
         function items = addToList(obj, values, items)
+            % Add values to a list while preserving order
+            %
+            % Args:
+            %     values (cell | char | string): Values to add
+            %     items (cell | char | string): Existing list
+            %
+            % Returns:
+            %     items (cell): Updated list
             values = obj.asCell(values);
             items = obj.asCell(items);
 
@@ -719,6 +826,14 @@ classdef AppSpeciesPanel < handle
         end
 
         function items = removeFromList(obj, values, items)
+            % Remove values from a list
+            %
+            % Args:
+            %     values (cell | char | string): Values to remove
+            %     items (cell | char | string): Existing list
+            %
+            % Returns:
+            %     items (cell): Updated list
             values = obj.asCell(values);
             items = obj.asCell(items);
 
@@ -730,6 +845,13 @@ classdef AppSpeciesPanel < handle
         end
 
         function values = asCell(obj, values) %#ok<INUSD>
+            % Normalize GUI list values to a row cell array
+            %
+            % Args:
+            %     values: GUI list value
+            %
+            % Returns:
+            %     values (cell): Row cell array
             if isempty(values)
                 values = {};
             elseif ischar(values)
@@ -795,6 +917,11 @@ classdef AppSpeciesPanel < handle
         end
 
         function setItems(obj, componentName, value)
+            % Set listbox items after normalizing empty and scalar values
+            %
+            % Args:
+            %     componentName (char): App component name
+            %     value (cell | char | string): Items to assign
             if obj.hasComponent(componentName) && isprop(obj.app.(componentName), 'Items')
                 value = obj.asCell(value);
                 obj.app.(componentName).Items = value;
@@ -802,6 +929,10 @@ classdef AppSpeciesPanel < handle
         end
 
         function setProductItems(obj, value)
+            % Set the internal products listbox items
+            %
+            % Args:
+            %     value (cell | char | string): Product species list
             obj.setItems('listbox_Products', value);
         end
 

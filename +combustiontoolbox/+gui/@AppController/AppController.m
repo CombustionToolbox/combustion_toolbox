@@ -360,21 +360,34 @@ classdef AppController < handle
 
         function onExportSelected(obj, format)
             % Export the current semantic result states
+            %
+            % Args:
+            %     format (char): Export format identifier
             obj.resultsPanel.exportResults(format);
         end
 
         function onClearSelected(obj)
             % Clear current results and visible result controls
+            %
+            % Args:
+            %     obj (AppController): Controller object
             obj.clearCurrentStudy();
         end
 
         function onNewSelected(obj)
             % Start a new app study from the current visible inputs
+            %
+            % Args:
+            %     obj (AppController): Controller object
             obj.clearCurrentStudy();
         end
 
         function [filepath, script] = onExportProblemScriptSelected(obj)
             % Export the current problem setup to a MATLAB script
+            %
+            % Returns:
+            %     filepath (char): Written file path, or [] if cancelled
+            %     script (char): Generated MATLAB script text
             filepath = [];
             script = '';
 
@@ -414,6 +427,9 @@ classdef AppController < handle
 
         function onResultsTreeSelectionChanged(obj)
             % Update result fields from the selected results tree node
+            %
+            % Args:
+            %     obj (AppController): Controller object
             obj.resultsPanel.onTreeSelectionChanged();
         end
 
@@ -429,12 +445,18 @@ classdef AppController < handle
 
         function onProductsChanged(obj)
             % Update product species and dependent display lists
+            %
+            % Args:
+            %     obj (AppController): Controller object
             obj.speciesPanel.onProductsChanged();
             obj.readInput();
         end
 
         function onCustomProductSpeciesChanged(obj, species)
             % Update product species selected by an external app panel
+            %
+            % Args:
+            %     species (cell | string | char): Custom product species list
             obj.speciesPanel.setCustomProductSpecies(species);
             obj.readInput();
         end

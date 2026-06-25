@@ -278,6 +278,11 @@ classdef AppResultsPanel < handle
         end
 
         function updateResult(obj, result, updateReactants)
+            % Project one semantic result case into the Results tab
+            %
+            % Args:
+            %     result (struct): Semantic result case
+            %     updateReactants (logical): Flag to refresh the reactants table
             obj.updateResultTabs(result);
             obj.updateMixtureProperties(result);
             obj.updateTables(result, updateReactants);
@@ -287,6 +292,10 @@ classdef AppResultsPanel < handle
         end
 
         function updateResultTabs(obj, result)
+            % Update result-tab visibility from the selected result content
+            %
+            % Args:
+            %     result (struct): Semantic result case
             if obj.hasOutputState(result, 'statistics')
                 obj.showTab('TurbulenceStatistics', 'TurbulencestatisticsTab');
                 obj.setVisible('Panel_parameters_2', 'on');
@@ -690,7 +699,7 @@ classdef AppResultsPanel < handle
                 lines{end + 1} = ['  ', line]; %#ok<AGROW>
             end
 
-            if numel(lines) == 1
+            if isscalar(lines)
                 lines = {};
                 return
             end
@@ -1428,6 +1437,11 @@ classdef AppResultsPanel < handle
         end
 
         function setNumericValue(obj, componentName, value)
+            % Set a numeric component value when the component exists
+            %
+            % Args:
+            %     componentName (char): App component name
+            %     value: Value assigned to the component
             if isprop(obj.app, componentName) && isprop(obj.app.(componentName), 'Value')
                 value = obj.numericValue(value);
                 obj.app.(componentName).Value = value;
@@ -1435,12 +1449,22 @@ classdef AppResultsPanel < handle
         end
 
         function setTextValue(obj, componentName, value)
+            % Set a text component value when the component exists
+            %
+            % Args:
+            %     componentName (char): App component name
+            %     value: Value assigned to the component
             if isprop(obj.app, componentName) && isprop(obj.app.(componentName), 'Value')
                 obj.app.(componentName).Value = value;
             end
         end
 
         function setVisible(obj, componentName, value)
+            % Set component visibility when the component exists
+            %
+            % Args:
+            %     componentName (char): App component name
+            %     value (char | logical): Visibility value
             if isprop(obj.app, componentName) && isprop(obj.app.(componentName), 'Visible')
                 obj.app.(componentName).Visible = value;
             end

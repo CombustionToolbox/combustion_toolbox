@@ -422,10 +422,6 @@ classdef AppSpeciesPanel < handle
             indexOxidizer = contains(typeSpecies, 'Oxidizer');
             indexInert = contains(typeSpecies, 'Inert');
 
-            obj.app.indexFuel = indexFuel;
-            obj.app.indexOxidizer = indexOxidizer;
-            obj.app.indexInert = indexInert;
-
             if any(indexFuel)
                 set(obj.app.mixture, listSpecies(indexFuel), 'fuel', moles(indexFuel));
             end

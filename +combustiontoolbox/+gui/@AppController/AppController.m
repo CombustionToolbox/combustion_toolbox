@@ -500,8 +500,8 @@ classdef AppController < handle
                 return
             end
 
-            if isprop(obj.app, 'temp_results')
-                obj.app.temp_results = [];
+            if isprop(obj.app, 'currentResults')
+                obj.app.currentResults = [];
             end
 
             if isprop(obj.app, 'Console_text')

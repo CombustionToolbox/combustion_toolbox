@@ -331,44 +331,21 @@ classdef combustion_toolbox < matlab.apps.AppBase
         displaySpecies    % Chemical species to be shown in plotComposition
         fig               % Auxiliary figure
         default           % Struct with default values of some components in the GUI
-        N_flags           % Number of flags active
-        PR1_vector        % Condition Reactants 1
-        PR2_vector        % Condition Reactants 2
-        PR3_vector        % Condition Reactants 3
-        PP1_vector        % Condition Products 1
-        PP2_vector        % Condition Products 2
-        PR1_var_name      % Variable name for PR1
-        PR2_var_name      % Variable name for PR2
-        PR3_var_name      % Variable name for PR3
-        PP1_var_name      % Variable name for PP1
-        PP2_var_name      % Variable name for PP2
-        flag_PR1          % FLAG for PR1: true-> vector
-        flag_PR2          % FLAG for PR2: true-> vector
-        flag_PR3          % FLAG for PR3: true-> vector
-        flag_PP1          % FLAG for PP1: true-> vector
-        flag_PP2          % FLAG for PP2: true-> vector
-        flag_phi          % FLAG for phi: true-> vector
-        indexFuel         % Index position Fuel species
-        indexOxidizer     % Index position Oxidizer species
-        indexInert        % Index position Inert species
-        LS                % List of species considered (reactants + products)
-        LS_products       % List of species considered as products
-        color_splash       = [0.5098, 0.6039, 0.6745]; % Font color splash
         color_lamp_nothing = [0.8000, 0.8000, 0.8000]; % Lamp color (rgb): nothing to report
         color_lamp_working = [0.9961, 0.9804, 0.8314]; % Lamp color (rgb): working
         color_lamp_done    = [0.5608, 0.7255, 0.6588]; % Lamp color (rgb): done
         color_lamp_error   = [0.6400, 0.0800, 0.1800]; % Lamp color (rgb): error
-        temp_results       % Temporal variable that contains the last parametric study
-        current_history    % Current history of commands
-        temp_index         % Temporal index to get current position of command history
-        dynamic_components % Struct with all the dynamic components
-        welcome_message = 'Welcome to Combustion Toolbox %s --- A MATLAB-based framework for solving combustion and high-speed flow problems.';
+        currentResults     % Last solved GUI result set
         maxRelativeError = 2e-2; % Relative error threshold to change color (2 %)
-        hiddenTabs         % Hidden tabs
     end
 
     properties (Access = private)
-        splashScreen % Startup splash screen
+        commandHistory      % Command window history
+        commandHistoryIndex % Current command history index
+        hiddenTabs          % Hidden tabs
+        splashColor = [0.5098, 0.6039, 0.6745] % Font color splash
+        splashScreen        % Startup splash screen
+        welcomeMessage = 'Welcome to Combustion Toolbox %s --- A MATLAB-based framework for solving combustion and high-speed flow problems.'
         runtimeOptions = struct( ...
             'debugMode', false, ...
             'showSplash', true, ...
@@ -410,14 +387,11 @@ classdef combustion_toolbox < matlab.apps.AppBase
             app.appController.onRocketModelChanged();
         end
 
-        function [current_history, temp_index] = public_get_current_history(app)
-            % Get current history
-            current_history = com.mathworks.mlservices.MLCommandHistoryServices.getSessionHistory;
-            % Get length history
-            temp_index = length(current_history);
-            % Assign values
-            app.current_history = current_history;
-            app.temp_index = temp_index;
+        function [commandHistory, commandHistoryIndex] = updateCommandHistory(app)
+            commandHistory = com.mathworks.mlservices.MLCommandHistoryServices.getSessionHistory;
+            commandHistoryIndex = length(commandHistory);
+            app.commandHistory = commandHistory;
+            app.commandHistoryIndex = commandHistoryIndex;
         end
         
         function public_ClearButtonPushed(app, event)
@@ -563,20 +537,6 @@ classdef combustion_toolbox < matlab.apps.AppBase
     end
 
     methods (Access = private)
-        
-        function create_components(app)
-            % Create additional components
-            
-            % Create toolbar background
-            app.dynamic_components.toolbar_background = uiimage(app.UIFigure, 'Position', [485 746 180 20], 'ImageSource', 'toolbar_background.svg');
-            % Add icons
-            app.dynamic_components.toolbar_button1 = uiimage(app.UIFigure, 'Position', [520 746 20 20], 'ImageSource', 'icon_new.svg', 'Tooltip', 'New (Ctrl + N)', 'ImageClickedFcn', createCallbackFcn(app, @ClearButtonPushed, true));
-            app.dynamic_components.toolbar_button2 = uiimage(app.UIFigure, 'Position', [542 746 20 20], 'ImageSource', 'icon_save.svg', 'Tooltip', 'Save (Ctrl + S)', 'ImageClickedFcn', createCallbackFcn(app, @xlsMenuSelected, true));
-            app.dynamic_components.toolbar_button3 = uiimage(app.UIFigure, 'Position', [564 746 20 20], 'ImageSource', 'icon_play.svg', 'Tooltip', 'Calculate (F5)', 'ImageClickedFcn', createCallbackFcn(app, @CalculateButtonPushed, true));
-            app.dynamic_components.toolbar_button4 = uiimage(app.UIFigure, 'Position', [586 746 20 20], 'ImageSource', 'icon_help.svg', 'Tooltip', 'Help (F1)', 'ImageClickedFcn', @(~,~) system('start https://combustion-toolbox-website.readthedocs.io/_/downloads/en/latest/pdf/'));
-            app.dynamic_components.toolbar_button5 = uiimage(app.UIFigure, 'Position', [608 746 20 20], 'ImageSource', 'icon_github_CT.svg', 'Tooltip', 'GitHub', 'ImageClickedFcn', @(~,~) system('start https://github.com/AlbertoCuadra/combustion_toolbox'));
-        end
-
         
         function installDatabase(app)
             % Check if running in standalone mode
@@ -772,7 +732,7 @@ classdef combustion_toolbox < matlab.apps.AppBase
 
             if app.runtimeOptions.showSplash
                 try
-                    app.splashScreen = combustiontoolbox.utils.display.showSplashScreen('color', app.color_splash);
+                    app.splashScreen = combustiontoolbox.utils.display.showSplashScreen('color', app.splashColor);
                 catch
                     % Continue startup when the splash screen cannot be created
                     closeSplash(app);
@@ -782,7 +742,7 @@ classdef combustion_toolbox < matlab.apps.AppBase
             % Install database (only standalone versions)
             installDatabase(app);
             % Add additional components
-            % create_components(app); % Next release
+            % createDynamicComponents(app); % Next release
             % Get screen position
             % position = splash_obj.ScreenPosition;
             position = combustiontoolbox.utils.display.getMonitorPositionsMATLAB();
@@ -823,9 +783,6 @@ classdef combustion_toolbox < matlab.apps.AppBase
             app.listbox_LS_DB.Items = app.database.listSpecies;
             % Initialize table data
             app.UITable_R.ColumnFormat = {[] [] [] {'Fuel', 'Oxidizer', 'Inert'} []};
-            % Initialize for TP
-            app.PR1_var_name = 'TR'; app.PR2_var_name = 'pR';
-            app.PP1_var_name = 'TP'; app.PP2_var_name = 'pP';
             % Save default state GUI
             app.default.Panel_parameters.Position = app.Panel_parameters.Position;
             app.default.data_UITable_R = app.UITable_R.Data;
@@ -833,9 +790,9 @@ classdef combustion_toolbox < matlab.apps.AppBase
 %             app.UITable_R2.ColumnFormat(2:3) = {'shortE'};
             app.UITable_P.ColumnFormat(2:3)  = {'shortE'};
             % Update welcome message in the command window
-            app.Console_text.Value = sprintf(app.welcome_message, app.constants.release);
+            app.Console_text.Value = sprintf(app.welcomeMessage, app.constants.release);
             % Get current history
-            public_get_current_history(app);
+            updateCommandHistory(app);
             % Apply startup visibility
             if app.runtimeOptions.showFigure
                 app.UIFigure.Visible = 'on';
@@ -1240,13 +1197,13 @@ classdef combustion_toolbox < matlab.apps.AppBase
             else
                 switch lower(key)
                     case 'uparrow'
-                        app.temp_index = app.temp_index - 1;
+                        app.commandHistoryIndex = app.commandHistoryIndex - 1;
                     case 'downarrow'
-                        app.temp_index = app.temp_index + 1;
+                        app.commandHistoryIndex = app.commandHistoryIndex + 1;
                     case 'rightarrow'
-                        [~, app.temp_index] = public_get_current_history(app);
+                        [~, app.commandHistoryIndex] = updateCommandHistory(app);
                     case 'leftarrow'
-                        app.temp_index = 1;
+                        app.commandHistoryIndex = 1;
                     case 'return'
                         FLAG_ENTER = true;
                         app.appController.onConsoleValueChanged(event);
@@ -1262,11 +1219,11 @@ classdef combustion_toolbox < matlab.apps.AppBase
             end
             % Print currhistory for that index
             if ~FLAG_ENTER
-                if app.temp_index >= 1 && app.temp_index <= numel(app.current_history)
-                    app.Console.Value = char(app.current_history(app.temp_index));
+                if app.commandHistoryIndex >= 1 && app.commandHistoryIndex <= numel(app.commandHistory)
+                    app.Console.Value = char(app.commandHistory(app.commandHistoryIndex));
                 else
                     app.Console.Value = 'Value out of current command history.';
-                    [~, app.temp_index] = public_get_current_history(app);
+                    [~, app.commandHistoryIndex] = updateCommandHistory(app);
                 end
             end
         end

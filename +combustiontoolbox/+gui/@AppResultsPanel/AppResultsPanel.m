@@ -41,7 +41,7 @@ classdef AppResultsPanel < handle
             end
 
             results = solution.results;
-            obj.app.temp_results = results;
+            obj.app.currentResults = results;
             obj.addResultNodes(results);
             obj.updateResult(results(1), false);
             obj.updateCustomFigures(results);
@@ -74,7 +74,7 @@ classdef AppResultsPanel < handle
             import combustiontoolbox.utils.display.*
             import combustiontoolbox.utils.extensions.brewermap
 
-            if isempty(obj.app) || ~isprop(obj.app, 'temp_results') || isempty(obj.app.temp_results)
+            if isempty(obj.app) || ~isprop(obj.app, 'currentResults') || isempty(obj.app.currentResults)
                 return
             end
 
@@ -102,7 +102,7 @@ classdef AppResultsPanel < handle
 
             legendNames = cell(1, numel(mixtureFields) * numel(yFields));
             legendIndex = numel(legendNames);
-            results = obj.app.temp_results;
+            results = obj.app.currentResults;
 
             for i = numel(mixtureFields):-1:1
                 mixtures = obj.mixtureSeries(results, mixtureFields{i});
@@ -140,11 +140,11 @@ classdef AppResultsPanel < handle
 
         function exportResults(obj, format)
             % Export current mixture output states
-            if isempty(obj.app) || ~isprop(obj.app, 'temp_results') || isempty(obj.app.temp_results)
+            if isempty(obj.app) || ~isprop(obj.app, 'currentResults') || isempty(obj.app.currentResults)
                 return
             end
 
-            mixArrays = obj.mixtureOutputArrays(obj.app.temp_results);
+            mixArrays = obj.mixtureOutputArrays(obj.app.currentResults);
 
             if isempty(mixArrays) || ~isprop(obj.app, 'export') || isempty(obj.app.export)
                 return

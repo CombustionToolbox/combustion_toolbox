@@ -328,23 +328,18 @@ classdef combustion_toolbox < matlab.apps.AppBase
         plotConfig        % PlotConfig object
         export            % Export object
         appController     % AppController object
+        statusPanel       % AppStatusPanel object
+        consolePanel      % AppConsolePanel object
         displaySpecies    % Chemical species to be shown in plotComposition
-        fig               % Auxiliary figure
-        default           % Struct with default values of some components in the GUI
-        color_lamp_nothing = [0.8000, 0.8000, 0.8000]; % Lamp color (rgb): nothing to report
-        color_lamp_working = [0.9961, 0.9804, 0.8314]; % Lamp color (rgb): working
-        color_lamp_done    = [0.5608, 0.7255, 0.6588]; % Lamp color (rgb): done
-        color_lamp_error   = [0.6400, 0.0800, 0.1800]; % Lamp color (rgb): error
-        currentResults     % Last solved GUI result set
+        defaultLayout     % Default GUI component layout and data
+        currentResults    % Last solved GUI result set
         maxRelativeError = 2e-2; % Relative error threshold to change color (2 %)
     end
 
     properties (Access = private)
-        commandHistory      % Command window history
-        commandHistoryIndex % Current command history index
-        hiddenTabs          % Hidden tabs
+        hiddenTabs         % Hidden tabs
         splashColor = [0.5098, 0.6039, 0.6745] % Font color splash
-        splashScreen        % Startup splash screen
+        splashScreen       % Startup splash screen
         welcomeMessage = 'Welcome to Combustion Toolbox %s --- A MATLAB-based framework for solving combustion and high-speed flow problems.'
         runtimeOptions = struct( ...
             'debugMode', false, ...
@@ -387,13 +382,6 @@ classdef combustion_toolbox < matlab.apps.AppBase
             app.appController.onRocketModelChanged();
         end
 
-        function [commandHistory, commandHistoryIndex] = updateCommandHistory(app)
-            commandHistory = com.mathworks.mlservices.MLCommandHistoryServices.getSessionHistory;
-            commandHistoryIndex = length(commandHistory);
-            app.commandHistory = commandHistory;
-            app.commandHistoryIndex = commandHistoryIndex;
-        end
-        
         function public_ClearButtonPushed(app, event)
             ClearButtonPushed(app, event)
         end
@@ -773,8 +761,12 @@ classdef combustion_toolbox < matlab.apps.AppBase
             app.shockTurbulenceSolver = combustiontoolbox.shockturbulence.ShockTurbulenceSolver('plotConfig', app.plotConfig, 'equilibriumSolver', app.equilibriumSolver, 'shockSolver', app.shockSolver);
             % Initialize export object
             app.export = combustiontoolbox.utils.Export();
+            % Initialize status panel
+            app.statusPanel = combustiontoolbox.gui.AppStatusPanel(app);
             % Initialize GUI controller
             app.appController = combustiontoolbox.gui.AppController(app);
+            % Initialize command window panel
+            app.consolePanel = combustiontoolbox.gui.AppConsolePanel(app);
             % Refresh problem dropdown from catalog metadata
             [problemItems, problemItemsData] = app.appController.problemDropdownData();
             app.ProblemType.Items = problemItems;
@@ -783,16 +775,12 @@ classdef combustion_toolbox < matlab.apps.AppBase
             app.listbox_LS_DB.Items = app.database.listSpecies;
             % Initialize table data
             app.UITable_R.ColumnFormat = {[] [] [] {'Fuel', 'Oxidizer', 'Inert'} []};
-            % Save default state GUI
-            app.default.Panel_parameters.Position = app.Panel_parameters.Position;
-            app.default.data_UITable_R = app.UITable_R.Data;
-%             app.UITable_R.ColumnFormat(2:3)  = {'shortE'};
-%             app.UITable_R2.ColumnFormat(2:3) = {'shortE'};
+            % Save default GUI state
+            app.defaultLayout.Panel_parameters.Position = app.Panel_parameters.Position;
+            app.defaultLayout.data_UITable_R = app.UITable_R.Data;
             app.UITable_P.ColumnFormat(2:3)  = {'shortE'};
-            % Update welcome message in the command window
-            app.Console_text.Value = sprintf(app.welcomeMessage, app.constants.release);
-            % Get current history
-            updateCommandHistory(app);
+            % Initialize command window output and history
+            app.consolePanel.initialize(sprintf(app.welcomeMessage, app.constants.release));
             % Apply startup visibility
             if app.runtimeOptions.showFigure
                 app.UIFigure.Visible = 'on';
@@ -817,7 +805,7 @@ classdef combustion_toolbox < matlab.apps.AppBase
 
         % Value changed function: Console_text
         function Console_textValueChanged(app, event)
-            app.Console_text.Value = event.PreviousValue;
+            app.consolePanel.restoreOutput(event.PreviousValue);
         end
 
         % Menu selected function: SnapshotMenu
@@ -827,17 +815,17 @@ classdef combustion_toolbox < matlab.apps.AppBase
 
         % Menu selected function: MaximizeMenu
         function MaximizeMenuSelected(app, event)
-            app.Console_text.Position = [78, 30, 554, 462];
+            app.consolePanel.maximize();
         end
 
         % Menu selected function: MinimizeMenu
         function MinimizeMenuSelected(app, event)
-            app.Console_text.Position = [78, 30, 554 57];
+            app.consolePanel.minimize();
         end
 
         % Menu selected function: ClearCommandWindowMenu
         function ClearCommandWindowMenuSelected(app, event)
-            app.Console_text.Value = '';
+            app.consolePanel.clearOutput();
         end
 
         % Button pushed function: Calculate
@@ -980,9 +968,9 @@ classdef combustion_toolbox < matlab.apps.AppBase
         function figure_sizeButtonPushed(app, event)
             if contains(app.figure_size.Text, 'Max')
                 % Save default values
-                app.default.UIFigure_position = app.UIFigure.Position;
-                app.default.UIAxes_position = app.UIAxes.Position;
-                app.default.Tab_results_position = app.Tab_results.Position;
+                app.defaultLayout.UIFigure_position = app.UIFigure.Position;
+                app.defaultLayout.UIAxes_position = app.UIAxes.Position;
+                app.defaultLayout.Tab_results_position = app.Tab_results.Position;
                 % Maximize UIFigure (width)
                 app.UIFigure.Position([1,3]) = [0.5 * app.UIFigure.Position(1), 2 * app.UIFigure.Position(3)];
                 % Delete UIAxes
@@ -994,11 +982,11 @@ classdef combustion_toolbox < matlab.apps.AppBase
                 % Replot
                 figure_plotButtonPushed(app, event);
             else
-                app.UIFigure.Position = app.default.UIFigure_position;
+                app.UIFigure.Position = app.defaultLayout.UIFigure_position;
                 % Delete UIAxes
                 delete(app.UIAxes);
                 % Create new UIAxes
-                app.UIAxes = uiaxes(app.CustomfiguresTab, 'Position', app.default.UIAxes_position);
+                app.UIAxes = uiaxes(app.CustomfiguresTab, 'Position', app.defaultLayout.UIAxes_position);
                 % Change name button
                 app.figure_size.Text = 'Maximize';
                 % Replot
@@ -1009,7 +997,7 @@ classdef combustion_toolbox < matlab.apps.AppBase
         % Menu selected function: CheckforupdatesMenu
         function CheckforupdatesMenuSelected(app, event)
             [~, message] = combustiontoolbox.utils.checkUpdate(app.UIFigure);
-            app.Console_text.Value = message;
+            app.consolePanel.setOutput(message);
         end
 
         % Button pushed function: PeriodicTable_R
@@ -1142,8 +1130,6 @@ classdef combustion_toolbox < matlab.apps.AppBase
 
         % Key press function: UIFigure
         function UIFigureKeyPress(app, event)
-            % Definitions
-            FLAG_ENTER = false;
             % Get key
             key = event.Key;
 
@@ -1181,14 +1167,14 @@ classdef combustion_toolbox < matlab.apps.AppBase
                     case 'p'
                         PreferencesMenuSelected(app, event);
                     case 'q'
-                        app.Console_text.Value = 'Closing the Combustion Toolbox';
+                        app.consolePanel.setOutput('Closing the Combustion Toolbox');
                         UIFigureCloseRequest(app, event);
                     case 's'
                         xlsMenuSelected(app, event);
                     case 'x'
-                        app.Console_text.Value = 'Taking snapshot...';
+                        app.consolePanel.setOutput('Taking snapshot...');
                         SnapshotMenuSelected(app, event);
-                        app.Console_text.Value = 'Taking snapshot... OK!';
+                        app.consolePanel.setOutput('Taking snapshot... OK!');
                 end
 
                 return
@@ -1196,16 +1182,9 @@ classdef combustion_toolbox < matlab.apps.AppBase
             % No modifier used (one key press)
             else
                 switch lower(key)
-                    case 'uparrow'
-                        app.commandHistoryIndex = app.commandHistoryIndex - 1;
-                    case 'downarrow'
-                        app.commandHistoryIndex = app.commandHistoryIndex + 1;
-                    case 'rightarrow'
-                        [~, app.commandHistoryIndex] = updateCommandHistory(app);
-                    case 'leftarrow'
-                        app.commandHistoryIndex = 1;
+                    case {'uparrow', 'downarrow', 'rightarrow', 'leftarrow'}
+                        app.consolePanel.selectHistory(key);
                     case 'return'
-                        FLAG_ENTER = true;
                         app.appController.onConsoleValueChanged(event);
                     case 'f1'
                         DocumentationMenuSelected(app, event);
@@ -1214,16 +1193,6 @@ classdef combustion_toolbox < matlab.apps.AppBase
                         return
                     otherwise
                         return
-                end
-            
-            end
-            % Print currhistory for that index
-            if ~FLAG_ENTER
-                if app.commandHistoryIndex >= 1 && app.commandHistoryIndex <= numel(app.commandHistory)
-                    app.Console.Value = char(app.commandHistory(app.commandHistoryIndex));
-                else
-                    app.Console.Value = 'Value out of current command history.';
-                    [~, app.commandHistoryIndex] = updateCommandHistory(app);
                 end
             end
         end

@@ -488,13 +488,18 @@ classdef AppResultsPanel < handle
         end
 
         function writeSelectedCaseReport(obj, result, caseLabel)
-            if isempty(obj.app) || ~isprop(obj.app, 'Console_text') ...
-                    || ~isprop(obj.app.Console_text, 'Value')
+            if isempty(obj.app)
                 return
             end
 
             lines = obj.selectedCaseReport(result, caseLabel);
-            obj.app.Console_text.Value = strjoin(lines, newline);
+            message = strjoin(lines, newline);
+
+            if isprop(obj.app, 'consolePanel') && ~isempty(obj.app.consolePanel)
+                obj.app.consolePanel.setOutput(message);
+            elseif isprop(obj.app, 'Console_text') && isprop(obj.app.Console_text, 'Value')
+                obj.app.Console_text.Value = message;
+            end
         end
 
         function lines = selectedCaseReport(obj, result, caseLabel)

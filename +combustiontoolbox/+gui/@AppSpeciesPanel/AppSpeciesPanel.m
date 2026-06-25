@@ -816,7 +816,7 @@ classdef AppSpeciesPanel < handle
         end
 
         function warnInitialMixtureRequired(obj)
-            obj.setLampColor('color_lamp_warning');
+            obj.setWarningStatus();
             obj.showWarning('First, define initial mixture');
         end
 
@@ -828,6 +828,8 @@ classdef AppSpeciesPanel < handle
         function showWarning(obj, message)
             if obj.shouldShowAlert()
                 uialert(obj.app.UIFigure, {message}, 'Warning', 'Icon', 'warning');
+            elseif obj.hasComponent('consolePanel')
+                obj.app.consolePanel.setOutput(message);
             elseif obj.hasComponent('Console_text') && isprop(obj.app.Console_text, 'Value')
                 obj.app.Console_text.Value = message;
             else
@@ -841,9 +843,9 @@ classdef AppSpeciesPanel < handle
                 && strcmpi(char(obj.app.UIFigure.Visible), 'on');
         end
 
-        function setLampColor(obj, colorProperty)
-            if obj.hasComponent('Lamp') && isprop(obj.app, colorProperty)
-                obj.app.Lamp.Color = obj.app.(colorProperty);
+        function setWarningStatus(obj)
+            if obj.hasComponent('statusPanel')
+                obj.app.statusPanel.setWarning();
             end
         end
 

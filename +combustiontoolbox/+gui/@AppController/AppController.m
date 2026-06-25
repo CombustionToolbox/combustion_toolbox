@@ -127,18 +127,18 @@ classdef AppController < handle
                 output = obj.runConsoleCommand(command, commands);
             catch exception
                 output = obj.formatConsoleError(exception);
-                obj.app.Lamp.Color = obj.app.color_lamp_error;
+                obj.setStatus('error');
                 FLAG_ERROR = true;
             end
 
             if ~isempty(output) || strcmp(command, 'clc')
-                obj.app.Console_text.Value = output;
+                obj.setConsoleOutput(output);
             end
 
             obj.app.Console.Value = '';
 
             if ~FLAG_ERROR
-                obj.app.Lamp.Color = obj.app.color_lamp_nothing;
+                obj.setStatus('idle');
             end
         end
 
@@ -504,13 +504,9 @@ classdef AppController < handle
                 obj.app.currentResults = [];
             end
 
-            if isprop(obj.app, 'Console_text')
-                obj.app.Console_text.Value = '';
-            end
+            obj.setConsoleOutput('');
 
-            if isprop(obj.app, 'Lamp') && isprop(obj.app, 'color_lamp_nothing')
-                obj.app.Lamp.Color = obj.app.color_lamp_nothing;
-            end
+            obj.setStatus('idle');
         end
 
         function setWorkingStatus(obj)
@@ -518,8 +514,8 @@ classdef AppController < handle
                 return
             end
 
-            obj.app.Lamp.Color = obj.app.color_lamp_working;
-            obj.app.Console_text.Value = 'Solving problem...';
+            obj.setStatus('working');
+            obj.setConsoleOutput('Solving problem...');
         end
 
         function runAutoReport(obj, solution)
@@ -560,7 +556,7 @@ classdef AppController < handle
                     uiabout();
                     output = 'Running uiabout...';
                 case 'clear'
-                    obj.app.Console_text.Value = '';
+                    obj.setConsoleOutput('');
                     output = ' ';
                 case {'docs', 'documentation'}
                     combustiontoolbox.utils.SystemUtils.openWebsite( ...
@@ -599,8 +595,8 @@ classdef AppController < handle
         end
 
         function output = runConsoleEval(obj, command, commands)
-            obj.app.Console_text.Value = sprintf('Running: %s...', command);
-            obj.app.Lamp.Color = obj.app.color_lamp_working;
+            obj.setConsoleOutput(sprintf('Running: %s...', command));
+            obj.setStatus('working');
             pause(0.1);
             output = combustiontoolbox.gui.AppController.evaluateConsoleCommands(obj.app, commands);
         end
@@ -668,8 +664,8 @@ classdef AppController < handle
                 return
             end
 
-            obj.app.Lamp.Color = obj.app.color_lamp_done;
-            obj.app.Console_text.Value = sprintf('Problem script exported to:\n%s', filepath);
+            obj.setStatus('done');
+            obj.setConsoleOutput(sprintf('Problem script exported to:\n%s', filepath));
         end
 
         function output = formatConsoleError(~, exception)
@@ -697,6 +693,53 @@ classdef AppController < handle
     end
 
     methods (Access = private)
+        function setConsoleOutput(obj, value)
+            if isempty(obj.app)
+                return
+            end
+
+            if isprop(obj.app, 'consolePanel') && ~isempty(obj.app.consolePanel)
+                obj.app.consolePanel.setOutput(value);
+                return
+            end
+
+            if isprop(obj.app, 'Console_text')
+                obj.app.Console_text.Value = value;
+            end
+        end
+
+        function setStatus(obj, status)
+            if isempty(obj.app)
+                return
+            end
+
+            if ~isprop(obj.app, 'statusPanel') || isempty(obj.app.statusPanel)
+                return
+            end
+
+            switch status
+                case 'idle'
+                    obj.app.statusPanel.setIdle();
+                case 'working'
+                    obj.app.statusPanel.setWorking();
+                case 'done'
+                    obj.app.statusPanel.setDone();
+                case 'error'
+                    obj.app.statusPanel.setError();
+            end
+        end
+
+        function setProblemErrorStatus(obj)
+            if isprop(obj.app, 'statusPanel') && ~isempty(obj.app.statusPanel)
+                obj.app.statusPanel.setProblemError();
+            end
+        end
+
+        function clearProblemErrorStatus(obj)
+            if isprop(obj.app, 'statusPanel') && ~isempty(obj.app.statusPanel)
+                obj.app.statusPanel.clearProblemError();
+            end
+        end
 
         function setFinishedStatus(obj)
             if isempty(obj.app)
@@ -704,19 +747,17 @@ classdef AppController < handle
             end
 
             if obj.app.text_error_problem.Value > obj.app.maxRelativeError
-                obj.app.Lamp.Color = obj.app.color_lamp_error;
-                obj.app.text_error_problem.FontColor = obj.app.color_lamp_error;
-                obj.app.ResultsTab.ForegroundColor = obj.app.color_lamp_error;
-                obj.app.Console_text.Value = sprintf( ...
+                obj.setStatus('error');
+                obj.setProblemErrorStatus();
+                obj.setConsoleOutput(sprintf( ...
                     'Warning! The maximum relative error is %.2f%%. Results may be compromised.\nDecreasing the tolerance and increasing the number of iterations may solve the problem.', ...
-                    obj.app.text_error_problem.Value * 100);
+                    obj.app.text_error_problem.Value * 100));
                 return
             end
 
-            obj.app.Lamp.Color = obj.app.color_lamp_done;
-            obj.app.text_error_problem.FontColor = [0 0 0];
-            obj.app.ResultsTab.ForegroundColor = [0 0 0];
-            obj.app.Console_text.Value = 'Done! check tab "Results"';
+            obj.setStatus('done');
+            obj.clearProblemErrorStatus();
+            obj.setConsoleOutput('Done! check tab "Results"');
         end
 
         function setErrorStatus(obj, exception)
@@ -724,9 +765,9 @@ classdef AppController < handle
                 rethrow(exception);
             end
 
-            obj.app.Lamp.Color = obj.app.color_lamp_error;
+            obj.setStatus('error');
             [message, title] = obj.errorStatusMessage(exception);
-            obj.app.Console_text.Value = message;
+            obj.setConsoleOutput(message);
 
             if obj.shouldShowAlert()
                 uialert(obj.app.UIFigure, {message}, title, 'Icon', 'warning');

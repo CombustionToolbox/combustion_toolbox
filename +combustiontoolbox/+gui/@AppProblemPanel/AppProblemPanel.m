@@ -306,14 +306,14 @@ classdef AppProblemPanel < handle
         function setRocketPanelVisible(obj, value)
             if value
                 delta_pos_x = 77;
-                panelPosition = obj.app.default.Panel_parameters.Position;
+                panelPosition = obj.app.defaultLayout.Panel_parameters.Position;
                 panelPosition(1) = panelPosition(1) - delta_pos_x;
                 panelPosition(3) = panelPosition(3) + 3 * delta_pos_x;
                 obj.setPosition('Panel_parameters', panelPosition);
                 obj.applyRocketModelControls();
             else
-                if isfield(obj.app.default, 'Panel_parameters')
-                    obj.setPosition('Panel_parameters', obj.app.default.Panel_parameters.Position);
+                if isfield(obj.app.defaultLayout, 'Panel_parameters')
+                    obj.setPosition('Panel_parameters', obj.app.defaultLayout.Panel_parameters.Position);
                 end
 
                 obj.setText('text_Products', 'Products');

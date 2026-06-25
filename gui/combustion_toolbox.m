@@ -763,10 +763,10 @@ classdef combustion_toolbox < matlab.apps.AppBase
             app.export = combustiontoolbox.utils.Export();
             % Initialize status panel
             app.statusPanel = combustiontoolbox.gui.AppStatusPanel(app);
-            % Initialize GUI controller
-            app.appController = combustiontoolbox.gui.AppController(app);
             % Initialize command window panel
             app.consolePanel = combustiontoolbox.gui.AppConsolePanel(app);
+            % Initialize GUI controller
+            app.appController = combustiontoolbox.gui.AppController(app);
             % Refresh problem dropdown from catalog metadata
             [problemItems, problemItemsData] = app.appController.problemDropdownData();
             app.ProblemType.Items = problemItems;

@@ -169,15 +169,37 @@ classdef AppResultsPanel < handle
                 return
             end
 
+            obj.clearCurrentResults();
             obj.clearAxes();
             obj.clearTreeChildren({'Node_Results', 'Mixtures', 'Variable_x', 'Variable_y'});
             obj.clearCheckedNodes({'Tree_mixtures', 'Tree_variable_x', 'Tree_variable_y'});
             obj.clearProductsTable();
             obj.clearNumericFields();
         end
+
+        function value = problemErrorValue(obj)
+            % Return the current problem error value
+            %
+            % Returns:
+            %     value (double): Problem relative error value
+            value = 0;
+
+            if isempty(obj.app) || ~isprop(obj.app, 'text_error_problem') ...
+                    || isempty(obj.app.text_error_problem)
+                return
+            end
+
+            value = obj.app.text_error_problem.Value;
+        end
     end
 
     methods (Access = private)
+        function clearCurrentResults(obj)
+            if isprop(obj.app, 'currentResults')
+                obj.app.currentResults = [];
+            end
+        end
+
         function clearAxes(obj)
             if isprop(obj.app, 'UIAxes') && ~isempty(obj.app.UIAxes) && isvalid(obj.app.UIAxes)
                 cla(obj.app.UIAxes);

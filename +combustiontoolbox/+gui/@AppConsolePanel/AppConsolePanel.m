@@ -68,6 +68,37 @@ classdef AppConsolePanel < handle
             obj.app.Console_text.Value = '';
         end
 
+        function clear(obj)
+            % Clear command-window input and output
+            obj.clearInput();
+            obj.clearOutput();
+        end
+
+        function clearInput(obj)
+            % Clear command-window input
+            obj.app.Console.Value = '';
+        end
+
+        function commands = inputCommands(obj)
+            % Return command-window input as a command list
+            %
+            % Returns:
+            %     commands (cell): Command-window input entries
+            rawValue = obj.app.Console.Value;
+
+            if ischar(rawValue)
+                commands = {rawValue};
+            elseif isstring(rawValue)
+                commands = cellstr(rawValue(:))';
+            elseif iscell(rawValue)
+                commands = rawValue(:)';
+            else
+                commands = {};
+            end
+
+            commands = commands(~cellfun(@isempty, commands));
+        end
+
         function setOutput(obj, value)
             % Set command-window output
             %

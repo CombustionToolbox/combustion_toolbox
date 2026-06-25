@@ -18,6 +18,8 @@ classdef AppController < handle
     %     problemInputsPanel (AppProblemInputsPanel): Coupled input updater
     %     speciesPanel (AppSpeciesPanel): Reactants/products UI updater
     %     resultsPanel (AppResultsPanel): Results tree, tables, and status updater
+    %     statusPanel (AppStatusPanel): Status indicator updater
+    %     consolePanel (AppConsolePanel): Command-window updater
     %     currentSolution (struct): Last successful solver solution
     %
     % Examples:
@@ -37,6 +39,8 @@ classdef AppController < handle
         problemInputsPanel
         speciesPanel
         resultsPanel
+        statusPanel
+        consolePanel
         currentSolution = []
     end
 
@@ -76,6 +80,12 @@ classdef AppController < handle
             obj.problemPanel = combustiontoolbox.gui.AppProblemPanel(app, obj.problemCatalog, obj.problemInputsPanel);
             obj.speciesPanel = combustiontoolbox.gui.AppSpeciesPanel(app);
             obj.resultsPanel = combustiontoolbox.gui.AppResultsPanel(app);
+
+            if ~isempty(app)
+                obj.statusPanel = app.statusPanel;
+                obj.consolePanel = app.consolePanel;
+            end
+
             obj.solver = combustiontoolbox.gui.AppSolver(obj.session, obj.problemCatalog);
         end
 
@@ -132,10 +142,10 @@ classdef AppController < handle
             end
 
             if ~isempty(output) || strcmp(command, 'clc')
-                obj.setConsoleOutput(output);
+                obj.consolePanel.setOutput(output);
             end
 
-            obj.app.Console.Value = '';
+            obj.consolePanel.clearInput();
 
             if ~FLAG_ERROR
                 obj.setStatus('idle');
@@ -500,11 +510,7 @@ classdef AppController < handle
                 return
             end
 
-            if isprop(obj.app, 'currentResults')
-                obj.app.currentResults = [];
-            end
-
-            obj.setConsoleOutput('');
+            obj.consolePanel.clearOutput();
 
             obj.setStatus('idle');
         end
@@ -515,7 +521,7 @@ classdef AppController < handle
             end
 
             obj.setStatus('working');
-            obj.setConsoleOutput('Solving problem...');
+            obj.consolePanel.setOutput('Solving problem...');
         end
 
         function runAutoReport(obj, solution)
@@ -533,19 +539,12 @@ classdef AppController < handle
         end
 
         function commands = consoleCommands(obj)
-            rawValue = obj.app.Console.Value;
-
-            if ischar(rawValue)
-                commands = {rawValue};
-            elseif isstring(rawValue)
-                commands = cellstr(rawValue(:))';
-            elseif iscell(rawValue)
-                commands = rawValue(:)';
-            else
-                commands = {};
+            if ~isempty(obj.consolePanel)
+                commands = obj.consolePanel.inputCommands();
+                return
             end
 
-            commands = commands(~cellfun(@isempty, commands));
+            commands = {};
         end
 
         function output = runConsoleCommand(obj, command, commands)
@@ -556,7 +555,7 @@ classdef AppController < handle
                     uiabout();
                     output = 'Running uiabout...';
                 case 'clear'
-                    obj.setConsoleOutput('');
+                    obj.consolePanel.clearOutput();
                     output = ' ';
                 case {'docs', 'documentation'}
                     combustiontoolbox.utils.SystemUtils.openWebsite( ...
@@ -595,7 +594,7 @@ classdef AppController < handle
         end
 
         function output = runConsoleEval(obj, command, commands)
-            obj.setConsoleOutput(sprintf('Running: %s...', command));
+            obj.consolePanel.setOutput(sprintf('Running: %s...', command));
             obj.setStatus('working');
             pause(0.1);
             output = combustiontoolbox.gui.AppController.evaluateConsoleCommands(obj.app, commands);
@@ -665,7 +664,7 @@ classdef AppController < handle
             end
 
             obj.setStatus('done');
-            obj.setConsoleOutput(sprintf('Problem script exported to:\n%s', filepath));
+            obj.consolePanel.setOutput(sprintf('Problem script exported to:\n%s', filepath));
         end
 
         function output = formatConsoleError(~, exception)
@@ -693,51 +692,36 @@ classdef AppController < handle
     end
 
     methods (Access = private)
-        function setConsoleOutput(obj, value)
-            if isempty(obj.app)
-                return
-            end
-
-            if isprop(obj.app, 'consolePanel') && ~isempty(obj.app.consolePanel)
-                obj.app.consolePanel.setOutput(value);
-                return
-            end
-
-            if isprop(obj.app, 'Console_text')
-                obj.app.Console_text.Value = value;
-            end
-        end
-
         function setStatus(obj, status)
             if isempty(obj.app)
                 return
             end
 
-            if ~isprop(obj.app, 'statusPanel') || isempty(obj.app.statusPanel)
+            if isempty(obj.statusPanel)
                 return
             end
 
             switch status
                 case 'idle'
-                    obj.app.statusPanel.setIdle();
+                    obj.statusPanel.setIdle();
                 case 'working'
-                    obj.app.statusPanel.setWorking();
+                    obj.statusPanel.setWorking();
                 case 'done'
-                    obj.app.statusPanel.setDone();
+                    obj.statusPanel.setDone();
                 case 'error'
-                    obj.app.statusPanel.setError();
+                    obj.statusPanel.setError();
             end
         end
 
         function setProblemErrorStatus(obj)
-            if isprop(obj.app, 'statusPanel') && ~isempty(obj.app.statusPanel)
-                obj.app.statusPanel.setProblemError();
+            if ~isempty(obj.statusPanel)
+                obj.statusPanel.setProblemError();
             end
         end
 
         function clearProblemErrorStatus(obj)
-            if isprop(obj.app, 'statusPanel') && ~isempty(obj.app.statusPanel)
-                obj.app.statusPanel.clearProblemError();
+            if ~isempty(obj.statusPanel)
+                obj.statusPanel.clearProblemError();
             end
         end
 
@@ -746,18 +730,28 @@ classdef AppController < handle
                 return
             end
 
-            if obj.app.text_error_problem.Value > obj.app.maxRelativeError
+            problemError = obj.problemErrorValue();
+
+            if problemError > obj.app.maxRelativeError
                 obj.setStatus('error');
                 obj.setProblemErrorStatus();
-                obj.setConsoleOutput(sprintf( ...
+                obj.consolePanel.setOutput(sprintf( ...
                     'Warning! The maximum relative error is %.2f%%. Results may be compromised.\nDecreasing the tolerance and increasing the number of iterations may solve the problem.', ...
-                    obj.app.text_error_problem.Value * 100));
+                    problemError * 100));
                 return
             end
 
             obj.setStatus('done');
             obj.clearProblemErrorStatus();
-            obj.setConsoleOutput('Done! check tab "Results"');
+            obj.consolePanel.setOutput('Done! check tab "Results"');
+        end
+
+        function value = problemErrorValue(obj)
+            value = 0;
+
+            if ~isempty(obj.resultsPanel)
+                value = obj.resultsPanel.problemErrorValue();
+            end
         end
 
         function setErrorStatus(obj, exception)
@@ -767,7 +761,7 @@ classdef AppController < handle
 
             obj.setStatus('error');
             [message, title] = obj.errorStatusMessage(exception);
-            obj.setConsoleOutput(message);
+            obj.consolePanel.setOutput(message);
 
             if obj.shouldShowAlert()
                 uialert(obj.app.UIFigure, {message}, title, 'Icon', 'warning');

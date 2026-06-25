@@ -171,12 +171,30 @@ classdef AppResults < handle
             numCases = max(counts);
         end
 
-        function value = valueForCase(~, value, index)
+        function value = valueForCase(obj, value, index)
             if isempty(value) || isscalar(value)
+                if isscalar(value) && isstruct(value)
+                    value = obj.structValueForCase(value, index);
+                end
+
                 return
             end
 
             value = value(min(index, numel(value)));
+        end
+
+        function value = structValueForCase(~, value, index)
+            fields = fieldnames(value);
+
+            for i = 1:numel(fields)
+                fieldValue = value.(fields{i});
+
+                if ~(isnumeric(fieldValue) || islogical(fieldValue)) || numel(fieldValue) <= 1
+                    continue
+                end
+
+                value.(fields{i}) = fieldValue(min(index, numel(fieldValue)));
+            end
         end
     end
 end

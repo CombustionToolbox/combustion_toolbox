@@ -446,9 +446,6 @@ classdef combustion_toolbox < matlab.apps.AppBase
                           'positionMode must be "original" or "end".');
             end
         
-            % Optional: select it (comment out if you want less flicker)
-            tg.SelectedTab = tabObj;
-        
             % Remove from hidden list
             app.hiddenTabs = rmfield(app.hiddenTabs, key);
         end

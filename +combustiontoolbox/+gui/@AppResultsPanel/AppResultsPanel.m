@@ -297,7 +297,7 @@ classdef AppResultsPanel < handle
             % Args:
             %     result (struct): Semantic result case
             if obj.hasOutputState(result, 'statistics')
-                obj.showTab('TurbulenceStatistics', 'TurbulencestatisticsTab');
+                obj.showTab('TurbulenceStatistics');
                 obj.setVisible('Panel_parameters_2', 'on');
             else
                 obj.hideTab('TurbulencestatisticsTab');

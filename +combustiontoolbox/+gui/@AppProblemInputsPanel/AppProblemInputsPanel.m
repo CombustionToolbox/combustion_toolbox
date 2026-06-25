@@ -14,7 +14,7 @@ classdef AppProblemInputsPanel < handle
     %     * panel = combustiontoolbox.gui.AppProblemInputsPanel(app);
     %     * panel.onReactantMachChanged();
 
-    properties
+    properties (Access = private)
         app
     end
 

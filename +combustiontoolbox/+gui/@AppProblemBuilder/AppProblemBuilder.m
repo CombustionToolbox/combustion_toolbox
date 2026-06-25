@@ -14,7 +14,7 @@ classdef AppProblemBuilder < handle
     %     * setup = builder.buildSetup(input);
     %     * problem = builder.build(input);
 
-    properties
+    properties (Access = private)
         session
     end
 

@@ -13,7 +13,7 @@ classdef AppSolver < handle
     % Examples:
     %     * appSolver = combustiontoolbox.gui.AppSolver(session);
 
-    properties
+    properties (Access = private)
         session
         problemBuilder
         problemCatalog
@@ -56,6 +56,17 @@ classdef AppSolver < handle
             % Returns:
             %     problem (struct): Solver-ready problem setup
             problem = obj.problemBuilder.build(input, varargin{:});
+        end
+
+        function script = exportScript(obj, setup)
+            % Export canonical setup data to a MATLAB script
+            %
+            % Args:
+            %     setup (struct): Canonical problem setup
+            %
+            % Returns:
+            %     script (char): Runnable MATLAB script text
+            script = obj.problemBuilder.exportScript(setup);
         end
 
         function solution = solve(obj, input, varargin)

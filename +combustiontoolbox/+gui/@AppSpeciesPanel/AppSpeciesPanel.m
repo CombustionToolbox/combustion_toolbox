@@ -12,7 +12,7 @@ classdef AppSpeciesPanel < handle
     %     * panel = combustiontoolbox.gui.AppSpeciesPanel(app);
     %     * panel.onReactantsChanged(event);
 
-    properties
+    properties (Access = private)
         app
     end
 

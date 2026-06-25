@@ -27,7 +27,7 @@ classdef AppController < handle
     %     * input = controller.readInput();
     %     * definition = controller.currentProblem();
 
-    properties
+    properties (Access = private)
         app
         session
         state
@@ -247,7 +247,7 @@ classdef AppController < handle
             solution = obj.solver.solve(input, currentMixture);
             obj.currentSolution = solution;
             obj.results.set(solution.results, solution.results);
-            obj.results.layout = solution.resultLayout;
+            obj.results.setLayout(solution.resultLayout);
 
             if ~isempty(obj.resultsPanel)
                 obj.resultsPanel.applySolution(solution);
@@ -265,6 +265,45 @@ classdef AppController < handle
                 obj.setFinishedStatus();
             catch exception
                 obj.setErrorStatus(exception);
+            end
+        end
+
+        function value = hasResults(obj)
+            % Check whether solved results are stored
+            %
+            % Returns:
+            %     value (logical): True if solved results are available
+            value = ~isempty(obj.results) && obj.results.hasResults();
+        end
+
+        function solution = currentSolutionData(obj)
+            % Return the last successful solver solution
+            %
+            % Returns:
+            %     solution (struct): Last successful solver solution
+            solution = obj.currentSolution;
+        end
+
+        function loadSolution(obj, solution)
+            % Load a solver solution into controller state
+            %
+            % Args:
+            %     solution (struct): Solver solution to store
+            obj.currentSolution = solution;
+        end
+
+        function syncSessionFromApp(obj)
+            % Synchronize session services from the App Designer shell
+            if isempty(obj.app) || isempty(obj.session)
+                return
+            end
+
+            if isprop(obj.app, 'chemicalSystem')
+                obj.session.chemicalSystem = obj.app.chemicalSystem;
+            end
+
+            if isprop(obj.app, 'mixture')
+                obj.session.mixture = obj.app.mixture;
             end
         end
 
@@ -311,7 +350,7 @@ classdef AppController < handle
             %     filepath (char): Written file path, or [] if cancelled
             %     script (char): Generated MATLAB script text
             setup = obj.currentProblemSetup();
-            script = obj.solver.problemBuilder.exportScript(setup);
+            script = obj.solver.exportScript(setup);
 
             if nargin > 1
                 filepath = varargin{1};
@@ -609,7 +648,7 @@ classdef AppController < handle
                     currentMixture = obj.app.mixture;
                 end
 
-                problem = obj.solver.problemBuilder.build(input, currentMixture);
+                problem = obj.solver.buildProblem(input, currentMixture);
                 setup = problem.setup;
                 return
             end

@@ -16,7 +16,7 @@ classdef AppResults < handle
     %     * results.set(resultArray);
     %     * selected = results.selected();
 
-    properties
+    properties (Access = private)
         items = struct([])
         temporary = struct([])
         layout = struct()
@@ -41,6 +41,14 @@ classdef AppResults < handle
             end
 
             obj.selectedIndex = 1;
+        end
+
+        function setLayout(obj, layout)
+            % Store result layout metadata
+            %
+            % Args:
+            %     layout (struct): Result layout metadata
+            obj.layout = layout;
         end
 
         function setFromSolverOutputs(obj, problemType, solverOutputs, layout, varargin)

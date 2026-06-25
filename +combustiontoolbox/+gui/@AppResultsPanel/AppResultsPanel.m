@@ -13,7 +13,7 @@ classdef AppResultsPanel < handle
     %     * panel = combustiontoolbox.gui.AppResultsPanel(app);
     %     * panel.applySolution(solution);
 
-    properties
+    properties (Access = private)
         app
     end
 

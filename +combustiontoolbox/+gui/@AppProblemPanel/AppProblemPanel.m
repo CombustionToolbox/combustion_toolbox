@@ -13,7 +13,7 @@ classdef AppProblemPanel < handle
     %     * panel = combustiontoolbox.gui.AppProblemPanel(app, catalog);
     %     * panel.applySelectedProblem();
 
-    properties
+    properties (Access = private)
         app
         catalog
         inputsPanel

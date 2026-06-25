@@ -12,7 +12,7 @@ classdef AppProblemScriptExporter < handle
     %     * exporter = combustiontoolbox.gui.AppProblemScriptExporter();
     %     * script = exporter.export(problem.setup);
 
-    properties
+    properties (Access = private)
         problemCatalog
     end
 

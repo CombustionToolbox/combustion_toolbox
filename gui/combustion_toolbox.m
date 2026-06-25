@@ -316,40 +316,40 @@ classdef combustion_toolbox < matlab.apps.AppBase
     end
 
     properties (Access = public)
-        constants         % Constants object
-        database          % Class inhereted from Database superclass
-        chemicalSystem    % Chemical system object
-        mixture           % Mixture object
-        equilibriumSolver % EquilibriumSolver object
-        shockSolver       % ShockSolver object
-        detonationSolver  % DetonationSolver object
-        rocketSolver      % RocketSolver object
-        shockTurbulenceSolver % ShockTurbulenceSolver
-        plotConfig        % PlotConfig object
-        export            % Export object
-        appController     % AppController object
-        statusPanel       % AppStatusPanel object
-        consolePanel      % AppConsolePanel object
-        displaySpecies    % Chemical species to be shown in plotComposition
-        defaultLayout     % Default GUI component layout and data
-        currentResults    % Last solved GUI result set
+        constants                % Constants object
+        database                 % Class inhereted from Database superclass
+        chemicalSystem           % Chemical system object
+        mixture                  % Mixture object
+        equilibriumSolver        % EquilibriumSolver object
+        shockSolver              % ShockSolver object
+        detonationSolver         % DetonationSolver object
+        rocketSolver             % RocketSolver object
+        shockTurbulenceSolver    % ShockTurbulenceSolver
+        plotConfig               % PlotConfig object
+        export                   % Export object
+        appController            % AppController object
+        statusPanel              % AppStatusPanel object
+        consolePanel             % AppConsolePanel object
+        displaySpecies           % Chemical species to be shown in plotComposition
+        defaultLayout            % Default GUI component layout and data
+        currentResults           % Last solved GUI result set
         maxRelativeError = 2e-2; % Relative error threshold to change color (2 %)
     end
 
     properties (Access = private)
-        hiddenTabs         % Hidden tabs
+        hiddenTabs                             % Hidden tabs
         splashColor = [0.5098, 0.6039, 0.6745] % Font color splash
-        splashScreen       % Startup splash screen
+        splashScreen                           % Startup splash screen
         welcomeMessage = 'Welcome to Combustion Toolbox %s --- A MATLAB-based framework for solving combustion and high-speed flow problems.'
         runtimeOptions = struct( ...
             'debugMode', false, ...
             'showSplash', true, ...
-            'showFigure', true) % Runtime startup options
+            'showFigure', true)                % Runtime startup options
     end
     
     properties (Dependent)
-        NS_products % Number of product species (computations)
-        NS_display  % Number of display species (plots)
+        NS_products  % Number of product species (computations)
+        NS_display   % Number of display species (plots)
         LS_reactants % List of reactants
     end
 

@@ -1,11 +1,5 @@
 classdef AppProblemCatalog < handle
-    % Catalog of GUI problem definitions
-    %
-    % AppProblemCatalog is the single source of GUI-facing problem metadata
-    % for the refactored Combustion Toolbox app layer. It keeps the problem
-    % dropdown labels, defaults, visible controls, solver routing, plot
-    % properties, and result layouts together so callbacks can become thin
-    % consumers of data instead of large switch statements
+    % Defines GUI problem metadata, solver routing, plots, and result layouts.
     %
     % Attributes:
     %     definitions (struct): Problem metadata keyed by valid MATLAB names

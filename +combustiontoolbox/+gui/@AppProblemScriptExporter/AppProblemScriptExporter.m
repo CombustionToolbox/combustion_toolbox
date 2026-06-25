@@ -1,9 +1,5 @@
 classdef AppProblemScriptExporter < handle
-    % Exports canonical problem setup data to runnable MATLAB script text
-    %
-    % AppProblemScriptExporter renders problem.setup without reading App
-    % Designer components. It uses the problem catalog for semantic output
-    % variable names, so branches and stations remain easy to extend
+    % Converts canonical GUI problem setups into runnable MATLAB scripts.
     %
     % Attributes:
     %     problemCatalog (AppProblemCatalog): Problem metadata and outputs

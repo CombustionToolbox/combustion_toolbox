@@ -1,8 +1,5 @@
 classdef AppConsolePanel < handle
-    % Manages the GUI command window controls
-    %
-    % AppConsolePanel owns command-window presentation details so the main
-    % App Designer class can delegate output, history, and geometry updates
+    % Manages GUI console input, output, history, and layout.
     %
     % Attributes:
     %     app (combustion_toolbox): Main App Designer object
@@ -10,7 +7,7 @@ classdef AppConsolePanel < handle
     %     commandHistoryIndex (double): Current command history index
     %
     % Example:
-    %     * panel = combustiontoolbox.gui.AppConsolePanel(app);
+    %     panel = combustiontoolbox.gui.AppConsolePanel(app);
 
     properties (Access = private)
         app

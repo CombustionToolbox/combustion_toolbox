@@ -1,9 +1,5 @@
 classdef AppState < handle
-    % Current mutable state of the GUI, separated from App Designer handles
-    %
-    % AppState stores the small set of values that describe what the user has
-    % selected in the GUI. It deliberately does not store UI component handles;
-    % this makes it suitable for tests and for future save/restore workflows
+    % Stores mutable GUI state independently of App Designer handles.
     %
     % Attributes:
     %     selectedProblem (char): Selected problem type identifier

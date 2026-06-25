@@ -1,7 +1,5 @@
 classdef AppStatusPanel < handle
-    % Manages GUI status indicators
-    %
-    % AppStatusPanel owns the status palette and applies it to the main App Designer object
+    % Applies GUI status colors and problem-error highlighting.
     %
     % Attributes:
     %     app (combustion_toolbox): Main App Designer object

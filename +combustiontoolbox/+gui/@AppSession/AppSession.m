@@ -1,10 +1,5 @@
 classdef AppSession < handle
-    % Long-lived services used by the Combustion Toolbox GUI
-    %
-    % AppSession centralizes service objects that should live for the whole GUI
-    % session: constants, databases, solvers, plot configuration, and export
-    % This keeps callbacks from repeatedly creating the same heavy objects and
-    % gives the refactored GUI layer a single place to manage shared services
+    % Stores long-lived Combustion Toolbox GUI services and shared state.
     %
     % Attributes:
     %     constants (Constants): Combustion Toolbox constants

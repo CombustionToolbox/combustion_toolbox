@@ -1,9 +1,5 @@
 classdef AppResults < handle
-    % GUI-side storage for computed studies and selected result views
-    %
-    % AppResults keeps the current result set separate from the App Designer
-    % tree, tables, axes, and text fields. This makes it possible to test result
-    % selection, output labeling, and serialization without creating UI components
+    % Stores GUI result sets, temporary solver outputs, layouts, and selection.
     %
     % Attributes:
     %     items (struct): Current GUI-friendly results

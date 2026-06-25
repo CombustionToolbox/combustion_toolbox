@@ -1,10 +1,5 @@
 classdef AppProblemInputsPanel < handle
-    % Coordinates coupled problem input controls
-    %
-    % AppProblemInputsPanel owns small interactions between PR and PP inputs,
-    % including reactant/product pressure mirroring, shock Mach/velocity
-    % coupling, and mutually exclusive fields for rocket, detonation, and
-    % shock variants
+    % Synchronizes coupled GUI problem inputs and mutually exclusive fields.
     %
     % Attributes:
     %     app (combustion_toolbox): Main App Designer object

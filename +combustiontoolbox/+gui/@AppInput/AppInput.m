@@ -1,9 +1,5 @@
 classdef AppInput < handle
-    % Typed snapshot and parsing helpers for Combustion Toolbox GUI inputs
-    %
-    % AppInput is intentionally independent from App Designer components. The
-    % controller can build one from the app, then downstream services can work
-    % with typed MATLAB values instead of UI handles and text fields
+    % Collects, normalizes, and parses Combustion Toolbox GUI inputs.
     %
     % Attributes:
     %     problemType (char): Selected problem type identifier

@@ -1,8 +1,5 @@
 classdef AppProblemPanel < handle
-    % Applies problem catalog metadata to App Designer controls
-    %
-    % AppProblemPanel owns the UI updates triggered by problem selection. It
-    % applies AppProblemCatalog metadata and AppInput parsing directly
+    % Applies selected-problem metadata to GUI controls and feature panels.
     %
     % Attributes:
     %     app (combustion_toolbox): Main App Designer object

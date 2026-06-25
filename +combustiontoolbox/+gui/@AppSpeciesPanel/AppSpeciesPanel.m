@@ -1,9 +1,5 @@
 classdef AppSpeciesPanel < handle
-    % Manages reactants, products, species tables, and equivalence ratio UI
-    %
-    % AppSpeciesPanel owns the species setup workflow for the App Designer GUI
-    % It updates mixture state, species tables, product lists, and related
-    % controls using AppInput parsing and CT core model objects directly
+    % Manages GUI species setup, mixture composition, products, and equivalence ratio.
     %
     % Attributes:
     %     app (combustion_toolbox): Main App Designer object

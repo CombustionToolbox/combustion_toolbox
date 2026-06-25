@@ -1,17 +1,13 @@
 classdef AppSolver < handle
-    % GUI orchestration layer for dispatching studies to CT solver classes
-    %
-    % This class is not a numerical solver. It owns the mapping from
-    % AppInput/AppProblemBuilder output to EquilibriumSolver, ShockSolver,
-    % DetonationSolver, RocketSolver, and ShockTurbulenceSolver calls
+    % Dispatches GUI study requests to CT solvers and packages results.
     %
     % Attributes:
     %     session (AppSession): Long-lived GUI services
     %     problemBuilder (AppProblemBuilder): Builder for solver problem setup
     %     problemCatalog (AppProblemCatalog): Problem metadata and output layouts
     %
-    % Examples:
-    %     * appSolver = combustiontoolbox.gui.AppSolver(session);
+    % Example:
+    %     appSolver = combustiontoolbox.gui.AppSolver(session);
 
     properties (Access = private)
         session

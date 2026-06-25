@@ -1,10 +1,5 @@
 classdef AppController < handle
-    % Coordinates App Designer callbacks with GUI application services
-    %
-    % AppController is the entry point of the refactored GUI layer. The
-    % App Designer class remains responsible for owning UI components, while
-    % this controller coordinates input reading, state updates, problem
-    % metadata, solver orchestration, and result storage
+    % Coordinates GUI callbacks, state, panels, solving, and results.
     %
     % Attributes:
     %     app (combustion_toolbox): Main App Designer object

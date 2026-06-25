@@ -1,12 +1,9 @@
 classdef AppProblemBuilder < handle
-    % Builds executable problem setup from GUI input data
-    %
-    % AppProblemBuilder is the boundary between GUI input data and CT core
-    % model objects. It first builds a canonical problem setup that can be
-    % solved or exported, then adapts that setup to current CT solver objects
+    % Builds canonical and solver-ready problem setups from GUI inputs.
     %
     % Attributes:
     %     session (AppSession): Long-lived GUI services
+    %     equilibriumProblems (cell): Equilibrium problem type identifiers
     %     constantVolumeProblems (cell): Problem types using volume state input
     %
     % Examples:

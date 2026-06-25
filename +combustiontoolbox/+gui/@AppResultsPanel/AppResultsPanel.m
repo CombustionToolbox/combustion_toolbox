@@ -1,10 +1,5 @@
 classdef AppResultsPanel < handle
-    % Applies computed results to App Designer result controls
-    %
-    % AppResultsPanel owns the GUI-facing result projection: results tree nodes,
-    % numeric state fields, mixture tables, and custom-figure tree entries. It
-    % consumes AppResults semantic output states so solver branches and rocket
-    % stations keep their meaning after the numerical solve
+    % Projects solved results onto GUI trees, fields, tables, plots, and exports.
     %
     % Attributes:
     %     app (combustion_toolbox): Main App Designer object

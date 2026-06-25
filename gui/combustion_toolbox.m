@@ -476,6 +476,51 @@ classdef combustion_toolbox < matlab.apps.AppBase
     end
 
     methods (Access = private)
+
+        function value = customFigureHasCompositionProperty(app, nodes)
+            values = app.customFigureNodeValues(nodes);
+
+            if isempty(values)
+                value = false;
+                return
+            end
+
+            value = any(ismember(lower(string(values)), ...
+                lower(string(app.customFigureCompositionProperties()))));
+        end
+
+        function value = customFigureIsCompositionProperty(app, node)
+            values = app.customFigureNodeValues(node);
+            value = ~isempty(values) ...
+                && any(strcmpi(values{1}, app.customFigureCompositionProperties()));
+        end
+
+        function values = customFigureNodeValues(~, nodes)
+            values = {};
+
+            for i = 1:numel(nodes)
+                if ~isempty(nodes(i).Children)
+                    continue
+                end
+
+                value = nodes(i).NodeData;
+
+                if isempty(value)
+                    value = nodes(i).Text;
+                end
+
+                if isstring(value)
+                    value = char(value);
+                end
+
+                values{end + 1} = char(value); %#ok<AGROW>
+            end
+        end
+
+        function value = customFigureCompositionProperties(~)
+            value = {'Xi', 'Yi', 'systemMoles', 'Ni', 'moles', ...
+                'molarFraction', 'massFraction'};
+        end
         
         function installDatabase(app)
             % Check if running in standalone mode
@@ -1216,30 +1261,28 @@ classdef combustion_toolbox < matlab.apps.AppBase
                 return
             end
 
-            if sum(contains([app.Tree_variable_y.CheckedNodes.Text], {'Xi', 'Yi', 'molarFraction', 'massFraction'})) == 0
+            if ~app.customFigureHasCompositionProperty(app.Tree_variable_y.CheckedNodes)
                 return
             end
             
-            if sum(contains([event.PreviousCheckedNodes.Text], {'Xi', 'Yi', 'molarFraction', 'massFraction'}))
-                indexRemove = [];
+            if app.customFigureHasCompositionProperty(event.PreviousCheckedNodes)
+                checkedNodes = app.Tree_variable_y.CheckedNodes;
+                indexRemove = false(size(checkedNodes));
                 
-                for i = 1:length(app.Tree_variable_y.CheckedNodes)
-                    if any(strcmpi(app.Tree_variable_y.CheckedNodes(i).Text, {'Xi', 'Yi', 'molarFraction', 'massFraction'}))
-                        indexRemove = [indexRemove, i];
-                    end
+                for i = 1:numel(checkedNodes)
+                    indexRemove(i) = app.customFigureIsCompositionProperty(checkedNodes(i));
                 end
 
                 app.Tree_variable_y.CheckedNodes(indexRemove) = [];
                 return
             end
 
-            if sum(contains([event.CheckedNodes.Text], {'Xi', 'Yi', 'molarFraction', 'massFraction'}))
-                indexRemove = [];
+            if app.customFigureHasCompositionProperty(event.CheckedNodes)
+                checkedNodes = app.Tree_variable_y.CheckedNodes;
+                indexRemove = false(size(checkedNodes));
                 
-                for i = 1:length(app.Tree_variable_y.CheckedNodes)
-                    if ~strcmpi(app.Tree_variable_y.CheckedNodes(i).Text, {'Xi', 'Yi', 'molarFraction', 'massFraction'})
-                        indexRemove = [indexRemove, i];
-                    end
+                for i = 1:numel(checkedNodes)
+                    indexRemove(i) = ~app.customFigureIsCompositionProperty(checkedNodes(i));
                 end
 
                 app.Tree_variable_y.CheckedNodes(indexRemove) = [];

@@ -92,6 +92,17 @@ classdef AppResultsPanel < handle
             end
 
             xField = xFields{1};
+            xCompositionField = obj.compositionPropertyField(xField);
+            yCompositionField = obj.selectedCompositionField(yFields);
+
+            if ~isempty(xCompositionField)
+                xField = xCompositionField;
+            end
+
+            if ~isempty(yCompositionField)
+                yFields = {yCompositionField};
+            end
+
             config = obj.currentPlotConfig(xField, yFields);
             lineStyles = {'-', '--', ':', '-.'};
             colorPalette = config.colorline;
@@ -115,19 +126,32 @@ classdef AppResultsPanel < handle
                     continue
                 end
 
-                xValues = cell2vector(mixtures, xField);
+                if ~isempty(xCompositionField) || ~isempty(yCompositionField)
+                    yField = yFields{1};
+
+                    if obj.seriesHasField(mixtures, xField) && obj.seriesHasField(mixtures, yField)
+                        obj.plotCompositionSeries(mixtures, xField, yField, config);
+                        return
+                    end
+
+                    continue
+                end
+
+                xValues = obj.seriesValues(results, mixtures, xField);
                 basis = cell2vector(mixtures, 'mi');
                 xValues = obj.convertPlotUnits(xField, xValues, basis);
 
-                if obj.isCompositionProperty(yFields{1})
-                    mixtureArray = [mixtures{:}];
-                    plotComposition(mixtureArray(1), mixtureArray, xField, yFields{1}, ...
-                        'config', config, 'y_var', mixtureArray, 'axes', obj.app.UIAxes);
-                    return
+                if isempty(xValues)
+                    continue
                 end
 
                 for j = numel(yFields):-1:1
-                    yValues = cell2vector(mixtures, yFields{j});
+                    yValues = obj.seriesValues(results, mixtures, yFields{j});
+
+                    if isempty(yValues)
+                        continue
+                    end
+
                     yValues = obj.convertPlotUnits(yFields{j}, yValues, basis);
                     color = colorPalette(min(j, size(colorPalette, 1)), :);
                     lineStyle = lineStyles{mod(i - 1, numel(lineStyles)) + 1};
@@ -1182,21 +1206,32 @@ classdef AppResultsPanel < handle
             delete(obj.app.Variable_y.Children);
 
             outputStates = results(1).outputStates;
-            mixtureFields = {};
+            [mixtureFields, mixtureLabels] = obj.mixtureTreeItems(outputStates);
 
-            for i = 1:numel(outputStates)
-                if strcmp(outputStates(i).type, 'mixture')
-                    mixtureFields{end + 1} = outputStates(i).field; %#ok<AGROW>
-                end
-            end
-
-            obj.addTreeNodes(obj.app.Mixtures, mixtureFields);
+            obj.addTreeNodes(obj.app.Mixtures, mixtureFields, mixtureLabels);
             properties = obj.numericMixtureProperties(results(1), mixtureFields);
-            obj.addTreeNodes(obj.app.Variable_x, properties);
-            obj.addTreeNodes(obj.app.Variable_y, properties);
+            properties = [properties, obj.numericDataProperties(results(1))];
+            properties = unique(properties, 'stable');
+            [properties, propertyLabels] = obj.sortedPropertyTreeItems(properties);
+            obj.addTreeNodes(obj.app.Variable_x, properties, propertyLabels);
+            obj.addTreeNodes(obj.app.Variable_y, properties, propertyLabels);
         end
 
-        function properties = numericMixtureProperties(~, result, mixtureFields)
+        function [fields, labels] = mixtureTreeItems(~, outputStates)
+            fields = {};
+            labels = {};
+
+            for i = 1:numel(outputStates)
+                if ~strcmp(outputStates(i).type, 'mixture')
+                    continue
+                end
+
+                fields{end + 1} = outputStates(i).field; %#ok<AGROW>
+                labels{end + 1} = outputStates(i).label; %#ok<AGROW>
+            end
+        end
+
+        function properties = numericMixtureProperties(obj, result, mixtureFields)
             properties = {};
 
             if isempty(mixtureFields)
@@ -1209,15 +1244,244 @@ classdef AppResultsPanel < handle
             for i = 1:numel(names)
                 value = mixture.(names{i});
 
-                if isfloat(value) && ~isempty(value)
+                if isfloat(value) && ~isempty(value) && obj.isCustomFigureProperty(names{i})
                     properties{end + 1} = names{i}; %#ok<AGROW>
                 end
             end
         end
 
-        function addTreeNodes(~, parentNode, names)
+        function properties = numericDataProperties(obj, result)
+            properties = {};
+
+            if ~isfield(result, 'outputStates')
+                return
+            end
+
+            outputStates = result.outputStates;
+
+            for i = 1:numel(outputStates)
+                outputState = outputStates(i);
+
+                if ~strcmp(outputState.type, 'data') || ~isfield(result, outputState.field)
+                    continue
+                end
+
+                data = result.(outputState.field);
+
+                if ~isstruct(data)
+                    continue
+                end
+
+                names = sort(fieldnames(data));
+
+                for j = 1:numel(names)
+                    value = data.(names{j});
+
+                    if isfloat(value) && ~isempty(value) && obj.isCustomFigureProperty(names{j})
+                        properties{end + 1} = names{j}; %#ok<AGROW>
+                    end
+                end
+            end
+        end
+
+        function value = isCustomFigureProperty(~, name)
+            hiddenProperties = {'hSpecific', 'eSpecific', 'gSpecific', ...
+                'sSpecific', 'cpSpecific', 'cvSpecific', 'vSpecific', ...
+                'natomElements', 'natomElementsReact', 'phase'};
+
+            value = ~any(strcmpi(name, hiddenProperties));
+        end
+
+        function [names, labels] = sortedPropertyTreeItems(obj, names)
+            labels = cell(size(names));
+
             for i = 1:numel(names)
-                uitreenode(parentNode, 'Text', names{i});
+                labels{i} = obj.propertyTreeLabel(names{i});
+            end
+
+            [~, order] = sort(lower(string(labels)));
+            names = names(order);
+            labels = labels(order);
+        end
+
+        function label = propertyTreeLabel(obj, name)
+            switch lower(char(name))
+                case 't'
+                    label = 'Temperature';
+                case 'p'
+                    label = 'Pressure';
+                case 'rho'
+                    label = 'Density';
+                case 'n'
+                    label = 'Total moles';
+                case 'n_gas'
+                    label = 'Moles gas';
+                case 'systemmoles'
+                    label = 'Moles';
+                case 'xi'
+                    label = 'Molar fraction';
+                case 'yi'
+                    label = 'Mass fraction';
+                case 'hf'
+                    label = 'Formation enthalpy';
+                case 'ef'
+                    label = 'Formation internal energy';
+                case 'h'
+                    label = 'Enthalpy';
+                case 'e'
+                    label = 'Internal energy';
+                case 'g'
+                    label = 'Gibbs energy';
+                case 's'
+                    label = 'Entropy';
+                case 'cp'
+                    label = 'Heat capacity cp';
+                case 'cv'
+                    label = 'Heat capacity cv';
+                case 'cp_r'
+                    label = 'Reactive heat capacity cp';
+                case 'cv_r'
+                    label = 'Reactive heat capacity cv';
+                case 'gamma'
+                    label = 'Adiabatic index';
+                case 'gamma_f'
+                    label = 'Frozen adiabatic index';
+                case 'gamma_s'
+                    label = 'Sound-speed adiabatic index';
+                case 'sound'
+                    label = 'Sound speed';
+                case 's0'
+                    label = 'Frozen entropy';
+                case 'dht'
+                    label = 'Thermal enthalpy';
+                case 'det'
+                    label = 'Thermal internal energy';
+                case 'ds'
+                    label = 'Entropy of mixing';
+                case 'w'
+                    label = 'Molecular weight';
+                case 'mw'
+                    label = 'Mean molecular weight';
+                case 'mi'
+                    label = 'Mixture mass';
+                case 'v'
+                    label = 'Volume';
+                case 'vspecific'
+                    label = 'Specific volume';
+                case 'dvdt_p'
+                    label = 'dV/dT at constant pressure';
+                case 'dvdp_t'
+                    label = 'dV/dp at constant temperature';
+                case 'dpdt_v'
+                    label = 'dp/dT at constant volume';
+                case 'dpdv_t'
+                    label = 'dp/dV at constant temperature';
+                case 'equivalenceratio'
+                    label = 'Equivalence ratio';
+                case 'percentagefuel'
+                    label = 'Fuel percentage';
+                case 'fueloxidizermassratio'
+                    label = 'Fuel-oxidizer mass ratio';
+                case 'oxidizerfuelmassratio'
+                    label = 'Oxidizer-fuel mass ratio';
+                case 'u'
+                    label = 'Velocity';
+                case 'ushock'
+                    label = 'Shock velocity';
+                case 'unormal'
+                    label = 'Normal velocity';
+                case 'cjspeed'
+                    label = 'CJ speed';
+                case 'mach'
+                    label = 'Mach number';
+                case 'drivefactor'
+                    label = 'Drive factor';
+                case 'eta'
+                    label = 'Dilatational-to-solenoidal TKE ratio';
+                case 'etavorticity'
+                    label = 'Dilatational-to-solenoidal vorticity ratio';
+                case 'chi'
+                    label = 'Entropic-vortical correlation parameter';
+                case 'k'
+                    label = 'Turbulent kinetic energy amplification ratio';
+                case 'r11'
+                    label = 'Streamwise TKE amplification ratio';
+                case 'rtt'
+                    label = 'Transverse TKE amplification ratio';
+                case 'enstrophy'
+                    label = 'Enstrophy amplification ratio';
+                case 'enstrophytt'
+                    label = 'Transverse enstrophy amplification ratio';
+                case 'ka'
+                    label = 'Acoustic TKE amplification ratio';
+                case 'r11a'
+                    label = 'Acoustic streamwise TKE amplification ratio';
+                case 'rtta'
+                    label = 'Acoustic transverse TKE amplification ratio';
+                case 'kr'
+                    label = 'Rotational TKE amplification ratio';
+                case 'r11r'
+                    label = 'Rotational streamwise TKE amplification ratio';
+                case 'rttr'
+                    label = 'Rotational transverse TKE amplification ratio';
+                case 'kolmogorovlengthratio'
+                    label = 'Kolmogorov length scale ratio';
+                case 'beta'
+                    label = 'Wave angle';
+                case 'theta'
+                    label = 'Deflection angle';
+                case 'betamin'
+                    label = 'Minimum wave angle';
+                case 'betamax'
+                    label = 'Maximum wave angle';
+                case 'thetamin'
+                    label = 'Minimum deflection angle';
+                case 'thetamax'
+                    label = 'Maximum deflection angle';
+                case 'arearatio'
+                    label = 'Area ratio';
+                case 'arearatiochamber'
+                    label = 'Chamber area ratio';
+                case 'cstar'
+                    label = 'Characteristic velocity';
+                case 'cf'
+                    label = 'Thrust coefficient';
+                case 'i_sp'
+                    label = 'Specific impulse';
+                case 'i_vac'
+                    label = 'Vacuum specific impulse';
+                otherwise
+                    label = obj.defaultPropertyTreeLabel(name);
+            end
+        end
+
+        function label = defaultPropertyTreeLabel(~, name)
+            label = regexprep(char(name), '_', ' ');
+            label = regexprep(label, '([a-z])([A-Z])', '$1 $2');
+            label = lower(strtrim(label));
+
+            if isempty(label)
+                return
+            end
+
+            words = regexp(label, '\s+', 'split');
+
+            for i = 1:numel(words)
+                word = words{i};
+
+                if isempty(word)
+                    continue
+                end
+
+                words{i} = [upper(word(1)), word(2:end)];
+            end
+
+            label = strjoin(words, ' ');
+        end
+
+        function addTreeNodes(~, parentNode, names, labels)
+            for i = 1:numel(names)
+                uitreenode(parentNode, 'Text', labels{i}, 'NodeData', names{i});
             end
         end
 
@@ -1256,13 +1520,29 @@ classdef AppResultsPanel < handle
             nodes = obj.app.(componentName).CheckedNodes;
 
             for i = 1:numel(nodes)
-                text = nodes(i).Text;
+                if ~isempty(nodes(i).Children)
+                    continue
+                end
+
+                text = obj.nodeValue(nodes(i));
 
                 if nargin > 2 && strcmp(text, varargin{1})
                     continue
                 end
 
                 names{end + 1} = text; %#ok<AGROW>
+            end
+        end
+
+        function value = nodeValue(~, node)
+            value = node.NodeData;
+
+            if isempty(value)
+                value = node.Text;
+            end
+
+            if isstring(value)
+                value = char(value);
             end
         end
 
@@ -1291,6 +1571,83 @@ classdef AppResultsPanel < handle
             end
         end
 
+        function values = seriesValues(obj, results, mixtures, fieldName)
+            if obj.seriesHasField(mixtures, fieldName)
+                values = cell2vector(mixtures, fieldName);
+                return
+            end
+
+            values = obj.dataSeriesValues(results, fieldName);
+        end
+
+        function value = seriesHasField(~, series, fieldName)
+            value = false;
+
+            if isempty(series)
+                return
+            end
+
+            item = series{1};
+
+            if isobject(item)
+                value = isprop(item, fieldName);
+            elseif isstruct(item)
+                value = isfield(item, fieldName);
+            end
+        end
+
+        function values = dataSeriesValues(obj, results, fieldName)
+            values = nan(1, numel(results));
+            hasValue = false(1, numel(results));
+
+            for i = 1:numel(results)
+                value = obj.resultDataValue(results(i), fieldName);
+
+                if isempty(value)
+                    continue
+                end
+
+                if ~isscalar(value)
+                    value = value(min(i, numel(value)));
+                end
+
+                values(i) = value;
+                hasValue(i) = true;
+            end
+
+            if ~any(hasValue)
+                values = [];
+                return
+            end
+
+            values = values(hasValue);
+        end
+
+        function value = resultDataValue(~, result, fieldName)
+            value = [];
+
+            if ~isfield(result, 'outputStates')
+                return
+            end
+
+            outputStates = result.outputStates;
+
+            for i = 1:numel(outputStates)
+                outputState = outputStates(i);
+
+                if ~strcmp(outputState.type, 'data') || ~isfield(result, outputState.field)
+                    continue
+                end
+
+                data = result.(outputState.field);
+
+                if isstruct(data) && isfield(data, fieldName)
+                    value = data.(fieldName);
+                    return
+                end
+            end
+        end
+
         function applyLegend(obj, legendNames, numMixtures, numProperties, config)
             legendNames = legendNames(~cellfun(@isempty, legendNames));
 
@@ -1315,8 +1672,40 @@ classdef AppResultsPanel < handle
             end
         end
 
-        function value = isCompositionProperty(~, fieldName)
-            value = any(strcmpi(fieldName, {'Xi', 'Yi', 'Ni', 'moles', 'molarFraction', 'massFraction'}));
+        function plotCompositionSeries(obj, mixtures, xField, yField, config)
+            mixtureArray = [mixtures{:}];
+            plotter = combustiontoolbox.utils.display.PlotComposition(config);
+            plotter.plot(mixtureArray(1), mixtureArray, xField, yField, ...
+                'y_var', mixtureArray, 'axes', obj.app.UIAxes);
+        end
+
+        function field = selectedCompositionField(obj, fieldNames)
+            field = '';
+
+            for i = 1:numel(fieldNames)
+                field = obj.compositionPropertyField(fieldNames{i});
+
+                if ~isempty(field)
+                    return
+                end
+            end
+        end
+
+        function value = isCompositionProperty(obj, fieldName)
+            value = ~isempty(obj.compositionPropertyField(fieldName));
+        end
+
+        function field = compositionPropertyField(~, fieldName)
+            switch lower(char(fieldName))
+                case {'xi', 'molarfraction'}
+                    field = 'Xi';
+                case {'yi', 'massfraction'}
+                    field = 'Yi';
+                case {'ni', 'moles', 'systemmoles'}
+                    field = 'systemMoles';
+                otherwise
+                    field = '';
+            end
         end
 
         function mixture = initialMixture(obj, result)

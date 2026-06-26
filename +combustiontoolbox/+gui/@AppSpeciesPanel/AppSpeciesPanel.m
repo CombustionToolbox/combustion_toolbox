@@ -51,7 +51,9 @@ classdef AppSpeciesPanel < handle
                 return
             end
 
-            if obj.isUnknownReactantsSelection(value, event)
+            selection = obj.resolveReactantsSelection(value, event);
+
+            if ~selection.isValid
                 obj.showWarning('Species not found.');
                 return
             end
@@ -65,7 +67,7 @@ classdef AppSpeciesPanel < handle
                 obj.app.mixture.ratioOxidizer = previousRatioOxidizer;
             end
 
-            obj.applyReactantsSelection(value, event);
+            obj.applyReactantsSelection(selection);
             obj.applyMixturePropertiesFromInputs();
             obj.updateReactantsTable();
             obj.updatePhiControls();
@@ -87,7 +89,7 @@ classdef AppSpeciesPanel < handle
             % Args:
             %     species (cell | string | char): Custom product species list
             species = unique(obj.asCell(species), 'stable');
-            obj.setValue('Products', '');
+            obj.clearProductsInput();
             obj.setProductItems(species);
             obj.rebuildChemicalSystem(species);
             obj.updateProductDisplayLists();
@@ -274,13 +276,17 @@ classdef AppSpeciesPanel < handle
     end
 
     methods (Access = private)
-        function applyReactantsSelection(obj, value, event)
-            preset = obj.reactantsPreset(value, event);
-
-            if isempty(preset)
+        function applyReactantsSelection(obj, selection)
+            % Apply a resolved reactants selection to the mixture
+            %
+            % Args:
+            %     selection (struct): Resolved preset or typed species selection
+            if ~isempty(selection.species)
+                obj.addCustomReactant(selection.species);
                 return
             end
 
+            preset = selection.preset;
             obj.setValue('edit_phi', preset.phi);
 
             if ~isempty(preset.fuelSpecies)
@@ -297,7 +303,16 @@ classdef AppSpeciesPanel < handle
             end
         end
 
-        function preset = reactantsPreset(obj, value, event)
+        function selection = resolveReactantsSelection(obj, value, event)
+            % Resolve the reactants dropdown value without changing state
+            %
+            % Args:
+            %     value: Current reactants dropdown value
+            %     event (object | struct): App Designer callback event
+            %
+            % Returns:
+            %     selection (struct): Resolved preset or database species
+            selection = struct('isValid', false, 'preset', [], 'species', '');
             definition = obj.findReactantsPresetDefinition(value);
 
             if isempty(definition)
@@ -305,7 +320,8 @@ classdef AppSpeciesPanel < handle
             end
 
             if ~isempty(definition)
-                preset = obj.buildReactantsPreset(definition);
+                selection.isValid = true;
+                selection.preset = obj.buildReactantsPreset(definition);
                 return
             end
 
@@ -315,32 +331,11 @@ classdef AppSpeciesPanel < handle
                 species = obj.matchSpecies(obj.eventValue(event, ''));
             end
 
-            if isempty(species)
-                obj.showWarning('Species not found.');
-                preset = [];
+            if ~isempty(species)
+                selection.isValid = true;
+                selection.species = species;
                 return
             end
-
-            obj.addCustomReactant(species, event);
-            preset = [];
-        end
-
-        function value = isUnknownReactantsSelection(obj, selection, event)
-            value = false;
-
-            if ~isempty(obj.findReactantsPresetDefinition(selection)) ...
-                    || ~isempty(obj.matchSpecies(selection))
-                return
-            end
-
-            eventSelection = obj.eventValue(event, '');
-
-            if ~isempty(obj.findReactantsPresetDefinition(eventSelection)) ...
-                    || ~isempty(obj.matchSpecies(eventSelection))
-                return
-            end
-
-            value = true;
         end
 
         function definition = findReactantsPresetDefinition(obj, value)
@@ -486,7 +481,7 @@ classdef AppSpeciesPanel < handle
             value = regexprep(value, '\s+', ' ');
         end
 
-        function addCustomReactant(obj, species, event) %#ok<INUSD>
+        function addCustomReactant(obj, species)
             if isempty(species)
                 return
             end
@@ -519,21 +514,6 @@ classdef AppSpeciesPanel < handle
 
             set(obj.app.mixture, {species}, 'inert', 1);
             obj.setValue('Reactants', 1);
-        end
-
-        function species = matchSpeciesFromEvent(obj, event)
-            species = '';
-
-            if nargin < 2 || isempty(event)
-                obj.showWarning('Species not found.');
-                return
-            end
-
-            species = obj.matchSpecies(obj.eventValue(event, ''));
-
-            if isempty(species)
-                obj.showWarning('Species not found.');
-            end
         end
 
         function species = matchSpecies(obj, value)
@@ -727,12 +707,12 @@ classdef AppSpeciesPanel < handle
             %     obj (AppSpeciesPanel): Species panel object
             productValue = obj.componentValue('Products', []);
 
-            if isempty(productValue)
-                if obj.hasExplicitProductsWithoutReactants()
-                    obj.rebuildChemicalSystem(obj.productSpecies());
-                    return
-                end
+            if obj.isClearedProductsInput(productValue)
+                obj.rebuildChemicalSystem(obj.productSpecies());
+                return
+            end
 
+            if isempty(productValue)
                 species = obj.findProductsFromReactants();
                 obj.setProductItems(species);
                 obj.rebuildChemicalSystem(species);
@@ -824,6 +804,11 @@ classdef AppSpeciesPanel < handle
             %
             % Returns:
             %     value (cell): Product species derived from the current reactants
+            if isempty(obj.componentData('UITable_R', {}))
+                value = {};
+                return
+            end
+
             if isempty(obj.app.mixture.listSpecies)
                 value = {};
                 return
@@ -856,9 +841,13 @@ classdef AppSpeciesPanel < handle
             value = any(strcmpi(char(productValue), obj.componentItems('Products')));
         end
 
-        function value = hasExplicitProductsWithoutReactants(obj)
-            value = isempty(obj.componentData('UITable_R', {})) ...
-                && ~isempty(obj.componentItems('listbox_Products'));
+        function value = isClearedProductsInput(obj, productValue)
+            value = (ischar(productValue) || isstring(productValue)) ...
+                && strcmp(char(productValue), obj.clearedProductsInputValue());
+        end
+
+        function value = clearedProductsInputValue(~)
+            value = ' ';
         end
 
         function value = equivalenceProductSpecies(obj)
@@ -896,11 +885,24 @@ classdef AppSpeciesPanel < handle
             obj.setData('UITable_R', {});
             obj.setData('UITable_R2', {});
             obj.setData('UITable_P', {});
+            obj.clearAutoProductSpecies();
             obj.setValue('edit_phi', '-');
             obj.setValue('edit_phi2', '-');
             obj.setValue('edit_phi3', '-');
             obj.setValue('edit_OF', 0);
             obj.setValue('edit_F', 0);
+        end
+
+        function clearAutoProductSpecies(obj)
+            if obj.isClearedProductsInput(obj.componentValue('Products', ''))
+                return
+            end
+
+            if isempty(obj.componentValue('Products', ''))
+                obj.setProductItems({});
+                obj.rebuildChemicalSystem({});
+                obj.updateProductDisplayLists();
+            end
         end
 
         function [temperature, FLAG_FIXED] = fixSpeciesTemperatures(obj, listSpecies, temperature, numSpecies)
@@ -1066,7 +1068,7 @@ classdef AppSpeciesPanel < handle
             end
         end
 
-        function value = eventValue(obj, event, defaultValue) %#ok<INUSD>
+        function value = eventValue(~, event, defaultValue)
             value = defaultValue;
 
             if isempty(event)
@@ -1088,14 +1090,6 @@ classdef AppSpeciesPanel < handle
 
             if obj.hasComponent(componentName) && isprop(obj.app.(componentName), 'Items')
                 value = obj.app.(componentName).Items;
-            end
-        end
-
-        function value = componentItemsData(obj, componentName)
-            value = {};
-
-            if obj.hasComponent(componentName) && isprop(obj.app.(componentName), 'ItemsData')
-                value = obj.app.(componentName).ItemsData;
             end
         end
 
@@ -1125,12 +1119,6 @@ classdef AppSpeciesPanel < handle
             end
         end
 
-        function setItemsData(obj, componentName, value)
-            if obj.hasComponent(componentName) && isprop(obj.app.(componentName), 'ItemsData')
-                obj.app.(componentName).ItemsData = value;
-            end
-        end
-
         function setProductItems(obj, value)
             % Set the internal products listbox items
             %
@@ -1139,13 +1127,18 @@ classdef AppSpeciesPanel < handle
             obj.setItems('listbox_Products', value);
         end
 
+        function clearProductsInput(obj)
+            % Clear products input after accepting an explicit product list
+            obj.setValueSilently('Products', obj.clearedProductsInputValue());
+        end
+
         function addTypedProductSpecies(obj, species)
             % Add a typed database species to the explicit product list
             %
             % Args:
             %     species (char): Database species name
             species = obj.addToList({species}, obj.componentItems('listbox_Products'));
-            obj.setValue('Products', '');
+            obj.clearProductsInput();
             obj.setProductItems(species);
             obj.rebuildChemicalSystem(species);
             obj.updateProductDisplayLists();
@@ -1164,6 +1157,22 @@ classdef AppSpeciesPanel < handle
             if obj.hasComponent(componentName) && isprop(obj.app.(componentName), 'Data')
                 obj.app.(componentName).Data = value;
             end
+        end
+
+        function setValueSilently(obj, componentName, value)
+            if ~obj.hasComponent(componentName) || ~isprop(obj.app.(componentName), 'Value')
+                return
+            end
+
+            if ~isprop(obj.app.(componentName), 'ValueChangedFcn')
+                obj.app.(componentName).Value = value;
+                return
+            end
+
+            callback = obj.app.(componentName).ValueChangedFcn;
+            obj.app.(componentName).ValueChangedFcn = [];
+            cleanup = onCleanup(@() set(obj.app.(componentName), 'ValueChangedFcn', callback));
+            obj.app.(componentName).Value = value;
         end
 
         function setText(obj, componentName, value)

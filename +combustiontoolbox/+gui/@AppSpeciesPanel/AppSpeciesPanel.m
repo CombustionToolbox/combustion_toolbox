@@ -13,10 +13,6 @@ classdef AppSpeciesPanel < handle
         session
     end
 
-    properties (Access = private, Constant)
-        customProductsValue = 'Custom selection'
-    end
-
     methods
         function obj = AppSpeciesPanel(app, session)
             % AppSpeciesPanel constructor
@@ -55,6 +51,11 @@ classdef AppSpeciesPanel < handle
                 return
             end
 
+            if obj.isUnknownReactantsSelection(value, event)
+                obj.showWarning('Species not found.');
+                return
+            end
+
             obj.rebuildChemicalSystem(obj.productSpecies());
             previousRatioOxidizer = obj.app.mixture.ratioOxidizer;
             previousStoichiometricMoles = obj.app.mixture.stoichiometricMoles;
@@ -86,8 +87,7 @@ classdef AppSpeciesPanel < handle
             % Args:
             %     species (cell | string | char): Custom product species list
             species = unique(obj.asCell(species), 'stable');
-            obj.addProductsDropdownItem(obj.customProductsValue);
-            obj.setValue('Products', obj.customProductsValue);
+            obj.setValue('Products', '');
             obj.setProductItems(species);
             obj.rebuildChemicalSystem(species);
             obj.updateProductDisplayLists();
@@ -298,72 +298,157 @@ classdef AppSpeciesPanel < handle
         end
 
         function preset = reactantsPreset(obj, value, event)
-            preset = obj.emptyPreset();
+            definition = obj.findReactantsPresetDefinition(value);
 
-            if ischar(value) || isstring(value)
-                species = obj.matchSpecies(char(value));
+            if isempty(definition)
+                definition = obj.findReactantsPresetDefinition(obj.eventValue(event, ''));
+            end
 
-                if isempty(species)
-                    species = obj.matchSpecies(obj.eventValue(event, ''));
-                end
+            if ~isempty(definition)
+                preset = obj.buildReactantsPreset(definition);
+                return
+            end
 
-                if isempty(species)
-                    obj.showWarning('Species not found.');
-                    return
-                end
+            species = obj.matchSpecies(value);
 
-                obj.addCustomReactant(species, event);
+            if isempty(species)
+                species = obj.matchSpecies(obj.eventValue(event, ''));
+            end
+
+            if isempty(species)
+                obj.showWarning('Species not found.');
                 preset = [];
                 return
             end
 
-            switch value
-                case 2
-                    [preset.oxidizerSpecies, preset.oxidizerMoles] = obj.air();
-                    preset.phi = '-';
-                case 3
-                    preset = obj.fuelAirPreset({'CH4'}, 1);
-                case 4
-                    preset = obj.fuelAirPreset({'C2H6'}, 1);
-                case 5
-                    preset = obj.fuelAirPreset({'C3H8'}, 1);
-                case 6
-                    preset = obj.fuelAirPreset({'C2H2_acetylene'}, 1);
-                case 7
-                    preset = obj.fuelAirPreset({'C2H4'}, 1);
-                case 8
-                    preset = obj.fuelAirPreset({'C6H6'}, 1);
-                case 9
-                    preset = obj.fuelAirPreset({'C8H18_isooctane'}, 1);
-                case 10
-                    preset = obj.fuelAirPreset({'H2'}, 1);
-                case 11
-                    preset = obj.fuelAirPreset({'CO'}, 1);
-                case 12
-                    preset = obj.fuelAirPreset({'CH3OH'}, 1);
-                case 13
-                    preset = obj.fuelAirPreset({'C2H5OH'}, 1);
-                case 14
-                    preset = obj.fuelAirPreset({'CH4', 'C2H6', 'C3H8'}, [0.85, 0.1, 0.05]);
-                case 15
-                    preset = obj.fuelAirPreset({'CO', 'H2'}, [0.5, 0.5]);
-                case 16
-                    preset.fuelSpecies = {'H2bLb'};
-                    preset.fuelMoles = 1;
-                    preset.oxidizerSpecies = {'O2bLb'};
-                    preset.oxidizerMoles = 1;
-                    preset.phi = '1';
-                case 17
-                    preset.fuelSpecies = {'RP_1'};
-                    preset.fuelMoles = 1;
-                    preset.oxidizerSpecies = {'O2bLb'};
-                    preset.oxidizerMoles = 1;
-                    preset.phi = '1';
-                otherwise
-                    species = obj.matchSpeciesFromEvent(event);
-                    obj.addCustomReactant(species, event);
-                    preset = [];
+            obj.addCustomReactant(species, event);
+            preset = [];
+        end
+
+        function value = isUnknownReactantsSelection(obj, selection, event)
+            value = false;
+
+            if ~isempty(obj.findReactantsPresetDefinition(selection)) ...
+                    || ~isempty(obj.matchSpecies(selection))
+                return
             end
+
+            eventSelection = obj.eventValue(event, '');
+
+            if ~isempty(obj.findReactantsPresetDefinition(eventSelection)) ...
+                    || ~isempty(obj.matchSpecies(eventSelection))
+                return
+            end
+
+            value = true;
+        end
+
+        function definition = findReactantsPresetDefinition(obj, value)
+            definition = [];
+
+            if isempty(value)
+                return
+            end
+
+            definitions = obj.reactantsPresetDefinitions();
+
+            if isnumeric(value)
+                index = find([definitions.id] == value, 1);
+            else
+                index = obj.findReactantsPresetTextIndex(definitions, value);
+            end
+
+            if ~isempty(index)
+                definition = definitions(index);
+            end
+        end
+
+        function index = findReactantsPresetTextIndex(obj, definitions, value)
+            index = [];
+            value = obj.normalizedText(value);
+
+            for i = 1:numel(definitions)
+                names = [{definitions(i).label}, definitions(i).aliases];
+                names = cellfun(@obj.normalizedText, names, 'UniformOutput', false);
+
+                if any(strcmp(value, names))
+                    index = i;
+                    return
+                end
+            end
+        end
+
+        function preset = buildReactantsPreset(obj, definition)
+            switch definition.type
+                case 'air'
+                    if isempty(definition.idealAir)
+                        FLAG_IDEAL_AIR = obj.componentValue('IdealAirCheckBox', false);
+                    else
+                        FLAG_IDEAL_AIR = definition.idealAir;
+                    end
+
+                    preset = obj.airPreset(FLAG_IDEAL_AIR);
+                case 'fuelAir'
+                    preset = obj.fuelAirPreset(definition.fuelSpecies, definition.fuelMoles);
+                otherwise
+                    preset = obj.emptyPreset();
+                    preset.fuelSpecies = definition.fuelSpecies;
+                    preset.fuelMoles = definition.fuelMoles;
+                    preset.oxidizerSpecies = definition.oxidizerSpecies;
+                    preset.oxidizerMoles = definition.oxidizerMoles;
+                    preset.phi = definition.phi;
+            end
+        end
+
+        function definitions = reactantsPresetDefinitions(obj)
+            definitions = obj.reactantsPresetDefinition(2, 'Air', {'air'}, ...
+                'air', {}, [], {}, [], [], '-');
+            definitions(end + 1) = obj.reactantsPresetDefinition(NaN, 'Air ideal', ...
+                {'ideal air', 'air_ideal', 'ideal_air'}, 'air', {}, [], {}, [], true, '-');
+            definitions(end + 1) = obj.reactantsPresetDefinition(3, 'Methane + Air', {}, ...
+                'fuelAir', {'CH4'}, 1, {}, [], [], '1');
+            definitions(end + 1) = obj.reactantsPresetDefinition(4, 'Ethane + Air', {}, ...
+                'fuelAir', {'C2H6'}, 1, {}, [], [], '1');
+            definitions(end + 1) = obj.reactantsPresetDefinition(5, 'Propane + Air', {}, ...
+                'fuelAir', {'C3H8'}, 1, {}, [], [], '1');
+            definitions(end + 1) = obj.reactantsPresetDefinition(6, 'Acetylene + Air', {}, ...
+                'fuelAir', {'C2H2_acetylene'}, 1, {}, [], [], '1');
+            definitions(end + 1) = obj.reactantsPresetDefinition(7, 'Ethylene + Air', {}, ...
+                'fuelAir', {'C2H4'}, 1, {}, [], [], '1');
+            definitions(end + 1) = obj.reactantsPresetDefinition(8, 'Bencene + Air', ...
+                {'benzene + air'}, 'fuelAir', {'C6H6'}, 1, {}, [], [], '1');
+            definitions(end + 1) = obj.reactantsPresetDefinition(9, 'Iso-octane + Air', ...
+                {'isooctane + air'}, 'fuelAir', {'C8H18_isooctane'}, 1, {}, [], [], '1');
+            definitions(end + 1) = obj.reactantsPresetDefinition(10, 'Hydrogen + Air', {}, ...
+                'fuelAir', {'H2'}, 1, {}, [], [], '1');
+            definitions(end + 1) = obj.reactantsPresetDefinition(11, 'Carbon monoxide + Air', {}, ...
+                'fuelAir', {'CO'}, 1, {}, [], [], '1');
+            definitions(end + 1) = obj.reactantsPresetDefinition(12, 'Methanol + Air', {}, ...
+                'fuelAir', {'CH3OH'}, 1, {}, [], [], '1');
+            definitions(end + 1) = obj.reactantsPresetDefinition(13, 'Ethanol + Air', {}, ...
+                'fuelAir', {'C2H5OH'}, 1, {}, [], [], '1');
+            definitions(end + 1) = obj.reactantsPresetDefinition(14, 'Natural Gas + Air', {}, ...
+                'fuelAir', {'CH4', 'C2H6', 'C3H8'}, [0.85, 0.1, 0.05], {}, [], [], '1');
+            definitions(end + 1) = obj.reactantsPresetDefinition(15, 'Syngas + Air', {}, ...
+                'fuelAir', {'CO', 'H2'}, [0.5, 0.5], {}, [], [], '1');
+            definitions(end + 1) = obj.reactantsPresetDefinition(16, 'LH2 + LOX', {}, ...
+                'direct', {'H2bLb'}, 1, {'O2bLb'}, 1, [], '1');
+            definitions(end + 1) = obj.reactantsPresetDefinition(17, 'RP1 + LOX', ...
+                {'rp-1 + lox'}, 'direct', {'RP_1'}, 1, {'O2bLb'}, 1, [], '1');
+        end
+
+        function definition = reactantsPresetDefinition(~, id, label, aliases, type, ...
+                fuelSpecies, fuelMoles, oxidizerSpecies, oxidizerMoles, idealAir, phi)
+            definition.id = id;
+            definition.label = label;
+            definition.aliases = aliases;
+            definition.type = type;
+            definition.fuelSpecies = fuelSpecies;
+            definition.fuelMoles = fuelMoles;
+            definition.oxidizerSpecies = oxidizerSpecies;
+            definition.oxidizerMoles = oxidizerMoles;
+            definition.idealAir = idealAir;
+            definition.phi = phi;
         end
 
         function preset = emptyPreset(obj) %#ok<MANU>
@@ -375,6 +460,13 @@ classdef AppSpeciesPanel < handle
                 'inertSpecies', {{}}, ...
                 'inertMoles', [], ...
                 'phi', '-');
+        end
+
+        function preset = airPreset(obj, FLAG_IDEAL_AIR)
+            preset = obj.emptyPreset();
+            [preset.oxidizerSpecies, preset.oxidizerMoles] = ...
+                combustiontoolbox.utils.getAir(FLAG_IDEAL_AIR);
+            preset.phi = '-';
         end
 
         function preset = fuelAirPreset(obj, fuelSpecies, fuelMoles)
@@ -389,20 +481,44 @@ classdef AppSpeciesPanel < handle
             [species, moles] = combustiontoolbox.utils.getAir(obj.componentValue('IdealAirCheckBox', false));
         end
 
+        function value = normalizedText(~, value)
+            value = lower(strtrim(char(value)));
+            value = regexprep(value, '\s+', ' ');
+        end
+
         function addCustomReactant(obj, species, event) %#ok<INUSD>
             if isempty(species)
                 return
             end
 
-            if ~isempty(obj.componentData('UITable_R', {}))
-                obj.setMixtureFromReactantsTable();
+            data = obj.componentData('UITable_R', {});
+
+            if isempty(data)
+                tableSpecies = {};
+            else
+                tableSpecies = data(:, 1)';
             end
 
-            if any(combustiontoolbox.utils.findIndex(obj.app.mixture.listSpecies, species))
+            if any(strcmp(tableSpecies, species))
+                obj.setValue('Reactants', 1);
                 return
             end
 
+            productSpecies = obj.componentItems('listbox_Products');
+            systemSpecies = obj.addToList(tableSpecies, productSpecies);
+            systemSpecies = obj.addToList({species}, systemSpecies);
+
+            if ~isempty(productSpecies) || ~isempty(tableSpecies)
+                obj.rebuildChemicalSystem(systemSpecies);
+                obj.app.mixture = combustiontoolbox.core.Mixture(obj.app.chemicalSystem);
+            end
+
+            if ~isempty(data)
+                obj.setMixtureFromReactantsTable();
+            end
+
             set(obj.app.mixture, {species}, 'inert', 1);
+            obj.setValue('Reactants', 1);
         end
 
         function species = matchSpeciesFromEvent(obj, event)
@@ -437,6 +553,10 @@ classdef AppSpeciesPanel < handle
 
             listSpecies = obj.app.database.listSpecies;
             index = find(strcmp(listSpecies, value), 1);
+
+            if isempty(index)
+                index = find(strcmpi(listSpecies, value), 1);
+            end
 
             if ~isempty(index)
                 species = listSpecies{index};
@@ -607,12 +727,12 @@ classdef AppSpeciesPanel < handle
             %     obj (AppSpeciesPanel): Species panel object
             productValue = obj.componentValue('Products', []);
 
-            if obj.isCustomProductSelection(productValue)
-                obj.rebuildChemicalSystem(obj.productSpecies());
-                return
-            end
-
             if isempty(productValue)
+                if obj.hasExplicitProductsWithoutReactants()
+                    obj.rebuildChemicalSystem(obj.productSpecies());
+                    return
+                end
+
                 species = obj.findProductsFromReactants();
                 obj.setProductItems(species);
                 obj.rebuildChemicalSystem(species);
@@ -624,16 +744,21 @@ classdef AppSpeciesPanel < handle
                 return
             end
 
-            FLAG_ADD = ~isempty(combustiontoolbox.utils.findIndex(obj.app.database.listSpecies, productValue));
-            chemicalSystem = combustiontoolbox.core.ChemicalSystem(obj.app.database);
-            chemicalSystem.setListSpecies(productValue);
+            species = obj.matchSpecies(productValue);
 
-            if FLAG_ADD
-                obj.setProductItems(unique([obj.productSpecies(), chemicalSystem.listSpecies], 'stable'));
-            else
-                obj.setProductItems(chemicalSystem.listSpecies);
+            if ~isempty(species)
+                obj.addTypedProductSpecies(species);
+                return
             end
 
+            if ~obj.isProductPreset(productValue)
+                obj.showWarning('Species not found.');
+                return
+            end
+
+            chemicalSystem = combustiontoolbox.core.ChemicalSystem(obj.app.database);
+            chemicalSystem.setListSpecies(productValue);
+            obj.setProductItems(chemicalSystem.listSpecies);
             obj.rebuildChemicalSystem(obj.productSpecies());
         end
 
@@ -725,6 +850,15 @@ classdef AppSpeciesPanel < handle
             if strcmpi(obj.componentValue('Products', ''), 'complete reaction')
                 value = 'complete';
             end
+        end
+
+        function value = isProductPreset(obj, productValue)
+            value = any(strcmpi(char(productValue), obj.componentItems('Products')));
+        end
+
+        function value = hasExplicitProductsWithoutReactants(obj)
+            value = isempty(obj.componentData('UITable_R', {})) ...
+                && ~isempty(obj.componentItems('listbox_Products'));
         end
 
         function value = equivalenceProductSpecies(obj)
@@ -957,6 +1091,14 @@ classdef AppSpeciesPanel < handle
             end
         end
 
+        function value = componentItemsData(obj, componentName)
+            value = {};
+
+            if obj.hasComponent(componentName) && isprop(obj.app.(componentName), 'ItemsData')
+                value = obj.app.(componentName).ItemsData;
+            end
+        end
+
         function data = componentData(obj, componentName, defaultValue)
             data = defaultValue;
 
@@ -983,6 +1125,12 @@ classdef AppSpeciesPanel < handle
             end
         end
 
+        function setItemsData(obj, componentName, value)
+            if obj.hasComponent(componentName) && isprop(obj.app.(componentName), 'ItemsData')
+                obj.app.(componentName).ItemsData = value;
+            end
+        end
+
         function setProductItems(obj, value)
             % Set the internal products listbox items
             %
@@ -991,18 +1139,16 @@ classdef AppSpeciesPanel < handle
             obj.setItems('listbox_Products', value);
         end
 
-        function addProductsDropdownItem(obj, value)
-            items = obj.componentItems('Products');
-
-            if any(strcmp(items, value))
-                return
-            end
-
-            obj.setItems('Products', [items, {value}]);
-        end
-
-        function value = isCustomProductSelection(obj, productValue)
-            value = strcmpi(char(productValue), obj.customProductsValue);
+        function addTypedProductSpecies(obj, species)
+            % Add a typed database species to the explicit product list
+            %
+            % Args:
+            %     species (char): Database species name
+            species = obj.addToList({species}, obj.componentItems('listbox_Products'));
+            obj.setValue('Products', '');
+            obj.setProductItems(species);
+            obj.rebuildChemicalSystem(species);
+            obj.updateProductDisplayLists();
         end
 
         function syncSessionChemicalSystem(obj)

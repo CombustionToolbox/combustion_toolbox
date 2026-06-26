@@ -13,6 +13,10 @@ classdef AppSpeciesPanel < handle
         session
     end
 
+    properties (Access = private, Constant)
+        customProductsValue = 'Custom selection'
+    end
+
     methods
         function obj = AppSpeciesPanel(app, session)
             % AppSpeciesPanel constructor
@@ -81,11 +85,11 @@ classdef AppSpeciesPanel < handle
             %
             % Args:
             %     species (cell | string | char): Custom product species list
-            if isempty(species)
-                species = {};
-            end
-
-            obj.setProductItems(unique(species, 'stable'));
+            species = unique(obj.asCell(species), 'stable');
+            obj.addProductsDropdownItem(obj.customProductsValue);
+            obj.setValue('Products', obj.customProductsValue);
+            obj.setProductItems(species);
+            obj.rebuildChemicalSystem(species);
             obj.updateProductDisplayLists();
         end
 
@@ -130,14 +134,15 @@ classdef AppSpeciesPanel < handle
             end
 
             pressure = obj.parseComponentValue('PR2', 'first');
-            equivalenceRatio = obj.parseComponentValue('edit_phi', 'first');
+            equivalenceRatio = obj.parseComponentValue('edit_phi');
+            equivalenceRatioFirst = obj.parseComponentValue('edit_phi', 'first');
             previousMixture = obj.app.mixture.copy();
             obj.rebuildChemicalSystem(obj.equivalenceProductSpecies());
             obj.app.mixture = combustiontoolbox.core.Mixture(obj.app.chemicalSystem);
             obj.restoreMixtureComposition(previousMixture);
             obj.setTemperatureFromReactantsTable();
             obj.app.mixture = setProperties(obj.app.mixture, 'pressure', pressure, ...
-                'equivalenceRatio', equivalenceRatio);
+                'equivalenceRatio', equivalenceRatioFirst);
             obj.updateReactantsTable();
             obj.updatePhiControlsFromInput();
             obj.updateCompleteReactionProducts(equivalenceRatio);
@@ -204,9 +209,7 @@ classdef AppSpeciesPanel < handle
             %     obj (AppSpeciesPanel): Species panel object
             items = obj.addToList(obj.componentValue('listbox_LS_DB', {}), ...
                 obj.componentItems('listbox_LS'));
-            obj.setItems('listbox_LS', items);
-            obj.setProductItems(items);
-            obj.onProductsChanged();
+            obj.setCustomProductSpecies(items);
         end
 
         function onProductSpeciesRemoved(obj)
@@ -216,9 +219,7 @@ classdef AppSpeciesPanel < handle
             %     obj (AppSpeciesPanel): Species panel object
             items = obj.removeFromList(obj.componentValue('listbox_LS', {}), ...
                 obj.componentItems('listbox_LS'));
-            obj.setItems('listbox_LS', items);
-            obj.setProductItems(items);
-            obj.onProductsChanged();
+            obj.setCustomProductSpecies(items);
         end
 
         function onDatabaseSpeciesSearchChanging(obj, event)
@@ -606,8 +607,15 @@ classdef AppSpeciesPanel < handle
             %     obj (AppSpeciesPanel): Species panel object
             productValue = obj.componentValue('Products', []);
 
+            if obj.isCustomProductSelection(productValue)
+                obj.rebuildChemicalSystem(obj.productSpecies());
+                return
+            end
+
             if isempty(productValue)
-                obj.setProductItems(obj.findProductsFromReactants());
+                species = obj.findProductsFromReactants();
+                obj.setProductItems(species);
+                obj.rebuildChemicalSystem(species);
                 return
             end
 
@@ -617,13 +625,16 @@ classdef AppSpeciesPanel < handle
             end
 
             FLAG_ADD = ~isempty(combustiontoolbox.utils.findIndex(obj.app.database.listSpecies, productValue));
-            obj.app.chemicalSystem.setListSpecies(productValue);
+            chemicalSystem = combustiontoolbox.core.ChemicalSystem(obj.app.database);
+            chemicalSystem.setListSpecies(productValue);
 
             if FLAG_ADD
-                obj.setProductItems(unique([obj.productSpecies(), obj.app.chemicalSystem.listSpecies], 'stable'));
+                obj.setProductItems(unique([obj.productSpecies(), chemicalSystem.listSpecies], 'stable'));
             else
-                obj.setProductItems(obj.app.chemicalSystem.listSpecies);
+                obj.setProductItems(chemicalSystem.listSpecies);
             end
+
+            obj.rebuildChemicalSystem(obj.productSpecies());
         end
 
         function updateCompleteReactionProducts(obj, equivalenceRatio)
@@ -635,10 +646,52 @@ classdef AppSpeciesPanel < handle
                 return
             end
 
-            obj.app.chemicalSystem.setListSpecies('complete', equivalenceRatio, ...
-                obj.app.mixture.equivalenceRatioSoot);
-            obj.setProductItems(obj.app.chemicalSystem.listSpecies);
+            obj.setProductItems(obj.completeReactionProductSpecies(equivalenceRatio));
             obj.updateProductDisplayLists();
+        end
+
+        function species = completeReactionProductSpecies(obj, equivalenceRatio)
+            % Return complete-reaction product species for the current phi sweep
+            %
+            % Args:
+            %     equivalenceRatio (float): Equivalence ratio values [-]
+            %
+            % Returns:
+            %     species (cell): Product species required across all branches
+            if isempty(equivalenceRatio)
+                species = obj.app.chemicalSystem.listSpecies;
+                return
+            end
+
+            equivalenceRatio = equivalenceRatio(:)';
+            sootEquivalenceRatio = obj.completeReactionSootEquivalenceRatio();
+            speciesGroups = { ...
+                obj.app.chemicalSystem.listSpeciesLean, ...
+                obj.app.chemicalSystem.listSpeciesRich, ...
+                obj.app.chemicalSystem.listSpeciesSoot};
+            includeGroups = [ ...
+                any(equivalenceRatio < 1), ...
+                any(equivalenceRatio >= 1 & equivalenceRatio <= sootEquivalenceRatio), ...
+                any(equivalenceRatio >= sootEquivalenceRatio)];
+
+            if ~any(includeGroups)
+                species = obj.app.chemicalSystem.listSpecies;
+                return
+            end
+
+            species = unique([speciesGroups{includeGroups}], 'stable');
+        end
+
+        function value = completeReactionSootEquivalenceRatio(obj)
+            % Return the soot-formation equivalence-ratio threshold
+            %
+            % Returns:
+            %     value (float): Equivalence ratio at which soot may appear [-]
+            value = obj.app.mixture.equivalenceRatioSoot;
+
+            if isempty(value) || isnan(value)
+                value = inf;
+            end
         end
 
         function value = findProductsFromReactants(obj)
@@ -697,6 +750,8 @@ classdef AppSpeciesPanel < handle
             else
                 obj.app.chemicalSystem = combustiontoolbox.core.ChemicalSystem(obj.app.database, listSpecies);
             end
+
+            obj.syncSessionChemicalSystem();
         end
 
         function clearReactantsTables(obj)
@@ -934,6 +989,29 @@ classdef AppSpeciesPanel < handle
             % Args:
             %     value (cell | char | string): Product species list
             obj.setItems('listbox_Products', value);
+        end
+
+        function addProductsDropdownItem(obj, value)
+            items = obj.componentItems('Products');
+
+            if any(strcmp(items, value))
+                return
+            end
+
+            obj.setItems('Products', [items, {value}]);
+        end
+
+        function value = isCustomProductSelection(obj, productValue)
+            value = strcmpi(char(productValue), obj.customProductsValue);
+        end
+
+        function syncSessionChemicalSystem(obj)
+            if isempty(obj.session) || ~isobject(obj.session) ...
+                    || ~isprop(obj.session, 'chemicalSystem')
+                return
+            end
+
+            obj.session.chemicalSystem = obj.app.chemicalSystem;
         end
 
         function setData(obj, componentName, value)
